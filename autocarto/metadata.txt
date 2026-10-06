@@ -1,0 +1,20 @@
+[general]
+name=AutoCarto AI
+qgisMinimumVersion=3.16
+description=基于多智能体系统的GIS智能助手
+version=0.1.0
+author=AutoCarto Team
+email=haitao.wong@outlook.com
+
+about=AutoCarto AI是一个基于多智能体系统的QGIS插件，通过AI技术增强GIS数据处理、空间分析和地图制图能力。
+
+tracker=https://github.com/autocarto/autocarto-ai/issues
+repository=https://github.com/autocarto/autocarto-ai
+tags=ai,gis,analysis,automation,agent
+
+homepage=https://autocarto.ai
+category=Analysis
+icon=icon.png
+
+experimental=True
+deprecated=False

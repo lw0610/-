@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: interpolate_point_on_line
+  display_name: 线上插值点
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 在线上按距离插值点
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: DISTANCE
+    type: number
+    description: 距离
+    default: 1.0
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: interpolate_point_on_line
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DISTANCE: '{{ DISTANCE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

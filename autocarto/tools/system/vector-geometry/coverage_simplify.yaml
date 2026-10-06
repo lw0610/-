@@ -1,0 +1,30 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: coverage_simplify
+  display_name: 简化Coverage
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 简化Coverage几何图形同时保持拓扑关系
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: TOLERANCE
+    type: number
+    required: true
+    description: 简化容差
+    default: 1.0
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: coverage_simplify
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    TOLERANCE: '{{ TOLERANCE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

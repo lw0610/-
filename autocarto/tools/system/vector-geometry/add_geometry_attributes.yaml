@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: add_geometry_attributes
+  display_name: 添加几何属性
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 添加几何属性到要素
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: CALC_METHOD
+    type: enum
+    description: 计算方法
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: add_geometry_attributes
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    CALC_METHOD: '{{ CALC_METHOD }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

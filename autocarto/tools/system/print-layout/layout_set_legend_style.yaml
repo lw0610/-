@@ -1,0 +1,77 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_legend_style
+  display_name: layout_set_legend_style
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置图例样式
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 图例ID
+  - name: title
+    type: string
+    description: 图例标题
+  - name: title_font_family
+    type: string
+    description: 图例标题字体
+  - name: title_font_size
+    type: number
+    description: 图例标题字号(mm)
+  - name: body_font_family
+    type: string
+    description: 图例正文字体
+  - name: body_font_size
+    type: number
+    description: 图例正文字号(mm)
+  - name: content_margin
+    type: number
+    description: 图例内容边距
+  - name: background_enabled
+    type: boolean
+    description: 是否启用背景
+  - name: background_color
+    type: string
+    description: 背景颜色
+  - name: frame_color
+    type: string
+    description: 边框颜色
+  - name: frame_width
+    type: number
+    description: 边框宽度
+  - name: symbol_size
+    type: number
+    description: 图例符号尺寸(mm)
+  - name: legend_layers
+    type: array
+    items:
+      type: string
+    description: 图例显示图层ID或唯一名称数组；按此顺序重建图例，可恢复先前隐藏的图层。省略时保留当前图层，空数组清空。
+  - name: include_military_arrow
+    type: boolean
+    description: 是否追加行军图军标箭头示意项，默认false；仅行军专题图需要时显式设为true
+execution:
+  handler: handlers.layout_advanced.set_legend_style_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    title: '{{ title }}'
+    title_font_family: '{{ title_font_family }}'
+    title_font_size: '{{ title_font_size }}'
+    body_font_family: '{{ body_font_family }}'
+    body_font_size: '{{ body_font_size }}'
+    content_margin: '{{ content_margin }}'
+    background_enabled: '{{ background_enabled }}'
+    background_color: '{{ background_color }}'
+    frame_color: '{{ frame_color }}'
+    frame_width: '{{ frame_width }}'
+    symbol_size: '{{ symbol_size }}'
+    legend_layers: '{{ legend_layers }}'
+    include_military_arrow: '{{ include_military_arrow }}'

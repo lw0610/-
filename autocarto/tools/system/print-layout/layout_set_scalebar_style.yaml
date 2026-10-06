@@ -1,0 +1,83 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_scalebar_style
+  display_name: layout_set_scalebar_style
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置比例尺样式
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 比例尺ID
+  - name: units
+    type: string
+    description: 单位
+  - name: unit_label
+    type: string
+    description: 单位标签
+  - name: segments
+    type: integer
+    description: 段数
+  - name: segments_left
+    type: integer
+    description: 左侧段数
+  - name: units_per_segment
+    type: number
+    description: 每段单位数
+  - name: height
+    type: number
+    description: 高度
+  - name: line_width
+    type: number
+    description: 线宽
+  - name: font_family
+    type: string
+    description: 字体
+  - name: font_size
+    type: number
+    description: 字号
+  - name: font_bold
+    type: boolean
+    description: 加粗
+  - name: font_color
+    type: string
+    description: 字体颜色
+  - name: fill_color
+    type: string
+    description: 填充颜色1
+  - name: fill_color2
+    type: string
+    description: 填充颜色2
+  - name: line_color
+    type: string
+    description: 线颜色
+  - name: alignment
+    type: string
+    description: 对齐方式
+execution:
+  handler: handlers.layout_advanced.set_scalebar_style_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    units: '{{ units }}'
+    unit_label: '{{ unit_label }}'
+    segments: '{{ segments }}'
+    segments_left: '{{ segments_left }}'
+    units_per_segment: '{{ units_per_segment }}'
+    height: '{{ height }}'
+    line_width: '{{ line_width }}'
+    font_family: '{{ font_family }}'
+    font_size: '{{ font_size }}'
+    font_bold: '{{ font_bold }}'
+    font_color: '{{ font_color }}'
+    fill_color: '{{ fill_color }}'
+    fill_color2: '{{ fill_color2 }}'
+    line_color: '{{ line_color }}'
+    alignment: '{{ alignment }}'

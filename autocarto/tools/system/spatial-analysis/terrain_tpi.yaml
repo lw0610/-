@@ -1,0 +1,24 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: terrain_tpi
+  display_name: 地形位置指数
+  domain: spatial-analysis
+  runtime: qgis
+spec:
+  description: 计算TPI地形位置指数
+  parameters:
+  - name: INPUT
+    type: raster_layer
+    required: true
+    description: 输入DEM
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: terrain_tpi
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

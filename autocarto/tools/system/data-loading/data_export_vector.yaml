@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: data_export_vector
+  display_name: data_export_vector
+  domain: data-loading
+  runtime: qgis
+spec:
+  description: 导出矢量图层
+  parameters:
+    - name: layer
+      type: string
+      required: true
+      description: 图层名称
+    - name: output
+      type: string
+      description: 输出文件路径（可选）
+      default: ''
+    - name: format
+      type: string
+      description: 输出格式（可选）
+      default: ''
+execution:
+  handler: handlers.loader.export_vector_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    output: '{{ output }}'
+    format: '{{ format }}'

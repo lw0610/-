@@ -1,0 +1,32 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: mean_and_standard_deviation_plot
+  display_name: 均值和标准差图
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 创建均值和标准差图表
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: NAME_FIELD
+    type: field
+    required: true
+    description: 类别字段
+  - name: VALUE_FIELD
+    type: field
+    required: true
+    description: 数值字段
+  - name: OUTPUT
+    type: file
+    description: 输出HTML文件
+execution:
+  backend_tool: mean_and_standard_deviation_plot
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    NAME_FIELD: '{{ NAME_FIELD }}'
+    VALUE_FIELD: '{{ VALUE_FIELD }}'
+    OUTPUT: '{{ OUTPUT }}'

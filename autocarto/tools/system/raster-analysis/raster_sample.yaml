@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: raster_sample
+  display_name: 栅格采样
+  domain: raster-analysis
+  runtime: qgis
+spec:
+  description: 在点位置采样栅格值
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入点图层
+  - name: RASTERCOPY
+    type: raster_layer
+    required: true
+    description: 采样栅格
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: raster_sample
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    RASTERCOPY: '{{ RASTERCOPY }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

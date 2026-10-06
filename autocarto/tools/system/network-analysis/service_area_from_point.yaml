@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: service_area_from_point
+  display_name: 服务区(从点)
+  domain: network-analysis
+  runtime: qgis
+spec:
+  description: 从点计算服务区
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 网络图层
+  - name: START_POINT
+    type: point
+    required: true
+    description: 起始点
+  - name: TRAVEL_COST
+    type: number
+    required: true
+    description: 行程成本
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: service_area_from_point
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    START_POINT: '{{ START_POINT }}'
+    TRAVEL_COST: '{{ TRAVEL_COST }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

@@ -1,0 +1,50 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_shape
+  display_name: layout_add_shape
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加形状到布局
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: shape_type
+    type: string
+    description: 形状类型(rectangle/ellipse/triangle)
+  - name: x
+    type: number
+    description: X坐标(mm)
+  - name: y
+    type: number
+    description: Y坐标(mm)
+  - name: width
+    type: number
+    description: 宽度(mm)
+  - name: height
+    type: number
+    description: 高度(mm)
+  - name: item_id
+    type: string
+    description: 元素ID
+  - name: fill_color
+    type: string
+    description: 填充颜色
+  - name: stroke_color
+    type: string
+    description: 边框颜色
+execution:
+  handler: handlers.layout_items.add_shape_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    shape_type: '{{ shape_type }}'
+    x: '{{ x }}'
+    y: '{{ y }}'
+    width: '{{ width }}'
+    height: '{{ height }}'
+    item_id: '{{ item_id }}'
+    fill_color: '{{ fill_color }}'
+    stroke_color: '{{ stroke_color }}'

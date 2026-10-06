@@ -1,0 +1,37 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: export_cross_section_dataset_values
+  display_name: 从网孔导出线上的剖面数据集值
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 沿线导出网孔数据集值
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入网孔图层
+  - name: DATASET_GROUPS
+    type: string
+    description: 数据集组
+  - name: DATASET_TIME
+    type: string
+    description: 数据集时间
+  - name: LINES
+    type: layer
+    required: true
+    description: 剖面线图层
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: export_cross_section_dataset_values
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DATASET_GROUPS: '{{ DATASET_GROUPS }}'
+    DATASET_TIME: '{{ DATASET_TIME }}'
+    LINES: '{{ LINES }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

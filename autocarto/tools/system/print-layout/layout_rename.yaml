@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_rename
+  display_name: layout_rename
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 重命名打印布局
+  parameters:
+  - name: old_name
+    type: string
+    required: true
+    description: 旧名称
+  - name: new_name
+    type: string
+    required: true
+    description: 新名称
+execution:
+  handler: handlers.layout.rename_layout_handler
+  param_mapping:
+    old_name: '{{ old_name }}'
+    new_name: '{{ new_name }}'

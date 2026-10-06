@@ -1,0 +1,17 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: selection_clear
+  display_name: selection_clear
+  domain: vector-selection
+  runtime: qgis
+spec:
+  description: 清除选择
+  parameters:
+    - name: layer
+      type: string
+      description: 图层名称(可选，不指定则清除所有)
+execution:
+  handler: handlers.selection.clear_selection_handler
+  param_mapping:
+    layer: '{{ layer }}'

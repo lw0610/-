@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: cartography_rule_based_style
+  display_name: cartography_rule_based_style
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 设置规则样式
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: rules
+    type: array
+    required: true
+    description: 规则列表
+execution:
+  handler: handlers.style.rule_based_style_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    rules: '{{ rules }}'

@@ -1,0 +1,46 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_scalebar
+  display_name: layout_add_scalebar
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加比例尺到布局
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: x
+    type: number
+    description: X坐标(mm)
+  - name: y
+    type: number
+    description: Y坐标(mm)
+  - name: width
+    type: number
+    description: 比例尺条带的目标最大宽度(mm)；最终元素外框宽度以返回的 data.rect_mm 为准
+  - name: height
+    type: number
+    description: 高度(mm)
+  - name: item_id
+    type: string
+    description: 元素ID
+  - name: map_id
+    type: string
+    description: 关联的地图框ID
+  - name: style
+    type: string
+    description: 样式(single_box/double_box/line/numeric)
+execution:
+  handler: handlers.layout_items.add_scalebar_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    x: '{{ x }}'
+    y: '{{ y }}'
+    width: '{{ width }}'
+    height: '{{ height }}'
+    item_id: '{{ item_id }}'
+    map_id: '{{ map_id }}'
+    style: '{{ style }}'

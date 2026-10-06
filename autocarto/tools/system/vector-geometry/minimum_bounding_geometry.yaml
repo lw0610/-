@@ -1,0 +1,35 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: minimum_bounding_geometry
+  display_name: 最小边界几何
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 计算最小边界几何图形
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: TYPE
+    type: enum
+    description: 几何类型
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: minimum_bounding_geometry
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    TYPE: '{{ TYPE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

@@ -1,0 +1,83 @@
+package control
+
+func buildSettingsWorkspaceData() map[string]any {
+	return map[string]any{
+		"tasks": []map[string]any{
+			{
+				"key":      "system",
+				"href":     "/settings/system",
+				"label":    "系统",
+				"hint":     "日志、目录、QGIS、性能与会话策略",
+				"routes":   []string{"/settings/system"},
+				"priority": 10,
+			},
+			{
+				"key":      "models-agents",
+				"href":     "/settings/models-agents",
+				"label":    "模型与智能体",
+				"hint":     "Provider、Image 2、API Key、方案管理与编排",
+				"routes":   []string{"/settings/models-agents", "/settings/models", "/settings/agents"},
+				"priority": 30,
+			},
+			{
+				"key":      "tools",
+				"href":     "/settings/tools",
+				"label":    "工具与技能",
+				"hint":     "技能包目录、启停状态与工具工作区入口",
+				"routes":   []string{"/settings/tools"},
+				"priority": 40,
+			},
+			{
+				"key":      "tool-center",
+				"href":     "/tool-center",
+				"label":    "工具中心",
+				"hint":     "统一查看技能包目录、来源、启停状态与详情",
+				"routes":   []string{"/tool-center"},
+				"hidden":   true,
+				"priority": 45,
+			},
+			{
+				"key":      "services",
+				"href":     "/settings/services",
+				"label":    "服务状态",
+				"hint":     "查看运行态服务、连接状态与实例健康度",
+				"routes":   []string{"/settings/services"},
+				"priority": 50,
+			},
+			{
+				"key":      "diagnostics",
+				"href":     "/diagnostics",
+				"label":    "诊断",
+				"hint":     "查看运行时快照、关键路径、工具目录与健康状态",
+				"routes":   []string{"/diagnostics"},
+				"hidden":   true,
+				"priority": 55,
+			},
+			{
+				"key":      "about",
+				"href":     "/settings/about",
+				"label":    "关于",
+				"hint":     "版本、链接与项目信息",
+				"routes":   []string{"/settings/about"},
+				"priority": 70,
+			},
+		},
+		"descriptors": []map[string]any{
+			{"id": "system-log-dir", "task": "system", "section": "系统运行", "path": "/settings/system", "anchor": "system-runtime", "label": "日志目录", "description": "设置 AutoCarto 日志输出目录与轮转策略。", "aliases": []string{"日志路径", "log dir"}, "keywords": []string{"log", "logging", "rotate", "backup"}, "impact": "instant", "mutability": "editable", "priority": 100},
+			{"id": "system-qgis-path", "task": "system", "section": "系统运行", "path": "/settings/system", "anchor": "system-runtime", "label": "QGIS 可执行路径", "description": "指定桌面端 QGIS 可执行文件。", "aliases": []string{"QGIS 路径", "QGIS executable"}, "keywords": []string{"qgis", "desktop", "binary", "path"}, "impact": "desktop_restart", "mutability": "editable", "priority": 95},
+			{"id": "system-performance", "task": "system", "section": "系统运行", "path": "/settings/system", "anchor": "system-runtime", "label": "超时与并发", "description": "配置工具超时、Agent 响应超时、并发数和循环限制。", "aliases": []string{"performance", "timeout"}, "keywords": []string{"timeout", "performance", "concurrency", "loop"}, "impact": "instant", "mutability": "editable", "priority": 90},
+			{"id": "system-session-policy", "task": "system", "section": "会话策略", "path": "/settings/system", "anchor": "system-session", "label": "会话策略", "description": "会话命名、自动命名、快照、归档与清理。", "aliases": []string{"会话命名", "归档策略"}, "keywords": []string{"session", "snapshot", "archive", "cleanup"}, "impact": "instant", "mutability": "editable", "priority": 85},
+			{"id": "models-active-provider", "task": "models-agents", "section": "模型", "path": "/settings/models-agents", "label": "激活模型", "description": "选择当前运行时使用的 provider 配置。", "aliases": []string{"当前模型", "active model"}, "keywords": []string{"provider", "active", "model"}, "impact": "runtime_rebuild", "mutability": "editable", "priority": 100},
+			{"id": "models-quick-provider", "task": "models-agents", "section": "模型", "path": "/settings/models-agents", "label": "快速模型", "description": "用于系统内部任务与自动命名。", "aliases": []string{"quick model", "自动命名模型"}, "keywords": []string{"quick model", "auto title"}, "impact": "runtime_rebuild", "mutability": "editable", "priority": 95},
+			{"id": "models-api-key", "task": "models-agents", "section": "模型", "path": "/settings/models-agents", "label": "API Key", "description": "配置 provider 鉴权密钥。", "aliases": []string{"密钥", "token"}, "keywords": []string{"api key", "auth", "secret"}, "impact": "runtime_rebuild", "mutability": "editable", "priority": 90},
+			{"id": "models-compression", "task": "models-agents", "section": "模型", "path": "/settings/models-agents", "label": "上下文压缩", "description": "控制压缩阈值、上下文上限与策略。", "aliases": []string{"compress", "压缩策略"}, "keywords": []string{"context", "compress", "threshold"}, "impact": "runtime_rebuild", "mutability": "editable", "priority": 85},
+			{"id": "online-data-integrations", "task": "system", "section": "在线数据与浏览器", "path": "/settings/system", "label": "GEE 与在线取数", "description": "配置 Earth Engine、浏览器和公开数据下载，并检查运行环境。", "aliases": []string{"遥感", "浏览器操作"}, "keywords": []string{"gee", "earth engine", "playwright", "browser", "在线取数"}, "impact": "instant", "mutability": "editable", "priority": 90},
+			{"id": "image2-config", "task": "models-agents", "section": "Image 2", "path": "/settings/models-agents", "label": "Image 2 设置", "description": "配置质量反馈工具使用的 Image 2 服务。", "aliases": []string{"图像优化服务", "质量反馈图片"}, "keywords": []string{"image2", "gpt-image-2", "openai image", "quality feedback"}, "impact": "instant", "mutability": "editable", "priority": 92},
+			{"id": "agents-configs", "task": "models-agents", "section": "智能体", "path": "/settings/models-agents", "label": "智能体方案", "description": "维护 agent config、激活方案与 Plan 配置。", "aliases": []string{"配置方案", "agent configs"}, "keywords": []string{"agent", "config", "plan", "runtime"}, "impact": "runtime_rebuild", "mutability": "editable", "priority": 100},
+			{"id": "agents-runtime-policy", "task": "models-agents", "section": "智能体", "path": "/settings/models-agents", "label": "Runtime / Plan 编排", "description": "配置 Runtime 与 Planner 的执行策略和共享资产。", "aliases": []string{"运行策略", "plan runtime"}, "keywords": []string{"runtime", "planner", "execution mode"}, "impact": "runtime_rebuild", "mutability": "editable", "priority": 90},
+			{"id": "tools-skill-packages", "task": "tools", "section": "工具与技能", "path": "/settings/tools", "label": "技能包目录", "description": "查看技能包分类、来源、启停状态与详细信息。", "aliases": []string{"工具中心", "tool center"}, "keywords": []string{"tools", "skills", "package", "catalog"}, "impact": "runtime_rebuild", "mutability": "editable", "priority": 88},
+			{"id": "services-runtime", "task": "services", "section": "服务状态", "path": "/settings/services", "label": "运行态服务", "description": "查看智能体系统、QGIS 桥接和连接状态。", "aliases": []string{"服务状态", "runtime services"}, "keywords": []string{"services", "runtime", "health", "instance"}, "impact": "read_only", "mutability": "read_only", "priority": 80},
+			{"id": "about-app", "task": "about", "section": "关于", "path": "/settings/about", "label": "应用信息", "description": "查看应用版本、构建信息与项目链接。", "aliases": []string{"关于", "version"}, "keywords": []string{"about", "version", "build", "links"}, "impact": "read_only", "mutability": "read_only", "priority": 60},
+		},
+	}
+}

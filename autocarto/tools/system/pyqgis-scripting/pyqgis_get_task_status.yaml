@@ -1,0 +1,17 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: pyqgis_get_task_status
+  domain: pyqgis-scripting
+  runtime: qgis
+spec:
+  description: 获取异步脚本任务的执行状态和结果
+  parameters:
+    - name: task_id
+      type: string
+      required: true
+      description: 任务ID
+execution:
+  handler: handlers.tools.pyqgis_get_task_status
+  param_mapping:
+    task_id: '{{ task_id }}'

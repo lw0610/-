@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: shortest_path_point_to_layer
+  display_name: 最短路径(点到图层)
+  domain: network-analysis
+  runtime: qgis
+spec:
+  description: 计算点到图层的最短路径
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 网络图层
+  - name: START_POINT
+    type: point
+    required: true
+    description: 起始点
+  - name: END_POINTS
+    type: layer
+    required: true
+    description: 终点图层
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: shortest_path_point_to_layer
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    START_POINT: '{{ START_POINT }}'
+    END_POINTS: '{{ END_POINTS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

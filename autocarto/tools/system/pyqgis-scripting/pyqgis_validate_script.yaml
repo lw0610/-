@@ -1,0 +1,17 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: pyqgis_validate_script
+  domain: pyqgis-scripting
+  runtime: qgis
+spec:
+  description: 验证 PyQGIS 脚本的语法和安全性，不执行脚本
+  parameters:
+    - name: script
+      type: string
+      required: true
+      description: PyQGIS 脚本代码
+execution:
+  handler: handlers.tools.pyqgis_validate_script
+  param_mapping:
+    script: '{{ script }}'

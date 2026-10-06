@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: kmeans_clustering
+  display_name: K-Means聚类
+  domain: spatial-analysis
+  runtime: qgis
+spec:
+  description: K均值聚类分析
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入点图层
+  - name: CLUSTERS
+    type: integer
+    description: 聚类数量
+    default: 5
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: kmeans_clustering
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    CLUSTERS: '{{ CLUSTERS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

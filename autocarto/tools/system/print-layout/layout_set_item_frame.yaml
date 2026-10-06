@@ -1,0 +1,35 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_item_frame
+  display_name: layout_set_item_frame
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置布局元素边框
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 元素ID
+  - name: color
+    type: string
+    description: 边框颜色
+  - name: width
+    type: number
+    description: 边框宽度
+  - name: enabled
+    type: boolean
+    description: 是否启用边框
+execution:
+  handler: handlers.layout_advanced.set_item_frame_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    color: '{{ color }}'
+    width: '{{ width }}'
+    enabled: '{{ enabled }}'

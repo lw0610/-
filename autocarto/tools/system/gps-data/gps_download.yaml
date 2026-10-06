@@ -1,0 +1,24 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gps_download
+  display_name: 下载GPS数据
+  domain: gps-data
+  runtime: qgis
+spec:
+  description: 从GPS设备下载数据
+  parameters:
+  - name: DEVICE
+    type: string
+    required: true
+    description: GPS设备
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: gps_download
+  param_mapping:
+    DEVICE: '{{ DEVICE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: extract_binary
+  display_name: 提取二进制字段
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 将二进制字段内容提取到文件
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD
+    type: field
+    required: true
+    description: 二进制字段
+  - name: FILENAME
+    type: field
+    required: true
+    description: 文件名字段
+  - name: FOLDER
+    type: folder
+    required: true
+    description: 输出文件夹
+execution:
+  backend_tool: extract_binary
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'
+    FILENAME: '{{ FILENAME }}'
+    FOLDER: '{{ FOLDER }}'

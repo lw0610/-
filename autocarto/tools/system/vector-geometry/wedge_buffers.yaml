@@ -1,0 +1,39 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: wedge_buffers
+  display_name: 楔形缓冲区
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 创建楔形缓冲区
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: AZIMUTH
+    type: number
+    description: 方位角
+    default: 0.0
+  - name: WIDTH
+    type: number
+    description: 宽度
+    default: 45.0
+  - name: OUTER_RADIUS
+    type: number
+    description: 外半径
+    default: 1.0
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: wedge_buffers
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    AZIMUTH: '{{ AZIMUTH }}'
+    WIDTH: '{{ WIDTH }}'
+    OUTER_RADIUS: '{{ OUTER_RADIUS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

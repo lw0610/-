@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_move_item
+  display_name: layout_move_item
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 移动布局元素位置
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 元素ID
+  - name: x
+    type: number
+    required: true
+    description: 新X坐标(mm)
+  - name: y
+    type: number
+    required: true
+    description: 新Y坐标(mm)
+execution:
+  handler: handlers.layout_items.move_item_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    x: '{{ x }}'
+    y: '{{ y }}'

@@ -1,0 +1,58 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: field_calculator
+  display_name: 字段计算器
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 使用表达式计算字段值
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD_NAME
+    type: string
+    required: true
+    description: 字段名称
+  - name: FIELD_TYPE
+    type: enum
+    description: 字段类型
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+  - name: FIELD_LENGTH
+    type: integer
+    description: 字段长度
+    default: 0
+  - name: FIELD_PRECISION
+    type: integer
+    description: 字段精度
+    default: 0
+  - name: FORMULA
+    type: expression
+    required: true
+    description: 表达式
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+    default: 'memory:'
+execution:
+  handler: handlers.attributes.field_calculator_handler
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD_NAME: '{{ FIELD_NAME }}'
+    FIELD_TYPE: '{{ FIELD_TYPE }}'
+    FIELD_LENGTH: '{{ FIELD_LENGTH }}'
+    FIELD_PRECISION: '{{ FIELD_PRECISION }}'
+    FORMULA: '{{ FORMULA }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

@@ -1,0 +1,31 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: assign_skill_packages
+  domain: creator-tools
+  runtime: internal
+spec:
+  description: 为指定方案或智能体分配技能包。
+  parameters:
+  - name: config_name
+    type: string
+    required: true
+  - name: mode
+    type: string
+    required: true
+  - name: target
+    type: string
+    required: true
+  - name: agent_name
+    type: string
+  - name: skill_packages
+    type: array
+    required: true
+execution:
+  backend_tool: assign_skill_packages
+  param_mapping:
+    config_name: '{{ config_name }}'
+    mode: '{{ mode }}'
+    target: '{{ target }}'
+    agent_name: '{{ agent_name }}'
+    skill_packages: '{{ skill_packages }}'

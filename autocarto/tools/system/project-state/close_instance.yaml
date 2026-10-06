@@ -1,0 +1,17 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: close_instance
+  display_name: close_instance
+  domain: project-state
+  runtime: qgis
+spec:
+  description: 关闭当前 QGIS 实例
+  parameters:
+    - name: delay_ms
+      type: integer
+      description: 发起退出前的延迟毫秒数，确保结果能先返回
+execution:
+  handler: handlers.project.close_instance
+  param_mapping:
+    delay_ms: '{{ delay_ms }}'

@@ -1,0 +1,84 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: cartography_build_and_draw_from_tables
+  display_name: cartography_build_and_draw_from_tables
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 从可信的当前会话知识抽取成果或用户明确提供的六表目录，自动构建并执行路线绘制、点符号化和图文注记
+  parameters:
+  - name: dataset_source
+    type: enum
+    values: [current_session, explicit]
+    required: true
+    description: 数据来源；叙事文本经知识抽取后必须使用 current_session，只有用户明确提供已有六表目录时才使用 explicit
+  - name: dataset_dir
+    type: string
+    description: 仅 explicit 模式必填；current_session 模式由程序从当前任务 intermediate/route_knowledge 自动解析，若同时传入则必须与该目录完全一致
+  - name: expected_table_counts
+    type: object
+    description: 可选的上游六表行数；传入后会在任何 QGIS 修改前与实际 CSV 逐表核对
+  - name: expected_task_id
+    type: string
+    description: 可选的上游任务知识图谱 task_id；传入后会与编译清单核对
+  - name: plugin_dir
+    type: string
+    required: true
+    description: CombinedMilitaryPlot 插件目录路径
+  - name: run_routes
+    type: boolean
+    description: 是否执行路线绘制，默认 true
+  - name: run_symbols
+    type: boolean
+    description: 是否执行点符号化，默认 true
+  - name: run_callouts
+    type: boolean
+    description: 是否执行图片文本注记，默认 true
+  - name: strict
+    type: boolean
+    description: 严格校验模式，默认 true；开启后地名缺失、路径结构错误会直接报错
+  - name: layout_name
+    type: string
+    description: 当 run_callouts=true 时可选，布局名称
+  - name: map_item_id
+    type: string
+    description: 当 run_callouts=true 时可选，布局中地图项ID
+  - name: input_crs
+    type: string
+    description: 输入坐标系，默认 EPSG:4326；用于专题 points 图层创建与 callouts 锚点输入
+  - name: points_layer
+    type: string
+    description: 专题点图层名称，默认 points；当 run_symbols=true 时将对该图层应用符号化
+  - name: overwrite_points_layer
+    type: boolean
+    description: 是否覆盖同名专题点图层，默认 true；为 false 时若图层存在则复用
+  - name: symbol_type_field
+    type: string
+    description: 当 run_symbols=true 时可选，point_rows 中符号类型字段名，默认 symbol_type
+  - name: hide_unmatched
+    type: boolean
+    description: 当 run_symbols=true 时可选，是否隐藏未匹配要素，默认 false
+  - name: fallback_size
+    type: number
+    description: 当 run_symbols=true 时可选，符号缺省大小(mm)，默认 4
+execution:
+  handler: handlers.style.cartography_build_and_draw_from_tables_handler
+  param_mapping:
+    dataset_source: '{{ dataset_source }}'
+    dataset_dir: '{{ dataset_dir }}'
+    expected_table_counts: '{{ expected_table_counts }}'
+    expected_task_id: '{{ expected_task_id }}'
+    plugin_dir: '{{ plugin_dir }}'
+    run_routes: '{{ run_routes }}'
+    run_symbols: '{{ run_symbols }}'
+    run_callouts: '{{ run_callouts }}'
+    strict: '{{ strict }}'
+    layout_name: '{{ layout_name }}'
+    map_item_id: '{{ map_item_id }}'
+    input_crs: '{{ input_crs }}'
+    points_layer: '{{ points_layer }}'
+    overwrite_points_layer: '{{ overwrite_points_layer }}'
+    symbol_type_field: '{{ symbol_type_field }}'
+    hide_unmatched: '{{ hide_unmatched }}'
+    fallback_size: '{{ fallback_size }}'

@@ -1,0 +1,35 @@
+contract: wave-gate-policy
+description: Wave 1 与 Batch 0 foundation 的最小 gate 定义。
+gates:
+  - wave: wave_1
+    scope: wave_exit
+    exit_gate: authority/degradation/protocol/removal/wave-gate contracts are finalized and test-loadable
+    required_tasks:
+      - T6
+      - T7
+      - T8
+      - T9
+      - T10
+    evidence_pack:
+      - .sisyphus/evidence/task-8-discovery-descriptor.txt
+      - .sisyphus/evidence/task-9-session-contract.txt
+      - .sisyphus/evidence/task-10-policy-loader.txt
+    verification_commands:
+      - cd carto_agent && go test ./internal/control -run 'TestArchitecturePolicyLoader|TestCompatLayerRequiresRemovalCriteria|TestWaveGateDefinitions' -v
+
+  - wave: batch_0
+    scope: foundation
+    exit_gate: discovery descriptor, session/task contract, and architecture policy assets all land together before Batch A
+    required_tasks:
+      - T8
+      - T9
+      - T10
+    evidence_pack:
+      - .sisyphus/evidence/task-8-discovery-descriptor.txt
+      - .sisyphus/evidence/task-9-session-contract.txt
+      - .sisyphus/evidence/task-10-policy-loader.txt
+    verification_commands:
+      - cd carto_agent && go test ./internal/control ./internal/discovery -run 'TestDiscoveryDescriptor|TestBackendRestartReconnectOrder|TestDescriptorExpiry' -v
+      - cd carto_agent && go test ./internal/websocket -run 'TestSessionReplayAfterReconnect|TestTaskEventDedupe|TestIdempotencyKeyEnforced' -v
+      - cd carto_agent && go test ./internal/control ./internal/websocket -run 'TestInstanceLeaseExpiry|TestHeartbeatRecovery' -v
+      - cd carto_agent && go test ./internal/control -run 'TestArchitecturePolicyLoader|TestCompatLayerRequiresRemovalCriteria|TestWaveGateDefinitions' -v

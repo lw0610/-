@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: dbscan_clustering
+  display_name: DBSCAN聚类
+  domain: spatial-analysis
+  runtime: qgis
+spec:
+  description: 基于密度的空间聚类
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入点图层
+  - name: MIN_SIZE
+    type: integer
+    description: 最小聚类大小
+    default: 5
+  - name: EPS
+    type: number
+    required: true
+    description: 邻域半径
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: dbscan_clustering
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    MIN_SIZE: '{{ MIN_SIZE }}'
+    EPS: '{{ EPS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

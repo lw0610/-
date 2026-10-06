@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_duplicate
+  display_name: layout_duplicate
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 复制打印布局
+  parameters:
+  - name: source
+    type: string
+    required: true
+    description: 源布局名称
+  - name: target
+    type: string
+    required: true
+    description: 目标布局名称
+execution:
+  handler: handlers.layout.duplicate_layout_handler
+  param_mapping:
+    source: '{{ source }}'
+    target: '{{ target }}'

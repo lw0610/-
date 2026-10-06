@@ -1,0 +1,37 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: tin_interpolation
+  display_name: TIN插值
+  domain: raster-analysis
+  runtime: qgis
+spec:
+  description: 三角网插值
+  parameters:
+  - name: INTERPOLATION_DATA
+    type: string
+    required: true
+    description: 插值数据配置
+  - name: METHOD
+    type: enum
+    description: 方法(0=线性,1=Clough-Tocher)
+    default: 0
+    values:
+    - 0
+    - 1
+  - name: PIXEL_SIZE
+    type: number
+    description: 像素大小
+    default: 0.1
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: tin_interpolation
+  param_mapping:
+    INTERPOLATION_DATA: '{{ INTERPOLATION_DATA }}'
+    METHOD: '{{ METHOD }}'
+    PIXEL_SIZE: '{{ PIXEL_SIZE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

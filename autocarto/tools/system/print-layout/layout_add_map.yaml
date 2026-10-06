@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_map
+  display_name: layout_add_map
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加地图框到布局
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    description: 元素ID
+    required: true 
+execution:
+  handler: handlers.layout_items.add_map_item_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'

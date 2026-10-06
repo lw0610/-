@@ -1,0 +1,4 @@
+interface:
+  display_name: "GoogleMapD CLI Agent"
+  short_description: "Operate GoogleMapD via V2 CLI commands for estimation, download, resume, merge, and vector workflows"
+  default_prompt: "Use googlemapd CLI commands directly. Prefer V2 commands (`tiles ...`, `vector ...`) and `--json` for machine-readable output, run the bundled preflight before long workflows, estimate before large downloads, preserve checkpoint paths, and use explicit output/config paths when relevant."

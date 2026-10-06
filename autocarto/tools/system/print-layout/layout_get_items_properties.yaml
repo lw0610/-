@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_get_items_properties
+  display_name: layout_get_items_properties
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: >-
+    一次读取多个布局元素的真实位置、尺寸、类型、层级以及页面尺寸。提供
+    layout_item_ids 时还会写入不可变布局快照，并在 data.layout_snapshot_path
+    返回其路径，供质量反馈使用。
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_ids
+    type: array
+    required: true
+    description: 由上游创建工具返回的真实元素 ID 数组
+  - name: layout_item_ids
+    type: object
+    required: false
+    description: >-
+      启用质量反馈时传入完整的语义化真实 ID 映射。工具会校验该映射与 item_ids
+      完全一致，并把映射、页面尺寸及全部元素状态自动保存为布局快照。
+execution:
+  handler: handlers.layout_advanced.get_items_properties_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_ids: '{{ item_ids }}'
+    layout_item_ids: '{{ layout_item_ids }}'

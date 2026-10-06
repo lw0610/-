@@ -1,0 +1,37 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: export_layout_pdf
+  display_name: export_layout_pdf
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 导出布局为 PDF
+  parameters:
+  - name: LAYOUT
+    type: string
+    description: 布局名称（大写参数，兼容旧调用）
+  - name: layout
+    type: string
+    description: 布局名称（推荐使用）
+  - name: OUTPUT
+    type: string
+    description: 输出 PDF 路径（大写参数，兼容旧调用）
+  - name: output
+    type: string
+    description: 输出 PDF 路径（推荐使用）
+  - name: DPI
+    type: number
+    description: 导出分辨率（大写参数，兼容旧调用）
+  - name: dpi
+    type: number
+    description: 导出分辨率（推荐使用）
+execution:
+  handler: handlers.layout_export.export_layout_pdf_handler
+  param_mapping:
+    LAYOUT: '{{ LAYOUT }}'
+    layout: '{{ layout }}'
+    OUTPUT: '{{ OUTPUT }}'
+    output: '{{ output }}'
+    DPI: '{{ DPI }}'
+    dpi: '{{ dpi }}'

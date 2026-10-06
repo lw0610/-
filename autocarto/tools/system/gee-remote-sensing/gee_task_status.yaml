@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gee_task_status
+  display_name: 查询 GEE 云任务
+  domain: gee-remote-sensing
+  runtime: internal
+spec:
+  description: "读取一个已提交的 GEE 云端任务的真实状态；不把 RUNNING/READY 当作完成。"
+  parameters:
+    - name: task_id
+      type: string
+      required: true
+      description: "提交工具返回的任务 ID 或 operation name"
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: gee_task_status
+  param_mapping:
+    task_id: '{{ task_id }}'

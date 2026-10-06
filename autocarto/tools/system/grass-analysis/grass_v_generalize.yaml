@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: grass_v_generalize
+  display_name: 矢量简化
+  domain: grass-analysis
+  runtime: qgis
+spec:
+  description: 简化矢量几何
+  parameters:
+  - name: input
+    type: layer
+    required: true
+    description: 输入矢量图层
+  - name: threshold
+    type: number
+    description: 简化阈值
+    default: 1.0
+  - name: output
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: grass_v_generalize
+  param_mapping:
+    input: '{{ input }}'
+    threshold: '{{ threshold }}'
+    output: '{{ output }}'
+  output:
+    auto_load: true

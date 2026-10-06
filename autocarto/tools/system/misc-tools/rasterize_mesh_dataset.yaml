@@ -1,0 +1,37 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: rasterize_mesh_dataset
+  display_name: 栅格化网孔数据集
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 将网孔数据集转换为栅格
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入网孔图层
+  - name: DATASET_GROUPS
+    type: string
+    description: 数据集组
+  - name: EXTENT
+    type: extent
+    description: 输出范围
+  - name: PIXEL_SIZE
+    type: number
+    description: 像素大小
+    default: 1.0
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: rasterize_mesh_dataset
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DATASET_GROUPS: '{{ DATASET_GROUPS }}'
+    EXTENT: '{{ EXTENT }}'
+    PIXEL_SIZE: '{{ PIXEL_SIZE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

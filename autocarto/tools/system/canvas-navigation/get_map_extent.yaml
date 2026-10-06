@@ -1,0 +1,19 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: get_map_extent
+  display_name: get_map_extent
+  domain: canvas-navigation
+  runtime: qgis
+spec:
+  description: 获取当前地图画布的显示范围
+  parameters:
+    - name: format
+      type: string
+      description: 返回格式：bbox（边界框）或wkt（WKT格式）
+      default: bbox
+      values: [bbox, wkt]
+execution:
+  handler: handlers.canvas.get_map_extent
+  param_mapping:
+    format: '{{ format }}'

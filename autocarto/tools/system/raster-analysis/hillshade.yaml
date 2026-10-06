@@ -1,0 +1,39 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: hillshade
+  display_name: 山体阴影
+  domain: raster-analysis
+  runtime: qgis
+spec:
+  description: 计算DEM的山体阴影
+  parameters:
+  - name: INPUT
+    type: raster_layer
+    required: true
+    description: 输入DEM
+  - name: Z_FACTOR
+    type: number
+    description: Z因子
+    default: 1.0
+  - name: AZIMUTH
+    type: number
+    description: 方位角
+    default: 315.0
+  - name: V_ANGLE
+    type: number
+    description: 垂直角度
+    default: 45.0
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: hillshade
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    Z_FACTOR: '{{ Z_FACTOR }}'
+    AZIMUTH: '{{ AZIMUTH }}'
+    V_ANGLE: '{{ V_ANGLE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

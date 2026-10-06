@@ -1,0 +1,32 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: add_xy_fields
+  display_name: 添加X/Y字段到图层
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 添加包含要素X和Y坐标的字段
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: CRS
+    type: crs
+    description: 坐标参考系统
+  - name: PREFIX
+    type: string
+    description: 字段前缀
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: add_xy_fields
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    CRS: '{{ CRS }}'
+    PREFIX: '{{ PREFIX }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

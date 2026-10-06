@@ -1,0 +1,30 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_create
+  display_name: layout_create
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 创建新的打印布局
+  parameters:
+  - name: name
+    type: string
+    required: true
+    description: 布局名称
+  - name: page_width
+    type: number
+    description: 页面宽度
+  - name: page_height
+    type: number
+    description: 页面高度
+  - name: units
+    type: string
+    description: 单位 (mm/cm/inches/pixels)
+execution:
+  handler: handlers.layout.create_layout_handler
+  param_mapping:
+    name: '{{ name }}'
+    page_width: '{{ page_width }}'
+    page_height: '{{ page_height }}'
+    units: '{{ units }}'

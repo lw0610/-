@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gee_run_script
+  display_name: 执行 GEE 遥感脚本
+  domain: gee-remote-sensing
+  runtime: internal
+spec:
+  description: "使用独立 Python 执行 Earth Engine 脚本，先读取 gee-scripting skill 和对应参考流程。已初始化 ee，提供 output_dir、load_region、check_coverage、heartbeat、download_image、export_image_to_drive。按任务选择筛选、单日期拼接或时间合成方法，下载前检查整个研究区的有效覆盖；check_coverage 返回 0..1 浮点数。download_image 用 geedim 自动分块拼接本地 GeoTIFF，同会话相同请求可复用已完成文件，必须使用返回的真实路径，保持指定分辨率与数值类型，不需手写下载网格。按 GeoCode 的无输出超时执行，进度与阶段心跳延长等待，用户停止会终止本地执行。结果保留真实文件、脚本和进度；Drive 导出任务不代表本地下载完成。"
+  parameters:
+    - name: code
+      type: string
+      required: true
+      description: "完整 Python 脚本，不含凭据。ee 已初始化，output_dir 为本次输出目录；load_region(local_path) 返回 FeatureCollection，check_coverage(image, roi, band=None, scale=30, bands=None) 返回覆盖比例，heartbeat(label) 为阶段上下文。download_image(image, filename, region=..., scale=..., crs=..., dtype=可选) 自动分块下载，异常必须传播。可通过 pathlib 读取 skill 工具返回目录下的本地参考与模板。"
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: gee_run_script
+  param_mapping:
+    code: '{{ code }}'

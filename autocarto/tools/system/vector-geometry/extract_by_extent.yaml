@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: extract_by_extent
+  display_name: 按范围提取
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 按范围提取要素
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: EXTENT
+    type: extent
+    required: true
+    description: 提取范围
+  - name: CLIP
+    type: boolean
+    description: 裁剪到范围
+    default: false
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: extract_by_extent
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    EXTENT: '{{ EXTENT }}'
+    CLIP: '{{ CLIP }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

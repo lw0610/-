@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_get_item_properties
+  display_name: layout_get_item_properties
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 获取布局元素属性
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 元素ID
+execution:
+  handler: handlers.layout_advanced.get_item_properties_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'

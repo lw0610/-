@@ -1,0 +1,41 @@
+apiVersion: tool_contract/v1
+kind: ToolContract
+metadata:
+  name: join_attributes_by_location
+  display_name: 按位置连接属性
+  domain: vector-fields
+  runtime: qgis
+policy:
+  visibility: public
+  authorization:
+    scopes:
+      - tool.invoke
+spec:
+  description: 按空间位置连接属性
+  parameters:
+    - name: INPUT
+      type: layer
+      required: true
+      description: 输入图层
+    - name: JOIN
+      type: layer
+      required: true
+      description: 连接图层
+    - name: PREDICATE
+      type: enum
+      description: 几何谓词
+      default: 0
+      values: [0, 1, 2, 3, 4, 5, 6]
+    - name: OUTPUT
+      type: output_layer
+      description: 输出图层
+execution:
+  binding: backend_tool
+  backend_tool: join_attributes_by_location
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    JOIN: '{{ JOIN }}'
+    PREDICATE: '{{ PREDICATE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

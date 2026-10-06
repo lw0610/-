@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: crs_find_projection
+  display_name: 查找投影
+  domain: crs-projection
+  runtime: qgis
+spec:
+  description: 根据坐标查找可能的投影
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: TARGET_AREA
+    type: extent
+    required: true
+    description: 目标区域范围
+execution:
+  backend_tool: crs_find_projection
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    TARGET_AREA: '{{ TARGET_AREA }}'

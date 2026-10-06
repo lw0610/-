@@ -1,0 +1,15 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: browser_close
+  display_name: 关闭当前会话浏览器
+  domain: browser-data-acquisition
+  runtime: internal
+spec:
+  description: "关闭本聊天的独立浏览器，释放进程；禁用后仍可调用。"
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: browser_close

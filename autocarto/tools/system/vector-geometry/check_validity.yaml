@@ -1,0 +1,41 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: check_validity
+  display_name: 检查有效性
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 检查几何图形的有效性
+  parameters:
+  - name: INPUT_LAYER
+    type: layer
+    required: true
+    description: 输入图层
+  - name: METHOD
+    type: enum
+    description: 检查方法
+    default: 2
+    values:
+    - 0
+    - 1
+    - 2
+  - name: VALID_OUTPUT
+    type: output_layer
+    description: 有效输出
+  - name: INVALID_OUTPUT
+    type: output_layer
+    description: 无效输出
+  - name: ERROR_OUTPUT
+    type: output_layer
+    description: 错误输出
+execution:
+  backend_tool: check_validity
+  param_mapping:
+    INPUT_LAYER: '{{ INPUT_LAYER }}'
+    METHOD: '{{ METHOD }}'
+    VALID_OUTPUT: '{{ VALID_OUTPUT }}'
+    INVALID_OUTPUT: '{{ INVALID_OUTPUT }}'
+    ERROR_OUTPUT: '{{ ERROR_OUTPUT }}'
+  output:
+    auto_load: true

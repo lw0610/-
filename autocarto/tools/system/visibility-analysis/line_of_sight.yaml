@@ -1,0 +1,53 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: line_of_sight
+  display_name: 视线分析
+  domain: visibility-analysis
+  runtime: qgis
+spec:
+  description: 计算两点之间的视线
+  parameters:
+    - name: INPUT
+      type: raster_layer
+      required: true
+      description: 输入DEM
+    - name: START_POINT
+      type: point
+      required: true
+      description: 起点坐标
+    - name: END_POINT
+      type: point
+      required: true
+      description: 终点坐标
+    - name: BAND
+      type: integer
+      description: DEM波段号
+      default: 1
+    - name: OBSERVER_HEIGHT
+      type: number
+      description: 起点附加高度
+      default: 0.0
+    - name: TARGET_HEIGHT
+      type: number
+      description: 终点附加高度
+      default: 0.0
+    - name: SAMPLE_INTERVAL
+      type: number
+      description: 采样间距（地图单位）
+    - name: OUTPUT
+      type: output_layer
+      description: 输出图层
+execution:
+  handler: handlers.visibility.line_of_sight_handler
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    START_POINT: '{{ START_POINT }}'
+    END_POINT: '{{ END_POINT }}'
+    BAND: '{{ BAND }}'
+    OBSERVER_HEIGHT: '{{ OBSERVER_HEIGHT }}'
+    TARGET_HEIGHT: '{{ TARGET_HEIGHT }}'
+    SAMPLE_INTERVAL: '{{ SAMPLE_INTERVAL }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

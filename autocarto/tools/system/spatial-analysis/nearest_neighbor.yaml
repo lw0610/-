@@ -1,0 +1,18 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: nearest_neighbor
+  display_name: 最近邻分析
+  domain: spatial-analysis
+  runtime: qgis
+spec:
+  description: 计算最近邻统计
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入点图层
+execution:
+  backend_tool: nearest_neighbor
+  param_mapping:
+    INPUT: '{{ INPUT }}'

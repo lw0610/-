@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: cartography_set_style
+  display_name: cartography_set_style
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 设置图层样式
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: style_type
+    type: string
+    description: 样式类型 (simple 或 categorized)
+  - name: color
+    type: string
+    description: 颜色 (十六进制格式)
+  - name: size
+    type: number
+    description: 符号大小
+  - name: field
+    type: string
+    description: 分类字段名称
+execution:
+  handler: handlers.style.set_layer_style_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    style_type: '{{ style_type }}'
+    color: '{{ color }}'
+    size: '{{ size }}'
+    field: '{{ field }}'

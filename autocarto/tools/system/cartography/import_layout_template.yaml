@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: import_layout_template
+  display_name: import_layout_template
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 将 QGIS .qpt 打印布局模板导入当前工程的指定布局；同名布局存在时覆盖，否则新建
+  parameters:
+  - name: template
+    type: string
+    description: QGIS .qpt 布局模板的绝对文件路径
+    required: true
+  - name: name
+    type: string
+    description: 目标布局名称（同名布局存在时覆盖）
+    required: true
+execution:
+  handler: handlers.layout.import_layout_template_handler
+  param_mapping:
+    template: '{{ template }}'
+    name: '{{ name }}'

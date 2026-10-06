@@ -1,0 +1,25 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: extract_selected_features
+  display_name: 提取选中要素
+  domain: vector-selection
+  runtime: qgis
+spec:
+  description: 提取当前选中的要素
+  parameters:
+    - name: INPUT
+      type: layer
+      required: true
+      description: 输入图层
+    - name: OUTPUT
+      type: output_layer
+      description: 输出图层
+      default: 'memory:'
+execution:
+  handler: handlers.selection.extract_selected_features_handler
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

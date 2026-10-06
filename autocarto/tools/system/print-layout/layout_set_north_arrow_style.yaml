@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_north_arrow_style
+  display_name: layout_set_north_arrow_style
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 使用 QGIS 内置样式编号更新已有指北针的 SVG 样式
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 指北针元素 ID
+  - name: style
+    type: integer
+    required: true
+    description: 指北针样式编号 0-7
+execution:
+  handler: handlers.layout_advanced.set_north_arrow_style_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    style: '{{ style }}'

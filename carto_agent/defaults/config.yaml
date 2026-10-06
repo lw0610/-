@@ -1,0 +1,221 @@
+# AutoCarto 系统默认配置
+#
+# 使用说明：
+# 1) 本文件为系统默认基线，运行时会与 autocarto/config/config.yaml 深度合并。
+# 2) 大模型 API Key 不写入本文件，统一通过 autocarto/config/secrets.enc 加密存储。
+# 3) 建议保持 provider.name 稳定，以避免与既有密钥映射关系断开。
+
+llm:
+  # 当前激活的主对话模型（必须与 providers.name 对齐）
+  active: openai-main
+  # 快速模型（用于轻量任务）；为空时回退 active
+  quick_model: google-flash
+  providers:
+    - name: openai-main
+      provider: openai
+      model: gpt-4.1
+      base_url: ""
+      # 单次生成上限（token）
+      max_tokens: 4096
+      # 生成随机性（0-2）
+      temperature: 0.7
+      # 是否开启深度思考模式
+      thinking_enabled: false
+      # 深度思考预算（token）
+      thinking_budget: 10240
+      # 模型上下文窗口（token）
+      max_context_tokens: 128000
+      # 上下文最大占用比例（%）
+      max_context_usage: 90
+      # 上下文达到该阈值时触发自动压缩（%）
+      auto_compress_threshold: 85
+      # 压缩策略：summary（摘要压缩）
+      compress_strategy: summary
+
+    - name: anthropic-sonnet
+      provider: anthropic
+      model: claude-sonnet-4-0
+      base_url: ""
+      max_tokens: 4096
+      temperature: 0.7
+      thinking_enabled: false
+      thinking_budget: 10240
+      max_context_tokens: 200000
+      max_context_usage: 90
+      auto_compress_threshold: 85
+      compress_strategy: summary
+
+    - name: google-flash
+      provider: google
+      model: gemini-2.5-flash
+      base_url: ""
+      max_tokens: 4096
+      temperature: 0.7
+      thinking_enabled: false
+      thinking_budget: 10240
+      max_context_tokens: 1000000
+      max_context_usage: 90
+      auto_compress_threshold: 85
+      compress_strategy: summary
+
+# Image 2 只供质量反馈工具生成候选图，不属于聊天模型 Provider。
+# API Key 使用本机密钥库或 config/secrets.enc 保存，不写入本文件。
+image2:
+  enabled: true
+  base_url: https://api.openai.com/v1
+
+ports:
+  agent_system:
+    # Agent WebSocket 服务默认端口
+    default: 3000
+    # 端口回退可用范围 [min, max]
+    range:
+      - 50000
+      - 50099
+    protocol: websocket
+    description: 智能体系统 WebSocket 服务
+    # 端口探活检查间隔（秒）
+    health_check_interval: 30
+    # 端口占用时重试次数
+    bind_retry_count: 3
+    # 每次重试等待时长（毫秒）
+    bind_retry_delay: 1000
+    # 默认端口冲突时自动在 range 内回退
+    auto_fallback: true
+
+log:
+  # 全局日志级别：DEBUG / INFO / WARN / ERROR
+  level: INFO
+  # 日志目录（支持 ~ 展开）
+  dir: data/logs
+  # 单个日志文件最大大小（字节）
+  max_size: 10485760
+  # 最大滚动备份数
+  max_backups: 5
+  # 单文件最大保留天数
+  max_age: 30
+  # 日志总大小上限（字节）
+  max_total_size: 104857600
+  # 是否压缩历史日志
+  compress: false
+
+agent:
+  # Agentic Loop 最大迭代次数
+  loop_max_iterations: 100
+  use_skill_engine: true
+
+performance:
+  # 工具调用超时（毫秒）
+  tool_call_timeout: 30000
+  # 智能体响应超时（毫秒）
+  agent_response_timeout: 120000
+  # 最大并发任务数
+  max_concurrent_tasks: 5
+  memory:
+    # 是否启用内存阈值策略
+    enabled: true
+    # 单任务可用内存上限（MB）
+    max_task_memory_mb: 2048
+  cache:
+    # 是否启用缓存
+    enabled: true
+    # 缓存 TTL（秒）
+    ttl: 300
+    # 缓存最大容量（MB）
+    max_size_mb: 100
+    # 缓存淘汰策略：lru / lfu / fifo
+    strategy: lru
+
+compute:
+  # worker 数量
+  max_workers: 2
+  # 指定 Python 解释器（为空则自动探测）
+  python_path: ""
+
+plan_mode:
+  # 是否启用 Plan 模式
+  enabled: true
+
+services:
+  lifecycle:
+    auto_start_on_app_launch: true
+    auto_stop_on_app_exit: true
+    auto_restart_on_failure: true
+
+session:
+  # 默认会话命名模板
+  default_name_pattern: 会话 MM-DD HH:mm
+  # 默认执行模式：plan / build
+  default_execution_mode: build
+  # 是否自动生成会话标题
+  auto_title_enabled: true
+  # 自动标题输入上限（token）
+  auto_title_max_input_tokens: 512
+  # 压缩前是否自动生成快照
+  auto_snapshot_before_compress: true
+  # 每个会话最大快照数量
+  max_snapshots_per_session: 10
+  auto_archive:
+    enabled: false
+    # 超过天数后自动归档
+    days: 30
+  auto_cleanup:
+    enabled: false
+    # 归档后保留天数
+    archive_retention_days: 90
+  timeout:
+    # 空闲超时（秒），0 表示禁用
+    idle_timeout_seconds: 0
+    # 最大持续时长（秒），0 表示禁用
+    max_duration_seconds: 0
+  concurrency:
+    # 最大活跃会话数，0 表示不限制
+    max_active_sessions: 0
+    # 单会话最大消息数，0 表示不限制
+    max_messages_per_session: 0
+  recovery:
+    # 自动保存间隔（秒）
+    auto_save_interval_seconds: 60
+    # 是否启用崩溃恢复
+    enable_crash_recovery: true
+
+ui:
+  # UI 配置仅作透传持久化，Go 端不参与渲染
+  main_panel:
+    visible: true
+    floating: false
+    # QGIS Dock 区域编号（QGIS 默认枚举值）
+    area: 2
+    # 面板几何信息（运行后由前端写入）
+    geometry: null
+    tabified: true
+    tabified_with: null
+
+qgis:
+  # QGIS 可执行文件路径（为空时由桌面端自动探测）
+  executable_path: ""
+  # 最近项目列表（由运行时维护）
+  recent_projects: []
+
+# AutoCarto 数据目录（支持 ~ 展开）
+data_dir: data
+
+# Optional data runtimes; credentials stay in Earth Engine/browser stores.
+integrations:
+  gee:
+    enabled: false
+    python: python3
+    project: ""
+    proxy_url: ""
+    timeout_seconds: 300
+  browser:
+    enabled: false
+    command: npx
+    args: ["-y", "@playwright/mcp@0.0.83"]
+    browser: chrome
+    headless: false
+    timeout_seconds: 60
+  web:
+    enabled: false
+    timeout_seconds: 60
+    max_download_mb: 100

@@ -1,0 +1,40 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: buffer
+  display_name: 缓冲区
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 为要素创建缓冲区
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: DISTANCE
+    type: number
+    required: true
+    description: 缓冲距离
+    default: 10.0
+  - name: SEGMENTS
+    type: integer
+    description: 线段数
+    default: 5
+  - name: DISSOLVE
+    type: boolean
+    description: 融合结果
+    default: false
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: buffer
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DISTANCE: '{{ DISTANCE }}'
+    SEGMENTS: '{{ SEGMENTS }}'
+    DISSOLVE: '{{ DISSOLVE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

@@ -1,0 +1,47 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_attribute_table
+  display_name: layout_add_attribute_table
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加属性表到布局
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: layer_name
+    type: string
+    required: true
+    description: 图层名称
+  - name: x
+    type: number
+    description: X坐标(mm)
+  - name: y
+    type: number
+    description: Y坐标(mm)
+  - name: width
+    type: number
+    description: 宽度(mm)
+  - name: height
+    type: number
+    description: 高度(mm)
+  - name: item_id
+    type: string
+    description: 元素ID
+  - name: max_features
+    type: integer
+    description: 最大要素数
+execution:
+  handler: handlers.layout_items.add_attribute_table_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    layer_name: '{{ layer_name }}'
+    x: '{{ x }}'
+    y: '{{ y }}'
+    width: '{{ width }}'
+    height: '{{ height }}'
+    item_id: '{{ item_id }}'
+    max_features: '{{ max_features }}'

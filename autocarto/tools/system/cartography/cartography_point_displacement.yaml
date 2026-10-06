@@ -1,0 +1,26 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: cartography_point_displacement
+  display_name: cartography_point_displacement
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 设置点位移样式
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 点图层名称
+  - name: distance
+    type: number
+    description: 位移距离
+  - name: placement
+    type: integer
+    description: 放置方式(0=环形,1=同心)
+execution:
+  handler: handlers.style.point_displacement_style_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    distance: '{{ distance }}'
+    placement: '{{ placement }}'

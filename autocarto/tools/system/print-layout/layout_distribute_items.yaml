@@ -1,0 +1,31 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_distribute_items
+  display_name: layout_distribute_items
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 等间距分布布局元素
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_ids
+    type: array
+    required: true
+    description: 元素ID数组
+  - name: direction
+    type: string
+    description: 分布方向
+  - name: spacing
+    type: number
+    description: 固定间距
+execution:
+  handler: handlers.layout_advanced.distribute_items_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_ids: '{{ item_ids }}'
+    direction: '{{ direction }}'
+    spacing: '{{ spacing }}'

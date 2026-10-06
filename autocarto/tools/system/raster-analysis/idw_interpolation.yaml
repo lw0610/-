@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: idw_interpolation
+  display_name: IDW插值
+  domain: raster-analysis
+  runtime: qgis
+spec:
+  description: 反距离加权插值
+  parameters:
+  - name: INTERPOLATION_DATA
+    type: string
+    required: true
+    description: 插值数据配置
+  - name: DISTANCE_COEFFICIENT
+    type: number
+    description: 距离系数
+    default: 2.0
+  - name: PIXEL_SIZE
+    type: number
+    description: 像素大小
+    default: 0.1
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: idw_interpolation
+  param_mapping:
+    INTERPOLATION_DATA: '{{ INTERPOLATION_DATA }}'
+    DISTANCE_COEFFICIENT: '{{ DISTANCE_COEFFICIENT }}'
+    PIXEL_SIZE: '{{ PIXEL_SIZE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

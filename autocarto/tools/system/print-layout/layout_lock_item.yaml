@@ -1,0 +1,27 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_lock_item
+  display_name: layout_lock_item
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 锁定/解锁布局元素
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 元素ID
+  - name: locked
+    type: boolean
+    description: 是否锁定
+execution:
+  handler: handlers.layout_items.lock_item_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    locked: '{{ locked }}'

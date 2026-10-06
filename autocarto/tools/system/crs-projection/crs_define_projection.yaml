@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: crs_define_projection
+  display_name: 定义投影
+  domain: crs-projection
+  runtime: qgis
+spec:
+  description: 定义图层坐标系
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: CRS
+    type: crs
+    required: true
+    description: 坐标系
+execution:
+  backend_tool: crs_define_projection
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    CRS: '{{ CRS }}'

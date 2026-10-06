@@ -1,0 +1,32 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: raster_layer_histogram
+  display_name: 栅格图层直方图
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 创建栅格图层直方图
+  parameters:
+  - name: INPUT
+    type: raster_layer
+    required: true
+    description: 输入栅格
+  - name: BAND
+    type: integer
+    description: 波段号
+    default: 1
+  - name: BINS
+    type: integer
+    description: 分组数量
+    default: 10
+  - name: OUTPUT
+    type: file
+    description: 输出HTML文件
+execution:
+  backend_tool: raster_layer_histogram
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    BAND: '{{ BAND }}'
+    BINS: '{{ BINS }}'
+    OUTPUT: '{{ OUTPUT }}'

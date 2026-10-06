@@ -1,0 +1,19 @@
+apiVersion: tool_contract/v1
+kind: ToolContract
+metadata:
+  name: get_project_info
+  display_name: get_project_info
+  domain: project-state
+  runtime: qgis
+policy:
+  visibility: public
+  authorization:
+    scopes:
+      - tool.invoke
+spec:
+  description: 获取当前QGIS项目的基本信息，包括CRS、文件路径、图层数量等
+execution:
+  binding: handler
+  handler_file: tools/system/project-state/handlers/project.py
+  handler_function: get_project_info
+  param_mapping: {}

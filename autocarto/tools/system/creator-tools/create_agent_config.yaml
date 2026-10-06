@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: create_agent_config
+  domain: creator-tools
+  runtime: internal
+spec:
+  description: 创建新的 agent 配置方案。
+  parameters:
+  - name: config_name
+    type: string
+    required: true
+  - name: clone_from
+    type: string
+  - name: config_data
+    type: object
+execution:
+  backend_tool: create_agent_config
+  param_mapping:
+    config_name: '{{ config_name }}'
+    clone_from: '{{ clone_from }}'
+    config_data: '{{ config_data }}'

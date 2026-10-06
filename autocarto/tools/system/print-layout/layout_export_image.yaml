@@ -1,0 +1,30 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_export_image
+  display_name: layout_export_image
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 导出布局为 PNG/JPG
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: output
+    type: string
+    description: 输出路径
+  - name: dpi
+    type: number
+    description: 导出 DPI
+  - name: format
+    type: string
+    description: 图片格式
+execution:
+  handler: handlers.layout_advanced.export_image_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    output: '{{ output }}'
+    dpi: '{{ dpi }}'
+    format: '{{ format }}'

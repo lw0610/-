@@ -1,0 +1,42 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: join_attributes_by_nearest
+  display_name: 按最近的方式连接属性
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 按最近距离连接属性
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: INPUT_2
+    type: layer
+    required: true
+    description: 连接图层
+  - name: FIELDS_TO_COPY
+    type: fields
+    description: 要复制的字段
+  - name: MAX_DISTANCE
+    type: number
+    description: 最大距离
+  - name: NEIGHBORS
+    type: integer
+    description: 最近邻数量
+    default: 1
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: join_attributes_by_nearest
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    INPUT_2: '{{ INPUT_2 }}'
+    FIELDS_TO_COPY: '{{ FIELDS_TO_COPY }}'
+    MAX_DISTANCE: '{{ MAX_DISTANCE }}'
+    NEIGHBORS: '{{ NEIGHBORS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

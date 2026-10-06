@@ -1,0 +1,18 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_delete
+  display_name: layout_delete
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 删除打印布局
+  parameters:
+  - name: name
+    type: string
+    required: true
+    description: 布局名称
+execution:
+  handler: handlers.layout.delete_layout_handler
+  param_mapping:
+    name: '{{ name }}'

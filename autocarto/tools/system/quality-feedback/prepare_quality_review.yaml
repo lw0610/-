@@ -1,0 +1,47 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: prepare_quality_review
+  display_name: 准备地图质量初审
+  domain: quality-feedback
+  runtime: cli
+spec:
+  description: >-
+    读取 QGIS 导出的初版 PNG，保存不可覆盖的 original 快照，
+    读取 layout_get_items_properties 自动生成的布局快照，
+    建立 original/final 质量反馈清单并预留独立终稿路径，
+    再将 original 作为真实多模态图片输入返回给当前质量反馈智能体。
+    图片 DPI、页面尺寸、布局名、真实元素 ID 和位置均由程序读取；
+    不允许智能体手工重建。本工具不生成图片、不调用 Image 2，也不需要额外 API Key。
+  parameters:
+    - name: original_image_path
+      type: string
+      required: true
+      description: QGIS 导出的初版 PNG 绝对路径
+    - name: layout_snapshot_path
+      type: string
+      required: true
+      description: layout_get_items_properties 返回的 layout_snapshot_path
+    - name: task_requirement
+      type: string
+      required: true
+      description: 用户原始制图任务要求
+    - name: locked_content
+      type: array
+      required: true
+      description: 不允许修改的文字、路线、节点、地图范围、图例语义等内容
+execution:
+  cli:
+    command: python3
+    args:
+      - '{{ skill_dir }}/scripts/quality_review.py'
+      - prepare
+    working_dir: '{{ skill_dir }}'
+    stdin: json
+    stdout: json
+    timeout: 30s
+  param_mapping:
+    original_image_path: '{{ original_image_path }}'
+    layout_snapshot_path: '{{ layout_snapshot_path }}'
+    task_requirement: '{{ task_requirement }}'
+    locked_content: '{{ locked_content }}'

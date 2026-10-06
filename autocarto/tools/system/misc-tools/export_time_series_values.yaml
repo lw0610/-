@@ -1,0 +1,31 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: export_time_series_values
+  display_name: 从网孔数据集中的点导出时间序列值
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 从点位置导出时间序列数据
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入网孔图层
+  - name: DATASET_GROUPS
+    type: string
+    description: 数据集组
+  - name: POINTS
+    type: layer
+    required: true
+    description: 点图层
+  - name: OUTPUT
+    type: file
+    description: 输出CSV文件
+execution:
+  backend_tool: export_time_series_values
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DATASET_GROUPS: '{{ DATASET_GROUPS }}'
+    POINTS: '{{ POINTS }}'
+    OUTPUT: '{{ OUTPUT }}'

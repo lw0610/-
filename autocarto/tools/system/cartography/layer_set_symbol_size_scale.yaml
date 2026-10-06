@@ -1,0 +1,26 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_set_symbol_size_scale
+  display_name: layer_set_symbol_size_scale
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 设置符号大小数据驱动比例
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: field
+    type: string
+    description: 字段名称
+  - name: expression
+    type: string
+    description: QGIS 表达式
+execution:
+  handler: handlers.style.set_symbol_size_scale_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    field: '{{ field }}'
+    expression: '{{ expression }}'

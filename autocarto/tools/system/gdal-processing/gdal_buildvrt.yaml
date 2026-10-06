@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gdal_buildvrt
+  display_name: 构建虚拟栅格
+  domain: gdal-processing
+  runtime: qgis
+spec:
+  description: 构建VRT虚拟栅格
+  parameters:
+  - name: INPUT
+    type: multi_layer
+    required: true
+    description: 输入栅格列表
+  - name: RESOLUTION
+    type: enum
+    description: 分辨率(0=平均,1=最高,2=最低)
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+  - name: OUTPUT
+    type: output_raster
+    description: 输出VRT
+execution:
+  backend_tool: gdal_buildvrt
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    RESOLUTION: '{{ RESOLUTION }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

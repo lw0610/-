@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: grass_r_contour
+  display_name: GRASS等值线
+  domain: grass-analysis
+  runtime: qgis
+spec:
+  description: 从栅格生成等值线
+  parameters:
+  - name: input
+    type: raster_layer
+    required: true
+    description: 输入栅格
+  - name: step
+    type: number
+    description: 等值线间隔
+    default: 10.0
+  - name: output
+    type: output_layer
+    description: 输出矢量
+execution:
+  backend_tool: grass_r_contour
+  param_mapping:
+    input: '{{ input }}'
+    step: '{{ step }}'
+    output: '{{ output }}'
+  output:
+    auto_load: true

@@ -1,0 +1,38 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: convert_vector_to_raster
+  display_name: 矢量转栅格
+  domain: data-conversion
+  runtime: qgis
+spec:
+  description: 将矢量图层转换为栅格
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入矢量图层
+  - name: FIELD
+    type: field
+    description: 属性字段
+  - name: WIDTH
+    type: number
+    description: 输出宽度
+    default: 0
+  - name: HEIGHT
+    type: number
+    description: 输出高度
+    default: 0
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: convert_vector_to_raster
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'
+    WIDTH: '{{ WIDTH }}'
+    HEIGHT: '{{ HEIGHT }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

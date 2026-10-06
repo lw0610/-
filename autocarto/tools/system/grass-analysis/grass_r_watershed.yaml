@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: grass_r_watershed
+  display_name: 流域分析
+  domain: grass-analysis
+  runtime: qgis
+spec:
+  description: 流域和水文分析
+  parameters:
+  - name: elevation
+    type: raster_layer
+    required: true
+    description: 输入DEM
+  - name: threshold
+    type: integer
+    description: 汇流阈值
+    default: 10000
+  - name: accumulation
+    type: output_raster
+    description: 汇流累积输出
+  - name: drainage
+    type: output_raster
+    description: 流向输出
+execution:
+  backend_tool: grass_r_watershed
+  param_mapping:
+    elevation: '{{ elevation }}'
+    threshold: '{{ threshold }}'
+    accumulation: '{{ accumulation }}'
+    drainage: '{{ drainage }}'
+  output:
+    auto_load: true

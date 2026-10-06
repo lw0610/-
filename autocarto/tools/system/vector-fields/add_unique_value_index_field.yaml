@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: add_unique_value_index_field
+  display_name: 添加唯一值索引字段
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 根据字段唯一值添加索引字段
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD
+    type: field
+    required: true
+    description: 分类字段
+  - name: FIELD_NAME
+    type: string
+    description: 新字段名称
+    default: NUM_FIELD
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: add_unique_value_index_field
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'
+    FIELD_NAME: '{{ FIELD_NAME }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

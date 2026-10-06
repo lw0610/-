@@ -1,0 +1,26 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: cartography_heatmap_style
+  display_name: cartography_heatmap_style
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 设置热力图样式
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 点图层名称
+  - name: radius
+    type: number
+    description: 热力图半径
+  - name: weight_field
+    type: string
+    description: 权重字段
+execution:
+  handler: handlers.style.heatmap_style_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    radius: '{{ radius }}'
+    weight_field: '{{ weight_field }}'

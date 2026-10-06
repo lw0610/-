@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: coverage_validate
+  display_name: 验证Coverage
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 验证Coverage的拓扑有效性
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: GAP_WIDTH
+    type: number
+    description: 间隙宽度阈值
+    default: 0.0
+  - name: INVALID_EDGES
+    type: output_layer
+    description: 无效边输出
+execution:
+  backend_tool: coverage_validate
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    GAP_WIDTH: '{{ GAP_WIDTH }}'
+    INVALID_EDGES: '{{ INVALID_EDGES }}'
+  output:
+    auto_load: true

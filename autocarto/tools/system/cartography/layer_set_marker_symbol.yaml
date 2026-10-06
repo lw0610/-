@@ -1,0 +1,31 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_set_marker_symbol
+  display_name: layer_set_marker_symbol
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 根据图层类型设置点图层符号和标注
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: layer_type
+    type: string
+    required: true
+    enum:
+    - city
+    - county
+    description: 图层类型，支持 city 或 county
+  - name: label_field
+    type: string
+    required: true
+    description: 标注字段名称
+execution:
+  handler: handlers.style.set_marker_symbol_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    layer_type: '{{ layer_type }}'
+    label_field: '{{ label_field }}'

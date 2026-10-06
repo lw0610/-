@@ -1,0 +1,37 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: scatter_3d_plot
+  display_name: 矢量图层3D散点图
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 创建3D散点图
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: XFIELD
+    type: field
+    required: true
+    description: X轴字段
+  - name: YFIELD
+    type: field
+    required: true
+    description: Y轴字段
+  - name: ZFIELD
+    type: field
+    required: true
+    description: Z轴字段
+  - name: OUTPUT
+    type: file
+    description: 输出HTML文件
+execution:
+  backend_tool: scatter_3d_plot
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    XFIELD: '{{ XFIELD }}'
+    YFIELD: '{{ YFIELD }}'
+    ZFIELD: '{{ ZFIELD }}'
+    OUTPUT: '{{ OUTPUT }}'

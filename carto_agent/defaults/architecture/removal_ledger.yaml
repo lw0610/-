@@ -1,0 +1,52 @@
+contract: removal-ledger
+description: Task 9 更新后的 legacy authority / compat bridge 删除台账；Go 仍为唯一公开 authority。
+compat_layers:
+  - id: private_skill_embedded_tool_cache
+    path: carto_agent/internal/skill/types.go#SkillPackage.Tools
+    why_temporary: '`SkillPackage.Tools` 仅剩 registry hydration/cache 的私有兼容实现；公开 package/detail JSON 与 API 真相已切到 `tool_refs` / `requires_tools`。'
+    remove_in_wave: wave_1_t10
+    evidence_required:
+      - '`SkillPackage` 与 `SkillPackageDetail` 序列化结果不再包含 `tools` 字段。'
+      - 'skill registry / settings / API 回归证明 package 详情继续通过 `tool_refs` 正常工作。'
+      - 'capability / catalog 不再把 hydrated `Tools` 当作公开 authority。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/skill ./internal/settings ./internal/api -v
+      - cd carto_agent && go test ./internal/control -run 'TestCompatLayerRequiresRemovalCriteria' -v
+    governs: []
+    status: private_internal_compat_only
+
+  - id: private_bridge_runtime_alias_compat
+    path: carto_agent/internal/tool/types.go#NormalizeRuntime
+    why_temporary: '`bridge` / `compute` 旧 runtime 名称仍会被归一化到 `qgis` / `cli`，但它只允许作为私有兼容输入消化，不能继续被 README、ledger 或 catalog 当成公开承诺。'
+    remove_in_wave: wave_1_t10
+    evidence_required:
+      - 'README 与 removal ledger 明确仅公开 `qgis` / `cli` / `internal` runtime 语义。'
+      - 'descriptor / catalog / API 不再对外发布 `bridge` 或 `compute` runtime。'
+      - 'legacy alias 回归仅覆盖归一化兼容，不构成新的公开 schema 入口。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/skill ./internal/settings ./internal/api -v
+      - cd carto_agent && go test ./internal/control -run 'Test(ArchitecturePolicyLoader|CompatLayerRequiresRemovalCriteria|CompletedRemovalsRequireEvidence)' -v
+    governs:
+      - defaults.config.ports.agent_system.default
+      - defaults.config.ports.agent_system.auto_fallback
+    status: private_alias_only
+
+completed_removals:
+  - id: removed_python_yaml_public_tool_authority
+    path: autocarto/core/tool_engine/definitions.py#ToolDefinitionLoader
+    removed_in_wave: wave_2_t6
+    evidence:
+      - Python 只消费 authority 下发的 `execution_manifest`，不再扫描 `autocarto/tools/**/*.yaml` 生成公开 schema/discovery。
+      - python -m pytest autocarto/tests/test_tool_engine.py -v
+  - id: removed_python_local_tool_directory_discovery_helpers
+    path: autocarto/core/tool_engine/engine.py#resolve_default_tool_dirs
+    removed_in_wave: wave_2_t9
+    evidence:
+      - Python tool engine 已删除本地 tool/skill 默认目录 helper，不再暴露任何本地 public discovery 入口。
+      - python -m pytest autocarto/tests/test_tool_engine.py -v
+  - id: removed_python_legacy_definition_loading_alias
+    path: autocarto/core/tool_engine/registry.py#load_from_definitions
+    removed_in_wave: wave_2_t9
+    evidence:
+      - 插件端 registry 只保留 authority 驱动的 execution manifest 加载入口，不再保留 legacy definitions 别名。
+      - python -m pytest autocarto/tests/test_tool_engine.py -v

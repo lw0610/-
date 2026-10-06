@@ -1,0 +1,26 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: cartography_25d_style
+  display_name: cartography_25d_style
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 设置2.5D样式
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 多边形图层名称
+  - name: height_field
+    type: string
+    description: 高度字段
+  - name: angle
+    type: number
+    description: 视角角度
+execution:
+  handler: handlers.style.style_25d_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    height_field: '{{ height_field }}'
+    angle: '{{ angle }}'

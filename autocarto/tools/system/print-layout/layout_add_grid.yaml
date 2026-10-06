@@ -1,0 +1,45 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_grid
+  display_name: layout_add_grid
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 为地图框添加网格线
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: map_id
+    type: string
+    required: true
+    description: 地图框 ID
+  - name: interval_x
+    type: number
+    required: true
+    description: X 方向网格间隔
+  - name: interval_y
+    type: number
+    required: true
+    description: Y 方向网格间隔
+  - name: grid_crs
+    type: string
+    description: 网格使用的坐标参考系
+  - name: line_color
+    type: string
+    description: 网格线颜色，默认 #89DEEA
+  - name: opacity
+    type: number
+    description: 网格线透明度，取值范围 0-1，默认 0.7
+execution:
+  handler: handlers.layout_items.add_grid_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    map_id: '{{ map_id }}'
+    interval_x: '{{ interval_x }}'
+    interval_y: '{{ interval_y }}'
+    grid_crs: '{{ grid_crs }}'
+    line_color: '{{ line_color }}'
+    opacity: '{{ opacity }}'

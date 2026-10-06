@@ -1,0 +1,32 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_set_fill_symbol
+  display_name: layer_set_fill_symbol
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 根据图层类型设置面图层填充符号和标注
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: layer_type
+    type: string
+    required: true
+    enum:
+    - 县
+    - 市
+    - 省
+    - 河流
+    description: 图层类型，支持县、市、省或河流
+  - name: label_field
+    type: string
+    description: 标注字段名称；不填写则只设置面符号，不设置标注
+execution:
+  handler: handlers.style.set_fill_symbol_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    layer_type: '{{ layer_type }}'
+    label_field: '{{ label_field }}'

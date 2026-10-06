@@ -1,0 +1,27 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: split_vector_layer
+  display_name: 分割矢量图层
+  domain: file-operations
+  runtime: qgis
+spec:
+  description: 按字段值分割图层为多个文件
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD
+    type: field
+    required: true
+    description: 分割字段
+  - name: OUTPUT
+    type: folder
+    description: 输出文件夹
+execution:
+  backend_tool: split_vector_layer
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'
+    OUTPUT: '{{ OUTPUT }}'

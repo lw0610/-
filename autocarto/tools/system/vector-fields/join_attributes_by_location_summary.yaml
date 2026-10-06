@@ -1,0 +1,58 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: join_attributes_by_location_summary
+  display_name: 按位置连接属性(汇总)
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 按空间位置连接属性并汇总
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: JOIN
+    type: layer
+    required: true
+    description: 连接图层
+  - name: PREDICATE
+    type: enum
+    description: 几何谓词
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+  - name: JOIN_FIELDS
+    type: fields
+    description: 连接字段
+  - name: SUMMARIES
+    type: enum
+    description: 汇总方法
+    values:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: join_attributes_by_location_summary
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    JOIN: '{{ JOIN }}'
+    PREDICATE: '{{ PREDICATE }}'
+    JOIN_FIELDS: '{{ JOIN_FIELDS }}'
+    SUMMARIES: '{{ SUMMARIES }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: random_selection
+  display_name: 随机选择
+  domain: vector-selection
+  runtime: qgis
+spec:
+  description: 随机选择要素
+  parameters:
+    - name: INPUT
+      type: layer
+      required: true
+      description: 输入图层
+    - name: METHOD
+      type: enum
+      description: 选择方法
+      default: 0
+      values: [0, 1]
+    - name: NUMBER
+      type: integer
+      description: 选择数量
+      default: 1
+execution:
+  backend_tool: random_selection
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    METHOD: '{{ METHOD }}'
+    NUMBER: '{{ NUMBER }}'

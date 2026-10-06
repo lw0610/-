@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: export_layers_to_dxf
+  display_name: 导出图层到DXF
+  domain: data-conversion
+  runtime: qgis
+spec:
+  description: 将图层导出为DXF格式
+  parameters:
+  - name: LAYERS
+    type: multi_layer
+    required: true
+    description: 输入图层
+  - name: OUTPUT
+    type: file
+    description: 输出DXF文件
+execution:
+  backend_tool: export_layers_to_dxf
+  param_mapping:
+    LAYERS: '{{ LAYERS }}'
+    OUTPUT: '{{ OUTPUT }}'

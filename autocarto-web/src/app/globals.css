@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+/* ─── Design Token System ─── */
+
+@theme {
+  /* Surface */
+  --color-surface-base: #fafafa;
+  --color-surface-raised: #ffffff;
+  --color-surface-overlay: rgba(255, 255, 255, 0.95);
+  --color-surface-sunken: #f4f4f5;
+
+  /* Border */
+  --color-border-subtle: #f4f4f5;
+  --color-border-default: #e4e4e7;
+  --color-border-strong: #d4d4d8;
+
+  /* Text */
+  --color-text-primary: #18181b;
+  --color-text-secondary: #52525b;
+  --color-text-muted: #71717a;
+  --color-text-faint: #a1a1aa;
+
+  /* Accent */
+  --color-accent: #3b82f6;
+
+  /* Chip tokens — keep structure, update to hex */
+  --color-chip-zinc-bg: #ffffff;
+  --color-chip-zinc-border: #e4e4e7;
+  --color-chip-zinc-text: #52525b;
+  --color-chip-blue-bg: #dbeafe;
+  --color-chip-blue-border: #93c5fd;
+  --color-chip-blue-text: #1d4ed8;
+  --color-chip-amber-bg: #fef3c7;
+  --color-chip-amber-border: #fcd34d;
+  --color-chip-amber-text: #92400e;
+  --color-chip-emerald-bg: #dcfce7;
+  --color-chip-emerald-border: #86efac;
+  --color-chip-emerald-text: #166534;
+  --color-chip-red-bg: #fee2e2;
+  --color-chip-red-border: #fca5a5;
+  --color-chip-red-text: #991b1b;
+  --color-chip-violet-bg: #f4f4f5;
+  --color-chip-violet-border: #d4d4d8;
+  --color-chip-violet-text: #3f3f46;
+  --color-chip-cyan-bg: #cffafe;
+  --color-chip-cyan-border: #67e8f9;
+  --color-chip-cyan-text: #155e75;
+
+  /* Radius — Crisp */
+  --radius-chip: 2px;
+  --radius-card: 4px;
+  --radius-panel: 0px;
+  --radius-button: 3px;
+
+  /* Transition — keep */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Layout heights — Relaxed */
+  --height-control-bar: 2rem;
+  --height-topbar: 2.25rem;
+  --height-panel-header: 2.25rem;
+  --height-panel-summary: 1.75rem;
+
+  /* Spacing — Relaxed */
+  --spacing-compact: 0.25rem;
+  --spacing-normal: 0.75rem;
+  --spacing-relaxed: 1rem;
+}
+
+/* ─── Dark Mode Token Overrides ─── */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface-base: #09090b;
+    --color-surface-raised: #18181b;
+    --color-surface-overlay: rgba(24, 24, 27, 0.95);
+    --color-surface-sunken: #09090b;
+    --color-border-subtle: #27272a;
+    --color-border-default: #27272a;
+    --color-border-strong: #3f3f46;
+    --color-text-primary: #fafafa;
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #71717a;
+    --color-text-faint: #52525b;
+    --color-chip-zinc-bg: #18181b;
+    --color-chip-zinc-border: #3f3f46;
+    --color-chip-zinc-text: #a1a1aa;
+    --color-chip-blue-bg: rgba(29,78,216,0.15);
+    --color-chip-blue-border: rgba(59,130,246,0.3);
+    --color-chip-blue-text: #93c5fd;
+    --color-chip-amber-bg: rgba(146,64,14,0.15);
+    --color-chip-amber-border: rgba(245,158,11,0.3);
+    --color-chip-amber-text: #fcd34d;
+    --color-chip-emerald-bg: rgba(22,101,52,0.15);
+    --color-chip-emerald-border: rgba(34,197,94,0.3);
+    --color-chip-emerald-text: #86efac;
+    --color-chip-red-bg: rgba(153,27,27,0.15);
+    --color-chip-red-border: rgba(239,68,68,0.3);
+    --color-chip-red-text: #fca5a5;
+    --color-chip-violet-bg: rgba(63,63,70,0.15);
+    --color-chip-violet-border: rgba(161,161,170,0.3);
+    --color-chip-violet-text: #d4d4d8;
+    --color-chip-cyan-bg: rgba(21,94,117,0.15);
+    --color-chip-cyan-border: rgba(6,182,212,0.3);
+    --color-chip-cyan-text: #67e8f9;
+  }
+}
+
+/* ─── Animation Keyframes ─── */
+
+@keyframes slide-in-from-left {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes slide-in-from-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+
+.animate-slide-in-left  { animation: slide-in-from-left  var(--duration-normal) var(--ease-default) both; }
+.animate-slide-in-right { animation: slide-in-from-right var(--duration-normal) var(--ease-default) both; }
+.animate-fade-in-up     { animation: fade-in-up          var(--duration-fast)   var(--ease-default) both; }
+.animate-fade-in        { animation: fade-in             var(--duration-normal) var(--ease-default) both; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, oklch(0.95 0 0 / 40%) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+.animate-pulse-subtle   { animation: pulse-subtle 2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-shimmer,
+  .animate-pulse-subtle,
+  .animate-pulse,
+  .animate-spin,
+  .animate-bounce { animation: none; }
+}
+
+/* ─── Custom Scrollbar ─── */
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-default) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar { width: 4px; height: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-default);
+  border-radius: 9999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-border-strong);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Interactive Card Utility ─── */
+
+.interactive-card {
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow   var(--duration-fast) var(--ease-default),
+              background   var(--duration-fast) var(--ease-default);
+}
+.interactive-card:hover {
+  border-color: var(--color-border-strong);
+}
+
+/* ─── Settings Layout (existing) ─── */
+
+.settings-shell {
+  --settings-app-top-offset: 2.75rem;
+  --settings-header-height: 0px;
+  --settings-action-height: 0px;
+  --settings-workspace-chrome-height: calc(
+    var(--settings-header-height) + var(--settings-action-height)
+  );
+  --settings-sticky-top: 0.75rem;
+  --settings-anchor-offset: 0.75rem;
+  --settings-sticky-max-height: calc(
+    100dvh - var(--settings-app-top-offset) -
+      var(--settings-workspace-chrome-height) - 1.25rem
+  );
+}
+
+.settings-scroll {
+  scroll-padding-top: calc(var(--settings-anchor-offset, 0.75rem) + 0.5rem);
+}
+
+.settings-anchor-target {
+  scroll-margin-top: calc(var(--settings-anchor-offset, 0.75rem) + 0.5rem);
+}
+
+.settings-sticky-rail {
+  top: var(--settings-sticky-top, 0.75rem);
+  max-height: var(--settings-sticky-max-height);
+}

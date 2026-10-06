@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: raster_reclassify
+  display_name: 栅格重分类
+  domain: raster-analysis
+  runtime: qgis
+spec:
+  description: 按表格重分类栅格值
+  parameters:
+  - name: INPUT_RASTER
+    type: raster_layer
+    required: true
+    description: 输入栅格
+  - name: RASTER_BAND
+    type: integer
+    description: 波段号
+    default: 1
+  - name: TABLE
+    type: matrix
+    required: true
+    description: 重分类表(最小值,最大值,新值)
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: raster_reclassify
+  param_mapping:
+    INPUT_RASTER: '{{ INPUT_RASTER }}'
+    RASTER_BAND: '{{ RASTER_BAND }}'
+    TABLE: '{{ TABLE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

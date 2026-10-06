@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: export_mesh_on_grid
+  display_name: 在网格上导出网孔
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 将网孔数据导出到规则网格
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入网孔图层
+  - name: DATASET_GROUPS
+    type: string
+    description: 数据集组
+  - name: GRID_SPACING
+    type: number
+    description: 网格间距
+    default: 10.0
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: export_mesh_on_grid
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DATASET_GROUPS: '{{ DATASET_GROUPS }}'
+    GRID_SPACING: '{{ GRID_SPACING }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

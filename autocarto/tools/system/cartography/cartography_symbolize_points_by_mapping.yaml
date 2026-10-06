@@ -1,0 +1,52 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: cartography_symbolize_points_by_mapping
+  display_name: cartography_symbolize_points_by_mapping
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 根据点表与符号表映射，仅对指定点应用符号化规则
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 点图层名称
+  - name: point_rows
+    type: array
+    required: true
+    description: 点记录数组（至少包含 name 与 symbol_type）
+  - name: symbol_rows
+    type: array
+    required: true
+    description: 符号记录数组（至少包含 symbol_type 与 svg_path）
+  - name: name_field
+    type: string
+    description: 图层中用于匹配点名称的字段（默认 name）
+  - name: symbol_type_field
+    type: string
+    description: 点记录中的符号类型字段名（默认 symbol_type）
+  - name: default_symbol_types
+    type: array
+    description: 视为默认样式、无需替换符号的 symbol_type 列表
+  - name: strict
+    type: boolean
+    description: 严格模式（true=匹配失败或符号缺失即报错，默认 true）
+  - name: hide_unmatched
+    type: boolean
+    description: 是否隐藏未匹配点（默认 false）
+  - name: fallback_size
+    type: number
+    description: 符号缺省大小（mm，默认 4）
+execution:
+  handler: handlers.style.symbolize_points_by_mapping_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    point_rows: '{{ point_rows }}'
+    symbol_rows: '{{ symbol_rows }}'
+    name_field: '{{ name_field }}'
+    symbol_type_field: '{{ symbol_type_field }}'
+    default_symbol_types: '{{ default_symbol_types }}'
+    strict: '{{ strict }}'
+    hide_unmatched: '{{ hide_unmatched }}'
+    fallback_size: '{{ fallback_size }}'

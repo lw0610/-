@@ -1,0 +1,42 @@
+contract: mixed-version-policy
+description: Go 控制面迁移期间的 mixed-version 允许窗口与阻断规则。
+governs_config_paths:
+  - defaults.config.ports.agent_system.default
+  - defaults.config.ports.agent_system.auto_fallback
+windows:
+  - wave: wave_0_1
+    allowed_combinations:
+      - old_client + old_backend baseline capture only
+      - new_contract verification under feature flag only
+    hard_block: any production-path mixed-version new-write-old-read mutation
+    sunset_rule: after wave_1 gate passes, enter dual-write prohibition
+
+  - wave: wave_2
+    allowed_combinations:
+      - new_backend + old_plugin/frontend read-only discovery and config migration observation
+    hard_block: old client writes into new config contract
+    sunset_rule: remove legacy discovery and config write paths after wave_2
+
+  - wave: wave_3
+    allowed_combinations:
+      - new_backend + old_client attach/read-only observation only
+    hard_block: old event consumer reads new unversioned mutation fields
+    sunset_rule: enforce protocol version checks after wave_3
+
+  - wave: wave_4
+    allowed_combinations:
+      - authoritative Go catalog contract only
+    hard_block: old plugin/frontend consumes legacy catalog semantics
+    sunset_rule: remove legacy catalog endpoint and shape after wave_4
+
+  - wave: wave_5
+    allowed_combinations:
+      - thin clients consuming backend contracts only
+    hard_block: local discovery/config/catalog merge or mirrored truth
+    sunset_rule: remove compatibility layers after wave_5
+
+  - wave: wave_6
+    allowed_combinations:
+      - single release candidate version only
+    hard_block: any mixed-version release candidate
+    sunset_rule: lock release baseline after wave_6 gate passes

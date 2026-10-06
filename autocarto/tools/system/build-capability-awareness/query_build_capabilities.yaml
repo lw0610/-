@@ -1,0 +1,25 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: query_build_capabilities
+  display_name: query_build_capabilities
+  domain: build-capability-awareness
+  runtime: internal
+spec:
+  description: '查询当前智能体方案在 BUILD 模式下各 agent 的可用技能包与工具列表。 规划前应调用此工具确认 BUILD 模式真实可用能力，避免规划不可执行步骤。
+
+    '
+  parameters:
+  - name: agent_name
+    type: string
+    required: false
+    description: 按 BUILD agent 名称过滤（可选）
+  - name: keyword
+    type: string
+    required: false
+    description: 按工具名称或描述关键词过滤（可选）
+execution:
+  backend_tool: query_build_capabilities
+  param_mapping:
+    agent_name: '{{ agent_name }}'
+    keyword: '{{ keyword }}'

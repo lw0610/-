@@ -1,0 +1,47 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_overview
+  display_name: layout_add_overview
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加鹰眼图到布局
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: main_map_id
+    type: string
+    required: true
+    description: 主地图框ID
+  - name: x
+    type: number
+    description: X坐标(mm)
+  - name: y
+    type: number
+    description: Y坐标(mm)
+  - name: width
+    type: number
+    description: 宽度(mm)
+  - name: height
+    type: number
+    description: 高度(mm)
+  - name: item_id
+    type: string
+    description: 鹰眼图元素ID
+  - name: frame_color
+    type: string
+    description: 框线颜色
+execution:
+  handler: handlers.layout_items.add_overview_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    main_map_id: '{{ main_map_id }}'
+    x: '{{ x }}'
+    y: '{{ y }}'
+    width: '{{ width }}'
+    height: '{{ height }}'
+    item_id: '{{ item_id }}'
+    frame_color: '{{ frame_color }}'

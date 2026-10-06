@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_map_layers
+  display_name: layout_set_map_layers
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置地图框图层列表
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 地图框ID
+  - name: layers
+    type: array
+    required: true
+    description: 图层ID或唯一名称数组，按指定顺序锁定地图框显示图层；同名图层必须使用ID
+execution:
+  handler: handlers.layout_advanced.set_map_layers_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    layers: '{{ layers }}'

@@ -1,0 +1,30 @@
+apiVersion: tool_contract/v1
+kind: ToolContract
+metadata:
+  name: close_instance
+  display_name: close_instance
+  domain: project-state
+  runtime: qgis
+policy:
+  visibility: public
+  authorization:
+    scopes:
+      - tool.invoke
+spec:
+  description: 请求关闭指定的 QGIS 实例
+  parameters:
+    - name: instance_id
+      type: string
+      required: true
+      description: 要关闭的实例 ID
+    - name: delay_ms
+      type: integer
+      description: 关闭前延迟毫秒数
+      default: 200
+execution:
+  binding: handler
+  handler_file: tools/system/project-state/handlers/project.py
+  handler_function: close_instance
+  param_mapping:
+    instance_id: '{{ instance_id }}'
+    delay_ms: '{{ delay_ms }}'

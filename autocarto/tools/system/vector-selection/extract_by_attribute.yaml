@@ -1,0 +1,40 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: extract_by_attribute
+  display_name: 按属性提取
+  domain: vector-selection
+  runtime: qgis
+spec:
+  description: 按属性值提取要素
+  parameters:
+    - name: INPUT
+      type: layer
+      required: true
+      description: 输入图层
+    - name: FIELD
+      type: field
+      required: true
+      description: 属性字段
+    - name: OPERATOR
+      type: enum
+      description: 运算符
+      default: 0
+      values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    - name: VALUE
+      type: string
+      description: 比较值
+    - name: OUTPUT
+      type: output_layer
+      description: 输出图层
+      default: 'memory:'
+execution:
+  handler: handlers.selection.extract_by_attribute_handler
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'
+    OPERATOR: '{{ OPERATOR }}'
+    VALUE: '{{ VALUE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

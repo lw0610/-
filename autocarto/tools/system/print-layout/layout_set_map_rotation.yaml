@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_map_rotation
+  display_name: layout_set_map_rotation
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置地图框旋转
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 地图框ID
+  - name: rotation
+    type: number
+    required: true
+    description: 旋转角度
+execution:
+  handler: handlers.layout_advanced.set_map_rotation_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    rotation: '{{ rotation }}'

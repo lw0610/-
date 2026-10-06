@@ -1,0 +1,79 @@
+---
+name: vector-geometry
+description: 矢量几何处理、叠置和覆盖分析工具集合
+kind: category
+runtime: qgis
+enabled: true
+tags:
+- vector
+- geometry
+tools:
+  - add_geometry_attributes
+  - bounding_boxes
+  - buffer
+  - centroids
+  - check_validity
+  - clip
+  - collect_geometries
+  - concave_hull
+  - convex_hull
+  - coverage_simplify
+  - coverage_union
+  - coverage_validate
+  - create_spatial_index
+  - delaunay_triangulation
+  - delete_duplicate_geometries
+  - densify_by_count
+  - densify_by_interval
+  - difference
+  - dissolve
+  - drop_z_values
+  - explode_lines
+  - extend_lines
+  - extract_by_extent
+  - extract_specific_vertices
+  - extract_vertices
+  - fix_geometries
+  - force_rhr
+  - geometry_by_expression
+  - interpolate_point_on_line
+  - intersection
+  - line_intersections
+  - line_substring
+  - lines_to_polygons
+  - merge_lines
+  - minimum_bounding_geometry
+  - minimum_enclosing_circle
+  - multipart_to_singleparts
+  - offset_line
+  - oriented_minimum_bounding_box
+  - point_on_surface
+  - points_along_geometry
+  - pole_of_inaccessibility
+  - polygons_to_lines
+  - remove_null_geometries
+  - reverse_line_direction
+  - rotate_features
+  - set_m_value
+  - set_z_value
+  - simplify
+  - single_sided_buffer
+  - smooth
+  - snap_geometries_to_layer
+  - snap_points_to_grid
+  - split_lines_by_maximum_length
+  - split_with_lines
+  - subdivide
+  - swap_xy_coordinates
+  - symmetric_difference
+  - tapered_buffer
+  - translate_geometry
+  - union
+  - variable_width_buffer
+  - voronoi_polygons
+  - wedge_buffers
+---
+
+# 矢量几何工具集
+
+本 package 收纳 矢量几何处理、叠置和覆盖分析工具集合，用于在运行时构建统一的扁平工具索引。

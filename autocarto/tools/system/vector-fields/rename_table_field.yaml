@@ -1,0 +1,35 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: rename_table_field
+  display_name: 重命名字段
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 重命名图层中的字段
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD
+    type: field
+    required: true
+    description: 要重命名的字段
+  - name: NEW_NAME
+    type: string
+    required: true
+    description: 新字段名称
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+    default: 'memory:'
+execution:
+  handler: handlers.attributes.rename_table_field_handler
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'
+    NEW_NAME: '{{ NEW_NAME }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

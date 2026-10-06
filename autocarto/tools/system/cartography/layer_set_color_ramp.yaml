@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_set_color_ramp
+  display_name: layer_set_color_ramp
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 设置分类或分级色带
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: color_ramp
+    type: string
+    required: true
+    description: 色带名称
+execution:
+  handler: handlers.style.set_color_ramp_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    color_ramp: '{{ color_ramp }}'

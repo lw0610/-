@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: grass_r_slope_aspect
+  display_name: 坡度坡向分析
+  domain: grass-analysis
+  runtime: qgis
+spec:
+  description: 计算坡度、坡向等地形参数
+  parameters:
+  - name: elevation
+    type: raster_layer
+    required: true
+    description: 输入DEM
+  - name: slope
+    type: output_raster
+    description: 坡度输出
+  - name: aspect
+    type: output_raster
+    description: 坡向输出
+execution:
+  backend_tool: grass_r_slope_aspect
+  param_mapping:
+    elevation: '{{ elevation }}'
+    slope: '{{ slope }}'
+    aspect: '{{ aspect }}'
+  output:
+    auto_load: true

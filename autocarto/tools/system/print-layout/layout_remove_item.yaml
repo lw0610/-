@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_remove_item
+  display_name: layout_remove_item
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 从布局中删除元素
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 元素ID
+execution:
+  handler: handlers.layout_items.remove_item_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'

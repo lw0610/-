@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_resize_item
+  display_name: layout_resize_item
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 调整布局元素大小；返回 data.rect_mm 为 QGIS 实际尺寸，auto_adjusted 表示实际尺寸与请求不一致
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 元素ID
+  - name: width
+    type: number
+    required: true
+    description: 新宽度(mm)
+  - name: height
+    type: number
+    required: true
+    description: 新高度(mm)
+execution:
+  handler: handlers.layout_items.resize_item_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    width: '{{ width }}'
+    height: '{{ height }}'

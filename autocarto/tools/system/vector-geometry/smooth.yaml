@@ -1,0 +1,39 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: smooth
+  display_name: 平滑
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 平滑几何图形
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: ITERATIONS
+    type: integer
+    description: 迭代次数
+    default: 1
+  - name: OFFSET
+    type: number
+    description: 偏移量
+    default: 0.25
+  - name: MAX_ANGLE
+    type: number
+    description: 最大角度
+    default: 180.0
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: smooth
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    ITERATIONS: '{{ ITERATIONS }}'
+    OFFSET: '{{ OFFSET }}'
+    MAX_ANGLE: '{{ MAX_ANGLE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

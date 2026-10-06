@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: pdal_merge
+  display_name: 点云合并
+  domain: point-cloud
+  runtime: qgis
+spec:
+  description: 合并多个点云文件
+  parameters:
+  - name: LAYERS
+    type: multi_layer
+    required: true
+    description: 输入点云文件列表
+  - name: OUTPUT
+    type: file
+    description: 输出点云文件
+execution:
+  backend_tool: pdal_merge
+  param_mapping:
+    LAYERS: '{{ LAYERS }}'
+    OUTPUT: '{{ OUTPUT }}'

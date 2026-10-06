@@ -1,0 +1,24 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: terrain_ruggedness
+  display_name: 地形粗糙度
+  domain: spatial-analysis
+  runtime: qgis
+spec:
+  description: 计算地形粗糙度指数
+  parameters:
+  - name: INPUT
+    type: raster_layer
+    required: true
+    description: 输入DEM
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: terrain_ruggedness
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

@@ -1,0 +1,27 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_group_items
+  display_name: layout_group_items
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 分组布局元素
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_ids
+    type: array
+    required: true
+    description: 元素ID数组
+  - name: group_id
+    type: string
+    description: 分组ID
+execution:
+  handler: handlers.layout_advanced.group_items_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_ids: '{{ item_ids }}'
+    group_id: '{{ group_id }}'

@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_page_size
+  display_name: layout_set_page_size
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置布局页面大小
+  parameters:
+  - name: name
+    type: string
+    required: true
+    description: 布局名称
+  - name: width
+    type: number
+    description: 页面宽度
+  - name: height
+    type: number
+    description: 页面高度
+  - name: units
+    type: string
+    description: 单位 (mm/cm/inches/pixels)
+  - name: orientation
+    type: string
+    description: 方向 (portrait/landscape)
+execution:
+  handler: handlers.layout.set_page_size_handler
+  param_mapping:
+    name: '{{ name }}'
+    width: '{{ width }}'
+    height: '{{ height }}'
+    units: '{{ units }}'
+    orientation: '{{ orientation }}'

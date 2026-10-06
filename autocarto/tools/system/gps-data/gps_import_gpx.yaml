@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gps_import_gpx
+  display_name: 导入GPX
+  domain: gps-data
+  runtime: qgis
+spec:
+  description: 导入GPX文件
+  parameters:
+  - name: INPUT
+    type: file
+    required: true
+    description: 输入GPX文件
+  - name: CONVERSION
+    type: enum
+    description: 转换类型
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: gps_import_gpx
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    CONVERSION: '{{ CONVERSION }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

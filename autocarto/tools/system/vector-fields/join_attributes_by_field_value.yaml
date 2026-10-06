@@ -1,0 +1,40 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: join_attributes_by_field_value
+  display_name: 按字段值连接属性
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 按字段值连接两个图层的属性
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD
+    type: field
+    required: true
+    description: 输入字段
+  - name: INPUT_2
+    type: layer
+    required: true
+    description: 连接图层
+  - name: FIELD_2
+    type: field
+    required: true
+    description: 连接字段
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+    default: 'memory:'
+execution:
+  handler: handlers.attributes.join_attributes_by_field_value_handler
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'
+    INPUT_2: '{{ INPUT_2 }}'
+    FIELD_2: '{{ FIELD_2 }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

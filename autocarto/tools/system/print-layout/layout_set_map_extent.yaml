@@ -1,0 +1,55 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_map_extent
+  display_name: layout_set_map_extent
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置地图框范围；四个显式坐标、目标图层与项目联合范围三选一，默认保持地图框位置和尺寸。返回适配框体后的实际范围与CRS。
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 地图框ID
+  - name: layer
+    type: string
+    description: 目标图层ID或唯一名称；由实际几何转换到地图框CRS后取范围，不受工程其他图层影响
+  - name: padding
+    type: number
+    description: 每侧相对范围宽高的外扩比例，0到1，默认0.03；显式坐标不需要外扩时设为0
+  - name: xmin
+    type: number
+    description: 地图框CRS中的最小X坐标，四个坐标须同时提供
+  - name: ymin
+    type: number
+    description: 地图框CRS中的最小Y坐标
+  - name: xmax
+    type: number
+    description: 地图框CRS中的最大X坐标
+  - name: ymax
+    type: number
+    description: 地图框CRS中的最大Y坐标
+  - name: use_canvas
+    type: boolean
+    description: 自动使用项目图层联合范围
+  - name: preserve_frame_size
+    type: boolean
+    description: 设置范围后是否保持地图框位置和尺寸不变（默认是）
+execution:
+  handler: handlers.layout_items.set_map_extent_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    layer: '{{ layer }}'
+    padding: '{{ padding }}'
+    xmin: '{{ xmin }}'
+    ymin: '{{ ymin }}'
+    xmax: '{{ xmax }}'
+    ymax: '{{ ymax }}'
+    use_canvas: '{{ use_canvas }}'
+    preserve_frame_size: '{{ preserve_frame_size }}'

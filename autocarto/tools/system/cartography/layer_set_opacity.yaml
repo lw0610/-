@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_set_opacity
+  display_name: layer_set_opacity
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 设置图层透明度
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: opacity
+    type: number
+    required: true
+    description: 透明度
+execution:
+  handler: handlers.style.set_layer_opacity_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    opacity: '{{ opacity }}'

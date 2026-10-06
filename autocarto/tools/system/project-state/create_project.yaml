@@ -1,0 +1,18 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: create_project
+  display_name: create_project
+  domain: project-state
+  runtime: qgis
+spec:
+  description: 创建新的空白 QGIS 工程并保存到指定路径
+  parameters:
+    - name: path
+      type: string
+      required: true
+      description: 要创建的 QGIS 工程完整文件路径
+execution:
+  handler: handlers.project.create_project
+  param_mapping:
+    path: '{{ path }}'

@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: package_layers
+  display_name: 打包图层
+  domain: file-operations
+  runtime: qgis
+spec:
+  description: 将多个图层打包为GeoPackage。默认输出到autoc/exports目录
+  parameters:
+  - name: LAYERS
+    type: multi_layer
+    required: true
+    description: 输入图层列表
+  - name: OUTPUT
+    type: file
+    description: 输出GeoPackage文件（可选，默认输出到autoc/exports目录）
+execution:
+  backend_tool: package_layers
+  param_mapping:
+    LAYERS: '{{ LAYERS }}'
+    OUTPUT: '{{ OUTPUT }}'

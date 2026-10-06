@@ -1,0 +1,27 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_map_scale
+  display_name: layout_set_map_scale
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置地图框比例尺
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    description: 地图框ID
+  - name: scale
+    type: number
+    required: true
+    description: 比例尺分母(如25000表示1:25000)
+execution:
+  handler: handlers.layout_items.set_map_scale_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    scale: '{{ scale }}'

@@ -1,0 +1,58 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: advanced_python_field_calculator
+  display_name: 高级Python字段计算器
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 使用Python表达式计算字段值
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD_NAME
+    type: string
+    required: true
+    description: 结果字段名称
+  - name: FIELD_TYPE
+    type: enum
+    description: 字段类型
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+  - name: FIELD_LENGTH
+    type: integer
+    description: 字段长度
+    default: 10
+  - name: FIELD_PRECISION
+    type: integer
+    description: 字段精度
+    default: 3
+  - name: GLOBAL
+    type: string
+    description: 全局表达式
+    default: ""
+  - name: FORMULA
+    type: string
+    required: true
+    description: 计算公式
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: advanced_python_field_calculator
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD_NAME: '{{ FIELD_NAME }}'
+    FIELD_TYPE: '{{ FIELD_TYPE }}'
+    FIELD_LENGTH: '{{ FIELD_LENGTH }}'
+    FIELD_PRECISION: '{{ FIELD_PRECISION }}'
+    GLOBAL: '{{ GLOBAL }}'
+    FORMULA: '{{ FORMULA }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

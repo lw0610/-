@@ -1,0 +1,27 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_set_blend_mode
+  display_name: layer_set_blend_mode
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 设置图层混合模式
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: blend_mode
+    type: string
+    required: true
+    description: 混合模式
+  - name: feature_blend_mode
+    type: string
+    description: 要素混合模式
+execution:
+  handler: handlers.style.set_layer_blend_mode_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    blend_mode: '{{ blend_mode }}'
+    feature_blend_mode: '{{ feature_blend_mode }}'

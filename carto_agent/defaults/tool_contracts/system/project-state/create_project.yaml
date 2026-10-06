@@ -1,0 +1,25 @@
+apiVersion: tool_contract/v1
+kind: ToolContract
+metadata:
+  name: create_project
+  display_name: create_project
+  domain: project-state
+  runtime: qgis
+policy:
+  visibility: public
+  authorization:
+    scopes:
+      - tool.invoke
+spec:
+  description: 创建新的 QGIS 工程文件
+  parameters:
+    - name: path
+      type: string
+      required: true
+      description: 要创建的 QGIS 工程文件路径
+execution:
+  binding: handler
+  handler_file: tools/system/project-state/handlers/project.py
+  handler_function: create_project
+  param_mapping:
+    path: '{{ path }}'

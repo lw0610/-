@@ -1,0 +1,15 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: browser_check_environment
+  display_name: 检查浏览器环境
+  domain: browser-data-acquisition
+  runtime: internal
+spec:
+  description: "检查浏览器 MCP 命令配置，不启动浏览器，不自动安装软件。"
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: browser_check_environment

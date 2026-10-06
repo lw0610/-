@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: pyqgis_execute_script
+  domain: pyqgis-scripting
+  runtime: qgis
+spec:
+  description: 执行 PyQGIS 脚本，支持超时控制。适用于需要动态生成和执行 Python 代码的场景
+  parameters:
+    - name: script
+      type: string
+      required: true
+      description: PyQGIS 脚本代码
+    - name: timeout
+      type: number
+      description: 超时时间（秒），默认300秒
+      default: 300
+execution:
+  handler: handlers.tools.pyqgis_execute_script
+  param_mapping:
+    script: '{{ script }}'
+    timeout: '{{ timeout }}'

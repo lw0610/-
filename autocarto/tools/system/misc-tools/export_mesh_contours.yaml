@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: export_mesh_contours
+  display_name: 导出等值线
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 从网孔数据集导出等值线
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入网孔图层
+  - name: DATASET_GROUPS
+    type: string
+    description: 数据集组
+  - name: INCREMENT
+    type: number
+    description: 等值线间隔
+    default: 10.0
+  - name: OUTPUT_LINES
+    type: output_layer
+    description: 输出等值线图层
+execution:
+  backend_tool: export_mesh_contours
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DATASET_GROUPS: '{{ DATASET_GROUPS }}'
+    INCREMENT: '{{ INCREMENT }}'
+    OUTPUT_LINES: '{{ OUTPUT_LINES }}'
+  output:
+    auto_load: true

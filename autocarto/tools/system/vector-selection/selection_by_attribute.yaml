@@ -1,0 +1,32 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: selection_by_attribute
+  display_name: selection_by_attribute
+  domain: vector-selection
+  runtime: qgis
+spec:
+  description: 按属性值选择要素
+  parameters:
+    - name: layer
+      type: string
+      required: true
+      description: 图层名称
+    - name: field
+      type: string
+      required: true
+      description: 字段名称
+    - name: value
+      type: string
+      description: 属性值
+    - name: operator
+      type: string
+      description: 比较运算符
+      default: '='
+execution:
+  handler: handlers.selection.select_by_attribute_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    field: '{{ field }}'
+    value: '{{ value }}'
+    operator: '{{ operator }}'

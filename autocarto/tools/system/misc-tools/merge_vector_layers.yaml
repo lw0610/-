@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: merge_vector_layers
+  display_name: 合并矢量图层
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 将多个图层合并为一个
+  parameters:
+  - name: LAYERS
+    type: multi_layer
+    required: true
+    description: 输入图层列表
+  - name: CRS
+    type: crs
+    description: 目标坐标系
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: merge_vector_layers
+  param_mapping:
+    LAYERS: '{{ LAYERS }}'
+    CRS: '{{ CRS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

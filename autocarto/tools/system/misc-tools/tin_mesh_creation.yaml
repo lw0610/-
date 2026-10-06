@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: tin_mesh_creation
+  display_name: TIN网孔创建
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 从点创建TIN网孔
+  parameters:
+  - name: SOURCE_DATA
+    type: layer
+    required: true
+    description: 输入点图层
+  - name: OUTPUT_MESH
+    type: file
+    description: 输出网孔文件
+execution:
+  backend_tool: tin_mesh_creation
+  param_mapping:
+    SOURCE_DATA: '{{ SOURCE_DATA }}'
+    OUTPUT_MESH: '{{ OUTPUT_MESH }}'

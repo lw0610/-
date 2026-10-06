@@ -1,0 +1,43 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: cartography_graduated_style
+  display_name: cartography_graduated_style
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 按数值字段设置分级设色，验证有限值和颜色区分，返回实际分类方法、区间与颜色；空值不参与分级
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: field
+    type: string
+    required: true
+    description: 分级字段
+  - name: classes
+    type: integer
+    default: 5
+    description: 请求分类数量（2-20，默认5）；不超过不同有效值数量，实际分级数以返回结果为准
+  - name: method
+    type: string
+    default: quantile
+    enum:
+    - quantile
+    - jenks
+    - equal_interval
+    - stddev
+    description: 分类方法，默认quantile（分位数）；jenks为自然断点，equal_interval为等间距，stddev为标准差
+  - name: color_ramp
+    type: string
+    default: YlOrRd
+    description: QGIS样式库或ColorBrewer颜色带名称，如YlOrRd、Blues；默认YlOrRd，未知或单色颜色带将报错
+execution:
+  handler: handlers.style.graduated_style_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    field: '{{ field }}'
+    classes: '{{ classes }}'
+    method: '{{ method }}'
+    color_ramp: '{{ color_ramp }}'

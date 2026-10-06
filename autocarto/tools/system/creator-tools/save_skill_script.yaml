@@ -1,0 +1,24 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: save_skill_script
+  domain: creator-tools
+  runtime: internal
+spec:
+  description: 将脚本文件写入指定技能包目录。
+  parameters:
+  - name: package_id
+    type: string
+    required: true
+  - name: script_path
+    type: string
+    required: true
+  - name: content
+    type: string
+    required: true
+execution:
+  backend_tool: save_skill_script
+  param_mapping:
+    package_id: '{{ package_id }}'
+    script_path: '{{ script_path }}'
+    content: '{{ content }}'

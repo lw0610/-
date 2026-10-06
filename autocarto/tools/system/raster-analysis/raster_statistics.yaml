@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: raster_statistics
+  display_name: 栅格统计
+  domain: raster-analysis
+  runtime: qgis
+spec:
+  description: 计算栅格图层统计信息
+  parameters:
+  - name: INPUT
+    type: raster_layer
+    required: true
+    description: 输入栅格
+  - name: BAND
+    type: integer
+    description: 波段号
+    default: 1
+execution:
+  backend_tool: raster_statistics
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    BAND: '{{ BAND }}'

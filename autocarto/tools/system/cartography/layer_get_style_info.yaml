@@ -1,0 +1,18 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_get_style_info
+  display_name: layer_get_style_info
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 获取图层样式详情
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+execution:
+  handler: handlers.style.get_style_info_handler
+  param_mapping:
+    layer: '{{ layer }}'

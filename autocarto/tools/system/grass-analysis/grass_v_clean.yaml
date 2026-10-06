@@ -1,0 +1,35 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: grass_v_clean
+  display_name: 矢量清理
+  domain: grass-analysis
+  runtime: qgis
+spec:
+  description: 清理矢量拓扑错误
+  parameters:
+  - name: input
+    type: layer
+    required: true
+    description: 输入矢量图层
+  - name: tool
+    type: enum
+    description: 清理工具
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - name: output
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: grass_v_clean
+  param_mapping:
+    input: '{{ input }}'
+    tool: '{{ tool }}'
+    output: '{{ output }}'
+  output:
+    auto_load: true

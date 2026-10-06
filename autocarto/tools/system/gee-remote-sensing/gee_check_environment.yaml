@@ -1,0 +1,15 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gee_check_environment
+  display_name: 检查 GEE 环境
+  domain: gee-remote-sensing
+  runtime: internal
+spec:
+  description: "检查配置的独立 Python、Earth Engine、GeoPandas 边界处理、geedim 下载依赖、项目及认证。environment.ready、region_ready、download_ready 分别表示查询、边界读取与本地下载就绪；不安装依赖或启动授权。"
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: gee_check_environment

@@ -1,0 +1,16 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: validate_skill_definition
+  domain: creator-tools
+  runtime: internal
+spec:
+  description: 校验技能工具定义是否合法。
+  parameters:
+  - name: definition
+    type: object
+    required: true
+execution:
+  backend_tool: validate_skill_definition
+  param_mapping:
+    definition: '{{ definition }}'

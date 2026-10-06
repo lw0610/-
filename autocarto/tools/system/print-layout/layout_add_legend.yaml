@@ -1,0 +1,86 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_legend
+  display_name: layout_add_legend
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加图例到布局
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: x
+    type: number
+    description: X坐标(mm)
+  - name: y
+    type: number
+    description: Y坐标(mm)
+  - name: width
+    type: number
+    description: 宽度(mm)
+  - name: height
+    type: number
+    description: 高度(mm)
+  - name: item_id
+    type: string
+    description: 元素ID
+  - name: map_id
+    type: string
+    description: 关联的地图框ID
+  - name: title
+    type: string
+    description: 图例标题
+  - name: auto_update_model
+    type: boolean
+    description: 是否自动更新图例内容
+  - name: position
+    type: string
+    description: 图例自动布局策略（auto/right_of_map/left_of_map/top_left/top_right/bottom_left/bottom_right）
+  - name: padding
+    type: number
+    description: 图例与地图框或页面边缘的间距（毫米）
+  - name: allow_auto_adjust
+    type: boolean
+    description: 是否允许元素超出页面时自动纠偏（默认否，严格按请求坐标尺寸）
+  - name: resize_to_contents
+    type: boolean
+    description: 是否按内容自动改变图例尺寸（默认否）
+  - name: frame_enabled
+    type: boolean
+    description: 是否显示图例边框（默认是）
+  - name: frame_color
+    type: string
+    description: 图例边框颜色（默认淡蓝色 #9DC3E6）
+  - name: frame_width
+    type: number
+    description: 图例边框线宽（毫米，默认 0.6）
+  - name: background_enabled
+    type: boolean
+    description: 是否显示图例背景（默认是）
+  - name: background_color
+    type: string
+    description: 图例背景色（默认白色 #FFFFFF）
+execution:
+  handler: handlers.layout_items.add_legend_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    x: '{{ x }}'
+    y: '{{ y }}'
+    width: '{{ width }}'
+    height: '{{ height }}'
+    item_id: '{{ item_id }}'
+    map_id: '{{ map_id }}'
+    title: '{{ title }}'
+    auto_update_model: '{{ auto_update_model }}'
+    position: '{{ position }}'
+    padding: '{{ padding }}'
+    allow_auto_adjust: '{{ allow_auto_adjust }}'
+    resize_to_contents: '{{ resize_to_contents }}'
+    frame_enabled: '{{ frame_enabled }}'
+    frame_color: '{{ frame_color }}'
+    frame_width: '{{ frame_width }}'
+    background_enabled: '{{ background_enabled }}'
+    background_color: '{{ background_color }}'

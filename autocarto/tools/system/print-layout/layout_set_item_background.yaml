@@ -1,0 +1,35 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_item_background
+  display_name: layout_set_item_background
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置布局元素背景
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 元素ID
+  - name: color
+    type: string
+    description: 背景颜色
+  - name: opacity
+    type: number
+    description: 透明度
+  - name: enabled
+    type: boolean
+    description: 是否启用背景
+execution:
+  handler: handlers.layout_advanced.set_item_background_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    color: '{{ color }}'
+    opacity: '{{ opacity }}'
+    enabled: '{{ enabled }}'

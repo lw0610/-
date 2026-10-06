@@ -1,0 +1,57 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: hitl_request
+  display_name: hitl_request
+  domain: runtime-control
+  runtime: internal
+spec:
+  description: 发起人工确认请求，在关键决策点暂停执行并等待用户响应
+  parameters:
+    - name: type
+      type: string
+      description: decision、clarification 或 plan_confirmation
+    - name: title
+      type: string
+      description: 具体决策标题
+    - name: description
+      type: string
+      description: 用户需要判断的具体问题、依据与影响
+    - name: select_mode
+      type: string
+      description: single、multiple、confirm 或 text
+    - name: options
+      type: array
+      description: 选项数组，每项含 label、value，可含 reason
+    - name: default
+      type: string
+      description: 单选默认值
+    - name: defaults
+      type: array
+      description: 多选默认值字符串数组
+    - name: plan
+      type: object
+      description: 计划，含 objective、steps（agent/action/impact）、risks、fallback
+    - name: decisions
+      type: array
+      description: 批量决策，每项含 id/title/description/select_mode/options/default/defaults/required/category
+    - name: required
+      type: boolean
+      description: 是否必须回答
+    - name: category
+      type: string
+      description: 决策分类
+execution:
+  backend_tool: hitl_request
+  param_mapping:
+    type: '{{ type }}'
+    title: '{{ title }}'
+    description: '{{ description }}'
+    select_mode: '{{ select_mode }}'
+    options: '{{ options }}'
+    default: '{{ default }}'
+    defaults: '{{ defaults }}'
+    plan: '{{ plan }}'
+    decisions: '{{ decisions }}'
+    required: '{{ required }}'
+    category: '{{ category }}'

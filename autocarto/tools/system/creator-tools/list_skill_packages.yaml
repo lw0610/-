@@ -1,0 +1,11 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: list_skill_packages
+  domain: creator-tools
+  runtime: internal
+spec:
+  description: 列出当前可见的技能包。
+execution:
+  backend_tool: list_skill_packages
+  param_mapping: {}

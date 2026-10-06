@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gdal_translate
+  display_name: 栅格转换
+  domain: gdal-processing
+  runtime: qgis
+spec:
+  description: 转换栅格格式
+  parameters:
+  - name: INPUT
+    type: raster_layer
+    required: true
+    description: 输入栅格
+  - name: TARGET_CRS
+    type: crs
+    description: 目标坐标系
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: gdal_translate
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    TARGET_CRS: '{{ TARGET_CRS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

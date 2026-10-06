@@ -1,0 +1,24 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: mesh_surface_to_polygon
+  display_name: 表面转多边形
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 将网孔表面转换为多边形
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入网孔图层
+  - name: OUTPUT
+    type: output_layer
+    description: 输出多边形图层
+execution:
+  backend_tool: mesh_surface_to_polygon
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

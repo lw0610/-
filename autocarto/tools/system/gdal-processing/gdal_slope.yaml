@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gdal_slope
+  display_name: 坡度
+  domain: gdal-processing
+  runtime: qgis
+spec:
+  description: 使用GDAL计算坡度
+  parameters:
+  - name: INPUT
+    type: raster_layer
+    required: true
+    description: 输入DEM
+  - name: BAND
+    type: integer
+    description: 波段号
+    default: 1
+  - name: SCALE
+    type: number
+    description: 比例因子
+    default: 1.0
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: gdal_slope
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    BAND: '{{ BAND }}'
+    SCALE: '{{ SCALE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

@@ -1,0 +1,17 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: get_active_layer_info
+  display_name: get_active_layer_info
+  domain: project-state
+  runtime: qgis
+spec:
+  description: 获取当前选中的活动图层的详细信息
+  parameters:
+    - name: layer_name
+      type: string
+      description: 图层名称；不指定时使用当前活动图层
+execution:
+  handler: handlers.project.get_active_layer_info
+  param_mapping:
+    layer_name: '{{ layer_name }}'

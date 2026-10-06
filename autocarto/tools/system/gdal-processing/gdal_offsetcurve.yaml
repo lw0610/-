@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gdal_offsetcurve
+  display_name: 偏移曲线
+  domain: gdal-processing
+  runtime: qgis
+spec:
+  description: 创建偏移曲线
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入线图层
+  - name: DISTANCE
+    type: number
+    required: true
+    description: 偏移距离
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: gdal_offsetcurve
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DISTANCE: '{{ DISTANCE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

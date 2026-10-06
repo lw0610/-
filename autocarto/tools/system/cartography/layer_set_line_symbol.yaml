@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_set_line_symbol
+  display_name: layer_set_line_symbol
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 根据线类型设置线图层符号；河流可同时沿线标注名称
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: line_type
+    type: string
+    required: true
+    enum:
+    - 铁路
+    - 高速公路
+    - 国道
+    - 省界
+    - 河流
+    description: 线类型，支持铁路、高速公路、国道、省界、河流
+  - name: label_field
+    type: string
+    required: false
+    description: 河流名称字段；仅在线状河流需要沿线显示名称时传入
+execution:
+  handler: handlers.style.set_line_symbol_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    line_type: '{{ line_type }}'
+    label_field: '{{ label_field }}'

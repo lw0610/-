@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: selection_by_expression
+  display_name: selection_by_expression
+  domain: vector-selection
+  runtime: qgis
+spec:
+  description: 按表达式选择要素
+  parameters:
+    - name: layer
+      type: string
+      required: true
+      description: 图层名称
+    - name: expression
+      type: string
+      required: true
+      description: QGIS表达式
+execution:
+  handler: handlers.selection.select_by_expression_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    expression: '{{ expression }}'

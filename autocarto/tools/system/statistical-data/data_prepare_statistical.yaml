@@ -1,0 +1,104 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: data_prepare_statistical
+  display_name: 准备年度统计专题数据
+  domain: statistical-data
+  runtime: qgis
+spec:
+  description: >-
+    只读读取行政区 GeoJSON 与 UTF-8 CSV，精确名称关联指定年份，校验重复键、数值和匹配范围。
+    支持年度横表或显式指定的长表；不猜名称、不把缺失值填零、不修改工程或加载图层。
+    生成独立面 GeoJSON、可选境界线 GeoJSON、长表 CSV 和来源校验清单。
+  parameters:
+    - name: geojson_path
+      type: string
+      required: true
+      description: 行政区 GeoJSON 绝对路径，支持 Polygon/MultiPolygon 及可分离的 LineString/MultiLineString
+    - name: csv_path
+      type: string
+      required: true
+      description: UTF-8（可带 BOM）CSV 绝对路径
+    - name: year
+      type: integer
+      required: true
+      description: 1—9999 的目标年份
+    - name: table_format
+      type: string
+      default: wide_year_rows
+      enum: [wide_year_rows, long]
+      description: wide_year_rows 为年份逐行、地区逐列；long 为年份/地区/数值逐行。不会猜测格式
+    - name: name_field
+      type: string
+      default: name
+      description: GeoJSON 面的地区名称字段，仅去除首尾空白后精确关联
+    - name: year_field
+      type: string
+      default: 年份
+      description: CSV 年份列
+    - name: value_field
+      type: string
+      default: stat_value
+      description: 派生面数值字段，必须不与任何源属性或工具元数据字段重名
+    - name: region_field
+      type: string
+      default: 地区
+      description: long 格式的 CSV 地区列
+    - name: csv_value_field
+      type: string
+      default: 数值
+      description: long 格式的 CSV 数值列
+    - name: metadata_fields
+      type: object
+      description: >-
+        CSV 元数据列映射，可含 indicator/unit/source/database；默认映射为 指标/单位/数据来源/数据库。
+        已映射且存在的列不会被当作地区列；自定义映射替换默认映射。缺失元数据仅报告，不推断单位或来源
+    - name: indicator
+      type: string
+      description: 显式指标名称；如 CSV 已提供不同值则报错
+    - name: unit
+      type: string
+      description: 显式统计单位；如 CSV 已提供不同值则报错，不换算数值
+    - name: source
+      type: string
+      description: 显式统计来源；如 CSV 已提供不同值则报错
+    - name: database
+      type: string
+      description: 显式数据库名称；如 CSV 已提供不同值则报错
+    - name: exclude_names
+      type: array
+      items:
+        type: string
+      description: 明确排除的地区名；面仍保留，数值为 null、data_status=excluded
+    - name: allow_unmatched
+      type: boolean
+      default: false
+      description: 默认未匹配地区阻止输出并返回清单；明确允许时保留未匹配面为 null，须先核对或确认缺失范围
+    - name: output_dir
+      type: string
+      description: 输出父目录绝对路径；每次创建独立运行子目录。默认当前会话 intermediate/statistical；无会话时为 AUTOCARTO_HOME/data/statistical
+    - name: validate_only
+      type: boolean
+      default: false
+      description: 只返回校验报告，不创建文件或目录，不加载图层
+execution:
+  handler: handlers.preparation.prepare_statistical_handler
+  param_mapping:
+    geojson_path: '{{ geojson_path }}'
+    csv_path: '{{ csv_path }}'
+    year: '{{ year }}'
+    table_format: '{{ table_format }}'
+    name_field: '{{ name_field }}'
+    year_field: '{{ year_field }}'
+    value_field: '{{ value_field }}'
+    region_field: '{{ region_field }}'
+    csv_value_field: '{{ csv_value_field }}'
+    metadata_fields: '{{ metadata_fields }}'
+    indicator: '{{ indicator }}'
+    unit: '{{ unit }}'
+    source: '{{ source }}'
+    database: '{{ database }}'
+    exclude_names: '{{ exclude_names }}'
+    allow_unmatched: '{{ allow_unmatched }}'
+    output_dir: '{{ output_dir }}'
+    validate_only: '{{ validate_only }}'

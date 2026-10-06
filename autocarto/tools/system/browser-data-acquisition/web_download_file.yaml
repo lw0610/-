@@ -1,0 +1,27 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: web_download_file
+  display_name: 下载公开数据文件
+  domain: browser-data-acquisition
+  runtime: internal
+spec:
+  description: "下载公开 HTTP(S) 文件至当前会话目录，同时记录来源、时间、字节数和SHA256。不覆盖旧文件，不自动解压或执行。"
+  parameters:
+    - name: url
+      type: string
+      required: true
+      description: "公开文件下载URL"
+    - name: filename
+      type: string
+      required: false
+      description: "仅文件名，不含目录；省略则从URL推断"
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: web_download_file
+  param_mapping:
+    url: '{{ url }}'
+    filename: '{{ filename }}'

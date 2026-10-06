@@ -1,0 +1,27 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: web_read_page
+  display_name: 读取网页及数据链接
+  domain: browser-data-acquisition
+  runtime: internal
+spec:
+  description: "读取公开 HTTP(S) 网页正文、JSON或文本及链接，返回来源URL和获取时间。不能执行页面脚本；动态网页改用浏览器。"
+  parameters:
+    - name: url
+      type: string
+      required: true
+      description: "公开网页或文本数据URL"
+    - name: max_chars
+      type: integer
+      required: false
+      description: "最大返回字符数，1000–100000，默认20000"
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: web_read_page
+  param_mapping:
+    url: '{{ url }}'
+    max_chars: '{{ max_chars }}'

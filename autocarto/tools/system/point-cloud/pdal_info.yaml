@@ -1,0 +1,18 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: pdal_info
+  display_name: 点云信息
+  domain: point-cloud
+  runtime: qgis
+spec:
+  description: 获取点云文件信息
+  parameters:
+  - name: INPUT
+    type: file
+    required: true
+    description: 输入点云文件
+execution:
+  backend_tool: pdal_info
+  param_mapping:
+    INPUT: '{{ INPUT }}'

@@ -1,0 +1,24 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: delete_duplicate_geometries
+  display_name: 删除重复几何图形
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 删除重复的几何图形
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: delete_duplicate_geometries
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

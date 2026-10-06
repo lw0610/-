@@ -1,0 +1,11 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: list_agent_configs
+  domain: creator-tools
+  runtime: internal
+spec:
+  description: 列出当前方案配置。
+execution:
+  backend_tool: list_agent_configs
+  param_mapping: {}

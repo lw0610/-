@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: geocode_from_table
+  display_name: 从表格创建点
+  domain: geocoding
+  runtime: qgis
+spec:
+  description: 根据XY坐标字段创建点图层
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入表格
+  - name: XFIELD
+    type: field
+    required: true
+    description: X坐标字段
+  - name: YFIELD
+    type: field
+    required: true
+    description: Y坐标字段
+  - name: OUTPUT
+    type: output_layer
+    description: 输出点图层
+execution:
+  backend_tool: geocode_from_table
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    XFIELD: '{{ XFIELD }}'
+    YFIELD: '{{ YFIELD }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

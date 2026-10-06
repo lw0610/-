@@ -1,0 +1,84 @@
+{
+  "repository": "https://github.com/zzhonglei/GeoCode-Release",
+  "commit": "6e3534f7af3675b19bd3c5d54c94022959dccdd2",
+  "skill_version": "0.1.0",
+  "assets": [
+    {
+      "upstream_path": "LICENSE",
+      "local_path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/LICENSE",
+      "bytes": 1094,
+      "sha256": "f41d999e610500dde235909b58be38be5903ad255b6646ec7f0aaf5ecf78a68e",
+      "git_blob_sha1": "91c9edaec726800e0430089a076d97a1e31fdfd6"
+    },
+    {
+      "upstream_path": "contributions/china-admin-boundaries/skill/SKILL.md",
+      "local_path": "upstream/SKILL.md",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/SKILL.md",
+      "bytes": 1748,
+      "sha256": "f1778b8e0867c7552ef5475eb4cb39d2813ed6723ed2c7ef99a1b55649690cbe",
+      "git_blob_sha1": "4d1b0205acabb768176f68acd6156c253028b49a"
+    },
+    {
+      "upstream_path": "contributions/china-admin-boundaries/manifest/meta.json",
+      "local_path": "upstream/meta.json",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/manifest/meta.json",
+      "bytes": 328,
+      "sha256": "af87feb576bce46d8475a2725547153f61b14df059f2abfc24d3c7e0487f4b0a",
+      "git_blob_sha1": "f1628869741c1c826051571072e9c1eaf5b7f8a4"
+    },
+    {
+      "upstream_path": "contributions/china-admin-boundaries/manifest/README.md",
+      "local_path": "upstream/README.md",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/manifest/README.md",
+      "bytes": 3042,
+      "sha256": "d889a813cfaef75d09dc2558ec5458d44722e5119dac48d607cc5888a39f236d",
+      "git_blob_sha1": "dbbceabf71145e219f51536414fb95ae63d232c1"
+    },
+    {
+      "upstream_path": "contributions/china-admin-boundaries/skill/data/china_province.geojson",
+      "local_path": "data/china_province.geojson",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/data/china_province.geojson",
+      "bytes": 1973055,
+      "sha256": "672b321924533dc2d4eb1429de322e3b612a5c9de860f518828a25e75ba6f262",
+      "git_blob_sha1": "5fa860bc533369e9509390038a9b46fceb123295",
+      "feature_count": 34,
+      "declared_crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      }
+    },
+    {
+      "upstream_path": "contributions/china-admin-boundaries/skill/data/china_city.geojson",
+      "local_path": "data/china_city.geojson",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/data/china_city.geojson",
+      "bytes": 4989113,
+      "sha256": "a3038b09823597c5b03ea2563455cebcc90559e83764f5d49d38a1403ad8683a",
+      "git_blob_sha1": "c0ba0fb1233aa7029501ef238ed5ba5d8b871968",
+      "feature_count": 375,
+      "declared_crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      }
+    },
+    {
+      "upstream_path": "contributions/china-admin-boundaries/skill/data/china_county.geojson",
+      "local_path": "data/china_county.geojson",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/data/china_county.geojson",
+      "bytes": 11856930,
+      "sha256": "22db6c54b9cb0118ecdcc8a117bf2da4fc24a2229cdba7e6e55dbb5dd56e8246",
+      "git_blob_sha1": "39d4984ba9b36d572e44a90198427ef882b62412",
+      "feature_count": 2891,
+      "declared_crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      }
+    }
+  ]
+}

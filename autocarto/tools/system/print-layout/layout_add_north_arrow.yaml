@@ -1,0 +1,42 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_north_arrow
+  display_name: layout_add_north_arrow
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加指北针到布局
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: x
+    type: number
+    description: X坐标(mm)
+  - name: y
+    type: number
+    description: Y坐标(mm)
+  - name: width
+    type: number
+    description: 宽度(mm)
+  - name: height
+    type: number
+    description: 高度(mm)
+  - name: item_id
+    type: string
+    description: 元素ID
+  - name: style
+    type: integer
+    description: 指北针样式(0-7)
+execution:
+  handler: handlers.layout_items.add_north_arrow_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    x: '{{ x }}'
+    y: '{{ y }}'
+    width: '{{ width }}'
+    height: '{{ height }}'
+    item_id: '{{ item_id }}'
+    style: '{{ style }}'

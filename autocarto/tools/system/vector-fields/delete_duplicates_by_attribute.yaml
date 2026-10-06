@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: delete_duplicates_by_attribute
+  display_name: 按属性删除重复项
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 按属性值删除重复要素
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELDS
+    type: fields
+    required: true
+    description: 比较字段
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: delete_duplicates_by_attribute
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELDS: '{{ FIELDS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

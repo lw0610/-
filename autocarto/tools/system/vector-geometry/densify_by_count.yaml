@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: densify_by_count
+  display_name: 按数量加密
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 按顶点数量加密几何图形
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: VERTICES
+    type: integer
+    description: 顶点数量
+    default: 1
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: densify_by_count
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    VERTICES: '{{ VERTICES }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

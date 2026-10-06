@@ -1,0 +1,11 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: pyqgis_get_context
+  domain: pyqgis-scripting
+  runtime: qgis
+spec:
+  description: 获取当前 QGIS 上下文信息，包括项目、图层列表、活动图层、地图范围等
+execution:
+  handler: handlers.tools.pyqgis_get_context
+  param_mapping: {}

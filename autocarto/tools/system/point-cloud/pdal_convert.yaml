@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: pdal_convert
+  display_name: 点云格式转换
+  domain: point-cloud
+  runtime: qgis
+spec:
+  description: 转换点云文件格式
+  parameters:
+  - name: INPUT
+    type: file
+    required: true
+    description: 输入点云文件
+  - name: OUTPUT
+    type: file
+    description: 输出点云文件
+execution:
+  backend_tool: pdal_convert
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    OUTPUT: '{{ OUTPUT }}'

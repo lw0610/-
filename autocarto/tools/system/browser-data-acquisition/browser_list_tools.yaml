@@ -1,0 +1,20 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: browser_list_tools
+  display_name: 发现浏览器操作
+  domain: browser-data-acquisition
+  runtime: internal
+spec:
+  description: >-
+    为当前会话启动独立浏览器 MCP，返回其内部操作名称及 inputSchema。
+    返回的 browser_navigate、browser_snapshot 等名称不是智能体的直接工具，不能直接调用；
+    必须调用 browser_call_tool，把内部名称放入 tool_name，把对应参数对象放入 args。
+    例如列表存在 browser_navigate 时，调用 browser_call_tool({"tool_name":"browser_navigate","args":{"url":"https://example.org"}})。
+    读取真实 inputSchema 后填写参数，不猜测工具名或参数。首次调用可能由 npx 下载固定版本组件。
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: browser_list_tools

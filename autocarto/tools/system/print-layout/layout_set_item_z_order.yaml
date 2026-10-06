@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_item_z_order
+  display_name: layout_set_item_z_order
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置布局元素层级
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 元素ID
+  - name: z_order
+    type: number
+    required: true
+    description: 层级值
+execution:
+  handler: handlers.layout_advanced.set_item_z_order_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'
+    z_order: '{{ z_order }}'

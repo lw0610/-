@@ -1,0 +1,37 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: single_sided_buffer
+  display_name: 单侧缓冲区
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 创建单侧缓冲区
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: DISTANCE
+    type: number
+    description: 缓冲距离
+    default: 10.0
+  - name: SIDE
+    type: enum
+    description: 缓冲侧
+    default: 0
+    values:
+    - 0
+    - 1
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: single_sided_buffer
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DISTANCE: '{{ DISTANCE }}'
+    SIDE: '{{ SIDE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

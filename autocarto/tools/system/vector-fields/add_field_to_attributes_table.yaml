@@ -1,0 +1,53 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: add_field_to_attributes_table
+  display_name: 添加字段到属性表
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 向图层添加新字段
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD_NAME
+    type: string
+    required: true
+    description: 字段名称
+  - name: FIELD_TYPE
+    type: enum
+    description: 字段类型(0=整数,1=浮点,2=字符串,3=日期,4=时间,5=日期时间,6=布尔)
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+  - name: FIELD_LENGTH
+    type: integer
+    description: 字段长度
+    default: 10
+  - name: FIELD_PRECISION
+    type: integer
+    description: 字段精度
+    default: 0
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+    default: 'memory:'
+execution:
+  backend_tool: add_field_to_attributes_table
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD_NAME: '{{ FIELD_NAME }}'
+    FIELD_TYPE: '{{ FIELD_TYPE }}'
+    FIELD_LENGTH: '{{ FIELD_LENGTH }}'
+    FIELD_PRECISION: '{{ FIELD_PRECISION }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

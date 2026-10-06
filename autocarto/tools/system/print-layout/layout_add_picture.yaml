@@ -1,0 +1,43 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_picture
+  display_name: layout_add_picture
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加图片到布局
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: path
+    type: string
+    required: true
+    description: 图片文件路径
+  - name: x
+    type: number
+    description: X坐标(mm)
+  - name: y
+    type: number
+    description: Y坐标(mm)
+  - name: width
+    type: number
+    description: 宽度(mm)
+  - name: height
+    type: number
+    description: 高度(mm)
+  - name: item_id
+    type: string
+    description: 元素ID
+execution:
+  handler: handlers.layout_items.add_picture_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    path: '{{ path }}'
+    x: '{{ x }}'
+    y: '{{ y }}'
+    width: '{{ width }}'
+    height: '{{ height }}'
+    item_id: '{{ item_id }}'

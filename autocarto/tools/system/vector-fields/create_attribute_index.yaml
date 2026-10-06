@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: create_attribute_index
+  display_name: 创建属性索引
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 为字段创建属性索引
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD
+    type: field
+    required: true
+    description: 索引字段
+execution:
+  backend_tool: create_attribute_index
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'

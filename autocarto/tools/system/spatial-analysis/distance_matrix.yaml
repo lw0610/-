@@ -1,0 +1,39 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: distance_matrix
+  display_name: 距离矩阵
+  domain: spatial-analysis
+  runtime: qgis
+spec:
+  description: 计算点之间的距离矩阵
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入点图层
+  - name: INPUT_FIELD
+    type: field
+    required: true
+    description: 输入ID字段
+  - name: TARGET
+    type: layer
+    required: true
+    description: 目标点图层
+  - name: TARGET_FIELD
+    type: field
+    required: true
+    description: 目标ID字段
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: distance_matrix
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    INPUT_FIELD: '{{ INPUT_FIELD }}'
+    TARGET: '{{ TARGET }}'
+    TARGET_FIELD: '{{ TARGET_FIELD }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

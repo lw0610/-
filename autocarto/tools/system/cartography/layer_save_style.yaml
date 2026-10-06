@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_save_style
+  display_name: layer_save_style
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 保存图层样式到 QML
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: path
+    type: string
+    required: true
+    description: QML 输出路径
+execution:
+  handler: handlers.style.save_style_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    path: '{{ path }}'

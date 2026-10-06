@@ -1,0 +1,18 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: canvas_zoom_to_layer
+  display_name: canvas_zoom_to_layer
+  domain: canvas-navigation
+  runtime: qgis
+spec:
+  description: 缩放到图层范围
+  parameters:
+    - name: layer
+      type: string
+      required: true
+      description: 图层名称
+execution:
+  handler: handlers.canvas.zoom_to_layer_handler
+  param_mapping:
+    layer: '{{ layer }}'

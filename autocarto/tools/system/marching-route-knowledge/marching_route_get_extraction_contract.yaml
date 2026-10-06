@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: marching_route_get_extraction_contract
+  display_name: marching_route_get_extraction_contract
+  runtime: qgis
+  domain: marching-route-knowledge
+spec:
+  description: 根据原始叙事返回行军路线任务知识图谱的完整 JSON Schema 和正式抽取提示；生成 knowledge_json 前必须先调用
+  parameters:
+  - name: source_text
+    type: string
+    required: true
+    description: 用户提供的完整史料或路线叙事，原样传入
+  - name: compact
+    type: boolean
+    required: false
+    description: 默认 false；分块执行器设为 true 时仅返回规则与一份 schema，不重复返回原文
+execution:
+  handler: handlers.knowledge.get_marching_route_extraction_contract_handler
+  param_mapping:
+    source_text: '{{ source_text }}'
+    compact: '{{ compact }}'

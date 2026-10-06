@@ -1,0 +1,37 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: generate_elevation_profile_image
+  display_name: 生成高程剖面图像
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 沿线生成高程剖面图像
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入线图层
+  - name: DEM
+    type: raster_layer
+    required: true
+    description: DEM栅格
+  - name: WIDTH
+    type: integer
+    description: 图像宽度
+    default: 800
+  - name: HEIGHT
+    type: integer
+    description: 图像高度
+    default: 600
+  - name: OUTPUT
+    type: file
+    description: 输出图像文件
+execution:
+  backend_tool: generate_elevation_profile_image
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DEM: '{{ DEM }}'
+    WIDTH: '{{ WIDTH }}'
+    HEIGHT: '{{ HEIGHT }}'
+    OUTPUT: '{{ OUTPUT }}'

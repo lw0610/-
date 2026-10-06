@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gdal_buffer_vectors
+  display_name: 矢量缓冲区
+  domain: gdal-processing
+  runtime: qgis
+spec:
+  description: 使用GDAL创建矢量缓冲区
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入矢量图层
+  - name: DISTANCE
+    type: number
+    required: true
+    description: 缓冲距离
+  - name: DISSOLVE
+    type: boolean
+    description: 是否融合结果
+    default: false
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: gdal_buffer_vectors
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    DISTANCE: '{{ DISTANCE }}'
+    DISSOLVE: '{{ DISSOLVE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

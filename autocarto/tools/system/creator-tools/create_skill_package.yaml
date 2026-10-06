@@ -1,0 +1,30 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: create_skill_package
+  domain: creator-tools
+  runtime: internal
+spec:
+  description: 创建新的技能包目录与 SKILL.md。
+  parameters:
+  - name: package_id
+    type: string
+  - name: name
+    type: string
+  - name: description
+    type: string
+  - name: kind
+    type: string
+  - name: runtime
+    type: string
+  - name: body
+    type: string
+execution:
+  backend_tool: create_skill_package
+  param_mapping:
+    package_id: '{{ package_id }}'
+    name: '{{ name }}'
+    description: '{{ description }}'
+    kind: '{{ kind }}'
+    runtime: '{{ runtime }}'
+    body: '{{ body }}'

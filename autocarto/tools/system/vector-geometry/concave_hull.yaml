@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: concave_hull
+  display_name: 凹包
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 计算凹包
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: ALPHA
+    type: number
+    description: 阈值
+    default: 0.3
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: concave_hull
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    ALPHA: '{{ ALPHA }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

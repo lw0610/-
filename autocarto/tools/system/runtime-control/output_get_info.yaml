@@ -1,0 +1,12 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: output_get_info
+  display_name: output_get_info
+  domain: runtime-control
+  runtime: internal
+spec:
+  description: 获取当前输出信息与执行产物摘要
+execution:
+  backend_tool: output_get_info
+  param_mapping: {}

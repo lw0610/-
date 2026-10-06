@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: save_vector_features_to_file
+  display_name: 保存矢量要素到文件
+  domain: file-operations
+  runtime: qgis
+spec:
+  description: 将矢量要素保存到文件
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: OUTPUT
+    type: file
+    required: true
+    description: 输出文件路径
+execution:
+  backend_tool: save_vector_features_to_file
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    OUTPUT: '{{ OUTPUT }}'

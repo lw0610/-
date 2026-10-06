@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: refactor_fields
+  display_name: 重构字段
+  domain: vector-fields
+  runtime: qgis
+spec:
+  description: 重构图层字段结构
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELDS_MAPPING
+    type: matrix
+    required: true
+    description: 字段映射配置
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  handler: handlers.attributes.refactor_fields_handler
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELDS_MAPPING: '{{ FIELDS_MAPPING }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

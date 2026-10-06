@@ -1,0 +1,27 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: extract_by_expression
+  display_name: 按表达式提取
+  domain: vector-selection
+  runtime: qgis
+spec:
+  description: 按表达式提取要素
+  parameters:
+    - name: INPUT
+      type: layer
+      required: true
+      description: 输入图层名称
+    - name: EXPRESSION
+      type: string
+      required: true
+      description: QGIS表达式
+    - name: OUTPUT
+      type: output_layer
+      description: 输出图层名称（可选，memory:图层名）
+execution:
+  handler: handlers.selection.extract_by_expression_handler
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    EXPRESSION: '{{ EXPRESSION }}'
+    OUTPUT: '{{ OUTPUT }}'

@@ -1,0 +1,31 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: cartography_add_labels
+  display_name: cartography_add_labels
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 添加标注
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: field
+    type: string
+    required: true
+    description: 标注字段名称
+  - name: font_size
+    type: number
+    description: 字体大小
+  - name: color
+    type: string
+    description: 字体颜色 (十六进制格式)
+execution:
+  handler: handlers.style.add_labels_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    field: '{{ field }}'
+    font_size: '{{ font_size }}'
+    color: '{{ color }}'

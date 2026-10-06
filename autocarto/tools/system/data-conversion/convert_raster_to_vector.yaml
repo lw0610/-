@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: convert_raster_to_vector
+  display_name: 栅格转矢量
+  domain: data-conversion
+  runtime: qgis
+spec:
+  description: 将栅格转换为矢量多边形
+  parameters:
+  - name: INPUT
+    type: raster_layer
+    required: true
+    description: 输入栅格
+  - name: BAND
+    type: integer
+    description: 波段号
+    default: 1
+  - name: OUTPUT
+    type: output_layer
+    description: 输出矢量
+execution:
+  backend_tool: convert_raster_to_vector
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    BAND: '{{ BAND }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

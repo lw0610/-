@@ -1,0 +1,18 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: create_spatial_index
+  display_name: 创建空间索引
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 为图层创建空间索引
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+execution:
+  backend_tool: create_spatial_index
+  param_mapping:
+    INPUT: '{{ INPUT }}'

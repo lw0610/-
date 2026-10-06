@@ -1,0 +1,24 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: convert_lines_to_polygons
+  display_name: 线转面
+  domain: data-conversion
+  runtime: qgis
+spec:
+  description: 将闭合线转换为多边形
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入线图层
+  - name: OUTPUT
+    type: output_layer
+    description: 输出面图层
+execution:
+  backend_tool: convert_lines_to_polygons
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

@@ -1,0 +1,27 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: pdal_clip
+  display_name: 点云裁剪
+  domain: point-cloud
+  runtime: qgis
+spec:
+  description: 按多边形裁剪点云
+  parameters:
+  - name: INPUT
+    type: file
+    required: true
+    description: 输入点云文件
+  - name: OVERLAY
+    type: layer
+    required: true
+    description: 裁剪多边形
+  - name: OUTPUT
+    type: file
+    description: 输出点云文件
+execution:
+  backend_tool: pdal_clip
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    OVERLAY: '{{ OVERLAY }}'
+    OUTPUT: '{{ OUTPUT }}'

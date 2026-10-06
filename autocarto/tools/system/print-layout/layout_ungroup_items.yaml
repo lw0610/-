@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_ungroup_items
+  display_name: layout_ungroup_items
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 取消布局元素分组
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: true
+    description: 分组元素ID
+execution:
+  handler: handlers.layout_advanced.ungroup_items_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'

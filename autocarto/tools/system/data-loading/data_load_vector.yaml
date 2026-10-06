@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: data_load_vector
+  display_name: data_load_vector
+  domain: data-loading
+  runtime: qgis
+spec:
+  description: 加载矢量图层
+  parameters:
+    - name: path
+      type: string
+      required: true
+      description: 矢量文件路径
+    - name: layer_name
+      type: string
+      description: 图层名称（可选）
+execution:
+  handler: handlers.loader.load_vector_handler
+  param_mapping:
+    path: '{{ path }}'
+    layer_name: '{{ layer_name }}'

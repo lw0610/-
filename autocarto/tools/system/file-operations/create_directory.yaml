@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: create_directory
+  display_name: 创建目录
+  domain: file-operations
+  runtime: internal
+spec:
+  description: 创建新目录
+  parameters:
+  - name: PATH
+    type: string
+    required: true
+    description: 目录路径
+policy:
+  visibility: public
+  authorization_scopes:
+  - tool.invoke
+execution:
+  backend_tool: create_directory
+  param_mapping:
+    PATH: '{{ PATH }}'

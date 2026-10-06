@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_label
+  display_name: layout_add_label
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加文本标签到布局
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: text
+    type: string
+    required: true
+    description: 标签文本
+  - name: item_id
+    type: string
+    required: true
+    description: 元素ID
+execution:
+  handler: handlers.layout_items.add_label_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    text: '{{ text }}'
+    item_id: '{{ item_id }}'

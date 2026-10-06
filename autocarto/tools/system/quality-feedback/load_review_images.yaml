@@ -1,0 +1,39 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: load_review_images
+  display_name: 加载地图复检图片
+  domain: quality-feedback
+  runtime: cli
+spec:
+  description: >-
+    根据 prepare_quality_review 建立的质量反馈清单，读取受保护的 QGIS 初版地图
+    和独立终稿，并将 original + final 作为真实多模态输入返回。
+    工具会验证 original 未被覆盖，且 final 使用预留路径并保持初版的像素尺寸与 DPI。
+  parameters:
+    - name: review_manifest_path
+      type: string
+      required: true
+      description: prepare_quality_review 返回的 review_manifest_path
+    - name: final_image_path
+      type: string
+      required: true
+      description: QGIS 按清单中 reserved_final_image_path 导出的终稿绝对路径
+    - name: applied_suggestions
+      type: array
+      required: true
+      description: cartographer 实际执行的结构化视觉建议数组；未修改时传空数组
+execution:
+  cli:
+    command: python3
+    args:
+      - '{{ skill_dir }}/scripts/quality_review.py'
+      - load-review
+    working_dir: '{{ skill_dir }}'
+    stdin: json
+    stdout: json
+    timeout: 30s
+  param_mapping:
+    review_manifest_path: '{{ review_manifest_path }}'
+    final_image_path: '{{ final_image_path }}'
+    applied_suggestions: '{{ applied_suggestions }}'

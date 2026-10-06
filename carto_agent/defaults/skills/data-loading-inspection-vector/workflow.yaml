@@ -1,0 +1,27 @@
+apiVersion: workflow/v1
+kind: serial_workflow
+metadata:
+  name: data-loading-inspection-vector
+spec:
+  inputs:
+    dataset_path:
+      type: string
+      required: true
+  steps:
+    - id: load_vector
+      type: tool
+      tool: data_load_vector
+      with:
+        file_path: "{{ inputs.dataset_path }}"
+    - id: validate_layers
+      type: tool
+      tool: get_layers_info
+      with: {}
+    - id: check_geometry_validity
+      type: tool
+      tool: check_validity
+      with: {}
+    - id: report_layer_info
+      type: tool
+      tool: get_active_layer_info
+      with: {}

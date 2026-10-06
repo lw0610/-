@@ -1,0 +1,35 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: extract_by_location
+  display_name: 按位置提取
+  domain: vector-selection
+  runtime: qgis
+spec:
+  description: 按空间位置提取要素
+  parameters:
+    - name: INPUT
+      type: layer
+      required: true
+      description: 输入图层
+    - name: INTERSECT
+      type: layer
+      required: true
+      description: 相交图层
+    - name: PREDICATE
+      type: enum
+      description: 几何谓词
+      default: 0
+      values: [0, 1, 2, 3, 4, 5, 6]
+    - name: OUTPUT
+      type: output_layer
+      description: 输出图层
+execution:
+  backend_tool: extract_by_location
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    INTERSECT: '{{ INTERSECT }}'
+    PREDICATE: '{{ PREDICATE }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

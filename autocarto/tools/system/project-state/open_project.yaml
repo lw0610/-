@@ -1,0 +1,18 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: open_project
+  display_name: open_project
+  domain: project-state
+  runtime: qgis
+spec:
+  description: 打开指定的 QGIS 工程文件
+  parameters:
+    - name: path
+      type: string
+      required: true
+      description: 要打开的 QGIS 工程文件路径
+execution:
+  handler: handlers.project.open_project
+  param_mapping:
+    path: '{{ path }}'

@@ -1,0 +1,41 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gdal_warp
+  display_name: 栅格重投影
+  domain: gdal-processing
+  runtime: qgis
+spec:
+  description: 重投影栅格数据
+  parameters:
+  - name: INPUT
+    type: raster_layer
+    required: true
+    description: 输入栅格
+  - name: TARGET_CRS
+    type: crs
+    required: true
+    description: 目标坐标系
+  - name: RESAMPLING
+    type: enum
+    description: 重采样方法(0=最近邻,1=双线性,2=三次)
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: gdal_warp
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    TARGET_CRS: '{{ TARGET_CRS }}'
+    RESAMPLING: '{{ RESAMPLING }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

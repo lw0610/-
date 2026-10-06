@@ -1,0 +1,30 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_set_page_background
+  display_name: layout_set_page_background
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 设置页面背景色
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: color
+    type: string
+    description: 背景颜色
+  - name: outline_color
+    type: string
+    description: 边框颜色
+  - name: outline_width
+    type: number
+    description: 边框宽度
+execution:
+  handler: handlers.layout_advanced.set_page_background_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    color: '{{ color }}'
+    outline_color: '{{ outline_color }}'
+    outline_width: '{{ outline_width }}'

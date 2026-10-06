@@ -1,0 +1,52 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: marching_route_compile_dataset
+  display_name: marching_route_compile_dataset
+  runtime: qgis
+  domain: marching-route-knowledge
+spec:
+  description: 校验行军路线任务知识图谱，并确定性生成现有 QGIS 路线绘图入口需要的六张 CSV、符号资产和溯源文件
+  parameters:
+  - name: knowledge_json
+    type: object
+    required: true
+    description: schema_version=1.0 的完整任务知识图谱对象；直接传入对象，不得序列化成 JSON 字符串或 Markdown 围栏
+  - name: source_text
+    type: string
+    required: true
+    description: 用于核对 evidence.quote 的原始史料或叙事文本
+  - name: contract_id
+    type: string
+    required: true
+    description: marching_route_get_extraction_contract 针对同一 source_text 返回的 contract_id
+  - name: output_dir
+    type: folder
+    description: 生成数据集目录；不传时自动保存到当前任务 intermediate/route_knowledge，无任务会话时才使用系统临时目录
+  - name: template_dataset_dir
+    type: folder
+    description: 可选模板数据集目录，用于复制原有 symbols 和相对路径注记图片
+  - name: symbol_assets_dir
+    type: folder
+    description: 可选独立 SVG 目录；优先于 template_dataset_dir/symbols
+  - name: overwrite
+    type: boolean
+    description: 输出目录非空时是否替换，默认 false
+  - name: validate_only
+    type: boolean
+    description: 仅校验，不生成或覆盖数据表；用于用户核对结果
+  - name: review_context
+    type: object
+    description: 服务端签名的人工核对凭据；由核对流程注入，模型不得自行构造
+execution:
+  handler: handlers.knowledge.compile_marching_route_dataset_handler
+  param_mapping:
+    knowledge_json: '{{ knowledge_json }}'
+    source_text: '{{ source_text }}'
+    contract_id: '{{ contract_id }}'
+    output_dir: '{{ output_dir }}'
+    template_dataset_dir: '{{ template_dataset_dir }}'
+    symbol_assets_dir: '{{ symbol_assets_dir }}'
+    overwrite: '{{ overwrite }}'
+    validate_only: '{{ validate_only }}'
+    review_context: '{{ review_context }}'

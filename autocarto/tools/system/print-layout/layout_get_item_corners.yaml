@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_get_item_corners
+  display_name: layout_get_item_corners
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 获取布局元素的外接矩形边界与四个角点坐标（单位 mm）
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_id
+    type: string
+    required: false
+    description: 元素ID，默认 main_map
+execution:
+  handler: handlers.layout_items.get_item_corners_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_id: '{{ item_id }}'

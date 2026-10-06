@@ -1,0 +1,78 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_decorative_border
+  display_name: layout_add_decorative_border
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 添加装饰边框（SVG 标记线 + 双偏移简单线）
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称（必填）
+  - name: x
+    type: number
+    description: 边框左上角 X 坐标（单位 mm，默认 10）
+  - name: y
+    type: number
+    description: 边框左上角 Y 坐标（单位 mm，默认 10）
+  - name: width
+    type: number
+    description: 边框宽度（单位 mm，默认 200）
+  - name: height
+    type: number
+    description: 边框高度（单位 mm，默认 150）
+  - name: item_id
+    type: string
+    description: 边框元素 ID（用于后续查询与样式调整，默认 decorative_border_1）
+  - name: svg_path
+    type: string
+    description: SVG 图标路径（可传本地绝对路径；为空时使用默认样式）
+  - name: strict_svg_path
+    type: boolean
+    description: 是否严格校验 svg_path（true=路径无效直接失败；false=回退默认图标，默认 false）
+  - name: marker_width
+    type: number
+    description: SVG 标记宽度（单位 mm，默认 4）
+  - name: marker_height
+    type: number
+    description: SVG 标记高度（单位 mm，默认 4）
+  - name: marker_interval
+    type: number
+    description: 标记线间隔（单位 mm，默认等于 marker_height）
+  - name: line_color
+    type: string
+    description: 线颜色（HEX，默认 #000000）
+  - name: line_width
+    type: number
+    description: 线宽（单位 mm，默认 0.3）
+  - name: offset
+    type: number
+    description: 双线偏移量（单位 mm，自动生成 +offset 与 -offset，默认 3）
+  - name: fill_color
+    type: string
+    description: 填充颜色（默认透明 #FFFFFF00）
+  - name: rotation
+    type: number
+    description: 边框旋转角度（单位度，默认 0）
+execution:
+  handler: handlers.layout_items.add_decorative_border_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    x: '{{ x }}'
+    y: '{{ y }}'
+    width: '{{ width }}'
+    height: '{{ height }}'
+    item_id: '{{ item_id }}'
+    svg_path: '{{ svg_path }}'
+    strict_svg_path: '{{ strict_svg_path }}'
+    marker_width: '{{ marker_width }}'
+    marker_height: '{{ marker_height }}'
+    marker_interval: '{{ marker_interval }}'
+    line_color: '{{ line_color }}'
+    line_width: '{{ line_width }}'
+    offset: '{{ offset }}'
+    fill_color: '{{ fill_color }}'
+    rotation: '{{ rotation }}'

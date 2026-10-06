@@ -1,0 +1,32 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: vector_layer_histogram
+  display_name: 矢量图层直方图
+  runtime: qgis
+  domain: misc-tools
+spec:
+  description: 创建矢量图层字段直方图
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD
+    type: field
+    required: true
+    description: 数值字段
+  - name: BINS
+    type: integer
+    description: 分组数量
+    default: 10
+  - name: OUTPUT
+    type: file
+    description: 输出HTML文件
+execution:
+  backend_tool: vector_layer_histogram
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'
+    BINS: '{{ BINS }}'
+    OUTPUT: '{{ OUTPUT }}'

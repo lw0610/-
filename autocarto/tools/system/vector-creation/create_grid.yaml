@@ -1,0 +1,49 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: create_grid
+  display_name: 创建网格
+  domain: vector-creation
+  runtime: qgis
+spec:
+  description: 创建矢量网格
+  parameters:
+  - name: TYPE
+    type: enum
+    description: 网格类型
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - name: EXTENT
+    type: extent
+    required: true
+    description: 网格范围
+  - name: HSPACING
+    type: number
+    description: 水平间距
+    default: 1.0
+  - name: VSPACING
+    type: number
+    description: 垂直间距
+    default: 1.0
+  - name: CRS
+    type: crs
+    description: 坐标系
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: create_grid
+  param_mapping:
+    TYPE: '{{ TYPE }}'
+    EXTENT: '{{ EXTENT }}'
+    HSPACING: '{{ HSPACING }}'
+    VSPACING: '{{ VSPACING }}'
+    CRS: '{{ CRS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

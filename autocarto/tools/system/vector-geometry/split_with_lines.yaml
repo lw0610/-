@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: split_with_lines
+  display_name: 用线分割
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 用线分割多边形
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: LINES
+    type: layer
+    required: true
+    description: 分割线图层
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: split_with_lines
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    LINES: '{{ LINES }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

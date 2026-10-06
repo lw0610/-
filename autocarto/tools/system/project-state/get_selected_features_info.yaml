@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: get_selected_features_info
+  display_name: get_selected_features_info
+  domain: project-state
+  runtime: qgis
+spec:
+  description: 获取当前选中要素的详细信息
+  parameters:
+    - name: layer_name
+      type: string
+      description: 图层名称，如果不指定则使用活动图层
+    - name: max_features
+      type: integer
+      description: 最多返回的要素数量
+      default: 100
+execution:
+  handler: handlers.project.get_selected_features_info
+  param_mapping:
+    layer_name: '{{ layer_name }}'
+    max_features: '{{ max_features }}'

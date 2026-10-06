@@ -1,0 +1,40 @@
+version: "1.0"
+global:
+  common_tools:
+    exclusive:
+      - get_project_info
+      - get_layers_info
+    tool_groups:
+      - state_query
+  common_skills:
+    - base-skill
+  tool_groups:
+    geometry_processing:
+      - dissolve
+      - intersection
+    field_management:
+      - delete_column
+      - rename_field
+    state_query:
+      - get_canvas_info
+      - get_map_extent
+agents:
+  test_agent:
+    enabled: true
+    tool_policy:
+      private:
+        exclusive:
+          - buffer
+          - centroids
+        tool_groups:
+          - geometry_processing
+      share:
+        exclusive:
+          - field_calculator
+        tool_groups:
+          - field_management
+    skill_policy:
+      private:
+        - test-agent-private
+      share:
+        - test-agent-share

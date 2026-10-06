@@ -1,0 +1,32 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: points_to_path
+  display_name: 点转路径
+  domain: vector-creation
+  runtime: qgis
+spec:
+  description: 将点连接成路径
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: ORDER_FIELD
+    type: field
+    description: 排序字段
+  - name: GROUP_FIELD
+    type: field
+    description: 分组字段
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: points_to_path
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    ORDER_FIELD: '{{ ORDER_FIELD }}'
+    GROUP_FIELD: '{{ GROUP_FIELD }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

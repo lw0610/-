@@ -1,0 +1,12 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: get_canvas_info
+  display_name: get_canvas_info
+  domain: canvas-navigation
+  runtime: qgis
+spec:
+  description: 获取地图画布的当前状态信息，包括缩放级别、中心点等
+execution:
+  handler: handlers.canvas.get_canvas_info
+  param_mapping: {}

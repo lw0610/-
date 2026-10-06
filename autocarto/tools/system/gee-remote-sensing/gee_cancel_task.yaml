@@ -1,0 +1,22 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: gee_cancel_task
+  display_name: 取消 GEE 云任务
+  domain: gee-remote-sensing
+  runtime: internal
+spec:
+  description: "仅在用户要求取消指定云任务时调用；本地脚本退出不会自动取消云端任务。"
+  parameters:
+    - name: task_id
+      type: string
+      required: true
+      description: "需要取消的真实任务 ID 或 operation name"
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: gee_cancel_task
+  param_mapping:
+    task_id: '{{ task_id }}'

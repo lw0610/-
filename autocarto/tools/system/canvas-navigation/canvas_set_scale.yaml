@@ -1,0 +1,18 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: canvas_set_scale
+  display_name: canvas_set_scale
+  domain: canvas-navigation
+  runtime: qgis
+spec:
+  description: 设置地图比例尺
+  parameters:
+    - name: scale
+      type: number
+      required: true
+      description: 比例尺分母(如10000表示1:10000)
+execution:
+  handler: handlers.canvas.set_scale_handler
+  param_mapping:
+    scale: '{{ scale }}'

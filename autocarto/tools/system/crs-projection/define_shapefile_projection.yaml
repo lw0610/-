@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: define_shapefile_projection
+  display_name: 定义形状文件投影
+  domain: crs-projection
+  runtime: qgis
+spec:
+  description: 定义图层的坐标参考系统
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: CRS
+    type: crs
+    required: true
+    description: 坐标参考系统
+execution:
+  backend_tool: define_shapefile_projection
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    CRS: '{{ CRS }}'

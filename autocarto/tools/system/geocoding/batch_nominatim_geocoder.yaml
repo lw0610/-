@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: batch_nominatim_geocoder
+  display_name: 批处理Nominatim地理编码
+  domain: geocoding
+  runtime: qgis
+spec:
+  description: 使用Nominatim服务进行批量地理编码
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: FIELD
+    type: field
+    required: true
+    description: 地址字段
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: batch_nominatim_geocoder
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    FIELD: '{{ FIELD }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

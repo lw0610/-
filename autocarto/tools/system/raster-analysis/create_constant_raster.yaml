@@ -1,0 +1,41 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: create_constant_raster
+  display_name: 创建固定值栅格图层
+  domain: raster-analysis
+  runtime: qgis
+spec:
+  description: 创建具有固定值的栅格图层
+  parameters:
+  - name: EXTENT
+    type: extent
+    required: true
+    description: 输出范围
+  - name: TARGET_CRS
+    type: crs
+    required: true
+    description: 目标坐标系
+  - name: PIXEL_SIZE
+    type: number
+    required: true
+    description: 像素大小
+    default: 1.0
+  - name: NUMBER
+    type: number
+    required: true
+    description: 固定值
+    default: 1
+  - name: OUTPUT
+    type: output_raster
+    description: 输出栅格
+execution:
+  backend_tool: create_constant_raster
+  param_mapping:
+    EXTENT: '{{ EXTENT }}'
+    TARGET_CRS: '{{ TARGET_CRS }}'
+    PIXEL_SIZE: '{{ PIXEL_SIZE }}'
+    NUMBER: '{{ NUMBER }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

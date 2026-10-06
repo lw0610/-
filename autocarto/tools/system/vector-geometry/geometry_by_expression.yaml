@@ -1,0 +1,38 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: geometry_by_expression
+  display_name: 按表达式几何
+  domain: vector-geometry
+  runtime: qgis
+spec:
+  description: 使用表达式修改几何图形
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: EXPRESSION
+    type: expression
+    required: true
+    description: 几何表达式
+  - name: OUTPUT_GEOMETRY
+    type: enum
+    description: 输出几何类型
+    default: 0
+    values:
+    - 0
+    - 1
+    - 2
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: geometry_by_expression
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    EXPRESSION: '{{ EXPRESSION }}'
+    OUTPUT_GEOMETRY: '{{ OUTPUT_GEOMETRY }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

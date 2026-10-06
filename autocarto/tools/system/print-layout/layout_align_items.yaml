@@ -1,0 +1,32 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_align_items
+  display_name: layout_align_items
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 对齐多个布局元素
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 布局名称
+  - name: item_ids
+    type: array
+    required: true
+    description: 待移动的元素ID列表；指定 reference_item_id 时可以只传一个元素
+  - name: reference_item_id
+    type: string
+    description: 可选参考元素ID；指定后只移动 item_ids，不移动参考元素
+  - name: alignment
+    type: string
+    required: true
+    description: 对齐方式(left/right/top/bottom/center_h/center_v)
+execution:
+  handler: handlers.layout_items.align_items_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    item_ids: '{{ item_ids }}'
+    reference_item_id: '{{ reference_item_id }}'
+    alignment: '{{ alignment }}'

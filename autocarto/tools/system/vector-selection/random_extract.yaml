@@ -1,0 +1,35 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: random_extract
+  display_name: 随机提取
+  domain: vector-selection
+  runtime: qgis
+spec:
+  description: 随机提取要素到新图层
+  parameters:
+    - name: INPUT
+      type: layer
+      required: true
+      description: 输入图层
+    - name: METHOD
+      type: enum
+      description: 提取方法
+      default: 0
+      values: [0, 1]
+    - name: NUMBER
+      type: integer
+      description: 提取数量
+      default: 1
+    - name: OUTPUT
+      type: output_layer
+      description: 输出图层
+execution:
+  backend_tool: random_extract
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    METHOD: '{{ METHOD }}'
+    NUMBER: '{{ NUMBER }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

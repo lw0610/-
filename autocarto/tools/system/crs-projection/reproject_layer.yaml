@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: reproject_layer
+  display_name: 重投影图层
+  domain: crs-projection
+  runtime: qgis
+spec:
+  description: 将图层重投影到新的坐标系
+  parameters:
+  - name: INPUT
+    type: layer
+    required: true
+    description: 输入图层
+  - name: TARGET_CRS
+    type: crs
+    required: true
+    description: 目标坐标系；必须使用 QGIS 可解析的 EPSG、WKT 或 PROJ 定义，不能只填显示名称
+  - name: OUTPUT
+    type: output_layer
+    description: 输出图层
+execution:
+  backend_tool: native:reprojectlayer
+  param_mapping:
+    INPUT: '{{ INPUT }}'
+    TARGET_CRS: '{{ TARGET_CRS }}'
+    OUTPUT: '{{ OUTPUT }}'
+  output:
+    auto_load: true

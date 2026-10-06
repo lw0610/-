@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_load_style
+  display_name: layer_load_style
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 加载 QML 图层样式
+  parameters:
+  - name: layer
+    type: string
+    required: true
+    description: 图层名称
+  - name: path
+    type: string
+    required: true
+    description: QML 文件路径
+execution:
+  handler: handlers.style.load_style_handler
+  param_mapping:
+    layer: '{{ layer }}'
+    path: '{{ path }}'

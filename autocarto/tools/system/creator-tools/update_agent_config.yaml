@@ -1,0 +1,20 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: update_agent_config
+  domain: creator-tools
+  runtime: internal
+spec:
+  description: 更新指定 agent 配置方案。
+  parameters:
+  - name: config_name
+    type: string
+    required: true
+  - name: config_data
+    type: object
+    required: true
+execution:
+  backend_tool: update_agent_config
+  param_mapping:
+    config_name: '{{ config_name }}'
+    config_data: '{{ config_data }}'
