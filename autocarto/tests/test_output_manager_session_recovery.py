@@ -4,6 +4,7 @@ import sys
 import tempfile
 import types
 import unittest
+from unittest.mock import patch
 
 
 class _FakeQgsProject:
@@ -28,10 +29,13 @@ class OutputManagerSessionRecoveryTestCase(unittest.TestCase):
     output_manager: types.ModuleType = types.ModuleType("output_manager")
 
     def setUp(self):
+        module_patch=patch.dict(sys.modules)
+        module_patch.start()
+        self.addCleanup(module_patch.stop)
         _install_fake_qgis_modules()
-        import autocarto.tools.system._shared.output_manager as output_manager
-
-        self.output_manager = importlib.reload(output_manager)
+        name="autocarto.tools.system._shared.output_manager"
+        sys.modules.pop(name,None)
+        self.output_manager=importlib.import_module(name)
         self.output_manager.set_session_context(None)
 
     def test_init_output_dir_handler_can_restore_session_from_params(self):

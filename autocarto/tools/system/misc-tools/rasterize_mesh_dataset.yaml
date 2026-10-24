@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: rasterize_mesh_dataset
-  display_name: 栅格化网孔数据集
+  keywords: ["网格数据", "栅格化网格数据", "统计图表", "数据可视化"]
+  display_name: "栅格化网格数据"
   runtime: qgis
   domain: misc-tools
 spec:
@@ -20,7 +21,7 @@ spec:
     description: 输出范围
   - name: PIXEL_SIZE
     type: number
-    description: 像素大小
+    description: "像素大小（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: OUTPUT
     type: output_raster

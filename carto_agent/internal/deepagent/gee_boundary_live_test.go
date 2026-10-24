@@ -253,10 +253,10 @@ func (m *geeBoundaryLiveModel) Generate(ctx context.Context, input []*schema.Mes
 		if message.Role != schema.Tool || (message.ToolName != "skill" && m.probe.callNames[message.ToolCallID] != "skill") {
 			continue
 		}
-		if strings.Contains(message.Content, filepath.Join(m.probe.skillsRoot, "gee-scripting")) {
+		if strings.Contains(message.Content, filepath.Join(m.probe.skillsRoot, "gee-remote-sensing")) {
 			m.probe.report.GEESkillRead = true
 		}
-		if strings.Contains(message.Content, filepath.Join(m.probe.skillsRoot, "china-admin-boundaries")) {
+		if strings.Contains(message.Content, filepath.Join(m.probe.skillsRoot, "admin-boundaries")) {
 			m.probe.report.BoundarySkillRead = true
 		}
 	}
@@ -319,7 +319,7 @@ func (t *geeBoundaryLiveTool) InvokableRun(ctx context.Context, arguments string
 			t.probe.mu.Unlock()
 			// Parse literal selector arguments, then invoke only the trusted local
 			// template. No generated Python statement is evaluated or executed.
-			cmd := exec.CommandContext(ctx, t.probe.python, "-c", geeBoundarySafeSelector, filepath.Join(t.probe.skillsRoot, "china-admin-boundaries", "templates", "select_boundary.py"), t.probe.outputDir)
+			cmd := exec.CommandContext(ctx, t.probe.python, "-c", geeBoundarySafeSelector, filepath.Join(t.probe.skillsRoot, "..", "..", "resources", "system", "data", "中国行政区边界", "templates", "select_boundary.py"), t.probe.outputDir)
 			cmd.Stdin = strings.NewReader(code)
 			output, err := cmd.Output()
 			if err != nil {

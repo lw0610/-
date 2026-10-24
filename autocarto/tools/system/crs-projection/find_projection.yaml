@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: find_projection
-  display_name: 查找投影
+  keywords: ["图层投影", "查找图层投影", "坐标系", "投影转换", "坐标转换"]
+  display_name: "查找图层投影"
   domain: crs-projection
   runtime: qgis
 spec:

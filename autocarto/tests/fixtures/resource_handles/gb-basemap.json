@@ -1,0 +1,197 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:562edda29731ef248fc2855671378ac0e4e74526c4e82a6536454e8af64a4acc",
+  "entries": [
+    {
+      "aliases": [
+        "城市驻地",
+        "市级行政中心"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "point",
+      "kind": "style",
+      "label_field": "name",
+      "label_mode": "field",
+      "layer": "地级城市驻地",
+      "name": "地级城市驻地",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/地级城市驻地.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/地级城市驻地.qml"
+    },
+    {
+      "aliases": [
+        "县城驻地",
+        "县级驻地"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "point",
+      "kind": "style",
+      "label_field": "name",
+      "label_mode": "field",
+      "layer": "县级城市驻地",
+      "name": "县级城市驻地",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/县级城市驻地.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/县级城市驻地.qml"
+    },
+    {
+      "aliases": [
+        "铁路线",
+        "轨道交通干线"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "line",
+      "kind": "style",
+      "label_field": "",
+      "label_mode": "off",
+      "layer": "铁路",
+      "name": "铁路",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/铁路.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/铁路.qml"
+    },
+    {
+      "aliases": [
+        "公路",
+        "快速路"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "line",
+      "kind": "style",
+      "label_field": "",
+      "label_mode": "off",
+      "layer": "高速公路",
+      "name": "高速公路",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/高速公路.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/高速公路.qml"
+    },
+    {
+      "aliases": [
+        "普通国道"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "line",
+      "kind": "style",
+      "label_field": "",
+      "label_mode": "off",
+      "layer": "国道",
+      "name": "国道",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/国道.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/国道.qml"
+    },
+    {
+      "aliases": [
+        "地区界线",
+        "线状省界",
+        "行政边界线"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "line",
+      "kind": "style",
+      "label_field": "",
+      "label_mode": "off",
+      "layer": "省界",
+      "name": "省界",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/省界.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/省界.qml"
+    },
+    {
+      "aliases": [
+        "线状河流",
+        "水系线",
+        "河流"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "line",
+      "kind": "style",
+      "label_field": "NAME",
+      "label_mode": "field",
+      "layer": "河流线",
+      "name": "河流线",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/河流线.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/河流线.qml"
+    },
+    {
+      "aliases": [
+        "面状河流",
+        "水域面"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "polygon",
+      "kind": "style",
+      "label_field": "",
+      "label_mode": "off",
+      "layer": "河流面",
+      "name": "河流面",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/河流面.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/河流面.qml"
+    },
+    {
+      "aliases": [
+        "县级行政区",
+        "县域"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "polygon",
+      "kind": "style",
+      "label_field": "",
+      "label_mode": "off",
+      "layer": "县域面",
+      "name": "县域面",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/县域面.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/县域面.qml"
+    },
+    {
+      "aliases": [
+        "地级市行政区",
+        "市域"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "polygon",
+      "kind": "style",
+      "label_field": "",
+      "label_mode": "off",
+      "layer": "市域面",
+      "name": "市域面",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/市域面.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/市域面.qml"
+    },
+    {
+      "aliases": [
+        "省级行政区",
+        "省界面",
+        "省域外框",
+        "省域面"
+      ],
+      "description": "由原预设导出的符号和标注",
+      "exists": true,
+      "geometry": "polygon",
+      "kind": "style",
+      "label_field": "NAME",
+      "label_mode": "field",
+      "layer": "省域",
+      "name": "省域",
+      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/省域面.qml",
+      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/省域面.qml"
+    }
+  ],
+  "entry": "${REPO}/autocarto/resources/system/styles/国标底图样式/对照表.csv",
+  "format": "",
+  "id": "style_set.gb-basemap",
+  "name": "国标底图样式",
+  "owner": "library_builtin",
+  "root": "${REPO}/autocarto/resources/system/styles/国标底图样式",
+  "total_entries": 11,
+  "truncated": false,
+  "type": "style_set",
+  "version": "1.0.0",
+  "warnings": []
+}

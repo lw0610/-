@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_north_arrow_style
-  display_name: layout_set_north_arrow_style
+  keywords: ["指北针样式", "配置指北针样式", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置指北针样式"
   runtime: qgis
   domain: print-layout
 spec:

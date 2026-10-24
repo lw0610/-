@@ -1,0 +1,24 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: flow_start
+  display_name: 启动流程
+  domain: runtime-control
+  runtime: internal
+  keywords: [流程, 启动流程, 执行流程, 步骤]
+spec:
+  description: 校验当前方案启用的流程与输入，登记本轮结束后启动；成功后结束当前编排，不再重复委派。
+  parameters:
+    - name: flow_id
+      type: string
+      required: true
+      description: 当前方案已启用的流程编号。
+    - name: inputs
+      type: object
+      required: false
+      description: '按流程输入key提供值；原文类输入使用 {$ref: current_user_message}，不得重写原文。'
+execution:
+  backend_tool: flow_start
+  param_mapping:
+    flow_id: '{{ flow_id }}'
+    inputs: '{{ inputs }}'

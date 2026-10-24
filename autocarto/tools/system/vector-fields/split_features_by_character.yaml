@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: split_features_by_character
-  display_name: 按字符分割要素
+  keywords: ["按字符拆分要素", "属性字段", "字段计算", "属性连接"]
+  display_name: "按字符拆分要素"
   domain: vector-fields
   runtime: qgis
 spec:

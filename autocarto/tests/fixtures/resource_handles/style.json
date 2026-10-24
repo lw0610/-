@@ -1,0 +1,23 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:e169645bde060da1f2d6599550d4af42a1d01b274978a527a72f0d32a81784b8",
+  "entries": [],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/面样式.qml",
+  "format": "qml",
+  "geometry": "polygon",
+  "id": "legacy.style.2338c5237d",
+  "name": "面样式",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/面样式.qml",
+  "total_entries": 0,
+  "truncated": false,
+  "type": "style",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

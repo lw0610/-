@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_map_extent
-  display_name: layout_set_map_extent
+  keywords: ["地图框范围", "配置地图框范围", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置地图框范围"
   runtime: qgis
   domain: print-layout
 spec:
@@ -24,16 +25,16 @@ spec:
     description: 每侧相对范围宽高的外扩比例，0到1，默认0.03；显式坐标不需要外扩时设为0
   - name: xmin
     type: number
-    description: 地图框CRS中的最小X坐标，四个坐标须同时提供
+    description: "地图框CRS中的最小X坐标，四个坐标须同时提供（对应地图坐标系单位：投影坐标通常为米，地理坐标为度）"
   - name: ymin
     type: number
-    description: 地图框CRS中的最小Y坐标
+    description: "地图框CRS中的最小Y坐标（对应地图坐标系单位：投影坐标通常为米，地理坐标为度）"
   - name: xmax
     type: number
-    description: 地图框CRS中的最大X坐标
+    description: "地图框CRS中的最大X坐标（对应地图坐标系单位：投影坐标通常为米，地理坐标为度）"
   - name: ymax
     type: number
-    description: 地图框CRS中的最大Y坐标
+    description: "地图框CRS中的最大Y坐标（对应地图坐标系单位：投影坐标通常为米，地理坐标为度）"
   - name: use_canvas
     type: boolean
     description: 自动使用项目图层联合范围

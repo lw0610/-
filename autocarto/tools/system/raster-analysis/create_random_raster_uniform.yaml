@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: create_random_raster_uniform
-  display_name: 创建随机栅格图层(均匀分布)
+  keywords: ["均匀随机栅格", "生成均匀随机栅格", "栅格分析", "地形分析", "空间插值"]
+  display_name: "创建均匀随机栅格"
   domain: raster-analysis
   runtime: qgis
 spec:
@@ -18,7 +19,7 @@ spec:
     description: 目标坐标系
   - name: PIXEL_SIZE
     type: number
-    description: 像素大小
+    description: "像素大小（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: OUTPUT
     type: output_raster

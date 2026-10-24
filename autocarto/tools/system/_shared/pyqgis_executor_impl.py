@@ -235,27 +235,24 @@ class ScriptExecutor:
             if task._cancel_event.is_set():
                 self._update_task_status(task_id, ScriptStatus.CANCELED)
             elif result.get("timeout"):
-                self._update_task_status(task_id, ScriptStatus.FAILED)
-                with self._lock:
-                    task.error = "脚本执行超时"
+                self._update_task_status(
+                    task_id, ScriptStatus.FAILED, error="脚本执行超时"
+                )
             elif result.get("error"):
-                self._update_task_status(task_id, ScriptStatus.FAILED)
-                with self._lock:
-                    task.error = result["error"]
+                self._update_task_status(
+                    task_id, ScriptStatus.FAILED, error=result["error"]
+                )
             else:
-                self._update_task_status(task_id, ScriptStatus.SUCCEEDED)
-                with self._lock:
-                    task.result = result.get("result")
+                self._update_task_status(
+                    task_id, ScriptStatus.SUCCEEDED, result=result.get("result")
+                )
                 self._report_progress(task_id, 1.0, "执行完成")
 
         except Exception as e:
             logger.exception(f"任务 {task_id} 执行异常")
-            self._update_task_status(task_id, ScriptStatus.FAILED)
-            with self._lock:
-                task.error = str(e)
+            self._update_task_status(task_id, ScriptStatus.FAILED, error=str(e))
         finally:
             with self._lock:
-                task.completed_at = datetime.now()
                 self._running_count -= 1
 
     def _run_script_with_timeout(
@@ -406,12 +403,30 @@ class ScriptExecutor:
 
         return env
 
-    def _update_task_status(self, task_id: str, status: ScriptStatus) -> None:
+    def _update_task_status(
+        self,
+        task_id: str,
+        status: ScriptStatus,
+        *,
+        result: Any = None,
+        error: Optional[str] = None,
+    ) -> None:
         with self._lock:
             task = self._tasks.get(task_id)
-        if task:
+            if task is None:
+                return
+            if status in (
+                ScriptStatus.SUCCEEDED,
+                ScriptStatus.FAILED,
+                ScriptStatus.CANCELED,
+            ):
+                # Publish terminal payload and timestamp before exposing the
+                # terminal status to waiters and polling clients.
+                task.result = result
+                task.error = error
+                task.completed_at = datetime.now()
             task.status = status
-            logger.debug(f"任务 {task_id} 状态更新: {status.value}")
+        logger.debug(f"任务 {task_id} 状态更新: {status.value}")
 
     def _report_progress(self, task_id: str, progress: float, message: str) -> None:
         with self._lock:
@@ -442,7 +457,7 @@ class ScriptExecutor:
     def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:
         with self._lock:
             task = self._tasks.get(task_id)
-        return task.to_dict() if task else None
+            return task.to_dict() if task else None
 
     def cancel_task(self, task_id: str) -> bool:
         with self._lock:
@@ -462,14 +477,12 @@ class ScriptExecutor:
     def list_tasks(
         self, status_filter: Optional[ScriptStatus] = None
     ) -> list[Dict[str, Any]]:
-        tasks = []
         with self._lock:
-            task_list = list(self._tasks.values())
-
-        for task in task_list:
-            if status_filter is None or task.status == status_filter:
-                tasks.append(task.to_dict())
-        return tasks
+            return [
+                task.to_dict()
+                for task in self._tasks.values()
+                if status_filter is None or task.status == status_filter
+            ]
 
     def wait_for_task(
         self, task_id: str, timeout: Optional[float] = None

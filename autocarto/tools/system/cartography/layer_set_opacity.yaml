@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_set_opacity
-  display_name: layer_set_opacity
+  keywords: ["图层透明度", "配置图层透明度", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置图层透明度"
   runtime: qgis
   domain: cartography
 spec:
@@ -15,7 +16,7 @@ spec:
   - name: opacity
     type: number
     required: true
-    description: 透明度
+    description: "图层不透明度（无单位，0—1）；0 为完全透明，1 为完全不透明"
 execution:
   handler: handlers.style.set_layer_opacity_handler
   param_mapping:

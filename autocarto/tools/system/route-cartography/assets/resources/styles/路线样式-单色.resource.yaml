@@ -1,0 +1,8 @@
+apiVersion: resource/v1
+id: route_style.mono
+type: route_style
+name: 路线样式-单色
+version: 1.0.0
+entry: 路线样式-单色.csv
+source:
+  author: AutoCarto

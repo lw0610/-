@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: oriented_minimum_bounding_box
-  display_name: 定向最小边界框
+  keywords: ["定向包围框", "分析定向包围框", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算定向包围框"
   domain: vector-geometry
   runtime: qgis
 spec:

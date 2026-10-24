@@ -1,0 +1,8 @@
+apiVersion: flow-lock/v1
+resources:
+    - type: layout
+      name: 四角对齐版式
+      id: layout.four-corner
+      version: 1.0.0
+      digest: sha256:4f267a472d104ec46d44e20555d680ed4aa60914d62b7ffbcdb2d046a113fe97
+      source: library_builtin

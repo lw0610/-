@@ -1,0 +1,7 @@
+{
+  "source": "autocarto/skills/system/china-admin-boundaries/data/china_city.geojson",
+  "source_sha256": "a3038b09823597c5b03ea2563455cebcc90559e83764f5d49d38a1403ad8683a",
+  "filter": "adcode starts with 42",
+  "feature_count": 17,
+  "values": "synthetic; 2020 final region missing; one unmatched CSV region"
+}

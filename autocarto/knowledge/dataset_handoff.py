@@ -327,7 +327,7 @@ def _validate_dataset(
     return actual_counts, manifest, validation
 
 
-def resolve_marching_route_dataset(
+def resolve_route_dataset(
     params: Mapping[str, Any],
 ) -> ResolvedRouteDataset:
     """Resolve a trusted dataset without asking another tool for output state."""
@@ -360,7 +360,8 @@ def resolve_marching_route_dataset(
             )
         dataset_dir = session_dataset
         if explicit_raw:
-            supplied = Path(explicit_raw).expanduser().resolve()
+            from autocarto.core.paths import resolve_project_path
+            supplied = resolve_project_path(explicit_raw)
             if supplied != dataset_dir:
                 raise DatasetHandoffError(
                     "route_dataset_handoff_conflict",
@@ -378,7 +379,8 @@ def resolve_marching_route_dataset(
                 "route_dataset_explicit_dir_missing",
                 "explicit 数据源必须提供 dataset_dir",
             )
-        dataset_dir = Path(explicit_raw).expanduser().resolve()
+        from autocarto.core.paths import resolve_project_path
+        dataset_dir = resolve_project_path(explicit_raw)
         artifact_id = f"marching_route_dataset/explicit:{dataset_dir}"
         require_metadata = False
 
@@ -402,3 +404,7 @@ def resolve_marching_route_dataset(
         manifest=manifest,
         validation=validation,
     )
+
+
+# 保留历史导入路径；新绘制工具统一使用中性名称。
+resolve_marching_route_dataset = resolve_route_dataset

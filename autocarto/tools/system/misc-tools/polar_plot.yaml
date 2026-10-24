@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: polar_plot
-  display_name: 极坐标图
+  keywords: ["极坐标图", "生成极坐标图", "统计图表", "网格数据", "数据可视化"]
+  display_name: "生成极坐标图"
   runtime: qgis
   domain: misc-tools
 spec:

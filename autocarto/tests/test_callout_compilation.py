@@ -1,3 +1,4 @@
+from autocarto.tests.support.resource_handles import load_handle, resolve_handle
 import copy
 import csv
 import tempfile
@@ -23,7 +24,7 @@ class CalloutCompilationTest(unittest.TestCase):
                  "title": "", "body": "明确选择纯文本", "template": "text_only", "image_enabled": True, "image_path": str(image_path)},
             ]
             original = copy.deepcopy(graph)
-            result = compile_task_knowledge(graph, Path(directory) / "dataset")
+            result = compile_task_knowledge(graph, Path(directory) / "dataset", route_style=load_handle("red-blue"), symbols=load_handle("military"))
             with (Path(result.dataset_dir) / "callouts.csv").open(encoding="utf-8-sig", newline="") as stream:
                 rows = list(csv.DictReader(stream))
         self.assertEqual(graph, original)

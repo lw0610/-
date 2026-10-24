@@ -13,6 +13,11 @@ tools:
 - canvas_zoom_to_layer
 - canvas_zoom_to_extent
 - canvas_set_scale
+display_name: 画布导航
+domain: 制图
+system: false
+hidden: false
+auto_mount: ''
 ---
 
 # 画布导航工具集

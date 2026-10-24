@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: point_on_surface
-  display_name: 表面上的点
+  keywords: ["面内点", "生成面内点", "几何处理", "空间叠加", "几何修复"]
+  display_name: "生成面内点"
   domain: vector-geometry
   runtime: qgis
 spec:

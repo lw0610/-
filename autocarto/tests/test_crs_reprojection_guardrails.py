@@ -152,35 +152,21 @@ class CrsReprojectionGuardrailsTestCase(unittest.TestCase):
             "",
         )
 
-    def test_reprojection_tools_use_real_qgis_algorithm_id(self):
+    def test_reprojection_tools_have_real_algorithm_contract(self):
+        import yaml
         plugin_root = Path(__file__).resolve().parents[1]
         for filename in ("crs_reproject_vector.yaml", "reproject_layer.yaml"):
-            text = (
-                plugin_root
-                / "tools"
-                / "system"
-                / "crs-projection"
-                / filename
-            ).read_text(encoding="utf-8")
-            self.assertIn("backend_tool: native:reprojectlayer", text)
-
-    def test_agent_policy_does_not_require_crs_normalization_for_display(self):
-        plugin_root = Path(__file__).resolve().parents[1]
-        agent_config = (
-            plugin_root / "config" / "agent_configs" / "default" / "agent.yaml"
-        ).read_text(encoding="utf-8")
-        crs_skill = (
-            plugin_root
-            / "skills"
-            / "system"
-            / "crs-diagnosis-transform"
-            / "SKILL.md"
-        ).read_text(encoding="utf-8")
-
-        self.assertNotIn("字段结构治理、筛选转换与 CRS 规范化", agent_config)
-        self.assertIn("QGIS 动态坐标转换", agent_config)
-        self.assertIn("任务只是加载、浏览、叠加显示或地图制图", crs_skill)
-        self.assertIn("流程在此结束", crs_skill)
+            definition = yaml.safe_load((plugin_root/"tools/system/crs-projection"/filename).read_text())
+            self.assertEqual(definition["execution"]["backend_tool"], "native:reprojectlayer")
+            parameters = {entry["name"]: entry for entry in definition["spec"]["parameters"]}
+            self.assertTrue(parameters["TARGET_CRS"]["required"])
+            self.assertEqual(parameters["TARGET_CRS"]["type"], "crs")
+            self.assertEqual(definition["execution"]["param_mapping"]["TARGET_CRS"], "{{ TARGET_CRS }}")
+        raw = (plugin_root/"skills/system/crs-projection/SKILL.md").read_text()
+        front = yaml.safe_load(raw.split("---", 2)[1])
+        self.assertIn("reproject_layer", front["tools"])
+        self.assertIn("crs_reproject_vector", front["tools"])
+        self.assertFalse((plugin_root/"skills/system/crs-diagnosis-transform").exists())
 
 
 if __name__ == "__main__":

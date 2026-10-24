@@ -13,17 +13,17 @@ import {
   TextAreaInput,
   TextInput,
 } from "@/components/settings/FormField";
-import TagSelector, { TagOption } from "@/components/settings/TagSelector";
+import ToolPackageSelector from "./ToolPackageSelector";
 import {
   EditorSection,
 } from "@/components/settings/shared/AgentFormParts";
 import { confirmDiscardChanges } from "@/hooks/useUnsavedChangesGuard";
-import { AgentDefData } from "@/lib/api";
+import { AgentDefData, AgentRoleKind, SkillPackageSummary } from "@/lib/api";
 import { collectSkillSelections } from "@/app/settings/agents/_components/normalizers";
 
 interface AgentCreateDialogProps {
   open: boolean;
-  skillOptions: TagOption[];
+  toolPackages: SkillPackageSummary[];
   modelOptions: Array<{ value: string; label: string }>;
   onClose: () => void;
   onSubmit: (agentName: string, agent: AgentDefData) => Promise<void> | void;
@@ -37,12 +37,13 @@ const initialPrompts = {
 
 export default function AgentCreateDialog({
   open,
-  skillOptions,
+  toolPackages,
   modelOptions,
   onClose,
   onSubmit,
   onDirtyChange,
 }: AgentCreateDialogProps) {
+  const [kind,setKind] = useState<AgentRoleKind>("agent");
   const [agentName, setAgentName] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [description, setDescription] = useState("");
@@ -60,6 +61,7 @@ export default function AgentCreateDialog({
     if (!open) {
       return;
     }
+    setKind("agent");
     setAgentName("");
     setDisplayName("");
     setDescription("");
@@ -74,7 +76,7 @@ export default function AgentCreateDialog({
 
   const isDirty = useMemo(() => {
     return Boolean(
-      agentName.trim() ||
+      kind !== "agent" || agentName.trim() ||
       displayName.trim() ||
       description.trim() ||
       !enabled ||
@@ -84,7 +86,7 @@ export default function AgentCreateDialog({
       userPromptTemplate !== initialPrompts.user_prompt_template,
     );
   }, [
-    agentName,
+    kind, agentName,
     description,
     displayName,
     enabled,
@@ -123,6 +125,9 @@ export default function AgentCreateDialog({
       }}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="新建 Runtime 智能体"
         className="max-h-[92vh] w-full max-w-[1320px] overflow-auto rounded border border-zinc-200 bg-zinc-50 p-3 shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:border-zinc-800 dark:bg-zinc-950 dark:shadow-black/30 lg:p-3"
         onClick={(event) => event.stopPropagation()}
       >
@@ -151,7 +156,7 @@ export default function AgentCreateDialog({
                 <ActionButton onClick={requestClose} disabled={submitting}>
                   关闭
                 </ActionButton>
-                <InfoTooltip content="配置基础信息、技能范围与提示词。" />
+                <InfoTooltip content="配置基础信息、工具包范围与提示词。" />
               </>
             }
             right={
@@ -171,7 +176,9 @@ export default function AgentCreateDialog({
                     llm: {
                       provider: llmProvider.trim(),
                     },
-                    skill_packages: collectSkillSelections(skillPackages),
+                    kind,
+                    ...(kind === "executor" ? {executor:"route_knowledge",flow_only:true} : {}),
+                    tool_packages: kind === "executor" ? [] : collectSkillSelections(skillPackages),
                     prompts: {
                       ...initialPrompts,
                       static_instructions: staticInstructions,
@@ -211,6 +218,7 @@ export default function AgentCreateDialog({
                 description="设置标识、显示名称、启用状态和模型覆盖。"
               >
                 <div className="grid gap-3 md:grid-cols-2">
+                  <Field label="角色类型"><SelectInput value={kind} onChange={(event) => setKind(event.target.value === "executor" ? "executor" : "agent")}><option value="agent">通用智能体</option><option value="executor">专用执行器</option></SelectInput></Field>
                   <Field label="智能体标识 (key)">
                     <TextInput
                       value={agentName}
@@ -225,8 +233,8 @@ export default function AgentCreateDialog({
                       placeholder="例如：矢量助手"
                     />
                   </Field>
-                  <Field label="描述">
-                    <TextInput
+                  <Field label="职责摘要">
+                    <TextAreaInput
                       value={description}
                       onChange={(event) => setDescription(event.target.value)}
                         placeholder="一句话描述当前智能体职责"
@@ -256,31 +264,14 @@ export default function AgentCreateDialog({
                 </div>
               </EditorSection>
 
-              <EditorSection
-                title="技能包"
-                description="为当前智能体配置专属技能包；全局技能包在方案层统一维护。"
-              >
-                <div className="space-y-3">
-                  <div>
-                    <div className="mb-1 flex items-center gap-1 text-xs text-zinc-700 dark:text-zinc-200">
-                      <span>智能体技能包</span>
-                      <InfoTooltip content="只对当前智能体生效的技能包列表。" />
-                    </div>
-                    <TagSelector
-                      options={skillOptions}
-                      value={skillPackages}
-                      onChange={setSkillPackages}
-                    />
-                  </div>
-                </div>
-              </EditorSection>
+              {kind === "executor" ? <EditorSection title="专用执行器"><p className="text-xs">路线知识抽取：仅在流程中使用，不参与自由委派。规则由流程步骤提供。</p></EditorSection> : <EditorSection title="工具包" description="选择角色可用的工具；系统基础包自动拥有。"><ToolPackageSelector packages={toolPackages} value={skillPackages} onChange={setSkillPackages}/></EditorSection>}
 
               <EditorSection
-                title="提示词与模板"
+                title="职责说明与高级设置"
                 description="静态提示词决定角色行为，输入模板定义用户请求的注入方式。"
               >
                 <div className="space-y-3">
-                  <Field label="系统提示词">
+                  <Field label="职责说明">
                     <TextAreaInput
                       className="min-h-[140px] text-xs"
                       value={staticInstructions}

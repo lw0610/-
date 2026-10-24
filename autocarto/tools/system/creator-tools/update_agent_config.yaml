@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: update_agent_config
+  display_name: "更新智能体方案"
+  keywords: ["智能体方案", "更新智能体方案", "方案配置", "工具管理", "技能创建"]
   domain: creator-tools
   runtime: internal
 spec:
@@ -9,9 +11,11 @@ spec:
   parameters:
   - name: config_name
     type: string
+    description: "待更新的智能体方案编号"
     required: true
   - name: config_data
     type: object
+    description: "更新后的完整方案配置对象"
     required: true
 execution:
   backend_tool: update_agent_config

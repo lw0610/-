@@ -274,17 +274,11 @@ func TestSettingsMutationServiceImportSkillHandlesExtensionManifest(t *testing.T
 	writePackageTestFile(t, filepath.Join(sourcePackageDir, "SKILL.md"), `---
 name: demo-extension-package
 description: demo package
-kind: workflow
+kind: category
+tools: [fixture_tool]
 ---
 
 # demo
-`)
-	writePackageTestFile(t, filepath.Join(sourcePackageDir, "workflow.yaml"), `apiVersion: workflow/v1
-kind: serial_workflow
-metadata:
-  name: demo-extension-package
-spec:
-  steps: []
 `)
 	manifestPath := filepath.Join(t.TempDir(), "extension.yaml")
 	writePackageTestFile(t, manifestPath, "apiVersion: extension/v1\nkind: skill-package\nmetadata:\n  name: demo-extension\nspec:\n  source_dir: "+sourcePackageDir+"\n  activation:\n    scope: global\n    owner_config: \"\"\n    enabled_by_default: false\n    rebuild_policy: auto\n")
@@ -328,17 +322,11 @@ func TestSettingsMutationServiceImportSkillHandlesExclusiveExtensionManifest(t *
 	writePackageTestFile(t, filepath.Join(sourcePackageDir, "SKILL.md"), `---
 name: exclusive-package
 description: exclusive package
-kind: workflow
+kind: category
+tools: [fixture_tool]
 ---
 
 # exclusive
-`)
-	writePackageTestFile(t, filepath.Join(sourcePackageDir, "workflow.yaml"), `apiVersion: workflow/v1
-kind: serial_workflow
-metadata:
-  name: exclusive-package
-spec:
-  steps: []
 `)
 	manifestPath := filepath.Join(t.TempDir(), "extension.yaml")
 	writePackageTestFile(t, manifestPath, "apiVersion: extension/v1\nkind: skill-package\nmetadata:\n  name: exclusive-extension\nspec:\n  source_dir: "+sourcePackageDir+"\n  activation:\n    scope: exclusive\n    owner_config: default\n    enabled_by_default: false\n    rebuild_policy: auto\n")
@@ -517,17 +505,11 @@ func TestSettingsMutationServiceImportSkillRegistersExtensionMetadataAndRequests
 	writePackageTestFile(t, filepath.Join(sourcePackageDir, "SKILL.md"), `---
 name: demo-extension-package
 description: demo package
-kind: workflow
+kind: category
+tools: [fixture_tool]
 ---
 
 # demo
-`)
-	writePackageTestFile(t, filepath.Join(sourcePackageDir, "workflow.yaml"), `apiVersion: workflow/v1
-kind: serial_workflow
-metadata:
-  name: demo-extension-package
-spec:
-  steps: []
 `)
 	manifestPath := filepath.Join(t.TempDir(), "extension.yaml")
 	writePackageTestFile(t, manifestPath, "apiVersion: extension/v1\nkind: skill-package\nmetadata:\n  name: demo-extension\n  display_name: Demo Extension\n  version: 1.0.0\nspec:\n  source_dir: "+sourcePackageDir+"\n  activation:\n    scope: global\n    owner_config: \"\"\n    enabled_by_default: false\n    rebuild_policy: auto\n")
@@ -673,7 +655,8 @@ func TestSettingsMutationServiceImportSkillWithScopeWritesExclusiveTarget(t *tes
 	writePackageTestFile(t, sourcePath, `---
 name: imported-exclusive-package
 description: imported package
-kind: workflow
+kind: category
+tools: [fixture_tool]
 ---
 
 # imported
@@ -708,7 +691,8 @@ func TestSettingsMutationServiceImportSkillDefaultsToGlobalTargetWithExclusiveOv
 	writePackageTestFile(t, sourcePath, `---
 name: imported-global-package
 description: imported package
-kind: workflow
+kind: category
+tools: [fixture_tool]
 ---
 
 # imported

@@ -8,7 +8,7 @@ import EmptyStatePanel from "@/components/settings/EmptyStatePanel";
 import InfoTooltip from "@/components/settings/InfoTooltip";
 import ReferencesBadge from "@/components/settings/ReferencesBadge";
 import StatusBadge from "@/components/settings/StatusBadge";
-import { SkillPackageDetail } from "@/lib/api";
+import { SkillPackageDetail, ToolCatalogItem } from "@/lib/api";
 import { normalizeKindLabel, normalizeScopeLabel } from "./skill-package-utils";
 
 function getDisplayedToolCount(detail: { tool_ref_count?: number; tool_count?: number }) {
@@ -18,11 +18,12 @@ function getDisplayedToolCount(detail: { tool_ref_count?: number; tool_count?: n
   return typeof detail.tool_count === "number" ? detail.tool_count : 0;
 }
 
-type DetailTab = "overview" | "markdown" | "tools" | "references" | "config";
+type DetailTab = "overview" | "markdown" | "tools" | "references" | "materials" | "config";
 
 interface ToolCenterDetailDrawerProps {
   open: boolean;
   detail: SkillPackageDetail | null;
+  catalog?: ToolCatalogItem[];
   loading: boolean;
   toggling: boolean;
   onClose: () => void;
@@ -48,6 +49,7 @@ function toolDescriptionOf(tool: Record<string, unknown>) {
 export default function ToolCenterDetailDrawer({
   open,
   detail,
+  catalog = [],
   loading,
   toggling,
   onClose,
@@ -87,14 +89,14 @@ export default function ToolCenterDetailDrawer({
               detail ? (
                 <ActionButton
                   variant={detail.enabled === false ? "primary" : "danger"}
-                  disabled={toggling || loading}
+                  disabled={toggling || loading || detail.system}
                   onClick={onToggle}
                 >
                   {toggling
                     ? "处理中..."
                     : detail.enabled === false
-                      ? "启用技能包"
-                      : "停用技能包"}
+                      ? "启用工具包"
+                      : "停用工具包"}
                 </ActionButton>
               ) : null
             }
@@ -102,7 +104,7 @@ export default function ToolCenterDetailDrawer({
 
           {!detail ? (
             <EmptyStatePanel
-              title={loading ? "加载中..." : "技能包不存在"}
+              title={loading ? "加载中..." : "工具包不存在"}
               description={loading ? "正在获取详情" : "请返回重试"}
             />
           ) : (
@@ -112,10 +114,10 @@ export default function ToolCenterDetailDrawer({
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
                       <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                        {detail.name || detail.package_id}
+                        {detail.display_name || detail.name || detail.package_id}
                       </div>
                       <StatusBadge size="xs">{normalizeKindLabel(String(detail.kind || ""))}</StatusBadge>
-                      <InfoTooltip content="统一展示技能包 front matter、Markdown 主体、工具定义、引用关系和启停状态。" />
+                      <InfoTooltip content="查看工具清单、通用使用说明与参考资料。" />
                     </div>
                     <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                       {detail.package_id} · 工具 {getDisplayedToolCount(detail)} · 引用 {referenceItems.length}
@@ -140,9 +142,10 @@ export default function ToolCenterDetailDrawer({
               <div className="flex flex-wrap gap-2">
                 {([
                   ["overview", "概览"],
-                  ["markdown", "Markdown"],
-                  ["tools", "工具"],
-                  ["references", "引用"],
+                  ["markdown", "使用说明"],
+                  ["tools", "工具清单"],
+                  ["materials", "参考资料"],
+                  ["references", "引用情况"],
                   ["config", "配置"],
                 ] as Array<[DetailTab, string]>).map(([key, label]) => (
                   <button
@@ -165,7 +168,7 @@ export default function ToolCenterDetailDrawer({
                   <div className="rounded border border-zinc-200/60 bg-zinc-50 px-4 py-3 text-sm dark:border-zinc-800 dark:bg-zinc-950/60">
                     <div className="mb-2 font-semibold text-zinc-900 dark:text-zinc-100">基础信息</div>
                     <div className="space-y-1.5 text-zinc-600 dark:text-zinc-300">
-                      <div><span className="text-zinc-400">名称：</span>{detail.name || detail.package_id}</div>
+                      <div><span className="text-zinc-400">名称：</span>{detail.display_name || detail.name || detail.package_id}</div>
                       <div><span className="text-zinc-400">类型：</span>{normalizeKindLabel(String(detail.kind || ""))}</div>
                       <div><span className="text-zinc-400">范围：</span>{normalizeScopeLabel(String(detail.scope || ""))}</div>
                       <div><span className="text-zinc-400">归属方案：</span>{detail.owner_config || "全局"}</div>
@@ -189,23 +192,25 @@ export default function ToolCenterDetailDrawer({
                   ) : detail.markdown_body ? (
                     <MarkdownContent content={detail.markdown_body} />
                   ) : (
-                    <EmptyStatePanel compact eyebrow="Markdown" title="暂无正文" description="当前技能包没有可展示的 Markdown 正文。" />
+                    <EmptyStatePanel compact eyebrow="Markdown" title="暂无正文" description="当前工具包没有可展示的 Markdown 正文。" />
                   )}
                 </div>
               ) : null}
 
               {activeTab === "tools" ? (
                 <div className="rounded border border-zinc-200/60 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950/60">
-                  {detail.tools.length === 0 ? (
-                    <EmptyStatePanel compact eyebrow="工具列表" title="当前无工具" description="该技能包当前没有内嵌工具定义。" />
+                  {(detail.tool_refs?.length || detail.tools.length) === 0 ? (
+                    <EmptyStatePanel compact eyebrow="工具列表" title="当前无工具" description="该工具包当前没有内嵌工具定义。" />
                   ) : (
                     <div className="grid gap-2 sm:grid-cols-2">
-                      {detail.tools.map((tool, index) => {
-                        const rawTool = tool as Record<string, unknown>;
+                      {(detail.tool_refs?.length ? detail.tool_refs : detail.tools.map((tool) => toolNameOf(tool as Record<string,unknown>))).map((name, index) => {
+                        const item = catalog.find((tool) => tool.name === name);
+                        const rawTool = {name,description:item?.description} as Record<string,unknown>;
                         return (
                           <div key={`${toolNameOf(rawTool)}-${index}`} className="flex flex-col rounded border border-zinc-200 bg-white px-3 py-2 text-xs dark:border-zinc-800 dark:bg-zinc-900">
                             <div className="font-medium text-zinc-900 dark:text-zinc-100 truncate" title={toolNameOf(rawTool)}>
-                              {toolNameOf(rawTool) || `tool-${index + 1}`}
+                              {item?.display_name || toolNameOf(rawTool) || `tool-${index + 1}`}
+                              <span className="ml-2 text-zinc-400">{toolNameOf(rawTool)}</span>
                             </div>
                             {toolDescriptionOf(rawTool) ? (
                               <div className="mt-1 line-clamp-2 text-zinc-500 dark:text-zinc-400" title={toolDescriptionOf(rawTool)}>
@@ -219,6 +224,8 @@ export default function ToolCenterDetailDrawer({
                   )}
                 </div>
               ) : null}
+
+              {activeTab === "materials" && <div className="rounded border border-zinc-200 p-3 text-xs dark:border-zinc-700"><ul className="space-y-2">{[...new Set(detail.markdown_body?.match(/references\/[^\s，、：;）)]+\.(?:md|txt|csv|json|yaml)/g) || [])].map((path) => <li key={path}>{detail.package_id}/{path}</li>)}</ul>{!detail.markdown_body?.includes("references/") && <p>此工具包未列出独立参考资料，通用方法见使用说明。</p>}</div>}
 
               {activeTab === "references" ? (
                 <div className="rounded border border-zinc-200/60 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950/60">

@@ -2,30 +2,25 @@ import unittest
 from unittest.mock import MagicMock, patch
 import sys
 
-# Pre-mock PyQt5 / qgis modules before ANY other imports happen
-mock_pyqt_core = MagicMock()
-mock_pyqt_core.Qt.RightDockWidgetArea = 2
-sys.modules["qgis"] = MagicMock()
-sys.modules["qgis.PyQt"] = MagicMock()
-sys.modules["qgis.PyQt.QtCore"] = mock_pyqt_core
-sys.modules["qgis.PyQt.QtWidgets"] = MagicMock()
-sys.modules["qgis.PyQt.QtGui"] = MagicMock()
-sys.modules["qgis.core"] = MagicMock()
-sys.modules["qgis.gui"] = MagicMock()
-
-# Now we can import the plugin
-from autocarto.autocarto_plugin import AutoCartoPlugin
-
-
 class PluginUIMigrationTestCase(unittest.TestCase):
-    mock_iface = MagicMock()
-    plugin = AutoCartoPlugin(mock_iface)
-    mock_create_icon = MagicMock()
-    patcher = MagicMock()
-
     def setUp(self):
+        # Scope Qt stand-ins to this test. Collection must retain real QGIS for
+        # the rendering and geometry regression modules collected afterwards.
+        core = MagicMock()
+        core.Qt.RightDockWidgetArea = 2
+        modules = {name: MagicMock() for name in (
+            "qgis", "qgis.PyQt", "qgis.PyQt.QtWidgets", "qgis.PyQt.QtGui",
+            "qgis.core", "qgis.gui",
+        )}
+        modules["qgis.PyQt.QtCore"] = core
+        module_patch = patch.dict(sys.modules, modules)
+        module_patch.start()
+        self.addCleanup(module_patch.stop)
+        sys.modules.pop("autocarto.autocarto_plugin", None)
+        from autocarto.autocarto_plugin import AutoCartoPlugin
+        self.plugin_type = AutoCartoPlugin
         self.mock_iface = MagicMock()
-        self.plugin = AutoCartoPlugin(self.mock_iface)
+        self.plugin = self.plugin_type(self.mock_iface)
 
         # Mock what we need for testing
         self.plugin._ws_client = MagicMock()
@@ -107,7 +102,7 @@ class PluginUIMigrationTestCase(unittest.TestCase):
             patch("autocarto.utils.logger.init_log_dir"),
             patch("autocarto.utils.logger.configure_log_policy"),
         ):
-            plugin = AutoCartoPlugin(self.mock_iface)
+            plugin = self.plugin_type(self.mock_iface)
 
             with patch.object(plugin, "_create_status_icon"):
                 plugin.initGui()

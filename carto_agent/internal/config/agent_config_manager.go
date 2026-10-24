@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -18,6 +19,7 @@ import (
 
 const (
 	AgentConfigVersionV10 = "1.0"
+	AgentConfigVersionV20 = "2.0"
 
 	PlanToolStrategyReadonlyOnly = "readonly_only"
 	PlanToolStrategyReadonlyPlus = "readonly_plus"
@@ -45,20 +47,30 @@ type AgentConfigMeta struct {
 
 // AgentConfigFile YAML 配置文件结构。
 type AgentConfigFile struct {
-	Version string          `yaml:"version"`
-	Meta    AgentConfigMeta `yaml:"meta"`
-	Runtime *RuntimeConfig  `yaml:"runtime,omitempty" json:"runtime,omitempty"`
-	Plan    *PlanConfig     `yaml:"plan,omitempty" json:"plan,omitempty"`
+	Version           string             `yaml:"version" json:"version"`
+	Meta              AgentConfigMeta    `yaml:"meta"`
+	Runtime           *RuntimeConfig     `yaml:"runtime,omitempty" json:"runtime,omitempty"`
+	Plan              *PlanConfig        `yaml:"plan,omitempty" json:"plan,omitempty"`
+	Flows             *FlowConfig        `yaml:"flows,omitempty" json:"flows,omitempty"`
+	MigrationWarnings []MigrationWarning `yaml:"-" json:"migration_warnings,omitempty"`
+}
+
+type FlowConfig struct {
+	// nil FlowConfig means all available flows; a present empty list disables all.
+	Enabled []string `yaml:"enabled" json:"enabled"`
 }
 
 // RuntimeConfig 统一运行配置。
 type RuntimeConfig struct {
-	Global GlobalAgentConfig       `yaml:"global" json:"global"`
-	Agents map[string]AgentDefData `yaml:"agents" json:"agents"`
+	SharedToolPackages       []string                `yaml:"shared_tool_packages,omitempty" json:"shared_tool_packages"`
+	LegacyUnresolvedPackages []string                `yaml:"legacy_unresolved_packages,omitempty" json:"legacy_unresolved_packages,omitempty"`
+	Global                   GlobalAgentConfig       `yaml:"global,omitempty" json:"global,omitempty"`
+	Agents                   map[string]AgentDefData `yaml:"agents" json:"agents"`
 }
 
 // PlanConfig Plan 模式配置。
 type PlanConfig struct {
+	Enabled       *bool                       `yaml:"enabled,omitempty" json:"enabled,omitempty"`
 	MaxIterations int                         `yaml:"max_iterations" json:"max_iterations"`
 	Global        GlobalAgentConfig           `yaml:"global" json:"global"`
 	Agents        map[string]PlanAgentDefData `yaml:"agents" json:"agents"`
@@ -67,6 +79,7 @@ type PlanConfig struct {
 // UnmarshalYAML 兼容历史 plan.behavior.max_iterations 写法。
 func (p *PlanConfig) UnmarshalYAML(value *yaml.Node) error {
 	type rawPlanConfig struct {
+		Enabled       *bool                       `yaml:"enabled,omitempty"`
 		MaxIterations int                         `yaml:"max_iterations"`
 		Global        GlobalAgentConfig           `yaml:"global"`
 		Agents        map[string]PlanAgentDefData `yaml:"agents"`
@@ -86,6 +99,7 @@ func (p *PlanConfig) UnmarshalYAML(value *yaml.Node) error {
 	}
 
 	*p = PlanConfig{
+		Enabled:       raw.Enabled,
 		MaxIterations: maxIterations,
 		Global:        raw.Global,
 		Agents:        raw.Agents,
@@ -95,21 +109,26 @@ func (p *PlanConfig) UnmarshalYAML(value *yaml.Node) error {
 
 // GlobalAgentConfig 全局智能体配置。
 type GlobalAgentConfig struct {
-	SkillPackages []string `yaml:"skill_packages,omitempty" json:"skill_packages"`
+	ToolPackages             []string `yaml:"tool_packages,omitempty" json:"tool_packages,omitempty"`
+	LegacyUnresolvedPackages []string `yaml:"legacy_unresolved_packages,omitempty" json:"legacy_unresolved_packages,omitempty"`
+	SkillPackages            []string `yaml:"skill_packages,omitempty" json:"skill_packages"`
 }
 
 func (c *GlobalAgentConfig) UnmarshalYAML(value *yaml.Node) error {
 	type rawGlobalAgentConfig struct {
-		SkillPackages        []string `yaml:"skill_packages,omitempty"`
-		CommonSkills         []string `yaml:"common_skills,omitempty"`
-		CommonCategorySkills []string `yaml:"common_category_skills,omitempty"`
-		CommonWorkflowSkills []string `yaml:"common_workflow_skills,omitempty"`
+		ToolPackages             []string `yaml:"tool_packages,omitempty"`
+		LegacyUnresolvedPackages []string `yaml:"legacy_unresolved_packages,omitempty"`
+		SkillPackages            []string `yaml:"skill_packages,omitempty"`
+		CommonSkills             []string `yaml:"common_skills,omitempty"`
+		CommonCategorySkills     []string `yaml:"common_category_skills,omitempty"`
+		CommonWorkflowSkills     []string `yaml:"common_workflow_skills,omitempty"`
 	}
 	var raw rawGlobalAgentConfig
 	if err := value.Decode(&raw); err != nil {
 		return err
 	}
 	*c = GlobalAgentConfig{
+		ToolPackages: raw.ToolPackages, LegacyUnresolvedPackages: raw.LegacyUnresolvedPackages,
 		SkillPackages: mergeSkillPackageLists(
 			raw.SkillPackages,
 			raw.CommonSkills,
@@ -122,45 +141,73 @@ func (c *GlobalAgentConfig) UnmarshalYAML(value *yaml.Node) error {
 
 // AgentDefData 单个 Runtime 子智能体定义。
 type AgentDefData struct {
-	DisplayName     string            `yaml:"display_name" json:"display_name"`
-	Description     string            `yaml:"description" json:"description"`
-	IsMain          bool              `yaml:"is_main,omitempty" json:"is_main"`
-	Deletable       bool              `yaml:"deletable,omitempty" json:"deletable"`
-	Enabled         bool              `yaml:"enabled" json:"enabled"`
-	LLM             AgentLLMConfig    `yaml:"llm,omitempty" json:"llm,omitempty"`
-	WorkflowPackage string            `yaml:"workflow_package,omitempty" json:"workflow_package,omitempty"`
-	SkillPackages   []string          `yaml:"skill_packages,omitempty" json:"skill_packages,omitempty"`
-	Prompts         map[string]string `yaml:"prompts" json:"prompts"`
+	Kind                     string            `yaml:"kind" json:"kind"`
+	Executor                 string            `yaml:"executor,omitempty" json:"executor,omitempty"`
+	FlowOnly                 bool              `yaml:"flow_only,omitempty" json:"flow_only,omitempty"`
+	ToolPackages             []string          `yaml:"tool_packages,omitempty" json:"tool_packages"`
+	LegacyUnresolvedPackages []string          `yaml:"legacy_unresolved_packages,omitempty" json:"legacy_unresolved_packages,omitempty"`
+	DisplayName              string            `yaml:"display_name" json:"display_name"`
+	Description              string            `yaml:"description" json:"description"`
+	IsMain                   bool              `yaml:"is_main,omitempty" json:"is_main"`
+	Deletable                bool              `yaml:"deletable,omitempty" json:"deletable"`
+	Enabled                  bool              `yaml:"enabled" json:"enabled"`
+	LLM                      AgentLLMConfig    `yaml:"llm,omitempty" json:"llm,omitempty"`
+	legacyWorkflowPackage    string            // v1 input only; never published or executed.
+	SkillPackages            []string          `yaml:"skill_packages,omitempty" json:"skill_packages,omitempty"`
+	Prompts                  map[string]string `yaml:"prompts" json:"prompts"`
 }
 
 func (a *AgentDefData) UnmarshalYAML(value *yaml.Node) error {
 	type rawAgentDefData struct {
-		DisplayName     string            `yaml:"display_name"`
-		Description     string            `yaml:"description"`
-		IsMain          bool              `yaml:"is_main,omitempty"`
-		Deletable       bool              `yaml:"deletable,omitempty"`
-		Enabled         bool              `yaml:"enabled"`
-		LLM             AgentLLMConfig    `yaml:"llm,omitempty"`
-		WorkflowPackage string            `yaml:"workflow_package,omitempty"`
-		SkillPackages   []string          `yaml:"skill_packages,omitempty"`
-		SkillPolicy     SkillPolicyData   `yaml:"skill_policy,omitempty"`
-		Prompts         map[string]string `yaml:"prompts"`
+		Kind                     string            `yaml:"kind"`
+		Executor                 string            `yaml:"executor,omitempty"`
+		FlowOnly                 bool              `yaml:"flow_only,omitempty"`
+		ToolPackages             []string          `yaml:"tool_packages,omitempty"`
+		LegacyUnresolvedPackages []string          `yaml:"legacy_unresolved_packages,omitempty"`
+		DisplayName              string            `yaml:"display_name"`
+		Description              string            `yaml:"description"`
+		IsMain                   bool              `yaml:"is_main,omitempty"`
+		Deletable                bool              `yaml:"deletable,omitempty"`
+		Enabled                  bool              `yaml:"enabled"`
+		LLM                      AgentLLMConfig    `yaml:"llm,omitempty"`
+		WorkflowPackage          string            `yaml:"workflow_package,omitempty"`
+		SkillPackages            []string          `yaml:"skill_packages,omitempty"`
+		SkillPolicy              SkillPolicyData   `yaml:"skill_policy,omitempty"`
+		Prompts                  map[string]string `yaml:"prompts"`
 	}
 	var raw rawAgentDefData
 	if err := value.Decode(&raw); err != nil {
 		return err
 	}
 	*a = AgentDefData{
-		DisplayName:     raw.DisplayName,
-		Description:     raw.Description,
-		IsMain:          raw.IsMain,
-		Deletable:       raw.Deletable,
-		Enabled:         raw.Enabled,
-		LLM:             raw.LLM,
-		WorkflowPackage: strings.TrimSpace(raw.WorkflowPackage),
-		SkillPackages:   mergeSkillPackageLists(raw.SkillPackages, skillPackagesFromPolicy(raw.SkillPolicy)),
-		Prompts:         raw.Prompts,
+		Kind: raw.Kind, Executor: raw.Executor, FlowOnly: raw.FlowOnly, ToolPackages: raw.ToolPackages, LegacyUnresolvedPackages: raw.LegacyUnresolvedPackages,
+		DisplayName:           raw.DisplayName,
+		Description:           raw.Description,
+		IsMain:                raw.IsMain,
+		Deletable:             raw.Deletable,
+		Enabled:               raw.Enabled,
+		LLM:                   raw.LLM,
+		legacyWorkflowPackage: strings.TrimSpace(raw.WorkflowPackage),
+		SkillPackages:         mergeSkillPackageLists(raw.SkillPackages, skillPackagesFromPolicy(raw.SkillPolicy)),
+		Prompts:               raw.Prompts,
 	}
+	return nil
+}
+
+func (a *AgentDefData) UnmarshalJSON(data []byte) error {
+	type wire AgentDefData
+	var parsed wire
+	if err := json.Unmarshal(data, &parsed); err != nil {
+		return err
+	}
+	var legacy struct {
+		WorkflowPackage string `json:"workflow_package"`
+	}
+	if err := json.Unmarshal(data, &legacy); err != nil {
+		return err
+	}
+	*a = AgentDefData(parsed)
+	a.legacyWorkflowPackage = strings.TrimSpace(legacy.WorkflowPackage)
 	return nil
 }
 
@@ -171,29 +218,36 @@ type AgentLLMConfig struct {
 
 // PlanAgentDefData Plan 子智能体定义。
 type PlanAgentDefData struct {
-	DisplayName   string            `yaml:"display_name" json:"display_name"`
-	IsMain        bool              `yaml:"is_main,omitempty" json:"is_main"`
-	Mode          string            `yaml:"mode,omitempty" json:"mode,omitempty"`
-	LLM           AgentLLMConfig    `yaml:"llm,omitempty" json:"llm,omitempty"`
-	SkillPackages []string          `yaml:"skill_packages,omitempty" json:"skill_packages,omitempty"`
-	Prompts       map[string]string `yaml:"prompts" json:"prompts"`
+	Kind                     string            `yaml:"kind" json:"kind"`
+	ToolPackages             []string          `yaml:"tool_packages,omitempty" json:"tool_packages"`
+	LegacyUnresolvedPackages []string          `yaml:"legacy_unresolved_packages,omitempty" json:"legacy_unresolved_packages,omitempty"`
+	DisplayName              string            `yaml:"display_name" json:"display_name"`
+	IsMain                   bool              `yaml:"is_main,omitempty" json:"is_main"`
+	Mode                     string            `yaml:"mode,omitempty" json:"mode,omitempty"`
+	LLM                      AgentLLMConfig    `yaml:"llm,omitempty" json:"llm,omitempty"`
+	SkillPackages            []string          `yaml:"skill_packages,omitempty" json:"skill_packages,omitempty"`
+	Prompts                  map[string]string `yaml:"prompts" json:"prompts"`
 }
 
 func (p *PlanAgentDefData) UnmarshalYAML(value *yaml.Node) error {
 	type rawPlanAgentDefData struct {
-		DisplayName   string            `yaml:"display_name"`
-		IsMain        bool              `yaml:"is_main,omitempty"`
-		Mode          string            `yaml:"mode,omitempty"`
-		LLM           AgentLLMConfig    `yaml:"llm,omitempty"`
-		SkillPackages []string          `yaml:"skill_packages,omitempty"`
-		SkillPolicy   SkillPolicyData   `yaml:"skill_policy,omitempty"`
-		Prompts       map[string]string `yaml:"prompts"`
+		Kind                     string            `yaml:"kind"`
+		ToolPackages             []string          `yaml:"tool_packages,omitempty"`
+		LegacyUnresolvedPackages []string          `yaml:"legacy_unresolved_packages,omitempty"`
+		DisplayName              string            `yaml:"display_name"`
+		IsMain                   bool              `yaml:"is_main,omitempty"`
+		Mode                     string            `yaml:"mode,omitempty"`
+		LLM                      AgentLLMConfig    `yaml:"llm,omitempty"`
+		SkillPackages            []string          `yaml:"skill_packages,omitempty"`
+		SkillPolicy              SkillPolicyData   `yaml:"skill_policy,omitempty"`
+		Prompts                  map[string]string `yaml:"prompts"`
 	}
 	var raw rawPlanAgentDefData
 	if err := value.Decode(&raw); err != nil {
 		return err
 	}
 	*p = PlanAgentDefData{
+		Kind: raw.Kind, ToolPackages: raw.ToolPackages, LegacyUnresolvedPackages: raw.LegacyUnresolvedPackages,
 		DisplayName:   raw.DisplayName,
 		IsMain:        raw.IsMain,
 		Mode:          strings.TrimSpace(raw.Mode),
@@ -247,9 +301,12 @@ type SkillPolicyData struct {
 
 // AgentConfigData 智能体配置数据（用于 JSON 传输）。
 type AgentConfigData struct {
-	Meta    AgentConfigMeta `yaml:"meta" json:"meta"`
-	Runtime *RuntimeConfig  `yaml:"runtime,omitempty" json:"runtime,omitempty"`
-	Plan    *PlanConfig     `yaml:"plan,omitempty" json:"plan,omitempty"`
+	Version           string             `yaml:"version" json:"version"`
+	Flows             *FlowConfig        `yaml:"flows,omitempty" json:"flows,omitempty"`
+	MigrationWarnings []MigrationWarning `yaml:"-" json:"migration_warnings,omitempty"`
+	Meta              AgentConfigMeta    `yaml:"meta" json:"meta"`
+	Runtime           *RuntimeConfig     `yaml:"runtime,omitempty" json:"runtime,omitempty"`
+	Plan              *PlanConfig        `yaml:"plan,omitempty" json:"plan,omitempty"`
 }
 
 // SkillReference Skill 引用信息。
@@ -264,6 +321,7 @@ type SkillReference struct {
 type AgentConfigManager struct {
 	configDir    string
 	configs      map[string]*AgentConfigFile
+	legacyPaths  map[string]string
 	activeConfig string
 	mu           sync.RWMutex
 }
@@ -291,9 +349,9 @@ func NewAgentConfigManager(configDir string) *AgentConfigManager {
 	acm := &AgentConfigManager{
 		configDir:    configDir,
 		configs:      make(map[string]*AgentConfigFile),
+		legacyPaths:  make(map[string]string),
 		activeConfig: "",
 	}
-	acm.migrateLegacyFlatConfigFiles()
 	acm.loadAllConfigs()
 	acm.loadActiveConfigState()
 	acm.ensureBootstrapConfig()
@@ -473,47 +531,6 @@ func (acm *AgentConfigManager) ListExclusiveSkillDirs() map[string]string {
 	return out
 }
 
-func (acm *AgentConfigManager) migrateLegacyFlatConfigFiles() {
-	entries, err := os.ReadDir(acm.configDir)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return
-		}
-		logger.Warn("AgentConfigManager: 读取配置目录失败: %v", err)
-		return
-	}
-
-	for _, entry := range entries {
-		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".yaml") {
-			continue
-		}
-		configName := strings.TrimSpace(strings.TrimSuffix(entry.Name(), ".yaml"))
-		if configName == "" {
-			continue
-		}
-		legacyPath := filepath.Join(acm.configDir, entry.Name())
-		targetPath := acm.configFilePath(configName)
-		if targetPath == "" {
-			continue
-		}
-		if _, err := os.Stat(targetPath); err == nil {
-			continue
-		} else if !os.IsNotExist(err) {
-			logger.Warn("AgentConfigManager: 检查迁移目标失败 %s: %v", targetPath, err)
-			continue
-		}
-		if err := os.MkdirAll(filepath.Dir(targetPath), 0o755); err != nil {
-			logger.Warn("AgentConfigManager: 创建迁移目录失败 %s: %v", targetPath, err)
-			continue
-		}
-		if err := os.Rename(legacyPath, targetPath); err != nil {
-			logger.Warn("AgentConfigManager: 迁移旧配置失败 %s -> %s: %v", legacyPath, targetPath, err)
-			continue
-		}
-		logger.Info("AgentConfigManager: 已迁移旧配置 %s -> %s", legacyPath, targetPath)
-	}
-}
-
 func (acm *AgentConfigManager) loadActiveConfigState() {
 	raw, err := os.ReadFile(acm.activeConfigStatePath())
 	if err != nil {
@@ -548,127 +565,17 @@ func builtInDefaultAgentConfig() *AgentConfigFile {
 	return normalizeAgentConfigFile(&embedded)
 }
 
-var (
-	embeddedSkillPackagesOnce sync.Once
-	embeddedSkillPackagesSet  map[string]struct{}
-)
-
-func builtInEmbeddedSkillPackages() map[string]struct{} {
-	embeddedSkillPackagesOnce.Do(func() {
-		embeddedSkillPackagesSet = make(map[string]struct{})
-		for _, root := range []string{ResolveSystemSkillsDir(), ResolvePluginUserSkillsDir()} {
-			entries, err := os.ReadDir(strings.TrimSpace(root))
-			if err != nil {
-				continue
-			}
-			for _, entry := range entries {
-				if !entry.IsDir() {
-					continue
-				}
-				packageID := strings.TrimSpace(entry.Name())
-				if packageID == "" {
-					continue
-				}
-				embeddedSkillPackagesSet[packageID] = struct{}{}
-			}
-		}
-	})
-	return embeddedSkillPackagesSet
-}
-
-func mergeUnknownSkillPackages(embeddedPackages, currentPackages []string) []string {
-	merged := append([]string{}, normalizeStringSlice(embeddedPackages)...)
-	known := make(map[string]struct{}, len(merged))
-	builtInPackages := builtInEmbeddedSkillPackages()
-	for _, packageID := range merged {
-		known[packageID] = struct{}{}
-	}
-	for _, packageID := range normalizeStringSlice(currentPackages) {
-		if _, exists := known[packageID]; exists {
-			continue
-		}
-		if _, builtIn := builtInPackages[packageID]; builtIn {
-			continue
-		}
-		merged = append(merged, packageID)
-		known[packageID] = struct{}{}
-	}
-	return merged
-}
-
-func mergeDefaultConfigPreservingUnknownPackages(embedded, current *AgentConfigFile) *AgentConfigFile {
-	if embedded == nil {
-		return normalizeAgentConfigFile(current)
-	}
-	merged, err := cloneConfigFile(embedded)
-	if err != nil {
-		return normalizeAgentConfigFile(embedded)
-	}
-	merged = normalizeAgentConfigFile(merged)
-	current = normalizeAgentConfigFile(current)
-	if current == nil {
-		return merged
-	}
-
-	if merged.Runtime != nil && current.Runtime != nil {
-		merged.Runtime.Global.SkillPackages = mergeUnknownSkillPackages(
-			merged.Runtime.Global.SkillPackages,
-			current.Runtime.Global.SkillPackages,
-		)
-		for agentName, embeddedAgent := range merged.Runtime.Agents {
-			currentAgent, ok := current.Runtime.Agents[agentName]
-			if !ok {
-				continue
-			}
-			embeddedAgent.SkillPackages = mergeUnknownSkillPackages(embeddedAgent.SkillPackages, currentAgent.SkillPackages)
-			merged.Runtime.Agents[agentName] = embeddedAgent
-		}
-	}
-
-	if merged.Plan != nil && current.Plan != nil {
-		if current.Plan.MaxIterations > 0 {
-			merged.Plan.MaxIterations = current.Plan.MaxIterations
-		}
-		merged.Plan.Global.SkillPackages = mergeUnknownSkillPackages(
-			merged.Plan.Global.SkillPackages,
-			current.Plan.Global.SkillPackages,
-		)
-		for agentName, embeddedAgent := range merged.Plan.Agents {
-			currentAgent, ok := current.Plan.Agents[agentName]
-			if !ok {
-				continue
-			}
-			embeddedAgent.SkillPackages = mergeUnknownSkillPackages(embeddedAgent.SkillPackages, currentAgent.SkillPackages)
-			merged.Plan.Agents[agentName] = embeddedAgent
-		}
-	}
-
-	return normalizeAgentConfigFile(merged)
-}
-
-func (acm *AgentConfigManager) refreshManagedDefaultConfigLocked() error {
-	current, exists := acm.configs["default"]
-	if !exists || current == nil {
-		return nil
-	}
-	merged := mergeDefaultConfigPreservingUnknownPackages(builtInDefaultAgentConfig(), current)
-	return acm.saveConfigFile("default", merged)
-}
-
 func (acm *AgentConfigManager) ensureBootstrapConfig() {
 	if len(acm.configs) > 0 {
-		if _, ok := acm.configs["default"]; ok {
-			if err := acm.refreshManagedDefaultConfigLocked(); err != nil {
-				logger.Warn("AgentConfigManager: 刷新受管默认配置失败: %v", err)
-			}
-		}
 		if _, ok := acm.configs[acm.activeConfig]; !ok {
 			names := make([]string, 0, len(acm.configs))
 			for name := range acm.configs {
 				names = append(names, name)
 			}
 			sort.Strings(names)
-			if len(names) > 0 {
+			if _, ok := acm.configs["default"]; ok {
+				acm.activeConfig = "default"
+			} else if len(names) > 0 {
 				acm.activeConfig = names[0]
 			}
 			_ = acm.saveActiveConfigStateLocked()
@@ -767,6 +674,7 @@ func normalizeAgentLLMConfig(cfg AgentLLMConfig) AgentLLMConfig {
 
 func normalizeGlobalAgentConfig(cfg GlobalAgentConfig) GlobalAgentConfig {
 	return GlobalAgentConfig{
+		ToolPackages: normalizeStringSlice(cfg.ToolPackages), LegacyUnresolvedPackages: normalizeStringSlice(cfg.LegacyUnresolvedPackages),
 		SkillPackages: normalizeStringSlice(cfg.SkillPackages),
 	}
 }
@@ -798,15 +706,16 @@ func normalizeAgentDefData(agentName string, agent AgentDefData) AgentDefData {
 	}
 
 	normalized := AgentDefData{
-		DisplayName:     displayName,
-		Description:     strings.TrimSpace(agent.Description),
-		IsMain:          agent.IsMain,
-		Deletable:       agent.Deletable,
-		Enabled:         agent.Enabled,
-		LLM:             normalizeAgentLLMConfig(agent.LLM),
-		WorkflowPackage: strings.TrimSpace(agent.WorkflowPackage),
-		SkillPackages:   normalizeStringSlice(agent.SkillPackages),
-		Prompts:         normalizeStringMap(agent.Prompts),
+		Kind: normalizeRoleKind(agent.Kind), Executor: strings.TrimSpace(agent.Executor), FlowOnly: agent.FlowOnly,
+		ToolPackages: normalizeStringSlice(agent.ToolPackages), LegacyUnresolvedPackages: normalizeStringSlice(agent.LegacyUnresolvedPackages),
+		DisplayName:   displayName,
+		Description:   strings.TrimSpace(agent.Description),
+		IsMain:        agent.IsMain,
+		Deletable:     agent.Deletable,
+		Enabled:       agent.Enabled,
+		LLM:           normalizeAgentLLMConfig(agent.LLM),
+		SkillPackages: normalizeStringSlice(agent.SkillPackages),
+		Prompts:       normalizeStringMap(agent.Prompts),
 	}
 
 	if normalized.Enabled == false && normalized.IsMain {
@@ -815,17 +724,7 @@ func normalizeAgentDefData(agentName string, agent AgentDefData) AgentDefData {
 	if normalized.Prompts == nil {
 		normalized.Prompts = map[string]string{}
 	}
-	if agentName == "knowledge_engineer" {
-		// Business rules now come from this agent's editable instructions. Remove
-		// the retired duplicate package from previously saved configurations.
-		packages := normalized.SkillPackages[:0]
-		for _, packageID := range normalized.SkillPackages {
-			if packageID != "marching-route-knowledge-extraction" {
-				packages = append(packages, packageID)
-			}
-		}
-		normalized.SkillPackages = packages
-	}
+
 	return normalized
 }
 
@@ -836,6 +735,7 @@ func normalizePlanAgentDefData(agentName string, agent PlanAgentDefData) PlanAge
 	}
 
 	normalized := PlanAgentDefData{
+		Kind: normalizeRoleKind(agent.Kind), ToolPackages: normalizeStringSlice(agent.ToolPackages), LegacyUnresolvedPackages: normalizeStringSlice(agent.LegacyUnresolvedPackages),
 		DisplayName:   displayName,
 		IsMain:        agent.IsMain,
 		Mode:          normalizePlanMode(agent.Mode),
@@ -857,7 +757,8 @@ func normalizeRuntimeConfig(runtimeCfg *RuntimeConfig) *RuntimeConfig {
 		return nil
 	}
 	normalized := &RuntimeConfig{
-		Global: normalizeGlobalAgentConfig(runtimeCfg.Global),
+		Global:             normalizeGlobalAgentConfig(runtimeCfg.Global),
+		SharedToolPackages: normalizeStringSlice(runtimeCfg.SharedToolPackages), LegacyUnresolvedPackages: normalizeStringSlice(runtimeCfg.LegacyUnresolvedPackages),
 		Agents: map[string]AgentDefData{},
 	}
 	for name, agent := range runtimeCfg.Agents {
@@ -871,6 +772,7 @@ func normalizePlanConfig(planCfg *PlanConfig) *PlanConfig {
 		return nil
 	}
 	normalized := &PlanConfig{
+		Enabled:       planCfg.Enabled,
 		MaxIterations: planCfg.MaxIterations,
 		Global:        normalizeGlobalAgentConfig(planCfg.Global),
 		Agents:        map[string]PlanAgentDefData{},
@@ -917,11 +819,21 @@ func normalizeAgentConfigFile(cfg *AgentConfigFile) *AgentConfigFile {
 	if cfg == nil {
 		return builtInDefaultAgentConfig()
 	}
+	migrated, warnings := migrateAgentConfigV1(cfg, nil)
+	cfg = migrated
 	normalized := &AgentConfigFile{
-		Version: AgentConfigVersionV10,
+		Version: AgentConfigVersionV20,
+		Flows:   cloneFlowConfig(cfg.Flows), MigrationWarnings: uniqueMigrationWarnings(append(append([]MigrationWarning(nil), cfg.MigrationWarnings...), warnings...)),
 		Meta:    normalizeAgentConfigMeta(cfg.Meta),
 		Runtime: normalizeRuntimeConfig(cfg.Runtime),
 		Plan:    normalizePlanConfig(cfg.Plan),
+	}
+	if normalized.Plan != nil {
+		if normalized.Plan.Enabled != nil {
+			normalized.Meta.PlanEnabled = *normalized.Plan.Enabled
+		}
+		enabled := normalized.Meta.PlanEnabled
+		normalized.Plan.Enabled = &enabled
 	}
 	return normalized
 }
@@ -966,6 +878,23 @@ func validateAgentConfig(cfg *AgentConfigFile) error {
 	if len(cfg.Runtime.Agents) == 0 {
 		return fmt.Errorf("runtime.agents 不能为空")
 	}
+	for name, agent := range cfg.Runtime.Agents {
+		switch agent.Kind {
+		case "agent":
+			if agent.Executor != "" {
+				return fmt.Errorf("runtime.agents.%s: agent 类型不能指定 executor", name)
+			}
+		case "executor":
+			if strings.TrimSpace(agent.Executor) == "" {
+				return fmt.Errorf("runtime.agents.%s.executor 不能为空", name)
+			}
+			if agent.IsMain {
+				return fmt.Errorf("主智能体不能使用专用执行器")
+			}
+		default:
+			return fmt.Errorf("runtime.agents.%s.kind 无效: %s", name, agent.Kind)
+		}
+	}
 	if err := validatePlanConfig(cfg.Plan); err != nil {
 		return err
 	}
@@ -981,6 +910,8 @@ func cloneConfigFile(cfg *AgentConfigFile) (*AgentConfigFile, error) {
 	if err := yaml.Unmarshal(raw, &cloned); err != nil {
 		return nil, err
 	}
+	cloned.MigrationWarnings = append([]MigrationWarning(nil), cfg.MigrationWarnings...)
+	copyLegacyWorkflowInputs(cfg.Runtime, cloned.Runtime)
 	return &cloned, nil
 }
 
@@ -993,7 +924,21 @@ func cloneConfigData(data *AgentConfigData) (*AgentConfigData, error) {
 	if err := yaml.Unmarshal(raw, &out); err != nil {
 		return nil, err
 	}
+	out.MigrationWarnings = append([]MigrationWarning(nil), data.MigrationWarnings...)
+	copyLegacyWorkflowInputs(data.Runtime, out.Runtime)
 	return &out, nil
+}
+
+func copyLegacyWorkflowInputs(source, target *RuntimeConfig) {
+	if source == nil || target == nil {
+		return
+	}
+	for name, role := range source.Agents {
+		if copied, exists := target.Agents[name]; exists {
+			copied.legacyWorkflowPackage = role.legacyWorkflowPackage
+			target.Agents[name] = copied
+		}
+	}
 }
 
 // loadAllConfigs 加载目录下所有配置文件。
@@ -1006,6 +951,23 @@ func (acm *AgentConfigManager) loadAllConfigs() {
 
 	for _, entry := range entries {
 		if !entry.IsDir() {
+			if strings.HasSuffix(entry.Name(), ".yaml") {
+				name := strings.TrimSuffix(entry.Name(), ".yaml")
+				if strings.HasPrefix(name, ".") || name == "" {
+					continue
+				}
+				if _, err := os.Stat(acm.configFilePath(name)); !os.IsNotExist(err) {
+					continue
+				}
+				path := filepath.Join(acm.configDir, entry.Name())
+				cfg, err := acm.loadConfigFile(path, name)
+				if err != nil {
+					logger.Warn("加载旧方案 %s 失败: %v", name, err)
+					continue
+				}
+				acm.configs[name] = cfg
+				acm.legacyPaths[name] = path
+			}
 			continue
 		}
 		configName := strings.TrimSpace(entry.Name())
@@ -1032,7 +994,7 @@ func (acm *AgentConfigManager) loadAllConfigs() {
 }
 
 // loadConfigFile 加载单个配置文件。
-func (acm *AgentConfigManager) loadConfigFile(path string) (*AgentConfigFile, error) {
+func (acm *AgentConfigManager) loadConfigFile(path string, legacyName ...string) (*AgentConfigFile, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("读取文件失败: %w", err)
@@ -1043,7 +1005,16 @@ func (acm *AgentConfigManager) loadConfigFile(path string) (*AgentConfigFile, er
 		return nil, fmt.Errorf("解析 YAML 失败: %w", err)
 	}
 
-	normalized := normalizeAgentConfigFile(&config)
+	if err := validateConfigInputVersion(config.Version); err != nil {
+		return nil, err
+	}
+	name := filepath.Base(filepath.Dir(path))
+	if len(legacyName) > 0 {
+		name = legacyName[0]
+	}
+	migrated, warnings := migrateAgentConfigV1(&config, acm.knownToolPackageIDs(name))
+	migrated.MigrationWarnings = warnings
+	normalized := normalizeAgentConfigFile(migrated)
 	if err := validateAgentConfig(normalized); err != nil {
 		return nil, err
 	}
@@ -1092,6 +1063,7 @@ func (acm *AgentConfigManager) GetConfigData(configName string) (*AgentConfigDat
 		return nil, fmt.Errorf("克隆配置失败: %w", err)
 	}
 	out, err := cloneConfigData(&AgentConfigData{
+		Version: cloned.Version, Flows: cloneFlowConfig(cloned.Flows), MigrationWarnings: append([]MigrationWarning(nil), cfg.MigrationWarnings...),
 		Meta:    cloned.Meta,
 		Runtime: cloned.Runtime,
 		Plan:    cloned.Plan,
@@ -1116,7 +1088,6 @@ func (acm *AgentConfigManager) CreateConfig(configName string) error {
 	}
 
 	cfg := builtInDefaultAgentConfig()
-	acm.configs[configName] = cfg
 	return acm.saveConfigFile(configName, cfg)
 }
 
@@ -1180,7 +1151,7 @@ func (acm *AgentConfigManager) configToYAMLString(cfg *AgentConfigFile) string {
 		return ""
 	}
 
-	data := AgentConfigData{Meta: cloned.Meta, Runtime: cloned.Runtime, Plan: cloned.Plan}
+	data := AgentConfigData{Version: cloned.Version, Meta: cloned.Meta, Runtime: cloned.Runtime, Plan: cloned.Plan, Flows: cloneFlowConfig(cloned.Flows)}
 	jsonBytes, _ := yaml.Marshal(data)
 	return string(jsonBytes)
 }
@@ -1205,21 +1176,25 @@ func (acm *AgentConfigManager) SaveConfig(userID, configName string, data *Agent
 		return fmt.Errorf("配置名不能为空")
 	}
 
+	if err := validateConfigInputVersion(data.Version); err != nil {
+		return err
+	}
 	requestedRuntime := runtimeConfigData(data)
 	if requestedRuntime == nil {
 		return fmt.Errorf("runtime 配置不能为空")
 	}
-	candidate := normalizeAgentConfigFile(&AgentConfigFile{
-		Version: AgentConfigVersionV10,
+	requested, warnings := migrateAgentConfigV1(&AgentConfigFile{
+		Version: data.Version, Flows: cloneFlowConfig(data.Flows),
 		Meta:    data.Meta,
 		Runtime: requestedRuntime,
 		Plan:    data.Plan,
-	})
+	}, acm.knownToolPackageIDs(configName))
+	requested.MigrationWarnings = warnings
+	candidate := normalizeAgentConfigFile(requested)
 	if err := validateAgentConfig(candidate); err != nil {
 		return err
 	}
 
-	acm.configs[configName] = candidate
 	return acm.saveConfigFile(configName, candidate)
 }
 
@@ -1269,6 +1244,12 @@ func (acm *AgentConfigManager) AddAgent(configName, agentName string, agent Agen
 	if !exists || runtimeConfig(cfg) == nil {
 		return fmt.Errorf("配置不存在: %s", configName)
 	}
+	candidate, cloneErr := cloneConfigFile(cfg)
+	if cloneErr != nil {
+		return cloneErr
+	}
+	cfg = candidate
+
 	if cfg.Runtime.Agents == nil {
 		cfg.Runtime.Agents = make(map[string]AgentDefData)
 	}
@@ -1305,6 +1286,12 @@ func (acm *AgentConfigManager) UpdateAgent(configName, agentName string, agent A
 	if !exists || runtimeConfig(cfg) == nil {
 		return fmt.Errorf("配置不存在: %s", configName)
 	}
+	candidate, cloneErr := cloneConfigFile(cfg)
+	if cloneErr != nil {
+		return cloneErr
+	}
+	cfg = candidate
+
 	original, exists := cfg.Runtime.Agents[agentName]
 	if !exists {
 		return fmt.Errorf("智能体不存在: %s", agentName)
@@ -1357,7 +1344,9 @@ func (acm *AgentConfigManager) RemoveAgent(configName, agentName string) error {
 
 // saveConfigFile 保存配置到文件。
 func (acm *AgentConfigManager) saveConfigFile(name string, cfg *AgentConfigFile) error {
-	normalized := normalizeAgentConfigFile(cfg)
+	migrated, warnings := migrateAgentConfigV1(cfg, acm.knownToolPackageIDs(name))
+	migrated.MigrationWarnings = append(migrated.MigrationWarnings, warnings...)
+	normalized := normalizeAgentConfigFile(migrated)
 	if err := validateAgentConfig(normalized); err != nil {
 		return err
 	}
@@ -1369,22 +1358,24 @@ func (acm *AgentConfigManager) saveConfigFile(name string, cfg *AgentConfigFile)
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return fmt.Errorf("创建配置目录失败: %w", err)
 	}
-	persisted := struct {
-		Version string          `yaml:"version"`
-		Meta    AgentConfigMeta `yaml:"meta"`
-		Runtime *RuntimeConfig  `yaml:"runtime,omitempty"`
-		Plan    *PlanConfig     `yaml:"plan,omitempty"`
-	}{
-		Version: normalized.Version,
-		Meta:    normalized.Meta,
-		Runtime: normalized.Runtime,
-		Plan:    normalized.Plan,
-	}
+	persisted := normalized
 	data, err := yaml.Marshal(persisted)
 	if err != nil {
 		return fmt.Errorf("序列化配置失败: %w", err)
 	}
-	if err := os.WriteFile(path, data, 0o644); err != nil {
+	if legacy := acm.legacyPaths[name]; legacy != "" {
+		raw, readErr := os.ReadFile(legacy)
+		if readErr != nil {
+			return readErr
+		}
+		if err := backupV1ConfigBytes(path, raw); err != nil {
+			return err
+		}
+	}
+	if err := backupV1ConfigOnce(path); err != nil {
+		return fmt.Errorf("备份旧方案失败: %w", err)
+	}
+	if err := atomicWriteAgentConfig(path, data); err != nil {
 		return err
 	}
 	acm.configs[name] = normalized
@@ -1425,6 +1416,12 @@ func (acm *AgentConfigManager) DeleteConfig(userID, configName string) error {
 		return fmt.Errorf("删除配置目录失败: %w", err)
 	}
 
+	if legacy := acm.legacyPaths[configName]; legacy != "" {
+		if err := os.Remove(legacy); err != nil && !os.IsNotExist(err) {
+			return err
+		}
+		delete(acm.legacyPaths, configName)
+	}
 	delete(acm.configs, configName)
 	if acm.activeConfig == configName {
 		acm.activeConfig = ""
@@ -1467,7 +1464,7 @@ func (acm *AgentConfigManager) GetActiveToolCatalog() ([]string, error) {
 		return nil, fmt.Errorf("没有激活的配置")
 	}
 
-	packageTools, err := subagents.LoadPackageToolsMultiDir(
+	packageCatalog, err := subagents.LoadPackageCatalogMultiDir(
 		skillPackagesDirFromConfigDir(acm.configDir),
 		ResolveUserSkillsDir(),
 		acm.ExclusiveSkillsDir(acm.activeConfig),
@@ -1486,18 +1483,21 @@ func (acm *AgentConfigManager) GetActiveToolCatalog() ([]string, error) {
 	}
 
 	addGlobalSkillTools := func(global GlobalAgentConfig) {
-		addCategorySkillTools(addTool, packageTools, global.SkillPackages)
+		addCategorySkillTools(addTool, packageCatalog.Tools, global.ToolPackages)
 	}
 
-	addGlobalSkillTools(cfg.Runtime.Global)
+	addCategorySkillTools(addTool, packageCatalog.Tools, cfg.Runtime.SharedToolPackages)
+	addCategorySkillTools(addTool, packageCatalog.Tools, subagents.AutoMountedPackageNames(packageCatalog.Metadata, "build", false, ""))
 	for _, agent := range cfg.Runtime.Agents {
-		addCategorySkillTools(addTool, packageTools, agent.SkillPackages)
+		addCategorySkillTools(addTool, packageCatalog.Tools, agent.ToolPackages)
+		addCategorySkillTools(addTool, packageCatalog.Tools, subagents.AutoMountedPackageNames(packageCatalog.Metadata, "build", agent.IsMain, agent.Executor))
 	}
 
 	if cfg.Plan != nil {
 		addGlobalSkillTools(cfg.Plan.Global)
 		for _, agent := range cfg.Plan.Agents {
-			addCategorySkillTools(addTool, packageTools, agent.SkillPackages)
+			addCategorySkillTools(addTool, packageCatalog.Tools, agent.ToolPackages)
+			addCategorySkillTools(addTool, packageCatalog.Tools, subagents.AutoMountedPackageNames(packageCatalog.Metadata, "plan", agent.IsMain, ""))
 		}
 	}
 
@@ -1522,14 +1522,14 @@ func (acm *AgentConfigManager) GetGlobalToolCatalog() ([]string, error) {
 		toolSet[name] = struct{}{}
 	}
 	addGlobalSkillTools := func(packageTools map[string][]string, global GlobalAgentConfig) {
-		addCategorySkillTools(addTool, packageTools, global.SkillPackages)
+		addCategorySkillTools(addTool, packageTools, global.ToolPackages)
 	}
 
 	for _, cfg := range acm.configs {
 		if runtimeConfig(cfg) == nil {
 			continue
 		}
-		packageTools, err := subagents.LoadPackageToolsMultiDir(
+		packageCatalog, err := subagents.LoadPackageCatalogMultiDir(
 			skillPackagesDirFromConfigDir(acm.configDir),
 			ResolveUserSkillsDir(),
 			acm.ExclusiveSkillsDir(acm.configNameForConfigLocked(cfg)),
@@ -1537,14 +1537,17 @@ func (acm *AgentConfigManager) GetGlobalToolCatalog() ([]string, error) {
 		if err != nil {
 			return nil, err
 		}
-		addGlobalSkillTools(packageTools, cfg.Runtime.Global)
+		addCategorySkillTools(addTool, packageCatalog.Tools, cfg.Runtime.SharedToolPackages)
+		addCategorySkillTools(addTool, packageCatalog.Tools, subagents.AutoMountedPackageNames(packageCatalog.Metadata, "build", false, ""))
 		for _, agent := range cfg.Runtime.Agents {
-			addCategorySkillTools(addTool, packageTools, agent.SkillPackages)
+			addCategorySkillTools(addTool, packageCatalog.Tools, agent.ToolPackages)
+			addCategorySkillTools(addTool, packageCatalog.Tools, subagents.AutoMountedPackageNames(packageCatalog.Metadata, "build", agent.IsMain, agent.Executor))
 		}
 		if cfg.Plan != nil {
-			addGlobalSkillTools(packageTools, cfg.Plan.Global)
+			addGlobalSkillTools(packageCatalog.Tools, cfg.Plan.Global)
 			for _, agent := range cfg.Plan.Agents {
-				addCategorySkillTools(addTool, packageTools, agent.SkillPackages)
+				addCategorySkillTools(addTool, packageCatalog.Tools, agent.ToolPackages)
+				addCategorySkillTools(addTool, packageCatalog.Tools, subagents.AutoMountedPackageNames(packageCatalog.Metadata, "plan", agent.IsMain, ""))
 			}
 		}
 	}
@@ -1617,14 +1620,18 @@ func (acm *AgentConfigManager) FindSkillReferences(skillName string) []SkillRefe
 		if runtimeConfig(cfg) == nil {
 			continue
 		}
-		checkSlice(configName, "global", "runtime/global", "skill_packages", cfg.Runtime.Global.SkillPackages)
+		checkSlice(configName, "global", "runtime/global", "shared_tool_packages", cfg.Runtime.SharedToolPackages)
+		checkSlice(configName, "global", "runtime/global", "legacy_unresolved_packages", cfg.Runtime.LegacyUnresolvedPackages)
 		for agentName, agent := range cfg.Runtime.Agents {
-			checkSlice(configName, agentName, "runtime/agent", "skill_packages", agent.SkillPackages)
+			checkSlice(configName, agentName, "runtime/agent", "tool_packages", agent.ToolPackages)
+			checkSlice(configName, agentName, "runtime/agent", "legacy_unresolved_packages", agent.LegacyUnresolvedPackages)
 		}
 		if cfg.Plan != nil {
-			checkSlice(configName, "global", "plan/global", "skill_packages", cfg.Plan.Global.SkillPackages)
+			checkSlice(configName, "global", "plan/global", "tool_packages", cfg.Plan.Global.ToolPackages)
+			checkSlice(configName, "global", "plan/global", "legacy_unresolved_packages", cfg.Plan.Global.LegacyUnresolvedPackages)
 			for agentName, agent := range cfg.Plan.Agents {
-				checkSlice(configName, agentName, "plan/agent", "skill_packages", agent.SkillPackages)
+				checkSlice(configName, agentName, "plan/agent", "tool_packages", agent.ToolPackages)
+				checkSlice(configName, agentName, "plan/agent", "legacy_unresolved_packages", agent.LegacyUnresolvedPackages)
 			}
 		}
 	}
@@ -1747,22 +1754,22 @@ func configUsesPackage(cfg *AgentConfigFile, packageID string) bool {
 	if target == "" || cfg == nil || runtimeConfig(cfg) == nil {
 		return false
 	}
-	if containsNormalized(cfg.Runtime.Global.SkillPackages, target) {
+	if containsNormalized(cfg.Runtime.SharedToolPackages, target) || containsNormalized(cfg.Runtime.LegacyUnresolvedPackages, target) {
 		return true
 	}
 	for _, agent := range cfg.Runtime.Agents {
-		if containsNormalized(agent.SkillPackages, target) {
+		if containsNormalized(agent.ToolPackages, target) || containsNormalized(agent.LegacyUnresolvedPackages, target) {
 			return true
 		}
 	}
 	if cfg.Plan == nil {
 		return false
 	}
-	if containsNormalized(cfg.Plan.Global.SkillPackages, target) {
+	if containsNormalized(cfg.Plan.Global.ToolPackages, target) || containsNormalized(cfg.Plan.Global.LegacyUnresolvedPackages, target) {
 		return true
 	}
 	for _, agent := range cfg.Plan.Agents {
-		if containsNormalized(agent.SkillPackages, target) {
+		if containsNormalized(agent.ToolPackages, target) || containsNormalized(agent.LegacyUnresolvedPackages, target) {
 			return true
 		}
 	}
@@ -1896,21 +1903,29 @@ func ConvertToRuntimeSkillConfigWithPlugin(cfg *AgentConfigFile, pluginSkillsDir
 	if runtimeConfig(cfg) == nil {
 		return nil
 	}
-	packageTools, err := subagents.LoadPackageToolsMultiDir(ResolveRuntimeSkillDirsWithPlugin(pluginSkillsDir, builtinSkillsDir, userSkillsDir, configBaseDir, activeConfigName)...)
+	packageCatalog, err := subagents.LoadPackageCatalogMultiDir(ResolveRuntimeSkillDirsWithPlugin(pluginSkillsDir, builtinSkillsDir, userSkillsDir, configBaseDir, activeConfigName)...)
 	if err != nil {
 		logger.Warn("加载技能包工具映射失败: %v", err)
-		packageTools = map[string][]string{}
+		packageCatalog = subagents.PackageCatalog{Tools: map[string][]string{}, Metadata: map[string]subagents.RuntimeSkillPackageMetadata{}}
 	}
+
+	known := map[string]bool{}
+	for id := range packageCatalog.Tools {
+		known[id] = true
+	}
+	migrated, warnings := migrateAgentConfigV1(cfg, known)
+	migrated.MigrationWarnings = append(migrated.MigrationWarnings, warnings...)
+	cfg = normalizeAgentConfigFile(migrated)
 
 	agents := make(map[string]subagents.RuntimeSkillAgentConfig)
 	for name, agent := range cfg.Runtime.Agents {
 		agents[name] = subagents.RuntimeSkillAgentConfig{
-			DisplayName:     agent.DisplayName,
-			Description:     agent.Description,
-			IsMain:          agent.IsMain,
-			Enabled:         agent.Enabled,
-			WorkflowPackage: strings.TrimSpace(agent.WorkflowPackage),
-			SkillPackages:   append([]string(nil), agent.SkillPackages...),
+			DisplayName: agent.DisplayName,
+			Description: agent.Description,
+			IsMain:      agent.IsMain,
+			Enabled:     agent.Enabled,
+			Executor:    agent.Executor, Kind: agent.Kind, FlowOnly: agent.FlowOnly,
+			ToolPackages: append([]string{}, agent.ToolPackages...),
 			Prompts: subagents.AgentPrompts{
 				StaticInstructions:     strings.TrimSpace(agent.Prompts["static_instructions"]),
 				UserPromptTemplate:     strings.TrimSpace(agent.Prompts["user_prompt_template"]),
@@ -1921,9 +1936,11 @@ func ConvertToRuntimeSkillConfigWithPlugin(cfg *AgentConfigFile, pluginSkillsDir
 
 	return &subagents.RuntimeSkillConfig{
 		Version: cfg.Version,
+		Mode:    "build",
 		Global: subagents.RuntimeSkillGlobalConfig{
-			SkillPackages: append([]string(nil), cfg.Runtime.Global.SkillPackages...),
-			PackageTools:  packageTools,
+			SkillPackages:   append([]string(nil), cfg.Runtime.SharedToolPackages...),
+			PackageTools:    packageCatalog.Tools,
+			PackageMetadata: packageCatalog.Metadata,
 		},
 		Agents: agents,
 	}

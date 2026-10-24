@@ -97,3 +97,10 @@ type Builder interface {
 	Build(ctx context.Context, activeConfigName string, activeConfig *config.AgentConfigFile) (*Runtime, error)
 	BuildActive(ctx context.Context, manager *config.AgentConfigManager) (*Runtime, error)
 }
+
+// FlowBuilder is optional; ordinary task builders need not implement flow support.
+type FlowBuilder interface {
+	BuildRole(ctx context.Context, activeConfigName string, activeConfig *config.AgentConfigFile, roleName string) (adk.Agent, error)
+	CallFlowJSON(ctx context.Context, activeConfig *config.AgentConfigFile, prompt string) (string, error)
+	InvokeFlowTool(ctx context.Context, name string, args map[string]any) (any, error)
+}

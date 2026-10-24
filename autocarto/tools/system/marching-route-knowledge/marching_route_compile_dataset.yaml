@@ -2,11 +2,17 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: marching_route_compile_dataset
-  display_name: marching_route_compile_dataset
+  keywords:
+  - 路线数据集
+  - 编译路线数据集
+  - 路线知识
+  - 图谱抽取
+  - 数据集编译
+  display_name: 编译路线数据集
   runtime: qgis
   domain: marching-route-knowledge
 spec:
-  description: 校验行军路线任务知识图谱，并确定性生成现有 QGIS 路线绘图入口需要的六张 CSV、符号资产和溯源文件
+  description: 校验路线任务知识图谱，确定性生成路线绘制需要的六张数据表、符号资产和溯源文件。输入为结构化知识图谱，输出为可校验的数据集目录。
   parameters:
   - name: knowledge_json
     type: object
@@ -25,10 +31,7 @@ spec:
     description: 生成数据集目录；不传时自动保存到当前任务 intermediate/route_knowledge，无任务会话时才使用系统临时目录
   - name: template_dataset_dir
     type: folder
-    description: 可选模板数据集目录，用于复制原有 symbols 和相对路径注记图片
-  - name: symbol_assets_dir
-    type: folder
-    description: 可选独立 SVG 目录；优先于 template_dataset_dir/symbols
+    description: 可选模板数据集目录，用于复制相对路径注记图片
   - name: overwrite
     type: boolean
     description: 输出目录非空时是否替换，默认 false
@@ -38,6 +41,16 @@ spec:
   - name: review_context
     type: object
     description: 服务端签名的人工核对凭据；由核对流程注入，模型不得自行构造
+  - name: route_style
+    type: resource
+    resource_type: route_style
+    required: true
+    description: 路线样式资源名称、编号或路径；按拓扑与阵营选择绘制方式和样式编号
+  - name: symbols
+    type: resource
+    resource_type: symbols
+    required: true
+    description: 符号资源名称、编号或目录；包含符号大小、说明和事件映射
 execution:
   handler: handlers.knowledge.compile_marching_route_dataset_handler
   param_mapping:
@@ -46,7 +59,8 @@ execution:
     contract_id: '{{ contract_id }}'
     output_dir: '{{ output_dir }}'
     template_dataset_dir: '{{ template_dataset_dir }}'
-    symbol_assets_dir: '{{ symbol_assets_dir }}'
     overwrite: '{{ overwrite }}'
     validate_only: '{{ validate_only }}'
     review_context: '{{ review_context }}'
+    route_style: '{{ route_style }}'
+    symbols: '{{ symbols }}'

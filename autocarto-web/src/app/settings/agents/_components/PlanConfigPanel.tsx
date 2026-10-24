@@ -1,6 +1,6 @@
 "use client";
 
-import { AgentConfigData, PlanConfig } from "@/lib/api";
+import { AgentConfigData, PlanConfig, toolPackageSelections } from "@/lib/api";
 import { Field, TextInput } from "@/components/settings/FormField";
 import InfoTooltip from "@/components/settings/InfoTooltip";
 import StatusBadge from "@/components/settings/StatusBadge";
@@ -78,7 +78,7 @@ export default function PlanConfigPanel({
         <div className="grid gap-2.5 md:grid-cols-[minmax(0,220px),minmax(0,1fr)]">
           <Field
             label="最大规划迭代数"
-            description="新 schema 已移除 context transfer / behavior；Plan 侧现在只维护 planner 最大迭代次数，其余运行时控制由统一 runtime 负责。"
+            description="限制一次规划的最大轮次，复杂任务可按需要提高上限。"
           >
             <TextInput
               type="number"
@@ -110,7 +110,7 @@ export default function PlanConfigPanel({
           <div className="flex flex-wrap items-center gap-2 text-[11px]">
             <StatusBadge>总数 {sortedPlanAgents.length}</StatusBadge>
             <StatusBadge tone="success">主规划 {mainAgents}</StatusBadge>
-            <StatusBadge>技能 {skillBindings}</StatusBadge>
+            <StatusBadge>工具包 {skillBindings}</StatusBadge>
           </div>
         </div>
         <div className="grid gap-2.5 md:grid-cols-2 xl:grid-cols-3">
@@ -119,6 +119,7 @@ export default function PlanConfigPanel({
               key={agentName}
               agentName={agentName}
               agent={agent}
+              shared={toolPackageSelections(plan.shared)}
               saving={saving}
               onEdit={() => onEditAgent(agentName)}
             />

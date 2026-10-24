@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: terrain_tpi
-  display_name: 地形位置指数
+  keywords: ["地形位置指数", "分析地形位置指数", "空间分析", "空间统计", "空间聚类"]
+  display_name: "计算地形位置指数"
   domain: spatial-analysis
   runtime: qgis
 spec:

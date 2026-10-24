@@ -114,7 +114,7 @@ class StatisticalWorkflowQgisTest(unittest.TestCase):
             polygons = json.loads(Path(derived).read_text(encoding="utf-8"))
             self.assertEqual([f["properties"]["stat_value"] for f in polygons["features"]], [0, 10, 25, 50, 100, None])
             invoke("data_load_vector", path=derived, layer_name="thematic values")
-            invoke("data_load_vector", path=derived, layer_name="missing value background")
+            invoke("data_load_vector", path=derived, layer_name="missing value background", reuse_existing=False)
             invoke("cartography_set_style", layer="missing value background", style_type="simple", color="#e5e7eb")
             project = QgsProject.instance()
             project.setCrs(QgsCoordinateReferenceSystem("EPSG:3857"))

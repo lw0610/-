@@ -69,6 +69,7 @@ func BuildSnapshot(input BuildInput) (*CapabilitySnapshot, error) {
 			Name:              name,
 			RawName:           name,
 			DisplayName:       strings.TrimSpace(def.Metadata.DisplayName),
+			Keywords:          append([]string(nil), def.Metadata.Keywords...),
 			Description:       strings.TrimSpace(item.Description),
 			Category:          strings.TrimSpace(item.Category),
 			Backend:           strings.TrimSpace(item.Backend),
@@ -126,6 +127,11 @@ func buildPackageCapability(summary settings.SkillPackageSummary) PackageCapabil
 		Key:         buildPackageKey(summary.Scope, summary.OwnerConfig, summary.PackageID),
 		PackageID:   strings.TrimSpace(summary.PackageID),
 		Name:        strings.TrimSpace(summary.Name),
+		DisplayName: strings.TrimSpace(summary.DisplayName),
+		Domain:      strings.TrimSpace(summary.Domain),
+		System:      summary.System,
+		Hidden:      summary.Hidden,
+		AutoMount:   strings.TrimSpace(summary.AutoMount),
 		Kind:        strings.TrimSpace(summary.Kind),
 		Backend:     strings.TrimSpace(summary.Backend),
 		Source:      strings.TrimSpace(summary.Source),
@@ -188,6 +194,9 @@ func resolveToolPackageBinding(toolName string, packages map[string]PackageCapab
 	selected := PackageCapability{}
 	selectedPriority := -1
 	for _, pkg := range packages {
+		if pkg.Kind != skill.SkillPackageKindCategory {
+			continue
+		}
 		if !containsToolName(pkg.ToolNames, trimmedToolName) {
 			continue
 		}
@@ -214,13 +223,17 @@ func resolveToolPackageBinding(toolName string, packages map[string]PackageCapab
 }
 
 func packageBindingPriority(pkg PackageCapability, activeConfigName string) int {
+	priority := 0
 	if pkg.Scope == settings.SkillPackageScopeExclusive && pkg.OwnerConfig == activeConfigName {
-		return 2
+		priority = 20
 	}
 	if pkg.Scope == settings.SkillPackageScopeGlobal {
-		return 1
+		priority = 10
 	}
-	return 0
+	if pkg.System || !pkg.Hidden {
+		priority++
+	}
+	return priority
 }
 
 func containsToolName(toolNames []string, toolName string) bool {
@@ -272,6 +285,8 @@ func buildAgentCapabilityViews(input BuildInput, snapshot *CapabilitySnapshot) [
 			}
 			toolRefs = append(toolRefs, ToolRef{
 				Name:        toolCapability.Name,
+				DisplayName: toolCapability.DisplayName,
+				Keywords:    append([]string(nil), toolCapability.Keywords...),
 				Description: toolCapability.Description,
 				Package:     toolCapability.Package,
 			})

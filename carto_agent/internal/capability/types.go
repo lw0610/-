@@ -22,6 +22,7 @@ type ToolCapability struct {
 	Name              string
 	RawName           string
 	DisplayName       string
+	Keywords          []string
 	Description       string
 	Category          string
 	Backend           string
@@ -41,6 +42,11 @@ type PackageCapability struct {
 	Key         string
 	PackageID   string
 	Name        string
+	DisplayName string
+	Domain      string
+	System      bool
+	Hidden      bool
+	AutoMount   string
 	Kind        string
 	Backend     string
 	Source      string
@@ -56,6 +62,8 @@ type PackageCapability struct {
 
 type ToolRef struct {
 	Name        string
+	DisplayName string
+	Keywords    []string
 	Description string
 	Package     PackageRef
 }

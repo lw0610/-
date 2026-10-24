@@ -21,19 +21,17 @@ class ConfigProxyTestCase(unittest.TestCase):
             self.assertIsNone(proxy.get("middleware.enabled"))
             self.assertIsNone(proxy.get("ports.qgis_tools"))
 
-    def test_resolve_path_supports_plugin_relative_paths(self):
+    def test_resolve_path_uses_runtime_home_for_logs_and_data(self):
         with tempfile.TemporaryDirectory() as tmp_dir:
             plugin_root = Path(tmp_dir) / "autocarto"
             config_dir = plugin_root / "config"
             config_dir.mkdir(parents=True, exist_ok=True)
             proxy = ConfigProxy(config_dir)
 
-            self.assertEqual(
-                proxy.resolve_path("log.dir"), plugin_root / "data" / "logs"
-            )
-            resolved_data_dir = proxy.resolve_path("data_dir")
-            self.assertIsNotNone(resolved_data_dir)
-            self.assertEqual(resolved_data_dir, plugin_root / "data")
+            runtime_home = Path(tmp_dir).resolve() / "autocarto_data"
+            with mock.patch("autocarto.core.config_manager.get_autocarto_home", return_value=runtime_home):
+                self.assertEqual(proxy.resolve_path("log.dir"), runtime_home / "data" / "logs")
+                self.assertEqual(proxy.resolve_path("data_dir"), runtime_home / "data")
 
     def test_config_proxy_exposes_read_only_bootstrap_view(self):
         with tempfile.TemporaryDirectory() as tmp_dir:

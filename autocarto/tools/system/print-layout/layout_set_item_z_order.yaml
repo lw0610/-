@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_item_z_order
-  display_name: layout_set_item_z_order
+  keywords: ["元素叠放层级", "配置元素叠放层级", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置元素叠放层级"
   runtime: qgis
   domain: print-layout
 spec:
@@ -19,7 +20,7 @@ spec:
   - name: z_order
     type: number
     required: true
-    description: 层级值
+    description: "叠放层级（无单位；值越大越靠上）"
 execution:
   handler: handlers.layout_advanced.set_item_z_order_handler
   param_mapping:

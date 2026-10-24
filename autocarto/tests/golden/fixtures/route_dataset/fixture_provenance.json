@@ -1,0 +1,51 @@
+{
+  "source_session": "5b9b9879-9968-444d-97ea-1f2eea706a5d",
+  "task_id": "task_001",
+  "source_validation_is_valid": true,
+  "files": {
+    "places.csv": {
+      "source_sha256": "9f30fa4ecae07b1a2e648fffd8d28d611351322b108636cf19eed67e783d4ef9",
+      "fixture_sha256": "9f30fa4ecae07b1a2e648fffd8d28d611351322b108636cf19eed67e783d4ef9",
+      "row_count": 81
+    },
+    "routes.csv": {
+      "source_sha256": "f7d495a5b2745ac9cc653117627ed348927382be6922f3a474e38cac8e1026f2",
+      "fixture_sha256": "f7d495a5b2745ac9cc653117627ed348927382be6922f3a474e38cac8e1026f2",
+      "row_count": 16
+    },
+    "route_paths.csv": {
+      "source_sha256": "64b2d5a5cba9fde05232639b0343dee18dc427523bb918f1ab1894f6ac37e853",
+      "fixture_sha256": "64b2d5a5cba9fde05232639b0343dee18dc427523bb918f1ab1894f6ac37e853",
+      "row_count": 100
+    },
+    "points.csv": {
+      "source_sha256": "f7fe79bdef439ba931663a40c3cd2659bc45768db783e5d8b51daad8314e9253",
+      "fixture_sha256": "f7fe79bdef439ba931663a40c3cd2659bc45768db783e5d8b51daad8314e9253",
+      "row_count": 81
+    },
+    "symbol_mapping.csv": {
+      "source_sha256": "d3b9bd8786ce79153fc99510ce5885c6e790c57632c670d38e67138772023c15",
+      "fixture_sha256": "d3b9bd8786ce79153fc99510ce5885c6e790c57632c670d38e67138772023c15",
+      "row_count": 5
+    },
+    "callouts.csv": {
+      "source_sha256": "7afcbe0d774c461c4e4b53abd5484d3fe19cf4bfe2812dc9893753f0ec7bb8c7",
+      "fixture_sha256": "718ab6523c8ca5ea3646f7ef866142f4b1976084d9ce7ebe7adaa693f5d7b62b",
+      "row_count": 2
+    }
+  },
+  "path_rewrites": [
+    {
+      "table": "callouts.csv",
+      "field": "image_path",
+      "asset": "images/3b2d1bc9aeef729a7132c7d3bb4aa442ac9970b2e817c9db343e136a020cbf18.png",
+      "source_asset_sha256": "3b2d1bc9aeef729a7132c7d3bb4aa442ac9970b2e817c9db343e136a020cbf18"
+    },
+    {
+      "table": "callouts.csv",
+      "field": "image_path",
+      "asset": "images/389d18861265fe23fb5519ef245f2014235a0fccc28512cb46ea308f80741b1a.png",
+      "source_asset_sha256": "389d18861265fe23fb5519ef245f2014235a0fccc28512cb46ea308f80741b1a"
+    }
+  ]
+}

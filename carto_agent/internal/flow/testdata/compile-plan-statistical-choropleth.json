@@ -1,0 +1,512 @@
+{
+  "plan_status": "ready",
+  "enrichment": {
+    "flow": "ready",
+    "done": 4,
+    "total": 4,
+    "failed": []
+  },
+  "compile_key": "\u003ccache-key\u003e",
+  "link_fingerprint": "\u003clink-fingerprint\u003e",
+  "linked_at": "0001-01-01T00:00:00Z",
+  "compile_diagnostics": [
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_TYPE_IMPLICIT",
+      "message": "以下输入没有写明类型，暂按文本处理：指标、单位、数据来源、排除地区、纸张、地图标题。需要文件、文件夹或图层时，请在括号里写明，例如（可选，文件）。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“统计年份”没有被任何步骤或条件引用。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“指标”没有被任何步骤或条件引用。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“单位”没有被任何步骤或条件引用。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“数据来源”没有被任何步骤或条件引用。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“排除地区”没有被任何步骤或条件引用。"
+    }
+  ],
+  "link_diagnostics": [],
+  "flow_dir": "<runtime>/flows/statistical-choropleth",
+  "lock": {
+    "api_version": "flow-lock/v1",
+    "resources": [
+      {
+        "type": "layout",
+        "name": "统计专题版式",
+        "id": "layout.statistical",
+        "version": "1.0.0",
+        "digest": "sha256:33a2084b7533ca0050376fa90c168f9dbf821740292eafd63e19ea367c77fa98",
+        "source": "library_builtin"
+      }
+    ]
+  },
+  "api_version": "flow-plan/v1",
+  "flow_id": "statistical-choropleth",
+  "flow_version": "2.0.0",
+  "name": "统计专题图",
+  "description": "把行政区与年度统计数据关联，制作分级设色专题图，并如实说明统计口径、缺测和来源",
+  "scheme": "测试方案",
+  "scheme_revision": "scheme1",
+  "catalog_revision": "catalog1",
+  "compiled_at": "0001-01-01T00:00:00Z",
+  "compiler": {
+    "version": "3",
+    "model": "固定夹具模型"
+  },
+  "triggers": [
+    "统计专题图",
+    "分级设色图"
+  ],
+  "applicability": "用户要求按行政区展示某个统计指标的数值分布，例如人口、经济、教育、资源等年度指标的分级设色图时使用。\n指标、年份和区域由用户和数据确定，不预设具体指标或色阶。用户没有提供数据，工程中也没有带该指标字段的行政区图层时，先请用户提供数据。",
+  "inputs": [
+    {
+      "key": "行政区数据",
+      "label": "行政区数据",
+      "type": "file",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": "行政区面数据文件（GeoJSON）",
+      "remember": true
+    },
+    {
+      "key": "统计表",
+      "label": "统计表",
+      "type": "file",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": "UTF-8 的 CSV；与「行政区数据」一起使用",
+      "remember": true
+    },
+    {
+      "key": "已有专题图层",
+      "label": "已有专题图层",
+      "type": "layer",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": "工程中已经带有指标字段的行政区面图层"
+    },
+    {
+      "key": "统计年份",
+      "label": "统计年份",
+      "type": "number",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": "使用统计表时必填"
+    },
+    {
+      "key": "指标",
+      "label": "指标",
+      "type": "text",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": "例如\"常住人口\"；统计表中已有时以表为准"
+    },
+    {
+      "key": "单位",
+      "label": "单位",
+      "type": "text",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": ""
+    },
+    {
+      "key": "数据来源",
+      "label": "数据来源",
+      "type": "text",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": ""
+    },
+    {
+      "key": "排除地区",
+      "label": "排除地区",
+      "type": "text",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": "任务明确要排除的地区名称"
+    },
+    {
+      "key": "纸张",
+      "label": "纸张",
+      "type": "text",
+      "required": false,
+      "default": "A4 横向",
+      "options": [],
+      "description": ""
+    },
+    {
+      "key": "输出格式",
+      "label": "输出格式",
+      "type": "choice",
+      "required": false,
+      "default": "PNG",
+      "options": [
+        "PNG",
+        "PDF",
+        "SVG"
+      ],
+      "description": ""
+    },
+    {
+      "key": "地图标题",
+      "label": "地图标题",
+      "type": "text",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": ""
+    }
+  ],
+  "input_constraints": [
+    {
+      "op": "at_least_one",
+      "inputs": [
+        "行政区数据",
+        "已有专题图层"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "entry_count": 0,
+      "key": "library:layout.statistical",
+      "id": "layout.statistical",
+      "label": "统计专题版式",
+      "name": "统计专题版式",
+      "type": "layout",
+      "version": "1.0.0",
+      "owner": "library_builtin",
+      "origin": "library_builtin",
+      "location": "公共资源库",
+      "root": "<project>/autocarto/resources/system/layouts/统计专题版式.layout.yaml",
+      "entry": "<project>/autocarto/resources/system/layouts/统计专题版式.layout.yaml",
+      "format": "layout_yaml",
+      "digest": "sha256:33a2084b7533ca0050376fa90c168f9dbf821740292eafd63e19ea367c77fa98",
+      "source": {
+        "author": "AutoCarto"
+      },
+      "legacy": false,
+      "entries": [],
+      "problems": [],
+      "base_dir_binding": ""
+    }
+  ],
+  "rules": [
+    "不虚构指标、年份、单位、来源或数值。",
+    "总量、占比、密度、增幅不能混称；缺少分母、两期数据或面积依据时，不把现有指标改成比例、密度或变化率。",
+    "空值不是零，缺测、未匹配、排除要分别说明。",
+    "工具报内部错误时，不要关闭、重开或新建工程；保留已生成的数据、图层和版面，报告工具名、参数和原始错误。"
+  ],
+  "notes": [],
+  "deliverables": "- 成果图路径\n- 行政区层级、指标、年份、单位、来源\n- 分级方法、级数和各级区间\n- 缺测、未匹配、排除的地区及数量\n- 生成的派生数据和质量清单路径（使用已有图层时注明\"复用已有图层\"）",
+  "steps": [
+    {
+      "id": "s1",
+      "index": 1,
+      "title": "核验并准备统计数据",
+      "kind": "agent",
+      "role": "data-custom",
+      "role_label": "数据工程专家",
+      "condition": null,
+      "instructions": "如果提供了「已有专题图层」：核验图层确实是面图层，指标字段是数值类型，并尽量确认年份、指标、单位、来源和缺测情况；无法确认的项目明确列出。直接使用该图层，不重新关联。\n否则使用「行政区数据」和「统计表」：先只做验证，检查表格格式、年份、地区名称关联、元数据列、重复键和非法数值，再生成独立的派生数据并加载为专题图层，不修改原始文件。每次只处理所选年份的一个指标；长表包含多个指标时，先按用户指定的指标筛选。\n地区名称只做精确关联，不猜测别名。只有部分地区未匹配、且剩余有效数值足以分级时，保留完整的未匹配清单继续生成，未匹配地区保持空值；重复键、非法数值或没有可用数据时停止并说明原因。\n空单元格是缺测，零是有效值，两者必须区分；空值不能填成零。\n存在缺测、未匹配或排除的地区时，再把同一个派生数据加载一次，作为独立的\"灰底\"图层，名称与专题图层不同。",
+      "completion": "- 「专题图层」（图层）\n- 「灰底图层」（图层，可选）\n- 「统计口径」（文本）：指标、年份、单位、来源、数值字段、标注字段、有效与缺测数量、未匹配和排除清单、数值范围\n- 「数据质量报告」（文件，可选）：派生数据的来源与关联质量清单",
+      "refs": {
+        "resources": [],
+        "inputs": [
+          "已有专题图层",
+          "行政区数据",
+          "统计表"
+        ],
+        "outputs": []
+      },
+      "suggested_tools": [
+        "data_prepare_statistical"
+      ],
+      "expected_outputs": [
+        {
+          "label": "专题图层",
+          "type": "layers",
+          "required": true
+        },
+        {
+          "label": "灰底图层",
+          "type": "layers",
+          "required": false
+        },
+        {
+          "label": "统计口径",
+          "type": "text",
+          "required": true,
+          "description": "指标、年份、单位、来源、数值字段、标注字段、有效与缺测数量、未匹配和排除清单、数值范围"
+        },
+        {
+          "label": "数据质量报告",
+          "type": "file",
+          "required": false,
+          "description": "派生数据的来源与关联质量清单"
+        }
+      ],
+      "on_failure": "retry_then_ask",
+      "missing_capabilities": [],
+      "notes": "固定输出夹具",
+      "enrichment": "ready"
+    },
+    {
+      "id": "s2",
+      "index": 2,
+      "title": "分级设色与标注",
+      "kind": "agent",
+      "role": "map-custom",
+      "role_label": "制图专家",
+      "condition": null,
+      "instructions": "对「专题图层」的数值字段做分级设色。按数据分布和表达目的选择分级方法（自然断点、分位数、等间距或标准差），通常分 5 级；连续数量使用有次序的渐变色带。报告实际使用的方法，不要把分位数说成自然断点。\n需要地名时，为专题图层添加地区名称标注，标注不能替换分级渲染。\n完成后读取图层的实际渲染状态，确认是分级渲染、字段正确，并记录每一级的上下界和颜色。数据只有一个不同数值、字段不是数值或分级失败时，停止并说明原因，不要用统一填色冒充分级图。\n有「灰底图层」时，只给灰底设置浅灰色（#e5e7eb）统一填充，放在专题图层下方；不要对专题图层做统一填充。",
+      "completion": "「分级结果」（文本）：分级方法、级数、每级区间与颜色",
+      "refs": {
+        "resources": [],
+        "inputs": [],
+        "outputs": [
+          {
+            "step": "s1",
+            "label": "专题图层"
+          },
+          {
+            "step": "s1",
+            "label": "灰底图层"
+          }
+        ]
+      },
+      "suggested_tools": [
+        "cartography_graduated_style"
+      ],
+      "expected_outputs": [
+        {
+          "label": "分级结果",
+          "type": "text",
+          "required": true,
+          "description": "分级方法、级数、每级区间与颜色"
+        }
+      ],
+      "on_failure": "retry_then_ask",
+      "missing_capabilities": [],
+      "notes": "固定输出夹具",
+      "enrichment": "ready"
+    },
+    {
+      "id": "s3",
+      "index": 3,
+      "title": "版面排版",
+      "kind": "agent",
+      "role": "map-custom",
+      "role_label": "制图专家",
+      "condition": null,
+      "instructions": "按「统计专题版式」和「纸张」排版。主图只显示「专题图层」、「灰底图层」和明确需要的底图，专题图层在上；范围按专题图层确定。\n标题使用「地图标题」；未提供时写成\"地区 + 年份 + 指标\"的形式。\n图例只列专题图层，标题写指标和单位，图例条目来自实际分级结果。\n在说明栏写明：年份、单位、数据来源（没有时写\"来源未提供\"）、分级方法；有灰底时加一句\"灰色区域：无有效统计值\"，并分别写出缺测、未匹配、排除的数量。\n字号由版式决定，不要调整。",
+      "completion": "「版面」（版面）",
+      "refs": {
+        "resources": [
+          "library:layout.statistical"
+        ],
+        "inputs": [
+          "纸张",
+          "地图标题"
+        ],
+        "outputs": [
+          {
+            "step": "s1",
+            "label": "专题图层"
+          },
+          {
+            "step": "s1",
+            "label": "灰底图层"
+          }
+        ]
+      },
+      "suggested_tools": [
+        "layout_compose"
+      ],
+      "expected_outputs": [
+        {
+          "label": "版面",
+          "type": "layout",
+          "required": true
+        }
+      ],
+      "on_failure": "retry_then_ask",
+      "missing_capabilities": [],
+      "notes": "固定输出夹具",
+      "enrichment": "ready"
+    },
+    {
+      "id": "s4",
+      "index": 4,
+      "title": "核验并导出",
+      "kind": "agent",
+      "role": "map-custom",
+      "role_label": "制图专家",
+      "condition": null,
+      "instructions": "导出前再次确认专题图层仍是分级渲染，图例条目、级数和区间与「分级结果」一致，主图图层和范围正确，文字没有裁切，元素之间没有遮挡。\n按「输出格式」导出成果图。",
+      "completion": "「成果图」（文件）",
+      "refs": {
+        "resources": [],
+        "inputs": [
+          "输出格式"
+        ],
+        "outputs": [
+          {
+            "step": "s2",
+            "label": "分级结果"
+          }
+        ]
+      },
+      "suggested_tools": [
+        "export_print_layout"
+      ],
+      "expected_outputs": [
+        {
+          "label": "成果图",
+          "type": "file",
+          "required": true
+        }
+      ],
+      "on_failure": "retry_then_ask",
+      "missing_capabilities": [],
+      "notes": "固定输出夹具",
+      "enrichment": "ready"
+    }
+  ],
+  "diagnostics": [
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_TYPE_IMPLICIT",
+      "message": "以下输入没有写明类型，暂按文本处理：指标、单位、数据来源、排除地区、纸张、地图标题。需要文件、文件夹或图层时，请在括号里写明，例如（可选，文件）。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“统计年份”没有被任何步骤或条件引用。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“指标”没有被任何步骤或条件引用。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“单位”没有被任何步骤或条件引用。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“数据来源”没有被任何步骤或条件引用。"
+    },
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_UNUSED",
+      "message": "输入“排除地区”没有被任何步骤或条件引用。"
+    }
+  ],
+  "roles": [
+    {
+      "id": "reader-custom",
+      "display_name": "知识抽取专家",
+      "kind": "executor",
+      "executor": "route_knowledge",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [],
+      "tools": []
+    },
+    {
+      "id": "data-custom",
+      "display_name": "数据工程专家",
+      "kind": "agent",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [
+        "data"
+      ],
+      "tools": [
+        "data_load_list",
+        "data_prepare_statistical"
+      ]
+    },
+    {
+      "id": "map-custom",
+      "display_name": "制图专家",
+      "kind": "agent",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [
+        "style",
+        "route",
+        "layout"
+      ],
+      "tools": [
+        "style_set_apply",
+        "route_draw",
+        "layout_compose",
+        "layout_add_callouts",
+        "layout_move_callout",
+        "layout_export_image",
+        "export_print_layout",
+        "cartography_graduated_style"
+      ]
+    },
+    {
+      "id": "review-custom",
+      "display_name": "质量反馈智能体",
+      "kind": "agent",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [
+        "review"
+      ],
+      "tools": [
+        "prepare_quality_review",
+        "load_review_images"
+      ]
+    },
+    {
+      "id": "analysis-custom",
+      "display_name": "空间分析专家",
+      "kind": "agent",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [
+        "analysis"
+      ],
+      "tools": [
+        "clip"
+      ]
+    }
+  ]
+}

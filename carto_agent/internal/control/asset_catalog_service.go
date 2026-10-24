@@ -3,6 +3,7 @@ package control
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"sort"
 	"strings"
@@ -47,6 +48,9 @@ type toolPackageCatalogMeta struct {
 	Source    string
 	Domain    string
 	Enabled   bool
+	Hidden    bool
+	System    bool
+	Priority  int
 }
 
 type scopedSkillCatalog interface {
@@ -109,6 +113,15 @@ func (s *assetCatalogService) GetAgentProfile(name string) (settings.AgentProfil
 		return settings.AgentProfileView{}, err
 	}
 	return settings.BuildAgentProfileView(name, data, s.runtimeDiagnostics), nil
+}
+
+// PreviewAgentConfigMigration is optional for asset catalog implementations.
+// Persistence still goes through SettingsMutationService's active-run guards.
+func (s *assetCatalogService) PreviewAgentConfigMigration(name string) (*config.AgentConfigMigrationResult, error) {
+	if s.agentConfigManager == nil {
+		return nil, fmt.Errorf("智能体配置管理器未初始化")
+	}
+	return s.agentConfigManager.PreviewMigration(name)
 }
 
 func (s *assetCatalogService) GetAgent(configName, agentName string) (config.AgentDefData, error) {
@@ -359,7 +372,14 @@ func (s *assetCatalogService) buildToolPackageCatalogIndex() map[string]toolPack
 		return nil
 	}
 	index := make(map[string]toolPackageCatalogMeta)
+	activeConfigName := ""
+	if s.agentConfigManager != nil {
+		activeConfigName = s.agentConfigManager.GetActiveConfigName()
+	}
 	for _, summary := range packages {
+		if summary.Kind != skill.SkillPackageKindCategory {
+			continue
+		}
 		packageID := strings.TrimSpace(summary.PackageID)
 		if packageID == "" {
 			continue
@@ -381,9 +401,22 @@ func (s *assetCatalogService) buildToolPackageCatalogIndex() map[string]toolPack
 			Backend:   strings.TrimSpace(summary.Backend),
 			Source:    strings.TrimSpace(summary.Source),
 			Enabled:   summary.Enabled,
+			Hidden:    summary.Hidden,
+			System:    summary.System,
+		}
+		if summary.Scope == settings.SkillPackageScopeExclusive && summary.OwnerConfig == activeConfigName {
+			meta.Priority = 20
+		} else if summary.Scope == settings.SkillPackageScopeGlobal {
+			meta.Priority = 10
+		}
+		if meta.System || !meta.Hidden {
+			meta.Priority++
 		}
 		for _, toolName := range toolRefs {
-			index[toolName] = meta
+			previous, exists := index[toolName]
+			if !exists || meta.Priority > previous.Priority || (meta.Priority == previous.Priority && meta.PackageID < previous.PackageID) {
+				index[toolName] = meta
+			}
 		}
 	}
 	return index
@@ -634,6 +667,10 @@ func (s *assetCatalogService) resolveToolAccessPolicyFallback(toolName string) (
 
 func buildPublicRuntimeCatalogItem(item toolcatalog.Item, runtime middlewareclient.ToolCatalogItem, policy toolCatalogPolicy, known bool) middlewareclient.ToolCatalogItem {
 	runtime.Name = strings.TrimSpace(item.Name)
+	runtime.DisplayName = firstNonEmpty(strings.TrimSpace(item.DisplayName), strings.TrimSpace(runtime.DisplayName))
+	if len(item.Keywords) > 0 {
+		runtime.Keywords = append([]string(nil), item.Keywords...)
+	}
 	runtime.Description = firstNonEmpty(strings.TrimSpace(item.Description), strings.TrimSpace(runtime.Description))
 	runtime.Category = firstNonEmpty(strings.TrimSpace(item.Category), strings.TrimSpace(runtime.Category))
 	runtime.Domain = firstNonEmpty(strings.TrimSpace(item.Domain), strings.TrimSpace(runtime.Domain), strings.TrimSpace(runtime.Category))

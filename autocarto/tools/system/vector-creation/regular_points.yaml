@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: regular_points
-  display_name: 规则点
+  keywords: ["规则分布点", "生成规则分布点", "矢量生成", "点线面", "空间网格"]
+  display_name: "生成规则分布点"
   domain: vector-creation
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 范围
   - name: SPACING
     type: number
-    description: 点间距
+    description: "点间距（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 100.0
   - name: CRS
     type: crs

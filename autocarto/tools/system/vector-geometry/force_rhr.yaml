@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: force_rhr
-  display_name: 强制右手规则
+  keywords: ["多边形环方向", "统一多边形环方向", "几何处理", "空间叠加", "几何修复"]
+  display_name: "统一多边形环方向"
   domain: vector-geometry
   runtime: qgis
 spec:

@@ -1,0 +1,60 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: import_layout_template
+  keywords: ["版面模板", "模板排版", "占位符", "打印布局"]
+  display_name: "按 QGIS 模板排版"
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 按 QGIS .qpt 模板替换文字、设置主图和图例，成功后导入或替换同名版面；保留模板文字框和字体，返回全部元素的 ID、毫米矩形与未替换占位符警告
+  parameters:
+  - name: template
+    type: resource
+    resource_type: layout:qpt
+    description: QGIS .qpt 布局资源的名称、编号或路径，模板内部相对资源以模板文件为基准
+    required: true
+  - name: name
+    type: string
+    description: 目标布局名称（同名布局存在时覆盖）
+    required: true
+  - name: texts
+    type: object
+    description: 占位符名称到替换文字的对象，例如“标题”和“综述”；不填的占位符保留并写入警告
+    required: false
+  - name: map_item_id
+    type: string
+    description: 模板主地图项的 ID，默认 main_map；仅提供模板和名称时保留模板原有地图设置
+    required: false
+  - name: map_layers
+    type: multi_layer
+    description: 主图显示的图层名称或 ID 数组，顺序为上下顺序；请求主图设置但未传本项时使用工程可见图层
+    required: false
+  - name: extent_layers
+    type: multi_layer
+    description: 主图范围使用的图层名称或 ID 数组，转换到模板主图坐标系；与显式范围二选一
+    required: false
+  - name: extent
+    type: object
+    description: 显式范围对象，含 xmin、ymin、xmax、ymax、crs；与范围图层二选一
+    required: false
+  - name: padding
+    type: number
+    description: 主图范围留白比例，默认零点零三；保持模板地图框的位置和尺寸
+    required: false
+  - name: legend_layers
+    type: multi_layer
+    description: 模板各图例显示的图层名称或 ID 数组；未传时保留模板图例
+    required: false
+execution:
+  handler: handlers.layout.import_layout_template_handler
+  param_mapping:
+    template: '{{ template }}'
+    name: '{{ name }}'
+    texts: '{{ texts }}'
+    map_item_id: '{{ map_item_id }}'
+    map_layers: '{{ map_layers }}'
+    extent_layers: '{{ extent_layers }}'
+    extent: '{{ extent }}'
+    padding: '{{ padding }}'
+    legend_layers: '{{ legend_layers }}'

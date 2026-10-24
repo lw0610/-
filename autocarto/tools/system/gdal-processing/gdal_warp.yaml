@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_warp
-  display_name: 栅格重投影
+  keywords: ["栅格投影", "转为栅格投影", "栅格处理", "矢量处理", "空间分析"]
+  display_name: "转换栅格投影"
   domain: gdal-processing
   runtime: qgis
 spec:

@@ -23,6 +23,8 @@ import (
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/control"
 	"github.com/autocarto/carto_agent/internal/discovery"
+	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/flowrun"
 	"github.com/autocarto/carto_agent/internal/knowledge"
 	"github.com/autocarto/carto_agent/internal/llm"
 	"github.com/autocarto/carto_agent/internal/logger"
@@ -54,6 +56,13 @@ const (
 
 // DeepServer 基于 DeepAgents 的 WebSocket 服务器
 type DeepServer struct {
+	eventSequenceMu           sync.Mutex
+	flowMu                    sync.Mutex
+	flowCompiler              flowrun.Compiler
+	flowController            *flowrun.Controller
+	flowContexts              map[string]flowSessionContext
+	pendingFlows              map[string]flowrun.StartRequest
+	flowMessageMeta           map[string]map[string]any
 	port                      int
 	httpServer                *http.Server
 	clients                   map[*websocket.Conn]bool
@@ -1313,9 +1322,6 @@ func isTrackedSkillSnapshotPath(path string) bool {
 	if len(parts) == 2 && (strings.EqualFold(parts[1], "config.yaml") || strings.EqualFold(parts[1], "config.yml")) {
 		return true
 	}
-	if len(parts) == 2 && (strings.EqualFold(parts[1], "workflow.yaml") || strings.EqualFold(parts[1], "workflow.yml")) {
-		return true
-	}
 	return false
 }
 
@@ -1389,17 +1395,33 @@ func (s *DeepServer) sendError(conn *websocket.Conn, errMsg string) {
 }
 
 func (s *DeepServer) sendSessionMessage(conn *websocket.Conn, msg Message) error {
+	_, err := s.sendSessionMessageSequenced(conn, msg)
+	return err
+}
+
+func (s *DeepServer) sendSessionMessageSequenced(conn *websocket.Conn, msg Message) (uint64, error) {
 	sessionID := strings.TrimSpace(msg.SessionID)
 	if sessionID == "" {
-		return s.sendMessage(conn, msg)
+		return 0, s.sendMessage(conn, msg)
 	}
 
+	s.flowMu.Lock()
+	meta := s.flowMessageMeta[sessionID]
+	s.flowMu.Unlock()
+	if len(meta) > 0 {
+		msg.Data = copyMessageData(msg.Data)
+		for k, v := range meta {
+			msg.Data[k] = v
+		}
+	}
+	var sequence uint64
 	var mirrored *Message
 	if eventSeq := s.nextSessionRunEventSequence(sessionID); eventSeq > 0 {
 		if runEvent, ok := buildRunEventMessageWithOptions(msg, runEventOptions{
 			Sequence:        eventSeq,
 			TimestampMillis: time.Now().UnixMilli(),
 		}); ok {
+			sequence = eventSeq
 			mirrored = &runEvent
 			s.recordSessionRunEvent(sessionID, runEvent)
 		}
@@ -1409,7 +1431,7 @@ func (s *DeepServer) sendSessionMessage(conn *websocket.Conn, msg Message) error
 
 	frames, err := marshalOutboundFrames(msg, mirrored)
 	if err != nil {
-		return err
+		return sequence, err
 	}
 
 	connections := s.listSessionSubscribers(sessionID)
@@ -1420,7 +1442,7 @@ func (s *DeepServer) sendSessionMessage(conn *websocket.Conn, msg Message) error
 		if projectionChanged {
 			s.persistSessionRuntimeProjection(sessionID)
 		}
-		return nil
+		return sequence, nil
 	}
 
 	var lastErr error
@@ -1439,7 +1461,7 @@ func (s *DeepServer) sendSessionMessage(conn *websocket.Conn, msg Message) error
 	if projectionChanged {
 		s.persistSessionRuntimeProjection(sessionID)
 	}
-	return lastErr
+	return sequence, lastErr
 }
 
 func normalizeSessionID(conn *websocket.Conn, sessionID string) string {
@@ -1485,6 +1507,16 @@ func (s *DeepServer) cancelSessionTask(conn *websocket.Conn, sessionID string) {
 	if sid == "" {
 		return
 	}
+
+	defer func() {
+		s.flowMu.Lock()
+		delete(s.pendingFlows, sid)
+		controller := s.flowController
+		s.flowMu.Unlock()
+		if controller != nil {
+			_, _ = controller.Cancel(context.Background(), sid)
+		}
+	}()
 
 	// Cancellation and review confirmation must not consume the same pause.
 	s.knowledgeConfirmMu.Lock()
@@ -1641,4 +1673,16 @@ func (s *DeepServer) popPendingInterrupt(conn *websocket.Conn, sessionID string)
 		}
 	}
 	return pending, true
+}
+
+// BroadcastFlowCompile delivers background progress independently of requests.
+func (s *DeepServer) BroadcastFlowCompile(status flow.CompileJobStatus) {
+	raw, _ := json.Marshal(status)
+	payload := map[string]any{}
+	_ = json.Unmarshal(raw, &payload)
+	for _, conn := range s.listClientConnections() {
+		if err := s.sendMessage(conn, Message{Type: MsgTypeFlowCompile, Data: payload}); err != nil {
+			logger.Warn("推送 flow_compile 失败: %v", err)
+		}
+	}
 }

@@ -1,0 +1,8 @@
+apiVersion: resource/v1
+id: layout.four-corner
+type: layout
+name: 四角对齐版式
+version: 1.0.0
+entry: 四角对齐版式.layout.yaml
+source:
+  author: AutoCarto

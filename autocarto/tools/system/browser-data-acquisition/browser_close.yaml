@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: browser_close
-  display_name: 关闭当前会话浏览器
+  keywords: ["会话浏览器", "关闭会话浏览器", "网页取数", "浏览器", "网络下载"]
+  display_name: "关闭会话浏览器"
   domain: browser-data-acquisition
   runtime: internal
 spec:

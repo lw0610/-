@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: define_shapefile_projection
-  display_name: 定义形状文件投影
+  keywords: ["文件投影", "定义文件投影", "坐标系", "投影转换", "坐标转换"]
+  display_name: "定义文件投影"
   domain: crs-projection
   runtime: qgis
 spec:

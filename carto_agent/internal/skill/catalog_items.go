@@ -31,6 +31,8 @@ func BuildCatalogItemsFromDefinitions(definitions []SkillDefinition) []middlewar
 		providerID, source := catalogIdentityForRuntime(runtimeID)
 		items = append(items, middlewareclient.ToolCatalogItem{
 			Name:        name,
+			DisplayName: strings.TrimSpace(def.Metadata.DisplayName),
+			Keywords:    append([]string(nil), def.Metadata.Keywords...),
 			ProviderID:  providerID,
 			Description: description,
 			Category:    strings.TrimSpace(def.Metadata.Category),

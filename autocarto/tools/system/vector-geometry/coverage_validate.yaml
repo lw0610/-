@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: coverage_validate
-  display_name: 验证Coverage
+  keywords: ["面覆盖拓扑", "验证面覆盖拓扑", "几何处理", "空间叠加", "几何修复"]
+  display_name: "验证面覆盖拓扑"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: GAP_WIDTH
     type: number
-    description: 间隙宽度阈值
+    description: "间隙宽度阈值（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.0
   - name: INVALID_EDGES
     type: output_layer

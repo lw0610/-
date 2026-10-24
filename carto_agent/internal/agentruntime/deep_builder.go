@@ -11,12 +11,24 @@ import (
 )
 
 func (f *Factory) buildDeepAgent(ctx context.Context, activeConfigName string, activeConfig *config.AgentConfigFile) (adk.ResumableAgent, error) {
+	cfg, err := f.deepAgentConfig(activeConfigName, activeConfig)
+	if err != nil {
+		return nil, err
+	}
+	return deepagent.New(ctx, cfg)
+}
+
+// deepAgentConfig keeps delegated and flow roles on the same runtime projection.
+func (f *Factory) deepAgentConfig(activeConfigName string, activeConfig *config.AgentConfigFile) (*deepagent.Config, error) {
+	if activeConfig == nil {
+		return nil, fmt.Errorf("active config is required")
+	}
 	runtimeSkillConfig := config.ConvertToRuntimeSkillConfigWithPlugin(activeConfig, f.config.PluginSkillsDir, f.config.BuiltinSkillsDir, f.config.UserSkillsDir, f.config.ConfigBaseDir, activeConfigName)
 	if runtimeSkillConfig == nil {
 		return nil, fmt.Errorf("runtime config projection failed")
 	}
 
-	return deepagent.New(ctx, &deepagent.Config{
+	return &deepagent.Config{
 		Name:                 "orchestrator",
 		Description:          "AutoCarto AI 智能GIS助手",
 		ChatModel:            f.config.DefaultChatModel,
@@ -37,5 +49,5 @@ func (f *Factory) buildDeepAgent(ctx context.Context, activeConfigName string, a
 		ResolveProviderCfg: func(provider string) *config.LLMProviderConfig {
 			return f.resolveProviderConfig(provider)
 		},
-	})
+	}, nil
 }

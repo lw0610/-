@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: aspect
-  display_name: 坡向
+  keywords: ["地形坡向", "分析地形坡向", "栅格分析", "地形分析", "空间插值"]
+  display_name: "计算地形坡向"
   domain: raster-analysis
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入DEM
   - name: Z_FACTOR
     type: number
-    description: Z因子
+    description: "Z因子（垂直方向换算系数，无单位，正数）"
     default: 1.0
   - name: OUTPUT
     type: output_raster

@@ -324,6 +324,7 @@ function categoryLabel(raw: string) {
   if (value === 'parameters') {
     return '参数选择'
   }
+  if (value === 'flow_confirmation') return '流程确认'
   return raw.trim()
 }
 
@@ -525,11 +526,12 @@ export default function InterruptCard({
     if (!currentDecision) {
       return []
     }
-    if (currentDecision.selectMode === 'single' || currentDecision.selectMode === 'multiple') {
+    if (info.category !== 'flow_confirmation' && currentDecision.category !== 'flow_confirmation' && (currentDecision.selectMode === 'single' || currentDecision.selectMode === 'multiple')) {
       return appendCustomOption(currentDecision.options)
     }
     return currentDecision.options
-  }, [currentDecision])
+  }, [currentDecision, info.category])
+  const primaryOptions = info.category === 'flow_confirmation' ? info.options : appendCustomOption(info.options)
 
   const answeredDecisionCount = useMemo(
     () => info.decisions.filter((decision) => isDecisionAnswered(decision, decisionAnswers[decision.id])).length,
@@ -846,7 +848,7 @@ export default function InterruptCard({
 
       {info.decisions.length === 0 && info.selectMode === 'single' && (
         <div className="mb-2 space-y-1 rounded-sm border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-900/40">
-          {appendCustomOption(info.options).map((option, idx) => {
+          {primaryOptions.map((option, idx) => {
             const value = String(option.value || '')
             const label = String(option.label || value || `选项 ${idx + 1}`)
             const checked = selectedOption === value
@@ -883,7 +885,7 @@ export default function InterruptCard({
 
       {info.decisions.length === 0 && info.selectMode === 'multiple' && (
         <div className="mb-2 space-y-1 rounded-sm border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-900/40">
-          {appendCustomOption(info.options).map((option, idx) => {
+          {primaryOptions.map((option, idx) => {
             const value = String(option.value || '')
             const label = String(option.label || value || `选项 ${idx + 1}`)
             const checked = selectedOptions.includes(value)
@@ -1054,7 +1056,7 @@ export default function InterruptCard({
             })}
           </div>
           <div className="flex items-center gap-2">
-          <button
+          {info.category !== 'flow_confirmation' && <button
             type="button"
             className="rounded-sm border border-zinc-200 px-2 py-1 text-[9px] text-zinc-600 hover:bg-zinc-100 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             onClick={() => {
@@ -1066,7 +1068,7 @@ export default function InterruptCard({
             disabled={interactionDisabled}
           >
             拒绝
-          </button>
+          </button>}
           {showNextDecisionAction ? (
             <button
               type="button"

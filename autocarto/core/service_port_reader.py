@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
-from .paths import get_runtime_home_env
+from .paths import get_autocarto_home
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -9,16 +9,14 @@ logger = get_logger(__name__)
 _RUNTIME_PORT_FILE = ".port"
 
 
-def get_runtime_port_file_path() -> Optional[Path]:
-    runtime_home = get_runtime_home_env()
-    if runtime_home is None:
-        return None
+def get_runtime_port_file_path() -> Path:
+    runtime_home = get_autocarto_home()
     return runtime_home / "data" / _RUNTIME_PORT_FILE
 
 
 def read_runtime_port() -> Optional[int]:
     port_file = get_runtime_port_file_path()
-    if port_file is None or not port_file.exists():
+    if not port_file.exists():
         return None
     try:
         port = int(port_file.read_text(encoding="utf-8").strip())

@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: add_geometry_attributes
+  keywords: ["几何属性", "添加几何属性", "几何处理", "空间叠加", "几何修复"]
   display_name: 添加几何属性
   domain: vector-geometry
   runtime: qgis

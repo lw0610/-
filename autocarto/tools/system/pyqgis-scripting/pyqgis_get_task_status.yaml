@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: pyqgis_get_task_status
+  display_name: "查询脚本任务状态"
+  keywords: ["脚本任务状态", "查询脚本任务状态", "地图脚本", "脚本执行", "脚本任务"]
   domain: pyqgis-scripting
   runtime: qgis
 spec:

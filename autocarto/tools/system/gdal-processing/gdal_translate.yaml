@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_translate
-  display_name: 栅格转换
+  keywords: ["栅格格式", "转为栅格格式", "栅格处理", "矢量处理", "空间分析"]
+  display_name: "转换栅格格式"
   domain: gdal-processing
   runtime: qgis
 spec:

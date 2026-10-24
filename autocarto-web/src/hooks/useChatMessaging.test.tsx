@@ -6,6 +6,7 @@ import { useChatStore } from '@/stores/chatStore'
 import { useConnectionStore } from '@/stores/connectionStore'
 import { useInstanceStore } from '@/stores/instanceStore'
 import { useSessionStore } from '@/stores/sessionStore'
+import type { FlowRunState } from '@/features/flow-run/types'
 import type { QGISInstance } from '@/types/instance'
 
 const {
@@ -13,12 +14,14 @@ const {
   sendInterruptResponseMock,
   sendCancelMock,
   sendChatMock,
+  sendTaskMock,
   waitUntilConnectedMock,
 } = vi.hoisted(() => ({
   websocketState: { connected: true },
   sendInterruptResponseMock: vi.fn(),
   sendCancelMock: vi.fn(),
   sendChatMock: vi.fn(),
+  sendTaskMock: vi.fn(),
   waitUntilConnectedMock: vi.fn(),
 }))
 
@@ -30,6 +33,7 @@ vi.mock('@/lib/websocket', () => ({
     sendInterruptResponse: sendInterruptResponseMock,
     sendCancel: sendCancelMock,
     sendChat: sendChatMock,
+    sendTask: sendTaskMock,
     waitUntilConnected: waitUntilConnectedMock,
   },
 }))
@@ -94,7 +98,6 @@ function resetStores() {
     sessions: [],
     sessionsReady: true,
     activeSessionId: 'sid-hitl',
-    sessionPanelCollapsed: false,
     sessionMutationTick: 0,
     lastMutatedSessionId: null,
     sessionAttachState: {},
@@ -128,6 +131,7 @@ describe('useChatMessaging HITL 交互流', () => {
     sendInterruptResponseMock.mockReset()
     sendCancelMock.mockReset()
     sendChatMock.mockReset()
+    sendTaskMock.mockReset()
     waitUntilConnectedMock.mockReset()
   })
 
@@ -210,6 +214,15 @@ describe('useChatMessaging HITL 交互流', () => {
 
     expect(result.current.resolvedInterruptStates['cp-1']).toBe('approved')
   })
+  it('流程确认保留服务器选项值并在步骤内展示中文决策', () => {
+    sendInterruptResponseMock.mockReturnValue(true)
+    const interrupt = { checkpoint_id: 'cp-1', flow_run_id: 'r', step_id: 's1', interrupt_contexts: [] }
+    useChatStore.setState({ pendingInterrupts: [interrupt], sessionPendingInterrupts: { 'sid-hitl': [interrupt] } })
+    const { result } = renderHook(() => useChatMessaging({ ensureSession: async () => 'sid-hitl' }))
+    act(() => result.current.handleInterruptApprove('cp-1', { option: 'skip', text: '保留数据' }))
+    expect(sendInterruptResponseMock).toHaveBeenCalledWith(expect.objectContaining({ userData: { option: 'skip', text: '保留数据' } }))
+    expect(useChatStore.getState().messages.at(-1)).toMatchObject({ type: 'decision', data: { flow_run_id: 'r', step_id: 's1' }, content: expect.stringContaining('跳过本步') })
+  })
 
   it('WebSocket 尚未 ready 时会等待连接恢复后再发送消息', async () => {
     websocketState.connected = false
@@ -254,6 +267,14 @@ describe('useChatMessaging HITL 交互流', () => {
     expect(errorMessage?.type).toBe('error')
     expect(errorMessage?.content).toContain('当前实时连接正在恢复')
   })
+  it('指定流程严格使用 task.data.flow 并保留现有运行上下文', async () => {
+    sendTaskMock.mockReturnValue(true)
+    const { result } = renderHook(() => useChatMessaging({ ensureSession: async () => 'sid-hitl' }))
+    const flow = { id: 'demo', inputs: { source: { $ref: 'current_user_message' }, review: false } }
+    await act(async () => { expect(await result.current.handleSend('用户原文', flow)).toBe(true) })
+    expect(sendChatMock).not.toHaveBeenCalled()
+    expect(sendTaskMock).toHaveBeenCalledWith('用户原文', 'sid-hitl', expect.objectContaining({ flow, execution_mode: 'build', run_intent: 'execute', project_path: '/tmp/hitl-test.qgz', instance_id: 'inst-hitl' }))
+  })
   it('取消运行会使用当前会话发送 websocket cancel 请求', () => {
     sendCancelMock.mockReturnValue(true)
     const ensureSession = vi.fn(async () => 'sid-hitl')
@@ -266,4 +287,39 @@ describe('useChatMessaging HITL 交互流', () => {
     expect(sendCancelMock).toHaveBeenCalledWith('sid-hitl')
     expect(useChatStore.getState().isThinking).toBe(false)
   })
+
+  it('流程连接恢复重发保留同一次任务身份', async () => {
+    sendTaskMock.mockReturnValueOnce(false).mockReturnValueOnce(true)
+    const { result } = renderHook(() => useChatMessaging({ ensureSession: async () => 'sid-hitl' }))
+    await act(async () => { expect(await result.current.handleSend('用户原文', { id: 'demo', inputs: {} })).toBe(true) })
+    expect(sendTaskMock).toHaveBeenCalledTimes(2)
+    const first = sendTaskMock.mock.calls[0][2]
+    const retry = sendTaskMock.mock.calls[1][2]
+    expect(first.request_id).toEqual(expect.stringMatching(/^task-.+/))
+    expect(first.idempotency_key).toBe(first.request_id)
+    expect(retry.request_id).toBe(first.request_id)
+    expect(retry.idempotency_key).toBe(first.idempotency_key)
+  })
+  it.each(['continue_snapshot', 'restart'] as const)('资源变化选择 %s 发送所见指纹和原运行编号', async choice => {
+    sendTaskMock.mockReturnValue(true)
+    const { result } = renderHook(() => useChatMessaging({ ensureSession: async () => 'sid-hitl' }))
+    const run = { flow_id: 'demo', flow_run_id: 'old-run', resource_change: { fingerprint: 'observed-new', message: '资源已变化' } } as FlowRunState
+    await act(async () => { expect(await result.current.handleResumeFlow(run, choice)).toBe(true) })
+    expect(sendTaskMock).toHaveBeenCalledWith(expect.any(String), 'sid-hitl', expect.objectContaining({ flow: {
+      id: 'demo', resume_run_id: 'old-run', resume_resource_choice: choice, resource_fingerprint: 'observed-new',
+    } }))
+  })
+  it('资源检查阻止恢复后，同一流程断点再次推送仍可确认', () => {
+    const pending = { checkpoint_id: 'cp-flow', flow_run_id: 'flow-run', interrupt_contexts: [] }
+    useChatStore.setState({ pendingInterrupts: [pending], sessionPendingInterrupts: { 'sid-hitl': [pending] } })
+    sendInterruptResponseMock.mockReturnValue(true)
+    const { result } = renderHook(() => useChatMessaging({ ensureSession: async () => 'sid-hitl' }))
+    act(() => result.current.handleInterruptApprove('cp-flow', { option: 'confirm' }))
+    expect(result.current.resolvedInterruptStates['cp-flow']).toBe('approved')
+    act(() => useChatStore.getState().addSessionInterrupt('sid-hitl', pending))
+    expect(result.current.resolvedInterruptStates['cp-flow']).toBeUndefined()
+    act(() => result.current.handleInterruptApprove('cp-flow', { option: 'confirm' }))
+    expect(sendInterruptResponseMock).toHaveBeenCalledTimes(2)
+  })
+
 })

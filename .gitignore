@@ -66,6 +66,10 @@ temp/
 tmp_gcc_test/
 .autocarto-cache/
 .gocache/
+/.runs/
+.runs/
+.tmp-test/
+autocarto_data/
 
 # =========================
 # Environment / Secrets
@@ -75,6 +79,7 @@ tmp_gcc_test/
 !.env.example
 !.env.sample
 .tmp_env.local
+.master_key
 autocarto/config/.master_key
 autocarto/config/secrets.enc
 autocarto_data/config/.master_key
@@ -112,36 +117,3 @@ tool_server/tool_manager
 .sisyphus/
 .playwright-mcp/
 .codex/
-
-# Source handoff: user state and generated artifacts are never versioned.
-/autocarto_data/
-/autocarto/config/
-/autocarto/intermediate/
-/outputs/
-/.gomodcache/
-/.tmp-test/
-/Eino.zip
-/1.24.0
-**/.master_key
-**/secrets.enc
-**/credentials.json
-**/token.json
-*.pem
-*.key
-*.p12
-*.pfx
-*.bak
-*.bak_*
-*.go.[0-9]*
-/autocarto-web/tmp_AgentConfigWorkspace.recovered.tsx
-/autocarto-web/.next*/
-/autocarto-web/src-tauri/target*/
-/autocarto-web/src-tauri/gen/
-/autocarto-web/src-tauri/binaries/
-/autocarto-web/src-tauri/*.shp
-/autocarto-web/src-tauri/*.shx
-/autocarto-web/src-tauri/*.dbf
-/autocarto-web/src-tauri/*.cpg
-/autocarto-web/src-tauri/*.prj
-/autocarto-web/src-tauri/*.qmd
-/carto_agent/defaults/third_party_skills/googlemapd-cli-agent/bin/

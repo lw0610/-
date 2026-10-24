@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: voronoi_polygons
-  display_name: 泰森多边形
+  keywords: ["泰森多边形", "生成泰森多边形", "几何处理", "空间叠加", "几何修复"]
+  display_name: "创建泰森多边形"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: BUFFER
     type: number
-    description: 缓冲区百分比
+    description: "输出范围外扩比例（百分比，非负）"
     default: 0.0
   - name: OUTPUT
     type: output_layer

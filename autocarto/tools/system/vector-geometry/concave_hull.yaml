@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: concave_hull
-  display_name: 凹包
+  keywords: ["要素凹包", "分析要素凹包", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算要素凹包"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: ALPHA
     type: number
-    description: 阈值
+    description: "凹包阈值（无单位，0—1）"
     default: 0.3
   - name: OUTPUT
     type: output_layer

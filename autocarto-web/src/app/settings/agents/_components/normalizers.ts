@@ -7,6 +7,10 @@ import {
   AgentGlobalConfig,
   PlanAgentDefData,
   PlanConfig,
+  normalizeAgentGlobalConfig,
+  normalizeRuntimeAgentDef,
+  normalizePlanAgentDef,
+  toolPackageSelections,
 } from "@/lib/api";
 export { resolveSkillId } from "@/lib/settings-utils";
 import { parseExecutionMode } from "@/lib/runIntent";
@@ -48,53 +52,13 @@ export function collectSkillSelections(packages?: string[] | null): string[] {
 }
 
 export function normalizeGlobalConfig(globalRaw: unknown): AgentGlobalConfig {
-  const raw = toRecord(globalRaw);
-  return {
-    skill_packages: toStringArray(raw.skill_packages),
-  };
+  return normalizeAgentGlobalConfig(toRecord(globalRaw));
 }
-
 export function normalizeRuntimeAgent(agentRaw: unknown): AgentDefData {
-  const raw = toRecord(agentRaw);
-  const prompts = toRecord(raw.prompts);
-  return {
-    display_name: String(raw.display_name || ""),
-    description: String(raw.description || ""),
-    is_main: Boolean(raw.is_main),
-    deletable: Boolean(raw.deletable),
-    enabled: raw.enabled !== false,
-    llm: {
-      provider: String(toRecord(raw.llm).provider || ""),
-    },
-    skill_packages: ensureSkillPackagesFromUnknown(raw.skill_packages),
-    prompts: Object.fromEntries(
-      Object.entries(prompts)
-        .filter(([key]) => String(key || "").trim())
-        .map(([key, value]) => [key, String(value || "")]),
-    ),
-  };
+  return normalizeRuntimeAgentDef(toRecord(agentRaw));
 }
-
 export function normalizePlanAgent(agentRaw: unknown): PlanAgentDefData {
-  const raw = toRecord(agentRaw);
-  const prompts = toRecord(raw.prompts);
-	const mode = String(raw.mode || "").trim();
-	return {
-		display_name: String(raw.display_name || ""),
-		is_main: Boolean(raw.is_main),
-		...(mode ? { mode } : {}),
-		llm: {
-		  provider: String(toRecord(raw.llm).provider || ""),
-		},
-    skill_packages: ensureSkillPackagesFromUnknown(raw.skill_packages),
-    prompts: {
-      static_instructions: String(prompts.static_instructions || ""),
-      runtime_mode_instruction: String(prompts.runtime_mode_instruction || ""),
-      user_prompt_template: String(
-        prompts.user_prompt_template || "{{ user_input }}",
-      ),
-    },
-  };
+  return normalizePlanAgentDef(toRecord(agentRaw));
 }
 
 export function normalizePlanConfig(planRaw: unknown): PlanConfig | undefined {
@@ -112,6 +76,7 @@ export function normalizePlanConfig(planRaw: unknown): PlanConfig | undefined {
 
   const maxIterations = Number(raw.max_iterations || 100);
   return {
+    ...raw,
     enabled: raw.enabled !== false,
     max_iterations:
       Number.isFinite(maxIterations) && maxIterations > 0 ? maxIterations : 100,
@@ -127,6 +92,7 @@ export function normalizeConfigMeta(meta: unknown): AgentConfigMeta {
     .toLowerCase();
   const normalizedMode = parseExecutionMode(rawMode) || "build";
   return {
+    ...raw,
     default_execution_mode: normalizedMode,
     description: String(raw.description || "").trim(),
     plan_enabled: raw.plan_enabled !== false,
@@ -153,6 +119,7 @@ export function normalizeConfigData(rawData: AgentConfigData): AgentConfigData {
 	}
 
 	return {
+    ...rawData,
 		meta: normalizedMeta,
 		runtime_shared: normalizeGlobalConfig(rawData.runtime_shared),
 		runtime_agents: runtimeAgents,
@@ -171,18 +138,15 @@ export function normalizeRuntimeAgentForSave(
 export function normalizePlanAgentForSave(
   agent: PlanAgentDefData,
 ): PlanAgentDefData {
-  return {
-    ...normalizePlanAgent(agent),
-    mode: 'all',
-  };
+  return normalizePlanAgent(agent);
 }
 
 export function countRuntimeAgentSkills(agent: AgentDefData): number {
-  const values = collectSkillSelections(agent.skill_packages);
+  const values = toolPackageSelections(agent);
   return new Set(values).size;
 }
 
 export function countPlanAgentSkills(agent: PlanAgentDefData): number {
-  const values = collectSkillSelections(agent.skill_packages);
+  const values = toolPackageSelections(agent);
   return new Set(values).size;
 }

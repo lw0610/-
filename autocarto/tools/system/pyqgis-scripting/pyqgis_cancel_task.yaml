@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: pyqgis_cancel_task
+  display_name: "取消脚本任务"
+  keywords: ["脚本任务", "取消脚本任务", "地图脚本", "脚本执行"]
   domain: pyqgis-scripting
   runtime: qgis
 spec:

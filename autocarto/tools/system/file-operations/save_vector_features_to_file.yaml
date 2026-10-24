@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: save_vector_features_to_file
-  display_name: 保存矢量要素到文件
+  keywords: ["矢量要素", "保存矢量要素", "文件管理", "数据文件"]
+  display_name: "保存矢量要素"
   domain: file-operations
   runtime: qgis
 spec:

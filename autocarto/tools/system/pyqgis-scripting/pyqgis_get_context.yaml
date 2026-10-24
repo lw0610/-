@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: pyqgis_get_context
+  display_name: "读取地图脚本上下文"
+  keywords: ["地图脚本上下文", "查询地图脚本上下文", "地图脚本", "脚本执行", "脚本任务"]
   domain: pyqgis-scripting
   runtime: qgis
 spec:

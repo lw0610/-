@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: grass_r_watershed
-  display_name: 流域分析
+  keywords: ["流域水文", "分析流域水文", "地形分析", "矢量分析", "水文分析"]
+  display_name: "分析流域水文"
   domain: grass-analysis
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入DEM
   - name: threshold
     type: integer
-    description: 汇流阈值
+    description: "最小汇流阈值（栅格像元数量，正整数）"
     default: 10000
   - name: accumulation
     type: output_raster

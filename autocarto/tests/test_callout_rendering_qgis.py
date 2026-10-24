@@ -24,7 +24,7 @@ class CalloutRenderingQgisTest(unittest.TestCase):
         cls.application = QgsApplication.instance() or QgsApplication([], False)
         if cls.owns_application:
             cls.application.initQgis()
-        from autocarto.tools.system._shared.cartography_style_impl import _cartography_add_callouts_impl
+        from autocarto.tools.system._shared.callouts_impl import _cartography_add_callouts_impl
         cls.render_callouts = staticmethod(_cartography_add_callouts_impl)
 
     @classmethod

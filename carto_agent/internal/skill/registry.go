@@ -450,6 +450,7 @@ func convertToolDefinition(def toolpkg.ToolDefinition) SkillDefinition {
 		Metadata: SkillMetadata{
 			Name:        strings.TrimSpace(def.Metadata.Name),
 			DisplayName: strings.TrimSpace(def.Metadata.DisplayName),
+			Keywords:    append([]string(nil), def.Metadata.Keywords...),
 			Category:    strings.TrimSpace(def.Metadata.Domain),
 			Runtime:     NormalizeRuntime(def.Metadata.Runtime),
 			Backend:     NormalizeRuntime(def.Metadata.Backend),
@@ -508,11 +509,13 @@ func convertToolParameters(params []toolpkg.ToolParameter) []SkillParameter {
 	converted := make([]SkillParameter, len(params))
 	for idx, param := range params {
 		converted[idx] = SkillParameter{
-			Name:        param.Name,
-			Type:        param.Type,
-			Required:    param.Required,
-			Description: param.Description,
-			Default:     cloneAny(param.Default),
+			Name:            param.Name,
+			Type:            param.Type,
+			ResourceType:    param.ResourceType,
+			DefaultResource: param.DefaultResource,
+			Required:        param.Required,
+			Description:     param.Description,
+			Default:         cloneAny(param.Default),
 		}
 		if len(param.Values) > 0 {
 			if values, ok := cloneAny(param.Values).([]any); ok {

@@ -26,6 +26,7 @@ type ConfigService struct {
 	userConfigPath string // 用户配置文件路径（写入目标）
 	configRevision string
 	secretsManager *SecretsManager
+	runtimeLogDir  string
 	mu             sync.RWMutex
 }
 
@@ -123,8 +124,12 @@ func NewConfigService(db *sql.DB, config *Config, configPath string, userConfigP
 		configPath:     configPath,
 		userConfigPath: userConfigPath,
 		secretsManager: secretsMgr,
+		runtimeLogDir:  config.Log.Dir,
 	}
 	service.configRevision = computeConfigRevision(config)
+	for _, warning := range service.GetRuntimeDirectoryDiagnostics().Warnings {
+		logger.Warn("运行目录检测 code=%s message=%s", warning.Code, warning.Message)
+	}
 	return service
 }
 

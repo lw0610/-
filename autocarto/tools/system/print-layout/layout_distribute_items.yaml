@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_distribute_items
-  display_name: layout_distribute_items
+  keywords: ["版面元素", "等距分布版面元素", "打印版面", "地图排版"]
+  display_name: "等距分布版面元素"
   runtime: qgis
   domain: print-layout
 spec:
@@ -21,7 +22,7 @@ spec:
     description: 分布方向
   - name: spacing
     type: number
-    description: 固定间距
+    description: "固定元素间距（毫米）"
 execution:
   handler: handlers.layout_advanced.distribute_items_handler
   param_mapping:

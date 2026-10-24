@@ -31,6 +31,21 @@ type stubAssetCatalogSkillStore struct {
 	details  map[string]settings.SkillPackageDetail
 }
 
+func TestToolPackageCatalogIndexPrefersFormalCategoryOwnership(t *testing.T) {
+	store := stubAssetCatalogSkillStore{packages: []settings.SkillPackageSummary{
+		{PackageID: "formal", Kind: "category", Scope: settings.SkillPackageScopeGlobal},
+		{PackageID: "legacy", Kind: "category", Hidden: true, Scope: settings.SkillPackageScopeGlobal},
+		{PackageID: "a-method", Kind: "workflow", Scope: settings.SkillPackageScopeGlobal},
+	}, details: map[string]settings.SkillPackageDetail{}}
+	for _, pkg := range store.packages {
+		store.details[pkg.PackageID] = settings.SkillPackageDetail{SkillPackageSummary: pkg, ToolRefs: []string{"sample"}}
+	}
+	service := &assetCatalogService{skillCatalog: store}
+	if got := service.buildToolPackageCatalogIndex()["sample"].PackageID; got != "formal" {
+		t.Fatalf("expected visible category ownership, got %q", got)
+	}
+}
+
 func (s stubAssetCatalogSkillStore) ListSkillPackages() ([]settings.SkillPackageSummary, error) {
 	return append([]settings.SkillPackageSummary(nil), s.packages...), nil
 }
@@ -376,7 +391,12 @@ func TestSchemaRevisionBump(t *testing.T) {
 		}, nil
 	}
 	serviceB := newAssetCatalogGovernanceTestService(t, middlewareclient.RuntimeSnapshot{})
-	serviceB.toolAggregatorSource = serviceA.toolAggregatorSource
+	serviceB.toolAggregatorSource = stubToolAggregatorSource{snapshot: toolrouter.Snapshot{
+		Interactive: []toolrouter.InteractiveToolDefinition{{
+			Name: "open_project", Description: "open", Category: "project",
+			InputSchema: map[string]any{"type": "object", "title": "open-project-v2"},
+		}},
+	}}
 	viewB, err := serviceB.GetToolCatalog(context.Background(), "global")
 	if err != nil {
 		t.Fatalf("GetToolCatalog schema-b returned error: %v", err)
@@ -931,6 +951,8 @@ func TestAssetCatalogServiceBuildToolPackageCatalogIndexIgnoresEmbeddedToolsWith
 
 func TestAssetCatalogServiceGlobalScopeIncludesCanonicalRuntimeTools(t *testing.T) {
 	rootDir := t.TempDir()
+	t.Setenv("AUTOCARTO_PROJECT_ROOT", rootDir)
+	t.Setenv("AUTOCARTO_ASSETS_ROOT", filepath.Join(rootDir, "autocarto"))
 	configDir := filepath.Join(rootDir, "autocarto", "config", "agent_configs")
 	systemSkillsDir := filepath.Join(rootDir, "autocarto", "skills", "system")
 	userSkillsDir := filepath.Join(rootDir, "autocarto", "skills", "user")
@@ -947,6 +969,18 @@ func TestAssetCatalogServiceGlobalScopeIncludesCanonicalRuntimeTools(t *testing.
 	originalWD, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Getwd failed: %v", err)
+	}
+	// Populate the isolated authority from the actual definitions. Empty asset
+	// directories no longer activate the retired embedded contract copy.
+	for _, name := range []string{"get_layers_info", "open_project"} {
+		source := filepath.Join(originalWD, "..", "..", "..", "autocarto", "tools", "system", "project-state", name+".yaml")
+		raw, err := os.ReadFile(source)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = os.WriteFile(filepath.Join(systemToolsDir, name+".yaml"), raw, 0600); err != nil {
+			t.Fatal(err)
+		}
 	}
 	if err := os.Chdir(rootDir); err != nil {
 		t.Fatalf("Chdir failed: %v", err)

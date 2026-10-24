@@ -1,4 +1,5 @@
 import logging
+import math
 import os
 from typing import Any, Dict, List, Optional
 
@@ -71,6 +72,52 @@ def _export_result_message(result: int) -> str:
         getattr(QgsLayoutExporter, "IteratorError", None): "布局迭代失败",
     }
     return result_map.get(result, f"未知错误码: {result}")
+
+
+def _image_export_dpi(layout, params):
+    from qgis.core import QgsUnitTypes
+    purpose = str(params.get("purpose") or "final").lower()
+    if purpose not in ("final", "review"):
+        raise ValueError("导出用途必须是 final 或 review")
+    sizes = []
+    pages = layout.pageCollection()
+    for index in range(pages.pageCount()):
+        page = pages.page(index)
+        rect = page.rect()
+        width = layout.convertFromLayoutUnits(float(rect.width()), QgsUnitTypes.LayoutMillimeters).length()
+        height = layout.convertFromLayoutUnits(float(rect.height()), QgsUnitTypes.LayoutMillimeters).length()
+        if not math.isfinite(width) or not math.isfinite(height) or width <= 0 or height <= 0:
+            raise ValueError("页面尺寸必须是有限正数")
+        sizes.append((width, height))
+    if not sizes:
+        raise ValueError("布局没有可导出的页面")
+    raw = params.get("DPI") if params.get("DPI") is not None else params.get("dpi")
+    if raw is not None:
+        if isinstance(raw, bool):
+            raise ValueError("导出 DPI 必须是有限正数")
+        dpi = float(raw)
+    elif purpose == "review":
+        first = sorted(sizes[0])
+        dpi = 100 if max(abs(first[0]-841), abs(first[1]-1189)) <= 1 else 140 if max(abs(first[0]-594), abs(first[1]-841)) <= 1 else 200
+    else:
+        dpi = float(layout.renderContext().dpi())
+    if not math.isfinite(dpi) or dpi <= 0:
+        raise ValueError("导出 DPI 必须是有限正数")
+    if purpose == "review":
+        def within_budget(value):
+            return all(math.ceil(width*value/25.4)*math.ceil(height*value/25.4) <= 16_000_000 for width, height in sizes)
+        if not within_budget(dpi):
+            low, high = 0.0, dpi
+            for _ in range(50):
+                middle = (low+high)/2
+                if within_budget(middle):
+                    low = middle
+                else:
+                    high = middle
+            dpi = math.floor(low*1000)/1000
+            if dpi <= 0:
+                raise ValueError("页面过大，无法在像素预算内导出")
+    return dpi, purpose
 
 
 def export_print_layout_handler(params: Dict[str, Any]) -> Dict[str, Any]:

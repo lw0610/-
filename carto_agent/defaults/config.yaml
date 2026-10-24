@@ -1,8 +1,8 @@
 # AutoCarto 系统默认配置
 #
 # 使用说明：
-# 1) 本文件为系统默认基线，运行时会与 autocarto/config/config.yaml 深度合并。
-# 2) 大模型 API Key 不写入本文件，统一通过 autocarto/config/secrets.enc 加密存储。
+# 1) 本文件为系统默认基线，运行时会与 AUTOCARTO_HOME/config/config.yaml 深度合并。
+# 2) 大模型 API Key 不写入本文件，由运行目录的 secrets.enc 或本机密钥库加密保存。
 # 3) 建议保持 provider.name 稳定，以避免与既有密钥映射关系断开。
 
 llm:

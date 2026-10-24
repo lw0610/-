@@ -18,6 +18,7 @@ from .style import (
     set_marker_symbol_handler,
     set_symbol_size_scale_handler,
     style_25d_handler,
+    symbolize_points_by_mapping_handler,
 )
 
 __all__ = [
@@ -34,7 +35,6 @@ __all__ = [
     "set_layer_opacity_handler",
     "set_layer_blend_mode_handler",
     "set_color_ramp_handler",
-    "cartography_build_and_draw_from_tables_handler",
     "set_symbol_size_scale_handler",
     "symbolize_points_by_mapping_handler",
     "get_style_info_handler",

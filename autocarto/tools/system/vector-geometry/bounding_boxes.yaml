@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: bounding_boxes
-  display_name: 边界框
+  keywords: ["要素边界框", "分析要素边界框", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算要素边界框"
   domain: vector-geometry
   runtime: qgis
 spec:

@@ -24,7 +24,6 @@ describe("session attach replay_required handling", () => {
     expect(
       resolveSessionAttachBlockFromNormalizedMessage({
         type: "session.response",
-        content: "",
         data: {
           action: "attach",
           success: false,

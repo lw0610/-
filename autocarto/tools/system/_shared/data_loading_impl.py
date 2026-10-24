@@ -12,6 +12,14 @@ from qgis.core import (
     QgsWkbTypes,
 )
 
+from autocarto.core.paths import get_project_root, resolve_project_path
+from autocarto.tools.system._shared.data_loading_support import (
+    DataLoadingError, boolean_parameter, normalized_data_source, split_data_source,
+)
+
+from autocarto.tools.system._shared.resource_handle import (
+    ResourceHandleError, require_handle, handle_entries, handle_entry_path, handle_summary,
+)
 from autocarto.tools.system._shared.canvas_refresh import refresh_canvas
 from autocarto.tools.system._shared.input_path_resolver import resolve_input_path
 from autocarto.tools.system._shared.output_manager import (
@@ -46,68 +54,72 @@ def _format_input_resolution_error(raw_path: str, resolution: Dict[str, Any]) ->
     return f"错误：文件不存在 '{raw_path}'"
 
 
-def load_vector_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+def _resolve_loading_source(raw_path, kind):
+    filename, options = split_data_source(raw_path)
+    absolute = str(resolve_project_path(filename))
+    resolution = resolve_input_path(absolute, expected_kind=kind, search_dirs={"project_root": str(get_project_root())})
+    if resolution.get("status") != "resolved":
+        raise DataLoadingError("input_" + str(resolution.get("status") or "invalid"),
+                               _format_input_resolution_error(raw_path, resolution), resolution)
+    resolved = resolution["resolved_path"]
+    return resolved + ("|" + "|".join(options) if options else ""), resolution
+
+
+def _layer_data(layer, reused):
+    geometry_type = QgsWkbTypes.geometryDisplayString(layer.geometryType()) if isinstance(layer, QgsVectorLayer) else "Raster"
+    return {"layer_id": layer.id(), "layer_name": layer.name(), "source": layer.source(),
+            "crs": _crs_label(layer.crs()), "geometry_type": geometry_type, "reused": reused}
+
+
+def _find_existing_source(source, kind):
+    identity = normalized_data_source(source)
+    expected_class = QgsVectorLayer if kind == "vector" else QgsRasterLayer
+    for layer in QgsProject.instance().mapLayers().values():
+        if not isinstance(layer, expected_class) or not layer.isValid():
+            continue
+        try:
+            if normalized_data_source(layer.source()) == identity:
+                return layer
+        except (DataLoadingError, ValueError, OSError):
+            continue
+    return None
+
+
+def _load_data_layer(params, kind):
     try:
-        file_path = params.get("path")
-        layer_name = params.get("layer_name")
-
-        if not file_path:
-            return {"success": False, "output": "", "info": "错误：缺少文件路径参数"}
-
-        resolution = resolve_input_path(file_path, expected_kind="vector")
-        if resolution.get("status") != "resolved":
-            logger.warning(
-                "矢量输入路径解析失败: raw=%s status=%s reason=%s",
-                file_path,
-                resolution.get("status"),
-                resolution.get("reason"),
-            )
-            return {
-                "success": False,
-                "output": "",
-                "info": _format_input_resolution_error(file_path, resolution),
-            }
-        resolved_path = resolution.get("resolved_path") or file_path
-        logger.debug(
-            "矢量输入路径解析: raw=%s resolved=%s source=%s",
-            file_path,
-            resolved_path,
-            resolution.get("source"),
-        )
-
-        if not layer_name:
-            layer_name = os.path.splitext(os.path.basename(resolved_path))[0]
-
-        vector_layer = QgsVectorLayer(resolved_path, layer_name, "ogr")
-
-        if not vector_layer.isValid():
-            return {
-                "success": False,
-                "output": "",
-                "info": "错误：无法加载图层，文件格式可能不支持或文件损坏",
-            }
-
-        QgsProject.instance().addMapLayer(vector_layer)
+        raw_path = params.get("path")
+        if not raw_path:
+            raise DataLoadingError("invalid_arguments", "错误：缺少文件路径参数")
+        reuse = boolean_parameter(params.get("reuse_existing"), True)
+        source, resolution = _resolve_loading_source(raw_path, kind)
+        existing = _find_existing_source(source, kind) if reuse else None
+        if existing is not None:
+            return {"success": True, "output": existing.name(), "info": "复用已加载图层: " + existing.name(),
+                    "data": _layer_data(existing, True)}
+        filename, _ = split_data_source(source)
+        layer_name = params.get("layer_name") or os.path.splitext(os.path.basename(filename))[0]
+        layer = QgsVectorLayer(source, layer_name, "ogr") if kind == "vector" else QgsRasterLayer(source, layer_name)
+        if not layer.isValid():
+            raise DataLoadingError("data_layer_invalid", "错误：无法加载图层，文件格式可能不支持或文件损坏")
+        QgsProject.instance().addMapLayer(layer)
         refresh_canvas()
+        if kind == "vector":
+            details = f"要素数: {layer.featureCount()}, 几何类型: {QgsWkbTypes.geometryDisplayString(layer.geometryType())}, 字段数: {len(layer.fields())}"
+        else:
+            details = f"宽度: {layer.width()}, 高度: {layer.height()}, 波段数: {layer.bandCount()}"
+        return {"success": True, "output": layer.name(),
+                "info": f"图层加载成功。{details}, 坐标系: {_crs_label(layer.crs())}, resolved_from: {resolution.get('source', 'unknown')}",
+                "data": _layer_data(layer, False)}
+    except DataLoadingError as exc:
+        return {"success": False, "output": "", "info": str(exc), "message": str(exc),
+                "error_type": exc.code, "data": exc.details}
+    except Exception as exc:
+        return {"success": False, "output": "", "info": f"加载图层失败: {exc}",
+                "error_type": "data_load_failed", "message": str(exc)}
 
-        feature_count = vector_layer.featureCount()
-        geometry_type = QgsWkbTypes.geometryDisplayString(vector_layer.geometryType())
-        crs = _crs_label(vector_layer.crs())
-        field_count = len(vector_layer.fields())
 
-        info_msg = (
-            f"矢量图层加载成功。"
-            f"要素数: {feature_count}, "
-            f"几何类型: {geometry_type}, "
-            f"坐标系: {crs}, "
-            f"字段数: {field_count}, "
-            f"resolved_from: {resolution.get('source', 'unknown')}"
-        )
-
-        return {"success": True, "output": layer_name, "info": info_msg}
-
-    except Exception as e:
-        return {"success": False, "output": "", "info": f"加载矢量图层失败: {str(e)}"}
+def load_vector_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    return _load_data_layer(params, "vector")
 
 
 def export_raster_handler(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -224,55 +236,85 @@ def export_vector_handler(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def load_raster_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    return _load_data_layer(params, "raster")
+
+
+def _place_layer_in_group(layer, name):
+    root = QgsProject.instance().layerTreeRoot()
+    group = root.findGroup(name) or root.addGroup(name)
+    node = root.findLayer(layer.id())
+    if node is not None and node.parent() != group:
+        group.addChildNode(node.clone())
+        node.parent().removeChildNode(node)
+
+
+def load_list_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    entries = []
     try:
-        file_path = params.get("path")
-        layer_name = params.get("layer_name")
-
-        if not file_path:
-            return {"success": False, "output": "", "info": "错误：缺少文件路径参数"}
-
-        resolution = resolve_input_path(file_path, expected_kind="raster")
-        if resolution.get("status") != "resolved":
-            logger.warning(
-                "栅格输入路径解析失败: raw=%s status=%s reason=%s",
-                file_path,
-                resolution.get("status"),
-                resolution.get("reason"),
-            )
-            return {
-                "success": False,
-                "output": "",
-                "info": _format_input_resolution_error(file_path, resolution),
-            }
-        resolved_path = resolution.get("resolved_path") or file_path
-        logger.debug(
-            "栅格输入路径解析: raw=%s resolved=%s source=%s",
-            file_path,
-            resolved_path,
-            resolution.get("source"),
-        )
-
-        if not layer_name:
-            layer_name = os.path.splitext(os.path.basename(resolved_path))[0]
-
-        raster_layer = QgsRasterLayer(resolved_path, layer_name)
-
-        if not raster_layer.isValid():
-            return {"success": False, "output": "", "info": "错误：无法加载栅格图层"}
-
-        QgsProject.instance().addMapLayer(raster_layer)
-        refresh_canvas()
-
-        info_msg = (
-            f"栅格图层加载成功。"
-            f"宽度: {raster_layer.width()}, "
-            f"高度: {raster_layer.height()}, "
-            f"波段数: {raster_layer.bandCount()}, "
-            f"坐标系: {_crs_label(raster_layer.crs())}, "
-            f"resolved_from: {resolution.get('source', 'unknown')}"
-        )
-
-        return {"success": True, "output": layer_name, "info": info_msg}
-
-    except Exception as e:
-        return {"success": False, "output": "", "info": f"加载栅格图层失败: {str(e)}"}
+        handle = require_handle(params.get("data_list"), "data_list")
+        list_path = handle_entry_path(handle)
+        if params.get("base_dir") is not None and not isinstance(params["base_dir"], str):
+            raise DataLoadingError("invalid_arguments", "base_dir 须为目录路径字符串")
+        # base_dir 已由 Go 在解析句柄前应用，工具不再拼接或搜索资源路径。
+        names = params.get("names")
+        if names is not None and (not isinstance(names, list) or any(not isinstance(name, str) or not name.strip() for name in names)):
+            raise DataLoadingError("invalid_arguments", "names 须为非空名称组成的数组")
+        selected_names = {name.strip() for name in (names or [])}
+        rows = handle_entries(handle)
+        if any(row["kind"] not in {"vector", "raster"} or not isinstance(row.get("required"), bool) for row in rows):
+            raise ResourceHandleError("resource_handle_invalid", "数据清单句柄缺少规范化的数据类型或必需标记")
+        unknown = sorted(selected_names - {row["name"] for row in rows})
+        if unknown:
+            raise DataLoadingError("data_list_names_not_found", "数据清单没有指定名称", {"unmatched_names": unknown})
+        strict = boolean_parameter(params.get("strict"), True)
+        reuse = boolean_parameter(params.get("reuse_existing"), True)
+        group = params.get("group")
+        if group is not None and not isinstance(group, str):
+            raise DataLoadingError("invalid_arguments", "group 须为图层分组名称字符串")
+        plans = []
+        for row in rows:
+            if selected_names and row["name"] not in selected_names:
+                continue
+            source = row["path"]
+            entry = {"name": row["name"], "path": source, "status": "missing", "layer_id": "",
+                     "crs": "", "geometry_type": "", "message": "", "required": row["required"]}
+            try:
+                if not row["exists"]:
+                    raise DataLoadingError("input_missing", "数据文件不存在: " + source)
+                source, resolution = _resolve_loading_source(source, row["kind"])
+                entry.update(path=source, status="failed", message="待加载")
+                plans.append((entry, source, row["kind"]))
+            except DataLoadingError as exc:
+                entry["message"] = str(exc)
+            entries.append(entry)
+        blocking = [entry for entry in entries if entry["status"] == "missing" and entry["required"]]
+        if strict and blocking:
+            for entry, _, _ in plans:
+                entry["message"] = "严格检查未通过，未加载任何图层"
+            return {"success": False, "output": "", "info": "必需数据缺失，未加载任何图层",
+                    "error_type": "data_list_required_missing", "resource": handle_summary(handle), "warnings": handle.get("warnings", []), "data": {"entries": entries, "crs_summary": {}, "loaded_count": 0, "reused_count": 0}}
+        summary = {}
+        for entry, source, kind in plans:
+            result = _load_data_layer({"path": source, "layer_name": entry["name"], "reuse_existing": reuse}, kind)
+            if result.get("success"):
+                data = result["data"]
+                entry.update(status="reused" if data["reused"] else "loaded", layer_id=data["layer_id"],
+                             crs=data["crs"], geometry_type=data["geometry_type"], message=result["info"],
+                             layer_name=data["layer_name"])
+                summary.setdefault(data["crs"], []).append({"layer_id": data["layer_id"], "layer_name": data["layer_name"]})
+                if group and group.strip():
+                    _place_layer_in_group(QgsProject.instance().mapLayer(data["layer_id"]), group.strip())
+            else:
+                entry.update(status="failed", message=result.get("info", "加载失败"))
+        success = not any(entry["status"] == "failed" or (entry["status"] == "missing" and entry["required"]) for entry in entries)
+        return {"success": success, "output": str(list_path), "info": "数据清单加载完成" if success else "数据清单加载完成，存在失败或必需数据缺失",
+                "resource": handle_summary(handle), "warnings": handle.get("warnings", []),
+                "data": {"entries": entries, "crs_summary": summary,
+                         "loaded_count": sum(entry["status"] == "loaded" for entry in entries),
+                         "reused_count": sum(entry["status"] == "reused" for entry in entries)}}
+    except (DataLoadingError, ResourceHandleError) as exc:
+        return {"success": False, "output": "", "info": str(exc), "message": str(exc),
+                "error_type": exc.code, "data": dict(exc.details, entries=entries, crs_summary={})}
+    except Exception as exc:
+        return {"success": False, "output": "", "info": f"读取数据清单失败: {exc}",
+                "error_type": "data_list_failed", "data": {"entries": entries, "crs_summary": {}}}

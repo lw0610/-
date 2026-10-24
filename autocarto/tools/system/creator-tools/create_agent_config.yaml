@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: create_agent_config
+  display_name: "创建智能体方案"
+  keywords: ["智能体方案", "生成智能体方案", "方案配置", "工具管理", "技能创建"]
   domain: creator-tools
   runtime: internal
 spec:
@@ -9,11 +11,14 @@ spec:
   parameters:
   - name: config_name
     type: string
+    description: "新方案编号"
     required: true
   - name: clone_from
     type: string
+    description: "可选的来源方案编号"
   - name: config_data
     type: object
+    description: "符合智能体方案结构的配置对象"
 execution:
   backend_tool: create_agent_config
   param_mapping:

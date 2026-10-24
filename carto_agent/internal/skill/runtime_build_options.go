@@ -2,6 +2,7 @@ package skill
 
 import (
 	"context"
+	"github.com/autocarto/carto_agent/internal/resource"
 
 	"github.com/autocarto/carto_agent/internal/compute"
 )
@@ -24,6 +25,7 @@ type AutoLoadFunc func(context.Context, map[string]any, []compute.OutputLayer)
 type InternalInvoker func(context.Context, string, map[string]any) (any, error)
 
 type BuildOptions struct {
+	ResourceResolver     resource.Resolver
 	ComputeClient        *compute.Client
 	QGISInvoker          QGISInvoker
 	QGISResponseInvoker  QGISResponseInvoker

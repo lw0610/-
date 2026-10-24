@@ -1,0 +1,199 @@
+{
+  "id": "province-density",
+  "flow_id": "province-density",
+  "layout": "人口密度验收",
+  "project_crs": "EPSG:3857",
+  "variables": {},
+  "bindings": {},
+  "inputs": {},
+  "model": {
+    "flow": {
+      "inputs": [
+        {
+          "key": "地图标题",
+          "label": "地图标题",
+          "type": "text",
+          "options": []
+        }
+      ],
+      "input_constraints": [],
+      "triggers": [
+        "人口密度"
+      ]
+    }
+  },
+  "steps": {
+    "s1": {
+      "actions": [
+        {
+          "tool": "data_load_list",
+          "params": {
+            "strict": true,
+            "data_list": "人口密度输入"
+          },
+          "save": "loaded"
+        },
+        {
+          "op": "layers",
+          "names": [
+            "省级行政区",
+            "人口面积表"
+          ],
+          "save": "loaded_layers"
+        }
+      ],
+      "outputs": {
+        "输入图层": {
+          "$ref": "loaded_layers"
+        }
+      }
+    },
+    "s2": {
+      "actions": [
+        {
+          "tool": "join_attributes_by_field_value",
+          "params": {
+            "INPUT": "省级行政区",
+            "FIELD": "adcode",
+            "INPUT_2": "人口面积表",
+            "FIELD_2": "adcode",
+            "OUTPUT": "memory:关联结果"
+          },
+          "save": "joined"
+        },
+        {
+          "op": "layers",
+          "names": [
+            "关联结果"
+          ],
+          "save": "joined_layers"
+        }
+      ],
+      "outputs": {
+        "关联图层": {
+          "$ref": "joined_layers"
+        }
+      }
+    },
+    "s3": {
+      "actions": [
+        {
+          "tool": "field_calculator",
+          "params": {
+            "INPUT": "关联结果",
+            "FIELD_NAME": "population_density",
+            "FIELD_TYPE": 1,
+            "FIELD_LENGTH": 20,
+            "FIELD_PRECISION": 8,
+            "FORMULA": "CASE WHEN \"area_km2\" > 0 THEN \"population\" / \"area_km2\" ELSE NULL END",
+            "OUTPUT": "memory:人口密度"
+          },
+          "save": "calculated"
+        },
+        {
+          "op": "assert_fields",
+          "layer": "人口密度",
+          "field": "population_density",
+          "numerator": "population",
+          "denominator": "area_km2",
+          "count": 34,
+          "save": "density_values"
+        },
+        {
+          "op": "layers",
+          "names": [
+            "人口密度"
+          ],
+          "save": "density_layers"
+        }
+      ],
+      "outputs": {
+        "密度图层": {
+          "$ref": "density_layers"
+        }
+      }
+    },
+    "s4": {
+      "actions": [
+        {
+          "tool": "cartography_graduated_style",
+          "params": {
+            "layer": "人口密度",
+            "field": "population_density",
+            "classes": 5,
+            "method": "jenks",
+            "color_ramp": "YlOrRd"
+          },
+          "save": "graduated"
+        }
+      ],
+      "outputs": {
+        "分级结果": {
+          "$json": "graduated"
+        }
+      }
+    },
+    "s5": {
+      "actions": [
+        {
+          "tool": "layout_compose",
+          "params": {
+            "layout": "人口密度验收",
+            "spec": "统计专题版式",
+            "paper": "A4",
+            "title": "省级人口密度（合成验收数据）",
+            "map_layers": [
+              "人口密度"
+            ],
+            "extent_layers": [
+              "人口密度"
+            ],
+            "legend_layers": [
+              "人口密度"
+            ],
+            "legend_title": "人口密度（人/平方千米）",
+            "overview_text": "人口与面积为明确标注的合成验收数值；按行政代码精确关联并用人口/面积计算；自然断点五级。不代表真实统计分布。"
+          },
+          "save": "composed"
+        }
+      ],
+      "outputs": {
+        "版面": "人口密度验收"
+      }
+    },
+    "s6": {
+      "actions": [
+        {
+          "tool": "export_print_layout",
+          "params": {
+            "layout": "人口密度验收",
+            "output": "${out}/人口密度.png",
+            "dpi": 120
+          },
+          "save": "png"
+        },
+        {
+          "tool": "export_layout_pdf",
+          "params": {
+            "layout": "人口密度验收",
+            "output": "${out}/人口密度.pdf",
+            "dpi": 120
+          },
+          "save": "pdf"
+        }
+      ],
+      "outputs": {
+        "成果 PNG": {
+          "$ref": "png.output"
+        },
+        "成果 PDF": {
+          "$ref": "pdf.output"
+        }
+      }
+    }
+  },
+  "invariants": {
+    "source_unchanged": true,
+    "province_count": 34
+  }
+}

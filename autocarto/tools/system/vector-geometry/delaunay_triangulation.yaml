@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: delaunay_triangulation
-  display_name: 德劳内三角剖分
+  keywords: ["德劳内三角网", "生成德劳内三角网", "几何处理", "空间叠加", "几何修复"]
+  display_name: "创建德劳内三角网"
   domain: vector-geometry
   runtime: qgis
 spec:

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: geometry_by_expression
-  display_name: 按表达式几何
+  keywords: ["按表达式生成几何", "几何处理", "空间叠加", "几何修复"]
+  display_name: "按表达式生成几何"
   domain: vector-geometry
   runtime: qgis
 spec:

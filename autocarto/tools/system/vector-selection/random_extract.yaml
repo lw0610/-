@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: random_extract
-  display_name: 随机提取
+  keywords: ["提取要素", "随机提取要素", "要素筛选", "条件选择", "要素提取"]
+  display_name: "随机提取要素"
   domain: vector-selection
   runtime: qgis
 spec:

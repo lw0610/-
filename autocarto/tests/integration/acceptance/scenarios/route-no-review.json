@@ -1,0 +1,430 @@
+{
+  "flow_id": "marching-route",
+  "layout": "路线黄金样例",
+  "golden": "route",
+  "title_geometry": "route",
+  "basemap": "${basemap}",
+  "renderer": "${renderer}",
+  "external_inputs": [
+    "basemap",
+    "renderer"
+  ],
+  "project_crs": "source:${basemap}/省域.shp",
+  "inputs": {
+    "路线数据集": "${fixture}/route_dataset",
+    "质量审查": false,
+    "地图标题": "固定路线数据回归样例",
+    "底图数据": "${basemap}"
+  },
+  "model": {
+    "flow": {
+      "inputs": [
+        {
+          "key": "史料原文",
+          "label": "史料原文",
+          "type": "conversation_text",
+          "options": []
+        },
+        {
+          "key": "路线数据集",
+          "label": "路线数据集",
+          "type": "folder",
+          "options": []
+        },
+        {
+          "key": "底图数据",
+          "label": "底图数据",
+          "type": "folder",
+          "options": []
+        },
+        {
+          "key": "纸张",
+          "label": "纸张",
+          "type": "text",
+          "options": []
+        },
+        {
+          "key": "质量审查",
+          "label": "质量审查",
+          "type": "text",
+          "options": []
+        },
+        {
+          "key": "地图标题",
+          "label": "地图标题",
+          "type": "text",
+          "options": []
+        },
+        {
+          "key": "重新抽取",
+          "label": "重新抽取",
+          "type": "text",
+          "options": []
+        }
+      ],
+      "input_constraints": [],
+      "triggers": [
+        "行军路线图",
+        "行军线路图"
+      ]
+    },
+    "conditions": {
+      "s1": {
+        "op": "or",
+        "args": [
+          {
+            "op": "not_provided",
+            "input": "路线数据集"
+          },
+          {
+            "op": "truthy",
+            "input": "重新抽取"
+          }
+        ]
+      }
+    }
+  },
+  "variables": {},
+  "steps": {
+    "s2": {
+      "actions": [
+        {
+          "tool": "data_load_list",
+          "params": {
+            "strict": true,
+            "data_list": "中国底图"
+          },
+          "save": "loaded"
+        },
+        {
+          "op": "layers",
+          "names": [
+            "省域",
+            "河流面",
+            "河流线",
+            "公路",
+            "国道",
+            "铁路",
+            "地区界线",
+            "县级城市驻地"
+          ],
+          "save": "base_layers"
+        },
+        {
+          "op": "extent",
+          "save": "map_extent"
+        }
+      ],
+      "outputs": {
+        "底图图层": {
+          "$ref": "base_layers"
+        }
+      }
+    },
+    "s3": {
+      "actions": [
+        {
+          "tool": "style_set_apply",
+          "params": {
+            "layers": [
+              "省域",
+              "河流面",
+              "河流线",
+              "公路",
+              "国道",
+              "铁路",
+              "地区界线",
+              "县级城市驻地"
+            ],
+            "strict": true,
+            "style_set": "国标底图样式"
+          },
+          "save": "styled"
+        }
+      ],
+      "outputs": {
+        "已符号化图层": {
+          "$ref": "base_layers"
+        }
+      }
+    },
+    "s4": {
+      "actions": [
+        {
+          "tool": "route_draw",
+          "params": {
+            "dataset_source": "explicit",
+            "dataset_dir": "${fixture}/route_dataset",
+            "renderer_plugin_dir": "${renderer}",
+            "label_layer_name": "国军路线名称",
+            "strict": true,
+            "route_style": "路线样式-红蓝对比"
+          },
+          "save": "drawn"
+        },
+        {
+          "tool": "route_points_build",
+          "params": {
+            "dataset_source": "explicit",
+            "dataset_dir": "${fixture}/route_dataset",
+            "points_layer": "points",
+            "default_symbol_types": [],
+            "rendezvous_label_rule": "会师军队名称",
+            "strict": true,
+            "symbols": "军标"
+          },
+          "save": "points"
+        },
+        {
+          "op": "layers",
+          "names": [
+            "points"
+          ],
+          "save": "point_layers"
+        },
+        {
+          "op": "map_order",
+          "base_names": [
+            "省域",
+            "河流面",
+            "河流线",
+            "公路",
+            "国道",
+            "铁路",
+            "地区界线",
+            "县级城市驻地"
+          ],
+          "save": "map_order"
+        }
+      ],
+      "outputs": {
+        "路线图层": {
+          "$ref": "drawn.data.layers"
+        },
+        "专题点图层": {
+          "$ref": "point_layers"
+        }
+      }
+    },
+    "s5": {
+      "actions": [
+        {
+          "tool": "layout_compose",
+          "params": {
+            "layout": "路线黄金样例",
+            "spec": "四角对齐版式",
+            "paper": "A1",
+            "title": "固定路线数据回归样例",
+            "overview_text": "固定六表包含路线、专题点和两条图文注记；本图用于检查旧工具的版面与样式输出。",
+            "map_layers": {
+              "$ref": "map_order"
+            },
+            "extent": {
+              "$ref": "map_extent"
+            },
+            "padding": 0,
+            "legend_layers": [
+              "points",
+              "河流线",
+              "铁路",
+              "省域"
+            ],
+            "legend_extra_items": [
+              {
+                "label": "军标箭头",
+                "size_mm": 7,
+                "symbol_type": "route_arrow"
+              }
+            ],
+            "elements": {
+              "grid": false
+            },
+            "legend_symbols": "图例"
+          },
+          "save": "composed"
+        }
+      ],
+      "outputs": {
+        "版面": "路线黄金样例"
+      }
+    },
+    "s6": {
+      "actions": [
+        {
+          "tool": "layout_add_callouts",
+          "params": {
+            "dataset_source": "explicit",
+            "dataset_dir": "${fixture}/route_dataset",
+            "layout": "路线黄金样例",
+            "map_item_id": "main_map",
+            "avoid_item_ids": []
+          },
+          "save": "annotations"
+        }
+      ],
+      "outputs": {
+        "图文标注": {
+          "$json": "annotations.data"
+        }
+      }
+    },
+    "s7": {
+      "actions": [
+        {
+          "tool": "layout_get_items_properties",
+          "params": {
+            "layout": "路线黄金样例"
+          },
+          "save": "layout_snapshot"
+        },
+        {
+          "tool": "layout_export_image",
+          "params": {
+            "layout": "路线黄金样例",
+            "output": "${out}/初版.png",
+            "purpose": "review",
+            "format": "PNG"
+          },
+          "save": "initial_export"
+        }
+      ],
+      "outputs": {
+        "初版图片": {
+          "$ref": "initial_export.output"
+        },
+        "版面快照": {
+          "$ref": "layout_snapshot.data.layout_snapshot_path"
+        }
+      }
+    },
+    "s8": {
+      "actions": [
+        {
+          "tool": "prepare_quality_review",
+          "params": {
+            "original_image_path": {
+              "$ref": "initial_export.output"
+            },
+            "layout_snapshot_path": {
+              "$ref": "layout_snapshot.data.layout_snapshot_path"
+            },
+            "task_requirement": "固定输入地图结构和保护链验收，不代替多模态审图",
+            "locked_content": [
+              "全部文字",
+              "地图范围与坐标系",
+              "路线方向拓扑",
+              "符号图例",
+              "字号与锚点"
+            ]
+          },
+          "save": "prepared_review"
+        },
+        {
+          "op": "review_initial",
+          "prepared": {
+            "$ref": "prepared_review"
+          },
+          "save": "initial_review"
+        }
+      ],
+      "outputs": {
+        "初审结果": {
+          "$ref": "initial_review"
+        }
+      }
+    },
+    "s9": {
+      "actions": [
+        {
+          "tool": "layout_export_image",
+          "params": {
+            "layout": "路线黄金样例",
+            "output": {
+              "$ref": "prepared_review.reserved_final_image_path"
+            },
+            "purpose": "review",
+            "format": "PNG"
+          },
+          "save": "final_export"
+        },
+        {
+          "tool": "export_layout_pdf",
+          "params": {
+            "layout": "路线黄金样例",
+            "output": "${out}/固定路线数据回归样例.pdf",
+            "dpi": 72
+          },
+          "save": "final_pdf"
+        }
+      ],
+      "outputs": {
+        "终稿图片": {
+          "$ref": "prepared_review.reserved_final_image_path"
+        },
+        "修改记录": "确定性初审未提出修改；实际版面、锁定字号、范围、文字与锚点均保持，PNG与PDF连续导出。",
+        "终稿 PDF": {
+          "$ref": "final_pdf.output"
+        }
+      }
+    },
+    "s10": {
+      "actions": [
+        {
+          "tool": "load_review_images",
+          "params": {
+            "review_manifest_path": {
+              "$ref": "prepared_review.review_manifest_path"
+            },
+            "final_image_path": {
+              "$ref": "prepared_review.reserved_final_image_path"
+            },
+            "applied_suggestions": []
+          },
+          "save": "review_pair"
+        },
+        {
+          "op": "review_final",
+          "manifest": {
+            "$ref": "prepared_review.review_manifest_path"
+          },
+          "save": "final_review"
+        }
+      ],
+      "outputs": {
+        "终审结果": {
+          "$ref": "final_review"
+        }
+      }
+    },
+    "s11": {
+      "actions": [
+        {
+          "tool": "export_layout_pdf",
+          "params": {
+            "layout": "路线黄金样例",
+            "output": "${out}/固定路线数据回归样例.pdf",
+            "dpi": 72
+          },
+          "save": "pdf"
+        }
+      ],
+      "outputs": {
+        "成果 PDF": {
+          "$ref": "pdf.output"
+        }
+      }
+    }
+  },
+  "invariants": {
+    "route_count": {
+      "$ref": "drawn.data.routes.count"
+    },
+    "point_count": {
+      "$ref": "points.data.points_layer.created_count"
+    },
+    "callout_count": {
+      "$ref": "annotations.data.created_count"
+    }
+  },
+  "id": "route-no-review"
+}

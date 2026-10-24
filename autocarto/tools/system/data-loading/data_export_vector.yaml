@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: data_export_vector
-  display_name: data_export_vector
+  keywords: ["矢量图层", "输出矢量图层", "图层加载", "数据导入", "数据导出"]
+  display_name: "导出矢量图层"
   domain: data-loading
   runtime: qgis
 spec:

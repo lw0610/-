@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: join_attributes_by_nearest
-  display_name: 按最近的方式连接属性
+  keywords: ["按最近邻连接属性", "属性字段", "字段计算", "属性连接"]
+  display_name: "按最近邻连接属性"
   domain: vector-fields
   runtime: qgis
 spec:
@@ -21,10 +22,10 @@ spec:
     description: 要复制的字段
   - name: MAX_DISTANCE
     type: number
-    description: 最大距离
+    description: "最大距离（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
   - name: NEIGHBORS
     type: integer
-    description: 最近邻数量
+    description: "最近邻数量（数量，正整数）"
     default: 1
   - name: OUTPUT
     type: output_layer

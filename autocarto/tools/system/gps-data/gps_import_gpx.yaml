@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gps_import_gpx
-  display_name: 导入GPX
+  keywords: ["轨迹文件", "导入轨迹文件", "轨迹数据", "定位设备"]
+  display_name: "导入轨迹文件"
   domain: gps-data
   runtime: qgis
 spec:

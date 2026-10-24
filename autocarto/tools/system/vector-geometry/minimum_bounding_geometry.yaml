@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: minimum_bounding_geometry
-  display_name: 最小边界几何
+  keywords: ["最小包围几何", "分析最小包围几何", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算最小包围几何"
   domain: vector-geometry
   runtime: qgis
 spec:

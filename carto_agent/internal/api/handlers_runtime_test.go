@@ -1109,7 +1109,7 @@ func TestRuntimeDescriptorReturnsStructuredEnvelopeWhenUnavailableOrCorrupted(t 
 			t.Fatalf("unexpected status=%d body=%s", rr.Code, rr.Body.String())
 		}
 		payload, envelope := decodeEnvelopeResponse(t, rr)
-		assertEnvelopeResponse(t, payload, envelope, "DISCOVERY_DESCRIPTOR_UNAVAILABLE", "discovery", "runtime_descriptor")
+		assertEnvelopeResponse(t, payload, envelope, "DISCOVERY_DESCRIPTOR_INVALID", "discovery", "runtime_descriptor")
 		if payload["data"] != nil {
 			t.Fatalf("expected no fallback descriptor data, got %#v", payload["data"])
 		}

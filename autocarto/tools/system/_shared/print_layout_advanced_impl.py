@@ -1,6 +1,7 @@
 import hashlib
 import json
 import logging
+import math
 import os
 import uuid
 from datetime import datetime, timezone
@@ -18,6 +19,8 @@ from qgis.core import (
     QgsLayoutItemLabel,
     QgsLayoutItemLegend,
     QgsLayoutItemMap,
+    QgsLayoutItem,
+    QgsLayoutItemPage,
     QgsLayoutItemPicture,
     QgsLayoutItemShape,
     QgsLayoutItemScaleBar,
@@ -41,6 +44,7 @@ from autocarto.tools.system._shared.canvas_refresh import refresh_canvas
 from autocarto.tools.system._shared.layout_export_impl import (
     _export_result_message,
     _get_layout,
+    _image_export_dpi,
     _resolve_export_path,
     _validate_layout_for_export,
 )
@@ -294,6 +298,11 @@ def _get_layout_item(
 
 
 def _item_rect(item) -> Dict[str, float]:
+    if isinstance(item, QgsLayoutItem):
+        rect = item.mapRectToScene(item.rect())
+        layout = item.layout()
+        return {key: float(layout.convertFromLayoutUnits(value, QgsUnitTypes.LayoutMillimeters).length())
+                for key, value in (("x", rect.x()), ("y", rect.y()), ("width", rect.width()), ("height", rect.height()))}
     rect = _safe_value(lambda: item.sceneRect())
     if rect is None:
         rect = _safe_value(lambda: item.rect())
@@ -313,12 +322,19 @@ def _item_rect(item) -> Dict[str, float]:
     }
     
 
-def _item_properties(item) -> Dict[str, Any]:
+def _item_properties(item, parent_map=None) -> Dict[str, Any]:
+    raw_anchor = _safe_value(lambda: item.customProperty("autocarto/anchor", ""), "")
+    try:
+        anchor = raw_anchor if isinstance(raw_anchor, Mapping) else json.loads(raw_anchor) if raw_anchor else None
+    except (TypeError, ValueError):
+        anchor = None
     data = {
         "item_id": _safe_value(lambda: item.id(), ""),
         "type": type(item).__name__,
-        "rect_mm": _item_rect(item),
+        "rect_mm": _item_rect(parent_map if parent_map is not None else item),
         "z_value": _safe_value(lambda: item.zValue(), 0),
+        "anchor": dict(anchor) if isinstance(anchor, Mapping) else None,
+        "font_locked": bool(_safe_value(lambda: item.customProperty("autocarto/font_locked", False), False)),
     }
     if isinstance(item, QgsLayoutItemMap):
         data.update(
@@ -470,6 +486,77 @@ def _apply_legend_margin(legend, margin: float):
             logger.debug("legend.setStyleMargin failed, skipping margin update")
 
 
+def _font_lock_error(item, params, size_keys):
+    if item.customProperty("autocarto/font_locked", False) and any(_has_value(params, key) for key in size_keys) and params.get("unlock_font") is not True:
+        return _result(False, "", "该元素字号由版式锁定，如需修改请传 unlock_font=true")
+    return None
+
+
+def _updated_text_format(current, params, *, prefix=""):
+    result = QgsTextFormat(current)
+    font = QFont(result.font())
+    family_key, size_key = prefix+"font_family", prefix+"font_size"
+    if _has_value(params, family_key):
+        font.setFamily(str(params[family_key]))
+    for key, setter in (("font_bold", font.setBold), ("font_italic", font.setItalic)):
+        if params.get(prefix+key) is not None:
+            setter(bool(params[prefix+key]))
+    result.setFont(font)
+    if _has_value(params, size_key):
+        size = float(params[size_key])
+        if not math.isfinite(size) or size <= 0:
+            raise ValueError("字号必须是有限正数（毫米）")
+        result.setSize(size)
+        result.setSizeUnit(Qgis.RenderUnit.Millimeters)
+    if _has_value(params, prefix+"font_color"):
+        result.setColor(_resolve_color(params[prefix+"font_color"], "#202020"))
+    return result
+
+
+def _is_extra_legend_layer(layer):
+    return bool(layer and (layer.customProperty("autocarto/legend_extra_item", False)
+                          or layer.customProperty("autocarto/military_arrow_legend", False)
+                          or layer.customProperty("autocarto/compose_legend_layout", "")))
+
+
+def _prepare_legend_extras(params, current_layers, project):
+    from autocarto.tools.system._shared.resource_handle import legend_extra_spec
+    explicit = params.get("legend_extra_items") is not None
+    extras = params.get("legend_extra_items") if explicit else []
+    if not isinstance(extras, list):
+        raise ValueError("legend_extra_items 必须是额外条目数组")
+    normalized = []
+    for extra in extras:
+        path, size, label = legend_extra_spec(extra, params.get("legend_symbols"))
+        key = json.dumps({"label": extra["label"], "image_path": str(path), "size_mm": size}, ensure_ascii=False, sort_keys=True)
+        normalized.append((key, path, size, label))
+    layers = [] if explicit else [layer for layer in current_layers if _is_extra_legend_layer(layer)
+                                  and not layer.customProperty("autocarto/military_arrow_legend", False)
+                                  and not layer.customProperty("autocarto/legend_compat_arrow", False)]
+    created = []
+    try:
+        for key, path, size, label in normalized:
+            layer = next((layer for layer in project.mapLayers().values() if layer.customProperty("autocarto/legend_extra_item", "") == key), None)
+            if layer is None:
+                marker = QgsSvgMarkerSymbolLayer(str(path)) if path.suffix.lower() == ".svg" else QgsRasterMarkerSymbolLayer(str(path))
+                marker.setSize(size)
+                marker.setSizeUnit(Qgis.RenderUnit.Millimeters)
+                symbol = QgsMarkerSymbol()
+                symbol.changeSymbolLayer(0, marker)
+                layer = QgsVectorLayer("Point", label, "memory")
+                layer.setRenderer(QgsSingleSymbolRenderer(symbol))
+                layer.setCustomProperty("autocarto/legend_extra_item", key)
+                project.addMapLayer(layer, False)
+                created.append(layer.id())
+            if layer not in layers:
+                layers.append(layer)
+        return layers
+    except Exception:
+        for layer_id in created:
+            project.removeMapLayer(layer_id)
+        raise
+
+
 def set_legend_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     layout, item, error = _get_layout_item(
         params.get("layout"), params.get("item_id"), QgsLayoutItemLegend
@@ -477,81 +564,54 @@ def set_legend_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     if error:
         return error
     legend = item
+    locked = _font_lock_error(legend, params, ("title_font_size", "body_font_size"))
+    if locked:
+        return locked
+    try:
+        title_style = legend.style(QgsLegendStyle.Title)
+        body_style = legend.style(QgsLegendStyle.SymbolLabel)
+        title_format = _updated_text_format(title_style.textFormat(), params, prefix="title_")
+        body_format = _updated_text_format(body_style.textFormat(), params, prefix="body_")
+    except (TypeError, ValueError) as exc:
+        return _result(False, "", f"错误：{exc}")
 
     project = QgsProject.instance()
-    # Resolve the full whitelist before mutation. Rebuild it from project
-    # layers, so a layer omitted by an earlier call can be restored later.
+    root = legend.model().rootGroup()
+    current = [node.layer() for node in root.findLayers() if node.layer() is not None]
+    selected = [layer for layer in current if not _is_extra_legend_layer(layer)]
     if params.get("legend_layers") is not None:
         if not isinstance(params["legend_layers"], list):
             return _result(False, "", "错误：legend_layers 必须为图层 ID 或唯一名称数组")
         selected = []
         for ref in params["legend_layers"]:
-            ref = str(ref).strip()
-            layer = project.mapLayer(ref)
+            layer = project.mapLayer(str(ref))
             if layer is None:
-                matches = project.mapLayersByName(ref)
+                matches = project.mapLayersByName(str(ref))
                 if len(matches) != 1:
-                    return _result(False, "", f"错误：图层 '{ref}' 不存在或名称不唯一，请使用图层 ID")
+                    return _result(False, "", f"错误：图层“{ref}”不存在或名称不唯一，请使用图层 ID")
                 layer = matches[0]
             if layer not in selected:
                 selected.append(layer)
+    try:
+        extras = _prepare_legend_extras(params, current, project)
+    except (TypeError, ValueError) as exc:
+        return _result(False, "", f"错误：{exc}")
+    if params.get("legend_layers") is not None or params.get("legend_extra_items") is not None or extras or any(_is_extra_legend_layer(layer) for layer in current):
         legend.setAutoUpdateModel(False)
         root = legend.model().rootGroup()
         root.removeAllChildren()
-        for layer in selected:
+        for layer in dict.fromkeys(selected+extras):
             root.addLayer(layer)
 
-    # Marching maps may opt into this illustrative symbol; generic thematic
-    # legends must contain only real selected layers and their classifications.
-    include_arrow = params.get("include_military_arrow") is True
-    if include_arrow:
-        legend.setAutoUpdateModel(False)
-    root = legend.model().rootGroup()
-    arrow_role = "autocarto/military_arrow_legend"
-    for node in list(root.findLayers()):
-        if node.layer() and node.layer().customProperty(arrow_role, False) and not include_arrow:
-            node.parent().removeChildNode(node)
-    existing_arrow = any(node.layer() and node.layer().customProperty(arrow_role, False) for node in root.findLayers())
-    if include_arrow and not existing_arrow:
-        placeholder = next((layer for layer in project.mapLayers().values() if layer.customProperty(arrow_role, False)), None)
-        if placeholder is None:
-            from autocarto.core.paths import get_plugin_root
-            image_path = os.path.join(str(get_plugin_root()), "resources", "legend_arrow.jpg")
-
-            raster_layer = QgsRasterMarkerSymbolLayer(image_path)
-            raster_layer.setSize(7.0)
-            raster_layer.setSizeUnit(Qgis.RenderUnit.Millimeters)
-
-            marker_symbol = QgsMarkerSymbol()
-            marker_symbol.changeSymbolLayer(0, raster_layer)
-
-            placeholder = QgsVectorLayer("Point", "军标箭头", "memory")
-            placeholder.setCustomProperty(arrow_role, True)
-            placeholder.setRenderer(QgsSingleSymbolRenderer(marker_symbol))
-            project.addMapLayer(placeholder, False)  # 不加入根图层树
-        root.addChildNode(QgsLayerTreeLayer(placeholder))
-
     if _has_value(params, "title"):
-        _call_if_supported(legend, "setTitle", str(params.get("title")))
-
-    if any(_has_value(params, key) for key in ["title_font_family", "title_font_size"]):
-        title_family = str(params.get("title_font_family") or "Arial")
-        title_size = float(params.get("title_font_size", 12) or 12)
-        _apply_legend_text_format(
-            legend,
-            [QgsLegendStyle.Title],
-            _build_mm_text_format(family=title_family, size_mm=title_size),
-        )
-
-    if any(_has_value(params, key) for key in ["body_font_family", "body_font_size"]):
-        body_family = str(params.get("body_font_family") or "Arial")
-        body_size = float(params.get("body_font_size", 10) or 10)
-        body_styles = [QgsLegendStyle.Group, QgsLegendStyle.Subgroup, QgsLegendStyle.SymbolLabel]
-        _apply_legend_text_format(
-            legend,
-            body_styles,
-            _build_mm_text_format(family=body_family, size_mm=body_size),
-        )
+        legend.setTitle(str(params["title"]))
+    if any(_has_value(params, key) for key in ("title_font_family", "title_font_size")):
+        _apply_legend_text_format(legend, [QgsLegendStyle.Title], title_format)
+    if any(_has_value(params, key) for key in ("body_font_family", "body_font_size")):
+        for kind in (QgsLegendStyle.Group, QgsLegendStyle.Subgroup, QgsLegendStyle.SymbolLabel):
+            current_style = legend.style(kind)
+            current_format = _updated_text_format(current_style.textFormat(), params, prefix="body_")
+            _apply_legend_text_format(legend, [kind], current_format)
 
     if _has_value(params, "content_margin"):
         _apply_legend_margin(legend, float(params.get("content_margin")))
@@ -592,6 +652,13 @@ def set_scalebar_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     if error:
         return error
     scalebar = item
+    locked = _font_lock_error(scalebar, params, ("font_size",))
+    if locked:
+        return locked
+    try:
+        text_format = _updated_text_format(scalebar.textFormat(), params)
+    except (TypeError, ValueError) as exc:
+        return _result(False, "", f"错误：{exc}")
     if _has_value(params, "style"):
         style_map = {
             "single_box": "Single Box",
@@ -606,19 +673,8 @@ def set_scalebar_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
 
     _call_if_supported(scalebar, "setNumberOfSegments", 4)
     _call_if_supported(scalebar, "setNumberOfSegmentsLeft", 0)
-    if any(_has_value(params, key) for key in ["font_family", "font_size"]):
-        family = str(params.get("font_family") or params.get("font_name") or "Arial")
-        size_mm = float(params.get("font_size", 10) or 10)
-        bold = bool(params.get("font_bold", False) or params.get("bold", False))
-        italic = bool(params.get("font_italic", False) or params.get("italic", False))
-        scalebar.setTextFormat(
-            _build_mm_text_format(
-                family=family,
-                size_mm=size_mm,
-                bold=bold,
-                italic=italic,
-            )
-        )
+    if any(_has_value(params, key) for key in ("font_family", "font_size", "font_bold", "font_italic", "font_color")):
+        scalebar.setTextFormat(text_format)
     _call_if_supported(scalebar, "update")
     _call_if_supported(scalebar, "refresh")
     refresh_canvas()
@@ -683,29 +739,60 @@ def get_items_properties_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     item_ids = params.get("item_ids")
     if not layout_name:
         return _result(False, "", "错误：缺少布局名称参数")
-    if not isinstance(item_ids, list) or not item_ids:
+    if item_ids is not None and (not isinstance(item_ids, list) or not item_ids):
         return _result(False, "", "错误：item_ids 必须是非空元素 ID 数组")
 
+    layout = _get_layout(layout_name)
+    if not layout:
+        return _result(False, "", f"错误：未找到布局 '{layout_name}'")
+    objects = {}
+    for item in layout.items():
+        if not isinstance(item, QgsLayoutItem) or isinstance(item, QgsLayoutItemPage):
+            continue
+        item_id = str(item.id() or "").strip()
+        if not item_id or item_id in objects:
+            item_id = "layout_item_"+uuid.uuid4().hex
+            item.setId(item_id)
+        objects[item_id] = (item, None)
+        if isinstance(item, QgsLayoutItemMap):
+            for grid in item.grids().asList():
+                objects[grid.id()] = (grid, item)
     normalized_ids = []
-    for value in item_ids:
+    for value in list(objects) if item_ids is None else item_ids:
         item_id = str(value or "").strip()
         if item_id and item_id not in normalized_ids:
             normalized_ids.append(item_id)
     if not normalized_ids:
         return _result(False, "", "错误：item_ids 中没有有效元素 ID")
 
-    layout = _get_layout(layout_name)
-    if not layout:
-        return _result(False, "", f"错误：未找到布局 '{layout_name}'")
-
     properties: Dict[str, Any] = {}
     missing_ids = []
+    grouped_ids = {"standard": {}, "callouts": {}}
+    def register(mapping, role, item_id):
+        if role not in mapping:
+            mapping[role] = item_id
+        elif isinstance(mapping[role], list):
+            mapping[role].append(item_id)
+        else:
+            mapping[role] = [mapping[role], item_id]
     for item_id in normalized_ids:
-        item = layout.itemById(item_id)
-        if item is None:
+        found = objects.get(item_id)
+        if found is None:
             missing_ids.append(item_id)
             continue
-        properties[item_id] = _item_properties(item)
+        item, parent = found
+        properties[item_id] = _item_properties(item, parent)
+        group = str(item.customProperty("autocarto/callout_group", "") or "").strip()
+        if group:
+            group_items = grouped_ids["callouts"].setdefault(group, {})
+            role = str(item.customProperty("autocarto/callout_role", "") or "items")
+            if role == "items":
+                group_items.setdefault("items", []).append(item_id)
+            else:
+                register(group_items, role, item_id)
+        else:
+            role = str(item.customProperty("autocarto/compose_role", "") or item_id)
+            register(grouped_ids["standard"], role, item_id)
 
     page_size = {"width": 0.0, "height": 0.0}
     page_collection = _safe_value(lambda: layout.pageCollection())
@@ -716,8 +803,8 @@ def get_items_properties_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         size = _safe_value(lambda: page.pageSize()) if page is not None else None
         if size is not None:
             page_size = {
-                "width": _safe_value(lambda: float(size.width()), 0.0),
-                "height": _safe_value(lambda: float(size.height()), 0.0),
+                "width": _item_rect(page)["width"],
+                "height": _item_rect(page)["height"],
             }
 
     data = {
@@ -735,6 +822,8 @@ def get_items_properties_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         )
 
     layout_item_ids = params.get("layout_item_ids")
+    if layout_item_ids is None:
+        layout_item_ids = grouped_ids
     if layout_item_ids is not None:
         if not isinstance(layout_item_ids, Mapping) or not layout_item_ids:
             return _result(
@@ -753,6 +842,7 @@ def get_items_properties_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         except Exception as exc:
             return _result(False, "", f"错误：保存布局快照失败：{exc}", data)
         data.update(snapshot)
+        data["layout_item_ids"] = dict(layout_item_ids)
 
     return _result(
         True,
@@ -807,29 +897,17 @@ def set_label_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     if error:
         return error
     label = item
+    locked = _font_lock_error(label, params, ("font_size",))
+    if locked:
+        return locked
+    try:
+        text_format = _updated_text_format(label.textFormat(), params)
+    except (TypeError, ValueError) as exc:
+        return _result(False, "", f"错误：{exc}")
     if params.get("text") is not None:
         label.setText(str(params.get("text")))
-    # if params.get("html"):
-    #     label.setMode(QgsLayoutItemLabel.ModeHtml)
-    # else:
-    label.setMode(QgsLayoutItemLabel.ModeFont)
-    if any(key in params for key in ["font_family", "font_size", "font_bold", "font_italic", "font_color"]):
-        family = str(params.get("font_family") or params.get("font_name") or "Arial")
-        size_mm = float(params.get("font_size", 10) or 10)
-        bold = bool(params.get("font_bold", False) or params.get("bold", False))
-        italic = bool(params.get("font_italic", False) or params.get("italic", False))
-        color = params.get("font_color")
-        label.setTextFormat(
-            _build_mm_text_format(
-                family=family,
-                size_mm=size_mm,
-                bold=bold,
-                italic=italic,
-                color=str(color) if color else None,
-            )
-        )
-    elif params.get("font_color"):
-        label.setFontColor(_resolve_color(params.get("font_color"), "#000000"))
+    if any(_has_value(params, key) for key in ("font_family", "font_size", "font_bold", "font_italic", "font_color")):
+        label.setTextFormat(text_format)
     if params.get("background_color"):
         label.setBackgroundEnabled(True)
         label.setBackgroundColor(
@@ -906,7 +984,6 @@ def export_image_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         params.get("LAYOUT") or params.get("layout") or params.get("name") or ""
     )
     output = params.get("OUTPUT") or params.get("output")
-    dpi = params.get("DPI") or params.get("dpi")
     image_format = str(params.get("format") or "png").strip().lower()
     extension = ".jpg" if image_format in {"jpg", "jpeg"} else ".png"
     layout = _get_layout(layout_name)
@@ -915,16 +992,19 @@ def export_image_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     validation_error = _validate_layout_for_export(layout)
     if validation_error:
         return _result(False, "", f"导出前校验失败：{validation_error}")
+    try:
+        dpi, purpose = _image_export_dpi(layout, params)
+    except (TypeError, ValueError) as exc:
+        return _result(False, "", f"导出前校验失败：{exc}")
     output_path = _resolve_export_path(output, f"{layout_name}{extension}", extension)
     exporter = QgsLayoutExporter(layout)
     settings = QgsLayoutExporter.ImageExportSettings()
-    if dpi is not None:
-        settings.dpi = float(dpi)
+    settings.dpi = dpi
     result = exporter.exportToImage(output_path, settings)
     if result != QgsLayoutExporter.Success:
         return _result(False, "", f"布局导出图片失败：{_export_result_message(result)}")
     refresh_canvas()
-    return _result(True, output_path, "布局图片导出成功")
+    return _result(True, output_path, "布局图片导出成功", {"dpi": dpi, "purpose": purpose})
 
 
 def export_svg_handler(params: Dict[str, Any]) -> Dict[str, Any]:

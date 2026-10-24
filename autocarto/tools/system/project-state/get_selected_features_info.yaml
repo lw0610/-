@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: get_selected_features_info
-  display_name: get_selected_features_info
+  keywords: ["选中要素信息", "查询选中要素信息", "地图工程", "图层状态", "工程管理"]
+  display_name: "读取选中要素信息"
   domain: project-state
   runtime: qgis
 spec:
@@ -13,7 +14,7 @@ spec:
       description: 图层名称，如果不指定则使用活动图层
     - name: max_features
       type: integer
-      description: 最多返回的要素数量
+      description: "最多返回的要素数量（数量，正整数）"
       default: 100
 execution:
   handler: handlers.project.get_selected_features_info

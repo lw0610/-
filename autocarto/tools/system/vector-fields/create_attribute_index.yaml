@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: create_attribute_index
+  keywords: ["属性索引", "生成属性索引", "属性字段", "字段计算", "属性连接"]
   display_name: 创建属性索引
   domain: vector-fields
   runtime: qgis

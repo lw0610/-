@@ -1,64 +1,78 @@
 package config
 
 import (
+	"encoding/json"
 	"path/filepath"
+	"reflect"
+	"strings"
 	"testing"
 
+	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
 	"gopkg.in/yaml.v3"
 )
 
-func TestAgentWorkflowPackageParsesAndConvertsToRuntimeSkillConfig(t *testing.T) {
-	cfg := `version: "1.0"
+func TestLegacyWorkflowInputIsRetiredBeforeRuntimeProjection(t *testing.T) {
+	raw := `version: "1.0"
 runtime:
-  global:
-    skill_packages: [project-state]
   agents:
-    orchestrator:
-      display_name: 编排智能体
-      description: 主智能体
-      is_main: true
+    worker:
       enabled: true
       workflow_package: data-loading-inspection-vector
-      skill_packages: [prompt-refinement]
-      prompts:
-        static_instructions: run
-        user_prompt_template: "{{ user_input }}"
+      skill_packages: [data-loading]
+      prompts: {static_instructions: saved rules, user_prompt_template: "{{ user_input }}"}
 `
-	var parsed AgentConfigFile
-	if err := yaml.Unmarshal([]byte(cfg), &parsed); err != nil {
-		t.Fatalf("yaml unmarshal failed: %v", err)
+	var source AgentConfigFile
+	if err := yaml.Unmarshal([]byte(raw), &source); err != nil {
+		t.Fatal(err)
 	}
-	if parsed.Runtime == nil {
-		t.Fatal("expected active runtime config")
+	if source.Runtime.Agents["worker"].legacyWorkflowPackage != "data-loading-inspection-vector" {
+		t.Fatal("legacy input was not recognized")
 	}
-	if got := parsed.Runtime.Agents["orchestrator"].WorkflowPackage; got != "data-loading-inspection-vector" {
-		t.Fatalf("unexpected workflow package in parsed config: %q", got)
+	migrated := normalizeAgentConfigFile(&source)
+	if len(migrated.MigrationWarnings) != 1 || migrated.MigrationWarnings[0].Code != "LEGACY_WORKFLOW_RETIRED" {
+		t.Fatal(migrated.MigrationWarnings)
 	}
-	rootDir := t.TempDir()
-	runtimeConfig := ConvertToRuntimeSkillConfig(&parsed, filepath.Join(rootDir, "skills", "builtin"), filepath.Join(rootDir, "skills", "user"), filepath.Join(rootDir, "config"), "default")
-	if runtimeConfig == nil {
-		t.Fatal("expected runtime skill config")
+	if migrated.Runtime.Agents["worker"].legacyWorkflowPackage != "" || migrated.Runtime.Agents["worker"].Prompts["static_instructions"] != "saved rules" {
+		t.Fatal("retired selector leaked or editable rules lost")
 	}
-	if got := runtimeConfig.Agents["orchestrator"].WorkflowPackage; got != "data-loading-inspection-vector" {
-		t.Fatalf("unexpected workflow package in runtime skill config: %q", got)
+	runtime := ConvertToRuntimeSkillConfigWithPlugin(&source, t.TempDir(), "", "", filepath.Join(t.TempDir(), "config"), "custom")
+	if runtime == nil || runtime.Agents["worker"].Kind != "agent" {
+		t.Fatal("legacy selector changed runtime kind")
+	}
+	if _, exists := reflect.TypeFor[subagents.RuntimeSkillAgentConfig]().FieldByName("WorkflowPackage"); exists {
+		t.Fatal("retired workflow runtime field still exists")
+	}
+	saved, err := yaml.Marshal(migrated)
+	if err != nil || strings.Contains(string(saved), "workflow_package:") {
+		t.Fatal("retired selector written as v2", err)
+	}
+	if source.Runtime.Agents["worker"].legacyWorkflowPackage == "" {
+		t.Fatal("migration mutated source")
 	}
 }
 
-func TestNormalizeRuntimeConfigPreservesWorkflowPackage(t *testing.T) {
-	normalized := normalizeRuntimeConfig(&RuntimeConfig{
-		Agents: map[string]AgentDefData{
-			"orchestrator": {
-				DisplayName:     "编排智能体",
-				Description:     "主智能体",
-				Enabled:         true,
-				WorkflowPackage: "data-loading-inspection-vector",
-			},
-		},
-	})
-	if normalized == nil {
-		t.Fatal("expected normalized runtime config")
+func TestLegacyWorkflowJSONInputWarnsWithoutPublicExecutionField(t *testing.T) {
+	var source AgentConfigFile
+	if err := json.Unmarshal([]byte(`{"version":"1.0","runtime":{"agents":{"worker":{"enabled":true,"workflow_package":"old-pilot","skill_packages":["data-loading"]}}}}`), &source); err != nil {
+		t.Fatal(err)
 	}
-	if got := normalized.Agents["orchestrator"].WorkflowPackage; got != "data-loading-inspection-vector" {
-		t.Fatalf("unexpected normalized workflow package: %q", got)
+	migrated := normalizeAgentConfigFile(&source)
+	if len(migrated.MigrationWarnings) != 1 || migrated.MigrationWarnings[0].Package != "old-pilot" {
+		t.Fatal(migrated.MigrationWarnings)
+	}
+	raw, err := json.Marshal(migrated)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var payload map[string]any
+	if err := json.Unmarshal(raw, &payload); err != nil {
+		t.Fatal(err)
+	}
+	role := payload["runtime"].(map[string]any)["agents"].(map[string]any)["worker"].(map[string]any)
+	if _, exists := role["workflow_package"]; exists {
+		t.Fatal("legacy input was published as a role property")
+	}
+	if _, exists := reflect.TypeFor[AgentDefData]().FieldByName("WorkflowPackage"); exists {
+		t.Fatal("public role still exposes retired selector")
 	}
 }

@@ -14,29 +14,32 @@ import (
 
 const planRuntimeAgentName = "planner_runtime"
 
-func buildPlanRuntimeSkillConfig(planCfg *config.PlanConfig, planAgent *config.PlanAgentDefData, packageTools map[string][]string) *subagents.RuntimeSkillConfig {
+func buildPlanRuntimeSkillConfig(planCfg *config.PlanConfig, planAgent *config.PlanAgentDefData, packageCatalog subagents.PackageCatalog) *subagents.RuntimeSkillConfig {
 	if planCfg == nil || planAgent == nil {
 		return nil
 	}
 	return &subagents.RuntimeSkillConfig{
+		Mode: "plan",
 		Global: subagents.RuntimeSkillGlobalConfig{
-			SkillPackages: append([]string(nil), planCfg.Global.SkillPackages...),
-			PackageTools:  packageTools,
+			SkillPackages:   append([]string(nil), planCfg.Global.ToolPackages...),
+			PackageTools:    packageCatalog.Tools,
+			PackageMetadata: packageCatalog.Metadata,
 		},
 		Agents: map[string]subagents.RuntimeSkillAgentConfig{
 			planRuntimeAgentName: {
-				Enabled:       true,
-				SkillPackages: append([]string(nil), planAgent.SkillPackages...),
+				Enabled:      true,
+				IsMain:       true,
+				ToolPackages: append([]string{}, planAgent.ToolPackages...),
 			},
 		},
 	}
 }
 
-func resolvePlanCategorySkillTools(planCfg *config.PlanConfig, planAgent *config.PlanAgentDefData, packageTools map[string][]string) []string {
-	if len(packageTools) == 0 {
+func resolvePlanCategorySkillTools(planCfg *config.PlanConfig, planAgent *config.PlanAgentDefData, packageCatalog subagents.PackageCatalog) []string {
+	if len(packageCatalog.Tools) == 0 {
 		return nil
 	}
-	runtimeConfig := buildPlanRuntimeSkillConfig(planCfg, planAgent, packageTools)
+	runtimeConfig := buildPlanRuntimeSkillConfig(planCfg, planAgent, packageCatalog)
 	if runtimeConfig == nil {
 		return nil
 	}
@@ -72,7 +75,7 @@ func selectPlanTools(
 	baseTools []tool.BaseTool,
 	planCfg *config.PlanConfig,
 	planAgent *config.PlanAgentDefData,
-	packageTools map[string][]string,
+	packageCatalog subagents.PackageCatalog,
 ) []tool.BaseTool {
 	if len(baseTools) == 0 || planAgent == nil {
 		return nil
@@ -97,7 +100,7 @@ func selectPlanTools(
 	}
 
 	requested := make(map[string]bool)
-	for _, toolName := range resolvePlanCategorySkillTools(planCfg, planAgent, packageTools) {
+	for _, toolName := range resolvePlanCategorySkillTools(planCfg, planAgent, packageCatalog) {
 		if toolName != "" {
 			requested[toolName] = true
 		}
@@ -105,13 +108,13 @@ func selectPlanTools(
 	if len(requested) == 0 {
 		globalPackages := []string(nil)
 		if planCfg != nil {
-			globalPackages = append(globalPackages, planCfg.Global.SkillPackages...)
+			globalPackages = append(globalPackages, planCfg.Global.ToolPackages...)
 		}
 		agentPackages := []string(nil)
 		if planAgent != nil {
-			agentPackages = append(agentPackages, planAgent.SkillPackages...)
+			agentPackages = append(agentPackages, planAgent.ToolPackages...)
 		}
-		logger.Warn("plan tools 选择结果为空: package_tools=%d global_skill_packages=%v agent_skill_packages=%v", len(packageTools), globalPackages, agentPackages)
+		logger.Warn("plan tools 选择结果为空: package_tools=%d global_skill_packages=%v agent_skill_packages=%v", len(packageCatalog.Tools), globalPackages, agentPackages)
 		return nil
 	}
 
@@ -137,6 +140,9 @@ func selectPlanTools(
 
 	selected := make([]tool.BaseTool, 0, len(allowed))
 	for _, name := range toolNames {
+		if name == "flow_start" {
+			continue // Starting execution is unavailable in Plan even with mode=all.
+		}
 		if !allowed[name] {
 			continue
 		}
@@ -185,6 +191,7 @@ func isReadonlyToolName(name string) bool {
 	}
 
 	readonlyTools := map[string]bool{
+		"flow_preview":           true,
 		"hitl_request":           true,
 		"output_get_info":        true,
 		"pyqgis_get_context":     true,

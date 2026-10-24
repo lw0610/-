@@ -2,137 +2,67 @@ package deepagent
 
 import (
 	"context"
+	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
+	"github.com/autocarto/carto_agent/internal/governance"
+	"github.com/autocarto/carto_agent/internal/skill"
+	toolpkg "github.com/autocarto/carto_agent/internal/tool"
+	"github.com/cloudwego/eino/components/tool"
+	"github.com/cloudwego/eino/components/tool/utils"
+	"github.com/cloudwego/eino/schema"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
-
-	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
-	"github.com/autocarto/carto_agent/internal/governance"
-	"github.com/autocarto/carto_agent/internal/skill"
-	toolpkg "github.com/autocarto/carto_agent/internal/tool"
-	"github.com/autocarto/carto_agent/internal/workflow"
-	"github.com/cloudwego/eino/components/tool"
-	"github.com/cloudwego/eino/components/tool/utils"
-	"github.com/cloudwego/eino/schema"
 )
 
 func TestConfigUsesUnifiedRegistryGovernanceField(t *testing.T) {
-	t.Parallel()
-
-	configType := reflect.TypeFor[Config]()
-	if _, ok := configType.FieldByName("RegistryGovernance"); !ok {
-		t.Fatal("expected Config to expose unified RegistryGovernance field")
+	typ := reflect.TypeFor[Config]()
+	if _, ok := typ.FieldByName("RegistryGovernance"); !ok {
+		t.Fatal("missing unified registry")
 	}
-	if _, ok := configType.FieldByName("WorkflowPackageResolver"); ok {
-		t.Fatal("expected Config to stop exposing WorkflowPackageResolver")
-	}
-	if _, ok := configType.FieldByName("SkillPackageResolver"); ok {
-		t.Fatal("expected Config to stop exposing SkillPackageResolver")
+	for _, old := range []string{"WorkflowPackageResolver", "SkillPackageResolver"} {
+		if _, ok := typ.FieldByName(old); ok {
+			t.Fatal("legacy resolver remains", old)
+		}
 	}
 }
 
-var _ governance.GovernedRegistry = (*stubWorkflowPackageResolver)(nil)
+var _ governance.GovernedRegistry = (*stubGovernedPackageResolver)(nil)
 
-type stubWorkflowPackageResolver struct {
-	called    bool
-	pkg       skill.SkillPackage
-	ok        bool
-	err       error
+type stubGovernedPackageResolver struct {
 	skillPkg  skill.SkillPackage
 	skillOK   bool
 	skillErr  error
 	skillCall []string
 }
 
-func (s *stubWorkflowPackageResolver) ResolveWorkflowPackage(string) (skill.SkillPackage, bool, error) {
-	s.called = true
-	return s.pkg, s.ok, s.err
-}
-
-func (s *stubWorkflowPackageResolver) ResolveSkillPackage(packageName string) (skill.SkillPackage, bool, error) {
-	s.skillCall = append(s.skillCall, packageName)
+func (s *stubGovernedPackageResolver) ResolveSkillPackage(name string) (skill.SkillPackage, bool, error) {
+	s.skillCall = append(s.skillCall, name)
 	return s.skillPkg, s.skillOK, s.skillErr
 }
+func (*stubGovernedPackageResolver) LoadToolRegistry() (*toolpkg.Registry, error) { return nil, nil }
+func (*stubGovernedPackageResolver) LoadSkillRegistry() (*skill.Registry, error)  { return nil, nil }
 
-func (s *stubWorkflowPackageResolver) LoadToolRegistry() (*toolpkg.Registry, error) {
-	return nil, nil
-}
-
-func (s *stubWorkflowPackageResolver) LoadSkillRegistry() (*skill.Registry, error) {
-	return nil, nil
-}
-
-func TestAgentConsumesGovernedRegistry(t *testing.T) {
-	t.Parallel()
-
-	resolver := &stubWorkflowPackageResolver{
-		ok: true,
-		pkg: skill.SkillPackage{
-			Name: "governed-workflow",
-			Workflow: &workflow.Definition{
-				Metadata: workflow.Metadata{Name: "governed-workflow"},
-				Spec:     workflow.Spec{Steps: []workflow.Step{{ID: "step_1", Type: workflow.StepTypeTool, Tool: "data_load_vector"}}},
-			},
-		},
+func TestAgentConsumesGovernedToolPackageInstructions(t *testing.T) {
+	root := t.TempDir()
+	dir := filepath.Join(root, "data-methods")
+	if err := os.MkdirAll(dir, 0700); err != nil {
+		t.Fatal(err)
 	}
-
-	agents, err := createSubAgents(context.Background(), &Config{
-		ChatModel: &fakeToolCallingChatModel{},
-		Tools: []tool.BaseTool{utils.NewEnhancedTool(&schema.ToolInfo{Name: "data_load_vector", Desc: "加载矢量"}, func(context.Context, map[string]any) (*schema.ToolResult, error) {
-			return &schema.ToolResult{}, nil
-		})},
-		RegistryGovernance: resolver,
-		SkillRuntimeConfig: &subagents.RuntimeSkillConfig{
-			Agents: map[string]subagents.RuntimeSkillAgentConfig{
-				"data_engineer": {
-					DisplayName:     "数据工程专家",
-					Description:     "处理数据",
-					Enabled:         true,
-					WorkflowPackage: "governed-workflow",
-				},
-			},
-		},
+	body := "---\nname: data-methods\nkind: category\ndescription: 数据方法\ntools: [data_load_vector]\n---\n" + strings.Repeat("使用实际参数核对图层。", 30)
+	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(body), 0600); err != nil {
+		t.Fatal(err)
+	}
+	resolver := &stubGovernedPackageResolver{skillOK: true, skillPkg: skill.SkillPackage{Name: "data-methods", Dir: dir, Source: root}}
+	agents, err := createSubAgents(context.Background(), &Config{ChatModel: &fakeToolCallingChatModel{}, BuiltinSkillsDir: root, RegistryGovernance: resolver,
+		Tools:              []tool.BaseTool{utils.NewEnhancedTool(&schema.ToolInfo{Name: "data_load_vector", Desc: "加载矢量"}, func(context.Context, map[string]any) (*schema.ToolResult, error) { return &schema.ToolResult{}, nil })},
+		SkillRuntimeConfig: &subagents.RuntimeSkillConfig{Global: subagents.RuntimeSkillGlobalConfig{PackageTools: map[string][]string{"data-methods": {"data_load_vector"}}, PackageMetadata: map[string]subagents.RuntimeSkillPackageMetadata{"data-methods": {BodyCharacters: 300}}}, Agents: map[string]subagents.RuntimeSkillAgentConfig{"worker": {Enabled: true, Kind: "agent", DisplayName: "数据专家", Description: "数据处理", ToolPackages: []string{"data-methods"}}}},
 	}, nil, nil)
-	if err != nil {
-		t.Fatalf("createSubAgents returned error: %v", err)
-	}
-	if !resolver.called {
-		t.Fatal("expected workflow package resolution to come from governed registry")
-	}
-	if len(agents) != 1 || agents[0].Name(context.Background()) != "data_engineer" {
-		t.Fatalf("unexpected agents: %#v", agents)
+	if err != nil || len(agents) != 1 || agents[0].Name(context.Background()) != "worker" || len(resolver.skillCall) != 1 || resolver.skillCall[0] != "data-methods" {
+		t.Fatal("role bypassed governed package middleware", agents, resolver.skillCall, err)
 	}
 }
-
-func TestWorkflowSubAgentRejectsUngovernedWorkflowPackageLookup(t *testing.T) {
-	t.Parallel()
-
-	_, err := createSubAgents(context.Background(), &Config{
-		ChatModel: &fakeToolCallingChatModel{},
-		Tools: []tool.BaseTool{utils.NewEnhancedTool(&schema.ToolInfo{Name: "data_load_vector", Desc: "加载矢量"}, func(context.Context, map[string]any) (*schema.ToolResult, error) {
-			return &schema.ToolResult{}, nil
-		})},
-		SkillRuntimeConfig: &subagents.RuntimeSkillConfig{
-			Agents: map[string]subagents.RuntimeSkillAgentConfig{
-				"data_engineer": {
-					DisplayName:     "数据工程专家",
-					Description:     "处理数据",
-					Enabled:         true,
-					WorkflowPackage: "governed-workflow",
-				},
-			},
-		},
-	}, nil, []string{"/tmp/legacy-skills"})
-	if err == nil {
-		t.Fatal("expected workflow package resolver requirement error")
-	}
-	if got := err.Error(); !strings.Contains(got, "registry governance is required for workflow package governed-workflow") {
-		t.Fatalf("unexpected error: %v", err)
-	}
-}
-
 func TestCreateSubAgentsRejectsUngovernedMiddlewarePackageLookup(t *testing.T) {
 	t.Parallel()
 
@@ -178,7 +108,7 @@ func TestResolveMiddlewareSkillDirsUsesGovernedPackageDirs(t *testing.T) {
 		t.Fatalf("write SKILL.md: %v", err)
 	}
 
-	resolver := &stubWorkflowPackageResolver{
+	resolver := &stubGovernedPackageResolver{
 		skillOK: true,
 		skillPkg: skill.SkillPackage{
 			Name:   "governed-knowledge",
@@ -214,7 +144,7 @@ func TestResolveMiddlewareSkillDirsNormalizesSinglePackageSourcePath(t *testing.
 	rootDir := t.TempDir()
 	packageDir := filepath.Join(rootDir, "governed-knowledge")
 
-	resolver := &stubWorkflowPackageResolver{
+	resolver := &stubGovernedPackageResolver{
 		skillOK: true,
 		skillPkg: skill.SkillPackage{
 			Name:   "governed-knowledge",

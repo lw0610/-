@@ -5,6 +5,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/resource"
 	"net/http"
 	"os"
 	"os/exec"
@@ -13,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -326,8 +329,24 @@ func runDeepAgent() {
 		}
 		return resp, nil
 	}
+	resourceLibrary, resourceErr := resource.NewDefaultLibrary()
+	if resourceErr != nil {
+		logger.Fatal("初始化资源库失败: %v", resourceErr)
+	}
+	flowStore, flowStoreErr := flow.NewDefaultStore(resourceLibrary)
+	if flowStoreErr != nil {
+		logger.Fatal("初始化流程绑定迁移失败: %v", flowStoreErr)
+	}
+	inputMemory, inputMemoryErr := flow.DefaultInputMemory()
+	if inputMemoryErr != nil {
+		logger.Fatal("初始化流程输入记忆失败: %v", inputMemoryErr)
+	}
+	if inputMemoryErr = flowStore.MigrateInputMemory(inputMemory, resourceLibrary); inputMemoryErr != nil {
+		logger.Fatal("迁移流程输入记忆失败，原配置及备份保留: %v", inputMemoryErr)
+	}
 	buildOptions := skill.BuildOptions{
-		ComputeClient: computeClient,
+		ResourceResolver: resourceLibrary,
+		ComputeClient:    computeClient,
 		QGISInvoker: func(invokeCtx context.Context, toolName string, args map[string]any) (any, error) {
 			resp, err := qgisInvokeTool(invokeCtx, toolName, args)
 			if err != nil {
@@ -344,6 +363,7 @@ func runDeepAgent() {
 			wsServer.InjectToolRuntimeArgs(mutateCtx, args)
 		},
 		InternalInvoker: func(invokeCtx context.Context, toolName string, args map[string]any) (any, error) {
+			invokeCtx = resource.WithResolver(invokeCtx, resourceLibrary)
 			switch {
 			case creatortools.Handles(toolName):
 				return creatortools.Invoke(invokeCtx, toolName, args, creatortools.Services{
@@ -451,6 +471,7 @@ func runDeepAgent() {
 	wsServer = websocket.NewDeepServer(port, initialAgent)
 	wsServer.SetLocalBridgeProvider(localBridgeProvider)
 	wsServer.SetLocalRuntimeProjection(buildLocalRuntimeSnapshot(localComputeRuntime))
+	var flowEnvironmentAPI atomic.Pointer[api.API]
 	capabilityRefresher := capability.NewRefresher(capabilityStore, func(refreshCtx context.Context, reason string) (*capability.CapabilitySnapshot, error) {
 		activeConfigName := ""
 		var activeConfig *config.AgentConfigFile
@@ -521,9 +542,17 @@ func runDeepAgent() {
 				logger.Debug("capability snapshot shadow diff clean: reason=%s", reason)
 			}
 		}
+		if handler := flowEnvironmentAPI.Load(); handler != nil {
+			handler.InvalidateFlowEnvironment()
+		}
 		return snapshot, nil
 	})
-	wsServer.SetCapabilitySnapshotRuntime(capabilityStore, capabilityRefresher, capabilityMode)
+	environmentAwareRefresher := flowEnvironmentRefreshRequester{invalidate: func() {
+		if handler := flowEnvironmentAPI.Load(); handler != nil {
+			handler.InvalidateFlowEnvironment()
+		}
+	}, request: capabilityRefresher.RequestRefresh}
+	wsServer.SetCapabilitySnapshotRuntime(capabilityStore, environmentAwareRefresher, capabilityMode)
 	if runtime != nil {
 		wsServer.SetRuntime(runtime)
 	}
@@ -597,6 +626,9 @@ func runDeepAgent() {
 		if err := wsServer.UpdateAgentTools(newTools); err != nil {
 			return err
 		}
+		if handler := flowEnvironmentAPI.Load(); handler != nil {
+			handler.InvalidateFlowEnvironment()
+		}
 		logger.Info("middleware 工具目录已刷新并重建 Agent: total=%d", len(newTools))
 		return nil
 	})
@@ -634,7 +666,7 @@ func runDeepAgent() {
 		RuntimeController:  wsServer,
 		SkillCatalog:       skillCatalog,
 		ActiveRuns:         wsServer,
-		SnapshotRefresher:  capabilityRefresher,
+		SnapshotRefresher:  environmentAwareRefresher,
 	})
 	assetCatalog := control.NewAssetCatalogService(control.AssetCatalogServiceDeps{
 		AgentConfigManager:   agentConfigManager,
@@ -650,7 +682,18 @@ func runDeepAgent() {
 
 	// REST API 路由
 	apiHandler := api.NewAPIWithServices(configService, wsServer, localInstanceRegistry, svcRegistry, runtimeCoordinator, settingsService, assetCatalog, realtimeHub)
+	flowEnvironmentAPI.Store(apiHandler)
 	apiHandler.SetLocalBridgeProvider(localBridgeProvider)
+	apiHandler.SetResourceLibrary(resourceLibrary)
+	apiHandler.SetFlowStore(flowStore)
+	flowCompiler, flowErr := apiHandler.FlowCompiler()
+	if flowErr != nil {
+		logger.Fatal("初始化流程编译器失败: %v", flowErr)
+	}
+	// Flow previews are built locally on save/read. Do not start background model analysis.
+	if err := wsServer.SetFlowCompiler(flowCompiler); err != nil {
+		logger.Fatal("初始化流程运行时失败: %v", err)
+	}
 	apiHandler.SetupRoutes(router)
 
 	// WebSocket 路由
@@ -911,6 +954,21 @@ func buildRuntimeTools(ctx context.Context, cfg *config.Config, opts skill.Build
 	if cfg == nil {
 		return nil, fmt.Errorf("config is nil")
 	}
+	if strings.TrimSpace(builtinSkillsDir) == "" {
+		builtinSkillsDir = config.ResolveBuiltinSkillsDir()
+	}
+	if strings.TrimSpace(userSkillsDir) == "" {
+		userSkillsDir = config.ResolveUserSkillsDir()
+	}
+	if invoke := opts.InternalInvoker; invoke != nil {
+		packageDirs := config.ResolveRuntimeSkillDirsWithPlugin(pluginSkillsDir, builtinSkillsDir, userSkillsDir, cfg.ConfigBaseDir, activeConfigName)
+		opts.InternalInvoker = func(invokeCtx context.Context, name string, args map[string]any) (any, error) {
+			if name == runtimecontrol.ToolReferenceRead {
+				invokeCtx = runtimecontrol.WithReferencePackageDirs(invokeCtx, packageDirs)
+			}
+			return invoke(invokeCtx, name, args)
+		}
+	}
 
 	registry, err := loadRuntimeSkillRegistry(builtinSkillsDir, userSkillsDir, pluginSkillsDir, cfg.ConfigBaseDir, activeConfigName, bridgeDynamicRegistry...)
 	if err != nil {
@@ -1015,6 +1073,7 @@ func buildRuntimeSkillEngine(registry *skill.Registry, opts skill.BuildOptions) 
 		backends = append(backends, skill.NewInternalBackend(opts.InternalInvoker))
 	}
 	engine := skill.NewEngine(registry, backends...)
+	engine.SetResourceResolver(opts.ResourceResolver)
 	if opts.AutoLoad != nil {
 		engine.SetAutoLoadHandler(func(autoCtx context.Context, params map[string]any, layers []skill.OutputLayer) {
 			if len(layers) == 0 {

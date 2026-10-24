@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: grass_v_generalize
-  display_name: 矢量简化
+  keywords: ["矢量几何", "简化矢量几何", "地形分析", "矢量分析", "水文分析"]
+  display_name: "简化矢量几何"
   domain: grass-analysis
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入矢量图层
   - name: threshold
     type: number
-    description: 简化阈值
+    description: "简化阈值（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: output
     type: output_layer

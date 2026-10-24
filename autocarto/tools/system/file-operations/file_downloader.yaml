@@ -2,11 +2,12 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: file_downloader
-  display_name: 文件下载
+  keywords: ["远程文件", "下载远程文件", "文件管理", "数据文件"]
+  display_name: "下载远程文件"
   domain: file-operations
   runtime: qgis
 spec:
-  description: 从URL下载文件。默认下载到autoc/downloads目录
+  description: "从给定网址下载文件，返回实际保存路径。未指定目标目录时使用当前运行环境的默认下载目录。"
   parameters:
   - name: URL
     type: string

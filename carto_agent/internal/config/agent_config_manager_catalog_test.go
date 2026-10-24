@@ -150,7 +150,7 @@ func TestGetToolCatalogIncludesUserSkillPackages(t *testing.T) {
 	}
 	manager := &AgentConfigManager{
 		configDir:    configDir,
-		configs:      map[string]*AgentConfigFile{"catalog": normalizeAgentConfigFile(&AgentConfigFile{Version: "1.0", Runtime: &RuntimeConfig{Global: GlobalAgentConfig{SkillPackages: []string{"user-category"}}, Agents: map[string]AgentDefData{"orchestrator": {Enabled: true, Prompts: map[string]string{}}}}})},
+		configs:      map[string]*AgentConfigFile{"catalog": normalizeAgentConfigFile(&AgentConfigFile{Version: "2.0", Runtime: &RuntimeConfig{SharedToolPackages: []string{"user-category"}, Agents: map[string]AgentDefData{"orchestrator": {Enabled: true, Prompts: map[string]string{}}}}})},
 		activeConfig: "catalog",
 	}
 	activeTools, err := manager.GetActiveToolCatalog()

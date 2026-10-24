@@ -48,6 +48,8 @@ const (
 // Item 工具目录项，包含可用性状态。
 type Item struct {
 	Name          string   `json:"name"`
+	DisplayName   string   `json:"display_name,omitempty"`
+	Keywords      []string `json:"keywords,omitempty"`
 	Description   string   `json:"description,omitempty"`
 	Category      string   `json:"category,omitempty"`
 	Domain        string   `json:"domain,omitempty"`
@@ -69,6 +71,10 @@ type Policy struct {
 
 type Capability struct {
 	ID                      string   `json:"id"`
+	DisplayName             string   `json:"display_name,omitempty"`
+	Description             string   `json:"description,omitempty"`
+	Keywords                []string `json:"keywords,omitempty"`
+	PackageID               string   `json:"package_id,omitempty"`
 	Source                  string   `json:"source,omitempty"`
 	CapabilityType          string   `json:"capability_type"`
 	RuntimeTarget           string   `json:"runtime_target,omitempty"`
@@ -108,6 +114,8 @@ type ToolDiffResult struct {
 }
 
 type metadata struct {
+	displayName       string
+	keywords          []string
 	description       string
 	category          string
 	domain            string
@@ -234,6 +242,8 @@ func BuildToolInfosWithHints(tools []string, snapshot toolrouter.Snapshot, hints
 			}
 			items = append(items, Item{
 				Name:          name,
+				DisplayName:   meta.displayName,
+				Keywords:      append([]string(nil), meta.keywords...),
 				Description:   meta.description,
 				Category:      meta.category,
 				Domain:        firstNonEmpty(meta.domain, meta.category),
@@ -261,6 +271,10 @@ func buildCapability(item Item, scope, configName string, services map[string]mi
 	runtimeTarget := capabilityRuntimeTarget(item)
 	capability := Capability{
 		ID:             strings.TrimSpace(item.Name),
+		DisplayName:    strings.TrimSpace(item.DisplayName),
+		Description:    strings.TrimSpace(item.Description),
+		Keywords:       append([]string(nil), item.Keywords...),
+		PackageID:      strings.TrimSpace(item.PackageID),
 		Source:         firstNonEmpty(strings.TrimSpace(item.PackageID), strings.TrimSpace(item.Source), strings.TrimSpace(item.Backend), contractSourceControlPlane),
 		CapabilityType: CapabilityTypeTool,
 		RuntimeTarget:  runtimeTarget,
@@ -424,6 +438,7 @@ func PublicCatalogItems(tools []middlewareclient.ToolCatalogItem) []middlewarecl
 		switch strings.ToLower(strings.TrimSpace(item.Visibility)) {
 		case "public":
 			cloned := item
+			cloned.Keywords = append([]string(nil), item.Keywords...)
 			cloned.AuthorizationScopes = normalizedAuthorizationScopes(item.AuthorizationScopes)
 			filtered = append(filtered, cloned)
 		}
@@ -443,6 +458,8 @@ func buildMetadataMap(snapshot toolrouter.Snapshot) map[string]metadata {
 			continue
 		}
 		metaMap[name] = metadata{
+			displayName:       strings.TrimSpace(item.DisplayName),
+			keywords:          append([]string(nil), item.Keywords...),
 			description:       strings.TrimSpace(item.Description),
 			category:          strings.TrimSpace(item.Category),
 			domain:            strings.TrimSpace(item.Category),
@@ -459,6 +476,8 @@ func buildMetadataMap(snapshot toolrouter.Snapshot) map[string]metadata {
 			continue
 		}
 		metaMap[name] = metadata{
+			displayName:       strings.TrimSpace(item.DisplayName),
+			keywords:          append([]string(nil), item.Keywords...),
 			description:       strings.TrimSpace(item.Description),
 			category:          strings.TrimSpace(item.Category),
 			domain:            strings.TrimSpace(item.Category),
@@ -555,8 +574,13 @@ func toolRevision(
 
 func toolSchemaSignature(item middlewareclient.ToolCatalogItem) string {
 	rawSchema, _ := json.Marshal(item.InputSchema)
+	keywords := normalizedAuthorizationScopes(item.Keywords)
+	sort.Strings(keywords)
+	rawKeywords, _ := json.Marshal(keywords)
 	return strings.Join([]string{
 		strings.TrimSpace(item.Name),
+		strings.TrimSpace(item.DisplayName),
+		string(rawKeywords),
 		canonicalToolRuntimeIdentity(item),
 		strings.TrimSpace(item.RawName),
 		strings.TrimSpace(item.Description),

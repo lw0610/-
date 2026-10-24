@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -143,6 +144,22 @@ func (s *DeepServer) restoreKnowledgeReviewPending(ctx context.Context, review *
 		return nil, fmt.Errorf("原制图任务配置已变化，不能恢复旧断点；核对稿仍可查看: %w", err)
 	} else if !exists {
 		return nil, fmt.Errorf("原制图任务的恢复断点已失效；核对稿仍保留，不能静默重新抽取")
+	}
+	if strings.HasPrefix(desc.CheckpointID, "flow-") {
+		dir, err := config.ResolveSessionDir(review.ProjectPath, review.SessionID)
+		if err != nil {
+			return nil, err
+		}
+		entries, err := os.ReadDir(filepath.Join(dir, "flows"))
+		if err != nil {
+			return nil, err
+		}
+		for _, entry := range entries {
+			if strings.HasPrefix(desc.CheckpointID, "flow-"+entry.Name()+"-s") {
+				return s.restoreFlowPending(ctx, review.SessionID, review.ProjectPath, entry.Name())
+			}
+		}
+		return nil, fmt.Errorf("找不到原流程断点")
 	}
 	mode := executionMode(desc.ExecutionMode)
 	if mode != executionModePlan {

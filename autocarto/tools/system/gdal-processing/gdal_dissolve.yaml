@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_dissolve
-  display_name: GDAL融合
+  keywords: ["矢量要素", "融合矢量要素", "栅格处理", "矢量处理", "空间分析"]
+  display_name: "融合矢量要素"
   domain: gdal-processing
   runtime: qgis
 spec:

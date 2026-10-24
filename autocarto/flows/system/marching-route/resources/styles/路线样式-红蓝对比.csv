@@ -1,0 +1,7 @@
+﻿拓扑,阵营,路线类型,绘制方式,样式编号,线宽系数,图例名称,preset_ref,default_sides,reference_style_id,label_paths,auto_width_group
+standard,friendly,main,bezier_arrow,bezier_red_gradient,,路线,friendly_main_red,friendly、neutral,route_red_reference,false,true
+standard,enemy,enemy,bezier_arrow,bezier_blue_gradient,,路线,enemy_main_blue,enemy,route_blue_reference,true,false
+branch,friendly,branch,branch_bezier,branch_bezier_red_gradient,,路线,friendly_branch_red,friendly、neutral,branch_route_red_reference,false,true
+branch,enemy,branch,branch_bezier,branch_bezier_blue_gradient,,路线,enemy_branch_blue,enemy,branch_route_blue_reference,true,false
+multi_start,friendly,main,multi_start_bezier,multi_start_bezier_red_gradient,,路线,friendly_multi_start_red,friendly、neutral,multi_start_route_red_reference,false,true
+multi_start,enemy,enemy,multi_start_bezier,multi_start_bezier_blue_gradient,,路线,enemy_multi_start_blue,enemy,multi_start_route_blue_reference,true,false

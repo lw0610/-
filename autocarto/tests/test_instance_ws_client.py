@@ -92,6 +92,10 @@ class _ModuleTestSignal:
 
 
 class _ModuleTestTimer:
+    @staticmethod
+    def singleShot(_interval, callback):
+        callback()
+
     def __init__(self):
         self.timeout = _ModuleTestSignal()
 
@@ -187,6 +191,13 @@ class _ModuleTestLingeringWebSocketApp(_ModuleTestWebSocketApp):
 
 
 class InstanceWSClientTestCase(unittest.TestCase):
+    def setUp(self):
+        # Unit dispatches run deterministically without a Qt event loop. The
+        # explicit main-thread dispatch tests provide their own queued invoker.
+        timer_patch = mock.patch.object(instance_ws_client_module, "QTimer", _ModuleTestTimer)
+        timer_patch.start()
+        self.addCleanup(timer_patch.stop)
+
     def test_vendored_adapter_dispatches_open_callback_via_dispatcher(self):
         connected = []
         queued_callbacks = []

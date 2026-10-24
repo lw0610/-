@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_slope
-  display_name: 坡度
+  keywords: ["栅格坡度", "分析栅格坡度", "栅格处理", "矢量处理", "空间分析"]
+  display_name: "计算栅格坡度"
   domain: gdal-processing
   runtime: qgis
 spec:
@@ -14,11 +15,11 @@ spec:
     description: 输入DEM
   - name: BAND
     type: integer
-    description: 波段号
+    description: "波段号（从 1 开始的波段序号）"
     default: 1
   - name: SCALE
     type: number
-    description: 比例因子
+    description: "垂直单位与水平单位的换算比例（无单位，正数）"
     default: 1.0
   - name: OUTPUT
     type: output_raster

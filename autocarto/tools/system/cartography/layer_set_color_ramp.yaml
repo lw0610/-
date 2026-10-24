@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_set_color_ramp
-  display_name: layer_set_color_ramp
+  keywords: ["图层色带", "配置图层色带", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置图层色带"
   runtime: qgis
   domain: cartography
 spec:

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: shortest_path_layer_to_point
-  display_name: 最短路径(图层到点)
+  keywords: ["图层到点最短路", "分析图层到点最短路", "路径分析", "最短路径", "服务范围"]
+  display_name: "计算图层到点最短路"
   domain: network-analysis
   runtime: qgis
 spec:

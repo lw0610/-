@@ -37,8 +37,8 @@ func TestImportSkillPackageCopiesSourceToGlobalSkillsDir(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(result.TargetDir, "SKILL.md")); err != nil {
 		t.Fatalf("expected imported SKILL.md: %v", err)
 	}
-	if _, err := os.Stat(filepath.Join(result.TargetDir, "workflow.yaml")); err != nil {
-		t.Fatalf("expected imported workflow.yaml: %v", err)
+	if _, err := os.Stat(filepath.Join(result.TargetDir, "references.md")); err != nil {
+		t.Fatalf("expected imported package reference: %v", err)
 	}
 	if result.Scope != "global" || result.OwnerConfig != "" {
 		t.Fatalf("unexpected import result scope metadata: %#v", result)
@@ -180,11 +180,11 @@ func writeManifestPackageFixture(t *testing.T, dir, name string) {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatalf("mkdir package dir failed: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte("---\nname: "+name+"\ndescription: demo\nkind: workflow\n---\n"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte("---\nname: "+name+"\ndescription: demo\nkind: category\ntools: [fixture_tool]\n---\n"), 0o644); err != nil {
 		t.Fatalf("write SKILL.md failed: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "workflow.yaml"), []byte("apiVersion: workflow/v1\nkind: serial_workflow\nmetadata:\n  name: "+name+"\nspec:\n  steps: []\n"), 0o644); err != nil {
-		t.Fatalf("write workflow.yaml failed: %v", err)
+	if err := os.WriteFile(filepath.Join(dir, "references.md"), []byte("tool usage guidance"), 0o644); err != nil {
+		t.Fatal(err)
 	}
 }
 

@@ -11,6 +11,8 @@ import (
 	"testing"
 
 	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
+	"github.com/autocarto/carto_agent/internal/resource"
+	"github.com/autocarto/carto_agent/internal/resource/bindings"
 	"github.com/autocarto/carto_agent/internal/skill"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/model"
@@ -19,21 +21,21 @@ import (
 
 // Load the shipped profile and on-disk category packages: declaring a tool in
 // workflow prose does not grant permission, and category references can go stale.
-func TestStatisticalWorkflowsHaveRealRoleTools(t *testing.T) {
+func TestStatisticalToolPackagesHaveRealRoleTools(t *testing.T) {
 	f := loadGEESkillIntegrationFixture(t)
 	for role, workflow := range map[string]string{
-		"orchestrator":  "statistical-map-orchestration",
-		"data_engineer": "statistical-data-preparation",
-		"cartographer":  "print-layout-statistical",
+		"orchestrator":  "flow-control",
+		"data_engineer": "statistical-data-tools",
+		"cartographer":  "print-layout",
 	} {
 		pkg, ok := f.registry.skills.GetPackage(workflow)
-		if !ok || pkg.Kind != "workflow" || !pkg.Enabled {
+		if !ok || pkg.Kind != "category" || !pkg.Enabled {
 			t.Fatalf("missing enabled workflow %s", workflow)
 		}
 		if !slices.Contains(f.runtimeConfig.GetAgentMiddlewareSkills(role), workflow) {
 			t.Errorf("%s cannot read %s", role, workflow)
 		}
-		for _, name := range pkg.RequiresTools {
+		for _, name := range pkg.ToolRefs {
 			if _, ok := f.registry.skills.GetTool(name); !ok {
 				t.Errorf("%s requires missing actual tool %s", workflow, name)
 			}
@@ -47,8 +49,8 @@ func TestStatisticalWorkflowsHaveRealRoleTools(t *testing.T) {
 		if allowed != (role == "data_engineer") {
 			t.Errorf("statistical preparation permission for %s = %v", role, allowed)
 		}
-		if slices.Contains(f.runtimeConfig.GetAgentMiddlewareSkills(role), "statistical-data-tools") {
-			t.Errorf("category package leaked into %s workflow catalog", role)
+		if readable := slices.Contains(f.runtimeConfig.GetAgentMiddlewareSkills(role), "statistical-data-tools"); readable != allowed {
+			t.Errorf("statistical method ownership for %s: readable=%v allowed=%v", role, readable, allowed)
 		}
 	}
 	if slices.Contains(f.runtimeConfig.GetAgentAllowedTools("cartographer"), "data_load_vector") {
@@ -81,18 +83,18 @@ func TestStatisticalTaskSkillAndToolAdapters(t *testing.T) {
 		role, workflow string
 		steps          []statisticalProbeStep
 	}{
-		{"data_engineer", "statistical-data-preparation", []statisticalProbeStep{
+		{"data_engineer", "statistical-data-tools", []statisticalProbeStep{
 			{"data_prepare_statistical", prepareArgs(true), "validation-only", map[string]any{"success": true, "data": map[string]any{"validation": "validation-only"}}},
 			{"data_prepare_statistical", prepareArgs(false), preparedPath, prepared},
 			{"data_load_vector", encode(map[string]any{"path": preparedPath, "layer_name": "statistical_theme"}), "theme-id", map[string]any{"success": true, "data": map[string]any{"layer_id": "theme-id"}}},
 			{"data_load_vector", encode(map[string]any{"path": preparedPath, "layer_name": "statistical_base"}), "base-id", map[string]any{"success": true, "data": map[string]any{"layer_id": "base-id"}}},
 		}},
-		{"cartographer", "print-layout-statistical", []statisticalProbeStep{
+		{"cartographer", "print-layout", []statisticalProbeStep{
 			{"cartography_set_style", `{"layer":"statistical_base","style_type":"simple","color":"#e5e7eb"}`, "gray-base", map[string]any{"success": true, "data": "gray-base"}},
 			{"cartography_graduated_style", `{"layer":"statistical_theme","field":"stat_value","classes":5,"method":"jenks","color_ramp":"Blues"}`, "graduatedSymbol", map[string]any{"success": true, "data": map[string]any{"renderer_type": "graduatedSymbol", "renderer_field": "stat_value"}}},
 			{"layout_set_map_layers", `{"layout":"statistics","item_id":"map","layers":["statistical_theme","statistical_base"]}`, "locked-layers", map[string]any{"success": true, "data": "locked-layers"}},
 			{"layout_set_map_extent", `{"layout":"statistics","item_id":"map","layer":"statistical_theme","padding":0.03,"preserve_frame_size":true}`, "extent-transformed", map[string]any{"success": true, "data": "extent-transformed"}},
-			{"layout_set_legend_style", `{"layout":"statistics","item_id":"legend","legend_layers":["statistical_theme"],"include_military_arrow":false,"title":"常住人口（万人）"}`, "native-legend", map[string]any{"success": true, "data": "native-legend"}},
+			{"layout_set_legend_style", `{"layout":"statistics","item_id":"legend","legend_layers":["statistical_theme"],"legend_extra_items":[],"title":"常住人口（万人）"}`, "native-legend", map[string]any{"success": true, "data": "native-legend"}},
 			{"export_print_layout", `{"layout":"statistics","output":"/output/statistics.png","dpi":200}`, "/output/statistics.png", map[string]any{"success": true, "output": "/output/statistics.png"}},
 		}},
 	}
@@ -131,7 +133,9 @@ func TestStatisticalTaskSkillAndToolAdapters(t *testing.T) {
 				probe.executed++
 				return expected.result, nil
 			}, nil)
-			tools, err := skill.BuildToolsFromRegistry(f.registry.skills, skill.NewEngine(f.registry.skills, backend))
+			engine := skill.NewEngine(f.registry.skills, backend)
+			engine.SetResourceResolver(resource.NewLibrary("", "", bindings.New(filepath.Join(t.TempDir(), "bindings.yaml"))))
+			tools, err := skill.BuildToolsFromRegistry(f.registry.skills, engine)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -190,8 +194,8 @@ func (m *statisticalProbeModel) Generate(_ context.Context, input []*schema.Mess
 		if available["data_prepare_statistical"] != nil || available["cartography_graduated_style"] != nil {
 			return nil, fmt.Errorf("statistical specialist tool leaked to orchestrator")
 		}
-		if available["skill"] == nil || !strings.Contains(available["skill"].Desc, "statistical-map-orchestration") {
-			return nil, fmt.Errorf("orchestrator cannot discover statistical workflow")
+		if available["skill"] == nil || !strings.Contains(available["skill"].Desc, "flow-control") {
+			return nil, fmt.Errorf("orchestrator cannot discover flow tools")
 		}
 		if !s.delegated {
 			s.delegated = true

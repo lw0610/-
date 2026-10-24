@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_add_picture
-  display_name: layout_add_picture
+  keywords: ["版面图片", "添加版面图片", "打印版面", "地图排版", "版面元素"]
+  display_name: "添加版面图片"
   runtime: qgis
   domain: print-layout
 spec:

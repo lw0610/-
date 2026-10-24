@@ -2,7 +2,7 @@
 
 Scripts execute with the user's permissions, in a fresh process. This is not a sandbox.
 Workflow helpers follow GeoCode v0.9.6; attribution and MIT license are in
-autocarto/skills/system/gee-scripting/UPSTREAM.md and LICENSE.
+autocarto/skills/system/gee-remote-sensing/UPSTREAM.md and LICENSE.
 API references: developers.google.com/earth-engine/guides/auth,
 apidocs/ee-image-getdownloadurl and apidocs/export-image-todrive.
 """

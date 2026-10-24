@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: cartography_add_labels
-  display_name: cartography_add_labels
+  keywords: ["图层标注", "添加图层标注", "符号样式", "地图标注", "图层渲染"]
+  display_name: "添加图层标注"
   runtime: qgis
   domain: cartography
 spec:
@@ -18,7 +19,7 @@ spec:
     description: 标注字段名称
   - name: font_size
     type: number
-    description: 字体大小
+    description: "标注字号（磅，pt）"
   - name: color
     type: string
     description: 字体颜色 (十六进制格式)

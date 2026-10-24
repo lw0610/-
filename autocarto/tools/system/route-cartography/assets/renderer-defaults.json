@@ -1,0 +1,121 @@
+{
+  "renderer_plugin_name": "RouteBezierPlotPlugin",
+  "labels": {
+    "route": {
+      "font_families": [
+        "Microsoft YaHei",
+        "Noto Sans CJK SC",
+        "Hiragino Sans GB"
+      ],
+      "size_mm": 2.2,
+      "color": "#343d76",
+      "buffer_mm": 0.4,
+      "buffer_color": "white"
+    },
+    "point": {
+      "font_families": [
+        "Microsoft YaHei",
+        "Noto Sans CJK SC",
+        "Hiragino Sans GB"
+      ],
+      "size_mm": 2.0,
+      "color": "#202020",
+      "buffer_mm": 0.5,
+      "buffer_color": "#ffffff"
+    },
+    "rendezvous": {
+      "font_families": [
+        "Microsoft YaHei",
+        "Noto Sans CJK SC",
+        "Hiragino Sans GB"
+      ],
+      "size_mm": 2.3,
+      "color": "#9c2929",
+      "buffer_mm": 0.5,
+      "buffer_color": "white"
+    }
+  },
+  "callouts": {
+    "box": {
+      "shape": "rectangle",
+      "fill_color": "#fff7e6",
+      "fill_opacity": 0.94,
+      "border_color": "#d9822b",
+      "border_width_mm": 0.3,
+      "padding_mm": 1.8,
+      "corner_radius_mm": 1.2,
+      "width_mm": 42.0,
+      "height_mm": "auto"
+    },
+    "text": {
+      "body_font_family": "SimSun",
+      "body_font_size_pt": 5.5,
+      "line_spacing": 1.15,
+      "body_color": "#333333"
+    },
+    "image": {
+      "enabled": false,
+      "height_mm": 18.0,
+      "gap_mm": 1.5,
+      "path": ""
+    },
+    "leader": {
+      "enabled": true,
+      "style": "double",
+      "color": "#d9822b",
+      "width_mm": 0.25,
+      "anchor_marker": "dot",
+      "anchor_marker_size_mm": 1.0
+    },
+    "position": {
+      "mode": "auto",
+      "preferred_side": "right_top",
+      "offset_mm": [
+        18.0,
+        -12.0
+      ],
+      "allow_sides": [
+        "right_top",
+        "right",
+        "right_bottom",
+        "left_top",
+        "left",
+        "left_bottom",
+        "top",
+        "bottom"
+      ]
+    }
+  },
+  "default_point_symbol": {
+    "name": "circle",
+    "size": "1.4",
+    "color": "#202020",
+    "outline_style": "no"
+  },
+  "curve_params": {
+    "main": {
+      "amp": 0.028,
+      "max": 0.09,
+      "min_len": 0.34
+    },
+    "branch": {
+      "amp": 0.045,
+      "max": 0.14,
+      "min_len": 0.3
+    },
+    "incoming": {
+      "amp": 0.075,
+      "max": 0.24,
+      "min_len": 0.42
+    },
+    "enemy": {
+      "amp": 0.075,
+      "max": 0.24,
+      "min_len": 0.42
+    }
+  },
+  "route_kind_by_type": {
+    "enemy": "enemy",
+    "branch": "branch"
+  }
+}

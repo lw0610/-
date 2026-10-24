@@ -80,9 +80,8 @@ func ResolveSessionsBaseDir(projectPath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("解析 runtime sessions 目录失败: %w", err)
 	}
-	// Existing runtime-home configuration accepts paths relative to the service
-	// working directory. Preserve that location while giving child processes an
-	// absolute path that remains valid after their own working directory changes.
+	// Runtime paths are anchored at the project root, so child processes keep
+	// the same session location when their working directory changes.
 	dataDir, err = filepath.Abs(dataDir)
 	if err != nil {
 		return "", fmt.Errorf("解析 runtime sessions 绝对路径失败: %w", err)

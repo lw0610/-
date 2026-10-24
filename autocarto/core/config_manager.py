@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 
 import yaml
 
+from .paths import get_autocarto_home, resolve_project_path
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -34,6 +35,7 @@ class ConfigProxy:
         self._config = self._normalize_config(raw_config)
 
     def _get_default_config(self) -> Dict[str, Any]:
+        from autocarto.knowledge.visual_presets import renderer_defaults
         return {
             "backend": {
                 "reconnect_max_sec": 8,
@@ -49,6 +51,7 @@ class ConfigProxy:
                 "session_max_backups": 2,
             },
             "data_dir": "data",
+            "route_renderer": {"plugin_name": renderer_defaults()["renderer_plugin_name"]},
         }
 
     def _normalize_config(self, config: Dict[str, Any]) -> Dict[str, Any]:
@@ -97,7 +100,9 @@ class ConfigProxy:
         if path.is_absolute():
             return path
 
-        return (self.plugin_dir / path).resolve()
+        if key in {"log.dir", "data_dir"}:
+            return (get_autocarto_home() / path).resolve()
+        return resolve_project_path(value)
 
     def _merge_config(self, target: Dict[str, Any], source: Dict[str, Any]):
         for key, value in source.items():

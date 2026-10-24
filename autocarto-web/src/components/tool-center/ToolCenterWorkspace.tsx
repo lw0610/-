@@ -50,12 +50,15 @@ export default function ToolCenterWorkspace() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [scopeFilter, setScopeFilter] = useState<SkillPackageScope>("all");
-  const [kindFilter, setKindFilter] = useState<string>("all");
   const [backendFilter, setBackendFilter] = useState<string>("all");
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [enabledFilter, setEnabledFilter] = useState<string>("all");
   const [toggling, setToggling] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const packageRequestRef = useRef(0);
+  const detailRequestRef = useRef(0);
+  const catalogRequestRef = useRef(0);
+  const catalogRequestedRef = useRef(false);
 
   const loadDetail = useCallback(
     async (
@@ -65,33 +68,40 @@ export default function ToolCenterWorkspace() {
         owner_config?: string;
       } | null,
     ) => {
+      const request = ++detailRequestRef.current;
       const packageId = String(item?.package_id || "").trim();
       if (!packageId) {
         setDetail(null);
+        setDetailLoading(false);
         return;
       }
       setDetail(null);
       setDetailLoading(true);
       try {
-        setDetail(
-          await api.getSkillPackage(
-            packageId,
-            String(item?.scope || "").trim() as SkillPackageScope | undefined,
-            String(item?.owner_config || "").trim() || undefined,
-          ),
+        const nextDetail = await api.getSkillPackage(
+          packageId,
+          String(item?.scope || "").trim() as SkillPackageScope | undefined,
+          String(item?.owner_config || "").trim() || undefined,
         );
+        if (request === detailRequestRef.current) setDetail(nextDetail);
+      } catch (loadError) {
+        if (request === detailRequestRef.current) {
+          setError(loadError instanceof Error ? loadError.message : "加载工具包详情失败");
+        }
       } finally {
-        setDetailLoading(false);
+        if (request === detailRequestRef.current) setDetailLoading(false);
       }
     },
     [],
   );
 
   const loadPackages = useCallback(async () => {
+    const request = ++packageRequestRef.current;
     setLoading(true);
     setError("");
     try {
-      const nextPackages = await api.getSkillPackages(scopeFilter);
+      const nextPackages = (await api.getSkillPackages(scopeFilter)).filter((item) => item.kind === "category" && !item.deprecated);
+      if (request !== packageRequestRef.current) return;
       setPackages(nextPackages);
       const target =
         nextPackages.find(
@@ -99,34 +109,38 @@ export default function ToolCenterWorkspace() {
         ) ||
         nextPackages[0] ||
         null;
-      setSelectedKey(packageKey(target));
+      selectedKeyRef.current = packageKey(target);
+      setSelectedKey(selectedKeyRef.current);
       if (target) {
         await loadDetail(target);
       } else {
-        setDetail(null);
+        await loadDetail(null);
       }
     } catch (loadError) {
-      setError(
-        loadError instanceof Error ? loadError.message : "加载技能包失败",
+      if (request === packageRequestRef.current) setError(
+        loadError instanceof Error ? loadError.message : "加载工具包失败",
       );
     } finally {
-      setLoading(false);
+      if (request === packageRequestRef.current) setLoading(false);
     }
   }, [loadDetail, scopeFilter]);
 
   const loadToolCatalog = useCallback(async () => {
+    const request = ++catalogRequestRef.current;
+    catalogRequestedRef.current = true;
     setCatalogLoading(true);
     setError("");
     try {
       const globalCatalog = await api.getToolCatalog("global") as ToolCatalogResponse;
+      if (request !== catalogRequestRef.current) return;
       setToolCatalog(globalCatalog.tool_infos || []);
       setToolCatalogContract(globalCatalog.catalog || null);
     } catch (loadError) {
-      setError(
+      if (request === catalogRequestRef.current) setError(
         loadError instanceof Error ? loadError.message : "加载工具目录失败",
       );
     } finally {
-      setCatalogLoading(false);
+      if (request === catalogRequestRef.current) setCatalogLoading(false);
     }
   }, []);
 
@@ -139,6 +153,17 @@ export default function ToolCenterWorkspace() {
       void loadToolCatalog();
     }
   }, [loadToolCatalog, viewTab]);
+
+  useEffect(() => { if (drawerOpen && !catalogRequestedRef.current) void loadToolCatalog(); },[drawerOpen,loadToolCatalog]);
+
+  useEffect(() => {
+    const refreshCatalogs = () => {
+      void loadPackages();
+      if (catalogRequestedRef.current) void loadToolCatalog();
+    };
+    window.addEventListener("autocarto:skill_catalog_changed", refreshCatalogs);
+    return () => window.removeEventListener("autocarto:skill_catalog_changed", refreshCatalogs);
+  }, [loadPackages, loadToolCatalog]);
 
   const backendOptions = useMemo(() => {
     return Array.from(
@@ -167,7 +192,7 @@ export default function ToolCenterWorkspace() {
         normalizedQuery &&
         ![
           item.package_id,
-          item.name,
+          item.name, item.display_name, item.domain,
           item.description,
           item.kind,
           item.scope,
@@ -178,9 +203,6 @@ export default function ToolCenterWorkspace() {
           .toLowerCase()
           .includes(normalizedQuery)
       ) {
-        return false;
-      }
-      if (kindFilter !== "all" && String(item.kind || "") !== kindFilter) {
         return false;
       }
       if (
@@ -203,7 +225,7 @@ export default function ToolCenterWorkspace() {
       }
       return true;
     });
-  }, [backendFilter, enabledFilter, kindFilter, packages, query, sourceFilter]);
+  }, [backendFilter, enabledFilter, packages, query, sourceFilter]);
 
   const currentDetail =
     detail && packageKey(detail) === selectedKey ? detail : null;
@@ -242,7 +264,7 @@ export default function ToolCenterWorkspace() {
       await loadPackages();
     } catch (toggleError) {
       setError(
-        toggleError instanceof Error ? toggleError.message : "切换技能包失败",
+        toggleError instanceof Error ? toggleError.message : "切换工具包失败",
       );
     } finally {
       setToggling(false);
@@ -266,7 +288,7 @@ export default function ToolCenterWorkspace() {
             <span className="text-xs text-zinc-500 dark:text-zinc-400">
               {viewTab === "catalog"
                 ? `工具 ${toolCatalog.length} 个`
-                : `技能包 ${packages.length} 个`}
+                : `工具包 ${packages.length} 个`}
             </span>
           </>
         }
@@ -275,14 +297,14 @@ export default function ToolCenterWorkspace() {
             {viewTab === "packages" ? (
               <ActionButton
                 variant={currentDetail?.enabled === false ? "primary" : "danger"}
-                disabled={!currentDetail || toggling || detailLoading}
+                disabled={!currentDetail || currentDetail.system || toggling || detailLoading}
                 onClick={() => void toggleCurrentPackage()}
               >
                 {toggling
                   ? "处理中..."
                   : currentDetail?.enabled === false
-                    ? "启用技能包"
-                    : "停用技能包"}
+                    ? "启用工具包"
+                    : "停用工具包"}
               </ActionButton>
             ) : null}
           </>
@@ -296,8 +318,8 @@ export default function ToolCenterWorkspace() {
       <div id="tool-center-list" className="space-y-2">
         <div className="flex flex-wrap gap-2">
           {([
-            ["packages", "技能包"],
-            ["catalog", "工具目录"],
+            ["packages", "工具包"],
+            ["catalog", "能力手册"],
           ] as const).map(([key, label]) => (
             <button
               key={key}
@@ -319,13 +341,14 @@ export default function ToolCenterWorkspace() {
             items={toolCatalog}
             loading={catalogLoading}
             catalog={toolCatalogContract}
+            packages={packages}
           />
         ) : (
           <>
             <ListPanelHeader
-              eyebrow="技能包目录"
+              eyebrow="工具包目录"
               title="工具中心"
-              description="统一查看全局与方案专属技能包。"
+              description="查看工具包的能力、使用说明与参考资料。"
               stats={[
                 {
                   label: "结果",
@@ -338,10 +361,11 @@ export default function ToolCenterWorkspace() {
                   className="h-8 w-full rounded-sm border border-zinc-300 bg-zinc-100 px-2.5 text-xs text-zinc-800 outline-none transition-colors placeholder:text-zinc-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/10 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="搜索技能包..."
+                  placeholder="搜索工具包..."
                 />
                 <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-5">
                   <select
+                    aria-label="工具包范围"
                     className={FILTER_SELECT_CLASS}
                     value={scopeFilter}
                     onChange={(event) =>
@@ -351,19 +375,9 @@ export default function ToolCenterWorkspace() {
                     <option value="all">全部</option>
                     <option value="builtin">仅内置</option>
                     <option value="user">仅用户</option>
-                    <option value="exclusive">仅专属</option>
                   </select>
                   <select
-                    className={FILTER_SELECT_CLASS}
-                    value={kindFilter}
-                    onChange={(event) => setKindFilter(event.target.value)}
-                  >
-                    <option value="all">全部类型</option>
-                    <option value="category">分类包</option>
-                    <option value="workflow">流程包</option>
-                    <option value="knowledge">知识包</option>
-                  </select>
-                  <select
+                    aria-label="工具后端"
                     className={FILTER_SELECT_CLASS}
                     value={backendFilter}
                     onChange={(event) => setBackendFilter(event.target.value)}
@@ -376,6 +390,7 @@ export default function ToolCenterWorkspace() {
                     ))}
                   </select>
                   <select
+                    aria-label="工具来源"
                     className={FILTER_SELECT_CLASS}
                     value={sourceFilter}
                     onChange={(event) => setSourceFilter(event.target.value)}
@@ -388,6 +403,7 @@ export default function ToolCenterWorkspace() {
                     ))}
                   </select>
                   <select
+                    aria-label="启用状态"
                     className={FILTER_SELECT_CLASS}
                     value={enabledFilter}
                     onChange={(event) => setEnabledFilter(event.target.value)}
@@ -405,12 +421,15 @@ export default function ToolCenterWorkspace() {
                 <EmptyStatePanel
                   compact
                   eyebrow="空列表"
-                  title="没有匹配的技能包"
+                  title="没有匹配的工具包"
                   description="调整筛选条件后再试。"
                 />
               ) : null}
 
-              {filteredPackages.map((item) => {
+              {[false,true].map((system) => {
+                const items = filteredPackages.filter((item) => Boolean(item.system || item.hidden) === system);
+                if (!items.length) return null;
+                const rows = <>{items.map((item) => {
                 const itemKey = packageKey(item);
                 const active = itemKey === selectedKey;
                 return (
@@ -423,6 +442,7 @@ export default function ToolCenterWorkspace() {
                         : "border-zinc-200/70 bg-zinc-50/80 text-zinc-700 hover:border-zinc-300 hover:bg-zinc-100 dark:border-zinc-800/70 dark:bg-zinc-900/50 dark:text-zinc-200 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
                     }`}
                     onClick={() => {
+                      selectedKeyRef.current = itemKey;
                       setSelectedKey(itemKey);
                       setDrawerOpen(true);
                       void loadDetail(item);
@@ -432,7 +452,7 @@ export default function ToolCenterWorkspace() {
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <div className="truncate font-medium text-base">
-                            {item.name || item.package_id}
+                            {item.display_name || item.name || item.package_id}
                           </div>
                           <StatusBadge size="xs">
                             {normalizeKindLabel(String(item.kind || ""))}
@@ -470,6 +490,8 @@ export default function ToolCenterWorkspace() {
                     </div>
                   </button>
                 );
+              })}</>;
+                return system ? <details key="system"><summary className="cursor-pointer py-2 text-sm">系统（{items.length}）</summary>{rows}</details> : <div key="selectable" className="space-y-1">{rows}</div>;
               })}
             </div>
           </>
@@ -479,6 +501,7 @@ export default function ToolCenterWorkspace() {
       <ToolCenterDetailDrawer
         open={viewTab === "packages" && drawerOpen}
         detail={currentDetail}
+        catalog={toolCatalog}
         loading={detailLoading}
         toggling={toggling}
         onClose={() => setDrawerOpen(false)}

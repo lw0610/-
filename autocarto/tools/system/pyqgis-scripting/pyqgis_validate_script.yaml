@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: pyqgis_validate_script
+  display_name: "校验地图脚本"
+  keywords: ["地图脚本", "校验地图脚本", "脚本执行", "脚本任务"]
   domain: pyqgis-scripting
   runtime: qgis
 spec:

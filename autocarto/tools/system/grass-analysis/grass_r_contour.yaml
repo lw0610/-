@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: grass_r_contour
-  display_name: GRASS等值线
+  keywords: ["地形等值线", "生成地形等值线", "地形分析", "矢量分析", "水文分析"]
+  display_name: "生成地形等值线"
   domain: grass-analysis
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入栅格
   - name: step
     type: number
-    description: 等值线间隔
+    description: "等值线间隔（与输入高程或网格数值单位一致，正数）"
     default: 10.0
   - name: output
     type: output_layer

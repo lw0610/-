@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: extract_specific_vertices
-  display_name: 提取特定顶点
+  keywords: ["指定顶点", "提取指定顶点", "几何处理", "空间叠加", "几何修复"]
+  display_name: "提取指定顶点"
   domain: vector-geometry
   runtime: qgis
 spec:

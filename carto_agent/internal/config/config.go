@@ -16,6 +16,8 @@ type Config struct {
 	// LLM配置
 	LLM LLMConfig `yaml:"llm"`
 
+	FlowCompile FlowCompileConfig `yaml:"flow_compile"`
+
 	// Image 2 工具服务配置（不参与聊天模型选择）
 	Image2 Image2Config `yaml:"image2"`
 
@@ -56,6 +58,31 @@ type Config struct {
 
 	// 配置基础目录（默认 autocarto/config）
 	ConfigBaseDir string `yaml:"-"`
+}
+
+type FlowCompileConfig struct {
+	Provider           string `yaml:"provider"`
+	Concurrency        int    `yaml:"concurrency"`
+	CallTimeoutSeconds int    `yaml:"call_timeout_seconds"`
+	JobTimeoutSeconds  int    `yaml:"job_timeout_seconds"`
+	RetryAfterSeconds  int    `yaml:"retry_after_seconds"`
+	WarmEnabledFlows   bool   `yaml:"warm_enabled_flows"`
+}
+
+func (c FlowCompileConfig) WithDefaults() FlowCompileConfig {
+	if c.Concurrency <= 0 {
+		c.Concurrency = 3
+	}
+	if c.CallTimeoutSeconds <= 0 {
+		c.CallTimeoutSeconds = 90
+	}
+	if c.JobTimeoutSeconds <= 0 {
+		c.JobTimeoutSeconds = 900
+	}
+	if c.RetryAfterSeconds <= 0 {
+		c.RetryAfterSeconds = 600
+	}
+	return c
 }
 
 const (
@@ -649,6 +676,7 @@ func findConfigFile() string {
 
 // setDefaults 设置默认值
 func (c *Config) setDefaults() {
+	c.FlowCompile = c.FlowCompile.WithDefaults()
 	c.Integrations.SetDefaults()
 	if c.Image2.Enabled == nil {
 		c.Image2.Enabled = boolPtr(true)

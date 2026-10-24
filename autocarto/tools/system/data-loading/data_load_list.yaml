@@ -1,0 +1,46 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: data_load_list
+  display_name: 按清单加载数据
+  keywords: [数据清单, 批量加载, 图层加载, 数据导入]
+  domain: data-loading
+  runtime: qgis
+spec:
+  description: >-
+    使用已解析的数据清单条目，按名称筛选并加载矢量和栅格，默认复用已加载数据源。
+    严格模式发现必需文件缺失时不加载任何图层；返回各条目状态和坐标系汇总，不转换坐标系。
+  parameters:
+    - name: data_list
+      type: resource
+      resource_type: data_list
+      required: true
+      description: 数据清单资源的名称、编号或路径，由资源服务解析
+    - name: base_dir
+      type: string
+      description: 本次调用的数据基准目录覆盖，由资源服务应用后重新校验，不修改持久绑定
+    - name: names
+      type: array
+      items:
+        type: string
+      description: 只加载这些清单名称；省略或空数组时加载全部，未知名称返回错误
+    - name: reuse_existing
+      type: boolean
+      default: true
+      description: 默认复用相同数据源；false 时允许建立独立图层
+    - name: group
+      type: string
+      description: 可选图层树分组名称；重复调用复用分组且不复制图层树节点
+    - name: strict
+      type: boolean
+      default: true
+      description: 默认任一必需文件缺失时不加载任何图层；false 时加载可用条目并报告缺失
+execution:
+  handler: handlers.loader.load_list_handler
+  param_mapping:
+    data_list: '{{ data_list }}'
+    base_dir: '{{ base_dir }}'
+    names: '{{ names }}'
+    reuse_existing: '{{ reuse_existing }}'
+    group: '{{ group }}'
+    strict: '{{ strict }}'

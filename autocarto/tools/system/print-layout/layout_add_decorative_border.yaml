@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_add_decorative_border
-  display_name: layout_add_decorative_border
+  keywords: ["装饰边框", "添加装饰边框", "打印版面", "地图排版", "版面元素"]
+  display_name: "添加装饰边框"
   runtime: qgis
   domain: print-layout
 spec:

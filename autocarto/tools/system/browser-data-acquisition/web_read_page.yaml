@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: web_read_page
-  display_name: 读取网页及数据链接
+  keywords: ["网页内容", "查询网页内容", "网页取数", "浏览器", "网络下载"]
+  display_name: "读取网页内容"
   domain: browser-data-acquisition
   runtime: internal
 spec:

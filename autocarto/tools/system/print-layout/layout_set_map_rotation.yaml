@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_map_rotation
-  display_name: layout_set_map_rotation
+  keywords: ["地图框旋转角度", "配置地图框旋转角度", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置地图框旋转角度"
   runtime: qgis
   domain: print-layout
 spec:
@@ -19,7 +20,7 @@ spec:
   - name: rotation
     type: number
     required: true
-    description: 旋转角度
+    description: "地图旋转角度（度）"
 execution:
   handler: handlers.layout_advanced.set_map_rotation_handler
   param_mapping:

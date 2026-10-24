@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: pdal_convert
-  display_name: 点云格式转换
+  keywords: ["点云格式", "转为点云格式", "点云数据", "激光点云"]
+  display_name: "转换点云格式"
   domain: point-cloud
   runtime: qgis
 spec:

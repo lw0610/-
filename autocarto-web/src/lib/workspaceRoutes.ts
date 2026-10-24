@@ -25,7 +25,7 @@ export function isToolCenterPath(pathname: string) {
 }
 
 export function isWorkspacePath(pathname: string) {
-  return isSettingsPath(pathname) || isDiagnosticsPath(pathname) || isToolCenterPath(pathname);
+  return isSettingsPath(pathname) || isDiagnosticsPath(pathname) || isToolCenterPath(pathname) || pathname === "/flows" || pathname.startsWith("/flows/");
 }
 
 export function routeIsActive(pathname: string, href: string) {

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: convert_lines_to_polygons
-  display_name: 线转面
+  keywords: ["闭合线为面", "转为闭合线为面", "格式转换", "数据转换"]
+  display_name: "转换闭合线为面"
   domain: data-conversion
   runtime: qgis
 spec:

@@ -1,0 +1,4 @@
+{
+  "flow": {"inputs":[{"key":"region","label":"区域","type":"text","options":[]},{"key":"transport_data","label":"交通数据","type":"folder","options":[]},{"key":"paper","label":"纸张","type":"text","options":[]},{"key":"title","label":"地图标题","type":"text","options":[]}],"input_constraints":[],"triggers":["交通线路图","道路交通图"]},
+  "tools": {"s1":["data_load_list"],"s2":["clip"],"s3":["style_set_apply"],"s4":["layout_compose","export_print_layout"]}
+}

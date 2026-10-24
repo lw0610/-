@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: convex_hull
-  display_name: 凸包
+  keywords: ["要素凸包", "分析要素凸包", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算要素凸包"
   domain: vector-geometry
   runtime: qgis
 spec:

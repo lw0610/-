@@ -7,7 +7,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/autocarto/carto_agent/internal/workflow"
 	"gopkg.in/yaml.v3"
 )
 
@@ -79,10 +78,6 @@ func loadPackageDirectory(dir string, source string) (SkillPackage, bool, error)
 	if err != nil {
 		return SkillPackage{}, false, err
 	}
-	workflowDef, err := loadSkillPackageWorkflow(dir)
-	if err != nil {
-		return SkillPackage{}, false, err
-	}
 
 	pkg := SkillPackage{
 		Name:         frontMatter.Name,
@@ -91,7 +86,6 @@ func loadPackageDirectory(dir string, source string) (SkillPackage, bool, error)
 		FrontMatter:  frontMatter,
 		MarkdownBody: body,
 		Config:       config,
-		Workflow:     workflowDef,
 		Source:       source,
 	}
 	pkg.normalize()
@@ -102,21 +96,6 @@ func loadPackageDirectory(dir string, source string) (SkillPackage, bool, error)
 		return SkillPackage{}, false, err
 	}
 	return pkg, true, nil
-}
-
-func loadSkillPackageWorkflow(dir string) (*workflow.Definition, error) {
-	path := filepath.Join(dir, "workflow.yaml")
-	if _, err := os.Stat(path); err != nil {
-		if os.IsNotExist(err) {
-			return nil, nil
-		}
-		return nil, fmt.Errorf("stat workflow definition %s: %w", path, err)
-	}
-	definition, err := workflow.LoadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("load workflow definition %s: %w", path, err)
-	}
-	return definition, nil
 }
 
 func validateSkillPackage(pkg SkillPackage) error {

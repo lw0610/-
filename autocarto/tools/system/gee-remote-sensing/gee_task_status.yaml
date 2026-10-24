@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gee_task_status
-  display_name: 查询 GEE 云任务
+  keywords: ["云端任务", "查询云端任务", "遥感影像", "云端计算", "影像下载"]
+  display_name: "查询云端任务"
   domain: gee-remote-sensing
   runtime: internal
 spec:

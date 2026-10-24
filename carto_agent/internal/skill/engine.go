@@ -3,6 +3,7 @@ package skill
 import (
 	"context"
 	"fmt"
+	"github.com/autocarto/carto_agent/internal/resource"
 	"strings"
 	"sync"
 )
@@ -41,7 +42,8 @@ type ExecutionResult struct {
 }
 
 type Engine struct {
-	registry *Registry
+	registry         *Registry
+	resourceResolver resource.Resolver
 
 	mu              sync.RWMutex
 	backends        map[string]ToolBackend
@@ -93,6 +95,10 @@ func (e *Engine) Execute(ctx context.Context, skillName string, args map[string]
 	session := SessionContextFromContext(ctx)
 	preparedArgs := applyParameterDefaults(definition, args)
 	preparedArgs = applyExecutionOutputDefaults(definition, preparedArgs, session)
+	traceArgs := cloneMapAny(preparedArgs)
+	if err := e.expandResourceArgs(ctx, definition, preparedArgs); err != nil {
+		return nil, err
+	}
 	if err := validateExecutionArgs(definition, preparedArgs, session); err != nil {
 		return nil, err
 	}
@@ -132,7 +138,7 @@ func (e *Engine) Execute(ctx context.Context, skillName string, args map[string]
 		SkillName:    definition.Metadata.Name,
 		BackendID:    backend.ID(),
 		ToolName:     definition.Execution.BackendTool,
-		Params:       cloneMapAny(resolvedParams),
+		Params:       resourceTraceParamsForCall(definition, resolvedParams, traceArgs),
 		Output:       cloneAny(backendResult.Output),
 		OutputLayers: cloneOutputLayers(backendResult.OutputLayers),
 	}, nil

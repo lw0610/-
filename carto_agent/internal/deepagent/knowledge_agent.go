@@ -14,6 +14,7 @@ import (
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/knowledge"
+	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/tool"
@@ -40,7 +41,7 @@ type knowledgeSubAgent struct {
 }
 
 func createKnowledgeSubAgent(name, description string, chatModel model.BaseChatModel, provider *config.LLMProviderConfig, tools []tool.BaseTool) *knowledgeSubAgent {
-	if name != "knowledge_engineer" || chatModel == nil {
+	if strings.TrimSpace(name) == "" || chatModel == nil {
 		return nil
 	}
 	indexed := indexToolsByName(tools)
@@ -60,7 +61,7 @@ func createKnowledgeSubAgent(name, description string, chatModel model.BaseChatM
 		}
 	}
 	return &knowledgeSubAgent{
-		name: name, description: firstNonEmpty(description, "行军路线知识抽取"),
+		name: name, description: firstNonEmpty(description, "路线知识抽取"),
 		chatModel: chatModel, modelIdentity: knowledgeIdentity(provider), config: cfg, tools: indexed,
 	}
 }
@@ -157,7 +158,7 @@ func resolveKnowledgeInputWithContext(ctx context.Context, input *adk.AgentInput
 					}
 					options["force_refresh"] = string(value) == "true"
 				}
-				for _, key := range []string{"template_dataset_dir", "symbol_assets_dir", "output_dir"} {
+				for _, key := range []string{"template_dataset_dir", "output_dir", "rules"} {
 					if value, exists := fields[key]; exists {
 						var path string
 						if err := json.Unmarshal(value, &path); err != nil {
@@ -165,6 +166,34 @@ func resolveKnowledgeInputWithContext(ctx context.Context, input *adk.AgentInput
 						}
 						if strings.TrimSpace(path) != "" {
 							options[key] = path
+						}
+					}
+				}
+				for _, key := range []string{"route_style", "symbols"} {
+					if value, exists := fields[key]; exists {
+						var selection any
+						if json.Unmarshal(value, &selection) != nil {
+							return "", nil, fmt.Errorf("%s 资源输入无效", key)
+						}
+						if raw, ok := selection.(map[string]any); ok {
+							scope, present := resource.ScopeFromContext(ctx)
+							id, _ := raw["id"].(string)
+							var linked map[string]any
+							for _, item := range scope.Linked {
+								if item != nil && item.ID == id && item.Type == key {
+									linked = item.Handle()
+									break
+								}
+							}
+							if !present || id == "" || linked == nil || raw["api_version"] != "resource-handle/v1" {
+								return "", nil, fmt.Errorf("%s 资源句柄没有当前流程的已链接作用域，请确认流程资源声明已保存后重新开始抽取", key)
+							}
+							// Use the server snapshot, never paths/entries supplied in a message.
+							options[key] = linked
+						} else if name, ok := selection.(string); ok && strings.TrimSpace(name) != "" {
+							options[key] = name
+						} else {
+							return "", nil, fmt.Errorf("%s 须为资源名称、编号、路径或已链接句柄", key)
 						}
 					}
 				}
@@ -186,7 +215,9 @@ func (a *knowledgeSubAgent) extractAndCompile(ctx context.Context, input *adk.Ag
 	}
 	forceRefresh, _ := compileArgs["force_refresh"].(bool)
 	delete(compileArgs, "force_refresh")
-	contractResult, err := invokeWorkflowTool(ctx, a.tools[knowledgeContractTool], knowledgeContractTool, map[string]any{"source_text": source, "compact": true})
+	rules, _ := compileArgs["rules"].(string)
+	delete(compileArgs, "rules")
+	contractResult, err := invokeRuntimeTool(ctx, a.tools[knowledgeContractTool], knowledgeContractTool, map[string]any{"source_text": source, "compact": true})
 	if err != nil {
 		return nil, fmt.Errorf("获取抽取契约失败: %w", err)
 	}
@@ -204,7 +235,9 @@ func (a *knowledgeSubAgent) extractAndCompile(ctx context.Context, input *adk.Ag
 	}
 	// Apply the actual configured extraction rules before checking caches or
 	// creating the editable result.
-	if a.instructions != "" {
+	if strings.TrimSpace(rules) != "" {
+		contract.Instructions = rules
+	} else if a.instructions != "" {
 		contract.Instructions = a.instructions
 	}
 	sourceHash := sha256.Sum256([]byte(source))
@@ -381,7 +414,7 @@ func (a *knowledgeSubAgent) compileKnowledge(ctx context.Context, source string,
 		}
 		return failure
 	}
-	compiled, err := invokeWorkflowTool(ctx, a.tools[knowledgeCompileTool], knowledgeCompileTool, compileArgs)
+	compiled, err := invokeRuntimeTool(resource.WithInternalHandles(ctx), a.tools[knowledgeCompileTool], knowledgeCompileTool, compileArgs)
 	if err != nil {
 		return nil, finish("blocked", fmt.Errorf("制图数据编译失败（过程文件 %s）: %w", traceFile, err))
 	}
@@ -459,7 +492,7 @@ func knowledgeToolPayload(result *schema.ToolResult) (map[string]any, error) {
 		Error   json.RawMessage `json:"error"`
 		Info    string          `json:"info"`
 	}
-	if err := json.Unmarshal([]byte(workflowToolResultText(result)), &envelope); err != nil {
+	if err := json.Unmarshal([]byte(runtimeToolResultText(result)), &envelope); err != nil {
 		return nil, fmt.Errorf("工具未返回有效 JSON: %w", err)
 	}
 	if envelope.Success == nil || !*envelope.Success {

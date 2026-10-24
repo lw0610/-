@@ -66,6 +66,9 @@ func (a *API) handleRuntimeSnapshot(w http.ResponseWriter, r *http.Request) {
 		"mode_readiness":              snapshot.ModeReadiness,
 		"stale":                       snapshot.Stale,
 	}
+	if a.configService != nil {
+		result["runtime_paths"] = a.configService.GetRuntimeDirectoryDiagnostics()
+	}
 	if !snapshot.LastRebuildAt.IsZero() {
 		result["last_rebuild_at"] = snapshot.LastRebuildAt
 	}

@@ -12,16 +12,12 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
+from .visual_presets import load_route_styles, load_symbol_styles
+from autocarto.core.paths import resolve_project_path
 from .schema import normalize_task_knowledge
 from .review import VerifiedReview
 from .validator import ValidationReport, validate_task_knowledge
-from .vocabulary import (
-    CSV_HEADERS,
-    DEFAULT_ROUTE_STYLE,
-    EVENT_SYMBOLS,
-    ROUTE_STYLE_PRESETS,
-    SYMBOL_PRESETS,
-)
+from .vocabulary import CSV_HEADERS
 
 
 # Optional display columns extend the existing six-table contract; old datasets
@@ -29,6 +25,7 @@ from .vocabulary import (
 _LABEL_HEADERS = {
     "route_paths.csv": ["label_text"],
     "points.csv": ["meeting_label"],
+    "symbol_mapping.csv": ["description"],
 }
 
 
@@ -137,11 +134,11 @@ def _make_render_names(
     return result
 
 
-def _choose_style(route: Mapping[str, Any]) -> Dict[str, Any]:
+def _choose_style(route: Mapping[str, Any], route_presets, route_defaults) -> Dict[str, Any]:
     topology = str(route.get("topology"))
     side = str(route.get("side"))
-    style_ref = route.get("style_ref") or DEFAULT_ROUTE_STYLE[(topology, side)]
-    return dict(ROUTE_STYLE_PRESETS[str(style_ref)])
+    style_ref = route.get("style_ref") or route_defaults[(topology, side)]
+    return dict(route_presets[str(style_ref)])
 
 
 def _actor_names(
@@ -200,6 +197,7 @@ def _build_point_choices(
     entities: Mapping[str, Dict[str, Any]],
     used_entity_ids: set[str],
     warnings: List[str],
+    symbol_presets, event_symbols,
 ) -> Dict[str, Tuple[str, float]]:
     """为真实路线地点选一个符号，途经点作为已有专题符号的兜底。"""
 
@@ -242,7 +240,7 @@ def _build_point_choices(
                 add(
                     entity_id,
                     "start_flag",
-                    SYMBOL_PRESETS["start_flag"]["priority"],
+                    symbol_presets["start_flag"]["priority"],
                     1,
                     f"route:{route.get('route_id')}",
                 )
@@ -250,13 +248,13 @@ def _build_point_choices(
     for event in graph.get("events", []):
         if not isinstance(event, dict):
             continue
-        symbol = EVENT_SYMBOLS.get(str(event.get("event_type")))
-        if not symbol or symbol not in SYMBOL_PRESETS:
+        symbol = event_symbols.get(str(event.get("event_type")))
+        if not symbol or symbol not in symbol_presets:
             continue
         add(
             str(event.get("location_ref")),
             symbol,
-            event.get("priority", SYMBOL_PRESETS[symbol]["priority"]),
+            event.get("priority", symbol_presets[symbol]["priority"]),
             2,
             f"event:{event.get('event_id')}",
         )
@@ -265,7 +263,7 @@ def _build_point_choices(
         if not isinstance(presentation, dict) or presentation.get("visible") is False:
             continue
         symbol = str(presentation.get("symbol_type"))
-        if symbol not in SYMBOL_PRESETS:
+        if symbol not in symbol_presets:
             continue
         entity_id = _resolve_anchor_entity_id(presentation, events)
         add(
@@ -302,7 +300,7 @@ def _build_point_choices(
         ):
             chosen.setdefault(
                 entity_id,
-                ("waypoint", float(SYMBOL_PRESETS["waypoint"]["priority"])),
+                ("waypoint", float(symbol_presets["waypoint"]["priority"])),
             )
     return chosen
 
@@ -339,12 +337,13 @@ def validate_task_knowledge_for_compile(
     *,
     source_text: Optional[str] = None,
     review: Optional[VerifiedReview] = None,
+    route_presets=None,
 ) -> ValidationReport:
     """在语义校验之外，检查本次六表实际使用地点的坐标是否齐全。"""
 
     report = validate_task_knowledge(
         raw, source_text=source_text, review=review,
-        accept_extraction=review is not None,
+        accept_extraction=review is not None, route_style_presets=route_presets,
     )
     if not report.is_valid:
         return report
@@ -371,6 +370,8 @@ def _build_rows(
     graph: Mapping[str, Any],
     *,
     accepted_graph: Optional[Mapping[str, Any]] = None,
+    route_presets, route_defaults,
+    symbol_presets, event_symbols,
 ) -> Tuple[Dict[str, List[Dict[str, Any]]], List[str]]:
     warnings: List[str] = []
     entity_list = [
@@ -404,14 +405,14 @@ def _build_rows(
         events,
         entities,
         used_entity_ids,
-        warnings,
+        warnings, symbol_presets, event_symbols,
     )
     # A one-location movement cannot form a line. Keep its known location on
     # the map instead of losing it when the renderer omits only that segment.
     for entity_id in accepted_entity_ids:
         if entities[entity_id].get("entity_kind") != "cartographic_control":
             point_choices.setdefault(
-                entity_id, ("waypoint", float(SYMBOL_PRESETS["waypoint"]["priority"]))
+                entity_id, ("waypoint", float(symbol_presets["waypoint"]["priority"]))
             )
 
     events_by_entity: Dict[str, List[Dict[str, Any]]] = {}
@@ -487,8 +488,8 @@ def _build_rows(
     for route in graph.get("routes", []):
         if not isinstance(route, dict):
             continue
-        preset = _choose_style(route)
-        width_scale: Any = ""
+        preset = _choose_style(route, route_presets, route_defaults)
+        width_scale: Any = preset.get("width_scale", "")
         if route.get("effective_width_scale") is not None:
             effective = float(route["effective_width_scale"])
             width_scale = (
@@ -546,7 +547,7 @@ def _build_rows(
             "symbol_type": symbol_type,
             **preset,
         }
-        for symbol_type, preset in SYMBOL_PRESETS.items()
+        for symbol_type, preset in symbol_presets.items()
     ]
 
     callout_rows: List[Dict[str, Any]] = []
@@ -591,47 +592,22 @@ def _build_rows(
     return rows, warnings
 
 
-def _resolve_symbol_source(
-    symbol_type: str,
-    *,
-    template_dataset_dir: Optional[Path],
-    symbol_assets_dir: Optional[Path],
-) -> Path:
-    candidates = []
-    if symbol_assets_dir is not None:
-        candidates.append(symbol_assets_dir)
-    if template_dataset_dir is not None:
-        candidates.append(template_dataset_dir / "symbols")
-    candidates.append(Path(__file__).resolve().parent / "assets" / "symbols")
-    for candidate in candidates:
-        source = candidate / f"{symbol_type}.svg"
-        if source.is_file():
-            return source
-    searched = "、".join(str(path) for path in candidates)
-    raise TaskKnowledgeCompilationError(
-        f"未找到 {symbol_type} 符号资产；已检查：{searched}"
-    )
-
-
 def _copy_assets(
     graph: Mapping[str, Any],
     stage_dir: Path,
     *,
     template_dataset_dir: Optional[Path],
-    symbol_assets_dir: Optional[Path],
     warnings: List[str],
+    symbol_presets, symbol_sources,
 ) -> None:
     target_symbols = stage_dir / "symbols"
     target_symbols.mkdir(parents=True, exist_ok=True)
-    for symbol_type in SYMBOL_PRESETS:
-        shutil.copyfile(
-            _resolve_symbol_source(
-                symbol_type,
-                template_dataset_dir=template_dataset_dir,
-                symbol_assets_dir=symbol_assets_dir,
-            ),
-            target_symbols / f"{symbol_type}.svg",
-        )
+    for symbol_type in symbol_presets:
+        source = symbol_sources[symbol_type]
+        if not source.is_file():
+            raise TaskKnowledgeCompilationError(f"符号资产不存在：{source}")
+        shutil.copyfile(source, stage_dir / symbol_presets[symbol_type]["svg_path"])
+
 
     for callout in graph.get("callouts", []):
         if not isinstance(callout, dict) or not callout.get("image_enabled"):
@@ -710,14 +686,17 @@ def compile_task_knowledge(
     *,
     source_text: Optional[str] = None,
     template_dataset_dir: Optional[Path | str] = None,
-    symbol_assets_dir: Optional[Path | str] = None,
     overwrite: bool = False,
     review: Optional[VerifiedReview] = None,
+    route_style: dict,
+    symbols: dict,
 ) -> CompilationResult:
     """校验并原子生成六表、符号资产、原文和任务图谱。"""
 
+    route_presets, route_defaults = load_route_styles(route_style)
+    symbol_presets, event_symbols, symbol_sources, _ = load_symbol_styles(symbols)
     report = validate_task_knowledge_for_compile(
-        raw, source_text=source_text, review=review
+        raw, source_text=source_text, review=review, route_presets=route_presets
     )
     if not report.is_valid:
         raise TaskKnowledgeCompilationError(
@@ -726,7 +705,7 @@ def compile_task_knowledge(
         )
     graph = normalize_task_knowledge(raw)
 
-    output_path = Path(output_dir).expanduser().resolve()
+    output_path = resolve_project_path(str(output_dir))
     if output_path.name in {"", ".", ".."}:
         raise TaskKnowledgeCompilationError("output_dir 不能是宽泛目录")
     filesystem_root = Path(output_path.anchor)
@@ -740,13 +719,8 @@ def compile_task_knowledge(
         )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     template_path = (
-        Path(template_dataset_dir).expanduser().resolve()
+        resolve_project_path(str(template_dataset_dir))
         if template_dataset_dir
-        else None
-    )
-    symbol_path = (
-        Path(symbol_assets_dir).expanduser().resolve()
-        if symbol_assets_dir
         else None
     )
     if template_path is not None and (
@@ -756,19 +730,16 @@ def compile_task_knowledge(
         raise TaskKnowledgeCompilationError(
             "template_dataset_dir 不能位于待替换的 output_dir 内"
         )
-    if symbol_path is not None and (
-        symbol_path == output_path
-        or _is_relative_to(symbol_path, output_path)
-    ):
-        raise TaskKnowledgeCompilationError(
-            "symbol_assets_dir 不能位于待替换的 output_dir 内"
-        )
+    if any(_is_relative_to(source, output_path) for source in symbol_sources.values()):
+        raise TaskKnowledgeCompilationError("符号资源不能位于待替换的 output_dir 内")
 
     rows, warnings = _build_rows(
         # Rendering defaults can evolve without changing the normalized graph
         # used by signed, older reviews. Preserve whether template was omitted.
         {**graph, "callouts": raw.get("callouts", [])},
         accepted_graph=review.source_graph if review is not None else None,
+        route_presets=route_presets, route_defaults=route_defaults,
+        symbol_presets=symbol_presets, event_symbols=event_symbols,
     )
     warnings = [issue.message for issue in report.warnings] + warnings
     stage_dir = Path(
@@ -790,8 +761,7 @@ def compile_task_knowledge(
             graph,
             stage_dir,
             template_dataset_dir=template_path,
-            symbol_assets_dir=symbol_path,
-            warnings=warnings,
+            warnings=warnings, symbol_presets=symbol_presets, symbol_sources=symbol_sources,
         )
 
         task_graph_path = stage_dir / "task_graph.json"

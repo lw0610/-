@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: pdal_info
-  display_name: 点云信息
+  keywords: ["点云信息", "查询点云信息", "点云数据", "激光点云"]
+  display_name: "读取点云信息"
   domain: point-cloud
   runtime: qgis
 spec:

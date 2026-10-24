@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: collect_geometries
-  display_name: 收集几何图形
+  keywords: ["多部件几何", "收集多部件几何", "几何处理", "空间叠加", "几何修复"]
+  display_name: "收集多部件几何"
   domain: vector-geometry
   runtime: qgis
 spec:

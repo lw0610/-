@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: explode_lines
-  display_name: 分解线
+  keywords: ["线为线段", "分解线为线段", "几何处理", "空间叠加", "几何修复"]
+  display_name: "分解线为线段"
   domain: vector-geometry
   runtime: qgis
 spec:

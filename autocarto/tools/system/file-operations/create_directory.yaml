@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: create_directory
-  display_name: 创建目录
+  keywords: ["文件目录", "生成文件目录", "文件管理", "数据文件"]
+  display_name: "创建文件目录"
   domain: file-operations
   runtime: internal
 spec:

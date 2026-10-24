@@ -2,11 +2,12 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_set_line_symbol
-  display_name: layer_set_line_symbol
+  keywords: ["线条符号", "配置线条符号", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置线条符号"
   runtime: qgis
   domain: cartography
 spec:
-  description: 根据线类型设置线图层符号；河流可同时沿线标注名称
+  description: 根据线类型读取内置 QML 设置线图层符号，河流可同时沿线标注名称；建议改用按样式集上样式
   parameters:
   - name: layer
     type: string
@@ -26,6 +27,8 @@ spec:
     type: string
     required: false
     description: 河流名称字段；仅在线状河流需要沿线显示名称时传入
+policy:
+  visibility: hidden
 execution:
   handler: handlers.style.set_line_symbol_handler
   param_mapping:

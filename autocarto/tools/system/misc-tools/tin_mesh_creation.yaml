@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: tin_mesh_creation
-  display_name: TIN网孔创建
+  keywords: ["不规则三角网", "生成不规则三角网", "统计图表", "网格数据", "数据可视化"]
+  display_name: "创建不规则三角网"
   runtime: qgis
   domain: misc-tools
 spec:

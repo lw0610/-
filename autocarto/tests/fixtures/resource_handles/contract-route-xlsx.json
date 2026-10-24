@@ -1,0 +1,89 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:f403edbdbd0717566877b6a0750581285cebd2fec7e79837fe8c9b51f4b9155f",
+  "entries": [
+    {
+      "auto_width_group": false,
+      "default_sides": [
+        "friendly",
+        "enemy",
+        "neutral"
+      ],
+      "draw_type": "bezier_arrow",
+      "exists": true,
+      "kind": "route_style",
+      "label_paths": true,
+      "legend_label": "",
+      "name": "standard/neutral",
+      "path": "",
+      "preset_ref": "contract_standard",
+      "reference_style_id": "route_blue_reference",
+      "route_type": "contract_standard",
+      "side": "neutral",
+      "style_id": "contract_standard",
+      "topology": "standard",
+      "width_scale": 1.25
+    },
+    {
+      "auto_width_group": false,
+      "default_sides": [
+        "friendly",
+        "enemy",
+        "neutral"
+      ],
+      "draw_type": "branch_bezier",
+      "exists": true,
+      "kind": "route_style",
+      "label_paths": true,
+      "legend_label": "",
+      "name": "branch/neutral",
+      "path": "",
+      "preset_ref": "contract_branch",
+      "reference_style_id": "route_blue_reference",
+      "route_type": "contract_branch",
+      "side": "neutral",
+      "style_id": "contract_branch",
+      "topology": "branch",
+      "width_scale": 1.25
+    },
+    {
+      "auto_width_group": false,
+      "default_sides": [
+        "friendly",
+        "enemy",
+        "neutral"
+      ],
+      "draw_type": "multi_start_bezier",
+      "exists": true,
+      "kind": "route_style",
+      "label_paths": true,
+      "legend_label": "",
+      "name": "multi_start/neutral",
+      "path": "",
+      "preset_ref": "contract_multi_start",
+      "reference_style_id": "route_blue_reference",
+      "route_type": "contract_multi_start",
+      "side": "neutral",
+      "style_id": "contract_multi_start",
+      "topology": "multi_start",
+      "width_scale": 1.25
+    }
+  ],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/契约路线.xlsx",
+  "format": "",
+  "id": "legacy.route_style.e22de0bf41",
+  "name": "契约路线",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/契约路线.xlsx",
+  "total_entries": 3,
+  "truncated": false,
+  "type": "route_style",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

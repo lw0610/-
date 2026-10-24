@@ -17,6 +17,9 @@ test("workspace route helpers distinguish settings and diagnostics", () => {
   expect(isWorkspacePath("/tool-center")).toBe(true);
   expect(isWorkspacePath("/diagnostics")).toBe(true);
   expect(isWorkspacePath("/chat")).toBe(false);
+  expect(isWorkspacePath("/flows")).toBe(true);
+  expect(isWorkspacePath("/flows/detail")).toBe(true);
+  expect(isWorkspacePath("/flows-extra")).toBe(false);
 });
 
 test("routeIsActive matches exact and nested workspace routes", () => {

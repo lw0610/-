@@ -285,7 +285,7 @@ func singleAdministrativeName(value string) string {
 		}
 	}
 	// Remove higher-level components but never the final suffix itself, e.g.
-	// 河南省信阳市罗山县 -> 罗山县; 湖北省宜昌市当阳市 -> 当阳市.
+	// 甲省乙市丙县 -> 丙县; 丁省戊市己市 -> 己市.
 	for _, separator := range []string{"特别行政区", "自治区", "自治州", "地区", "省", "市"} {
 		search := value
 		if strings.HasSuffix(search, separator) {

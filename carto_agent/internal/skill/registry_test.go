@@ -155,9 +155,8 @@ func TestDefaultVectorFieldToolsUseQGISRuntime(t *testing.T) {
 		t.Fatalf("toolReg.LoadDirectories() error = %v", err)
 	}
 	pluginRoot := repoSamplePath(t, "autocarto/skills/system")
-	defaultsRoot := repoSamplePath(t, "carto_agent/defaults/skills")
 	registry := NewRegistry(toolReg)
-	if err := registry.LoadDirectories(pluginRoot, defaultsRoot); err != nil {
+	if err := registry.LoadDirectories(pluginRoot); err != nil {
 		t.Fatalf("LoadDirectories() error = %v", err)
 	}
 
@@ -348,14 +347,13 @@ tools:
 
 func TestRegistryLoadBuiltinSkillPackages(t *testing.T) {
 	pluginDir := repoPluginSkillPackagesPath(t)
-	defaultsDir := repoSkillPackagesPath(t)
 	toolRoot := repoSamplePath(t, "autocarto/tools/system")
 	toolReg := toolpkg.NewRegistry()
 	if err := toolReg.LoadDirectories(toolRoot); err != nil {
 		t.Fatalf("toolReg.LoadDirectories() error = %v", err)
 	}
 	registry := NewRegistry(toolReg)
-	if err := registry.LoadDirectories(pluginDir, defaultsDir); err != nil {
+	if err := registry.LoadDirectories(pluginDir); err != nil {
 		t.Fatalf("LoadDirectories() error = %v", err)
 	}
 
@@ -366,8 +364,13 @@ func TestRegistryLoadBuiltinSkillPackages(t *testing.T) {
 	if len(registry.CategoryPackages()) < 28 {
 		t.Fatalf("expected at least 28 builtin category packages, got %d", len(registry.CategoryPackages()))
 	}
-	if len(registry.WorkflowPackages()) < 42 {
-		t.Fatalf("expected at least 42 builtin workflow packages, got %d", len(registry.WorkflowPackages()))
+	if len(registry.WorkflowPackages()) != 0 {
+		t.Fatal("retired method packages remain in the builtin catalog")
+	}
+	for _, pkg := range registry.Packages() {
+		if pkg.Kind != SkillPackageKindCategory {
+			t.Errorf("builtin package %s has retired kind %s", pkg.Name, pkg.Kind)
+		}
 	}
 	buffer, ok := registry.Get("buffer")
 	if !ok {
@@ -446,28 +449,16 @@ func TestRegistryLoadBuiltinSkillPackages(t *testing.T) {
 		t.Fatalf("unexpected create_directory backend: %s", createDirectory.Metadata.Backend)
 	}
 
-	promptRefinement, ok := registry.GetPackage("prompt-refinement")
-	if !ok {
-		t.Fatal("expected prompt-refinement package to exist")
+	for _, name := range []string{"runtime-control", "charts", "route-cartography", "admin-boundaries", "flow-control"} {
+		pkg, ok := registry.GetPackage(name)
+		if !ok || pkg.Kind != SkillPackageKindCategory || len(pkg.ToolRefs) == 0 {
+			t.Errorf("missing category with actual tool references: %s", name)
+		}
 	}
-	if promptRefinement.Kind != SkillPackageKindKnowledge {
-		t.Fatalf("unexpected prompt-refinement kind: %s", promptRefinement.Kind)
-	}
-
-	chartVisualization, ok := registry.GetPackage("chart-visualization")
-	if !ok {
-		t.Fatal("expected chart-visualization package to exist")
-	}
-	if chartVisualization.Kind != SkillPackageKindWorkflow {
-		t.Fatalf("unexpected chart-visualization kind: %s", chartVisualization.Kind)
-	}
-	if len(chartVisualization.Tools) != 0 {
-		t.Fatalf("unexpected chart-visualization tool count: %d", len(chartVisualization.Tools))
-	}
-
-	miscTools := registry.ToolsForPackages([]string{"misc-tools"})
-	if len(miscTools) != 20 {
-		t.Fatalf("unexpected misc-tools tool count: %d", len(miscTools))
+	for _, name := range []string{"prompt-refinement", "chart-visualization", "misc-tools"} {
+		if _, ok := registry.GetPackage(name); ok {
+			t.Errorf("retired builtin package remains: %s", name)
+		}
 	}
 
 	projectStateTools := registry.ToolsForPackages([]string{"project-state"})
@@ -478,14 +469,13 @@ func TestRegistryLoadBuiltinSkillPackages(t *testing.T) {
 
 func TestRegistryLoadsMarchingRouteKnowledgeTools(t *testing.T) {
 	pluginDir := repoPluginSkillPackagesPath(t)
-	defaultsDir := repoSkillPackagesPath(t)
 	toolRoot := repoSamplePath(t, "autocarto/tools/system")
 	toolReg := toolpkg.NewRegistry()
 	if err := toolReg.LoadDirectories(toolRoot); err != nil {
 		t.Fatalf("toolReg.LoadDirectories() error = %v", err)
 	}
 	registry := NewRegistry(toolReg)
-	if err := registry.LoadDirectories(pluginDir, defaultsDir); err != nil {
+	if err := registry.LoadDirectories(pluginDir); err != nil {
 		t.Fatalf("LoadDirectories() error = %v", err)
 	}
 
@@ -496,13 +486,10 @@ func TestRegistryLoadsMarchingRouteKnowledgeTools(t *testing.T) {
 	if knowledgeToolsPackage.Kind != SkillPackageKindCategory {
 		t.Fatalf("unexpected marching-route-knowledge-tools kind: %s", knowledgeToolsPackage.Kind)
 	}
-	extractionPackage, ok := registry.GetPackage("marching-route-knowledge-extraction")
-	if !ok {
-		t.Fatal("expected marching-route-knowledge-extraction package to exist")
+	if _, ok := registry.GetPackage("marching-route-knowledge-extraction"); ok {
+		t.Fatal("retired knowledge method remains a package")
 	}
-	if extractionPackage.Kind != SkillPackageKindKnowledge {
-		t.Fatalf("unexpected marching-route-knowledge-extraction kind: %s", extractionPackage.Kind)
-	}
+
 	knowledgeTools := registry.ToolsForPackages([]string{"marching-route-knowledge-tools"})
 	if len(knowledgeTools) != 2 {
 		t.Fatalf("unexpected marching-route knowledge tool count: %d", len(knowledgeTools))
@@ -766,16 +753,6 @@ execution:
   backend_tool: `+backendTool+`
   param_mapping:
     INPUT: '{{ layer }}'`) + "\n"
-}
-
-func repoSkillPackagesPath(t *testing.T) string {
-	t.Helper()
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("failed to resolve caller path")
-	}
-	base := filepath.Clean(filepath.Join(filepath.Dir(file), "..", "..", ".."))
-	return filepath.Join(base, "carto_agent", "defaults", "skills")
 }
 
 func repoPluginSkillPackagesPath(t *testing.T) string {

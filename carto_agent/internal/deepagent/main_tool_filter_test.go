@@ -107,8 +107,8 @@ func (m *namedMainCatalogProbe) Generate(_ context.Context, input []*schema.Mess
 	if available["gee_run_script"] != nil {
 		return nil, fmt.Errorf("named main received unassigned specialist tool")
 	}
-	if !strings.Contains(available["skill"].Desc, "prompt-refinement") {
-		return nil, fmt.Errorf("named main lost its workflow skill catalog")
+	if !strings.Contains(available["skill"].Desc, "runtime-control") {
+		return nil, fmt.Errorf("named main lost its assigned tool package instructions")
 	}
 	found := false
 	for _, message := range input {

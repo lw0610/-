@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: canvas_zoom_to_extent
-  display_name: canvas_zoom_to_extent
+  keywords: ["指定范围", "缩放到指定范围", "地图画布", "地图缩放", "显示范围"]
+  display_name: "缩放到指定范围"
   domain: canvas-navigation
   runtime: qgis
 spec:
@@ -11,19 +12,19 @@ spec:
     - name: xmin
       type: number
       required: true
-      description: 最小X坐标
+      description: "最小X坐标（对应地图坐标系单位：投影坐标通常为米，地理坐标为度）"
     - name: ymin
       type: number
       required: true
-      description: 最小Y坐标
+      description: "最小Y坐标（对应地图坐标系单位：投影坐标通常为米，地理坐标为度）"
     - name: xmax
       type: number
       required: true
-      description: 最大X坐标
+      description: "最大X坐标（对应地图坐标系单位：投影坐标通常为米，地理坐标为度）"
     - name: ymax
       type: number
       required: true
-      description: 最大Y坐标
+      description: "最大Y坐标（对应地图坐标系单位：投影坐标通常为米，地理坐标为度）"
 execution:
   handler: handlers.canvas.zoom_to_extent_handler
   param_mapping:

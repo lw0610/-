@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: export_mesh_on_grid
-  display_name: 在网格上导出网孔
+  keywords: ["按规则网格导出数据", "统计图表", "网格数据", "数据可视化"]
+  display_name: "按规则网格导出数据"
   runtime: qgis
   domain: misc-tools
 spec:
@@ -17,7 +18,7 @@ spec:
     description: 数据集组
   - name: GRID_SPACING
     type: number
-    description: 网格间距
+    description: "网格间距（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 10.0
   - name: OUTPUT
     type: output_layer

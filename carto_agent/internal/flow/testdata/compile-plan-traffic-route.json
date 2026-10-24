@@ -1,0 +1,696 @@
+{
+  "plan_status": "ready",
+  "enrichment": {
+    "flow": "ready",
+    "done": 4,
+    "total": 4,
+    "failed": []
+  },
+  "compile_key": "\u003ccache-key\u003e",
+  "link_fingerprint": "\u003clink-fingerprint\u003e",
+  "linked_at": "0001-01-01T00:00:00Z",
+  "compile_diagnostics": [
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_TYPE_IMPLICIT",
+      "message": "以下输入没有写明类型，暂按文本处理：区域、地图标题。需要文件、文件夹或图层时，请在括号里写明，例如（可选，文件）。"
+    }
+  ],
+  "link_diagnostics": [],
+  "flow_dir": "<runtime>/flows/traffic-route",
+  "lock": {
+    "api_version": "flow-lock/v1",
+    "resources": [
+      {
+        "type": "style_set",
+        "name": "国标底图样式",
+        "id": "style_set.gb-basemap",
+        "version": "1.0.0",
+        "digest": "sha256:562edda29731ef248fc2855671378ac0e4e74526c4e82a6536454e8af64a4acc",
+        "source": "library_builtin"
+      },
+      {
+        "type": "layout",
+        "name": "四角对齐版式",
+        "id": "layout.four-corner",
+        "version": "1.0.0",
+        "digest": "sha256:4f267a472d104ec46d44e20555d680ed4aa60914d62b7ffbcdb2d046a113fe97",
+        "source": "library_builtin"
+      }
+    ]
+  },
+  "api_version": "flow-plan/v1",
+  "flow_id": "traffic-route",
+  "flow_version": "2.0.0",
+  "name": "交通线路图",
+  "description": "检查并整理城市或区域的交通数据，按统一的底图样式和四角对齐版式制作交通线路专题图",
+  "scheme": "测试方案",
+  "scheme_revision": "scheme1",
+  "catalog_revision": "catalog1",
+  "compiled_at": "0001-01-01T00:00:00Z",
+  "compiler": {
+    "version": "3",
+    "model": "固定夹具模型"
+  },
+  "triggers": [
+    "交通线路图",
+    "道路交通图"
+  ],
+  "applicability": "用户要求制作城市或区域的交通线路图、道路交通图、轨道交通图、公交线路图等交通专题图时使用。\n用户只给出区域名称、没有更多要求时：范围取该行政区，优先导出 PDF；数据优先使用当前工程已加载的图层，其次是工程目录中的数据文件，都没有时请用户补充。",
+  "inputs": [
+    {
+      "key": "区域",
+      "label": "区域",
+      "type": "text",
+      "required": true,
+      "default": null,
+      "options": [],
+      "description": "例如\"郑州市\""
+    },
+    {
+      "key": "交通数据",
+      "label": "交通数据",
+      "type": "folder",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": "交通数据所在文件夹；不提供时使用工程中已有图层",
+      "remember": true
+    },
+    {
+      "key": "纸张",
+      "label": "纸张",
+      "type": "choice",
+      "required": false,
+      "default": "A4 横向",
+      "options": [
+        "A0",
+        "A1",
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "description": ""
+    },
+    {
+      "key": "地图标题",
+      "label": "地图标题",
+      "type": "text",
+      "required": false,
+      "default": null,
+      "options": [],
+      "description": "不提供时写成\"区域 + 交通线路图\""
+    }
+  ],
+  "input_constraints": [],
+  "resources": [
+    {
+      "entry_count": 11,
+      "key": "library:style_set.gb-basemap",
+      "id": "style_set.gb-basemap",
+      "label": "国标底图样式",
+      "name": "国标底图样式",
+      "type": "style_set",
+      "version": "1.0.0",
+      "owner": "library_builtin",
+      "origin": "library_builtin",
+      "location": "公共资源库",
+      "root": "<project>/autocarto/resources/system/styles/国标底图样式",
+      "entry": "<project>/autocarto/resources/system/styles/国标底图样式/对照表.csv",
+      "format": "",
+      "digest": "sha256:562edda29731ef248fc2855671378ac0e4e74526c4e82a6536454e8af64a4acc",
+      "source": {
+        "author": "AutoCarto"
+      },
+      "legacy": false,
+      "entries": [
+        {
+          "name": "地级城市驻地",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/地级城市驻地.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "城市驻地、市级行政中心",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "name",
+            "layer": "地级城市驻地",
+            "style_file": "地级城市驻地.qml"
+          },
+          "fields": {
+            "aliases": [
+              "城市驻地",
+              "市级行政中心"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "point",
+            "label_field": "name",
+            "label_mode": "field",
+            "layer": "地级城市驻地",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/地级城市驻地.qml"
+          }
+        },
+        {
+          "name": "县级城市驻地",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/县级城市驻地.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "县城驻地、县级驻地",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "name",
+            "layer": "县级城市驻地",
+            "style_file": "县级城市驻地.qml"
+          },
+          "fields": {
+            "aliases": [
+              "县城驻地",
+              "县级驻地"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "point",
+            "label_field": "name",
+            "label_mode": "field",
+            "layer": "县级城市驻地",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/县级城市驻地.qml"
+          }
+        },
+        {
+          "name": "铁路",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/铁路.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "铁路线、轨道交通干线",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "无",
+            "layer": "铁路",
+            "style_file": "铁路.qml"
+          },
+          "fields": {
+            "aliases": [
+              "铁路线",
+              "轨道交通干线"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "line",
+            "label_field": "",
+            "label_mode": "off",
+            "layer": "铁路",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/铁路.qml"
+          }
+        },
+        {
+          "name": "高速公路",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/高速公路.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "公路、快速路",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "无",
+            "layer": "高速公路",
+            "style_file": "高速公路.qml"
+          },
+          "fields": {
+            "aliases": [
+              "公路",
+              "快速路"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "line",
+            "label_field": "",
+            "label_mode": "off",
+            "layer": "高速公路",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/高速公路.qml"
+          }
+        },
+        {
+          "name": "国道",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/国道.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "普通国道",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "无",
+            "layer": "国道",
+            "style_file": "国道.qml"
+          },
+          "fields": {
+            "aliases": [
+              "普通国道"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "line",
+            "label_field": "",
+            "label_mode": "off",
+            "layer": "国道",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/国道.qml"
+          }
+        },
+        {
+          "name": "省界",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/省界.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "地区界线、线状省界、行政边界线",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "无",
+            "layer": "省界",
+            "style_file": "省界.qml"
+          },
+          "fields": {
+            "aliases": [
+              "地区界线",
+              "线状省界",
+              "行政边界线"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "line",
+            "label_field": "",
+            "label_mode": "off",
+            "layer": "省界",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/省界.qml"
+          }
+        },
+        {
+          "name": "河流线",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/河流线.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "线状河流、水系线、河流",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "NAME",
+            "layer": "河流线",
+            "style_file": "河流线.qml"
+          },
+          "fields": {
+            "aliases": [
+              "线状河流",
+              "水系线",
+              "河流"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "line",
+            "label_field": "NAME",
+            "label_mode": "field",
+            "layer": "河流线",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/河流线.qml"
+          }
+        },
+        {
+          "name": "河流面",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/河流面.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "面状河流、水域面",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "无",
+            "layer": "河流面",
+            "style_file": "河流面.qml"
+          },
+          "fields": {
+            "aliases": [
+              "面状河流",
+              "水域面"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "polygon",
+            "label_field": "",
+            "label_mode": "off",
+            "layer": "河流面",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/河流面.qml"
+          }
+        },
+        {
+          "name": "县域面",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/县域面.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "县级行政区、县域",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "无",
+            "layer": "县域面",
+            "style_file": "县域面.qml"
+          },
+          "fields": {
+            "aliases": [
+              "县级行政区",
+              "县域"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "polygon",
+            "label_field": "",
+            "label_mode": "off",
+            "layer": "县域面",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/县域面.qml"
+          }
+        },
+        {
+          "name": "市域面",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/市域面.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "地级市行政区、市域",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "无",
+            "layer": "市域面",
+            "style_file": "市域面.qml"
+          },
+          "fields": {
+            "aliases": [
+              "地级市行政区",
+              "市域"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "polygon",
+            "label_field": "",
+            "label_mode": "off",
+            "layer": "市域面",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/市域面.qml"
+          }
+        },
+        {
+          "name": "省域",
+          "path": "<project>/autocarto/resources/system/styles/国标底图样式/省域面.qml",
+          "kind": "style",
+          "exists": true,
+          "extra": {
+            "aliases": "省级行政区、省界面、省域外框、省域面",
+            "description": "由原预设导出的符号和标注",
+            "label_field": "NAME",
+            "layer": "省域",
+            "style_file": "省域面.qml"
+          },
+          "fields": {
+            "aliases": [
+              "省级行政区",
+              "省界面",
+              "省域外框",
+              "省域面"
+            ],
+            "description": "由原预设导出的符号和标注",
+            "geometry": "polygon",
+            "label_field": "NAME",
+            "label_mode": "field",
+            "layer": "省域",
+            "style_path": "<project>/autocarto/resources/system/styles/国标底图样式/省域面.qml"
+          }
+        }
+      ],
+      "problems": [],
+      "base_dir_binding": ""
+    },
+    {
+      "entry_count": 0,
+      "key": "library:layout.four-corner",
+      "id": "layout.four-corner",
+      "label": "四角对齐版式",
+      "name": "四角对齐版式",
+      "type": "layout",
+      "version": "1.0.0",
+      "owner": "library_builtin",
+      "origin": "library_builtin",
+      "location": "公共资源库",
+      "root": "<project>/autocarto/resources/system/layouts/四角对齐版式.layout.yaml",
+      "entry": "<project>/autocarto/resources/system/layouts/四角对齐版式.layout.yaml",
+      "format": "layout_yaml",
+      "digest": "sha256:4f267a472d104ec46d44e20555d680ed4aa60914d62b7ffbcdb2d046a113fe97",
+      "source": {
+        "author": "AutoCarto"
+      },
+      "legacy": false,
+      "entries": [],
+      "problems": [],
+      "base_dir_binding": ""
+    }
+  ],
+  "rules": [
+    "不编造数据、线路名称或站点。",
+    "不做坐标转换，不导出投影副本。"
+  ],
+  "notes": [],
+  "deliverables": "- 成果 PDF 路径\n- 使用的交通图层与边界图层、裁剪或筛选的处理说明\n- 缺失的数据（如有）",
+  "steps": [
+    {
+      "id": "s1",
+      "index": 1,
+      "title": "检查和加载交通数据",
+      "kind": "agent",
+      "role": "data-custom",
+      "role_label": "数据工程专家",
+      "condition": null,
+      "instructions": "确认当前工程中的图层和工程目录中的数据文件，找出与「区域」相关的道路、铁路或轨道、站点、行政边界图层；需要时加载「交通数据」，已加载的同一文件直接复用。缺少关键数据时明确报告缺少哪些，不要假装数据存在。坐标系不同时只报告，不转换。",
+      "completion": "- 「交通图层」（图层）：道路、轨道、站点等\n- 「边界图层」（图层）：该区域的行政边界",
+      "refs": {
+        "resources": [],
+        "inputs": [
+          "区域",
+          "交通数据"
+        ],
+        "outputs": []
+      },
+      "suggested_tools": [
+        "data_load_list"
+      ],
+      "expected_outputs": [
+        {
+          "label": "交通图层",
+          "type": "layers",
+          "required": true,
+          "description": "道路、轨道、站点等"
+        },
+        {
+          "label": "边界图层",
+          "type": "layers",
+          "required": true,
+          "description": "该区域的行政边界"
+        }
+      ],
+      "on_failure": "retry_then_ask",
+      "missing_capabilities": [],
+      "notes": "固定输出夹具",
+      "enrichment": "ready"
+    },
+    {
+      "id": "s2",
+      "index": 2,
+      "title": "裁剪和筛选",
+      "kind": "agent",
+      "role": "analysis-custom",
+      "role_label": "空间分析专家",
+      "condition": null,
+      "instructions": "需要时，用「边界图层」裁剪「交通图层」，或筛选出该区域内的线路和站点；不需要处理时直接说明原因并完成本步。",
+      "completion": "「制图图层」（图层）：用于制图的交通图层（不处理时与「交通图层」相同）",
+      "refs": {
+        "resources": [],
+        "inputs": [],
+        "outputs": [
+          {
+            "step": "s1",
+            "label": "边界图层"
+          },
+          {
+            "step": "s1",
+            "label": "交通图层"
+          }
+        ]
+      },
+      "suggested_tools": [
+        "clip"
+      ],
+      "expected_outputs": [
+        {
+          "label": "制图图层",
+          "type": "layers",
+          "required": true,
+          "description": "用于制图的交通图层（不处理时与「交通图层」相同）"
+        }
+      ],
+      "on_failure": "retry_then_ask",
+      "missing_capabilities": [],
+      "notes": "固定输出夹具",
+      "enrichment": "ready"
+    },
+    {
+      "id": "s3",
+      "index": 3,
+      "title": "符号化",
+      "kind": "agent",
+      "role": "map-custom",
+      "role_label": "制图专家",
+      "condition": null,
+      "instructions": "按「国标底图样式」为「制图图层」和「边界图层」设置符号；站点显示名称，主要线路显示名称。对照表中没有的图层，按要素类型选择清晰、层次分明的样式。",
+      "completion": "「已符号化图层」（图层）",
+      "refs": {
+        "resources": [
+          "library:style_set.gb-basemap"
+        ],
+        "inputs": [],
+        "outputs": [
+          {
+            "step": "s2",
+            "label": "制图图层"
+          },
+          {
+            "step": "s1",
+            "label": "边界图层"
+          }
+        ]
+      },
+      "suggested_tools": [
+        "style_set_apply"
+      ],
+      "expected_outputs": [
+        {
+          "label": "已符号化图层",
+          "type": "layers",
+          "required": true
+        }
+      ],
+      "on_failure": "retry_then_ask",
+      "missing_capabilities": [],
+      "notes": "固定输出夹具",
+      "enrichment": "ready"
+    },
+    {
+      "id": "s4",
+      "index": 4,
+      "title": "版面排版并导出",
+      "kind": "agent",
+      "role": "map-custom",
+      "role_label": "制图专家",
+      "condition": null,
+      "instructions": "按「四角对齐版式」和「纸张」排版，主图范围为「边界图层」的范围；标题使用「地图标题」；撰写 80–120 字的综述，概括区域交通网络的主要通道、线路构成和枢纽，只使用数据中能看出的信息。字号由版式决定。完成后导出 PDF，文件名使用地图标题。",
+      "completion": "- 「版面」（版面）\n- 「成果 PDF」（文件，pdf）",
+      "refs": {
+        "resources": [
+          "library:layout.four-corner"
+        ],
+        "inputs": [
+          "纸张",
+          "地图标题"
+        ],
+        "outputs": [
+          {
+            "step": "s1",
+            "label": "边界图层"
+          }
+        ]
+      },
+      "suggested_tools": [
+        "layout_compose",
+        "export_print_layout"
+      ],
+      "expected_outputs": [
+        {
+          "label": "版面",
+          "type": "layout",
+          "required": true
+        },
+        {
+          "label": "成果 PDF",
+          "type": "file",
+          "format": "pdf",
+          "required": true
+        }
+      ],
+      "on_failure": "retry_then_ask",
+      "missing_capabilities": [],
+      "notes": "固定输出夹具",
+      "enrichment": "ready"
+    }
+  ],
+  "diagnostics": [
+    {
+      "level": "info",
+      "code": "FLOW_INPUT_TYPE_IMPLICIT",
+      "message": "以下输入没有写明类型，暂按文本处理：区域、地图标题。需要文件、文件夹或图层时，请在括号里写明，例如（可选，文件）。"
+    }
+  ],
+  "roles": [
+    {
+      "id": "reader-custom",
+      "display_name": "知识抽取专家",
+      "kind": "executor",
+      "executor": "route_knowledge",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [],
+      "tools": []
+    },
+    {
+      "id": "data-custom",
+      "display_name": "数据工程专家",
+      "kind": "agent",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [
+        "data"
+      ],
+      "tools": [
+        "data_load_list",
+        "data_prepare_statistical"
+      ]
+    },
+    {
+      "id": "map-custom",
+      "display_name": "制图专家",
+      "kind": "agent",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [
+        "style",
+        "route",
+        "layout"
+      ],
+      "tools": [
+        "style_set_apply",
+        "route_draw",
+        "layout_compose",
+        "layout_add_callouts",
+        "layout_move_callout",
+        "layout_export_image",
+        "export_print_layout",
+        "cartography_graduated_style"
+      ]
+    },
+    {
+      "id": "review-custom",
+      "display_name": "质量反馈智能体",
+      "kind": "agent",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [
+        "review"
+      ],
+      "tools": [
+        "prepare_quality_review",
+        "load_review_images"
+      ]
+    },
+    {
+      "id": "analysis-custom",
+      "display_name": "空间分析专家",
+      "kind": "agent",
+      "flow_only": false,
+      "enabled": true,
+      "is_main": false,
+      "tool_packages": [
+        "analysis"
+      ],
+      "tools": [
+        "clip"
+      ]
+    }
+  ]
+}

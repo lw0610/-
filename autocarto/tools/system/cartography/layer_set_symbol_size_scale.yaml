@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_set_symbol_size_scale
-  display_name: layer_set_symbol_size_scale
+  keywords: ["符号大小比例", "配置符号大小比例", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置符号大小比例"
   runtime: qgis
   domain: cartography
 spec:

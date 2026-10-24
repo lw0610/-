@@ -8,22 +8,27 @@ tags:
 - gdal
 - processing
 tools:
-  - gdal_aspect
-  - gdal_buffer_vectors
-  - gdal_buildvrt
-  - gdal_clip_raster_by_extent
-  - gdal_clip_raster_by_mask
-  - gdal_clip_vector_by_extent
-  - gdal_clip_vector_by_polygon
-  - gdal_contour
-  - gdal_dissolve
-  - gdal_hillshade
-  - gdal_merge
-  - gdal_offsetcurve
-  - gdal_onesidebuffer
-  - gdal_slope
-  - gdal_translate
-  - gdal_warp
+- gdal_aspect
+- gdal_buffer_vectors
+- gdal_buildvrt
+- gdal_clip_raster_by_extent
+- gdal_clip_raster_by_mask
+- gdal_clip_vector_by_extent
+- gdal_clip_vector_by_polygon
+- gdal_contour
+- gdal_dissolve
+- gdal_hillshade
+- gdal_merge
+- gdal_offsetcurve
+- gdal_onesidebuffer
+- gdal_slope
+- gdal_translate
+- gdal_warp
+display_name: GDAL 处理
+domain: 栅格与分析
+system: false
+hidden: false
+auto_mount: ''
 ---
 
 # GDAL 处理工具集

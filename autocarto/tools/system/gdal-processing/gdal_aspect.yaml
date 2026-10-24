@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_aspect
-  display_name: 坡向
+  keywords: ["栅格坡向", "分析栅格坡向", "栅格处理", "矢量处理", "空间分析"]
+  display_name: "计算栅格坡向"
   domain: gdal-processing
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入DEM
   - name: BAND
     type: integer
-    description: 波段号
+    description: "波段号（从 1 开始的波段序号）"
     default: 1
   - name: OUTPUT
     type: output_raster

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: rotate_features
-  display_name: 旋转要素
+  keywords: ["要素几何", "旋转要素几何", "几何处理", "空间叠加", "几何修复"]
+  display_name: "旋转要素几何"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: ANGLE
     type: number
-    description: 旋转角度
+    description: "旋转角度（度）"
     default: 0.0
   - name: OUTPUT
     type: output_layer

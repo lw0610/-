@@ -2,10 +2,8 @@ package skill
 
 import (
 	"fmt"
-	"maps"
+	toolpkg "github.com/autocarto/carto_agent/internal/tool"
 	"strings"
-
-	"github.com/autocarto/carto_agent/internal/workflow"
 )
 
 const SkillAPIVersionV1 = "skill/v1"
@@ -37,6 +35,7 @@ type SkillDefinition struct {
 type SkillMetadata struct {
 	Name        string   `yaml:"name" json:"name"`
 	DisplayName string   `yaml:"display_name,omitempty" json:"display_name,omitempty"`
+	Keywords    []string `yaml:"keywords,omitempty" json:"keywords,omitempty"`
 	Category    string   `yaml:"category,omitempty" json:"category,omitempty"`
 	Runtime     string   `yaml:"runtime,omitempty" json:"runtime,omitempty"`
 	Backend     string   `yaml:"backend,omitempty" json:"backend,omitempty"`
@@ -48,6 +47,12 @@ type SkillMetadata struct {
 
 type SkillFrontMatter struct {
 	Name          string   `yaml:"name" json:"name"`
+	DisplayName   string   `yaml:"display_name,omitempty" json:"display_name,omitempty"`
+	Domain        string   `yaml:"domain,omitempty" json:"domain,omitempty"`
+	System        bool     `yaml:"system,omitempty" json:"system"`
+	Hidden        bool     `yaml:"hidden,omitempty" json:"hidden"`
+	AutoMount     string   `yaml:"auto_mount,omitempty" json:"auto_mount,omitempty"`
+	Deprecated    bool     `yaml:"deprecated,omitempty" json:"deprecated,omitempty"`
 	Description   string   `yaml:"description" json:"description"`
 	Kind          string   `yaml:"kind" json:"kind"`
 	Runtime       string   `yaml:"runtime,omitempty" json:"runtime,omitempty"`
@@ -65,18 +70,22 @@ type SkillPackageConfig struct {
 }
 
 type SkillPackage struct {
-	Name          string               `json:"name"`
-	Dir           string               `json:"dir"`
-	Kind          string               `json:"kind"`
-	FrontMatter   SkillFrontMatter     `json:"front_matter"`
-	MarkdownBody  string               `json:"markdown_body"`
-	Config        *SkillPackageConfig  `json:"config,omitempty"`
-	Tools         []SkillDefinition    `json:"-"`
-	ToolRefs      []string             `json:"tool_refs,omitempty"`
-	Workflow      *workflow.Definition `json:"workflow,omitempty"`
-	RequiresTools []string             `json:"requires_tools,omitempty"`
-	Source        string               `json:"source,omitempty"`
-	Enabled       bool                 `json:"enabled"`
+	Name          string              `json:"name"`
+	DisplayName   string              `json:"display_name,omitempty"`
+	Domain        string              `json:"domain,omitempty"`
+	System        bool                `json:"system"`
+	Hidden        bool                `json:"hidden"`
+	AutoMount     string              `json:"auto_mount,omitempty"`
+	Dir           string              `json:"dir"`
+	Kind          string              `json:"kind"`
+	FrontMatter   SkillFrontMatter    `json:"front_matter"`
+	MarkdownBody  string              `json:"markdown_body"`
+	Config        *SkillPackageConfig `json:"config,omitempty"`
+	Tools         []SkillDefinition   `json:"-"`
+	ToolRefs      []string            `json:"tool_refs,omitempty"`
+	RequiresTools []string            `json:"requires_tools,omitempty"`
+	Source        string              `json:"source,omitempty"`
+	Enabled       bool                `json:"enabled"`
 }
 
 type SkillSpec struct {
@@ -86,12 +95,14 @@ type SkillSpec struct {
 }
 
 type SkillParameter struct {
-	Name        string `yaml:"name" json:"name"`
-	Type        string `yaml:"type" json:"type"`
-	Required    bool   `yaml:"required,omitempty" json:"required,omitempty"`
-	Description string `yaml:"description,omitempty" json:"description,omitempty"`
-	Default     any    `yaml:"default,omitempty" json:"default,omitempty"`
-	Values      []any  `yaml:"values,omitempty" json:"values,omitempty"`
+	Name            string `yaml:"name" json:"name"`
+	Type            string `yaml:"type" json:"type"`
+	ResourceType    string `yaml:"resource_type,omitempty" json:"resource_type,omitempty"`
+	DefaultResource string `yaml:"default_resource,omitempty" json:"default_resource,omitempty"`
+	Required        bool   `yaml:"required,omitempty" json:"required,omitempty"`
+	Description     string `yaml:"description,omitempty" json:"description,omitempty"`
+	Default         any    `yaml:"default,omitempty" json:"default,omitempty"`
+	Values          []any  `yaml:"values,omitempty" json:"values,omitempty"`
 }
 
 type SkillExample struct {
@@ -155,6 +166,7 @@ func (d *SkillDefinition) normalize() {
 		d.Metadata.Tags = tags
 	}
 	d.Metadata.InstanceIDs = normalizeStringSlice(d.Metadata.InstanceIDs)
+	d.Metadata.Keywords = normalizeStringSlice(d.Metadata.Keywords)
 	d.Spec.Description = strings.TrimSpace(d.Spec.Description)
 	for idx := range d.Spec.Parameters {
 		d.Spec.Parameters[idx].Name = strings.TrimSpace(d.Spec.Parameters[idx].Name)
@@ -208,6 +220,9 @@ func (f *SkillFrontMatter) normalize() {
 		return
 	}
 	f.Name = strings.TrimSpace(f.Name)
+	f.DisplayName = strings.TrimSpace(f.DisplayName)
+	f.Domain = strings.TrimSpace(f.Domain)
+	f.AutoMount = strings.ToLower(strings.TrimSpace(f.AutoMount))
 	f.Description = strings.TrimSpace(f.Description)
 	f.Kind = strings.ToLower(strings.TrimSpace(f.Kind))
 	f.Runtime = NormalizeRuntime(f.Runtime)
@@ -251,6 +266,11 @@ func (p *SkillPackage) normalize() {
 	p.MarkdownBody = strings.TrimSpace(p.MarkdownBody)
 	p.Source = strings.TrimSpace(p.Source)
 	p.FrontMatter.normalize()
+	p.DisplayName = p.FrontMatter.DisplayName
+	p.Domain = p.FrontMatter.Domain
+	p.System = p.FrontMatter.System
+	p.Hidden = p.FrontMatter.Hidden
+	p.AutoMount = p.FrontMatter.AutoMount
 	if p.Config != nil {
 		p.Config.normalize()
 	}
@@ -284,6 +304,7 @@ func (p *SkillPackage) normalize() {
 
 func (d SkillDefinition) Clone() SkillDefinition {
 	cloned := d
+	cloned.Metadata.Keywords = append([]string(nil), d.Metadata.Keywords...)
 	cloned.Metadata.InstanceIDs = append([]string(nil), d.Metadata.InstanceIDs...)
 	cloned.Metadata.Tags = append([]string(nil), d.Metadata.Tags...)
 	if len(d.Spec.Parameters) > 0 {
@@ -346,12 +367,6 @@ func (p SkillPackage) Clone() SkillPackage {
 		config.Settings = cloneMapAny(p.Config.Settings)
 		cloned.Config = &config
 	}
-	if p.Workflow != nil {
-		workflowDef := *p.Workflow
-		workflowDef.Spec.Inputs = cloneWorkflowInputs(p.Workflow.Spec.Inputs)
-		workflowDef.Spec.Steps = cloneWorkflowSteps(p.Workflow.Spec.Steps)
-		cloned.Workflow = &workflowDef
-	}
 	return cloned
 }
 
@@ -359,27 +374,6 @@ func (p SkillPackage) publicView() SkillPackage {
 	cloned := p.Clone()
 	cloned.Tools = nil
 	return cloned
-}
-
-func cloneWorkflowInputs(src map[string]workflow.Input) map[string]workflow.Input {
-	if len(src) == 0 {
-		return nil
-	}
-	out := make(map[string]workflow.Input, len(src))
-	maps.Copy(out, src)
-	return out
-}
-
-func cloneWorkflowSteps(src []workflow.Step) []workflow.Step {
-	if len(src) == 0 {
-		return nil
-	}
-	out := make([]workflow.Step, len(src))
-	for idx, step := range src {
-		out[idx] = step
-		out[idx].With = cloneMapAny(step.With)
-	}
-	return out
 }
 
 type ValidationError struct {
@@ -455,6 +449,9 @@ func (d SkillDefinition) Validate() error {
 		}
 		if param.Type == "" {
 			problems = append(problems, fieldPrefix+".type is required")
+		}
+		if err := toolpkg.ValidateResourceParameter(param.Type, param.ResourceType, param.DefaultResource); err != nil {
+			problems = append(problems, fieldPrefix+": "+err.Error())
 		}
 	}
 

@@ -3,9 +3,37 @@ package tool
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 )
+
+func TestEmptyAuthorityDoesNotLoadEmbeddedFallback(t *testing.T) {
+	definitions, err := LoadAuthorityDefinitions(t.TempDir())
+	if err != nil || len(definitions) != 0 {
+		t.Fatalf("empty authority unexpectedly loaded stale tools: %v %+v", err, definitions)
+	}
+}
+
+func TestLoadDefinitionRetainsChineseDiscoveryMetadata(t *testing.T) {
+	t.Parallel()
+	root := t.TempDir()
+	raw := strings.Replace(toolDefinitionFixture("sample", "vector", "qgis", "native:buffer", ""),
+		"  name: sample", "  name: sample\n  display_name: 创建要素缓冲区\n  keywords: [' 邻近分析 ', 缓冲]", 1)
+	writeToolFixture(t, root, "sample.yaml", raw)
+	definition, err := loadDefinitionFile(filepath.Join(root, "sample.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if definition.Metadata.DisplayName != "创建要素缓冲区" || !reflect.DeepEqual(definition.Metadata.Keywords, []string{"邻近分析", "缓冲"}) {
+		t.Fatalf("discovery metadata lost or not normalized: %#v", definition.Metadata)
+	}
+	cloned := definition.Clone()
+	cloned.Metadata.Keywords[0] = "changed"
+	if definition.Metadata.Keywords[0] != "邻近分析" {
+		t.Fatal("cloning a tool must isolate mutable keyword metadata")
+	}
+}
 
 func TestLoadDefinitionsFromDirectoryRecursive(t *testing.T) {
 	t.Parallel()

@@ -19,7 +19,6 @@ from .vocabulary import (
     MAP_TYPES,
     NODE_REF_TYPES,
     PATH_ROLES,
-    ROUTE_STYLE_PRESETS,
     SCHEMA_VERSION,
     SELF_INTERSECTION_POLICIES,
     SIDES,
@@ -456,9 +455,11 @@ def validate_task_knowledge(
     source_text: Optional[str] = None,
     review: Optional[VerifiedReview] = None,
     accept_extraction: bool = False,
+    route_style_presets=None,
 ) -> ValidationReport:
     """校验模型任务图；函数不会修改调用方传入的数据。"""
 
+    style_presets = route_style_presets
     report = ValidationReport()
     if not isinstance(raw, Mapping):
         report.add("invalid_root", "$", "任务知识图谱顶层必须是对象")
@@ -473,9 +474,14 @@ def validate_task_knowledge(
         review.object_paths(raw) if review is not None else frozenset()
     )
 
+    schema = load_task_knowledge_schema()
+    if route_style_presets is not None:
+        schema["properties"]["routes"]["items"]["properties"]["style_ref"]["enum"] = list(style_presets)
+    else:
+        schema["properties"]["routes"]["items"]["properties"]["style_ref"].pop("enum", None)
     _validate_schema_value(
         raw,
-        load_task_knowledge_schema(),
+        schema,
         "$",
         report,
         reviewed_paths,
@@ -864,14 +870,14 @@ def validate_task_knowledge(
                 f"未知敌我属性：{side}",
             )
         style_ref = route.get("style_ref")
-        if style_ref is not None and style_ref not in ROUTE_STYLE_PRESETS:
+        if style_presets is not None and style_ref is not None and style_ref not in style_presets:
             report.add(
                 "unknown_style_preset",
                 f"{path}.style_ref",
                 f"未知视觉预设：{style_ref}",
             )
-        elif style_ref is not None:
-            style_preset = ROUTE_STYLE_PRESETS[str(style_ref)]
+        elif style_presets is not None and style_ref is not None:
+            style_preset = style_presets[str(style_ref)]
             if (
                 style_preset.get("topology") != topology
                 or style_preset.get("side") != side

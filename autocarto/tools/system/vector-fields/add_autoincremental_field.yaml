@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: add_autoincremental_field
-  display_name: 添加自增量字段
+  keywords: ["自增字段", "添加自增字段", "属性字段", "字段计算", "属性连接"]
+  display_name: "添加自增字段"
   domain: vector-fields
   runtime: qgis
 spec:

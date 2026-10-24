@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from autocarto.tools.system._shared.resource_handle import ResourceHandleError, handle_summary, require_handle
+
 import copy
 import hashlib
 import json
@@ -10,6 +12,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
+from .visual_presets import load_route_styles, load_symbol_styles
 from .compiler import (
     TaskKnowledgeCompilationError,
     compile_task_knowledge,
@@ -198,12 +201,17 @@ def compile_marching_route_dataset_handler(
             review = verify_review_context(
                 params["review_context"], graph, source_text
             )
+        route_style = require_handle(params.get("route_style"), "route_style")
+        symbols = require_handle(params.get("symbols"), "symbols")
+        presets = load_route_styles(route_style)[0]
+        load_symbol_styles(symbols)
+        resources = {"route_style": handle_summary(route_style), "symbols": handle_summary(symbols)}
         if _to_bool(params.get("validate_only", False)):
             # A validation request never allocates or replaces an output directory.
             # Invalid fields are a successful validation response, not a runtime
             # failure: the editor needs their exact paths while keeping its draft.
             report = validate_task_knowledge_for_compile(
-                graph, source_text=source_text, review=review
+                graph, source_text=source_text, review=review, route_presets=presets
             )
             validation = report.to_dict()
             validation.update({
@@ -211,7 +219,7 @@ def compile_marching_route_dataset_handler(
                 "errors": [issue.to_dict() for issue in report.errors],
                 "warnings": [issue.to_dict() for issue in report.warnings],
             })
-            payload = {"validation": validation, "review_protocol_version": 1}
+            payload = {"validation": validation, "review_protocol_version": 1, "resources": resources}
             return {
                 "success": True,
                 "output": payload,
@@ -235,13 +243,12 @@ def compile_marching_route_dataset_handler(
             template_dataset_dir=(
                 str(params.get("template_dataset_dir") or "").strip() or None
             ),
-            symbol_assets_dir=(
-                str(params.get("symbol_assets_dir") or "").strip() or None
-            ),
             overwrite=_to_bool(params.get("overwrite", False)) or auto_overwrite,
             review=review,
+            route_style=route_style, symbols=symbols,
         )
         payload = result.to_dict()
+        payload["resources"] = resources
         task = graph.get("task") if isinstance(graph, dict) else {}
         task_id = (
             str(task.get("task_id") or "").strip()
@@ -289,6 +296,8 @@ def compile_marching_route_dataset_handler(
             ),
             "data": payload,
         }
+    except ResourceHandleError as exc:
+        return {"success": False, "output": "", "info": str(exc), "error_type": exc.code, "data": exc.details}
     except ReviewContextError as exc:
         return {
             "success": False,

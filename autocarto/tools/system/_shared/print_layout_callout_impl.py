@@ -1,6 +1,6 @@
 """Safe, atomic movement of composite layout callouts.
 
-A callout created by the marching-route cartography tools is composed of a
+A callout created by the cartography tools is composed of a
 shape, optional picture/title/body items, and one or more leader polylines.
 Moving those items as a normal QGIS group would also move the geographic
 anchor at the far end of every leader.  This module instead translates only
@@ -130,6 +130,15 @@ def _rect_within(container: Rect, candidate: Rect, margin: float) -> bool:
         and x + width <= cx + cw - margin + _TOLERANCE_MM
         and y + height <= cy + ch - margin + _TOLERANCE_MM
     )
+
+
+def _overflow_edges(container, candidate, margin=0):
+    edges = []
+    if candidate[0] < container[0]+margin-_TOLERANCE_MM: edges.append("left")
+    if candidate[1] < container[1]+margin-_TOLERANCE_MM: edges.append("top")
+    if candidate[0]+candidate[2] > container[0]+container[2]-margin+_TOLERANCE_MM: edges.append("right")
+    if candidate[1]+candidate[3] > container[1]+container[3]-margin+_TOLERANCE_MM: edges.append("bottom")
+    return edges
 
 
 def _boundary_hit(rect: Rect, anchor: Point) -> Tuple[str, Point]:
@@ -347,6 +356,7 @@ def _move_callout(params: Dict[str, Any]) -> Dict[str, Any]:
                 "target_box_rect": _rect_dict(new_box_rect),
                 "container_rect": _rect_dict(container_rect),
                 "margin_mm": margin,
+                "overflow_edges": _overflow_edges(container_rect, new_box_rect, margin),
             },
         )
 
@@ -408,6 +418,16 @@ def _move_callout(params: Dict[str, Any]) -> Dict[str, Any]:
                 )
         except ValueError as exc:
             return _result(False, message=str(exc), error_code="invalid_leader_geometry")
+
+    from autocarto.tools.system._shared.print_layout_items_impl import _item_container_error
+    planned = [(role, (rect[0]+delta_x, rect[1]+delta_y, rect[2], rect[3])) for role, rect in old_component_rects.items()]
+    for item_id, nodes in leader_plan.items():
+        xs, ys = [point[0] for point in nodes], [point[1] for point in nodes]
+        planned.append((item_id, (min(xs), min(ys), max(xs)-min(xs), max(ys)-min(ys))))
+    for role, rect in planned:
+        violation = _item_container_error(layout, components["box"], container_item_id, _rect_dict(rect))
+        if violation:
+            return _result(False, message=f"图文标注子元素“{role}”超出容器或页面边界", error_code="callout_outside_container", data=violation.get("data", {}))
 
     rollback_errors: List[str] = []
     try:

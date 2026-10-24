@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: line_substring
-  display_name: 线子串
+  keywords: ["线条子段", "提取线条子段", "几何处理", "空间叠加", "几何修复"]
+  display_name: "提取线条子段"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,11 +15,11 @@ spec:
     description: 输入图层
   - name: START_DISTANCE
     type: number
-    description: 起始距离
+    description: "起始距离（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.0
   - name: END_DISTANCE
     type: number
-    description: 结束距离
+    description: "结束距离（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: OUTPUT
     type: output_layer

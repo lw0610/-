@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: translate_geometry
-  display_name: 平移几何图形
+  keywords: ["要素几何", "平移要素几何", "几何处理", "空间叠加", "几何修复"]
+  display_name: "平移要素几何"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,11 +15,11 @@ spec:
     description: 输入图层
   - name: DELTA_X
     type: number
-    description: X偏移量
+    description: "X偏移量（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.0
   - name: DELTA_Y
     type: number
-    description: Y偏移量
+    description: "Y偏移量（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.0
   - name: OUTPUT
     type: output_layer

@@ -293,6 +293,8 @@ func buildToolTestRouterWithPackages(t *testing.T, ss SessionService, packages [
 	t.Helper()
 
 	rootDir := t.TempDir()
+	t.Setenv("AUTOCARTO_PROJECT_ROOT", rootDir)
+	t.Setenv("AUTOCARTO_ASSETS_ROOT", filepath.Join(rootDir, "autocarto"))
 	configDir := filepath.Join(rootDir, ".autocarto", "config", "agent_configs")
 	skillsDir := filepath.Join(rootDir, "autocarto", "skills", "system")
 	if err := os.MkdirAll(configDir, 0o755); err != nil {
@@ -304,6 +306,22 @@ func buildToolTestRouterWithPackages(t *testing.T, ss SessionService, packages [
 	originalWD, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Getwd failed: %v", err)
+	}
+	// Read the canonical tool definitions into this isolated asset tree. Empty
+	// trees intentionally no longer fall back to stale embedded contracts.
+	toolsDir := filepath.Join(rootDir, "autocarto", "tools", "system")
+	if err := os.MkdirAll(toolsDir, 0700); err != nil {
+		t.Fatal(err)
+	}
+	for _, relative := range []string{"project-state/open_project.yaml", "project-state/get_project_info.yaml", "project-state/get_layers_info.yaml", "pyqgis-scripting/pyqgis_get_context.yaml"} {
+		source := filepath.Join(originalWD, "..", "..", "..", "autocarto", "tools", "system", filepath.FromSlash(relative))
+		raw, err := os.ReadFile(source)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = os.WriteFile(filepath.Join(toolsDir, filepath.Base(relative)), raw, 0600); err != nil {
+			t.Fatal(err)
+		}
 	}
 	if err := os.Chdir(rootDir); err != nil {
 		t.Fatalf("Chdir failed: %v", err)
@@ -318,11 +336,16 @@ func buildToolTestRouterWithPackages(t *testing.T, ss SessionService, packages [
 			t.Fatalf("mkdir package dir: %v", err)
 		}
 		toolRefs := strings.Join(toolNames, "\n  - ")
+		systemFlag := "false"
+		if packageName == "project-state" {
+			systemFlag = "true"
+		}
 		skillMarkdown := strings.TrimSpace(`---
 name: `+packageName+`
 description: `+packageName+` package
 kind: category
 backend: `+backend+`
+system: `+systemFlag+`
 enabled: true
 tools:
   - `+toolRefs+`
@@ -344,10 +367,9 @@ tools:
 		skillPackagesYAML = "[" + strings.Join(packageNames, ", ") + "]"
 	}
 
-	defaultConfig := `version: "1.0"
+	defaultConfig := `version: "2.0"
 runtime:
-  global:
-	skill_packages: ` + skillPackagesYAML + `
+  shared_tool_packages: ` + skillPackagesYAML + `
   agents:
     orchestrator:
       display_name: 编排智能体
@@ -548,7 +570,7 @@ func TestCatalogContract(t *testing.T) {
 		t.Fatalf("unexpected catalog capability_type: %q", got)
 	}
 	if got, _ := catalog["availability"].(string); got != "available" {
-		t.Fatalf("unexpected catalog availability: %q", got)
+		t.Fatalf("unexpected catalog availability: %q body=%s", got, rr.Body.String())
 	}
 	if got, _ := catalog["degradation_status"].(string); got != "none" {
 		t.Fatalf("unexpected catalog degradation_status: %q", got)
@@ -920,6 +942,31 @@ func TestGetToolCatalogUsesAuthoritativeContractItems(t *testing.T) {
 	}
 }
 
+func TestGetToolCatalogReturnsChineseDiscoveryMetadata(t *testing.T) {
+	contract := toolcatalog.BuildContract("global", "default", []toolcatalog.Item{{
+		Name: "sample", DisplayName: "创建要素缓冲区", Description: "按距离生成缓冲区", Keywords: []string{"缓冲", "邻近分析"}, PackageID: "vector-analysis", Source: "qgis", Available: true,
+	}}, []string{"sample"}, nil)
+	router := buildToolTestRouterWithAssetCatalog(t, stubAPIAssetCatalogService{view: control.ToolCatalogView{Catalog: contract}})
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/tools/catalog", nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("status=%d body=%s", rr.Code, rr.Body.String())
+	}
+	_, _, catalog := decodeToolCatalogContract(t, rr)
+	items := requireCatalogItems(t, catalog)
+	if len(items) != 1 {
+		t.Fatalf("unexpected catalog: %#v", items)
+	}
+	item := items[0]
+	if item["display_name"] != "创建要素缓冲区" || item["description"] != "按距离生成缓冲区" || item["package_id"] != "vector-analysis" {
+		t.Fatalf("missing public discovery metadata: %#v", item)
+	}
+	keywords, ok := item["keywords"].([]any)
+	if !ok || len(keywords) != 2 || keywords[0] != "缓冲" || keywords[1] != "邻近分析" {
+		t.Fatalf("keywords must be a string array: %#v", item)
+	}
+}
+
 func TestGetToolCatalogMarksUnavailableContractItems(t *testing.T) {
 	service := &fakeToolSessionService{
 		snapshot: toolrouter.Snapshot{},
@@ -973,7 +1020,7 @@ func TestGetToolCatalogMarksUnavailableContractItems(t *testing.T) {
 	}
 }
 
-func TestGetToolCatalogOmitsLegacyPackageMetadataFields(t *testing.T) {
+func TestGetToolCatalogOmitsLegacyPackagePolicyFields(t *testing.T) {
 	service := &fakeToolSessionService{
 		snapshot: toolrouter.Snapshot{
 			Interactive: []toolrouter.InteractiveToolDefinition{{
@@ -1074,9 +1121,6 @@ runtime:
 	_, _, catalog := decodeToolCatalogContract(t, rr)
 	items := requireCatalogItems(t, catalog)
 	for _, item := range items {
-		if _, exists := item["package_id"]; exists {
-			t.Fatalf("unexpected legacy package_id in authoritative contract: %#v", item)
-		}
 		if _, exists := item["kind"]; exists {
 			t.Fatalf("unexpected legacy kind in authoritative contract: %#v", item)
 		}

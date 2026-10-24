@@ -1,0 +1,22 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:f9da52076322c7f50832347977fec3442d00fea6e08ac05e22f0539a198245a3",
+  "entries": [],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/docs/说明.md",
+  "format": "md",
+  "id": "legacy.doc.84af05c54b",
+  "name": "说明",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/docs/说明.md",
+  "total_entries": 0,
+  "truncated": false,
+  "type": "doc",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

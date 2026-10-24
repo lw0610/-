@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: random_points_in_extent
-  display_name: 在范围内随机点
+  keywords: ["按范围生成随机点", "矢量生成", "点线面", "空间网格"]
+  display_name: "按范围生成随机点"
   domain: vector-creation
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 范围
   - name: POINTS_NUMBER
     type: integer
-    description: 点数量
+    description: "点数量（数量，正整数）"
     default: 1
   - name: TARGET_CRS
     type: crs

@@ -82,9 +82,9 @@ describe('WorkspaceShell', () => {
         {
           id: 'tools-skill-packages',
           task: 'tools',
-          section: '工具与技能',
+          section: '工具包与能力',
           path: '/settings/tools',
-          label: '技能包目录',
+          label: '工具包目录',
         },
       ],
     })

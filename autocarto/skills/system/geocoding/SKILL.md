@@ -8,9 +8,14 @@ tags:
 - geocoding
 - location
 tools:
-  - batch_nominatim_geocoder
-  - geocode_from_table
-  - geocode_nominatim
+- batch_nominatim_geocoder
+- geocode_from_table
+- geocode_nominatim
+display_name: 地理编码
+domain: 数据
+system: false
+hidden: false
+auto_mount: ''
 ---
 
 # 地理编码工具集

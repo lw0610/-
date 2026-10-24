@@ -3,13 +3,16 @@ package api
 import (
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/gorilla/mux"
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/control"
 	"github.com/autocarto/carto_agent/internal/discovery"
+	"github.com/autocarto/carto_agent/internal/flow"
 	bridgeprovider "github.com/autocarto/carto_agent/internal/middleware/bridge"
+	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/autocarto/carto_agent/internal/settings"
 )
 
@@ -41,6 +44,12 @@ type SkillService interface {
 
 // API REST API 处理器。
 type API struct {
+	flowPackages            *flow.Store
+	flowCompilation         *flow.Compiler
+	flowCompilerMu          sync.Mutex
+	flowEnvironments        flowEnvironmentCache
+	resourceLibrary         *resource.Library
+	resourceLibraryMu       sync.Mutex
 	configService           *config.ConfigService
 	sessionService          SessionService
 	router                  *mux.Router

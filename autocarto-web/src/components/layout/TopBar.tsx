@@ -16,6 +16,7 @@ const navItems = [
   { href: '/instances', label: '实例', icon: InstancesIcon },
   { href: '/sessions', label: '会话', icon: SessionsIcon },
   { href: '/chat', label: '聊天', icon: ChatIcon },
+  { href: '/flows', label: '流程中心', icon: ServicesIcon },
 ]
 
 function HeaderIconButton({

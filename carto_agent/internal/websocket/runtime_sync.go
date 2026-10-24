@@ -852,6 +852,8 @@ func (s *DeepServer) updateToolAggregatorFromCatalog(tools []middlewareclient.To
 		if isCompute {
 			computeDefs = append(computeDefs, compute.ToolDefinition{
 				Name:              item.Name,
+				DisplayName:       item.DisplayName,
+				Keywords:          append([]string(nil), item.Keywords...),
 				Description:       item.Description,
 				Category:          item.Category,
 				InputSchema:       cloneSchemaMap(item.InputSchema),
@@ -862,6 +864,8 @@ func (s *DeepServer) updateToolAggregatorFromCatalog(tools []middlewareclient.To
 		}
 		interactive = append(interactive, toolrouter.InteractiveToolDefinition{
 			Name:              item.Name,
+			DisplayName:       item.DisplayName,
+			Keywords:          append([]string(nil), item.Keywords...),
 			Description:       item.Description,
 			Category:          item.Category,
 			InputSchema:       cloneSchemaMap(item.InputSchema),
@@ -908,7 +912,7 @@ func cloneSchemaMap(src map[string]any) map[string]interface{} {
 }
 
 func (s *DeepServer) broadcastRuntimeSnapshot(snapshot middlewareclient.RuntimeSnapshot) {
-	msg := Message{Type: MsgTypeRuntimeSnapshot, Data: runtimeSnapshotToMessageData(s.augmentRuntimeSnapshot(snapshot))}
+	msg := Message{Type: MsgTypeRuntimeSnapshot, Data: s.runtimeSnapshotMessageData(s.augmentRuntimeSnapshot(snapshot))}
 	for _, conn := range s.listClientConnections() {
 		if err := s.sendMessage(conn, msg); err != nil {
 			logger.Warn("广播 runtime_snapshot 失败: %v", err)
@@ -924,9 +928,20 @@ func (s *DeepServer) sendCurrentRuntimeSnapshot(conn *websocket.Conn) {
 	if snapshot.Version == 0 && len(snapshot.Services) == 0 && snapshot.Instances.InstanceCount == 0 {
 		return
 	}
-	if err := s.sendMessage(conn, Message{Type: MsgTypeRuntimeSnapshot, Data: runtimeSnapshotToMessageData(snapshot)}); err != nil {
+	if err := s.sendMessage(conn, Message{Type: MsgTypeRuntimeSnapshot, Data: s.runtimeSnapshotMessageData(snapshot)}); err != nil {
 		logger.Warn("发送当前 runtime_snapshot 失败: %v", err)
 	}
+}
+
+func (s *DeepServer) runtimeSnapshotMessageData(snapshot middlewareclient.RuntimeSnapshot) map[string]any {
+	data := runtimeSnapshotToMessageData(snapshot)
+	s.mu.Lock()
+	service := s.configService
+	s.mu.Unlock()
+	if service != nil {
+		data["runtime_paths"] = service.GetRuntimeDirectoryDiagnostics()
+	}
+	return data
 }
 
 func runtimeSnapshotToMessageData(snapshot middlewareclient.RuntimeSnapshot) map[string]any {

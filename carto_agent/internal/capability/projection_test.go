@@ -6,6 +6,20 @@ import (
 	"github.com/autocarto/carto_agent/internal/toolcatalog"
 )
 
+func TestCapabilityKeywordFilterMatchesChineseSynonyms(t *testing.T) {
+	snapshot := &CapabilitySnapshot{Agents: []AgentCapabilityView{{
+		AgentName: "planner", Tools: []ToolRef{{Name: "sample", DisplayName: "创建要素缓冲区", Description: "按距离生成面", Keywords: []string{"邻近分析"}}},
+	}}}
+	payload := snapshot.BuildCapabilityPayload("", "邻近", nil)
+	if payload["total_tools"] != 1 {
+		t.Fatalf("Chinese keyword synonym did not match: %#v", payload)
+	}
+	tools := payload["agents"].([]map[string]any)[0]["tools"].([]map[string]any)
+	if tools[0]["display_name"] != "创建要素缓冲区" || len(tools[0]["keywords"].([]string)) != 1 {
+		t.Fatalf("capability manual lost Chinese discovery metadata: %#v", tools)
+	}
+}
+
 func TestEmptySnapshotProjectionMethodsReturnEmptyViews(t *testing.T) {
 	snapshot := &CapabilitySnapshot{
 		ConfigName: "default",

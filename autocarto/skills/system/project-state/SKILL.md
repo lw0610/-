@@ -15,6 +15,11 @@ tools:
 - open_project
 - create_project
 - close_instance
+display_name: 工程与图层状态
+domain: 系统
+system: true
+hidden: false
+auto_mount: ''
 ---
 
 # 工程状态与项目控制工具集

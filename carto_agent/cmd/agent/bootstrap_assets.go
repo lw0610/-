@@ -219,7 +219,7 @@ func shouldReplaceEmbeddedDefaultAgentConfig(path string) bool {
 		return true
 	}
 
-	if len(runtimeCfg.Global.SkillPackages) > 0 {
+	if len(runtimeCfg.Global.SkillPackages) > 0 || len(runtimeCfg.SharedToolPackages) > 0 {
 		return false
 	}
 	if len(runtimeCfg.Agents) != 1 {
@@ -229,5 +229,5 @@ func shouldReplaceEmbeddedDefaultAgentConfig(path string) bool {
 	if !ok {
 		return false
 	}
-	return len(orch.SkillPackages) == 0
+	return len(orch.SkillPackages) == 0 && len(orch.ToolPackages) == 0
 }

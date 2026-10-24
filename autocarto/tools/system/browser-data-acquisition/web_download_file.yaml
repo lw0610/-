@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: web_download_file
-  display_name: 下载公开数据文件
+  keywords: ["公开文件", "下载公开文件", "网页取数", "浏览器", "网络下载"]
+  display_name: "下载公开文件"
   domain: browser-data-acquisition
   runtime: internal
 spec:

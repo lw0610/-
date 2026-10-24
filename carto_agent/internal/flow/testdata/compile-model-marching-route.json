@@ -1,0 +1,87 @@
+{
+  "flow": {
+    "inputs": [
+      {
+        "key": "source_text",
+        "label": "史料原文",
+        "type": "conversation_text",
+        "options": []
+      },
+      {
+        "key": "route_dataset",
+        "label": "路线数据集",
+        "type": "folder",
+        "options": []
+      },
+      {
+        "key": "底图数据",
+        "label": "底图数据",
+        "type": "folder",
+        "options": []
+      },
+      {
+        "key": "paper",
+        "label": "纸张",
+        "type": "text",
+        "options": []
+      },
+      {
+        "key": "quality_review",
+        "label": "质量审查",
+        "type": "text",
+        "options": []
+      },
+      {
+        "key": "title",
+        "label": "地图标题",
+        "type": "text",
+        "options": []
+      },
+      {
+        "key": "reextract",
+        "label": "重新抽取",
+        "type": "text",
+        "options": []
+      }
+    ],
+    "input_constraints": [],
+    "triggers": [
+      "行军路线图",
+      "行军线路图"
+    ]
+  },
+  "tools": {
+    "s1": [],
+    "s2": [
+      "data_load_list"
+    ],
+    "s3": [
+      "style_set_apply"
+    ],
+    "s4": [
+      "route_draw"
+    ],
+    "s5": [
+      "layout_compose"
+    ],
+    "s6": [
+      "layout_add_callouts"
+    ],
+    "s7": [
+      "layout_export_image"
+    ],
+    "s8": [
+      "prepare_quality_review"
+    ],
+    "s9": [
+      "layout_move_callout",
+      "layout_export_image"
+    ],
+    "s10": [
+      "load_review_images"
+    ],
+    "s11": [
+      "export_print_layout"
+    ]
+  }
+}

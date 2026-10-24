@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: browser_list_tools
-  display_name: 发现浏览器操作
+  keywords: ["浏览器操作", "列出浏览器操作", "网页取数", "浏览器", "网络下载"]
+  display_name: "列出浏览器操作"
   domain: browser-data-acquisition
   runtime: internal
 spec:

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: scatter_3d_plot
-  display_name: 矢量图层3D散点图
+  keywords: ["三维散点图", "生成三维散点图", "统计图表", "网格数据", "数据可视化"]
+  display_name: "生成三维散点图"
   runtime: qgis
   domain: misc-tools
 spec:

@@ -1,6 +1,6 @@
 ---
 name: skill-management
-description: 管理技能包与原子技能定义。
+description: 管理工具包与工具定义。
 kind: category
 runtime: internal
 tools:
@@ -10,6 +10,6 @@ tools:
   - save_skill_to_package
 ---
 
-管理技能包与原子技能定义。
+管理工具包与工具定义。
 
 通过内部工具管理配置与定义。

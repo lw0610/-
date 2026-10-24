@@ -8,27 +8,37 @@ import (
 )
 
 type AgentProfileGlobalView struct {
-	SkillPackages []string `json:"skill_packages"`
+	ToolPackages             []string `json:"tool_packages"`
+	LegacyUnresolvedPackages []string `json:"legacy_unresolved_packages,omitempty"`
+	SkillPackages            []string `json:"skill_packages,omitempty"`
 }
 
 type AgentProfileRuntimeAgentData struct {
-	DisplayName   string                `json:"display_name"`
-	Description   string                `json:"description"`
-	IsMain        bool                  `json:"is_main,omitempty"`
-	Deletable     bool                  `json:"deletable,omitempty"`
-	Enabled       bool                  `json:"enabled"`
-	LLM           config.AgentLLMConfig `json:"llm,omitempty"`
-	SkillPackages []string              `json:"skill_packages,omitempty"`
-	Prompts       map[string]string     `json:"prompts"`
+	Kind                     string                `json:"kind"`
+	Executor                 string                `json:"executor,omitempty"`
+	FlowOnly                 bool                  `json:"flow_only,omitempty"`
+	ToolPackages             []string              `json:"tool_packages"`
+	LegacyUnresolvedPackages []string              `json:"legacy_unresolved_packages,omitempty"`
+	DisplayName              string                `json:"display_name"`
+	Description              string                `json:"description"`
+	IsMain                   bool                  `json:"is_main,omitempty"`
+	Deletable                bool                  `json:"deletable,omitempty"`
+	Enabled                  bool                  `json:"enabled"`
+	LLM                      config.AgentLLMConfig `json:"llm,omitempty"`
+	SkillPackages            []string              `json:"skill_packages,omitempty"`
+	Prompts                  map[string]string     `json:"prompts"`
 }
 
 type AgentProfilePlanAgentData struct {
-	DisplayName   string                `json:"display_name"`
-	IsMain        bool                  `json:"is_main,omitempty"`
-	Mode          string                `json:"mode,omitempty"`
-	LLM           config.AgentLLMConfig `json:"llm,omitempty"`
-	SkillPackages []string              `json:"skill_packages,omitempty"`
-	Prompts       map[string]string     `json:"prompts"`
+	Kind                     string                `json:"kind"`
+	ToolPackages             []string              `json:"tool_packages"`
+	LegacyUnresolvedPackages []string              `json:"legacy_unresolved_packages,omitempty"`
+	DisplayName              string                `json:"display_name"`
+	IsMain                   bool                  `json:"is_main,omitempty"`
+	Mode                     string                `json:"mode,omitempty"`
+	LLM                      config.AgentLLMConfig `json:"llm,omitempty"`
+	SkillPackages            []string              `json:"skill_packages,omitempty"`
+	Prompts                  map[string]string     `json:"prompts"`
 }
 
 type AgentProfileRuntimeAgentView struct {
@@ -60,20 +70,26 @@ type AgentProfileDiagnosticsView struct {
 }
 
 type AgentProfileView struct {
-	Meta          config.AgentConfigMeta         `json:"meta"`
-	RuntimeShared AgentProfileGlobalView         `json:"runtime_shared"`
-	RuntimeAgents []AgentProfileRuntimeAgentView `json:"runtime_agents"`
-	HasPlan       bool                           `json:"has_plan"`
-	Plan          AgentProfilePlanView           `json:"plan"`
-	Diagnostics   AgentProfileDiagnosticsView    `json:"diagnostics,omitempty"`
+	Version           string                         `json:"version"`
+	Flows             *config.FlowConfig             `json:"flows,omitempty"`
+	MigrationWarnings []config.MigrationWarning      `json:"migration_warnings,omitempty"`
+	Meta              config.AgentConfigMeta         `json:"meta"`
+	RuntimeShared     AgentProfileGlobalView         `json:"runtime_shared"`
+	RuntimeAgents     []AgentProfileRuntimeAgentView `json:"runtime_agents"`
+	HasPlan           bool                           `json:"has_plan"`
+	Plan              AgentProfilePlanView           `json:"plan"`
+	Diagnostics       AgentProfileDiagnosticsView    `json:"diagnostics,omitempty"`
 }
 
 func BuildAgentProfileView(configName string, data *config.AgentConfigData, diagnostics RuntimeDiagnosticsService) AgentProfileView {
 	profile := AgentProfileView{}
 	if data != nil {
+		profile.Version = data.Version
+		profile.Flows = cloneProfileFlows(data.Flows)
+		profile.MigrationWarnings = append([]config.MigrationWarning(nil), data.MigrationWarnings...)
 		profile.Meta = cloneAgentConfigMeta(data.Meta)
 		if data.Runtime != nil {
-			profile.RuntimeShared = cloneGlobalAgentProfileView(data.Runtime.Global)
+			profile.RuntimeShared = AgentProfileGlobalView{ToolPackages: append([]string{}, data.Runtime.SharedToolPackages...), LegacyUnresolvedPackages: append([]string(nil), data.Runtime.LegacyUnresolvedPackages...)}
 			profile.RuntimeAgents = buildRuntimeAgentViews(data.Runtime.Agents)
 		}
 		if data.Plan != nil {
@@ -97,9 +113,10 @@ func ExpandAgentProfileView(profile AgentProfileView) *config.AgentConfigData {
 	meta.PlanEnabled = hasPlan && profile.Plan.Enabled
 
 	result := &config.AgentConfigData{
-		Meta: meta,
+		Meta: meta, Version: profile.Version, Flows: cloneProfileFlows(profile.Flows),
 		Runtime: &config.RuntimeConfig{
-			Global: expandGlobalAgentProfileView(profile.RuntimeShared),
+			Global:             config.GlobalAgentConfig{SkillPackages: append([]string(nil), profile.RuntimeShared.SkillPackages...)},
+			SharedToolPackages: append([]string(nil), profile.RuntimeShared.ToolPackages...), LegacyUnresolvedPackages: append([]string(nil), profile.RuntimeShared.LegacyUnresolvedPackages...),
 			Agents: expandRuntimeAgentViews(profile.RuntimeAgents),
 		},
 	}
@@ -225,7 +242,7 @@ func hasPlanProfileData(plan AgentProfilePlanView) bool {
 }
 
 func hasGlobalAgentProfileContent(cfg AgentProfileGlobalView) bool {
-	if len(cfg.SkillPackages) > 0 {
+	if len(cfg.SkillPackages) > 0 || len(cfg.ToolPackages) > 0 {
 		return true
 	}
 	return false
@@ -248,18 +265,21 @@ func cloneAgentConfigMeta(meta config.AgentConfigMeta) config.AgentConfigMeta {
 
 func cloneGlobalAgentProfileView(cfg config.GlobalAgentConfig) AgentProfileGlobalView {
 	return AgentProfileGlobalView{
+		ToolPackages: append([]string{}, cfg.ToolPackages...), LegacyUnresolvedPackages: append([]string(nil), cfg.LegacyUnresolvedPackages...),
 		SkillPackages: append([]string(nil), cfg.SkillPackages...),
 	}
 }
 
 func expandGlobalAgentProfileView(cfg AgentProfileGlobalView) config.GlobalAgentConfig {
 	return config.GlobalAgentConfig{
+		ToolPackages: append([]string(nil), cfg.ToolPackages...), LegacyUnresolvedPackages: append([]string(nil), cfg.LegacyUnresolvedPackages...),
 		SkillPackages: append([]string(nil), cfg.SkillPackages...),
 	}
 }
 
 func cloneRuntimeAgentView(agent config.AgentDefData) AgentProfileRuntimeAgentData {
 	return AgentProfileRuntimeAgentData{
+		Kind: agent.Kind, Executor: agent.Executor, FlowOnly: agent.FlowOnly, ToolPackages: append([]string{}, agent.ToolPackages...), LegacyUnresolvedPackages: append([]string(nil), agent.LegacyUnresolvedPackages...),
 		DisplayName: strings.TrimSpace(agent.DisplayName),
 		Description: strings.TrimSpace(agent.Description),
 		IsMain:      agent.IsMain,
@@ -275,6 +295,7 @@ func cloneRuntimeAgentView(agent config.AgentDefData) AgentProfileRuntimeAgentDa
 
 func expandRuntimeAgentView(agent AgentProfileRuntimeAgentData) config.AgentDefData {
 	return config.AgentDefData{
+		Kind: agent.Kind, Executor: agent.Executor, FlowOnly: agent.FlowOnly, ToolPackages: append([]string(nil), agent.ToolPackages...), LegacyUnresolvedPackages: append([]string(nil), agent.LegacyUnresolvedPackages...),
 		DisplayName: strings.TrimSpace(agent.DisplayName),
 		Description: strings.TrimSpace(agent.Description),
 		IsMain:      agent.IsMain,
@@ -290,6 +311,7 @@ func expandRuntimeAgentView(agent AgentProfileRuntimeAgentData) config.AgentDefD
 
 func clonePlanAgentView(agent config.PlanAgentDefData) AgentProfilePlanAgentData {
 	return AgentProfilePlanAgentData{
+		Kind: agent.Kind, ToolPackages: append([]string{}, agent.ToolPackages...), LegacyUnresolvedPackages: append([]string(nil), agent.LegacyUnresolvedPackages...),
 		DisplayName: strings.TrimSpace(agent.DisplayName),
 		IsMain:      agent.IsMain,
 		Mode:        strings.TrimSpace(agent.Mode),
@@ -307,6 +329,7 @@ func expandPlanAgentView(agent AgentProfilePlanAgentData) config.PlanAgentDefDat
 		mode = config.PlanToolStrategyReadonlyPlus
 	}
 	return config.PlanAgentDefData{
+		Kind: agent.Kind, ToolPackages: append([]string(nil), agent.ToolPackages...), LegacyUnresolvedPackages: append([]string(nil), agent.LegacyUnresolvedPackages...),
 		DisplayName: strings.TrimSpace(agent.DisplayName),
 		IsMain:      agent.IsMain,
 		Mode:        mode,
@@ -331,4 +354,11 @@ func clonePromptMap(prompts map[string]string) map[string]string {
 		result[trimmedKey] = value
 	}
 	return result
+}
+
+func cloneProfileFlows(value *config.FlowConfig) *config.FlowConfig {
+	if value == nil {
+		return nil
+	}
+	return &config.FlowConfig{Enabled: append([]string{}, value.Enabled...)}
 }

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: browser_call_tool
-  display_name: 操作浏览器
+  keywords: ["浏览器页面", "操作浏览器页面", "网页取数", "浏览器", "网络下载"]
+  display_name: "操作浏览器页面"
   domain: browser-data-acquisition
   runtime: internal
 spec:

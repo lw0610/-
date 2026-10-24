@@ -99,8 +99,8 @@ func TestExpandPathWithHomePrefix(t *testing.T) {
 		t.Fatalf("os.UserHomeDir failed: %v", err)
 	}
 
-	got := expandPath("~/.autocarto/config/agent_configs")
-	want := filepath.Join(home, ".autocarto", "config", "agent_configs")
+	got := expandPath("~/.autocarto/config/example")
+	want := filepath.Join(home, ".autocarto", "config", "example")
 	if got != want {
 		t.Fatalf("expandPath home prefix mismatch, got %q want %q", got, want)
 	}
@@ -163,7 +163,7 @@ func TestExpandPathWithExecutableSupportsTauriBinariesLayout(t *testing.T) {
 }
 
 func TestExpandPathWithExecutableFallsBackToWorkingDirectoryParents(t *testing.T) {
-	root := t.TempDir()
+	root := physicalPath(t, t.TempDir())
 	workspaceDir := filepath.Join(root, "workspace")
 	workDir := filepath.Join(workspaceDir, "carto_agent")
 	tempExecModuleDir := filepath.Join(root, "go-build", "tmp", "autocarto", "core", "tool_engine")

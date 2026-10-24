@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_add_legend
-  display_name: layout_add_legend
+  keywords: ["版面图例", "添加版面图例", "打印版面", "地图排版", "版面元素"]
+  display_name: "添加版面图例"
   runtime: qgis
   domain: print-layout
 spec:

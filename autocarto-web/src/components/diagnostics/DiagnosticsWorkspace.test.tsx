@@ -23,6 +23,7 @@ type DiagnosticsSettingsState = {
 
 type DiagnosticsRuntimeState = {
   snapshot: {
+    runtime_paths?: { runtime_home: string; data_dir: string; log_file: string; warnings: { code: string; message: string }[] }
     runtime_revision: string
     tool_schema_revision: string
     tool_availability_revision: string
@@ -266,6 +267,24 @@ describe('DiagnosticsWorkspace', () => {
     settingsState.refreshTools.mockResolvedValue(undefined)
     settingsState.refreshSkills.mockResolvedValue(undefined)
     runtimeState.fetchSnapshot.mockResolvedValue(undefined)
+  })
+
+  it('shows actual runtime paths and an outside-directory warning without changing settings', async () => {
+    const configBefore = JSON.stringify(settingsState.config)
+    runtimeState.snapshot.runtime_paths = {
+      runtime_home: '/tmp/isolated-runtime', data_dir: '/tmp/old-project/data',
+      log_file: '/tmp/old-project/data/logs/agent.log',
+      warnings: [{ code: 'DATA_DIR_OUTSIDE_RUNTIME_HOME', message: '数据目录位于运行目录之外，请检查配置。' }],
+    }
+    const view = render(<DiagnosticsWorkspace />)
+    expect(screen.getByText('/tmp/isolated-runtime')).toBeInTheDocument()
+    expect(screen.getByText('/tmp/old-project/data/logs/agent.log')).toBeInTheDocument()
+    expect(screen.getByText('运行目录提示')).toBeInTheDocument()
+    expect(JSON.stringify(settingsState.config)).toBe(configBefore)
+    runtimeState.snapshot.runtime_paths.warnings = []
+    view.rerender(<DiagnosticsWorkspace />)
+    expect(screen.queryByText('运行目录提示')).not.toBeInTheDocument()
+    await waitFor(() => expect(runtimeState.fetchSnapshot).toHaveBeenCalled())
   })
 
   it('刷新时直接请求 global 工具目录', async () => {

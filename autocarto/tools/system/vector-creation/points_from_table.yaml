@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: points_from_table
-  display_name: 从表格创建点
+  keywords: ["按表格坐标创建点", "矢量生成", "点线面", "空间网格"]
+  display_name: "按表格坐标创建点"
   domain: vector-creation
   runtime: qgis
 spec:

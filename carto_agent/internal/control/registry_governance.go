@@ -125,10 +125,6 @@ func (g *RegistryGovernance) LoadSkillRegistry() (*skill.Registry, error) {
 	return registry, nil
 }
 
-func (g *RegistryGovernance) ResolveWorkflowPackage(packageName string) (skill.SkillPackage, bool, error) {
-	return g.ResolveSkillPackage(packageName)
-}
-
 func (g *RegistryGovernance) ResolveSkillPackage(packageName string) (skill.SkillPackage, bool, error) {
 	registry, err := g.LoadSkillRegistry()
 	if err != nil {

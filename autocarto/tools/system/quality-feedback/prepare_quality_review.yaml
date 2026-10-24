@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: prepare_quality_review
+  keywords: ["地图质量初审", "准备地图质量初审", "地图质检", "视觉审查", "质量反馈"]
   display_name: 准备地图质量初审
   domain: quality-feedback
   runtime: cli
@@ -12,6 +13,7 @@ spec:
     建立 original/final 质量反馈清单并预留独立终稿路径，
     再将 original 作为真实多模态图片输入返回给当前质量反馈智能体。
     图片 DPI、页面尺寸、布局名、真实元素 ID 和位置均由程序读取；
+    review_context.legal_anchors 保留版式锚点，元素位于其锚点位置是版式规定，不是问题；
     不允许智能体手工重建。本工具不生成图片、不调用 Image 2，也不需要额外 API Key。
   parameters:
     - name: original_image_path

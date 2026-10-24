@@ -1,6 +1,6 @@
 ---
 name: agent-management
-description: 管理智能体方案与技能包分配。
+description: 管理智能体方案与工具包分配。
 kind: category
 runtime: internal
 tools:
@@ -10,6 +10,6 @@ tools:
   - assign_skill_packages
 ---
 
-管理智能体方案与技能包分配。
+管理智能体方案与工具包分配。
 
 通过内部工具管理配置与定义。

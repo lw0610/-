@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: set_m_value
-  display_name: 设置M值
+  keywords: ["几何测量值", "配置几何测量值", "几何处理", "空间叠加", "几何修复"]
+  display_name: "设置几何测量值"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: M_VALUE
     type: number
-    description: M值
+    description: "几何测量值（单位由输入数据的测量含义决定）"
     default: 0.0
   - name: OUTPUT
     type: output_layer

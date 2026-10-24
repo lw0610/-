@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_save_style
-  display_name: layer_save_style
+  keywords: ["图层样式", "保存图层样式", "符号样式", "地图标注", "图层渲染"]
+  display_name: "保存图层样式"
   runtime: qgis
   domain: cartography
 spec:
@@ -11,7 +12,7 @@ spec:
   - name: layer
     type: string
     required: true
-    description: 图层名称
+    description: 图层名称或 ID；名称重复时须使用 ID
   - name: path
     type: string
     required: true

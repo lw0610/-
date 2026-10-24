@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: add_xy_fields
-  display_name: 添加X/Y字段到图层
+  keywords: ["平面坐标字段", "添加平面坐标字段", "属性字段", "字段计算", "属性连接"]
+  display_name: "添加平面坐标字段"
   domain: vector-fields
   runtime: qgis
 spec:

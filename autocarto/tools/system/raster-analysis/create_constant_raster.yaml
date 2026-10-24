@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: create_constant_raster
-  display_name: 创建固定值栅格图层
+  keywords: ["常量栅格", "生成常量栅格", "栅格分析", "地形分析", "空间插值"]
+  display_name: "创建常量栅格"
   domain: raster-analysis
   runtime: qgis
 spec:
@@ -19,12 +20,12 @@ spec:
   - name: PIXEL_SIZE
     type: number
     required: true
-    description: 像素大小
+    description: "像素大小（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: NUMBER
     type: number
     required: true
-    description: 固定值
+    description: "栅格固定数值（数值单位由数据含义决定）"
     default: 1
   - name: OUTPUT
     type: output_raster

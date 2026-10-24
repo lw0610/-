@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_legend_style
-  display_name: layout_set_legend_style
+  keywords: ["图例样式", "配置图例样式", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置图例样式"
   runtime: qgis
   domain: print-layout
 spec:
@@ -33,7 +34,7 @@ spec:
     description: 图例正文字号(mm)
   - name: content_margin
     type: number
-    description: 图例内容边距
+    description: "图例内容边距（毫米，非负）"
   - name: background_enabled
     type: boolean
     description: 是否启用背景
@@ -45,7 +46,7 @@ spec:
     description: 边框颜色
   - name: frame_width
     type: number
-    description: 边框宽度
+    description: "边框线宽（毫米，非负）"
   - name: symbol_size
     type: number
     description: 图例符号尺寸(mm)
@@ -54,9 +55,18 @@ spec:
     items:
       type: string
     description: 图例显示图层ID或唯一名称数组；按此顺序重建图例，可恢复先前隐藏的图层。省略时保留当前图层，空数组清空。
-  - name: include_military_arrow
+  - name: legend_symbols
+    type: resource
+    resource_type: symbols
+    description: 额外图例使用的符号资源名称、编号或目录
+  - name: unlock_font
     type: boolean
-    description: 是否追加行军图军标箭头示意项，默认false；仅行军专题图需要时显式设为true
+    required: false
+    description: 本次调用是否明确允许修改版式锁定的字号；默认不允许，其他文字样式仍可修改
+  - name: legend_extra_items
+    type: array
+    required: false
+    description: 额外示意条目数组，每项含 label、symbol_type 或 image_path、可选 size_mm；symbol_type 从 legend_symbols 选择；图片支持 SVG、PNG、JPEG，路径按项目根解析；空数组清空额外条目，省略保留通用条目
 execution:
   handler: handlers.layout_advanced.set_legend_style_handler
   param_mapping:
@@ -74,4 +84,6 @@ execution:
     frame_width: '{{ frame_width }}'
     symbol_size: '{{ symbol_size }}'
     legend_layers: '{{ legend_layers }}'
-    include_military_arrow: '{{ include_military_arrow }}'
+    legend_symbols: '{{ legend_symbols }}'
+    unlock_font: '{{ unlock_font }}'
+    legend_extra_items: '{{ legend_extra_items }}'

@@ -31,7 +31,7 @@ class CalloutTextLayoutTestCase(unittest.TestCase):
             / "tools"
             / "system"
             / "_shared"
-            / "cartography_style_impl.py"
+            / "callouts_impl.py"
         )
         tree = ast.parse(implementation.read_text(encoding="utf-8"))
         callout_function = next(

@@ -1,0 +1,8 @@
+apiVersion: resource/v1
+id: layout.statistical
+type: layout
+name: 统计专题版式
+version: 1.0.0
+entry: 统计专题版式.layout.yaml
+source:
+  author: AutoCarto

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: selection_by_attribute
-  display_name: selection_by_attribute
+  keywords: ["按属性选择要素", "要素筛选", "条件选择", "要素提取"]
+  display_name: "按属性选择要素"
   domain: vector-selection
   runtime: qgis
 spec:

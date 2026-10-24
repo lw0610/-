@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: heatmap
-  display_name: 热力图
+  keywords: ["核密度热力图", "分析核密度热力图", "栅格分析", "地形分析", "空间插值"]
+  display_name: "计算核密度热力图"
   domain: raster-analysis
   runtime: qgis
 spec:
@@ -15,10 +16,10 @@ spec:
   - name: RADIUS
     type: number
     required: true
-    description: 搜索半径
+    description: "搜索半径（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
   - name: PIXEL_SIZE
     type: number
-    description: 像素大小
+    description: "像素大小（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.1
   - name: OUTPUT
     type: output_raster

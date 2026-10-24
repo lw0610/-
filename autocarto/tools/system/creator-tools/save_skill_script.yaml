@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: save_skill_script
+  display_name: "保存技能脚本"
+  keywords: ["技能脚本", "保存技能脚本", "方案配置", "工具管理", "技能创建"]
   domain: creator-tools
   runtime: internal
 spec:
@@ -9,12 +11,15 @@ spec:
   parameters:
   - name: package_id
     type: string
+    description: "目标技能包编号"
     required: true
   - name: script_path
     type: string
+    description: "相对于技能包目录的脚本路径"
     required: true
   - name: content
     type: string
+    description: "写入脚本文件的完整文本"
     required: true
 execution:
   backend_tool: save_skill_script

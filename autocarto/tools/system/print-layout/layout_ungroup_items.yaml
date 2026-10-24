@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_ungroup_items
-  display_name: layout_ungroup_items
+  keywords: ["元素组合", "取消元素组合", "打印版面", "地图排版", "版面元素"]
+  display_name: "取消元素组合"
   runtime: qgis
   domain: print-layout
 spec:

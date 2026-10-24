@@ -1,0 +1,53 @@
+version: '2.0'
+meta:
+  default_execution_mode: build
+runtime:
+  shared_tool_packages: [vector-selection]
+  agents:
+    orchestrator:
+      display_name: 编排智能体
+      kind: agent
+      is_main: true
+      enabled: true
+      tool_packages: []
+      prompts: {}
+    knowledge_engineer:
+      display_name: 制图知识抽取专家
+      kind: executor
+      executor: route_knowledge
+      flow_only: true
+      enabled: true
+      tool_packages: []
+      prompts: {}
+    data_engineer:
+      display_name: 数据工程专家
+      kind: agent
+      enabled: true
+      tool_packages: [data-loading, data-conversion, file-operations, crs-projection, geocoding, gps-data, statistical-data-tools, admin-boundaries, browser-data-acquisition, gee-remote-sensing, vector-fields]
+      prompts: {}
+    spatial_analyst:
+      display_name: 空间分析专家
+      kind: agent
+      enabled: true
+      tool_packages: [vector-geometry, vector-creation, raster-analysis, gdal-processing, grass-analysis, spatial-analysis, network-analysis, visibility-analysis, mesh-analysis, gee-remote-sensing, admin-boundaries]
+      prompts: {}
+    cartographer:
+      display_name: 制图布局专家
+      kind: agent
+      enabled: true
+      tool_packages: [cartography-styling, route-cartography, print-layout, canvas-navigation, charts]
+      prompts: {}
+    quality_feedback:
+      display_name: 质量反馈智能体
+      kind: agent
+      enabled: true
+      tool_packages: [quality-feedback]
+      prompts: {}
+    scripting_specialist:
+      display_name: 脚本与高级数据专家
+      kind: agent
+      enabled: true
+      tool_packages: [pyqgis-scripting, point-cloud, gps-data, gee-remote-sensing, admin-boundaries, browser-data-acquisition, mesh-analysis]
+      prompts: {}
+flows:
+  enabled: [marching-route, statistical-choropleth, traffic-route, data-to-map]

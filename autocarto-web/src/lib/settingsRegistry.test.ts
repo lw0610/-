@@ -5,6 +5,7 @@ import {
   getSettingsTask,
   normalizeSettingsWorkspaceMetadata,
   searchSettingDescriptors,
+  type SettingDescriptor,
 } from "./settingsRegistry";
 
 test("getSettingsTask handles empty array properly", () => {
@@ -79,7 +80,7 @@ test("normalizeSettingsWorkspaceMetadata preserves read-only mutability when imp
 });
 
 test("search results rank and filter correctly", () => {
-  const descriptors = [
+  const descriptors: SettingDescriptor[] = [
     {
       id: 'system-log-dir',
       task: 'system',
@@ -88,6 +89,8 @@ test("search results rank and filter correctly", () => {
       label: '日志目录',
       description: '设置日志输出',
       priority: 10,
+      impact: 'instant',
+      mutability: 'editable',
     },
     {
       id: 'system-about',
@@ -97,8 +100,10 @@ test("search results rank and filter correctly", () => {
       label: '应用信息',
       description: '查看版本',
       priority: 5,
+      impact: 'read_only',
+      mutability: 'read_only',
     }
-  ] as Record<string, unknown>[];
+  ];
 
   const logResults = searchSettingDescriptors("日志", descriptors);
   expect(logResults.length).toBeGreaterThan(0);

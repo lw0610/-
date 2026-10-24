@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: extract_binary
+  keywords: ["二进制字段", "提取二进制字段", "属性字段", "字段计算", "属性连接"]
   display_name: 提取二进制字段
   domain: vector-fields
   runtime: qgis

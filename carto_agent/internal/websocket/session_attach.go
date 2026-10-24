@@ -1,7 +1,9 @@
 package websocket
 
 import (
+	"context"
 	"fmt"
+	"github.com/autocarto/carto_agent/internal/flowrun"
 	"math"
 	"strings"
 
@@ -224,14 +226,25 @@ func (s *DeepServer) nextSessionRunEventSequence(sessionID string) uint64 {
 	if sid == "" {
 		return 0
 	}
-
+	s.eventSequenceMu.Lock()
+	defer s.eventSequenceMu.Unlock()
+	run, ok := s.flowContext(sid)
+	path := ""
+	if ok {
+		path, _ = sequencePath(sid, run.ProjectPath)
+	}
 	s.mu.Lock()
-	defer s.mu.Unlock()
 	if s.sessionRunEventSeq == nil {
-		s.sessionRunEventSeq = make(map[string]uint64)
+		s.sessionRunEventSeq = map[string]uint64{}
 	}
 	next := s.sessionRunEventSeq[sid] + 1
 	s.sessionRunEventSeq[sid] = next
+	s.mu.Unlock()
+	if path != "" {
+		if err := writeEventSequence(path, next); err != nil {
+			logger.Warn("保存事件序号失败: session_id=%s err=%v", sid, err)
+		}
+	}
 	return next
 }
 
@@ -342,6 +355,9 @@ func (s *DeepServer) buildSessionAttachmentBundle(sessionID string, lastSeenSeq 
 		boundProjectPath = strings.TrimSpace(s.sessionRuntimeProjectionSnapshot(sid, nil).RuntimeState.BoundProjectPath)
 	}
 	if sessionData, err := s.LoadSession(sid, boundProjectPath); err == nil {
+		if state, ok := sessionData["flow_run"].(*flowrun.RunState); ok && state != nil && state.Status == "waiting_user" {
+			_, _ = s.restoreFlowPending(context.Background(), sid, boundProjectPath, state.ID)
+		}
 		payload := buildAttachedSessionStatePayload(sessionData)
 		if snapshotEvent, ok := buildRunEventMessage(Message{Type: MsgTypeSessionState, SessionID: sid, Data: payload}); ok {
 			bundle.Messages = append(bundle.Messages, snapshotEvent)
@@ -375,9 +391,7 @@ func (s *DeepServer) buildSessionAttachmentBundle(sessionID string, lastSeenSeq 
 				if interruptEvent, ok := buildRunEventMessage(Message{
 					Type:      MsgTypeInterruptRequest,
 					SessionID: sid,
-					Data: map[string]any{
-						"checkpoint_id": pending.CheckpointID,
-					},
+					Data:      pendingInterruptPayload(pending),
 				}); ok {
 					bundle.Messages = append(bundle.Messages, interruptEvent)
 				}

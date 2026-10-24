@@ -2,6 +2,8 @@ package compute
 
 type ToolDefinition struct {
 	Name              string                 `json:"name"`
+	DisplayName       string                 `json:"display_name,omitempty"`
+	Keywords          []string               `json:"keywords,omitempty"`
 	Description       string                 `json:"description"`
 	Category          string                 `json:"category"`
 	InputSchema       map[string]interface{} `json:"inputSchema"`

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: service_area_from_point
-  display_name: 服务区(从点)
+  keywords: ["按单点计算服务区", "路径分析", "最短路径", "服务范围"]
+  display_name: "按单点计算服务区"
   domain: network-analysis
   runtime: qgis
 spec:
@@ -19,7 +20,7 @@ spec:
   - name: TRAVEL_COST
     type: number
     required: true
-    description: 行程成本
+    description: "距离成本阈值（默认最短路策略；单位由网络坐标系及工程测量设置决定）"
   - name: OUTPUT
     type: output_layer
     description: 输出图层

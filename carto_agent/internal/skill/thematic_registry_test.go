@@ -12,7 +12,7 @@ func TestThematicWorkflowToolsReachRuntimeCatalog(t *testing.T) {
 		t.Fatal(err)
 	}
 	registry := NewRegistry(toolRegistry)
-	if err := registry.LoadDirectories(repoPluginSkillPackagesPath(t), repoSkillPackagesPath(t)); err != nil {
+	if err := registry.LoadDirectories(repoPluginSkillPackagesPath(t)); err != nil {
 		t.Fatal(err)
 	}
 	items, err := BuildCatalogItemsFromRegistry(registry)
@@ -37,13 +37,13 @@ func TestThematicWorkflowToolsReachRuntimeCatalog(t *testing.T) {
 			}
 		}
 	}
-	workflow, ok := registry.GetPackage("thematic-map-styling")
-	if !ok || len(workflow.RequiresTools) == 0 {
-		t.Fatal("thematic workflow must declare its actual renderer verification dependencies")
+	pkg, ok := registry.GetPackage("cartography-styling")
+	if !ok || pkg.Kind != SkillPackageKindCategory || pkg.MarkdownBody == "" {
+		t.Fatal("styling methods must belong to their actual tool package")
 	}
-	for _, name := range workflow.RequiresTools {
+	for _, name := range pkg.ToolRefs {
 		if !catalog[name] {
-			t.Fatalf("thematic workflow requires inaccessible tool %s", name)
+			t.Fatalf("styling package references inaccessible tool %s", name)
 		}
 	}
 }

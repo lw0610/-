@@ -83,7 +83,9 @@ def _get_transformed_vector_extent(
             skipped_features += 1
             continue
 
-        if geometry_extent.isEmpty():
+        # A point feature has a zero-area rectangle but still contributes to
+        # the extent of a point layer. Reject non-finite bounds, not points.
+        if not geometry_extent.isFinite():
             continue
         if transformed_extent is None:
             transformed_extent = QgsRectangle(geometry_extent)
@@ -826,6 +828,67 @@ def add_north_arrow_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         return {"success": False, "output": "", "info": f"添加指北针失败: {str(e)}"}
     
 
+def _item_container_error(layout, item, container_id, candidate=None):
+    from autocarto.tools.system._shared.print_layout_advanced_impl import _item_rect
+    if not container_id:
+        return None
+    container = layout.itemById(str(container_id)) if container_id != "page" else None
+    if container_id != "page" and container is None:
+        return {"success": False, "output": "", "info": f"未找到容器元素：{container_id}"}
+    if container is item:
+        return {"success": False, "output": "", "info": "容器不能是目标元素自身"}
+    page_index = max(0, container.page() if container is not None else item.page())
+    page = layout.pageCollection().page(page_index)
+    if page is None:
+        return {"success": False, "output": "", "info": "未找到目标元素所在页面"}
+    rect = candidate if candidate is not None else _item_rect(item)
+    violations = {}
+    for name, boundary in (("page", _item_rect(page)), ("container", _item_rect(container) if container is not None else None)):
+        if boundary is None:
+            continue
+        edges = []
+        if rect["x"] < boundary["x"]-0.001: edges.append("left")
+        if rect["y"] < boundary["y"]-0.001: edges.append("top")
+        if rect["x"]+rect["width"] > boundary["x"]+boundary["width"]+0.001: edges.append("right")
+        if rect["y"]+rect["height"] > boundary["y"]+boundary["height"]+0.001: edges.append("bottom")
+        if edges:
+            violations[name] = edges
+    if violations:
+        edges = sorted({edge for values in violations.values() for edge in values})
+        return {"success": False, "output": "", "info": "目标元素超出容器或页面边界："+"、".join(edges),
+                "data": {"overflow_edges": edges, "violations": violations, "target_rect_mm": rect}}
+    return None
+
+
+def get_item_corners_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    from autocarto.tools.system._shared.print_layout_advanced_impl import _get_layout_item, _item_rect
+    layout, item, error = _get_layout_item(params.get("layout"), params.get("item_id") or "main_map")
+    if error:
+        return error
+    rect = _item_rect(item)
+    x, y, width, height = (rect[key] for key in ("x", "y", "width", "height"))
+    return {"success": True, "output": item.id(), "info": "已读取元素毫米边界和角点。",
+            "data": {"item_id": item.id(), "rect_mm": rect, "corners": {
+                "top_left": {"x": x, "y": y}, "top_right": {"x": x+width, "y": y},
+                "bottom_left": {"x": x, "y": y+height}, "bottom_right": {"x": x+width, "y": y+height}}}}
+
+
+def set_map_scale_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    from autocarto.tools.system._shared.print_layout_advanced_impl import _get_layout_item, _item_properties
+    layout, item, error = _get_layout_item(params.get("layout"), params.get("item_id") or "main_map", QgsLayoutItemMap)
+    if error:
+        return error
+    try:
+        scale = float(params.get("scale"))
+        if isinstance(params.get("scale"), bool) or not math.isfinite(scale) or scale <= 0:
+            raise ValueError("比例尺分母必须是有限正数")
+        item.setScale(scale)
+        item.refresh()
+        return {"success": True, "output": item.id(), "info": "已设置地图框比例尺。", "data": _item_properties(item)}
+    except (TypeError, ValueError) as exc:
+        return {"success": False, "output": "", "info": f"设置比例尺失败：{exc}"}
+
+
 def move_item_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     try:
         layout_name = params.get("layout")
@@ -853,7 +916,15 @@ def move_item_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": f"错误：未找到元素 '{item_id}'",
             }
 
+        x, y = float(x), float(y)
+        if not math.isfinite(x) or not math.isfinite(y):
+            raise ValueError("目标坐标必须是有限数值")
+        old_position = item.positionWithUnits()
         item.attemptMove(QgsLayoutPoint(x, y, QgsUnitTypes.LayoutMillimeters))
+        violation = _item_container_error(layout, item, params.get("container_item_id"))
+        if violation:
+            item.attemptMove(old_position)
+            return violation
         return {
             "success": True,
             "output": item_id,
@@ -1403,9 +1474,19 @@ def resize_item_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": f"错误：未找到元素 '{item_id}'",
             }
 
+        width, height = float(width), float(height)
+        if not math.isfinite(width) or not math.isfinite(height) or width <= 0 or height <= 0:
+            raise ValueError("目标宽高必须是有限正数")
+        old_position, old_size = item.positionWithUnits(), item.sizeWithUnits()
         item.attemptResize(QgsLayoutSize(width, height, QgsUnitTypes.LayoutMillimeters))
+        violation = _item_container_error(layout, item, params.get("container_item_id"))
+        if violation:
+            item.attemptResize(old_size)
+            item.attemptMove(old_position)
+            return violation
         QgsApplication.processEvents()
-        actual_rect = get_item_rect_mm(item)
+        from autocarto.tools.system._shared.print_layout_advanced_impl import _item_rect
+        actual_rect = _item_rect(item)
         size_matched = (
             abs(float(actual_rect["width"]) - float(width)) <= 0.1
             and abs(float(actual_rect["height"]) - float(height)) <= 0.1
@@ -1983,6 +2064,8 @@ def _wrap_main_thread(handler):
 
 
 remove_item_handler = _wrap_main_thread(remove_item_handler)
+get_item_corners_handler = _wrap_main_thread(get_item_corners_handler)
+set_map_scale_handler = _wrap_main_thread(set_map_scale_handler)
 move_item_handler = _wrap_main_thread(move_item_handler)
 resize_item_handler = _wrap_main_thread(resize_item_handler)
 lock_item_handler = _wrap_main_thread(lock_item_handler)

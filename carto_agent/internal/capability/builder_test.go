@@ -3,6 +3,8 @@ package capability
 import (
 	"os"
 	"path/filepath"
+	"reflect"
+	"runtime"
 	"sort"
 	"strings"
 	"testing"
@@ -18,6 +20,95 @@ import (
 	"github.com/autocarto/carto_agent/internal/toolcatalog"
 	"github.com/autocarto/carto_agent/internal/toolrouter"
 )
+
+func TestBuiltinToolBindingsFollowCategoryOwnership(t *testing.T) {
+	_, file, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("cannot locate repository fixtures")
+	}
+	assets := filepath.Join(filepath.Dir(file), "..", "..", "..", "autocarto")
+	tools := toolpkg.NewRegistry()
+	if err := tools.LoadDirectories(filepath.Join(assets, "tools", "system")); err != nil {
+		t.Fatal(err)
+	}
+	registry := skill.NewRegistry(tools)
+	if err := registry.LoadDirectories(filepath.Join(assets, "skills", "system")); err != nil {
+		t.Fatal(err)
+	}
+	details := map[string]settings.SkillPackageDetail{}
+	for _, pkg := range registry.Packages() {
+		details[buildPackageKey(settings.SkillPackageScopeBuiltin, "", pkg.Name)] = settings.SkillPackageDetail{
+			SkillPackageSummary: settings.SkillPackageSummary{PackageID: pkg.Name, Name: pkg.Name, Kind: pkg.Kind, System: pkg.System, Hidden: pkg.Hidden, Scope: settings.SkillPackageScopeBuiltin, Enabled: pkg.Enabled},
+			ToolRefs:            pkg.ToolRefs,
+		}
+	}
+	snapshot, err := BuildSnapshot(BuildInput{Registry: registry, PackageDetails: details})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := map[string]string{"bar_chart": "charts", "rasterize_mesh_dataset": "mesh-analysis", "merge_vector_layers": "vector-geometry", "route_draw": "route-cartography", "route_points_build": "route-cartography", "import_layout_template": "print-layout", "export_print_layout": "print-layout"}
+	if _, exists := snapshot.Tools["cartography_build_and_draw_from_tables"]; exists {
+		t.Fatal("retired combined tool remains in capability catalog")
+	}
+	for tool, packageID := range want {
+		if got := snapshot.Tools[tool].Package.PackageID; got != packageID {
+			t.Fatalf("%s package=%q want=%q", tool, got, packageID)
+		}
+	}
+}
+
+func TestToolDiscoveryMetadataReachesCapabilityCatalog(t *testing.T) {
+	root := t.TempDir()
+	toolDir := filepath.Join(root, "tools")
+	skillDir := filepath.Join(root, "skills")
+	writeTestSkillFile(t, filepath.Join(toolDir, "sample.yaml"), `apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: sample
+  display_name: 创建要素缓冲区
+  keywords: [缓冲, 邻近分析]
+  domain: vector
+  runtime: qgis
+spec:
+  description: 按距离生成缓冲区
+execution:
+  backend_tool: native:buffer
+`)
+	writeTestSkillFile(t, filepath.Join(skillDir, "analysis", "SKILL.md"), "---\nname: analysis\ndescription: sample\nkind: category\ntools: [sample]\n---\n")
+	tools := toolpkg.NewRegistry()
+	if err := tools.LoadDirectories(toolDir); err != nil {
+		t.Fatal(err)
+	}
+	registry := skill.NewRegistry(tools)
+	if err := registry.LoadDirectories(skillDir); err != nil {
+		t.Fatal(err)
+	}
+	snapshot, err := BuildSnapshot(BuildInput{Registry: registry})
+	if err != nil {
+		t.Fatal(err)
+	}
+	runtimeItems := snapshot.AsRuntimeCatalogItems()
+	publicItems := snapshot.ProjectToolCatalog(nil, ToolCatalogConfigured)
+	want := []string{"缓冲", "邻近分析"}
+	if len(runtimeItems) != 1 || len(publicItems) != 1 || runtimeItems[0].DisplayName != "创建要素缓冲区" || publicItems[0].DisplayName != "创建要素缓冲区" || !reflect.DeepEqual(runtimeItems[0].Keywords, want) || !reflect.DeepEqual(publicItems[0].Keywords, want) {
+		t.Fatalf("YAML-to-catalog discovery metadata lost: runtime=%#v public=%#v", runtimeItems, publicItems)
+	}
+	publicItems[0].Keywords[0] = "changed"
+	if snapshot.Tools["sample"].Keywords[0] != "缓冲" {
+		t.Fatal("public projection changed the capability snapshot")
+	}
+}
+
+func TestToolPackageBindingUsesFormalCategoryOwnership(t *testing.T) {
+	packages := map[string]PackageCapability{
+		"a-method": {Key: "a-method", PackageID: "a-method", Kind: "workflow", ToolNames: []string{"sample"}, Scope: settings.SkillPackageScopeGlobal},
+		"legacy":   {Key: "legacy", PackageID: "legacy", Kind: "category", Hidden: true, ToolNames: []string{"sample"}, Scope: settings.SkillPackageScopeGlobal},
+		"formal":   {Key: "formal", PackageID: "formal", Kind: "category", ToolNames: []string{"sample"}, Scope: settings.SkillPackageScopeGlobal},
+	}
+	if got := resolveToolPackageBinding("sample", packages, "default").Package.PackageID; got != "formal" {
+		t.Fatalf("expected visible category ownership, got %q", got)
+	}
+}
 
 func TestBuildSnapshotReturnsEmptySnapshotForEmptyInput(t *testing.T) {
 	snapshot, err := BuildSnapshot(BuildInput{})
@@ -163,11 +254,11 @@ func TestBuildSnapshotPrefersExclusivePackageBindingForSameToolName(t *testing.T
 		Registry:         registry,
 		PackageDetails: map[string]settings.SkillPackageDetail{
 			buildPackageKey(settings.SkillPackageScopeGlobal, "", "analysis-global"): {
-				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-global", Name: "analysis-global", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
+				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-global", Name: "analysis-global", Kind: "category", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
 				ToolRefs:            []string{"buffer"},
 			},
 			buildPackageKey(settings.SkillPackageScopeExclusive, "default", "analysis-exclusive"): {
-				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-exclusive", Name: "analysis-exclusive", Scope: settings.SkillPackageScopeExclusive, OwnerConfig: "default", Enabled: true},
+				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-exclusive", Name: "analysis-exclusive", Kind: "category", Scope: settings.SkillPackageScopeExclusive, OwnerConfig: "default", Enabled: true},
 				ToolRefs:            []string{"buffer"},
 			},
 		},
@@ -195,11 +286,11 @@ func TestBuildSnapshotUsesDeterministicBindingForSamePriorityPackages(t *testing
 		}}},
 		PackageDetails: map[string]settings.SkillPackageDetail{
 			buildPackageKey(settings.SkillPackageScopeGlobal, "", "analysis-zeta"): {
-				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-zeta", Name: "analysis-zeta", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
+				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-zeta", Name: "analysis-zeta", Kind: "category", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
 				ToolRefs:            []string{"buffer"},
 			},
 			buildPackageKey(settings.SkillPackageScopeGlobal, "", "analysis-alpha"): {
-				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-alpha", Name: "analysis-alpha", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
+				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-alpha", Name: "analysis-alpha", Kind: "category", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
 				ToolRefs:            []string{"buffer"},
 			},
 		},
@@ -282,7 +373,7 @@ func TestBuildSnapshotIgnoresEmbeddedToolsWithoutToolRefs(t *testing.T) {
 		Registry: registry,
 		PackageDetails: map[string]settings.SkillPackageDetail{
 			buildPackageKey(settings.SkillPackageScopeGlobal, "", "analysis-global"): {
-				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-global", Name: "analysis-global", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
+				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-global", Name: "analysis-global", Kind: "category", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
 				Tools:               []skill.SkillDefinition{{Metadata: skill.SkillMetadata{Name: "buffer", Backend: skill.RuntimeIDCLI}}},
 			},
 		},
@@ -588,7 +679,7 @@ func TestBuildSnapshotBuildsAgentCapabilityViewsFromRuntimeConfig(t *testing.T) 
 		}},
 		PackageDetails: map[string]settings.SkillPackageDetail{
 			buildPackageKey(settings.SkillPackageScopeGlobal, "", "analysis-global"): {
-				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-global", Name: "analysis-global", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
+				SkillPackageSummary: settings.SkillPackageSummary{PackageID: "analysis-global", Name: "analysis-global", Kind: "category", Scope: settings.SkillPackageScopeGlobal, Enabled: true},
 				ToolRefs:            []string{"buffer"},
 			},
 			buildPackageKey(settings.SkillPackageScopeExclusive, "default", "exclusive-tools"): {

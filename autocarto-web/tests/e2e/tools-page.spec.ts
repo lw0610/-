@@ -1,4 +1,7 @@
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
+import { DEFAULT_DESKTOP_RUNTIME_PORT, mockDesktopRuntime } from './helpers/desktopRuntime'
+
+const backendBaseURL = `http://127.0.0.1:${DEFAULT_DESKTOP_RUNTIME_PORT}`
 
 async function bodyText(page: Page) {
   return page.locator('body').innerText()
@@ -9,46 +12,7 @@ async function waitForBodyState(page: Page, pattern: RegExp, timeout = 15000) {
   return bodyText(page)
 }
 
-async function isExplicitApiFailure(page: Page) {
-  const body = await bodyText(page)
-  return body.includes('API Error 404') || body.includes('File not found')
-}
-
-async function mockDesktopRuntime(page: Page, port = 3000) {
-  await page.addInitScript((runtimePort) => {
-    const runtime = window as Window & {
-      __TAURI_INTERNALS__?: {
-        invoke?: (cmd: string, args?: unknown) => Promise<unknown>
-      }
-      __TAURI__?: Record<string, unknown>
-    }
-
-    const existingInvoke = runtime.__TAURI_INTERNALS__?.invoke
-
-    runtime.__TAURI_INTERNALS__ = {
-      ...(runtime.__TAURI_INTERNALS__ || {}),
-      invoke: async (cmd: string, args?: unknown) => {
-        if (cmd === 'get_backend_runtime') {
-          return {
-            port: runtimePort,
-            backend_url: `http://127.0.0.1:${runtimePort}`,
-            ws_url: `ws://127.0.0.1:${runtimePort}/ws`,
-            startup_error: '',
-          }
-        }
-        if (existingInvoke) {
-          return existingInvoke(cmd, args)
-        }
-        throw new Error(`unexpected tauri invoke: ${cmd}`)
-      },
-    }
-    runtime.__TAURI__ = {
-      ...(runtime.__TAURI__ || {}),
-    }
-  }, port)
-}
-
-async function getPackageEnabledState(request: any, packageId: string, scope?: string, configName?: string) {
+async function getPackageEnabledState(request: APIRequestContext, packageId: string, scope?: string, configName?: string) {
   const search = new URLSearchParams()
   if (scope) {
     search.set('scope', scope)
@@ -57,14 +21,14 @@ async function getPackageEnabledState(request: any, packageId: string, scope?: s
     search.set('config_name', configName)
   }
   const query = search.size > 0 ? `?${search.toString()}` : ''
-  const response = await request.get(`http://127.0.0.1:3000/api/skill-packages/${packageId}${query}`)
+  const response = await request.get(`${backendBaseURL}/api/skill-packages/${packageId}${query}`)
   expect(response.ok()).toBeTruthy()
   const payload = await response.json()
   expect(payload.success).toBeTruthy()
   return Boolean(payload.data?.enabled)
 }
 
-async function setPackageEnabledState(request: any, packageId: string, enabled: boolean, scope?: string, configName?: string) {
+async function setPackageEnabledState(request: APIRequestContext, packageId: string, enabled: boolean, scope?: string, configName?: string) {
   const search = new URLSearchParams()
   if (scope) {
     search.set('scope', scope)
@@ -73,7 +37,7 @@ async function setPackageEnabledState(request: any, packageId: string, enabled: 
     search.set('config_name', configName)
   }
   const query = search.size > 0 ? `?${search.toString()}` : ''
-  const response = await request.post(`http://127.0.0.1:3000/api/skill-packages/${packageId}/toggle${query}`, {
+  const response = await request.post(`${backendBaseURL}/api/skill-packages/${packageId}/toggle${query}`, {
     data: { enabled },
   })
   expect(response.ok()).toBeTruthy()
@@ -83,7 +47,7 @@ async function setPackageEnabledState(request: any, packageId: string, enabled: 
 
 async function readPackageSummaryCount(page: Page) {
   const body = await page.locator('body').innerText()
-  const summaryMatch = body.match(/技能包\s*(\d+)\s*个/)
+  const summaryMatch = body.match(/工具包\s*(\d+)\s*个/)
   return Number(summaryMatch?.[1] ?? '0')
 }
 
@@ -107,19 +71,14 @@ test('tool center renders package catalog from running backend', async ({ page }
   test.setTimeout(90_000)
   await mockDesktopRuntime(page)
   await page.goto('/tool-center.html', { waitUntil: 'networkidle' })
-  await waitForBodyState(page, /工具中心|API Error 404|File not found/, 20000)
-  if (await isExplicitApiFailure(page)) {
-    await expect(page.locator('body')).toContainText(/API Error 404|File not found/)
-    return
-  }
+  await waitForBodyState(page, /工具中心/, 20000)
   await expect(page.locator('#tool-center-list')).toContainText('工具中心')
-  await expect(page.locator('#tool-center-list')).toContainText('技能包目录')
+  await expect(page.locator('#tool-center-list')).toContainText('工具包目录')
 
   await ensurePackageCatalogReady(page)
 
-  const body = await page.locator('body').innerText()
-  expect(body.includes('分类包') || body.includes('流程包') || body.includes('知识包')).toBeTruthy()
-  const firstPackageButton = page.locator('#tool-center-list button').filter({ hasText: /分类包|流程包|知识包/ }).first()
+  await expect(page.locator('#tool-center-list')).not.toContainText(/分类包|流程包|知识包/)
+  const firstPackageButton = page.locator('#tool-center-list button').filter({ hasText: 'canvas-navigation' }).first()
   await expect(firstPackageButton).toBeVisible()
   await firstPackageButton.click()
   await expect(page.locator('#tool-center-detail-drawer')).toBeVisible()
@@ -130,11 +89,7 @@ test('tool center supports filters, detail tabs, and toggle feedback', async ({ 
   test.setTimeout(90_000)
   await mockDesktopRuntime(page)
   await page.goto('/tool-center.html', { waitUntil: 'networkidle' })
-  await waitForBodyState(page, /工具中心|API Error 404|File not found/, 20000)
-  if (await isExplicitApiFailure(page)) {
-    await expect(page.locator('body')).toContainText(/API Error 404|File not found/)
-    return
-  }
+  await waitForBodyState(page, /工具中心/, 20000)
   await ensurePackageCatalogReady(page)
   const list = page.locator('#tool-center-list')
   const drawer = page.locator('#tool-center-detail-drawer')
@@ -147,52 +102,57 @@ test('tool center supports filters, detail tabs, and toggle feedback', async ({ 
       .filter({ hasText: new RegExp(packageId) })
       .filter({ hasText: /内置/ })
       .first()
-  await list.getByPlaceholder('搜索技能包...').fill(packageId)
-  await list.locator('select').nth(0).selectOption(packageScope)
-  await list.locator('select').nth(1).selectOption('category')
-  const sourceOptions = await list.locator('select').nth(3).evaluate((node) =>
+  await list.getByPlaceholder('搜索工具包...').fill(packageId)
+  await list.getByRole('combobox', { name: '工具包范围' }).selectOption(packageScope)
+  const sourceFilter = list.getByRole('combobox', { name: '工具来源' })
+  const sourceOptions = await sourceFilter.evaluate((node) =>
     Array.from((node as HTMLSelectElement).options).map((option) => option.value),
   )
-  expect(sourceOptions.length).toBeGreaterThan(0)
-  expect(sourceOptions).toContain(packageId)
-  await list.locator('select').nth(3).selectOption(packageId)
+  expect(sourceOptions).toContain('all')
+  const specificSource = sourceOptions.find((source) => source !== 'all')
+  expect(specificSource).toBeTruthy()
+  await sourceFilter.selectOption(specificSource!)
+  await expect(sourceFilter).toHaveValue(specificSource!)
+  await sourceFilter.selectOption('all')
   await expect(list).toContainText(packageId)
   await builtinCanvasButton().click()
   await expect(drawer).toBeVisible()
   await expect(detail).toContainText(packageId)
-  await detail.getByRole('button', { name: '工具' }).click()
+  await detail.getByRole('button', { name: '工具清单', exact: true }).click()
   await expect(detail).toContainText('canvas_zoom_to_extent')
-  await detail.getByRole('button', { name: 'Markdown' }).click()
+  await detail.getByRole('button', { name: '使用说明', exact: true }).click()
   await expect(detail).toContainText('画布缩放')
   await drawer.getByRole('button', { name: '关闭' }).click()
   await expect(drawer).not.toBeVisible()
-  await list.locator('select').nth(0).selectOption(packageScope)
-  await list.locator('select').nth(1).selectOption('all')
-  await list.locator('select').nth(2).selectOption('all')
-  await list.locator('select').nth(3).selectOption('all')
-  await list.locator('select').nth(4).selectOption('all')
-  await list.getByPlaceholder('搜索技能包...').fill('accessibility-service-area')
-  await list.getByRole('button', { name: /accessibility-service-area/ }).click()
+  await list.getByRole('combobox', { name: '工具后端' }).selectOption('all')
+  await list.getByRole('combobox', { name: '工具来源' }).selectOption('all')
+  await list.getByRole('combobox', { name: '启用状态' }).selectOption('all')
+  await list.getByPlaceholder('搜索工具包...').fill('vector-selection')
+  await list.getByRole('button', { name: /vector-selection/ }).click()
   await expect(drawer).toBeVisible()
-  await detail.locator('button').filter({ hasText: /^引用$/ }).first().click()
-  await expect(detail).toContainText('层级：')
-  await expect(detail).toContainText('来源：')
+  await detail.getByRole('button', { name: '参考资料', exact: true }).click()
+  await expect(detail).toContainText('references/')
+  await detail.getByRole('button', { name: '引用情况', exact: true }).click()
+  await expect(detail).toContainText(/层级：|当前无引用/)
   await drawer.getByRole('button', { name: '关闭' }).click()
   await expect(drawer).not.toBeVisible()
-  await list.getByPlaceholder('搜索技能包...').fill(packageId)
+  await list.getByPlaceholder('搜索工具包...').fill(packageId)
   await builtinCanvasButton().click()
   await expect(drawer).toBeVisible()
   const originalEnabled = await getPackageEnabledState(request, packageId, packageScope)
-  const firstToggleLabel = originalEnabled ? '停用技能包' : '启用技能包'
-  const secondToggleLabel = originalEnabled ? '启用技能包' : '停用技能包'
-  await drawer.getByRole('button', { name: firstToggleLabel }).click()
-  await expect.poll(async () => getPackageEnabledState(request, packageId, packageScope)).toBe(!originalEnabled)
-  await drawer.getByRole('button', { name: '关闭', exact: true }).click()
-  await expect(drawer).not.toBeVisible()
-  await builtinCanvasButton().click()
-  await expect(drawer).toBeVisible()
-  await expect(drawer.getByRole('button', { name: '处理中...' })).not.toBeVisible({ timeout: 15000 })
-  await expect(drawer.getByRole('button', { name: secondToggleLabel })).toBeVisible({ timeout: 30000 })
-  await setPackageEnabledState(request, packageId, originalEnabled, packageScope)
-  await expect.poll(async () => getPackageEnabledState(request, packageId, packageScope)).toBe(originalEnabled)
+  try {
+    const firstToggleLabel = originalEnabled ? '停用工具包' : '启用工具包'
+    const secondToggleLabel = originalEnabled ? '启用工具包' : '停用工具包'
+    await drawer.getByRole('button', { name: firstToggleLabel }).click()
+    await expect.poll(async () => getPackageEnabledState(request, packageId, packageScope)).toBe(!originalEnabled)
+    await drawer.getByRole('button', { name: '关闭', exact: true }).click()
+    await expect(drawer).not.toBeVisible()
+    await builtinCanvasButton().click()
+    await expect(drawer).toBeVisible()
+    await expect(drawer.getByRole('button', { name: '处理中...' })).not.toBeVisible({ timeout: 15000 })
+    await expect(drawer.getByRole('button', { name: secondToggleLabel })).toBeVisible({ timeout: 30000 })
+  } finally {
+    await setPackageEnabledState(request, packageId, originalEnabled, packageScope)
+    await expect.poll(async () => getPackageEnabledState(request, packageId, packageScope)).toBe(originalEnabled)
+  }
 })

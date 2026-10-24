@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_get_item_corners
-  display_name: layout_get_item_corners
+  keywords: ["元素角点坐标", "查询元素角点坐标", "打印版面", "地图排版", "版面元素"]
+  display_name: "读取元素角点坐标"
   runtime: qgis
   domain: print-layout
 spec:

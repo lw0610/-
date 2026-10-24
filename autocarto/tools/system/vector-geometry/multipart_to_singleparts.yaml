@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: multipart_to_singleparts
-  display_name: 多部件转单部件
+  keywords: ["多部件要素", "拆分多部件要素", "几何处理", "空间叠加", "几何修复"]
+  display_name: "拆分多部件要素"
   domain: vector-geometry
   runtime: qgis
 spec:

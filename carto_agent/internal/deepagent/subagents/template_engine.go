@@ -253,7 +253,7 @@ func (e *TemplateEngine) collectSubAgents(
 	var agents []SubAgentInfo
 
 	for agentName, agentConfig := range e.runtimeConfig.Agents {
-		if agentConfig.IsMain || agentName == "orchestrator" || !agentConfig.Enabled {
+		if agentConfig.IsMain || agentName == "orchestrator" || !agentConfig.Enabled || agentConfig.FlowOnly {
 			continue
 		}
 

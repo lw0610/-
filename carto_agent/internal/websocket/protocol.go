@@ -27,6 +27,8 @@ const (
 	MsgTypeTaskCancel     = "cancel"
 	MsgTypeTaskRetry      = "task_retry"
 	MsgTypeTaskAck        = "task_ack"
+	MsgTypeFlowEvent      = "flow_event"
+	MsgTypeFlowCompile    = "flow_compile"
 	MsgTypeRunEvent       = "run_event"        // 统一运行事件
 	MsgTypeTaskListUpdate = "task_list_update" // 任务列表更新
 	MsgTypeAgentWorkflow  = "agent_workflow"   // 智能体工作流事件
@@ -146,6 +148,8 @@ type Message struct {
 
 // PendingInterrupt 待确认的中断状态
 type PendingInterrupt struct {
+	FlowOptions     consumeEventsOptions
+	InterruptData   map[string]any
 	CheckpointID    string
 	Runner          *adk.Runner
 	Contexts        []*adk.InterruptCtx

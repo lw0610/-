@@ -1,0 +1,96 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:47dd26669523918a5208892e9f437e7edd4bc24186fac4db0460fb17f073e9aa",
+  "entries": [
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "途经点",
+      "event_types": [],
+      "exists": true,
+      "format": "svg",
+      "kind": "symbol",
+      "name": "waypoint",
+      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/waypoint.svg",
+      "priority": 10,
+      "size": 2.8,
+      "symbol_type": "waypoint"
+    },
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "起点",
+      "event_types": [
+        "departure"
+      ],
+      "exists": true,
+      "format": "svg",
+      "kind": "symbol",
+      "name": "start_flag",
+      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/start_flag.svg",
+      "priority": 100,
+      "size": 6.5,
+      "symbol_type": "start_flag"
+    },
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "战斗",
+      "event_types": [
+        "battle"
+      ],
+      "exists": true,
+      "format": "svg",
+      "kind": "symbol",
+      "name": "battle",
+      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/battle.svg",
+      "priority": 90,
+      "size": 5.5,
+      "symbol_type": "battle"
+    },
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "会议",
+      "event_types": [
+        "meeting"
+      ],
+      "exists": true,
+      "format": "svg",
+      "kind": "symbol",
+      "name": "meeting",
+      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/meeting.svg",
+      "priority": 80,
+      "size": 5.2,
+      "symbol_type": "meeting"
+    },
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "会师",
+      "event_types": [
+        "rendezvous"
+      ],
+      "exists": true,
+      "format": "svg",
+      "kind": "symbol",
+      "name": "rendezvous",
+      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/rendezvous.svg",
+      "priority": 100,
+      "size": 5.2,
+      "symbol_type": "rendezvous"
+    }
+  ],
+  "entry": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/对照表.csv",
+  "format": "",
+  "id": "symbols.military",
+  "name": "军标",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标",
+  "total_entries": 5,
+  "truncated": false,
+  "type": "symbols",
+  "version": "1.0.0",
+  "warnings": []
+}

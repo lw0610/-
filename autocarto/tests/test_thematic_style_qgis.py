@@ -32,8 +32,9 @@ class ThematicStyleQgisTestCase(unittest.TestCase):
         cls.profile = tempfile.TemporaryDirectory(prefix="autocarto-thematic-test-")
         cls.application = QgsApplication([], False, cls.profile.name)
         cls.application.initQgis()
-        from autocarto.tools.system._shared import cartography_style_impl
-        cls.handlers = cartography_style_impl
+        from autocarto.tools.system._shared import style_thematic_impl, style_basic_impl
+        cls.handlers = style_thematic_impl
+        cls.basic = style_basic_impl
 
     @classmethod
     def tearDownClass(cls):
@@ -110,7 +111,7 @@ class ThematicStyleQgisTestCase(unittest.TestCase):
                 self.assertEqual(data["ranges"][-1]["upper"], max(values))
                 self.assertEqual(data["ranges"][0]["color"], "#ffffffcc")
                 self.assertEqual(data["ranges"][-1]["color"], "#ff800026")
-                verified = self.handlers.get_style_info_handler({"layer": layer.name()})
+                verified = self.basic.get_style_info_handler({"layer": layer.name()})
                 self.assertTrue(verified["success"], verified)
                 self.assertEqual(verified["data"]["ranges"], data["ranges"])
                 self.assertEqual(verified["data"]["renderer_field"], "value")

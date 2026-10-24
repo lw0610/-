@@ -1,0 +1,22 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:ba22a9f74910cd81ebf72c9edfbb2bbbf1e1afe5c4cbb5bb1942a8bdc30017cc",
+  "entries": [],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/layouts/模板.qpt",
+  "format": "qpt",
+  "id": "legacy.layout.c8f2ce3a90",
+  "name": "模板",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/layouts/模板.qpt",
+  "total_entries": 0,
+  "truncated": false,
+  "type": "layout",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { AgentConfigData } from "@/lib/api";
+import { AgentConfigData, toolPackageSelections } from "@/lib/api";
 import { ActionButton } from "@/components/settings/ActionBar";
 import StatusBadge from "@/components/settings/StatusBadge";
 import RuntimeAgentCard from "./RuntimeAgentCard";
@@ -68,7 +68,7 @@ export default function RuntimeConfigPanel({
           <StatusBadge>Runtime 智能体 {sortedRuntimeAgents.length}</StatusBadge>
           <StatusBadge tone="success">启用 {enabledAgents}</StatusBadge>
           <StatusBadge tone="accent">主控 {mainAgents}</StatusBadge>
-          <StatusBadge>技能 {skillBindings}</StatusBadge>
+          <StatusBadge>工具包 {skillBindings}</StatusBadge>
         </div>
         <ActionButton onClick={onCreateAgent} disabled={saving}>
           新建 Runtime 智能体
@@ -85,6 +85,7 @@ export default function RuntimeConfigPanel({
               key={agentName}
               agentName={agentName}
               agent={agent}
+              shared={toolPackageSelections(runtimeConfig.shared)}
               saving={saving}
               onEdit={() => onEditAgent(agentName)}
               onToggle={() => {

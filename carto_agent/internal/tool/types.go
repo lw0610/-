@@ -44,6 +44,7 @@ type ToolDefinition struct {
 type ToolMetadata struct {
 	Name        string   `yaml:"name" json:"name"`
 	DisplayName string   `yaml:"display_name,omitempty" json:"display_name,omitempty"`
+	Keywords    []string `yaml:"keywords,omitempty" json:"keywords,omitempty"`
 	Domain      string   `yaml:"domain,omitempty" json:"domain,omitempty"`
 	Version     string   `yaml:"version,omitempty" json:"version,omitempty"`
 	Runtime     string   `yaml:"runtime,omitempty" json:"runtime,omitempty"`
@@ -66,13 +67,15 @@ type ToolSpec struct {
 }
 
 type ToolParameter struct {
-	Name        string `yaml:"name" json:"name"`
-	Type        string `yaml:"type" json:"type"`
-	Required    bool   `yaml:"required,omitempty" json:"required,omitempty"`
-	Description string `yaml:"description,omitempty" json:"description,omitempty"`
-	Default     any    `yaml:"default,omitempty" json:"default,omitempty"`
-	Values      []any  `yaml:"values,omitempty" json:"values,omitempty"`
-	Enum        []any  `yaml:"enum,omitempty" json:"enum,omitempty"`
+	Name            string `yaml:"name" json:"name"`
+	Type            string `yaml:"type" json:"type"`
+	ResourceType    string `yaml:"resource_type,omitempty" json:"resource_type,omitempty"`
+	DefaultResource string `yaml:"default_resource,omitempty" json:"default_resource,omitempty"`
+	Required        bool   `yaml:"required,omitempty" json:"required,omitempty"`
+	Description     string `yaml:"description,omitempty" json:"description,omitempty"`
+	Default         any    `yaml:"default,omitempty" json:"default,omitempty"`
+	Values          []any  `yaml:"values,omitempty" json:"values,omitempty"`
+	Enum            []any  `yaml:"enum,omitempty" json:"enum,omitempty"`
 }
 
 type ToolExample struct {
@@ -179,6 +182,7 @@ func (d *ToolDefinition) normalize() {
 	d.Kind = ToolKind(strings.TrimSpace(string(d.Kind)))
 	d.Metadata.Name = strings.TrimSpace(d.Metadata.Name)
 	d.Metadata.DisplayName = strings.TrimSpace(d.Metadata.DisplayName)
+	d.Metadata.Keywords = normalizeStringSlice(d.Metadata.Keywords)
 	d.Metadata.Domain = strings.TrimSpace(d.Metadata.Domain)
 	d.Metadata.Version = strings.TrimSpace(d.Metadata.Version)
 	d.Metadata.Runtime = NormalizeRuntime(d.Metadata.Runtime)
@@ -294,6 +298,7 @@ func (d *ToolDefinition) normalize() {
 
 func (d ToolDefinition) Clone() ToolDefinition {
 	cloned := d
+	cloned.Metadata.Keywords = append([]string(nil), d.Metadata.Keywords...)
 	cloned.Metadata.InstanceIDs = append([]string(nil), d.Metadata.InstanceIDs...)
 	cloned.Metadata.Tags = append([]string(nil), d.Metadata.Tags...)
 	if len(d.Spec.Preconditions) > 0 {
@@ -425,6 +430,9 @@ func (d ToolDefinition) Validate() error {
 		}
 		if param.Type == "" {
 			problems = append(problems, fieldPrefix+".type is required")
+		}
+		if err := ValidateResourceParameter(param.Type, param.ResourceType, param.DefaultResource); err != nil {
+			problems = append(problems, fieldPrefix+": "+err.Error())
 		}
 	}
 

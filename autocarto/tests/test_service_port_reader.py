@@ -29,10 +29,18 @@ class ServicePortReaderTestCase(unittest.TestCase):
         finally:
             shutil.rmtree(tmp_dir, ignore_errors=True)
 
-    def test_read_runtime_port_returns_none_without_runtime_home(self):
-        with mock.patch.dict(os.environ, {"AUTOCARTO_HOME": ""}, clear=False):
-            self.assertIsNone(service_port_reader.get_runtime_port_file_path())
-            self.assertIsNone(service_port_reader.read_runtime_port())
+    def test_read_runtime_port_uses_project_default_without_override(self):
+        tmp_dir = _make_workspace_temp_dir()
+        try:
+            with mock.patch.dict(os.environ, {"AUTOCARTO_HOME": "", "AUTOCARTO_PROJECT_ROOT": str(tmp_dir)}, clear=False):
+                port_file = tmp_dir / "autocarto_data" / "data" / ".port"
+                self.assertEqual(service_port_reader.get_runtime_port_file_path(), port_file)
+                self.assertIsNone(service_port_reader.read_runtime_port())
+                port_file.parent.mkdir(parents=True)
+                port_file.write_text("50323", encoding="utf-8")
+                self.assertEqual(service_port_reader.read_runtime_port(), 50323)
+        finally:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
 
     def test_read_runtime_port_returns_none_for_missing_or_invalid_file(self):
         tmp_dir = _make_workspace_temp_dir()

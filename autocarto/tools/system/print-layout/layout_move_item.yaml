@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_move_item
-  display_name: layout_move_item
+  keywords: ["版面元素", "移动版面元素", "打印版面", "地图排版"]
+  display_name: "移动版面元素"
   runtime: qgis
   domain: print-layout
 spec:
@@ -24,6 +25,10 @@ spec:
     type: number
     required: true
     description: 新Y坐标(mm)
+  - name: container_item_id
+    type: string
+    required: false
+    description: 可选容器真实编号，或 page 表示所在页面；提供时完整矩形必须同时位于容器和页面内，否则拒绝并返回越界边
 execution:
   handler: handlers.layout_items.move_item_handler
   param_mapping:
@@ -31,3 +36,4 @@ execution:
     item_id: '{{ item_id }}'
     x: '{{ x }}'
     y: '{{ y }}'
+    container_item_id: '{{ container_item_id }}'

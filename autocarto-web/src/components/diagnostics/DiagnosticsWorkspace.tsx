@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import WorkspaceShell from "@/components/layout/WorkspaceShell";
+import { normalizeKindLabel } from "@/components/tool-center/skill-package-utils";
 import ActionBar, { ActionButton } from "@/components/settings/ActionBar";
 import AlertPanel from "@/components/settings/AlertPanel";
 import DetailList from "@/components/settings/DetailList";
@@ -171,15 +172,16 @@ export default function DiagnosticsWorkspace() {
     {
       id: "diagnostics-resources",
       label: "配置资源",
-      hint: "Provider、方案、技能",
+      hint: "模型配置、方案与工具包",
     },
     { id: "diagnostics-paths", label: "路径信息", hint: "目录与连接地址" },
     { id: "diagnostics-tools", label: "工具目录", hint: "当前有效工具与可用性" },
   ];
 
   const pathItems = [
-    { label: "数据目录", value: config?.data_dir || "-", mono: true },
-    { label: "日志目录", value: config?.log?.dir || "-", mono: true },
+    { label: "运行根目录", value: runtimeSnapshot?.runtime_paths?.runtime_home || "-", mono: true },
+    { label: "实际数据目录", value: runtimeSnapshot?.runtime_paths?.data_dir || config?.data_dir || "-", mono: true },
+    { label: "当前日志文件", value: runtimeSnapshot?.runtime_paths?.log_file || "-", mono: true },
     {
       label: "Agent WS",
       value: buildAuthoritativeAgentWsUrl(runtimeSnapshot),
@@ -250,7 +252,7 @@ export default function DiagnosticsWorkspace() {
           {
             label: "配置资源",
             value: `${llmProviders?.providers?.length ?? 0} / ${agentConfigs.length}`,
-            hint: "Provider、方案、技能",
+            hint: "模型配置、方案与工具包",
             tone: "accent",
           },
           {
@@ -433,9 +435,12 @@ export default function DiagnosticsWorkspace() {
         <div id="diagnostics-paths" className="settings-anchor-target">
           <FormSection
             title="路径信息"
-            description="当前配置中的关键目录与连接地址。"
+            description="后端报告的实际目录、当前日志文件与连接地址。"
           >
             <DetailList items={pathItems} />
+            {runtimeSnapshot?.runtime_paths?.warnings?.map(warning => (
+              <AlertPanel key={warning.code} className="mt-2" tone="warning" title="运行目录提示" message={warning.message} />
+            ))}
           </FormSection>
         </div>
 
@@ -504,7 +509,7 @@ export default function DiagnosticsWorkspace() {
                         </span>
                       </span>
                       <span className="inline-flex items-center gap-1">
-                        <span>技能包</span>
+                        <span>工具包</span>
                         <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                           {item.package_id || "-"}
                         </span>
@@ -512,7 +517,7 @@ export default function DiagnosticsWorkspace() {
                       <span className="inline-flex items-center gap-1">
                         <span>包类型</span>
                         <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                          {item.kind || "-"}
+                          {item.kind ? normalizeKindLabel(item.kind) : "-"}
                         </span>
                       </span>
                       <span className="inline-flex items-center gap-1">

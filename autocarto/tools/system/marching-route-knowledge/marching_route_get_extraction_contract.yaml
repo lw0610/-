@@ -2,11 +2,12 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: marching_route_get_extraction_contract
-  display_name: marching_route_get_extraction_contract
+  keywords: ["路线抽取规范", "查询路线抽取规范", "路线知识", "图谱抽取", "数据集编译"]
+  display_name: "读取路线抽取规范"
   runtime: qgis
   domain: marching-route-knowledge
 spec:
-  description: 根据原始叙事返回行军路线任务知识图谱的完整 JSON Schema 和正式抽取提示；生成 knowledge_json 前必须先调用
+  description: "根据原始叙事返回路线知识图谱的完整 JSON Schema 和抽取规范。生成 knowledge_json 前先读取本工具返回的结构约束。"
   parameters:
   - name: source_text
     type: string

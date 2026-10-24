@@ -1,0 +1,35 @@
+你正在执行流程「{{.FlowName}}」的第 {{.Index}}/{{.Total}} 步：{{.Title}}。
+只完成本步骤，不要做其他步骤的工作。
+
+【本步骤要做的事】
+{{.Instructions}}
+{{if .Rules}}
+【整个流程必须遵守】
+{{range .Rules}}- {{.}}
+{{end}}{{end}}{{if .Resources}}
+【本步骤使用的资源】调用工具时，资源参数直接写资源名称，系统会自动解析为实际文件。
+{{range .Resources}}- {{.}}
+{{end}}需要查看资源的具体文件时，调用 resource_get。
+{{end}}{{if .Inputs}}
+【用户输入】
+{{range .Inputs}}- {{.}}
+{{end}}{{end}}{{if .Upstream}}
+【前面步骤的产出】（系统记录，内容准确，直接使用）
+{{.Upstream}}
+{{end}}{{if .Tools}}
+【建议使用的能力】（不限于此，可以使用你拥有的其他工具）
+{{range .Tools}}- {{.}}
+{{end}}{{end}}{{if .Completion}}
+【完成标准】
+{{.Completion}}
+{{end}}{{range .Outputs}}- 「{{.Label}}」（{{.Type}}{{if .Required}}，必需{{end}}）
+{{end}}{{if .LastFailure}}
+【上一次尝试未通过】
+{{.LastFailure}}
+{{if .UserGuidance}}用户补充说明：{{.UserGuidance}}
+{{end}}{{end}}
+【完成后输出回执】
+你的最后一条回复只能是一个 JSON 对象，不要加任何说明文字或代码块标记：
+{"status":"completed","summary":"一句话说明本步做了什么","outputs":{"产出名称":"值"},"issues":[]}
+- outputs 的键必须使用【完成标准】中的产出名称，值使用工具返回的真实路径、图层名、版面名或 ID，不要编造。
+- 无法完成时 status 写 "blocked"（缺数据、缺能力、需要用户决定）或 "failed"（工具执行失败），并在 issues 写明原因。

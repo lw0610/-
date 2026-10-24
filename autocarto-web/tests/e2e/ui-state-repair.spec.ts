@@ -1,4 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
+import { DEFAULT_DESKTOP_RUNTIME_PORT, mockDesktopRuntime } from './helpers/desktopRuntime'
+
+const backendBaseURL = `http://127.0.0.1:${DEFAULT_DESKTOP_RUNTIME_PORT}`
 
 async function bodyText(page: Page) {
   return page.locator('body').innerText()
@@ -66,44 +69,11 @@ async function disableRealtimeWebSocket(page: Page) {
   })
 }
 
-async function mockDesktopRuntime(page: Page, port = 3000) {
-  await page.addInitScript((runtimePort) => {
-    const win = window as Window & {
-      __TAURI_INTERNALS__?: {
-        invoke?: (cmd: string, args?: unknown) => Promise<unknown>
-      }
-      __TAURI__?: Record<string, unknown>
-    }
-
-    const existingInvoke = win.__TAURI_INTERNALS__?.invoke
-
-    win.__TAURI_INTERNALS__ = {
-      ...(win.__TAURI_INTERNALS__ || {}),
-      invoke: async (cmd: string, args?: unknown) => {
-        if (cmd === 'get_backend_runtime') {
-          return {
-            port: runtimePort,
-            backend_url: `http://127.0.0.1:${runtimePort}`,
-            ws_url: `ws://127.0.0.1:${runtimePort}/ws`,
-          }
-        }
-        if (existingInvoke) {
-          return existingInvoke(cmd, args)
-        }
-        throw new Error(`unexpected tauri invoke: ${cmd}`)
-      },
-    }
-    win.__TAURI__ = {
-      ...(win.__TAURI__ || {}),
-    }
-  }, port)
-}
-
 async function mockDesktopPickerRuntime(
   page: Page,
   responses: Record<string, unknown>,
 ) {
-  await page.addInitScript((runtimeResponses) => {
+  await page.addInitScript(({ runtimeResponses, runtimePort }) => {
     const win = window as Window & {
       __TAURI_INTERNALS__?: {
         invoke?: (cmd: string, args?: unknown) => Promise<unknown>
@@ -113,9 +83,9 @@ async function mockDesktopPickerRuntime(
 
     const runtime: Record<string, unknown> = {
       get_backend_runtime: {
-        port: 3000,
-        backend_url: 'http://127.0.0.1:3000',
-        ws_url: 'ws://127.0.0.1:3000/ws',
+        port: runtimePort,
+        backend_url: `http://127.0.0.1:${runtimePort}`,
+        ws_url: `ws://127.0.0.1:${runtimePort}/ws`,
       },
       ...runtimeResponses,
     }
@@ -134,12 +104,12 @@ async function mockDesktopPickerRuntime(
     win.__TAURI__ = {
       ...(win.__TAURI__ || {}),
     }
-  }, responses)
+  }, { runtimeResponses: responses, runtimePort: DEFAULT_DESKTOP_RUNTIME_PORT })
 }
 
-test('agents edit drawer is skill-first and no longer exposes legacy tool controls', async ({ page, request }) => {
+test('agents edit drawer is tool-package-first and no longer exposes legacy tool controls', async ({ page, request }) => {
   await mockDesktopRuntime(page)
-  const configPayload = await api<{ configs?: Array<{ config_name: string }> }>(request, 'GET', 'http://127.0.0.1:3000/api/agent-configs')
+  const configPayload = await api<{ configs?: Array<{ config_name: string }> }>(request, 'GET', `${backendBaseURL}/api/agent-configs`)
   const configName = configPayload.configs?.[0]?.config_name
   expect(configName).toBeTruthy()
 
@@ -153,10 +123,12 @@ test('agents edit drawer is skill-first and no longer exposes legacy tool contro
   await page.getByPlaceholder('搜索方案...').fill(String(configName))
   await expect(page.getByRole('button', { name: '编辑' }).first()).toBeVisible()
   await page.getByRole('button', { name: '编辑' }).first().click()
-  await page.getByRole('button', { name: '编辑' }).nth(2).click()
+  await page.getByRole('group', { name: /^角色 / }).first().getByRole('button', { name: '编辑' }).click()
 
-  await expect(page.getByText(/编辑 Runtime 智能体|编辑 Plan 智能体/)).toBeVisible()
-  await expect(page.getByText('智能体技能包')).toBeVisible()
+  const roleDrawer = page.getByRole('dialog', { name: /^编辑角色 / })
+  await expect(roleDrawer.getByLabel('角色类型')).toBeVisible()
+  await expect(roleDrawer.getByRole('textbox', { name: '搜索工具包' })).toBeVisible()
+  await expect(roleDrawer.getByRole('region', { name: '系统基础包' }).getByRole('checkbox').first()).toBeDisabled()
   await expect(page.getByText('专属直连工具（旧版）')).toHaveCount(0)
   await expect(page.getByText('共享直连工具（旧版）')).toHaveCount(0)
   await expect(page.getByText('展开工具列表')).toHaveCount(0)
@@ -399,7 +371,7 @@ test('chat restores historical session without duplicate user input and with tas
 
 test('agent edit drawer keeps model selection linked to configured models', async ({ page, request }) => {
   await mockDesktopRuntime(page)
-  const configPayload = await api<{ configs?: Array<{ config_name: string }> }>(request, 'GET', 'http://127.0.0.1:3000/api/agent-configs')
+  const configPayload = await api<{ configs?: Array<{ config_name: string }> }>(request, 'GET', `${backendBaseURL}/api/agent-configs`)
   const configName = configPayload.configs?.[0]?.config_name
   expect(configName).toBeTruthy()
 
@@ -411,9 +383,7 @@ test('agent edit drawer keeps model selection linked to configured models', asyn
   await expect(page.getByText(`编辑智能体方案 · ${configName}`)).toBeVisible({ timeout: 15000 })
 
   const modelSelect = page.getByLabel('独立模型（可选）')
-  const detailEditButtons = page.locator('#agent-config-detail').getByRole('button', { name: '编辑' })
-  expect(await detailEditButtons.count()).toBeGreaterThan(1)
-  await detailEditButtons.nth(1).click()
+  await page.getByRole('group', { name: /^角色 / }).first().getByRole('button', { name: '编辑' }).click()
   await expect(modelSelect).toBeVisible()
   const optionTexts = await modelSelect.evaluate((element) => {
     return Array.from((element as HTMLSelectElement).options).map((option) => option.textContent?.trim() || '')
@@ -454,9 +424,9 @@ test('settings pages keep fixed directories read-only and only browse QGIS path'
   await expect(page.locator('body')).toContainText('服务状态')
 })
 
-test('agent create dialog is skill-first and model-linked', async ({ page, request }) => {
+test('agent create dialog is tool-package-first and model-linked', async ({ page, request }) => {
   await mockDesktopRuntime(page)
-  const configPayload = await api<{ configs?: Array<{ config_name: string }> }>(request, 'GET', 'http://127.0.0.1:3000/api/agent-configs')
+  const configPayload = await api<{ configs?: Array<{ config_name: string }> }>(request, 'GET', `${backendBaseURL}/api/agent-configs`)
   const configName = configPayload.configs?.[0]?.config_name
   expect(configName).toBeTruthy()
 
@@ -471,11 +441,13 @@ test('agent create dialog is skill-first and model-linked', async ({ page, reque
   await page.getByRole('button', { name: '编辑' }).first().click()
   await page.getByRole('button', { name: '新建 Runtime 智能体' }).click()
 
-  const modelSelect = page.getByLabel('独立模型（可选）')
-  await expect(page.getByText('新建 Runtime 智能体').nth(1)).toBeVisible()
+  const createDialog = page.getByRole('dialog', { name: '新建 Runtime 智能体', exact: true })
+  const modelSelect = createDialog.getByLabel('独立模型（可选）')
+  await expect(createDialog).toBeVisible()
   await expect(modelSelect).toBeVisible()
   await expect(modelSelect).toHaveValue('')
-  await expect(page.getByText('智能体技能包').first()).toBeVisible()
+  await expect(createDialog.getByLabel('角色类型')).toBeVisible()
+  await expect(createDialog.getByRole('textbox', { name: '搜索工具包' })).toBeVisible()
   await expect(page.getByText('专属工具（旧版）')).toHaveCount(0)
   await expect(page.getByText('共享工具（旧版）')).toHaveCount(0)
   await expect(page.getByText('展开旧版工具列表')).toHaveCount(0)

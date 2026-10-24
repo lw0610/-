@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: viewshed
-  display_name: 视域分析
+  keywords: ["观察点视域", "分析观察点视域", "可视域", "通视分析", "地形遮挡"]
+  display_name: "计算观察点视域"
   domain: visibility-analysis
   runtime: qgis
 spec:
@@ -18,19 +19,19 @@ spec:
       description: 观察点坐标
     - name: OBSERVER_HEIGHT
       type: number
-      description: 观察者高度
+      description: "观察者高度（与输入地形高程的垂直单位一致）"
       default: 1.0
     - name: TARGET_HEIGHT
       type: number
-      description: 目标高度
+      description: "目标高度（与输入地形高程的垂直单位一致）"
       default: 1.0
     - name: MAX_DISTANCE
       type: number
-      description: 最大分析距离
+      description: "最大分析距离（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
       default: 100.0
     - name: BAND
       type: integer
-      description: 波段号
+      description: "波段号（从 1 开始的波段序号）"
       default: 1
     - name: OUTPUT
       type: output_raster

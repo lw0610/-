@@ -206,14 +206,7 @@ func TestReadCalloutWorkbookRejectsDecompressionLimit(t *testing.T) {
 func TestReadCalloutWorkbookActualExample(t *testing.T) {
 	source := os.Getenv("CALLOUT_XLSX_TEST_FILE")
 	if source == "" {
-		home, err := os.UserHomeDir()
-		if err != nil {
-			t.Skip("set CALLOUT_XLSX_TEST_FILE to test the original workbook")
-		}
-		source = filepath.Join(home, "Documents", "红二十五军图文标注.xlsx")
-		if _, err = os.Stat(source); os.IsNotExist(err) {
-			t.Skip("original workbook unavailable; synthetic fixtures cover the parser")
-		}
+		t.Skip("设置 CALLOUT_XLSX_TEST_FILE 后验证固定原始工作簿；合成夹具已覆盖读取器")
 	}
 	rows, warnings, err := readCalloutWorkbook(source)
 	if err != nil {

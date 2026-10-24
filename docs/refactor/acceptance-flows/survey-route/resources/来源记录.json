@@ -1,0 +1,21 @@
+{
+  "repository": "https://github.com/zzhonglei/GeoCode-Release",
+  "commit": "6e3534f7af3675b19bd3c5d54c94022959dccdd2",
+  "original": {
+    "upstream_path": "contributions/china-admin-boundaries/skill/data/china_province.geojson",
+    "local_path": "data/china_province.geojson",
+    "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/data/china_province.geojson",
+    "bytes": 1973055,
+    "sha256": "672b321924533dc2d4eb1429de322e3b612a5c9de860f518828a25e75ba6f262",
+    "git_blob_sha1": "5fa860bc533369e9509390038a9b46fceb123295",
+    "feature_count": 34,
+    "declared_crs": {
+      "type": "name",
+      "properties": {
+        "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+      }
+    }
+  },
+  "processing": "province-density复制完整原始文件；survey-route只按320000、330000、340000选择原始面，不修复、不转换、无坐标改写。",
+  "synthetic_data": "人口、面积和考察安排均为合成验收内容，不是实际统计或轨迹。"
+}

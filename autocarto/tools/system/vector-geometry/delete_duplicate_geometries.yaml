@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: delete_duplicate_geometries
-  display_name: 删除重复几何图形
+  keywords: ["重复几何", "删除重复几何", "几何处理", "空间叠加", "几何修复"]
+  display_name: "删除重复几何"
   domain: vector-geometry
   runtime: qgis
 spec:

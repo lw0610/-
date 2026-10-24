@@ -1,0 +1,45 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data",
+  "digest": "sha256:1b1a4c53b5cb30c8d7859ae10c485eb6e916ce53b3ae01d6a66c1eca16684d04",
+  "entries": [
+    {
+      "description": "",
+      "exists": true,
+      "kind": "vector",
+      "name": "测试面",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/图层/测试面.geojson",
+      "required": true,
+      "sidecars_missing": []
+    },
+    {
+      "description": "",
+      "exists": false,
+      "kind": "vector",
+      "name": "可选缺失",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/missing.geojson",
+      "required": false,
+      "sidecars_missing": []
+    }
+  ],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/可选数据.csv",
+  "format": "",
+  "id": "legacy.data_list.93a8f6bb71",
+  "name": "可选数据",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/可选数据.csv",
+  "total_entries": 2,
+  "truncated": false,
+  "type": "data_list",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    },
+    {
+      "code": "FLOW_DATA_FILE_MISSING",
+      "message": "数据“可选缺失”的文件不存在或不可读取：${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/missing.geojson"
+    }
+  ]
+}

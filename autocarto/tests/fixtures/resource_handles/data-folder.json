@@ -1,0 +1,30 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:e352947bd78cd9feafceeb5005fd968e4e6efe55b3858768c60b08731271805e",
+  "entries": [
+    {
+      "exists": true,
+      "kind": "vector",
+      "name": "测试面",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/图层/测试面.geojson",
+      "sidecars_missing": []
+    }
+  ],
+  "entry": "",
+  "format": "",
+  "id": "legacy.data_folder.ac5a4c5003",
+  "name": "图层",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/图层",
+  "total_entries": 1,
+  "truncated": false,
+  "type": "data_folder",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

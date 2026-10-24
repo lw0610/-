@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: extend_lines
-  display_name: 延伸线
+  keywords: ["线段端点", "延伸线段端点", "几何处理", "空间叠加", "几何修复"]
+  display_name: "延伸线段端点"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,11 +15,11 @@ spec:
     description: 输入图层
   - name: START_DISTANCE
     type: number
-    description: 起点延伸距离
+    description: "起点延伸距离（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.0
   - name: END_DISTANCE
     type: number
-    description: 终点延伸距离
+    description: "终点延伸距离（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.0
   - name: OUTPUT
     type: output_layer

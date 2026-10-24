@@ -31,7 +31,7 @@ func TestThematicSkillToolsReachDefaultCartographer(t *testing.T) {
 		"orchestrator": fixture.runtimeConfig.Agents["orchestrator"],
 		"cartographer": fixture.runtimeConfig.Agents["cartographer"],
 	}
-	path := filepath.Join(fixture.skillsRoot, "thematic-map-styling", "SKILL.md")
+	path := filepath.Join(fixture.skillsRoot, "cartography-styling", "SKILL.md")
 	body, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
@@ -127,7 +127,7 @@ func (m *thematicProbeModel) Generate(_ context.Context, input []*schema.Message
 			return nil, fmt.Errorf("cartographer missing required thematic tool %s", name)
 		}
 	}
-	if available["skill"] == nil || !strings.Contains(available["skill"].Desc, "thematic-map-styling") {
+	if available["skill"] == nil || !strings.Contains(available["skill"].Desc, "cartography-styling") {
 		return nil, fmt.Errorf("cartographer cannot discover its thematic workflow")
 	}
 	for _, message := range input {
@@ -149,7 +149,7 @@ func (m *thematicProbeModel) Generate(_ context.Context, input []*schema.Message
 		}
 	}
 	if !m.state.skillRead {
-		return geeProbeToolCall("thematic-skill", "skill", `{"skill":"thematic-map-styling"}`), nil
+		return geeProbeToolCall("thematic-skill", "skill", `{"skill":"cartography-styling"}`), nil
 	}
 	return geeProbeToolCall("thematic-style", "cartography_graduated_style", `{"layer":"population_layer","field":"population","classes":5,"method":"jenks","color_ramp":"YlOrRd"}`), nil
 }

@@ -8,12 +8,17 @@ tags:
 - vector
 - creation
 tools:
-  - create_grid
-  - points_from_table
-  - points_to_path
-  - random_points_in_extent
-  - random_points_in_polygons
-  - regular_points
+- create_grid
+- points_from_table
+- points_to_path
+- random_points_in_extent
+- random_points_in_polygons
+- regular_points
+display_name: 矢量生成
+domain: 矢量
+system: false
+hidden: false
+auto_mount: ''
 ---
 
 # 矢量生成工具集

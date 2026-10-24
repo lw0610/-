@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_export_svg
-  display_name: layout_export_svg
+  keywords: ["版面矢量图", "输出版面矢量图", "打印版面", "地图排版", "版面元素"]
+  display_name: "导出版面矢量图"
   runtime: qgis
   domain: print-layout
 spec:
@@ -17,7 +18,7 @@ spec:
     description: 输出路径
   - name: dpi
     type: number
-    description: 导出 DPI
+    description: "导出 DPI（像素/英寸，正数）"
   - name: export_as_layers
     type: boolean
     description: 按图层导出

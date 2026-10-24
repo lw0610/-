@@ -1,0 +1,23 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_save_template
+  display_name: 保存版式模板
+  domain: print-layout
+  runtime: qgis
+  keywords: [版式模板, 保存版面, 复用版式]
+spec:
+  description: 将当前工程的版面保存为 QPT 模板，保存副本的主地图 ID 为 main_map，工程保持原样
+  parameters:
+    - {name: layout, type: string, required: true, description: 工程中的版面名称}
+    - {name: path, type: string, required: true, description: 输出 .qpt 文件路径}
+    - {name: main_map_item, type: string, description: 主地图项的 ID 或 UUID；版面含多个地图项时必填}
+policy:
+  visibility: public
+  authorization_scopes: [tool.invoke]
+execution:
+  handler: handlers.layout.save_layout_template_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    path: '{{ path }}'
+    main_map_item: '{{ main_map_item }}'

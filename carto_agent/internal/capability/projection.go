@@ -24,6 +24,8 @@ func (s *CapabilitySnapshot) AsRuntimeCatalogItems() []middlewareclient.ToolCata
 		tool := s.Tools[name]
 		items = append(items, middlewareclient.ToolCatalogItem{
 			Name:              tool.Name,
+			DisplayName:       tool.DisplayName,
+			Keywords:          append([]string(nil), tool.Keywords...),
 			ProviderID:        tool.ProviderID,
 			RawName:           tool.RawName,
 			Description:       tool.Description,
@@ -65,6 +67,8 @@ func (s *CapabilitySnapshot) ProjectToolCatalog(configuredTools []string, mode T
 		enabled := tool.PackageEnabled
 		items = append(items, toolcatalog.Item{
 			Name:          tool.Name,
+			DisplayName:   tool.DisplayName,
+			Keywords:      append([]string(nil), tool.Keywords...),
 			Description:   tool.Description,
 			Category:      tool.Category,
 			Domain:        tool.Category,
@@ -101,13 +105,16 @@ func (s *CapabilitySnapshot) BuildCapabilityPayload(filterAgent, filterKeyword s
 				if description == "" {
 					description = strings.TrimSpace(baseToolDescs[tool.Name])
 				}
-				if keywordFilter != "" && !strings.Contains(strings.ToLower(tool.Name), keywordFilter) && !strings.Contains(strings.ToLower(description), keywordFilter) {
+				searchText := strings.Join([]string{tool.Name, tool.DisplayName, description, strings.Join(tool.Keywords, " ")}, " ")
+				if keywordFilter != "" && !strings.Contains(strings.ToLower(searchText), keywordFilter) {
 					continue
 				}
 				toolPayloads = append(toolPayloads, map[string]any{
-					"name":        tool.Name,
-					"description": description,
-					"package_id":  tool.Package.PackageID,
+					"name":         tool.Name,
+					"display_name": tool.DisplayName,
+					"keywords":     append([]string(nil), tool.Keywords...),
+					"description":  description,
+					"package_id":   tool.Package.PackageID,
 				})
 				totalTools[tool.Name] = struct{}{}
 			}

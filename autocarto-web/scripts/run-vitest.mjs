@@ -12,9 +12,18 @@ if (!existsSync(vitestCliPath)) {
   throw new Error(`Cannot find vitest CLI at ${vitestCliPath}. Run npm ci first.`)
 }
 
+// jsdom provides browser storage; Node's host storage must not replace it.
+const browserStorageIsolation = process.allowedNodeEnvironmentFlags.has('--no-experimental-webstorage')
+  ? ['--no-experimental-webstorage']
+  : []
+// Process workers replace execArgv, so propagate isolation through their env.
+const testEnvironment = { ...process.env }
+if (browserStorageIsolation.length) {
+  testEnvironment.NODE_OPTIONS = [process.env.NODE_OPTIONS, ...browserStorageIsolation].filter(Boolean).join(' ')
+}
 const result = spawnSync(process.execPath, [vitestCliPath, '--run', ...passthroughArgs], {
   stdio: 'inherit',
-  env: process.env,
+  env: testEnvironment,
 })
 
 if (typeof result.status === 'number') {

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_get_style_info
-  display_name: layer_get_style_info
+  keywords: ["图层样式", "查询图层样式", "符号样式", "地图标注", "图层渲染"]
+  display_name: "读取图层样式"
   runtime: qgis
   domain: cartography
 spec:

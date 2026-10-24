@@ -3,6 +3,7 @@ from .layout import (
     delete_layout_handler,
     duplicate_layout_handler,
     get_layout_info_handler,
+    import_layout_template_handler,
     list_layouts_handler,
     rename_layout_handler,
     set_page_size_handler,
@@ -29,6 +30,7 @@ from .layout_advanced import (
     ungroup_items_handler,
 )
 from .layout_export import export_print_layout_handler
+from .layout_compose import compose_layout_handler
 
 from .layout_items import (
     add_attribute_table_handler,
@@ -36,6 +38,8 @@ from .layout_items import (
     add_label_handler,
     add_legend_handler,
     add_map_item_handler,
+    get_item_corners_handler,
+    set_map_scale_handler,
     add_north_arrow_handler,
     add_overview_handler,
     add_picture_handler,
@@ -50,12 +54,14 @@ from .layout_items import (
 )
 
 __all__ = [
+    "compose_layout_handler",
     "create_layout_handler",
     "delete_layout_handler",
     "list_layouts_handler",
     "duplicate_layout_handler",
     "rename_layout_handler",
     "get_layout_info_handler",
+    "import_layout_template_handler",
     "set_page_size_handler",
     "add_map_item_handler",
     "add_decorative_border_handler",
@@ -65,6 +71,7 @@ __all__ = [
     "add_picture_handler",
     "add_shape_handler",
     "get_item_corners_handler",
+    "set_map_scale_handler",
     "remove_item_handler",
     "move_item_handler",
     "resize_item_handler",
@@ -94,5 +101,4 @@ __all__ = [
     "set_item_z_order_handler",
     "move_callout_handler",
     "export_print_layout_handler",
-    "add_file_overview_to_layout_handler",
 ]

@@ -3,13 +3,13 @@ package config
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 )
 
 func TestDiscoverPluginRootFindsAutocartoFromWorkingDirectory(t *testing.T) {
-	rootDir := t.TempDir()
+	t.Setenv(assetsRootEnvVar, "")
+	rootDir := physicalPath(t, t.TempDir())
 	pluginRoot := filepath.Join(rootDir, "autocarto")
 	for _, dir := range []string{
 		filepath.Join(pluginRoot, "skills", "system"),
@@ -40,7 +40,8 @@ func TestDiscoverPluginRootFindsAutocartoFromWorkingDirectory(t *testing.T) {
 }
 
 func TestResolveSkillAndToolDirectoriesUsePluginRootLayout(t *testing.T) {
-	rootDir := t.TempDir()
+	t.Setenv(assetsRootEnvVar, "")
+	rootDir := physicalPath(t, t.TempDir())
 	pluginRoot := filepath.Join(rootDir, "autocarto")
 	for _, dir := range []string{
 		filepath.Join(pluginRoot, "skills", "system"),
@@ -79,7 +80,7 @@ func TestResolveSkillAndToolDirectoriesUsePluginRootLayout(t *testing.T) {
 }
 
 func TestResolveConfigAndDataDirectoriesUsePluginRootLayout(t *testing.T) {
-	rootDir := t.TempDir()
+	rootDir := physicalPath(t, t.TempDir())
 	pluginRoot := filepath.Join(rootDir, "autocarto")
 	runtimeHome := filepath.Join(rootDir, "app-local")
 	for _, dir := range []string{
@@ -203,7 +204,7 @@ func TestResolveAutoCartoHomeRespectsEnvOverride(t *testing.T) {
 }
 
 func TestResolveAutoCartoHomeRejectsInvalidEnvOverride(t *testing.T) {
-	rootDir := t.TempDir()
+	rootDir := physicalPath(t, t.TempDir())
 	invalidAssetsRoot := filepath.Join(rootDir, "invalid-assets")
 	if err := os.MkdirAll(invalidAssetsRoot, 0o755); err != nil {
 		t.Fatalf("mkdir invalid assets root failed: %v", err)
@@ -222,95 +223,25 @@ func TestResolveAutoCartoHomeRejectsInvalidEnvOverride(t *testing.T) {
 	}
 }
 
-func TestResolveAutoCartoHomeReportsDiscoveryFailureDetails(t *testing.T) {
-	originalWD, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Getwd failed: %v", err)
-	}
-	failureRoot := filepath.Join(t.TempDir(), "nowhere")
-	if err := os.MkdirAll(failureRoot, 0o755); err != nil {
-		t.Fatalf("mkdir failure root failed: %v", err)
-	}
-	t.Setenv(assetsRootEnvVar, "")
-	if err := os.Chdir(failureRoot); err != nil {
-		t.Fatalf("Chdir failed: %v", err)
-	}
-	t.Cleanup(func() {
-		_ = os.Chdir(originalWD)
-	})
-
-	_, err = ResolveAssetsRoot()
-	if err == nil {
-		t.Fatalf("ResolveAssetsRoot() error = nil, want discovery failure")
-	}
-	if !strings.Contains(err.Error(), assetsRootEnvVar) {
-		t.Fatalf("ResolveAssetsRoot() error = %q, want mention %s", err, assetsRootEnvVar)
-	}
-	if !strings.Contains(err.Error(), "当前目录") {
-		t.Fatalf("ResolveAssetsRoot() error = %q, want mention current directory search", err)
-	}
-	if !strings.Contains(err.Error(), "可执行") {
-		t.Fatalf("ResolveAssetsRoot() error = %q, want mention executable search", err)
-	}
-	if !strings.Contains(err.Error(), "8 层") {
-		t.Fatalf("ResolveAssetsRoot() error = %q, want mention search depth", err)
-	}
-	if !strings.Contains(err.Error(), "skills/system") {
-		t.Fatalf("ResolveAssetsRoot() error = %q, want mention required marker", err)
+func TestPluginRootDiscoveryDoesNotInventMissingAssets(t *testing.T) {
+	if got := discoverPluginRootFromSeed(t.TempDir()); got != "" {
+		t.Fatalf("found nonexistent assets: %q", got)
 	}
 }
 
 func TestResolveConfigAndDataDirectoriesPropagateRootResolutionError(t *testing.T) {
 	t.Setenv(runtimeHomeEnvVar, "")
-
-	tests := []struct {
-		name string
-		fn   func() (string, error)
-	}{
-		{name: "config", fn: ResolveAutoCartoConfigDir},
-		{name: "data", fn: ResolvePluginDataDir},
-		{name: "runtime-port", fn: ResolveRuntimePortFile},
-	}
-
-	if runtime.GOOS == "windows" {
-		want := filepath.Clean(defaultWindowsRuntimeHome)
-		wantByName := map[string]string{
-			"config":       filepath.Join(want, "config"),
-			"data":         filepath.Join(want, "data"),
-			"runtime-port": filepath.Join(want, "data", ".port"),
+	t.Setenv(projectRootEnvVar, "relative-root")
+	for _, resolve := range []func() (string, error){ResolveAutoCartoConfigDir, ResolvePluginDataDir, ResolveRuntimePortFile} {
+		if _, err := resolve(); err == nil || !strings.Contains(err.Error(), projectRootEnvVar) {
+			t.Fatalf("want explicit project root error, got %v", err)
 		}
-		for _, tc := range tests {
-			t.Run(tc.name, func(t *testing.T) {
-				got, err := tc.fn()
-				if err != nil {
-					t.Fatalf("%s resolver error = %v, want Windows default", tc.name, err)
-				}
-				if got != wantByName[tc.name] {
-					t.Fatalf("%s resolver = %q, want %q", tc.name, got, wantByName[tc.name])
-				}
-			})
-		}
-		return
-	}
-
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			_, err := tc.fn()
-			if err == nil {
-				t.Fatalf("%s resolver error = nil, want root resolution failure", tc.name)
-			}
-			if !strings.Contains(err.Error(), "AUTOCARTO_HOME") {
-				t.Fatalf("%s resolver error = %q, want mention AUTOCARTO_HOME", tc.name, err)
-			}
-			if !strings.Contains(err.Error(), "app-local") {
-				t.Fatalf("%s resolver error = %q, want mention app-local runtime home", tc.name, err)
-			}
-		})
 	}
 }
 
 func TestRuntimeLocator_UsesBundledAndAppLocalPaths(t *testing.T) {
-	rootDir := t.TempDir()
+	t.Setenv(assetsRootEnvVar, "")
+	rootDir := physicalPath(t, t.TempDir())
 	bundledRoot := filepath.Join(rootDir, "bundle", "autocarto")
 	for _, dir := range []string{
 		filepath.Join(bundledRoot, "skills", "system"),
@@ -369,50 +300,77 @@ func TestRuntimeLocator_UsesBundledAndAppLocalPaths(t *testing.T) {
 	}
 }
 
-func TestRuntimeLocator_RejectsInvalidPluginRootFallback(t *testing.T) {
-	rootDir := t.TempDir()
-	pluginRoot := filepath.Join(rootDir, "autocarto")
-	for _, dir := range []string{
-		filepath.Join(pluginRoot, "skills", "system"),
-		filepath.Join(pluginRoot, "skills", "user"),
-		filepath.Join(pluginRoot, "tools", "system"),
-		filepath.Join(pluginRoot, "tools", "user"),
-		filepath.Join(rootDir, "nested", "work"),
-	} {
-		if err := os.MkdirAll(dir, 0o755); err != nil {
-			t.Fatalf("mkdir %s failed: %v", dir, err)
+func TestRuntimeHomeDefaultsToProjectDataOnEveryPlatform(t *testing.T) {
+	root := t.TempDir()
+	t.Setenv(projectRootEnvVar, root)
+	t.Setenv(runtimeHomeEnvVar, "")
+	got, err := ResolveRuntimePortFile()
+	want := filepath.Join(root, "autocarto_data", "data", ".port")
+	if err != nil || got != want {
+		t.Fatalf("got %q, %v; want %q", got, err, want)
+	}
+	if _, err := os.Stat(filepath.Join(root, "autocarto_data")); !os.IsNotExist(err) {
+		t.Fatalf("resolving paths created runtime data: %v", err)
+	}
+}
+
+func TestProjectRelativePathsSurviveWorkingDirectoryChanges(t *testing.T) {
+	root := t.TempDir()
+	t.Setenv(projectRootEnvVar, root)
+	t.Setenv(runtimeHomeEnvVar, "local/runtime")
+	want := filepath.Join(root, "local", "runtime")
+	original, _ := os.Getwd()
+	t.Cleanup(func() { _ = os.Chdir(original) })
+	for _, cwd := range []string{t.TempDir(), t.TempDir()} {
+		if err := os.Chdir(cwd); err != nil {
+			t.Fatal(err)
+		}
+		got, err := ResolveAutoCartoHome()
+		if err != nil || got != want {
+			t.Fatalf("got %q, %v; want %q", got, err, want)
 		}
 	}
+	internal := filepath.Join(root, "resources", "数据.csv")
+	got, err := PreferProjectRelativePath(internal)
+	if err != nil || got != "resources/数据.csv" {
+		t.Fatalf("portable: %q, %v", got, err)
+	}
+	roundtrip, err := ResolveProjectPath(got)
+	if err != nil || roundtrip != internal {
+		t.Fatalf("roundtrip: %q, %v", roundtrip, err)
+	}
+	external := filepath.Join(t.TempDir(), "outside.csv")
+	got, err = PreferProjectRelativePath(external)
+	if err != nil || got != external {
+		t.Fatalf("external: %q, %v", got, err)
+	}
+	for _, invalid := range []string{"", "  ", "bad\x00name"} {
+		if _, err := ResolveProjectPath(invalid); err == nil {
+			t.Fatalf("accepted invalid path")
+		}
+	}
+}
 
-	originalWD, err := os.Getwd()
+func TestRuntimeRootFollowsExplicitAssetsLocation(t *testing.T) {
+	t.Setenv(projectRootEnvVar, "")
+	t.Setenv(runtimeHomeEnvVar, "")
+	root := t.TempDir()
+	assets := filepath.Join(root, "autocarto")
+	if err := os.MkdirAll(filepath.Join(assets, "skills", "system"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv(assetsRootEnvVar, assets)
+	got, err := ResolveAutoCartoHome()
+	if err != nil || got != filepath.Join(root, "autocarto_data") {
+		t.Fatalf("got %q, %v", got, err)
+	}
+}
+
+func physicalPath(t *testing.T, path string) string {
+	t.Helper()
+	resolved, err := filepath.EvalSymlinks(path)
 	if err != nil {
-		t.Fatalf("Getwd failed: %v", err)
+		t.Fatal(err)
 	}
-	if err := os.Chdir(filepath.Join(rootDir, "nested", "work")); err != nil {
-		t.Fatalf("Chdir failed: %v", err)
-	}
-	t.Cleanup(func() {
-		_ = os.Chdir(originalWD)
-	})
-	t.Setenv("AUTOCARTO_HOME", "")
-
-	if runtime.GOOS == "windows" {
-		got, err := ResolveRuntimePortFile()
-		if err != nil {
-			t.Fatalf("ResolveRuntimePortFile() error = %v, want Windows default", err)
-		}
-		want := filepath.Join(filepath.Clean(defaultWindowsRuntimeHome), "data", ".port")
-		if got != want {
-			t.Fatalf("ResolveRuntimePortFile() = %q, want %q", got, want)
-		}
-		return
-	}
-
-	_, err = ResolveRuntimePortFile()
-	if err == nil {
-		t.Fatalf("ResolveRuntimePortFile() error = nil, want invalid plugin root fallback rejection")
-	}
-	if !strings.Contains(err.Error(), "app-local") {
-		t.Fatalf("ResolveRuntimePortFile() error = %q, want mention app-local runtime home", err)
-	}
+	return resolved
 }

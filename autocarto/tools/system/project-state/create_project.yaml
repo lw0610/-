@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: create_project
-  display_name: create_project
+  keywords: ["地图工程", "生成地图工程", "图层状态", "工程管理"]
+  display_name: "创建地图工程"
   domain: project-state
   runtime: qgis
 spec:

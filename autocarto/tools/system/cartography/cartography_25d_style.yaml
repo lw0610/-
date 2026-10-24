@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: cartography_25d_style
-  display_name: cartography_25d_style
+  keywords: ["二维半样式", "配置二维半样式", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置二维半样式"
   runtime: qgis
   domain: cartography
 spec:
@@ -17,7 +18,7 @@ spec:
     description: 高度字段
   - name: angle
     type: number
-    description: 视角角度
+    description: "视角角度（度）"
 execution:
   handler: handlers.style.style_25d_handler
   param_mapping:

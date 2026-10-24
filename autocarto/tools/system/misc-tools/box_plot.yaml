@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: box_plot
-  display_name: 箱形图
+  keywords: ["箱线图", "生成箱线图", "统计图表", "网格数据", "数据可视化"]
+  display_name: "生成箱线图"
   runtime: qgis
   domain: misc-tools
 spec:

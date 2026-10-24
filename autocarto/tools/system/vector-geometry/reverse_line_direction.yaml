@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: reverse_line_direction
-  display_name: 反转线方向
+  keywords: ["线条方向", "反转线条方向", "几何处理", "空间叠加", "几何修复"]
+  display_name: "反转线条方向"
   domain: vector-geometry
   runtime: qgis
 spec:

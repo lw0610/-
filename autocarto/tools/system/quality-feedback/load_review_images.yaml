@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: load_review_images
+  keywords: ["地图复检图片", "导入地图复检图片", "地图质检", "视觉审查", "质量反馈"]
   display_name: 加载地图复检图片
   domain: quality-feedback
   runtime: cli

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: check_validity
-  display_name: 检查有效性
+  keywords: ["几何有效性", "检查几何有效性", "几何处理", "空间叠加", "几何修复"]
+  display_name: "检查几何有效性"
   domain: vector-geometry
   runtime: qgis
 spec:

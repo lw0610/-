@@ -5,13 +5,9 @@ export function normalizeKindLabel(kind: string) {
       .toLowerCase()
   ) {
     case "category":
-      return "分类包";
-    case "workflow":
-      return "流程包";
-    case "knowledge":
-      return "知识包";
+      return "工具包";
     default:
-      return kind || "未分类";
+      return "已退役的包";
   }
 }
 
@@ -26,7 +22,7 @@ export function normalizeScopeLabel(scope: string) {
     case "user":
       return "用户";
     case "exclusive":
-      return "专属";
+      return "旧方案目录";
     case "global":
       return "全局";
     default:

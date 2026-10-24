@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: centroids
-  display_name: 质心
+  keywords: ["要素质心", "分析要素质心", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算要素质心"
   domain: vector-geometry
   runtime: qgis
 spec:

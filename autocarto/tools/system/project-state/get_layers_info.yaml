@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: get_layers_info
-  display_name: get_layers_info
+  keywords: ["图层信息", "列出图层信息", "地图工程", "图层状态", "工程管理"]
+  display_name: "列出图层信息"
   domain: project-state
   runtime: qgis
 spec:

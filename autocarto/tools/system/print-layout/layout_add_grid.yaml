@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_add_grid
-  display_name: layout_add_grid
+  keywords: ["地图网格", "添加地图网格", "打印版面", "地图排版", "版面元素"]
+  display_name: "添加地图网格"
   runtime: qgis
   domain: print-layout
 spec:
@@ -19,11 +20,11 @@ spec:
   - name: interval_x
     type: number
     required: true
-    description: X 方向网格间隔
+    description: "横向网格间隔（网格坐标系的地图单位，正数）"
   - name: interval_y
     type: number
     required: true
-    description: Y 方向网格间隔
+    description: "纵向网格间隔（网格坐标系的地图单位，正数）"
   - name: grid_crs
     type: string
     description: 网格使用的坐标参考系

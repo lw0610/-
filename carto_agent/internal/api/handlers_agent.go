@@ -2,11 +2,13 @@ package api
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
 
+	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/settings"
 )
 
@@ -105,6 +107,7 @@ func (a *API) handleCreateAgentConfig(w http.ResponseWriter, r *http.Request) {
 		writeAgentConfigError(w, r, err)
 		return
 	}
+	a.InvalidateFlowEnvironment()
 	Success(w, payload)
 }
 
@@ -136,6 +139,7 @@ func (a *API) handleCloneAgentConfig(w http.ResponseWriter, r *http.Request) {
 		writeAgentConfigError(w, r, err)
 		return
 	}
+	a.InvalidateFlowEnvironment()
 	Success(w, payload)
 }
 
@@ -147,17 +151,81 @@ func (a *API) handleSaveAgentConfig(w http.ResponseWriter, r *http.Request) {
 	}
 	userID := r.URL.Query().Get("user_id")
 	name := mux.Vars(r)["name"]
-	var profile settings.AgentProfileView
-	if err := json.NewDecoder(r.Body).Decode(&profile); err != nil {
+	var raw json.RawMessage
+	if err := json.NewDecoder(r.Body).Decode(&raw); err != nil {
 		Error(w, http.StatusBadRequest, "无效的请求体")
 		return
 	}
-	result, err := a.settingsMutationService.SaveAgentConfig(userID, name, profile)
+	var shape map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &shape); err != nil {
+		Error(w, http.StatusBadRequest, "无效的配置对象")
+		return
+	}
+	var result settings.SettingsMutationResult
+	var err error
+	if _, direct := shape["runtime"]; direct {
+		var data config.AgentConfigData
+		if err = json.Unmarshal(raw, &data); err != nil {
+			Error(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		result, err = a.settingsMutationService.SaveAgentConfigData(userID, name, &data)
+	} else {
+		var profile settings.AgentProfileView
+		if err = json.Unmarshal(raw, &profile); err != nil {
+			Error(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		result, err = a.settingsMutationService.SaveAgentConfig(userID, name, profile)
+	}
 	if err != nil {
 		writeAgentConfigError(w, r, err)
 		return
 	}
+	a.InvalidateFlowEnvironment()
 	Success(w, result)
+}
+
+func (a *API) handleMigrateAgentConfig(w http.ResponseWriter, r *http.Request) {
+	catalog, ok := a.assetCatalogService.(interface {
+		PreviewAgentConfigMigration(string) (*config.AgentConfigMigrationResult, error)
+	})
+	if !ok {
+		Error(w, http.StatusServiceUnavailable, "方案迁移服务未初始化")
+		return
+	}
+	var body struct {
+		DryRun bool `json:"dry_run"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil && err != io.EOF {
+		Error(w, http.StatusBadRequest, "无效的请求体")
+		return
+	}
+	if r.URL.Query().Get("dry_run") == "true" {
+		body.DryRun = true
+	}
+	name := mux.Vars(r)["name"]
+	preview, err := catalog.PreviewAgentConfigMigration(name)
+	if err != nil {
+		writeAgentConfigError(w, r, err)
+		return
+	}
+	preview.DryRun = body.DryRun
+	if !body.DryRun {
+		if a.settingsMutationService == nil {
+			Error(w, http.StatusServiceUnavailable, "设置服务未初始化")
+			return
+		}
+		mutation, err := a.settingsMutationService.SaveAgentConfigData(r.URL.Query().Get("user_id"), name, preview.Config)
+		if err != nil {
+			writeAgentConfigError(w, r, err)
+			return
+		}
+		a.InvalidateFlowEnvironment()
+		Success(w, map[string]any{"config": preview.Config, "warnings": preview.Warnings, "changed": preview.Changed, "dry_run": false, "mutation": mutation})
+		return
+	}
+	Success(w, preview)
 }
 
 // handleDeleteAgentConfig DELETE /api/agent-configs/{name}
@@ -173,6 +241,7 @@ func (a *API) handleDeleteAgentConfig(w http.ResponseWriter, r *http.Request) {
 		writeAgentConfigError(w, r, err)
 		return
 	}
+	a.InvalidateFlowEnvironment()
 	Success(w, payload)
 }
 
@@ -189,5 +258,6 @@ func (a *API) handleActivateAgentConfig(w http.ResponseWriter, r *http.Request) 
 		writeAgentConfigError(w, r, err)
 		return
 	}
+	a.InvalidateFlowEnvironment()
 	Success(w, result)
 }

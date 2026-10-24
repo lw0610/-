@@ -1,3 +1,4 @@
+from build_test_support import install_fake_build_platform_and_go
 import os
 import shutil
 import subprocess
@@ -69,6 +70,7 @@ class BuildPluginDeployCleanupTestCase(unittest.TestCase):
         self._seed_stale_target(target_plugin_dir)
 
         env = os.environ.copy()
+        env["PYTHON_BIN"] = str(fake_bin / "python")
         env["HOME"] = str(home_dir)
         env["PATH"] = f"{fake_bin}{os.pathsep}{env.get('PATH', '')}"
         env["AUTOCARTO_FAKE_LOG"] = str(fake_log)
@@ -84,6 +86,8 @@ class BuildPluginDeployCleanupTestCase(unittest.TestCase):
         return completed, target_plugin_dir
 
     def _seed_repo_layout(self, repo_root: Path) -> None:
+        for asset in ("flows/system", "resources/system"):
+            (repo_root / "autocarto" / asset).mkdir(parents=True, exist_ok=True)
         _ = (repo_root / ".sisyphus" / "evidence").mkdir(parents=True, exist_ok=True)
 
         agent_dir = repo_root / "carto_agent"
@@ -213,6 +217,10 @@ printf '%s\n' "go $*" >> "$AUTOCARTO_FAKE_LOG"
             textwrap.dedent(
                 f"""#!/bin/bash
 REAL_PYTHON={sys.executable}
+if [[ "${{1:-}}" == */scripts/refactor/run_python_tests.py ]]; then
+  printf '%s\\n' "python $*" >> "$AUTOCARTO_FAKE_LOG"
+  exit 0
+fi
 if [ "${{1:-}}" = "-m" ] && [ "${{2:-}}" = "pytest" ]; then
   printf '%s\n' "python $*" >> "$AUTOCARTO_FAKE_LOG"
   exit 0
@@ -225,6 +233,8 @@ exec "$REAL_PYTHON" "$@"
             fake_bin / "tauri",
             '#!/bin/bash\nprintf \'%s\\n\' "tauri $*" >> "$AUTOCARTO_FAKE_LOG"\nexit 0\n',
         )
+
+        install_fake_build_platform_and_go(fake_bin)
 
     def _write_executable(self, path: Path, content: str) -> None:
         _ = path.write_text(content, encoding="utf-8")

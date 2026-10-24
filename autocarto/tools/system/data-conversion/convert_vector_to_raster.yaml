@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: convert_vector_to_raster
-  display_name: 矢量转栅格
+  keywords: ["矢量为栅格", "转为矢量为栅格", "格式转换", "数据转换"]
+  display_name: "转换矢量为栅格"
   domain: data-conversion
   runtime: qgis
 spec:
@@ -17,11 +18,11 @@ spec:
     description: 属性字段
   - name: WIDTH
     type: number
-    description: 输出宽度
+    description: "输出栅格宽度（像素数，非负；0 使用算法默认值）"
     default: 0
   - name: HEIGHT
     type: number
-    description: 输出高度
+    description: "输出栅格高度（像素数，非负；0 使用算法默认值）"
     default: 0
   - name: OUTPUT
     type: output_raster

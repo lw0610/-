@@ -1,3 +1,4 @@
+from autocarto.tests.support.resource_handles import load_handle, resolve_handle
 import csv
 import json
 import tempfile
@@ -65,7 +66,7 @@ class KnowledgeGeocodingContractTest(unittest.TestCase):
         report = validate_task_knowledge(graph, source_text=source)
         self.assertTrue(report.is_valid, report.to_dict())
         with tempfile.TemporaryDirectory() as temp:
-            result = compile_task_knowledge(graph, Path(temp) / "dataset", source_text=source)
+            result = compile_task_knowledge(graph, Path(temp) / "dataset", source_text=source, route_style=load_handle("red-blue"), symbols=load_handle("military"))
             saved = json.loads(Path(result.task_graph_file).read_text())
             saved_entity = saved["spatial_entities"][0]
             self.assertEqual(saved_entity["coordinate_source"], "source_text")
@@ -82,7 +83,7 @@ class KnowledgeGeocodingContractTest(unittest.TestCase):
         graph = graph_fixture()
         original = json.loads(json.dumps(graph))
         with tempfile.TemporaryDirectory() as temp:
-            result = compile_task_knowledge(graph, Path(temp) / "dataset")
+            result = compile_task_knowledge(graph, Path(temp) / "dataset", route_style=load_handle("red-blue"), symbols=load_handle("military"))
             saved = json.loads(Path(result.task_graph_file).read_text())
             self.assertEqual(saved["spatial_entities"], graph["spatial_entities"])
             with (Path(result.dataset_dir) / "places.csv").open(encoding="utf-8-sig", newline="") as stream:
@@ -134,7 +135,7 @@ class KnowledgeGeocodingContractTest(unittest.TestCase):
         self.assertTrue(all("按估算位置参与制图" in issue.message for issue in estimate_warnings))
         with tempfile.TemporaryDirectory() as temp:
             # No signed review context or per-place manual approval is required.
-            result = compile_task_knowledge(graph, Path(temp) / "dataset", source_text=source)
+            result = compile_task_knowledge(graph, Path(temp) / "dataset", source_text=source, route_style=load_handle("red-blue"), symbols=load_handle("military"))
             saved = json.loads(Path(result.task_graph_file).read_text())
             self.assertEqual(saved["spatial_entities"], graph["spatial_entities"])
             self.assertEqual(saved["routes"], graph["routes"])

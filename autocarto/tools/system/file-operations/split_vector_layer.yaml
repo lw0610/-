@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: split_vector_layer
-  display_name: 分割矢量图层
+  keywords: ["按字段拆分图层", "文件管理", "数据文件"]
+  display_name: "按字段拆分图层"
   domain: file-operations
   runtime: qgis
 spec:

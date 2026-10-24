@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: pole_of_inaccessibility
-  display_name: 不可达极点
+  keywords: ["面不可达极点", "分析面不可达极点", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算面不可达极点"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: TOLERANCE
     type: number
-    description: 容差
+    description: "容差（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: OUTPUT
     type: output_layer

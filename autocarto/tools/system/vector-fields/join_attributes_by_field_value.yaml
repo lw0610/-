@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: join_attributes_by_field_value
+  keywords: ["按字段值连接属性", "属性字段", "字段计算", "属性连接"]
   display_name: 按字段值连接属性
   domain: vector-fields
   runtime: qgis

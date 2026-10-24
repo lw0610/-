@@ -5,12 +5,17 @@ kind: category
 runtime: internal
 enabled: true
 tools:
-  - browser_check_environment
-  - browser_list_tools
-  - browser_call_tool
-  - browser_close
-  - web_read_page
-  - web_download_file
+- browser_check_environment
+- browser_list_tools
+- browser_call_tool
+- browser_close
+- web_read_page
+- web_download_file
+display_name: 网页与浏览器取数
+domain: 在线数据
+system: false
+hidden: false
+auto_mount: ''
 ---
 
 # 浏览器与在线取数

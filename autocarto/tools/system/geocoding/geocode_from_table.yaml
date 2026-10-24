@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: geocode_from_table
-  display_name: 从表格创建点
+  keywords: ["按坐标表创建点", "地理编码", "地名坐标", "地址定位"]
+  display_name: "按坐标表创建点"
   domain: geocoding
   runtime: qgis
 spec:

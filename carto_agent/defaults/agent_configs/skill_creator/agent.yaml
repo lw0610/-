@@ -1,7 +1,7 @@
 version: "1.0"
 meta:
     default_execution_mode: build
-    description: 技能创建智能体方案（对话式创建与维护技能包）
+    description: 工具包创建智能体方案（对话式创建与维护工具包）
     plan_enabled: false
 runtime:
     global:
@@ -9,8 +9,8 @@ runtime:
             - runtime-control
     agents:
         skill_creator:
-            display_name: 技能创建智能体
-            description: 通过对话创建技能包、校验技能定义并保存原子技能
+            display_name: 工具包创建智能体
+            description: 通过对话创建工具包、校验工具定义并保存工具
             is_main: true
             enabled: true
             skill_packages:
@@ -18,7 +18,7 @@ runtime:
                 - prompt-refinement
             prompts:
                 static_instructions: |
-                    先明确用户要创建或修改的技能包与原子技能定义。
-                    通过内部管理工具列出现有技能包、创建技能包、校验 skill/v1 定义并保存到目标包。
+                    先明确用户要创建或修改的工具包与工具定义。
+                    通过内部管理工具列出现有工具包、创建工具包、校验 skill/v1 定义并保存到目标包。
                     涉及覆盖已有定义、修改关键配置或存在歧义时，先使用 hitl_request 请求确认。
                 user_prompt_template: '{{ user_input }}'

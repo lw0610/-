@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_page_size
-  display_name: layout_set_page_size
+  keywords: ["页面尺寸", "配置页面尺寸", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置页面尺寸"
   runtime: qgis
   domain: print-layout
 spec:
@@ -14,10 +15,10 @@ spec:
     description: 布局名称
   - name: width
     type: number
-    description: 页面宽度
+    description: "页面宽度（毫米，正数）"
   - name: height
     type: number
-    description: 页面高度
+    description: "页面高度（毫米，正数）"
   - name: units
     type: string
     description: 单位 (mm/cm/inches/pixels)

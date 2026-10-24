@@ -17,6 +17,7 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/mattn/go-sqlite3 v1.14.33
 	github.com/modelcontextprotocol/go-sdk v1.3.1
+	github.com/yuin/goldmark v1.7.13
 	google.golang.org/genai v1.36.0
 	gopkg.in/yaml.v3 v3.0.1
 )

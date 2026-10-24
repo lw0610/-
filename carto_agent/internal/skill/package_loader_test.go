@@ -1,7 +1,10 @@
 package skill
 
 import (
+	"encoding/json"
 	"path/filepath"
+	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -184,47 +187,21 @@ tools:
 	}
 }
 
-func TestLoadPackageDirectoryLoadsStructuredWorkflowDefinition(t *testing.T) {
-	t.Parallel()
-
+func TestPackageDirectoryIgnoresRetiredSerialWorkflowFile(t *testing.T) {
 	root := t.TempDir()
-	writeSkillPackageFixture(t, root, "vector-workflow", `---
-name: vector-workflow
-description: Vector workflow.
-kind: workflow
----
-
-# Vector workflow
-`, map[string]string{
-		"workflow.yaml": `apiVersion: workflow/v1
-kind: serial_workflow
-metadata:
-  name: vector-workflow
-spec:
-  inputs:
-    project_path:
-      type: string
-      required: true
-  steps:
-    - id: open_project
-      type: tool
-      tool: open_project
-      with:
-        project_path: "{{ inputs.project_path }}"
-`,
-	})
-
-	pkg, ok, err := loadPackageDirectory(filepath.Join(root, "vector-workflow"), root)
-	if err != nil {
-		t.Fatalf("loadPackageDirectory() error = %v", err)
+	writeSkillPackageFixture(t, root, "vector-tools", "---\nname: vector-tools\nkind: category\ntools: [open_project]\n---\n使用说明", map[string]string{"workflow.yaml": "invalid retired workflow content"})
+	pkg, ok, err := loadPackageDirectory(filepath.Join(root, "vector-tools"), root)
+	if err != nil || !ok {
+		t.Fatal(pkg, ok, err)
 	}
-	if !ok {
-		t.Fatal("expected workflow package to load")
+	if len(pkg.ToolRefs) != 1 || pkg.ToolRefs[0] != "open_project" {
+		t.Fatal("category references lost")
 	}
-	if pkg.Workflow == nil {
-		t.Fatal("expected structured workflow definition to be loaded")
+	if _, exists := reflect.TypeFor[SkillPackage]().FieldByName("Workflow"); exists {
+		t.Fatal("retired executable package field remains")
 	}
-	if pkg.Workflow.Metadata.Name != "vector-workflow" || len(pkg.Workflow.Spec.Steps) != 1 {
-		t.Fatalf("unexpected workflow definition: %#v", pkg.Workflow)
+	raw, err := json.Marshal(pkg)
+	if err != nil || strings.Contains(string(raw), "\"workflow\"") {
+		t.Fatal("retired workflow published", err)
 	}
 }

@@ -8,11 +8,16 @@ tags:
 - file
 - operations
 tools:
-  - create_directory
-  - file_downloader
-  - package_layers
-  - save_vector_features_to_file
-  - split_vector_layer
+- create_directory
+- file_downloader
+- package_layers
+- save_vector_features_to_file
+- split_vector_layer
+display_name: 文件操作
+domain: 数据
+system: false
+hidden: false
+auto_mount: ''
 ---
 
 # 文件操作工具集

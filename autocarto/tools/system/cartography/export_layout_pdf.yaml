@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: export_layout_pdf
-  display_name: export_layout_pdf
+  keywords: ["版面文档", "输出版面文档", "符号样式", "地图标注", "图层渲染"]
+  display_name: "导出版面文档"
   runtime: qgis
   domain: cartography
 spec:
@@ -22,10 +23,10 @@ spec:
     description: 输出 PDF 路径（推荐使用）
   - name: DPI
     type: number
-    description: 导出分辨率（大写参数，兼容旧调用）
+    description: "导出分辨率（大写参数，兼容旧调用）（像素/英寸，正数）"
   - name: dpi
     type: number
-    description: 导出分辨率（推荐使用）
+    description: "导出分辨率（推荐使用）（像素/英寸，正数）"
 execution:
   handler: handlers.layout_export.export_layout_pdf_handler
   param_mapping:

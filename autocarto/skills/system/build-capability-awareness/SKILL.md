@@ -5,10 +5,16 @@ kind: category
 runtime: internal
 enabled: true
 tags:
-  - internal
-  - plan
+- internal
+- plan
 tools:
-  - query_build_capabilities
+- query_build_capabilities
+- flow_preview
+display_name: 能力查询
+domain: 系统
+system: false
+hidden: true
+auto_mount: plan_main
 ---
 
 # BUILD 能力感知

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gee_check_environment
-  display_name: 检查 GEE 环境
+  keywords: ["遥感运行环境", "检查遥感运行环境", "遥感影像", "云端计算", "影像下载"]
+  display_name: "检查遥感运行环境"
   domain: gee-remote-sensing
   runtime: internal
 spec:

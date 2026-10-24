@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: export_layers_to_dxf
-  display_name: 导出图层到DXF
+  keywords: ["绘图交换文件", "输出绘图交换文件", "格式转换", "数据转换"]
+  display_name: "导出绘图交换文件"
   domain: data-conversion
   runtime: qgis
 spec:

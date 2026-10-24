@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: bar_chart
-  display_name: 条形图
+  keywords: ["条形图", "生成条形图", "统计图表", "网格数据", "数据可视化"]
+  display_name: "生成条形图"
   runtime: qgis
   domain: misc-tools
 spec:

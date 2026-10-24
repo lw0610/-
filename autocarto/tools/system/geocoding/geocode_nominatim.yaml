@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: geocode_nominatim
-  display_name: Nominatim地理编码
+  keywords: ["地名坐标", "查询地名坐标", "地理编码", "地址定位"]
+  display_name: "查询地名坐标"
   domain: geocoding
   runtime: qgis
 spec:

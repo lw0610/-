@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: style_set_apply
+  display_name: 按样式集设置符号
+  keywords: [样式集, 批量样式, 图层符号, 图层标注, 样式对照表]
+  domain: cartography
+  runtime: qgis
+spec:
+  description: >-
+    使用已解析样式集的条目，先按图层名、再按别名精确匹配并加载 QML；可覆盖标注字段或关闭标注。
+    返回实际应用图层、未匹配图层和未使用样式；先检查文件、字段与严格匹配，加载失败时恢复已有样式。
+  parameters:
+    - name: style_set
+      type: resource
+      resource_type: style_set
+      default_resource: style_set.gb-basemap
+      required: true
+      description: 样式集资源的名称、编号或资源目录路径，省略时使用默认样式集
+    - name: layers
+      type: array
+      items:
+        type: string
+      description: 可选图层名称或 ID 数组；省略或空数组时处理工程中所有可匹配图层，重名需使用 ID
+    - name: strict
+      type: boolean
+      default: false
+      description: true 时存在未匹配图层即报错且不修改样式；默认仅报告未匹配项
+execution:
+  handler: handlers.style_sets.apply_style_set_handler
+  param_mapping:
+    style_set: '{{ style_set }}'
+    layers: '{{ layers }}'
+    strict: '{{ strict }}'

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_add_map
-  display_name: layout_add_map
+  keywords: ["地图框", "添加地图框", "打印版面", "地图排版", "版面元素"]
+  display_name: "添加地图框"
   runtime: qgis
   domain: print-layout
 spec:

@@ -1,6 +1,9 @@
 package knowledge
 
-import "errors"
+import (
+	"errors"
+	"github.com/autocarto/carto_agent/internal/resource"
+)
 
 const (
 	ReviewAwaiting      = "awaiting_review"
@@ -85,22 +88,23 @@ type ReviewResumeDescriptor struct {
 
 // Review is the on-disk record. HTTP handlers intentionally return ReviewView.
 type Review struct {
-	Version           int            `json:"version"`
-	ReviewID          string         `json:"review_id"`
-	SessionID         string         `json:"session_id"`
-	ProjectPath       string         `json:"project_path"`
-	SessionDir        string         `json:"session_dir"`
-	InstanceID        string         `json:"instance_id,omitempty"`
-	SourceText        string         `json:"source_text"`
-	SourceSHA256      string         `json:"source_sha256"`
-	CompatibilityKey  string         `json:"compatibility_key"`
-	Contract          Contract       `json:"contract"`
-	OriginalResult    *Result        `json:"original_result"`
-	OriginalCacheInfo map[string]any `json:"original_cache_info,omitempty"`
-	CompileArgs       map[string]any `json:"compile_args,omitempty"`
-	TraceFile         string         `json:"trace_file,omitempty"`
-	Graph             Graph          `json:"graph"`
-	InitialGraph      Graph          `json:"initial_graph,omitempty"`
+	Version           int             `json:"version"`
+	ReviewID          string          `json:"review_id"`
+	SessionID         string          `json:"session_id"`
+	ProjectPath       string          `json:"project_path"`
+	SessionDir        string          `json:"session_dir"`
+	InstanceID        string          `json:"instance_id,omitempty"`
+	SourceText        string          `json:"source_text"`
+	SourceSHA256      string          `json:"source_sha256"`
+	CompatibilityKey  string          `json:"compatibility_key"`
+	Contract          Contract        `json:"contract"`
+	OriginalResult    *Result         `json:"original_result"`
+	OriginalCacheInfo map[string]any  `json:"original_cache_info,omitempty"`
+	CompileArgs       map[string]any  `json:"compile_args,omitempty"`
+	ResourceScope     *resource.Scope `json:"resource_scope,omitempty"`
+	TraceFile         string          `json:"trace_file,omitempty"`
+	Graph             Graph           `json:"graph"`
+	InitialGraph      Graph           `json:"initial_graph,omitempty"`
 	// Backend-owned snapshots keep automatic coordinate enrichment distinct from
 	// human edits when generating signed review provenance.
 	CoordinateLookups   map[string]map[string]any      `json:"coordinate_lookups,omitempty"`
@@ -131,6 +135,7 @@ type ReviewCreateInput struct {
 	OriginalResult                                             *Result
 	Graph                                                      Graph
 	CompileArgs                                                map[string]any
+	ResourceScope                                              *resource.Scope
 	TraceFile                                                  string
 	OriginalCacheInfo                                          map[string]any
 	Assets                                                     []ReviewAsset

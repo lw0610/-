@@ -1,6 +1,19 @@
 contract: removal-ledger
 description: Task 9 更新后的 legacy authority / compat bridge 删除台账；Go 仍为唯一公开 authority。
 compat_layers:
+  - id: resource_bindings_v1_reader
+    path: carto_agent/internal/resource/bindings/migrate.go
+    why_temporary: '旧哈希键和名称键只在读取旧绑定文件时映射，首次保存前保留原始备份，新写入仅支持 resource-bindings/v2。'
+    remove_in_wave: after_binding_v2_two_releases
+    evidence_required:
+      - '自动迁移发布满两个版本，存量绑定均已写入 v2，未匹配的记录仍保留在 orphaned。'
+      - '旧文件备份、稳定键及项目内外路径转换通过迁移回归。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/flow -run TestBindingsMigrateV1 -count=1
+      - cd carto_agent && go test ./internal/resource/bindings -count=1
+    governs: []
+    status: v1_read_v2_write
+
   - id: private_skill_embedded_tool_cache
     path: carto_agent/internal/skill/types.go#SkillPackage.Tools
     why_temporary: '`SkillPackage.Tools` 仅剩 registry hydration/cache 的私有兼容实现；公开 package/detail JSON 与 API 真相已切到 `tool_refs` / `requires_tools`。'
@@ -31,7 +44,211 @@ compat_layers:
       - defaults.config.ports.agent_system.auto_fallback
     status: private_alias_only
 
+
+  - id: agent_config_v1_reader_migration
+    path: carto_agent/internal/config/agent_config_migrate_v1.go
+    why_temporary: '读取 v1 方案时仅在内存映射工具包、流程和专用执行器；旧角色名推断仅在该迁移文件内，首次写 v2 保留原始 v1 备份。'
+    remove_in_wave: after_v2_config_support_window
+    evidence_required:
+      - '所有部署及导入的方案均写为 v2，已过兼容版本窗口。'
+      - '未知旧包均有明确替代或用户确认处理，备份与 v2 执行结果通过迁移回归。'
+      - '移除 skill_packages/workflow_package 等旧输入后，HTTP/WS、角色授权及专用执行器回归通过。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/config ./internal/settings ./internal/api -run 'Test(V2|AgentProfileV2|AgentConfigV2)' -count=1
+      - cd carto_agent && go test ./internal/control -run TestCompatLayerRequiresRemovalCriteria -count=1
+    governs: []
+    status: v1_read_v2_write
+
+
+  - id: resource_style_type_adjustment
+    path: carto_agent/internal/resource/resolve.go
+    why_temporary: '旧流程将样式和样式集混写，解析暂按实际文件调整并返回修复诊断。'
+    remove_in_wave: after_r61_next_release
+    evidence_required:
+      - 'R61 rewrite_type 修复入口发布后的下一个版本，已有流程声明完成修正。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/resource -run TestStyleTypeAdjusted -count=1
+    governs: []
+    status: diagnostic_compat
+
+  - id: basemap_legacy_preset_tools
+    path: autocarto/tools/system/_shared/basemap_presets_impl.py
+    why_temporary: '三个旧预设工具已从公开工具包隐藏；兼容包装仅使用 cartography/assets 中冻结的 QML 与 basemap-legacy-presets.json，不绕过公共资源解析。'
+    remove_in_wave: after_golden_legacy_baseline_migrated_next_version
+    evidence_required:
+      - 'autocarto/tests/golden/run_golden.py 非 compose 模式改为样式集后的下一个版本。'
+      - '所有调用方已使用 style_set_apply 或通用符号工具；冻结 QML、旧索引与三个旧工具定义可同时删除。'
+      - '资源句柄路径与黄金样例均无旧预设入口依赖。'
+    blocking_tests:
+      - python -m pytest autocarto/tests/test_style_set_qgis.py -q
+      - python -m pytest autocarto/tests/golden/test_golden_regression_qgis.py -q
+      - cd carto_agent && go test ./internal/control -run TestCompatLayerRequiresRemovalCriteria -count=1
+    governs: []
+    status: hidden_legacy_tools
+
+  - id: resource_manifest_inference
+    path: carto_agent/internal/resource/manifest.go
+    why_temporary: '无清单的旧用户资源与流程资源暂按格式规范推断类型、名称和 legacy 编号，并返回可升级诊断。'
+    remove_in_wave: after_r51_upgrade_next_release
+    evidence_required:
+      - 'R51 升级入口发布后的下一个版本，启动时已自动升级用户库中的旧式资源。'
+      - '已有流程资源已生成清单，旧式资源回归样例完成迁移。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/resource -run 'TestManifestConflictsLegacyTypeAndDigest|TestBuiltinResourcesHaveManifests' -count=1
+      - cd carto_agent && go test ./internal/control -run TestCompatLayerRequiresRemovalCriteria -count=1
+    governs: []
+    status: diagnostic_compat
+
+  - id: resource_type_name_management_routes
+    path: carto_agent/internal/api/handlers_resource.go
+    why_temporary: '旧 GET/DELETE /resources/{type}/{name} 与预览入口暂保留一个版本；新界面按稳定编号管理，旧删除同样执行引用保护。'
+    remove_in_wave: after_resource_id_management_next_release
+    evidence_required:
+      - '按编号的 R51/R60 管理接口发布一个版本，全部资源库调用方已迁移。'
+      - '旧名称接口调用统计与外部集成确认无剩余依赖。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/api -run 'TestResourceManagementAPI|TestResourceAPIUsesLibraryAndSharedRelativeBindings' -count=1
+      - cd carto_agent && go test ./internal/control -run TestCompatLayerRequiresRemovalCriteria -count=1
+    governs: []
+    status: legacy_routes
+
+  - id: legend_legacy_layer_properties
+    path: autocarto/tools/system/_shared/print_layout_advanced_impl.py
+    why_temporary: '仅识别旧工程中 military_arrow_legend 和 legend_compat_arrow 图层属性以清理旧图例，不再写入属性或读取默认图片。'
+    remove_in_wave: after_legacy_legend_projects_migrated_next_version
+    evidence_required:
+      - '旧项目图例均已保存为通用 legend_extra_item 属性后的下一个版本。'
+    blocking_tests:
+      - QGIS_PYTHON -m pytest autocarto/tests/test_layout_refactor_qgis.py -q
+    governs: []
+    status: read_only_compat
+
+  - id: flow_ensure_compiled_alias
+    path: carto_agent/internal/flow/compile.go
+    why_temporary: 'EnsureCompiled 保留一个版本，内部只委托 EnsureRunnable；新运行入口已切换。'
+    remove_in_wave: after_flow_v2_next_release
+    evidence_required:
+      - '集成调用方均已使用 EnsureRunnable，旧入口发布满一个版本。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/flow ./internal/flowrun -count=1
+    governs: []
+    status: wrapper_only
+
+  - id: flow_plan_v1_read_only
+    path: carto_agent/internal/flow/plan_legacy.go
+    why_temporary: '旧 run.json 的 cache_key / resolved_path 仅在反序列化时转换为 CompileKey / Root / Entry，新 API、缓存和运行记录不再输出旧字段。'
+    remove_in_wave: after_flow_v2_next_release
+    evidence_required:
+      - '新客户端发布满一个版本，存量运行记录已恢复或归档。'
+      - '删除只读转换不会丢失仍受支持的运行记录。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/flow ./internal/flowrun -run 'TestLegacyPlan|TestResumeReadsLegacyPlan' -count=1
+    governs: []
+    status: legacy_read_canonical_write
+
+  - id: resource_parser_legacy_metadata
+    path: carto_agent/internal/resource/types.go
+    why_temporary: '资源解析内部仍使用 ResolvedPath、Origin 和 ResourceEntry.Extra；ResolvedPath 已私有不输出，工具只消费规范化 Fields 生成的 Handle。Origin/Extra 仍保留在部分管理和计划记录中。'
+    remove_in_wave: after_resource_parser_metadata_migration
+    evidence_required:
+      - '内部解析统一使用 Root/Entry/Owner/Fields 后移除旧字段，管理和存档回归通过。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/resource ./internal/flow -count=1
+    governs: []
+    status: parser_metadata_only
+
+  - id: resource_import_type_v2
+    path: carto_agent/internal/resource/manage.go
+    why_temporary: '导入仍接受旧 type 参数，但必须匹配自动识别类型。'
+    remove_in_wave: after_flow_v3_next_release
+    evidence_required: ['V33 前端完成后的下一个版本。']
+    blocking_tests: ['cd carto_agent && go test ./internal/resource -run TestPublicImport -count=1']
+    governs: []
+    status: validated_compat_input
+  - id: resource_library_retired_type_v2
+    path: carto_agent/internal/resource/resolver.go
+    why_temporary: '非公共类型旧用户资源保留读取与 adopt_into_flow 迁移。'
+    remove_in_wave: after_flow_v3_next_release
+    evidence_required: ['旧资源已通过 adopt_into_flow 迁移，且发布满一个版本。']
+    blocking_tests: ['cd carto_agent && go test ./internal/resource ./internal/api -run TestRetired -count=1']
+    governs: []
+    status: read_only_compat
+  - id: resource_library_binding_read_only_v2
+    path: carto_agent/internal/api/handlers_resource.go
+    why_temporary: '公共数据绑定写入返回 410，已有 library 绑定只读生效。'
+    remove_in_wave: after_flow_v3_next_release
+    evidence_required: ['旧非公共资源兼容窗口结束。']
+    blocking_tests: ['cd carto_agent && go test ./internal/api -run TestResourceBinding -count=1']
+    governs: []
+    status: read_only_compat
+
+  - id: flow_bindings_input_memory_adapter_v2
+    path: carto_agent/internal/api/handlers_flow.go
+    why_temporary: '旧流程绑定接口仅为已关联的文件夹输入写入本机输入记忆；未关联清单返回 410 和 convert_to_input 指引。'
+    remove_in_wave: after_flow_v3_next_release
+    evidence_required: ['V41 输入表单已发布满一个版本，所有受支持客户端改用输入记忆接口。']
+    blocking_tests: ['cd carto_agent && go test ./internal/api -run TestFlowBinding -count=1']
+    governs: []
+    status: wrapper_only
+  - id: resource_bindings_to_input_memory_v2
+    path: carto_agent/internal/flow/input_memory_migration.go
+    why_temporary: '启动时将关联清单的 v1/v2 绑定迁移为本机输入记忆；未关联、冲突与 library 绑定保留只读兼容。'
+    remove_in_wave: after_flow_v3_next_release
+    evidence_required: ['资源绑定只读兼容窗口结束，关联输入迁移至少发布满一个版本。']
+    blocking_tests: ['cd carto_agent && go test ./internal/flow ./internal/resource/bindings -run "TestInputMemory|TestBindingConsume" -count=1']
+    governs: []
+    status: legacy_read_canonical_write
+
+  - id: flow_run_v2_plan_key_upgrade
+    path: carto_agent/internal/flowrun/resume_legacy.go
+    why_temporary: '旧编译器运行快照按原输入键恢复；只在步骤语义、条件、产出、输入约束及相关角色授权完全相等时跨 v3 编译键算法升级。'
+    remove_in_wave: after_flow_v3_next_release
+    evidence_required: ['受支持的旧运行记录均完成或归档，v3 已发布满一个版本。']
+    blocking_tests: ['cd carto_agent && go test ./internal/flowrun -run TestLegacyV2Run -count=1']
+    governs: []
+    status: read_only_compat
+
 completed_removals:
+  - id: flow_resource_absolute_path_code
+    path: carto_agent/internal/resource/resolver.go
+    removed_in_wave: refactor_v2_r70
+    evidence:
+      - 'R61 真实 HTTP 联调完成；外部资源仅输出 FLOW_RESOURCE_PATH_EXTERNAL，测试明确拒绝旧码。'
+  - id: resource_plan_legacy_fields
+    path: carto_agent/internal/flow/plan.go
+    removed_in_wave: refactor_v2_r70
+    evidence:
+      - 'ResourcePlan.ResolvedPath 字段已删除，资源管理 JSON 也不输出 resolved_path。旧运行记录只读兼容单独登记。'
+  - id: flow_cache_key_alias
+    path: carto_agent/internal/flow/plan.go
+    removed_in_wave: refactor_v2_r70
+    evidence:
+      - 'FlowPlan.CacheKey 已删除，运行和前端均使用 CompileKey；旧 run.json 恢复测试通过。'
+  - id: legacy_canonical_tool_contracts
+    path: carto_agent/defaults/tool_contracts
+    removed_in_wave: refactor_v2_g4
+    evidence:
+      - '旧11份契约、embed及fallback转换已删除，空工具目录不再启用分叉authority。'
+      - 'G4.md：tool/skill/toolcontract/config/control测试及Go build通过；调用方测试改读正本。'
+  - id: serial_workflow_pilot_runtime
+    path: carto_agent/internal/workflow/
+    removed_in_wave: refactor_t52
+    evidence:
+      - 'internal/workflow与deepagent/workflow_agent.go、公开Workflow结构和治理分支已删除。'
+      - 'docs/refactor/evidence/T52-Go.md：统一角色工厂、流程解析/控制器、真实工具授权与导入原子拒绝测试通过。'
+      - 'workflow_package仅在v1迁移私有输入中生成退休警告，由agent_config_v1_reader_migration兼容窗口管理。'
+  - id: python_cartography_style_module_reexports
+    path: autocarto/tools/system/_shared/cartography_style_impl.py
+    removed_in_wave: refactor_t52
+    evidence:
+      - '旧模块已删除，所有生产与黄金调用直接导入职责模块，原始固定输入与基线未改。'
+      - 'docs/refactor/evidence/T52-resources.md：真实QGIS样式30项、黄金10项及四场景完整结构比较通过。'
+  - id: python_route_combined_handler_compat
+    path: autocarto/tools/system/_shared/route_drawing_impl.py#cartography_build_and_draw_from_tables_handler
+    removed_in_wave: refactor_t52
+    evidence:
+      - '旧组合wrapper与公开YAML已删除，路线、专题点、图文标注分别由独立工具执行。'
+      - 'docs/refactor/evidence/T52-resources.md：真实路线10项、布局/QPT19项及黄金10项全部通过。'
   - id: removed_python_yaml_public_tool_authority
     path: autocarto/core/tool_engine/definitions.py#ToolDefinitionLoader
     removed_in_wave: wave_2_t6

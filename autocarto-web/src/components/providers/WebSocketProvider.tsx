@@ -49,6 +49,10 @@ import {
 } from "@/types/message";
 import { generateId } from "@/lib/utils";
 import { parseReviewReference } from "@/features/knowledge-review/model";
+import { useFlowRunStore } from "@/features/flow-run/store";
+import { terminalFlow } from "@/features/flow-run/model";
+import { parseFlowPreview } from "@/features/flow-run/FlowPreviewCard";
+import type { FlowEvent } from "@/features/flow-run/types";
 import {
   collectSessionAttachTargets,
   markSessionAttachStateLive,
@@ -235,6 +239,7 @@ const sessionScopedMessageTypes = new Set([
   "tool",
   "agent",
   "task_running_changed",
+  "flow_event",
 ]);
 
 function parseAutoPhase(raw: unknown): AutoPhase {
@@ -554,6 +559,7 @@ export default function WebSocketProvider({
   const hasEverLoadedRef = useRef(false);
   const realtimeMessageHandlerRef = useRef<(msg: WSMessage) => void>(() => {});
   const refreshSessionsRef = useRef<() => Promise<void>>(async () => {});
+  const syncSessionAttachmentsRef = useRef<() => void>(() => {});
   const attachedSessionsRef = useRef<Set<string>>(new Set());
   const runEventSeqRef = useRef<Record<string, number>>(
     createInitialRunEventSeqState(),
@@ -853,6 +859,25 @@ export default function WebSocketProvider({
             promoteSessionAttachStateLive(attachAckSessionId);
           }
         }
+        const source = String(eventData.source_type || "");
+        if (source === "session_state" && Object.prototype.hasOwnProperty.call(payload, "flow_run")) {
+          const sid = normalizeSessionId(payload.session_id || msg.session_id);
+          if (sid) useFlowRunStore.getState().restore(sid, payload.flow_run, Number(payload.flow_run_event_seq || asRecord(payload.flow_run).event_seq || 0));
+        }
+        if (source === "flow_event") {
+          const sid = normalizeSessionId(payload.session_id || msg.session_id);
+          if (sid) {
+            useFlowRunStore.getState().applyEvent({ ...payload, session_id: sid } as unknown as FlowEvent, replaySeq, Boolean(eventData.replayed));
+            const run = useFlowRunStore.getState().runs[sid]?.find(run => run.flow_run_id === payload.flow_run_id);
+            if (run) { setSessionRunning(sid, !terminalFlow(run.status)); setSessionThinking(sid, run.status === "running"); }
+          }
+          return;
+        }
+        // Live legacy frames are still consumed once. Only replayed, tagged
+        // process frames are unpacked for the flow's collapsed step details.
+        if (eventData.replayed && payload.flow_run_id && ["agent_workflow", "thinking", "response", "status", "error", "interrupt_request", "tool"].includes(source)) {
+          msg = { ...msg, type: source, content: String(payload.content || ""), phase: String(payload.phase || ""), agent: String(payload.agent || ""), agent_display_name: String(payload.agent_display_name || ""), data: payload };
+        }
       }
 
       msg = normalizeIncomingMessage(msg);
@@ -971,6 +996,7 @@ export default function WebSocketProvider({
         if (changeType === "deleted" && changedSessionId) {
           removeSession(changedSessionId);
           purgeSession(changedSessionId);
+          useFlowRunStore.getState().purge(changedSessionId);
           removeRunEventSeq(changedSessionId);
           getGlobalPersistenceController().markSessionDeleted(changedSessionId);
         } else if (
@@ -1008,6 +1034,31 @@ export default function WebSocketProvider({
         sessionId = normalizeSessionId(activeSessionId);
       }
       const activeMessage = isActiveSessionMessage(sessionId, activeSessionId);
+
+      if (msg.type === "flow_event") {
+        const event = asRecord(msg.data);
+        const sid = normalizeSessionId(event.session_id || msg.session_id);
+        if (!sid || !event.event || !event.payload) return;
+        useFlowRunStore.getState().applyEvent({ ...event, session_id: sid } as unknown as FlowEvent);
+        const run = useFlowRunStore.getState().runs[sid]?.find(run => run.flow_run_id === event.flow_run_id);
+        if (String(event.event) === "flow.blocked") { setSessionRunning(sid, false); setSessionThinking(sid, false); }
+        else if (run) { setSessionRunning(sid, !terminalFlow(run.status)); setSessionThinking(sid, run.status === "running"); }
+        return;
+      }
+
+      const processData = asRecord(msg.data);
+      if ((msg.phase === "tool_result" || msg.type === "tool") && processData.tool === "flow_preview") {
+        const preview = parseFlowPreview(processData.result || msg.content);
+        if (preview) {
+          appendSessionAwareMessage(sessionId, activeMessage, { type: "status", content: `流程预览：${preview.name || preview.plan.name}`, data: { ...processData, flow_preview: preview } });
+          return;
+        }
+      }
+      if (processData.flow_run_id && ["agent_workflow", "thinking", "response", "status", "error", "tool", "agent"].includes(msg.type)) {
+        const type = msg.phase === "tool_call" || msg.phase === "tool_result" || msg.type === "tool" ? "tool" : msg.type === "thinking" || msg.phase === "thinking" ? "thinking" : msg.type === "response" ? "assistant" : msg.type === "error" ? "error" : "status";
+        appendSessionAwareMessage(sessionId, activeMessage, { type, content: msg.content || "", phase: msg.phase, agent: msg.agent, agentDisplayName: msg.agent_display_name, data: processData });
+        return;
+      }
 
       const unsupportedContractCode = resolveUnsupportedContractCode(msg);
       if (unsupportedContractCode) {
@@ -1303,6 +1354,7 @@ export default function WebSocketProvider({
           setAvailableAgentConfigs(names);
         }
         if (snapshotSessionId) {
+          if (Object.prototype.hasOwnProperty.call(data, "flow_run")) useFlowRunStore.getState().restore(snapshotSessionId, data.flow_run, Number(data.flow_run_event_seq || asRecord(data.flow_run).event_seq || 0));
           const restoredTasks = toTodoItems(data.tasks ?? data.todos ?? data.items);
           if (restoredTasks.length > 0) {
             setSessionTasks(snapshotSessionId, restoredTasks);
@@ -1434,6 +1486,7 @@ export default function WebSocketProvider({
   }, [refreshSessions]);
 
   useEffect(() => {
+    syncSessionAttachmentsRef.current = syncSessionAttachments;
     syncSessionAttachments();
   }, [syncSessionAttachments]);
 
@@ -1447,7 +1500,7 @@ export default function WebSocketProvider({
         attachedSessionsRef.current = new Set();
         if (wasConnected) {
           reattachPendingRef.current = true;
-          syncSessionAttachments();
+          syncSessionAttachmentsRef.current();
         }
         return;
       }
@@ -1458,7 +1511,7 @@ export default function WebSocketProvider({
         void fetchRuntimeSnapshot().catch(() => undefined);
         void refreshSessionsRef.current();
       }
-      syncSessionAttachments();
+      syncSessionAttachmentsRef.current();
     });
     const disposeMessages = wsClient.onMessage((msg) => {
       realtimeMessageHandlerRef.current(msg);
@@ -1550,7 +1603,6 @@ export default function WebSocketProvider({
     initializeRuntime,
     retryToken,
     setConnected,
-    syncSessionAttachments,
     waitForBackend,
   ]);
 

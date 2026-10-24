@@ -4,18 +4,23 @@ description: 创建和维护技能包与方案配置的内部工具集合。
 kind: category
 runtime: internal
 tags:
-  - internal
-  - creator
+- internal
+- creator
 tools:
-  - assign_skill_packages
-  - create_agent_config
-  - create_skill_package
-  - list_agent_configs
-  - list_skill_packages
-  - save_skill_script
-  - save_skill_to_package
-  - update_agent_config
-  - validate_skill_definition
+- assign_skill_packages
+- create_agent_config
+- create_skill_package
+- list_agent_configs
+- list_skill_packages
+- save_skill_script
+- save_skill_to_package
+- update_agent_config
+- validate_skill_definition
+display_name: 创建者工具
+domain: 系统
+system: false
+hidden: true
+auto_mount: ''
 ---
 
 # Creator Tools

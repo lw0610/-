@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: open_project
-  display_name: open_project
+  keywords: ["地图工程", "打开地图工程", "图层状态", "工程管理"]
+  display_name: "打开地图工程"
   domain: project-state
   runtime: qgis
 spec:

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: cartography_heatmap_style
-  display_name: cartography_heatmap_style
+  keywords: ["热力渲染", "配置热力渲染", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置热力渲染"
   runtime: qgis
   domain: cartography
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 点图层名称
   - name: radius
     type: number
-    description: 热力图半径
+    description: "热力渲染半径（毫米）"
   - name: weight_field
     type: string
     description: 权重字段

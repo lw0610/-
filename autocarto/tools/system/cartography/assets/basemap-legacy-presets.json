@@ -1,0 +1,311 @@
+{
+  "schema_version": "basemap-presets/v1",
+  "source": "T42 拆分后、T41 资源化前的原始预设",
+  "compatibility": {
+    "river_line_color": "#a6cee3"
+  },
+  "entries": [
+    {
+      "layer": "地级城市驻地",
+      "aliases": [
+        "河南省地级城市驻地",
+        "城市驻地",
+        "市级行政中心"
+      ],
+      "style_file": "地级城市驻地.qml",
+      "label_field": "name",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "marker",
+      "legacy_type": "city",
+      "geometry": "Point",
+      "params": {
+        "layer_type": "city",
+        "label_field": "name"
+      },
+      "label_policy": {
+        "mode": "merge",
+        "settings": [],
+        "text": [
+          "size",
+          "size_unit"
+        ],
+        "clear_size_property": true
+      }
+    },
+    {
+      "layer": "县级城市驻地",
+      "aliases": [
+        "县城驻地",
+        "河南省县城驻地",
+        "县级驻地"
+      ],
+      "style_file": "县级城市驻地.qml",
+      "label_field": "name",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "marker",
+      "legacy_type": "county",
+      "geometry": "Point",
+      "params": {
+        "layer_type": "county",
+        "label_field": "name"
+      },
+      "label_policy": {
+        "mode": "merge",
+        "settings": [],
+        "text": [
+          "size",
+          "size_unit"
+        ],
+        "clear_size_property": true
+      }
+    },
+    {
+      "layer": "铁路",
+      "aliases": [
+        "河南铁路",
+        "铁路线",
+        "轨道交通干线"
+      ],
+      "style_file": "铁路.qml",
+      "label_field": "无",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "line",
+      "legacy_type": "铁路",
+      "geometry": "LineString",
+      "params": {
+        "line_type": "铁路"
+      },
+      "label_policy": {
+        "mode": "preserve"
+      }
+    },
+    {
+      "layer": "高速公路",
+      "aliases": [
+        "公路",
+        "河南高速公路",
+        "快速路"
+      ],
+      "style_file": "高速公路.qml",
+      "label_field": "无",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "line",
+      "legacy_type": "高速公路",
+      "geometry": "LineString",
+      "params": {
+        "line_type": "高速公路"
+      },
+      "label_policy": {
+        "mode": "preserve"
+      }
+    },
+    {
+      "layer": "国道",
+      "aliases": [
+        "普通国道"
+      ],
+      "style_file": "国道.qml",
+      "label_field": "无",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "line",
+      "legacy_type": "国道",
+      "geometry": "LineString",
+      "params": {
+        "line_type": "国道"
+      },
+      "label_policy": {
+        "mode": "preserve"
+      }
+    },
+    {
+      "layer": "省界",
+      "aliases": [
+        "地区界线",
+        "线状省界",
+        "行政边界线"
+      ],
+      "style_file": "省界.qml",
+      "label_field": "无",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "line",
+      "legacy_type": "省界",
+      "geometry": "LineString",
+      "params": {
+        "line_type": "省界"
+      },
+      "label_policy": {
+        "mode": "preserve"
+      }
+    },
+    {
+      "layer": "河流线",
+      "aliases": [
+        "线状河流",
+        "水系线",
+        "河流"
+      ],
+      "style_file": "河流线.qml",
+      "label_field": "NAME",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "line",
+      "legacy_type": "河流",
+      "geometry": "LineString",
+      "params": {
+        "line_type": "河流",
+        "label_field": "NAME"
+      },
+      "label_policy": {
+        "mode": "replace",
+        "default_field": "NAME",
+        "mark_dirty": true
+      }
+    },
+    {
+      "layer": "河流面",
+      "aliases": [
+        "面状河流",
+        "水域面"
+      ],
+      "style_file": "河流面.qml",
+      "label_field": "无",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "fill",
+      "legacy_type": "river",
+      "geometry": "Polygon",
+      "params": {
+        "layer_type": "河流",
+        "label_field": "NAME"
+      },
+      "label_policy": {
+        "mode": "merge",
+        "settings": [
+          "placement"
+        ],
+        "text": [
+          "font",
+          "size",
+          "size_unit",
+          "color"
+        ],
+        "clear_size_property": true,
+        "mark_dirty": true
+      },
+      "legacy_aliases": [
+        "河流",
+        "river"
+      ]
+    },
+    {
+      "layer": "县域面",
+      "aliases": [
+        "县级行政区",
+        "县域"
+      ],
+      "style_file": "县域面.qml",
+      "label_field": "无",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "fill",
+      "legacy_type": "county",
+      "geometry": "Polygon",
+      "params": {
+        "layer_type": "县",
+        "label_field": "NAME"
+      },
+      "label_policy": {
+        "mode": "merge",
+        "settings": [
+          "placement"
+        ],
+        "text": [
+          "font",
+          "size",
+          "size_unit",
+          "color"
+        ],
+        "clear_size_property": true,
+        "mark_dirty": true
+      },
+      "legacy_aliases": [
+        "县",
+        "county"
+      ]
+    },
+    {
+      "layer": "市域面",
+      "aliases": [
+        "地级市行政区",
+        "市域"
+      ],
+      "style_file": "市域面.qml",
+      "label_field": "无",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "fill",
+      "legacy_type": "city",
+      "geometry": "Polygon",
+      "params": {
+        "layer_type": "市",
+        "label_field": "NAME"
+      },
+      "label_policy": {
+        "mode": "merge",
+        "settings": [
+          "placement"
+        ],
+        "text": [
+          "font",
+          "size",
+          "size_unit",
+          "color"
+        ],
+        "clear_size_property": true,
+        "mark_dirty": true
+      },
+      "legacy_aliases": [
+        "市",
+        "city"
+      ]
+    },
+    {
+      "layer": "省域",
+      "aliases": [
+        "省级行政区",
+        "省界面",
+        "省域外框",
+        "省域面"
+      ],
+      "style_file": "省域面.qml",
+      "label_field": "NAME",
+      "description": "由原预设导出的符号和标注",
+      "legacy_handler": "fill",
+      "legacy_type": "province",
+      "geometry": "Polygon",
+      "params": {
+        "layer_type": "省",
+        "label_field": "NAME"
+      },
+      "label_policy": {
+        "mode": "merge",
+        "settings": [
+          "placement",
+          "displayAll",
+          "obstacle",
+          "priority",
+          "allowDegradedPlacement"
+        ],
+        "text": [
+          "font",
+          "size",
+          "size_unit",
+          "color",
+          "buffer"
+        ],
+        "clear_size_property": true,
+        "mark_dirty": true
+      },
+      "legacy_aliases": [
+        "省",
+        "province"
+      ]
+    }
+  ]
+}

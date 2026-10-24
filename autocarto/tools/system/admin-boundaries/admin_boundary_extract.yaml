@@ -1,0 +1,34 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: admin_boundary_extract
+  display_name: 提取行政区边界
+  keywords: [行政区边界, 省市县, 边界提取, 行政区代码]
+  domain: admin-boundaries
+  runtime: qgis
+spec:
+  description: >-
+    按省、市、县级别和精确名称或六位代码，从已校验的内置离线资源提取原始行政区面并加载到工程。
+    重名返回候选，不取第一条；保留原坐标与属性，输出 GeoJSON 和来源记录，相同调用复用结果。
+  parameters:
+    - name: level
+      type: string
+      required: true
+      enum: [省, 市, 县, province, city, county]
+      description: 行政区级别，省/province、市/city或县/county
+    - name: name
+      type: string
+      description: 行政区精确全名，与 code 至少提供一个；重名时根据候选改用代码
+    - name: code
+      type: string
+      description: 六位行政区代码字符串，与 name 同时提供时必须同时匹配
+    - name: output
+      type: string
+      description: 可选 .geojson 输出文件路径，相对路径按项目根解析；默认项目运行数据目录的 data/boundaries，已有不同内容不会覆盖
+execution:
+  handler: handlers.boundary.extract_boundary_handler
+  param_mapping:
+    level: '{{ level }}'
+    name: '{{ name }}'
+    code: '{{ code }}'
+    output: '{{ output }}'

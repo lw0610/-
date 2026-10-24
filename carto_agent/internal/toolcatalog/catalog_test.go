@@ -1,6 +1,7 @@
 package toolcatalog
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/autocarto/carto_agent/internal/compute"
@@ -8,6 +9,37 @@ import (
 	"github.com/autocarto/carto_agent/internal/skill"
 	"github.com/autocarto/carto_agent/internal/toolrouter"
 )
+
+func TestChineseDiscoveryMetadataSurvivesRuntimeProjection(t *testing.T) {
+	snapshot := toolrouter.Snapshot{Interactive: []toolrouter.InteractiveToolDefinition{{
+		Name: "sample", DisplayName: "创建要素缓冲区", Description: "按距离生成缓冲区", Keywords: []string{"邻近分析", "缓冲"}, Available: true,
+	}}}
+	items := BuildToolInfos([]string{"sample"}, snapshot)
+	if len(items) != 1 || items[0].DisplayName != "创建要素缓冲区" || !reflect.DeepEqual(items[0].Keywords, []string{"邻近分析", "缓冲"}) {
+		t.Fatalf("runtime projection lost discovery metadata: %#v", items)
+	}
+	items[0].Keywords[0] = "changed"
+	if snapshot.Interactive[0].Keywords[0] != "邻近分析" {
+		t.Fatal("projection must isolate keyword slices")
+	}
+}
+
+func TestDiscoveryMetadataChangesUpdateSchemaRevision(t *testing.T) {
+	baseline := []middlewareclient.ToolCatalogItem{{Name: "sample", DisplayName: "创建要素缓冲区", Keywords: []string{"邻近分析", "缓冲"}, Available: true}}
+	for _, variant := range []middlewareclient.ToolCatalogItem{
+		{Name: "sample", DisplayName: "创建几何缓冲区", Keywords: []string{"邻近分析", "缓冲"}, Available: true},
+		{Name: "sample", DisplayName: "创建要素缓冲区", Keywords: []string{"距离分析"}, Available: true},
+	} {
+		diff := DiffTools(baseline, []middlewareclient.ToolCatalogItem{variant})
+		if !diff.SchemaChanged || diff.AvailabilityChanged {
+			t.Fatalf("discovery metadata changes must invalidate schema only: %#v", diff)
+		}
+	}
+	reordered := []middlewareclient.ToolCatalogItem{{Name: "sample", DisplayName: "创建要素缓冲区", Keywords: []string{"缓冲", " 邻近分析 ", "缓冲"}, Available: true}}
+	if DiffTools(baseline, reordered).Changed {
+		t.Fatal("keyword ordering, whitespace and duplicates must not change the revision")
+	}
+}
 
 func assertRuntimeCatalogParity(t *testing.T, baseline, candidate []middlewareclient.ToolCatalogItem, toleratedDiffs ...string) {
 	t.Helper()

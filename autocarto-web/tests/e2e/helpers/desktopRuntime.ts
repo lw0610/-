@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
 
-export const DEFAULT_DESKTOP_RUNTIME_PORT = 3000
+export const DEFAULT_DESKTOP_RUNTIME_PORT = Number(process.env.AUTOCARTO_TEST_RUNTIME_PORT || '3000')
 
 interface MockDesktopRuntimeOptions {
   port?: number

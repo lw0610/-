@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { AgentDefData, PlanAgentDefData } from "@/lib/api";
+import { AgentDefData, PlanAgentDefData, SkillPackageSummary, toolPackageSelections } from "@/lib/api";
 import ActionBar, { ActionButton } from "@/components/settings/ActionBar";
 import AlertPanel from "@/components/settings/AlertPanel";
 import InfoTooltip from "@/components/settings/InfoTooltip";
@@ -17,10 +17,11 @@ import {
 import {
   EditorSection,
 } from "@/components/settings/shared/AgentFormParts";
-import TagSelector, { TagOption } from "@/components/settings/TagSelector";
+import ToolPackageSelector from "./ToolPackageSelector";
+import AgentRoleTypeFields from "./AgentRoleTypeFields";
 import { confirmDiscardChanges } from "@/hooks/useUnsavedChangesGuard";
 import {
-  collectSkillSelections,
+  normalizeRuntimeAgent, normalizePlanAgent,
 } from "@/app/settings/agents/_components/normalizers";
 
 interface AgentEditDrawerProps {
@@ -28,7 +29,7 @@ interface AgentEditDrawerProps {
   mode: "runtime" | "plan";
   agentName: string;
   agent: AgentDefData | PlanAgentDefData | null;
-  skillOptions: TagOption[];
+  toolPackages: SkillPackageSummary[];
   modelOptions: Array<{ value: string; label: string }>;
   onClose: () => void;
   onSave: (agent: AgentDefData | PlanAgentDefData) => Promise<void> | void;
@@ -39,51 +40,15 @@ function cloneAgent<T extends AgentDefData | PlanAgentDefData>(agent: T): T {
   return JSON.parse(JSON.stringify(agent)) as T;
 }
 
-function ensureRuntimeAgent(agent: AgentDefData): AgentDefData {
-  return {
-    ...agent,
-    llm: {
-      provider: String(agent.llm?.provider || ""),
-    },
-    skill_packages: collectSkillSelections(agent.skill_packages),
-    prompts: {
-      static_instructions: String(agent.prompts?.static_instructions || ""),
-      user_prompt_template: String(
-        agent.prompts?.user_prompt_template || "{{ user_input }}",
-      ),
-      runtime_mode_instruction: String(
-        agent.prompts?.runtime_mode_instruction || "",
-      ),
-    },
-  };
-}
-
-function ensurePlanAgent(agent: PlanAgentDefData): PlanAgentDefData {
-  return {
-    ...agent,
-    llm: {
-      provider: String(agent.llm?.provider || ""),
-    },
-    mode: String(agent.mode || "readonly_plus"),
-    skill_packages: collectSkillSelections(agent.skill_packages),
-    prompts: {
-      static_instructions: String(agent.prompts?.static_instructions || ""),
-      runtime_mode_instruction: String(
-        agent.prompts?.runtime_mode_instruction || "",
-      ),
-      user_prompt_template: String(
-        agent.prompts?.user_prompt_template || "{{ user_input }}",
-      ),
-    },
-  };
-}
+const ensureRuntimeAgent = normalizeRuntimeAgent;
+const ensurePlanAgent = normalizePlanAgent;
 
 export default function AgentEditDrawer({
   open,
   mode,
   agentName,
   agent,
-  skillOptions,
+  toolPackages,
   modelOptions,
   onClose,
   onSave,
@@ -200,7 +165,7 @@ export default function AgentEditDrawer({
           requestClose();
         }}
       />
-      <div className="absolute inset-y-0 right-0 w-full max-w-[1360px] overflow-auto border-l border-zinc-200 bg-zinc-50 p-3 shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:border-zinc-800 dark:bg-zinc-950 lg:p-3">
+      <div role="dialog" aria-modal="true" aria-label={`编辑角色 ${draft.display_name || agentName}`} className="absolute inset-y-0 right-0 w-full max-w-[1360px] overflow-auto border-l border-zinc-200 bg-zinc-50 p-3 shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:border-zinc-800 dark:bg-zinc-950 lg:p-3">
         <div className="space-y-3">
           <div className="rounded border border-zinc-200 bg-white px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-900">
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -212,8 +177,8 @@ export default function AgentEditDrawer({
                   <InfoTooltip
                     content={
                       mode === "runtime"
-                        ? "调整 Runtime 智能体的执行能力、技能范围与提示词。"
-                        : "调整 Plan 智能体的技能范围、提示词与独立模型覆盖。"
+                        ? "调整 Runtime 智能体的执行能力、工具包范围与提示词。"
+                        : "调整 Plan 智能体的工具包范围、提示词与独立模型覆盖。"
                     }
                   />
                 </div>
@@ -251,8 +216,8 @@ export default function AgentEditDrawer({
                 <InfoTooltip
                   content={
                     mode === "runtime"
-                      ? "调整 Runtime 智能体的执行能力、技能范围与提示词。"
-                      : "调整 Plan 智能体的技能范围、提示词与独立模型覆盖。"
+                      ? "调整 Runtime 智能体的执行能力、工具包范围与提示词。"
+                      : "调整 Plan 智能体的工具包范围、提示词与独立模型覆盖。"
                   }
                 />
               </>
@@ -301,7 +266,8 @@ export default function AgentEditDrawer({
                     : "设置 Plan 智能体名称与独立模型覆盖。"
                 }
               >
-                <div className="grid gap-3 md:grid-cols-2">
+                {mode === "runtime" && runtimeDraft && <AgentRoleTypeFields agent={runtimeDraft} onChange={(next) => setDraft(next)} />}
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
                   <Field label="显示名称">
                     <TextInput
                       value={
@@ -338,13 +304,13 @@ export default function AgentEditDrawer({
                         if (mode === "runtime") {
                           updateRuntimeDraft((current) => ({
                             ...current,
-                            llm: { provider: value },
+                            llm: { ...current.llm, provider: value },
                           }));
                           return;
                         }
                           updatePlanDraft((current) => ({
                             ...current,
-                            llm: { provider: value },
+                            llm: { ...current.llm, provider: value },
                           }));
                         }}
                     >
@@ -359,8 +325,8 @@ export default function AgentEditDrawer({
 
                   {mode === "runtime" && runtimeDraft && (
                     <>
-                      <Field label="描述">
-                        <TextInput
+                      <Field label="职责摘要">
+                        <TextAreaInput
                           value={runtimeDraft.description || ""}
                           onChange={(event) => {
                             const value = event.target.value;
@@ -390,47 +356,20 @@ export default function AgentEditDrawer({
                 </div>
               </EditorSection>
 
-              <EditorSection
-                title="技能包"
-                description="为当前智能体配置专属技能包；全局技能包在方案层统一维护。"
-              >
-                <div className="space-y-3">
-                  <div>
-                    <div className="mb-1 flex items-center gap-1 text-xs text-zinc-700 dark:text-zinc-200">
-                      <span>智能体技能包</span>
-                      <InfoTooltip content="当前智能体独有的技能包选择。" />
-                    </div>
-                    <TagSelector
-                      options={skillOptions}
-                      value={
-                        mode === "runtime"
-                          ? collectSkillSelections(runtimeDraft?.skill_packages)
-                          : collectSkillSelections(planDraft?.skill_packages)
-                      }
-                      onChange={(next) => {
-                        if (mode === "runtime") {
-                          updateRuntimeDraft((current) => ({
-                            ...current,
-                            skill_packages: collectSkillSelections(next),
-                          }));
-                          return;
-                        }
-                        updatePlanDraft((current) => ({
-                          ...current,
-                          skill_packages: collectSkillSelections(next),
-                        }));
-                      }}
-                    />
-                  </div>
-                </div>
-              </EditorSection>
+              {(mode === "plan" || runtimeDraft?.kind !== "executor") && <EditorSection title="工具包" description="选择当前角色可用的工具包；系统基础包自动挂载。">
+                <ToolPackageSelector packages={toolPackages} value={toolPackageSelections(mode === "runtime" ? runtimeDraft : planDraft)} onChange={(next) => {
+                  if (mode === "runtime") updateRuntimeDraft((current) => ({...current,tool_packages:next}));
+                  else updatePlanDraft((current) => ({...current,tool_packages:next}));
+                }} />
+              </EditorSection>}
+              {(draft.legacy_unresolved_packages || []).length > 0 && <AlertPanel tone="warning" title="旧配置中有未识别的工具包" message={(draft.legacy_unresolved_packages || []).join("、")} />}
 
               <EditorSection
-                title="提示词与模板"
-                description={mode === "runtime" && agentName === "knowledge_engineer" ? "静态提示词会作为知识抽取的业务规则生效；输出结构、原文引用与数据校验由系统固定约束。" : "定义静态提示词、用户输入模板，以及 Plan 模式补充指令。"}
+                title="职责说明与高级设置"
+                description={mode === "runtime" && runtimeDraft?.kind === "executor" ? "专用执行器使用流程步骤中的规则；职责说明保留为备用规则。" : "定义静态提示词、用户输入模板，以及 Plan 模式补充指令。"}
               >
                 <div className="space-y-3">
-                  <Field label="静态提示词">
+                  <Field label="职责说明">
                     <TextAreaInput
                       className="min-h-[180px] text-xs"
                       value={String(draft.prompts?.static_instructions || "")}
@@ -473,7 +412,7 @@ export default function AgentEditDrawer({
                     </Field>
                   )}
 
-                  {mode === "runtime" && agentName === "knowledge_engineer" ? <p className="text-xs text-zinc-500">知识抽取直接读取本次输入的完整原文，不使用用户输入模板。</p> : <Field label="用户输入模板">
+                  {mode === "runtime" && runtimeDraft?.kind === "executor" ? <p className="text-xs text-zinc-500">专用执行器接收流程步骤提供的输入，保留原有高级字段。</p> : <Field label="用户输入模板">
                     <TextInput
                       value={String(
                         draft.prompts?.user_prompt_template ||

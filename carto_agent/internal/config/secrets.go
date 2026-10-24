@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -43,6 +44,9 @@ type SecretsManager struct {
 // NewSecretsManager 创建密钥管理器
 // configDir 应该是运行时配置目录路径（通常为 autocarto/config）
 func NewSecretsManager(configDir string) (*SecretsManager, error) {
+	if disabled, _ := strconv.ParseBool(strings.TrimSpace(os.Getenv("AUTOCARTO_DISABLE_KEYRING"))); disabled {
+		return newSecretsManagerWithKeyring(configDir, nil)
+	}
 	return newSecretsManagerWithKeyring(configDir, newOSKeyringBackend(defaultKeyringServiceName))
 }
 

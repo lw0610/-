@@ -10,6 +10,7 @@ import { useInstanceStore } from '@/stores/instanceStore'
 import { useRuntimeSnapshotStore } from '@/stores/runtimeSnapshotStore'
 import { useSessionStore } from '@/stores/sessionStore'
 import type { WorkflowBlock, WSMessage } from '@/types/message'
+import { useFlowRunStore } from '@/features/flow-run/store'
 
 function createSessionRecord(
   sessionId: string,
@@ -137,6 +138,7 @@ vi.mock('@/lib/tauri', () => ({
 }))
 
 function resetStores() {
+  useFlowRunStore.setState({ runs: {}, blocked: {}, snapshotSeq: {}, eventSeq: {} })
   useConnectionStore.setState({
     connected: false,
     backendReady: true,
@@ -365,7 +367,7 @@ describe('WebSocketProvider session attach recovery', () => {
 
       await act(async () => {
         websocketHarness.emitMessage({
-          type, session_id: sessionId,
+          type, content: '', session_id: sessionId,
           data: {
             status: 'cancelled',
             ...(type === 'session_state' ? { workflow_blocks: [{ ...workflow, id: 'wf-restored' }] } : {}),
@@ -452,6 +454,68 @@ describe('WebSocketProvider session attach recovery', () => {
 
     expect(websocketHarness.connectMock).not.toHaveBeenCalled()
     expect(screen.queryByText('无法连接到后端服务')).not.toBeInTheDocument()
+  })
+
+  it('updates session subscriptions and finishes a flow without rebuilding the connection', async () => {
+    const sessions = ['sid-reconnect', 'sid-next', 'sid-background'].map((id) => createSessionRecord(id))
+    loadSessionsForProjectMock.mockResolvedValue(sessions)
+    const { unmount } = render(<WebSocketProvider><div>persistent connection</div></WebSocketProvider>)
+    await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
+    await act(async () => websocketHarness.emitConnection(true))
+    expect(websocketHarness.sendSessionAttachMock).toHaveBeenCalledWith('sid-reconnect', undefined)
+
+    act(() => useSessionStore.getState().setActiveSession('sid-next'))
+    expect(websocketHarness.sendSessionAttachMock).toHaveBeenCalledWith('sid-next', undefined)
+    act(() => useChatStore.getState().setSessionRunning('sid-background', true))
+    expect(websocketHarness.sendSessionAttachMock).toHaveBeenCalledWith('sid-background', undefined)
+    act(() => useChatStore.getState().setSessionId('sid-next'))
+
+    for (const [seq, event] of [[1, 'flow.started'], [2, 'flow.finished']] as const) {
+      await act(async () => websocketHarness.emitMessage({
+        type: 'run_event', content: '', session_id: 'sid-reconnect',
+        data: {
+          seq, source_type: 'flow_event',
+          payload: {
+            event, session_id: 'sid-reconnect', flow_run_id: 'flow-connection',
+            payload: { flow_id: 'demo', status: event === 'flow.finished' ? 'completed' : 'running', steps: [] },
+          },
+        },
+      }))
+    }
+    expect(useFlowRunStore.getState().runs['sid-reconnect'][0].status).toBe('completed')
+    expect(websocketHarness.sendSessionDetachMock).toHaveBeenCalledWith('sid-reconnect')
+    act(() => useChatStore.getState().setSessionRunning('sid-background', false))
+    expect(websocketHarness.sendSessionDetachMock).toHaveBeenCalledWith('sid-background')
+    expect(useConnectionStore.getState().connected).toBe(true)
+    expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1)
+    expect(websocketHarness.disconnectMock).not.toHaveBeenCalled()
+    expect(useConnectionStore.getState().initializeRuntime).toHaveBeenCalledTimes(1)
+    expect(useConnectionStore.getState().waitForBackend).toHaveBeenCalledTimes(1)
+
+    unmount()
+    expect(websocketHarness.disconnectMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('uses the latest session targets when the same connection subscription reconnects', async () => {
+    loadSessionsForProjectMock.mockResolvedValue([
+      createSessionRecord('sid-reconnect'), createSessionRecord('sid-latest'),
+    ])
+    render(<WebSocketProvider><AttachStateProbe /></WebSocketProvider>)
+    await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
+    await act(async () => websocketHarness.emitConnection(true))
+    act(() => websocketHarness.emitConnection(false))
+    act(() => {
+      useSessionStore.getState().setActiveSession('sid-latest')
+      useChatStore.getState().setSessionId('sid-latest')
+      useChatStore.getState().setSessionRunning('sid-reconnect', false)
+    })
+    websocketHarness.sendSessionAttachMock.mockClear()
+    await act(async () => websocketHarness.emitConnection(true))
+
+    expect(websocketHarness.sendSessionAttachMock.mock.calls).toEqual([['sid-latest', undefined]])
+    expect(useConnectionStore.getState().connected).toBe(true)
+    expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1)
+    expect(websocketHarness.disconnectMock).not.toHaveBeenCalled()
   })
 
   it('reconnects desired sessions with last seen seq and promotes them back to live', async () => {
@@ -787,6 +851,34 @@ describe('WebSocketProvider session attach recovery', () => {
       expect(messages).toHaveLength(0)
       expect(useChatStore.getState().messages).toHaveLength(0)
     })
+  })
+
+  it('restores flow-only snapshots, skips covered replay and folds tagged process messages', async () => {
+    render(<WebSocketProvider><AttachStateProbe /></WebSocketProvider>)
+    await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
+    const snapshot = { api_version: 'flow-run/v1', flow_run_id: 'flow-r', session_id: 'sid-reconnect', flow_id: 'demo', status: 'waiting_user', started_at: '2026-10-21T00:00:00Z', steps: [{ id: 's1', index: 1, title: '检查', role: '数据角色', status: 'waiting_user', attempts: [], outputs: {} }], result: { deliverables: {}, issues: [], summary: '' } }
+    act(() => {
+      websocketHarness.emitMessage({ type: 'run_event', content: '', session_id: 'sid-reconnect', data: { source_type: 'session_state', event: 'session_state', payload: { session_id: 'sid-reconnect', flow_run: snapshot, flow_run_event_seq: 12 } } })
+      websocketHarness.emitMessage({ type: 'run_event', content: '', session_id: 'sid-reconnect', data: { seq: 11, replayed: true, source_type: 'flow_event', payload: { event: 'flow.step_started', session_id: 'sid-reconnect', flow_run_id: 'flow-r', payload: { step_id: 's1', attempt: 1, run_id: 'old' } } } })
+    })
+    expect(useFlowRunStore.getState().runs['sid-reconnect'][0].steps[0].status).toBe('waiting_user')
+    act(() => websocketHarness.emitMessage({ type: 'run_event', content: '', session_id: 'sid-reconnect', data: { seq: 13, replayed: true, source_type: 'agent_workflow', payload: { content: '真实能力回执', session_id: 'sid-reconnect', flow_run_id: 'flow-r', step_id: 's1', phase: 'tool_result', tool: 'get_layers_info', result: '图层存在' } } }))
+    expect(useChatStore.getState().messages.at(-1)).toMatchObject({ type: 'tool', content: '真实能力回执', data: { flow_run_id: 'flow-r', step_id: 's1' } })
+    expect(useChatStore.getState().workflowBlocks).toEqual([])
+    expect(useFlowRunStore.getState().runs['sid-reconnect'][0].steps[0].status).toBe('waiting_user')
+    act(() => websocketHarness.emitMessage({ type: 'flow_event', content: '', session_id: 'other-session', data: { event: 'flow.started', session_id: 'other-session', flow_run_id: 'other-r', payload: { flow_id: 'demo', steps: [] } } }))
+    expect(useFlowRunStore.getState().runs['other-session'][0].flow_run_id).toBe('other-r')
+    expect(useChatStore.getState().sessionId).toBe('sid-reconnect')
+    await act(async () => {})
+  })
+
+  it('renders the agreed flow_preview tool result as a persisted preview message', async () => {
+    render(<WebSocketProvider><AttachStateProbe /></WebSocketProvider>)
+    await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
+    const preview = { flow_id: 'demo', name: '流程', plan: { flow_id: 'demo', name: '流程', inputs: [], steps: [], resources: [] }, diagnostics: [], input_check: { valid: true, missing: [] } }
+    act(() => websocketHarness.emitMessage({ type: 'agent_workflow', content: '', session_id: 'sid-reconnect', phase: 'tool_result', data: { tool: 'flow_preview', result: JSON.stringify({ data: preview }) } }))
+    expect(useChatStore.getState().messages.at(-1)).toMatchObject({ type: 'status', data: { flow_preview: preview } })
+    expect(useChatStore.getState().workflowBlocks).toEqual([])
   })
 
   it('shows fatal startup shell when unsupported protocol arrives during initial connect', async () => {

@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: browser_check_environment
+  keywords: ["浏览器环境", "检查浏览器环境", "网页取数", "浏览器", "网络下载"]
   display_name: 检查浏览器环境
   domain: browser-data-acquisition
   runtime: internal

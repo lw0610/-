@@ -118,12 +118,12 @@ func TestSelectPlanToolsReadonlyPlus(t *testing.T) {
 	baseTools := subagents.InvokableToBaseTool(invokables)
 
 	planAgent := &config.PlanAgentDefData{
-		Mode:          config.PlanToolStrategyReadonlyPlus,
-		SkillPackages: []string{"validation", "vector-write", "layout-read"},
+		Mode:         config.PlanToolStrategyReadonlyPlus,
+		ToolPackages: []string{"validation", "vector-write", "layout-read"},
 	}
 	planCfg := &config.PlanConfig{
 		Global: config.GlobalAgentConfig{
-			SkillPackages: []string{"project-state"},
+			ToolPackages: []string{"project-state"},
 		},
 	}
 
@@ -134,7 +134,7 @@ func TestSelectPlanToolsReadonlyPlus(t *testing.T) {
 		"layout-read":   {"layout_info"},
 	}
 
-	selected := selectPlanTools(context.Background(), baseTools, planCfg, planAgent, packageTools)
+	selected := selectPlanTools(context.Background(), baseTools, planCfg, planAgent, subagents.PackageCatalog{Tools: packageTools})
 	names := strings.Join(mustToolNames(t, selected), ",")
 
 	if !strings.Contains(names, "get_layers_info") {
@@ -151,6 +151,26 @@ func TestSelectPlanToolsReadonlyPlus(t *testing.T) {
 	}
 	if strings.Contains(names, "buffer") {
 		t.Fatalf("unexpected write tool buffer in selected tools: %s", names)
+	}
+}
+
+func TestPlanFlowPreviewAutoMountsAndFlowStartIsNeverSelected(t *testing.T) {
+	ctx := context.Background()
+	baseTools := []einotool.BaseTool{&fakeInvokableTool{name: "flow_preview"}, &fakeInvokableTool{name: "flow_start"}}
+	catalog := subagents.PackageCatalog{
+		Tools: map[string][]string{"flow-awareness": {"flow_preview", "flow_start"}},
+		Metadata: map[string]subagents.RuntimeSkillPackageMetadata{
+			"flow-awareness": {Hidden: true, AutoMount: "plan_main"},
+		},
+	}
+	for _, mode := range []string{config.PlanToolStrategyReadonlyOnly, config.PlanToolStrategyReadonlyPlus, config.PlanToolStrategyAll} {
+		t.Run(mode, func(t *testing.T) {
+			selected := selectPlanTools(ctx, baseTools, &config.PlanConfig{}, &config.PlanAgentDefData{Mode: mode}, catalog)
+			names := mustToolNames(t, selected)
+			if len(names) != 1 || names[0] != "flow_preview" {
+				t.Fatalf("Plan must expose preview without starting execution: %v", names)
+			}
+		})
 	}
 }
 
@@ -177,7 +197,7 @@ func TestSelectPlanToolsFromDefaultProfile(t *testing.T) {
 		"pyqgis-scripting":           {"pyqgis_execute_script"},
 	}
 
-	selected := selectPlanTools(context.Background(), baseTools, defaultCfg.Plan, &planner, packageTools)
+	selected := selectPlanTools(context.Background(), baseTools, defaultCfg.Plan, &planner, subagents.PackageCatalog{Tools: packageTools, Metadata: map[string]subagents.RuntimeSkillPackageMetadata{"runtime-control": {System: true}, "build-capability-awareness": {Hidden: true, AutoMount: "plan_main"}}})
 	names := strings.Join(mustToolNames(t, selected), ",")
 
 	if !strings.Contains(names, "hitl_request") {
@@ -196,10 +216,10 @@ func TestSelectPlanToolsFromDefaultProfile(t *testing.T) {
 
 func TestResolvePlanCategorySkillToolsMatchesRuntimeSkillProjection(t *testing.T) {
 	planAgent := &config.PlanAgentDefData{
-		SkillPackages: []string{"validation", "shared"},
+		ToolPackages: []string{"validation", "shared"},
 	}
 	planCfg := &config.PlanConfig{
-		Global: config.GlobalAgentConfig{SkillPackages: []string{"project-state", "shared"}},
+		Global: config.GlobalAgentConfig{ToolPackages: []string{"project-state", "shared"}},
 	}
 	packageTools := map[string][]string{
 		"project-state": {"get_layers_info"},
@@ -207,8 +227,8 @@ func TestResolvePlanCategorySkillToolsMatchesRuntimeSkillProjection(t *testing.T
 		"shared":        {"layout_info", "check_validity"},
 	}
 
-	resolved := resolvePlanCategorySkillTools(planCfg, planAgent, packageTools)
-	runtimeConfig := buildPlanRuntimeSkillConfig(planCfg, planAgent, packageTools)
+	resolved := resolvePlanCategorySkillTools(planCfg, planAgent, subagents.PackageCatalog{Tools: packageTools})
+	runtimeConfig := buildPlanRuntimeSkillConfig(planCfg, planAgent, subagents.PackageCatalog{Tools: packageTools})
 	if runtimeConfig == nil {
 		t.Fatal("expected runtime skill projection for planner")
 	}
@@ -219,14 +239,14 @@ func TestResolvePlanCategorySkillToolsMatchesRuntimeSkillProjection(t *testing.T
 }
 
 func TestBuildPlanRuntimeSkillConfigExposesMiddlewareSkillsSeparately(t *testing.T) {
-	planAgent := &config.PlanAgentDefData{SkillPackages: []string{"validation", "planning-knowledge"}}
-	planCfg := &config.PlanConfig{Global: config.GlobalAgentConfig{SkillPackages: []string{"project-state"}}}
+	planAgent := &config.PlanAgentDefData{ToolPackages: []string{"validation", "planning-knowledge"}}
+	planCfg := &config.PlanConfig{Global: config.GlobalAgentConfig{ToolPackages: []string{"project-state"}}}
 	packageTools := map[string][]string{
 		"project-state": {"get_layers_info"},
 		"validation":    {"check_validity"},
 	}
 
-	runtimeConfig := buildPlanRuntimeSkillConfig(planCfg, planAgent, packageTools)
+	runtimeConfig := buildPlanRuntimeSkillConfig(planCfg, planAgent, subagents.PackageCatalog{Tools: packageTools})
 	if runtimeConfig == nil {
 		t.Fatal("expected runtime config")
 	}

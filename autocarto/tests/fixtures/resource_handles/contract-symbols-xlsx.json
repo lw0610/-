@@ -1,0 +1,56 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:9fa50136d750cc60afa99fe77834301d2a62d51a3272fa5edbe24fffb4fd5c36",
+  "entries": [
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "契约起点",
+      "event_types": [
+        "出发"
+      ],
+      "exists": true,
+      "format": "svg",
+      "kind": "symbol",
+      "name": "start_flag",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/symbols/契约符号/point.svg",
+      "priority": 3,
+      "size": 5.5,
+      "symbol_type": "start_flag"
+    },
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "契约途经点",
+      "event_types": [
+        "抵达",
+        "会合"
+      ],
+      "exists": true,
+      "format": "svg",
+      "kind": "symbol",
+      "name": "waypoint",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/symbols/契约符号/point.svg",
+      "priority": 2,
+      "size": 3.5,
+      "symbol_type": "waypoint"
+    }
+  ],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/symbols/契约符号/symbol_mapping.xlsx",
+  "format": "",
+  "id": "legacy.symbols.125c491f21",
+  "name": "契约符号",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/symbols/契约符号",
+  "total_entries": 2,
+  "truncated": false,
+  "type": "symbols",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

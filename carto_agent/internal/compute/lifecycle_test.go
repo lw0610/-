@@ -32,7 +32,10 @@ func TestResolveComputeWorkingDirSupportsFileSeed(t *testing.T) {
 }
 
 func TestResolveComputeWorkingDirFallsBackToCurrentWorkingDirectory(t *testing.T) {
-	root := t.TempDir()
+	root, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
 	originalWD, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("getwd failed: %v", err)

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: remove_null_geometries
-  display_name: 移除空几何图形
+  keywords: ["空几何要素", "删除空几何要素", "几何处理", "空间叠加", "几何修复"]
+  display_name: "移除空几何要素"
   domain: vector-geometry
   runtime: qgis
 spec:

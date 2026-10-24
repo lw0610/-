@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: data_prepare_statistical
-  display_name: 准备年度统计专题数据
+  keywords: ["年度统计数据", "准备年度统计数据", "统计数据", "数据关联", "数据校验"]
+  display_name: "准备年度统计数据"
   domain: statistical-data
   runtime: qgis
 spec:

@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_buildvrt
+  keywords: ["虚拟栅格", "构建虚拟栅格", "栅格处理", "矢量处理", "空间分析"]
   display_name: 构建虚拟栅格
   domain: gdal-processing
   runtime: qgis

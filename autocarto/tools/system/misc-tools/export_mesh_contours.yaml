@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: export_mesh_contours
-  display_name: 导出等值线
+  keywords: ["网格等值线", "输出网格等值线", "统计图表", "网格数据", "数据可视化"]
+  display_name: "导出网格等值线"
   runtime: qgis
   domain: misc-tools
 spec:
@@ -17,7 +18,7 @@ spec:
     description: 数据集组
   - name: INCREMENT
     type: number
-    description: 等值线间隔
+    description: "等值线间隔（与输入高程或网格数值单位一致，正数）"
     default: 10.0
   - name: OUTPUT_LINES
     type: output_layer

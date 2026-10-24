@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_item_rotation
-  display_name: layout_set_item_rotation
+  keywords: ["元素旋转角度", "配置元素旋转角度", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置元素旋转角度"
   runtime: qgis
   domain: print-layout
 spec:
@@ -19,7 +20,7 @@ spec:
   - name: rotation
     type: number
     required: true
-    description: 旋转角度
+    description: "顺时针旋转角度（度）"
 execution:
   handler: handlers.layout_advanced.set_item_rotation_handler
   param_mapping:

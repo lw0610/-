@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: smooth
-  display_name: 平滑
+  keywords: ["要素几何", "平滑要素几何", "几何处理", "空间叠加", "几何修复"]
+  display_name: "平滑要素几何"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,15 +15,15 @@ spec:
     description: 输入图层
   - name: ITERATIONS
     type: integer
-    description: 迭代次数
+    description: "迭代次数（数量，正整数）"
     default: 1
   - name: OFFSET
     type: number
-    description: 偏移量
+    description: "平滑偏移比例（无单位，0—0.5）"
     default: 0.25
   - name: MAX_ANGLE
     type: number
-    description: 最大角度
+    description: "需要平滑的最大拐角（度，0—180）"
     default: 180.0
   - name: OUTPUT
     type: output_layer

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_set_blend_mode
-  display_name: layer_set_blend_mode
+  keywords: ["图层混合模式", "配置图层混合模式", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置图层混合模式"
   runtime: qgis
   domain: cartography
 spec:

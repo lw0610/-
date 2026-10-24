@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: subdivide
-  display_name: 细分
+  keywords: ["按节点上限细分几何", "几何处理", "空间叠加", "几何修复"]
+  display_name: "按节点上限细分几何"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: MAX_NODES
     type: integer
-    description: 最大节点数
+    description: "最大节点数（数量，正整数）"
     default: 256
   - name: OUTPUT
     type: output_layer

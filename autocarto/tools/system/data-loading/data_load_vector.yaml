@@ -2,21 +2,29 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: data_load_vector
-  display_name: data_load_vector
+  keywords: ["矢量图层", "导入矢量图层", "图层加载", "数据导入", "数据导出"]
+  display_name: "加载矢量图层"
   domain: data-loading
   runtime: qgis
 spec:
-  description: 加载矢量图层
+  description: >-
+    加载本地矢量文件，默认复用工程中相同数据源的图层，返回实际图层标识、名称和坐标系。
+    需要同一数据的第二个独立图层时，设置 reuse_existing=false 并指定不同图层名。
   parameters:
     - name: path
       type: string
       required: true
-      description: 矢量文件路径
+      description: 矢量文件路径；相对路径按项目根解析，可附带 layername 等数据提供程序选项
     - name: layer_name
       type: string
       description: 图层名称（可选）
+    - name: reuse_existing
+      type: boolean
+      default: true
+      description: 默认复用相同数据源；设为 false 时创建独立图层，建议同时提供不同图层名
 execution:
   handler: handlers.loader.load_vector_handler
   param_mapping:
     path: '{{ path }}'
     layer_name: '{{ layer_name }}'
+    reuse_existing: '{{ reuse_existing }}'

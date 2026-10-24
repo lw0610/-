@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: distance_matrix
-  display_name: 距离矩阵
+  keywords: ["点距离矩阵", "分析点距离矩阵", "空间分析", "空间统计", "空间聚类"]
+  display_name: "计算点距离矩阵"
   domain: spatial-analysis
   runtime: qgis
 spec:

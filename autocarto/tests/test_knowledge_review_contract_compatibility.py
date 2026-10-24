@@ -1,3 +1,4 @@
+from autocarto.tests.support.resource_handles import load_handle, resolve_handle
 import copy
 import hashlib
 import hmac
@@ -56,7 +57,7 @@ class KnowledgeReviewContractCompatibilityTest(unittest.TestCase):
             "knowledge_json": self.graph, "review_context": self.token(), "validate_only": True,
         }
         params.update(overrides)
-        return compile_marching_route_dataset_handler(params)
+        return compile_marching_route_dataset_handler({"route_style": load_handle("red-blue"), "symbols": load_handle("military"), **params})
 
     def test_signed_previous_review_validates_with_lookup_metadata(self):
         original = copy.deepcopy(self.graph)
@@ -77,7 +78,7 @@ class KnowledgeReviewContractCompatibilityTest(unittest.TestCase):
             "source_text": self.source, "contract_id": self.previous_id,
             "knowledge_json": self.graph, "validate_only": True,
         }
-        result = compile_marching_route_dataset_handler(params)
+        result = compile_marching_route_dataset_handler({"route_style": load_handle("red-blue"), "symbols": load_handle("military"), **params})
         self.assertFalse(result["success"])
         self.assertEqual(result["error_type"], "task_knowledge_contract_mismatch")
         forged = self.token()
@@ -124,10 +125,10 @@ class KnowledgeReviewContractCompatibilityTest(unittest.TestCase):
         self.assertFalse((self.root / "invalid-dataset").exists())
 
     def test_current_contract_still_works_without_review_token(self):
-        result = compile_marching_route_dataset_handler({
+        result = compile_marching_route_dataset_handler({"route_style": load_handle("red-blue"), "symbols": load_handle("military"), **{
             "source_text": self.source, "contract_id": self.current["contract_id"],
             "knowledge_json": self.graph, "validate_only": True,
-        })
+        }})
         self.assertTrue(result["success"], result)
         self.assertTrue(result["data"]["validation"]["valid"], result)
 

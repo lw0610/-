@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: tapered_buffer
-  display_name: 锥形缓冲区
+  keywords: ["渐变宽度缓冲区", "生成渐变宽度缓冲区", "几何处理", "空间叠加", "几何修复"]
+  display_name: "创建渐变宽度缓冲区"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,11 +15,11 @@ spec:
     description: 输入图层
   - name: START_WIDTH
     type: number
-    description: 起始宽度
+    description: "起始宽度（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.0
   - name: END_WIDTH
     type: number
-    description: 结束宽度
+    description: "结束宽度（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: OUTPUT
     type: output_layer

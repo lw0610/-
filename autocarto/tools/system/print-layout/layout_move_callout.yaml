@@ -2,14 +2,15 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_move_callout
-  display_name: layout_move_callout
+  keywords: ["图文标注", "整体移动图文标注", "打印版面", "地图排版", "版面元素"]
+  display_name: "整体移动图文标注"
   runtime: qgis
   domain: print-layout
 spec:
   description: >-
     将一组图文标注的边框、图片、标题和正文整体移动到新的绝对位置，保持各子元素
     的相对位置与尺寸不变，并在固定地图锚点的前提下重新计算直线、曲线或双线牵引线。
-    只适用于 cartography_build_and_draw_from_tables 返回 created_item_ids 的图文标注。
+    使用图文标注创建工具返回的真实分组编号；完整内容与牵引线均检查容器和页面边界。
   parameters:
   - name: layout
     type: string
@@ -32,7 +33,7 @@ spec:
   - name: container_item_id
     type: string
     required: true
-    description: 标注框必须完整位于其中的容器元素真实 ID，行军路线图通常为 main_map
+    description: "标注框必须完整位于其中的容器元素真实编号，通常使用主地图框编号"
   - name: margin_mm
     type: number
     required: false

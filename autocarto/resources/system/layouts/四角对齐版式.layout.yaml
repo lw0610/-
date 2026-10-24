@@ -1,0 +1,54 @@
+name: 四角对齐版式
+description: 标题居于装饰框上方，综述右上、图例左下、比例尺右下、指北针左上
+font_family: Noto Sans CJK SC
+page:
+  default_paper: A1
+  default_orientation: landscape
+  # T01 路线基线：841×594 mm，主图 (63.075,58.707456,714.85,476.585088)。
+  # 其他纸张按基准纸张的横纵比例缩放页边距，文字仍使用对应纸张毫米字号。
+  reference_size_mm: {width: 841, height: 594}
+  margins_mm: {top: 58.707456, right: 63.075, bottom: 58.707456, left: 63.075}
+fonts_mm:
+  A0: {title: 15, legend_title: 4, legend_body: 3, scalebar: 2.5, overview_title: 4, overview_body: 3}
+  A1: {title: 11.5, legend_title: 3.5, legend_body: 2.5, scalebar: 2, overview_title: 3.5, overview_body: 2.5}
+  A2: {title: 9, legend_title: 3, legend_body: 2.5, scalebar: 2, overview_title: 3, overview_body: 2.5}
+  A3: {title: 8, legend_title: 2.5, legend_body: 2, scalebar: 2, overview_title: 2.5, overview_body: 2}
+  A4: {title: 5.5, legend_title: 2.5, legend_body: 2, scalebar: 2, overview_title: 2.5, overview_body: 2}
+elements:
+  main_map: {fill: content_area}
+  border:
+    type: decorative_border
+    around: main_map
+    offset_mm: 5
+    marker_svg: arrows/NorthArrow_01.svg
+    marker_size_mm: 4
+    marker_interval_mm: 4
+    line_width_mm: 0.3
+    line_offset_mm: 3
+  grid: {enabled: true, density: sparse, color: '#89deea', opacity: 0.5, width_mm: 0.1}
+  title:
+    anchor: {to: border, at: top_center, placement: outside}
+    bold: true
+    frame: false
+    background: false
+  overview:
+    optional: true
+    anchor: {to: main_map, at: top_right, placement: inside}
+    frame: true
+    frame_width_mm: 0.3
+    background: '#ffffff'
+    max_width_ratio: 0.125
+  legend:
+    anchor: {to: main_map, at: bottom_left, placement: inside}
+    font_family: Arial
+    width_mm: 55
+    height_mm: 50
+    frame: true
+  scalebar:
+    anchor: {to: main_map, at: bottom_right, placement: inside}
+    max_width_mm: 80
+  north_arrow:
+    anchor: {to: main_map, at: top_left, placement: inside}
+    width_mm: 20
+    height_mm: 30
+    svg: arrows/NorthArrow_03.svg

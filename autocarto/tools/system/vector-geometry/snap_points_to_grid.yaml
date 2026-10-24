@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: snap_points_to_grid
+  keywords: ["点到网格", "捕捉点到网格", "几何处理", "空间叠加", "几何修复"]
   display_name: 捕捉点到网格
   domain: vector-geometry
   runtime: qgis
@@ -14,11 +15,11 @@ spec:
     description: 输入图层
   - name: HSPACING
     type: number
-    description: 水平间距
+    description: "水平间距（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: VSPACING
     type: number
-    description: 垂直间距
+    description: "垂直间距（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: OUTPUT
     type: output_layer

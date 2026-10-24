@@ -128,9 +128,26 @@ func TestResolve_InvalidConfig(t *testing.T) {
 }
 
 func TestIsPortAvailable_Free(t *testing.T) {
-	port := testutil.ReserveFreePort(t)
-	if !IsPortAvailable("", port) {
-		t.Fatalf("expected free port %d to be available", port)
+	for _, host := range []string{"127.0.0.1", ""} {
+		t.Run("host_"+host, func(t *testing.T) {
+			bindHost := host
+			if bindHost == "" {
+				bindHost = wildcardPortHost
+			}
+			// Empty-host availability includes the wildcard interface; a port
+			// chosen only on loopback does not establish that precondition.
+			listener, err := net.Listen("tcp", net.JoinHostPort(bindHost, "0"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			port := listener.Addr().(*net.TCPAddr).Port
+			if err := listener.Close(); err != nil {
+				t.Fatal(err)
+			}
+			if !IsPortAvailable(host, port) {
+				t.Fatalf("expected free %q port %d to be available", host, port)
+			}
+		})
 	}
 }
 

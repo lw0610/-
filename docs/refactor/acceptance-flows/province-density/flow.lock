@@ -1,0 +1,8 @@
+apiVersion: flow-lock/v1
+resources:
+    - type: layout
+      name: 统计专题版式
+      id: layout.statistical
+      version: 1.0.0
+      digest: sha256:33a2084b7533ca0050376fa90c168f9dbf821740292eafd63e19ea367c77fa98
+      source: library_builtin

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: order_by_expression
-  display_name: 按表达式排序
+  keywords: ["按表达式排序要素", "属性字段", "字段计算", "属性连接"]
+  display_name: "按表达式排序要素"
   domain: vector-fields
   runtime: qgis
 spec:

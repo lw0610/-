@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: points_to_path
-  display_name: 点转路径
+  keywords: ["点为路径", "连接点为路径", "矢量生成", "点线面", "空间网格"]
+  display_name: "连接点为路径"
   domain: vector-creation
   runtime: qgis
 spec:

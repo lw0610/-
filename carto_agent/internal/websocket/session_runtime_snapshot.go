@@ -329,6 +329,19 @@ func encodeRuntimeSnapshotMessages(messages []*schema.Message) []any {
 			for i, item := range encoded {
 				if payload, ok := item.(map[string]any); ok {
 					persistKnowledgeReviewCard(payload, messages[i])
+					if msg := messages[i]; msg != nil && msg.Extra != nil {
+						if id, ok := msg.Extra["flow_run_id"].(string); ok && id != "" {
+							data := asMap(payload["data"])
+							if data == nil {
+								data = map[string]any{}
+							}
+							data["flow_run_id"] = id
+							if step, ok := msg.Extra["step_id"].(string); ok {
+								data["step_id"] = step
+							}
+							payload["data"] = data
+						}
+					}
 				}
 			}
 			return encoded

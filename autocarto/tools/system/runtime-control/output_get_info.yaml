@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: output_get_info
-  display_name: output_get_info
+  keywords: ["执行产物信息", "查询执行产物信息", "运行控制", "人工确认", "执行产物"]
+  display_name: "读取执行产物信息"
   domain: runtime-control
   runtime: internal
 spec:

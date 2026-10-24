@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: union
-  display_name: 联合
+  keywords: ["叠加图层", "联合叠加图层", "几何处理", "空间叠加", "几何修复"]
+  display_name: "联合叠加图层"
   domain: vector-geometry
   runtime: qgis
 spec:

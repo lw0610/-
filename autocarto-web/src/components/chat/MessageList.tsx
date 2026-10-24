@@ -5,8 +5,14 @@ import { ExecutionMode, InterruptRequestData, Message, WorkflowBlock } from '@/t
 import { cn } from '@/lib/utils'
 import MessageBubble from './MessageBubble'
 import type { ReviewReference, ReviewSummary } from '@/features/knowledge-review/model'
+import FlowProgressCard from '@/features/flow-run/FlowProgressCard'
+import FlowPreviewCard, { parseFlowPreview } from '@/features/flow-run/FlowPreviewCard'
+import type { FlowRunState, FlowBlocked, ResourceResumeChoice } from '@/features/flow-run/types'
 
 interface Props {
+  flowRuns?: FlowRunState[]
+  flowBlocked?: FlowBlocked
+  onResumeFlow?: (run: FlowRunState, choice?: ResourceResumeChoice) => Promise<boolean>
   messages: Message[]
   workflowBlocks: WorkflowBlock[]
   focusedWorkflowBlockId: string | null
@@ -37,6 +43,11 @@ function extractCheckpointId(message: Message): string {
   return (snake || camel).trim()
 }
 
+function previewForMessage(message: Message) {
+  return parseFlowPreview(message.data?.flow_preview ||
+    (message.data?.tool === 'flow_preview' && message.phase === 'tool_result' ? message.data.result || message.content : null))
+}
+
 function buildWorkflowMessages(workflowBlocks: WorkflowBlock[], existingMessages: Message[]) {
   const linkedWorkflowIds = new Set(
     existingMessages
@@ -55,6 +66,7 @@ function buildWorkflowMessages(workflowBlocks: WorkflowBlock[], existingMessages
       agentDisplayName: block.agentDisplayName,
       workflowBlockId: block.id,
       data: {
+        ...block.entries.find(entry => entry.data?.flow_run_id)?.data,
         status: block.status,
         updated_at: block.updatedAt,
       },
@@ -84,6 +96,7 @@ function buildPendingInterruptMessages(
       content: '任务需要您的确认才能继续',
       timestamp: fallbackTimestamp + idx + 1,
       data: {
+        ...item.interrupt,
         checkpoint_id: item.checkpointId,
         interrupt_contexts: Array.isArray(item.interrupt.interrupt_contexts)
           ? item.interrupt.interrupt_contexts
@@ -107,6 +120,9 @@ export default function MessageList({
   knowledgeReviewSummaries,
   onOpenKnowledgeReview,
   onConfirmKnowledgeReview,
+  flowRuns = [],
+  flowBlocked,
+  onResumeFlow,
 }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null)
   const isBuildMode = executionMode === 'build'
@@ -148,7 +164,7 @@ export default function MessageList({
 
   const visibleMessages = useMemo(() => {
     const baseMessages = messages.filter(
-      (msg) => msg.type !== 'tool' && msg.type !== 'thinking',
+      (msg) => msg.type !== 'tool' && msg.type !== 'thinking' || Boolean(previewForMessage(msg)),
     )
     const generatedWorkflowMessages = buildWorkflowMessages(workflowBlocks, baseMessages)
     const sorted = [...baseMessages, ...generatedWorkflowMessages].sort((a, b) => a.timestamp - b.timestamp)
@@ -197,11 +213,42 @@ export default function MessageList({
     return [...deduped, ...generatedInterruptMessages].sort((a, b) => a.timestamp - b.timestamp)
   }, [messages, pendingInterrupts, workflowBlocks])
 
-  const hasContent = visibleMessages.length > 0
+  const runIds = new Set(flowRuns.map(run => run.flow_run_id))
+  const belongsToFlow = (message: Message) => message.type !== 'user' && runIds.has(String(message.data?.flow_run_id || ''))
+  const process: Message[] = [...new Map([...messages, ...visibleMessages].filter(belongsToFlow).filter(message => !message.workflowBlockId).map(message => [message.type === 'interrupt' ? extractCheckpointId(message) || message.id : message.id, message])).values()]
+  // Older persisted workflow blocks retain their tool entries as the source
+  // of process details; state still comes only from flow events / snapshots.
+  for (const block of workflowBlocks) for (const entry of block.entries) {
+    if (runIds.has(String(entry.data?.flow_run_id || ''))) process.push({ id: entry.id, type: entry.type === 'thinking' ? 'thinking' : entry.type === 'tool' ? 'tool' : 'status', timestamp: entry.timestamp, content: entry.content, phase: entry.phase, data: entry.data })
+  }
+  const timeline = [
+    ...visibleMessages.filter(message => !belongsToFlow(message)).map(message => ({ id: message.id, timestamp: message.timestamp, message, run: undefined as FlowRunState | undefined })),
+    ...flowRuns.map(run => ({ id: `flow-${run.flow_run_id}`, timestamp: Date.parse(run.started_at) || 0, message: undefined as Message | undefined, run })),
+  ].sort((a, b) => a.timestamp - b.timestamp)
+  const hasContent = timeline.length > 0 || Boolean(flowBlocked)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [visibleMessages])
+  }, [visibleMessages, flowRuns])
+
+  const renderMessage = (msg: Message) => {
+    const preview = previewForMessage(msg)
+    if (preview) return <FlowPreviewCard key={msg.id} preview={preview}/>
+    const checkpointId = msg.type === 'interrupt' ? extractCheckpointId(msg) : ''
+    const fallbackData = asRecord(msg.data)
+    const interruptData = checkpointId ? interruptByCheckpoint.get(checkpointId) || {
+      checkpoint_id: checkpointId,
+      interrupt_contexts: Array.isArray(fallbackData.interrupt_contexts) ? fallbackData.interrupt_contexts : [],
+    } : undefined
+    return <MessageBubble key={msg.type === 'interrupt' && checkpointId ? `interrupt-${checkpointId}` : msg.id}
+      message={msg} workflowBlock={msg.workflowBlockId ? workflowById.get(msg.workflowBlockId) : undefined}
+      workflowFocused={msg.workflowBlockId === focusedWorkflowBlockId} onOpenWorkflowBlock={onOpenWorkflowBlock}
+      interrupt={interruptData} interruptSubmitting={checkpointId ? interruptSubmitting === checkpointId : false}
+      interruptResolvedState={checkpointId ? interruptResolvedStates[checkpointId] : undefined}
+      onInterruptApprove={onInterruptApprove} onInterruptReject={onInterruptReject} sessionId={sessionId}
+      knowledgeReviewSummaries={knowledgeReviewSummaries} onOpenKnowledgeReview={onOpenKnowledgeReview}
+      onConfirmKnowledgeReview={onConfirmKnowledgeReview}/>
+  }
 
   return (
     <div
@@ -239,37 +286,10 @@ export default function MessageList({
         </div>
       )}
 
-      {visibleMessages.map((msg) => {
-        const checkpointId = msg.type === 'interrupt' ? extractCheckpointId(msg) : ''
-        const fallbackData = asRecord(msg.data)
-        const interruptData = checkpointId
-          ? interruptByCheckpoint.get(checkpointId) || {
-            checkpoint_id: checkpointId,
-            interrupt_contexts: Array.isArray(fallbackData.interrupt_contexts)
-              ? fallbackData.interrupt_contexts
-              : [],
-          }
-          : undefined
-
-        return (
-          <MessageBubble
-            key={msg.type === 'interrupt' && checkpointId ? `interrupt-${checkpointId}` : msg.id}
-            message={msg}
-            workflowBlock={msg.workflowBlockId ? workflowById.get(msg.workflowBlockId) : undefined}
-            workflowFocused={msg.workflowBlockId === focusedWorkflowBlockId}
-            onOpenWorkflowBlock={onOpenWorkflowBlock}
-            interrupt={interruptData}
-            interruptSubmitting={checkpointId ? interruptSubmitting === checkpointId : false}
-            interruptResolvedState={checkpointId ? interruptResolvedStates[checkpointId] : undefined}
-            onInterruptApprove={onInterruptApprove}
-            onInterruptReject={onInterruptReject}
-            sessionId={sessionId}
-            knowledgeReviewSummaries={knowledgeReviewSummaries}
-            onOpenKnowledgeReview={onOpenKnowledgeReview}
-            onConfirmKnowledgeReview={onConfirmKnowledgeReview}
-          />
-        )
-      })}
+      {flowBlocked && <section role="alert" className="mb-3 rounded border border-red-300 bg-surface-raised p-3 text-xs"><h2 className="font-medium">流程暂时无法启动：{flowBlocked.flow_id}</h2>{flowBlocked.reasons.map((reason, index) => <p key={index} className="mt-1">{reason.message}</p>)}</section>}
+      {timeline.map(item => item.run
+        ? <FlowProgressCard key={item.id} run={item.run} messages={process.filter(message => message.data?.flow_run_id === item.run?.flow_run_id)} renderMessage={renderMessage} onResume={onResumeFlow}/>
+        : item.message && renderMessage(item.message))}
       <div ref={bottomRef} />
     </div>
   )

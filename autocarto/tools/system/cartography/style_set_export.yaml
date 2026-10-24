@@ -1,0 +1,21 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: style_set_export
+  display_name: 导出图层样式集
+  domain: cartography
+  runtime: qgis
+  keywords: [样式集, 导出样式, 复用样式]
+spec:
+  description: 将所选矢量图层的 QML 样式及自动生成的对照表保存到空文件夹
+  parameters:
+    - {name: layers, type: array, description: 图层名称或 ID 列表；省略时选择全部可见矢量图层}
+    - {name: directory, type: string, required: true, description: 样式集输出文件夹（须为空或尚不存在）}
+policy:
+  visibility: public
+  authorization_scopes: [tool.invoke]
+execution:
+  handler: handlers.style_sets.export_style_set_handler
+  param_mapping:
+    layers: '{{ layers }}'
+    directory: '{{ directory }}'

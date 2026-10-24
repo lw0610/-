@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: list_agent_configs
+  display_name: "列出智能体方案"
+  keywords: ["智能体方案", "列出智能体方案", "方案配置", "工具管理", "技能创建"]
   domain: creator-tools
   runtime: internal
 spec:

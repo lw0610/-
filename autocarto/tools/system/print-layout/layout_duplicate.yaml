@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_duplicate
-  display_name: layout_duplicate
+  keywords: ["打印版面", "复制打印版面", "地图排版", "版面元素"]
+  display_name: "复制打印版面"
   runtime: qgis
   domain: print-layout
 spec:

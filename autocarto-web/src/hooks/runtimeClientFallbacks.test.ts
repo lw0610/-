@@ -13,10 +13,13 @@ describe("runtime client legacy fallback removal", () => {
   });
 
   it("does not default api requests to legacy port 3000", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      json: async () => ({ success: true, data: { ok: true } }),
-    }));
+    const fetchMock = vi.fn(async (...args: unknown[]) => {
+      void args;
+      return {
+        ok: true,
+        json: async () => ({ success: true, data: { ok: true } }),
+      };
+    });
     vi.stubGlobal("fetch", fetchMock);
 
     const { default: api } = await import("@/lib/api");

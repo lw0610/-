@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: line_intersections
-  display_name: 线交点
+  keywords: ["线条交点", "分析线条交点", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算线条交点"
   domain: vector-geometry
   runtime: qgis
 spec:

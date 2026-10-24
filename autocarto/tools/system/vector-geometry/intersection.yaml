@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: intersection
-  display_name: 交集
+  keywords: ["图层交集", "分析图层交集", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算图层交集"
   domain: vector-geometry
   runtime: qgis
 spec:

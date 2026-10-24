@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_load_style
-  display_name: layer_load_style
+  keywords: ["图层样式", "导入图层样式", "符号样式", "地图标注", "图层渲染"]
+  display_name: "加载图层样式"
   runtime: qgis
   domain: cartography
 spec:
@@ -12,12 +13,13 @@ spec:
     type: string
     required: true
     description: 图层名称
-  - name: path
-    type: string
+  - name: style
+    type: resource
+    resource_type: style
     required: true
-    description: QML 文件路径
+    description: 单个 QML 样式资源的名称、编号或路径
 execution:
   handler: handlers.style.load_style_handler
   param_mapping:
     layer: '{{ layer }}'
-    path: '{{ path }}'
+    style: '{{ style }}'

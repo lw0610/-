@@ -1,4 +1,5 @@
 """An accepted extraction is drawable without certifying its semantics."""
+from autocarto.tests.support.resource_handles import load_handle, resolve_handle
 
 import copy
 import hashlib
@@ -51,7 +52,7 @@ class AcceptedCompilationTest(unittest.TestCase):
                 "payload": encoded,
                 "signature": hmac.new(self.key, encoded.encode(), hashlib.sha256).hexdigest(),
             }
-        return compile_marching_route_dataset_handler(params)
+        return compile_marching_route_dataset_handler({"route_style": load_handle("red-blue"), "symbols": load_handle("military"), **params})
 
     def test_content_findings_do_not_block_accepted_extraction(self):
         graph = graph_fixture()

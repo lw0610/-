@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gps_download
-  display_name: 下载GPS数据
+  keywords: ["定位设备数据", "下载定位设备数据", "轨迹数据", "定位设备"]
+  display_name: "下载定位设备数据"
   domain: gps-data
   runtime: qgis
 spec:

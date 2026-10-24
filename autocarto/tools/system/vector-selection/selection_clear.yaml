@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: selection_clear
-  display_name: selection_clear
+  keywords: ["要素选择", "清除要素选择", "要素筛选", "条件选择", "要素提取"]
+  display_name: "清除要素选择"
   domain: vector-selection
   runtime: qgis
 spec:

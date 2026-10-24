@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: cartography_point_displacement
-  display_name: cartography_point_displacement
+  keywords: ["点位移样式", "配置点位移样式", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置点位移样式"
   runtime: qgis
   domain: cartography
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 点图层名称
   - name: distance
     type: number
-    description: 位移距离
+    description: "点位移容差（毫米）"
   - name: placement
     type: integer
     description: 放置方式(0=环形,1=同心)

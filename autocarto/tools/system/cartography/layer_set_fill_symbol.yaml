@@ -2,11 +2,12 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_set_fill_symbol
-  display_name: layer_set_fill_symbol
+  keywords: ["面填充符号", "配置面填充符号", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置面填充符号"
   runtime: qgis
   domain: cartography
 spec:
-  description: 根据图层类型设置面图层填充符号和标注
+  description: 根据图层类型读取内置 QML 设置面图层填充符号和标注；建议改用按样式集上样式
   parameters:
   - name: layer
     type: string
@@ -24,6 +25,8 @@ spec:
   - name: label_field
     type: string
     description: 标注字段名称；不填写则只设置面符号，不设置标注
+policy:
+  visibility: hidden
 execution:
   handler: handlers.style.set_fill_symbol_handler
   param_mapping:

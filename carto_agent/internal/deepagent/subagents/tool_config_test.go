@@ -3,9 +3,83 @@ package subagents
 import (
 	"os"
 	"path/filepath"
+	"reflect"
+	"sort"
 	"strings"
 	"testing"
 )
+
+func TestAutomaticPackagePoliciesRespectRoleAndMode(t *testing.T) {
+	cfg := &RuntimeSkillConfig{
+		Mode: "build",
+		Global: RuntimeSkillGlobalConfig{
+			SkillPackages: []string{"foundation"},
+			PackageTools:  map[string][]string{"foundation": {"shared"}, "launch": {"start"}, "planning": {"query"}, "executor": {"compile"}, "creator": {"create"}},
+			PackageMetadata: map[string]RuntimeSkillPackageMetadata{
+				"foundation": {System: true}, "launch": {Hidden: true, AutoMount: "main"}, "planning": {Hidden: true, AutoMount: "plan_main"}, "executor": {Hidden: true, AutoMount: "executor:route_knowledge"}, "creator": {Hidden: true},
+			},
+		},
+		Agents: map[string]RuntimeSkillAgentConfig{"main": {IsMain: true}, "worker": {}, "executor": {Executor: "route_knowledge"}},
+	}
+	check := func(agent string, want []string) {
+		t.Helper()
+		got := cfg.GetAgentAllowedTools(agent)
+		sort.Strings(got)
+		sort.Strings(want)
+		if !reflect.DeepEqual(got, want) {
+			t.Fatalf("%s/%s tools=%v want=%v", cfg.Mode, agent, got, want)
+		}
+	}
+	check("main", []string{"shared", "start"})
+	check("worker", []string{"shared"})
+	check("executor", []string{"shared", "compile"})
+	cfg.Mode = "plan"
+	check("main", []string{"shared", "query"})
+	cfg.Agents["worker"] = RuntimeSkillAgentConfig{SkillPackages: []string{"creator"}}
+	check("worker", []string{"shared", "create"})
+	if got := cfg.GetAgentSkills("main"); !reflect.DeepEqual(got, []string{"foundation", "planning"}) {
+		t.Fatalf("unexpected mounted packages: %v", got)
+	}
+}
+
+func TestPackageCatalogLoadsMetadataAndDisabledOverrideShadowsBase(t *testing.T) {
+	base := t.TempDir()
+	override := t.TempDir()
+	writeCategoryPackage(t, base, "foundation", []string{"shared"})
+	path := filepath.Join(base, "foundation", "SKILL.md")
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw = []byte(strings.Replace(string(raw), "kind: category", "kind: category\ndisplay_name: 基础能力\ndomain: 系统\nsystem: true\nhidden: false\nauto_mount: ''", 1))
+	if err := os.WriteFile(path, raw, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	catalog, err := LoadPackageCatalogMultiDir(base)
+	if err != nil {
+		t.Fatal(err)
+	}
+	meta := catalog.Metadata["foundation"]
+	if meta.DisplayName != "基础能力" || meta.Domain != "系统" || !meta.System || meta.Hidden {
+		t.Fatalf("metadata lost: %#v", meta)
+	}
+	writeCategoryPackage(t, override, "foundation", []string{"other"})
+	path = filepath.Join(override, "foundation", "SKILL.md")
+	raw, err = os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, []byte(strings.Replace(string(raw), "kind: category", "kind: category\nenabled: false", 1)), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	catalog, err = LoadPackageCatalogMultiDir(base, override)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(catalog.Tools) != 0 || len(catalog.Metadata) != 0 {
+		t.Fatalf("disabled override did not shadow base: %#v", catalog)
+	}
+}
 
 func TestLoadPackageToolsMultiDirLaterDirectoryOverridesSamePackage(t *testing.T) {
 	baseDir := t.TempDir()

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: nearest_neighbor
-  display_name: 最近邻分析
+  keywords: ["最近邻分布", "分析最近邻分布", "空间分析", "空间统计", "空间聚类"]
+  display_name: "分析最近邻分布"
   domain: spatial-analysis
   runtime: qgis
 spec:

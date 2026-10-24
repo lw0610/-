@@ -28,8 +28,8 @@ var geeIntegrationToolNames = []string{
 
 // Exercise the shipped profile, package registry, filtering, middleware, and
 // Eino task -> specialist -> skill chain together. A category package exposes
-// tools but is deliberately excluded from the readable skill catalog; testing
-// the Python helpers alone cannot catch a missing workflow assignment.
+// tools and now exposes substantial category methods too; the legacy workflow
+// remains reachable during migration. Python-only tests cannot catch filtering.
 func TestGEESkillReachableThroughDefaultTaskDelegation(t *testing.T) {
 	ctx := context.Background()
 	fixture := loadGEESkillIntegrationFixture(t)
@@ -89,7 +89,7 @@ func TestGEESkillDefaultOrchestratorCannotReadSpecialistWorkflow(t *testing.T) {
 		if info.Name != "skill" {
 			continue
 		}
-		if strings.Contains(info.Desc, "gee-scripting") {
+		if strings.Contains(info.Desc, "gee-remote-sensing") {
 			t.Fatal("specialist GEE workflow leaked into orchestrator skill catalog")
 		}
 		invokable, ok := candidate.(tool.InvokableTool)
@@ -98,7 +98,7 @@ func TestGEESkillDefaultOrchestratorCannotReadSpecialistWorkflow(t *testing.T) {
 		}
 		// A model guessing the skill name must not bypass the same allowlist
 		// that filters the catalog. The real package exists on the filesystem.
-		result, err := invokable.InvokableRun(ctx, `{"skill":"gee-scripting"}`)
+		result, err := invokable.InvokableRun(ctx, `{"skill":"gee-remote-sensing"}`)
 		if err == nil || !strings.Contains(err.Error(), "允许列表") || result != "" {
 			t.Fatalf("expected allowlist rejection, got result=%q err=%v", result, err)
 		}
@@ -112,7 +112,7 @@ func TestGEEToolsRemainAvailableWhenExplicitlyAssignedToOrchestrator(t *testing.
 	fixture := loadGEESkillIntegrationFixture(t)
 	runtimeConfig := *fixture.runtimeConfig
 	main := runtimeConfig.Agents["orchestrator"]
-	main.SkillPackages = append(append([]string{}, main.SkillPackages...), "gee-remote-sensing")
+	main.ToolPackages = append(append([]string{}, main.ToolPackages...), "gee-remote-sensing")
 	runtimeConfig.Agents = map[string]subagents.RuntimeSkillAgentConfig{
 		"orchestrator":  main,
 		"data_engineer": fixture.runtimeConfig.Agents["data_engineer"],
@@ -177,7 +177,7 @@ func loadGEESkillIntegrationFixture(t *testing.T) geeSkillIntegrationFixture {
 	}
 	fixture := geeSkillIntegrationFixture{
 		runtimeConfig: runtimeConfig, registry: &geeIntegrationRegistry{tools: toolRegistry, skills: skillRegistry},
-		skillsRoot: skillsRoot, skillDir: filepath.Join(skillsRoot, "gee-scripting"),
+		skillsRoot: skillsRoot, skillDir: filepath.Join(skillsRoot, "gee-remote-sensing"),
 	}
 	for _, name := range append(append([]string{}, geeIntegrationToolNames...), "get_project_info") {
 		definition, ok := skillRegistry.GetTool(name)
@@ -216,9 +216,6 @@ func (r *geeIntegrationRegistry) LoadSkillRegistry() (*skill.Registry, error) {
 func (r *geeIntegrationRegistry) ResolveSkillPackage(name string) (skill.SkillPackage, bool, error) {
 	pkg, ok := r.skills.GetPackage(name)
 	return pkg, ok, nil
-}
-func (r *geeIntegrationRegistry) ResolveWorkflowPackage(name string) (skill.SkillPackage, bool, error) {
-	return r.ResolveSkillPackage(name)
 }
 
 type geeSkillProbeState struct {
@@ -262,12 +259,13 @@ func (m *geeSkillProbeModel) Generate(_ context.Context, input []*schema.Message
 		if available["get_project_info"] == nil {
 			return nil, fmt.Errorf("orchestrator lost its globally assigned project-state tool")
 		}
-		if info := available["skill"]; info != nil && strings.Contains(info.Desc, "gee-scripting") {
-			return nil, fmt.Errorf("orchestrator unexpectedly has specialist GEE workflow")
+		info := available["skill"]
+		if readable := info != nil && strings.Contains(info.Desc, "gee-remote-sensing"); readable != m.state.mainGEEAllowed {
+			return nil, fmt.Errorf("orchestrator GEE instructions do not match its explicit package assignment")
 		}
 		if !m.state.delegated {
 			m.state.delegated = true
-			args, _ := json.Marshal(map[string]string{"subagent_type": m.state.agentName, "description": "读取 gee-scripting，依据流程准备武汉遥感影像任务。"})
+			args, _ := json.Marshal(map[string]string{"subagent_type": m.state.agentName, "description": "读取 gee-remote-sensing，依据流程准备武汉遥感影像任务。"})
 			return geeProbeToolCall("delegate-gee", "task", string(args)), nil
 		}
 		for _, message := range input {
@@ -284,8 +282,8 @@ func (m *geeSkillProbeModel) Generate(_ context.Context, input []*schema.Message
 		}
 	}
 	info := available["skill"]
-	if info == nil || !strings.Contains(info.Desc, "gee-scripting") {
-		return nil, fmt.Errorf("%s cannot discover gee-scripting in actual skill tool catalog", m.state.agentName)
+	if info == nil || !strings.Contains(info.Desc, "gee-remote-sensing") {
+		return nil, fmt.Errorf("%s cannot discover gee-remote-sensing in actual skill tool catalog", m.state.agentName)
 	}
 	for _, message := range input {
 		if message.Role != schema.Tool || message.ToolCallID != "read-gee-skill" {
@@ -306,7 +304,7 @@ func (m *geeSkillProbeModel) Generate(_ context.Context, input []*schema.Message
 		m.state.skillRead = true
 		return schema.AssistantMessage("gee-workflow-read-verified", nil), nil
 	}
-	return geeProbeToolCall("read-gee-skill", "skill", `{"skill":"gee-scripting"}`), nil
+	return geeProbeToolCall("read-gee-skill", "skill", `{"skill":"gee-remote-sensing"}`), nil
 }
 
 func geeProbeToolCall(id, name, arguments string) *schema.Message {

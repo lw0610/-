@@ -104,7 +104,7 @@ exit /b 0
 call :preflight go || exit /b 1
 call :clean_local_artifacts || exit /b 1
 call :build_go || exit /b 1
-set "AUTOCARTO_HOME=F:\AutoCarto"
+if not defined AUTOCARTO_HOME set "AUTOCARTO_HOME=%ROOT_DIR%\autocarto_data"
 set "AUTOCARTO_ASSETS_ROOT=%PLUGIN_DIR%"
 "%SIDECAR_PATH%"
 exit /b 0
@@ -218,6 +218,10 @@ exit /b 0
 
 :check_repo_layout
 set "LAYOUT_COMMAND=%~1"
+for %%C in (build dev check) do if /I "%LAYOUT_COMMAND%"=="%%C" (
+  if not exist "%PLUGIN_DIR%\flows\system" call :mark_preflight_failure "缺少内置流程目录，无法完整打包运行资产"
+  if not exist "%PLUGIN_DIR%\resources\system" call :mark_preflight_failure "缺少内置资源库目录，无法完整打包运行资产"
+)
 if /I "%LAYOUT_COMMAND%"=="go" (
   if not exist "%AGENT_DIR%" call :mark_preflight_failure "   Go           sidecar %AGENT_DIR% "
   if not exist "%TAURI_DIR%" call :mark_preflight_failure "   Tauri         sidecar    %TAURI_DIR% "
@@ -503,7 +507,7 @@ call :step "   QGIS   "
 
 if not exist "%QGIS_PLUGINS_DIR%\autocarto" mkdir "%QGIS_PLUGINS_DIR%\autocarto"
 
-robocopy "%PLUGIN_DIR%" "%QGIS_PLUGINS_DIR%\autocarto" /MIR /R:1 /W:1 /XD logs data .session __pycache__ >nul
+robocopy "%PLUGIN_DIR%" "%QGIS_PLUGINS_DIR%\autocarto" /MIR /R:1 /W:1 /XD "%PLUGIN_DIR%\data" logs .session __pycache__ /XF .master_key secrets.enc .port plugin_config.yaml *.db *.db-wal *.db-shm *.sqlite >nul
 if errorlevel 8 (
   call :fail "   autocarto     "
   exit /b 1

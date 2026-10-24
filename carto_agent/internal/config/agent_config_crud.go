@@ -70,14 +70,14 @@ func AssignManagedSkillPackages(manager *AgentConfigManager, configName, mode, t
 			data.Runtime = &RuntimeConfig{Global: GlobalAgentConfig{}, Agents: map[string]AgentDefData{}}
 		}
 		if target == "global" {
-			data.Runtime.Global.SkillPackages = normalized
+			data.Runtime.SharedToolPackages = normalized
 		} else {
 			agentKey := strings.TrimSpace(agentName)
 			agent, ok := data.Runtime.Agents[agentKey]
 			if !ok {
 				return nil, fmt.Errorf("runtime 智能体不存在: %s", agentKey)
 			}
-			agent.SkillPackages = normalized
+			agent.ToolPackages = normalized
 			data.Runtime.Agents[agentKey] = agent
 		}
 	case "plan":
@@ -85,14 +85,14 @@ func AssignManagedSkillPackages(manager *AgentConfigManager, configName, mode, t
 			data.Plan = &PlanConfig{Global: GlobalAgentConfig{}, Agents: map[string]PlanAgentDefData{}}
 		}
 		if target == "global" {
-			data.Plan.Global.SkillPackages = normalized
+			data.Plan.Global.ToolPackages = normalized
 		} else {
 			agentKey := strings.TrimSpace(agentName)
 			agent, ok := data.Plan.Agents[agentKey]
 			if !ok {
 				return nil, fmt.Errorf("plan 智能体不存在: %s", agentKey)
 			}
-			agent.SkillPackages = normalized
+			agent.ToolPackages = normalized
 			data.Plan.Agents[agentKey] = agent
 		}
 	default:

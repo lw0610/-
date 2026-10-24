@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: polygons_to_lines
-  display_name: 多边形转线
+  keywords: ["多边形为线", "转为多边形为线", "几何处理", "空间叠加", "几何修复"]
+  display_name: "转换多边形为线"
   domain: vector-geometry
   runtime: qgis
 spec:

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: grass_r_slope_aspect
-  display_name: 坡度坡向分析
+  keywords: ["坡度与坡向", "分析坡度与坡向", "地形分析", "矢量分析", "水文分析"]
+  display_name: "计算坡度与坡向"
   domain: grass-analysis
   runtime: qgis
 spec:

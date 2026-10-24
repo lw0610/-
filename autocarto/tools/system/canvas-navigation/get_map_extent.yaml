@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: get_map_extent
-  display_name: get_map_extent
+  keywords: ["画布范围", "查询画布范围", "地图画布", "地图缩放", "显示范围"]
+  display_name: "读取画布范围"
   domain: canvas-navigation
   runtime: qgis
 spec:

@@ -5,7 +5,7 @@ import AlertPanel from "@/components/settings/AlertPanel";
 import EmptyStatePanel from "@/components/settings/EmptyStatePanel";
 import ListPanelHeader from "@/components/settings/ListPanelHeader";
 import StatusBadge from "@/components/settings/StatusBadge";
-import { ToolCatalogContract, ToolCatalogItem } from "@/lib/api";
+import { ToolCatalogContract, ToolCatalogItem, SkillPackageSummary } from "@/lib/api";
 import {
   getToolCatalogDegradedDictionary,
   getToolItemDegradedDictionary,
@@ -18,12 +18,14 @@ interface ToolCatalogViewProps {
   catalog?: ToolCatalogContract | null;
   items: ToolCatalogItem[];
   loading: boolean;
+  packages?: SkillPackageSummary[];
 }
 
 export default function ToolCatalogView({
   catalog,
   items,
   loading,
+  packages = [],
 }: ToolCatalogViewProps) {
   const [query, setQuery] = useState("");
   const [runtimeFilter, setRuntimeFilter] = useState("all");
@@ -36,15 +38,7 @@ export default function ToolCatalogView({
     ).sort();
   }, [items]);
 
-  const domainOptions = useMemo(() => {
-    return Array.from(
-      new Set(
-        items
-          .map((item) => String(item.domain || item.category || "").trim())
-          .filter(Boolean),
-      ),
-    ).sort();
-  }, [items]);
+  const domainOptions = useMemo(() => [...new Set(items.map((item) => item.package_id || "").filter(Boolean))].sort(),[items]);
 
   const filteredItems = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -52,7 +46,7 @@ export default function ToolCatalogView({
       if (
         normalizedQuery &&
         ![
-          item.name,
+          item.name, item.display_name, ...(item.keywords || []),
           item.description,
           item.domain,
           item.category,
@@ -72,7 +66,7 @@ export default function ToolCatalogView({
       }
       if (
         domainFilter !== "all" &&
-        String(item.domain || item.category || "") !== domainFilter
+        String(item.package_id || "") !== domainFilter
       ) {
         return false;
       }
@@ -91,9 +85,9 @@ export default function ToolCatalogView({
   return (
     <>
       <ListPanelHeader
-        eyebrow="工具目录"
-        title="统一工具目录"
-        description="查看当前运行时可发现的扁平工具列表与可用性状态。"
+        eyebrow="工具能力"
+        title="能力手册"
+        description="按工具包查找能力，使用中文名称、说明和关键词编写流程。"
         stats={[
           {
             label: "结果",
@@ -126,10 +120,10 @@ export default function ToolCatalogView({
               value={domainFilter}
               onChange={(event) => setDomainFilter(event.target.value)}
             >
-              <option value="all">全部域</option>
+              <option value="all">全部工具包</option>
               {domainOptions.map((item) => (
                 <option key={item} value={item}>
-                  {item}
+                  {packages.find((pkg) => pkg.package_id === item)?.display_name || packages.find((pkg) => pkg.package_id === item)?.name || item}
                 </option>
               ))}
             </select>
@@ -172,7 +166,9 @@ export default function ToolCatalogView({
           />
         ) : null}
 
-        {filteredItems.map((item) => {
+        {[...new Set(filteredItems.map((item) => item.package_id || ""))].sort().map((packageId) => <section key={packageId || "other"} className="space-y-2">
+          <h3 className="mt-3 text-sm font-medium">{packages.find((pkg) => pkg.package_id === packageId)?.display_name || packages.find((pkg) => pkg.package_id === packageId)?.name || packageId || "其他能力"}</h3>
+          {filteredItems.filter((item) => (item.package_id || "") === packageId).map((item) => {
           const available = item.available !== false;
           const degraded = getToolItemDegradedDictionary(item);
           return (
@@ -183,7 +179,7 @@ export default function ToolCatalogView({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <div className="truncate font-medium text-base">{item.name}</div>
+                    <div className="truncate font-medium text-base">{item.display_name || item.name}</div>
                     <StatusBadge size="xs">{item.backend || "-"}</StatusBadge>
                     {item.domain || item.category ? (
                       <StatusBadge size="xs">{item.domain || item.category}</StatusBadge>
@@ -201,6 +197,8 @@ export default function ToolCatalogView({
                       {item.description}
                     </div>
                   ) : null}
+                  <p className="mt-1 text-xs text-zinc-500">{item.display_name && item.display_name !== item.name ? item.name : ""}{item.keywords?.length ? ` · ${item.keywords.join("、")}` : ""}</p>
+                  <p className="mt-1 text-xs">写流程时可以这样描述：{item.display_name || item.description || item.name}</p>
                   {!available && degraded ? (
                     <AlertPanel
                       className="mt-1.5"
@@ -239,7 +237,7 @@ export default function ToolCatalogView({
               </div>
             </div>
           );
-        })}
+        })}</section>)}
       </div>
     </>
   );

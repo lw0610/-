@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_scalebar_style
-  display_name: layout_set_scalebar_style
+  keywords: ["比例尺样式", "配置比例尺样式", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置比例尺样式"
   runtime: qgis
   domain: print-layout
 spec:
@@ -24,25 +25,25 @@ spec:
     description: 单位标签
   - name: segments
     type: integer
-    description: 段数
+    description: "兼容段数参数（段，整数）；当前样式固定使用 4 段"
   - name: segments_left
     type: integer
-    description: 左侧段数
+    description: "兼容左侧段数参数（段，整数）；当前样式固定使用 0 段"
   - name: units_per_segment
     type: number
-    description: 每段单位数
+    description: "兼容每段长度参数（比例尺显示单位）；当前处理器保留原长度"
   - name: height
     type: number
-    description: 高度
+    description: "兼容比例尺高度参数（毫米）；当前处理器保留原高度"
   - name: line_width
     type: number
-    description: 线宽
+    description: "兼容线宽参数（毫米）；当前处理器保留原线宽"
   - name: font_family
     type: string
     description: 字体
   - name: font_size
     type: number
-    description: 字号
+    description: "比例尺文字字号（毫米，正数）"
   - name: font_bold
     type: boolean
     description: 加粗
@@ -61,6 +62,10 @@ spec:
   - name: alignment
     type: string
     description: 对齐方式
+  - name: unlock_font
+    type: boolean
+    required: false
+    description: 本次调用是否明确允许修改版式锁定的字号；默认不允许，其他文字样式仍可修改
 execution:
   handler: handlers.layout_advanced.set_scalebar_style_handler
   param_mapping:
@@ -81,3 +86,4 @@ execution:
     fill_color2: '{{ fill_color2 }}'
     line_color: '{{ line_color }}'
     alignment: '{{ alignment }}'
+    unlock_font: '{{ unlock_font }}'

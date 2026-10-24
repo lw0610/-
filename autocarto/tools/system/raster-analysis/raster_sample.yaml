@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: raster_sample
-  display_name: 栅格采样
+  keywords: ["栅格数值", "采样栅格数值", "栅格分析", "地形分析", "空间插值"]
+  display_name: "采样栅格数值"
   domain: raster-analysis
   runtime: qgis
 spec:

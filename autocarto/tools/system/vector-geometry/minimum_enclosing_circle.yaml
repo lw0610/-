@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: minimum_enclosing_circle
-  display_name: 最小外接圆
+  keywords: ["最小外接圆", "分析最小外接圆", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算最小外接圆"
   domain: vector-geometry
   runtime: qgis
 spec:

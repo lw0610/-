@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: split_with_lines
-  display_name: 用线分割
+  keywords: ["按线拆分多边形", "几何处理", "空间叠加", "几何修复"]
+  display_name: "按线拆分多边形"
   domain: vector-geometry
   runtime: qgis
 spec:

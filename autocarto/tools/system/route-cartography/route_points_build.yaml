@@ -1,0 +1,71 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: route_points_build
+  display_name: 生成专题点图层
+  keywords:
+  - 专题点
+  - 点符号
+  - 符号对照表
+  - 参与者标注
+  domain: route-cartography
+  runtime: qgis
+spec:
+  description: 从 points.csv 生成专题点图层、按符号资源设置符号，并保留地名和非空 meeting_label 的参与者标注。
+  parameters:
+  - name: dataset_source
+    type: string
+    enum:
+    - current_session
+    - explicit
+    required: true
+    description: 数据来源：当前任务数据集或显式指定目录
+  - name: dataset_dir
+    type: string
+    description: 六表数据集目录；explicit 时必填，相对路径按项目根解析
+  - name: expected_table_counts
+    type: object
+    description: 可选六表行数断言，文件名到非负整数的映射
+  - name: expected_task_id
+    type: string
+    description: 可选任务编号断言，必须与数据集元数据一致
+  - name: points_layer
+    type: string
+    default: 专题点
+    description: 生成或复用的点图层名称，默认专题点
+  - name: symbols
+    type: resource
+    resource_type: symbols
+    description: 可选符号资源名称、编号或目录；省略时读取运行数据集 symbol_mapping.csv
+  - name: default_symbol_types
+    type: array
+    items:
+      type: string
+    default:
+    - waypoint
+    description: 显示为普通小圆点的符号类型；默认 waypoint，空数组时按对照表全部符号化
+  - name: rendezvous_label_rule
+    type: string
+    default: 汇合点标注
+    description: meeting_label 非空点的参与者标注规则名称，默认汇合点标注
+  - name: overwrite
+    type: boolean
+    default: true
+    description: 是否覆盖同名点图层；false 时复用已有图层
+  - name: strict
+    type: boolean
+    default: true
+    description: 符号映射缺失时是否报错，默认 true
+execution:
+  handler: handlers.route_tools.route_points_build_handler
+  param_mapping:
+    dataset_source: '{{ dataset_source }}'
+    dataset_dir: '{{ dataset_dir }}'
+    expected_table_counts: '{{ expected_table_counts }}'
+    expected_task_id: '{{ expected_task_id }}'
+    points_layer: '{{ points_layer }}'
+    symbols: '{{ symbols }}'
+    default_symbol_types: '{{ default_symbol_types }}'
+    rendezvous_label_rule: '{{ rendezvous_label_rule }}'
+    overwrite: '{{ overwrite }}'
+    strict: '{{ strict }}'

@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: merge_vector_layers
+  keywords: ["矢量图层", "合并矢量图层", "统计图表", "网格数据", "数据可视化"]
   display_name: 合并矢量图层
   runtime: qgis
   domain: misc-tools

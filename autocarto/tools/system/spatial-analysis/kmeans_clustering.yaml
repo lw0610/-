@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: kmeans_clustering
-  display_name: K-Means聚类
+  keywords: ["均值空间聚类", "分析均值空间聚类", "空间分析", "空间统计", "空间聚类"]
+  display_name: "计算均值空间聚类"
   domain: spatial-analysis
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入点图层
   - name: CLUSTERS
     type: integer
-    description: 聚类数量
+    description: "聚类数量（数量，正整数）"
     default: 5
   - name: OUTPUT
     type: output_layer

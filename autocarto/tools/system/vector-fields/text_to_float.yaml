@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: text_to_float
-  display_name: 文本型转浮点型
+  keywords: ["文本为浮点数", "转为文本为浮点数", "属性字段", "字段计算", "属性连接"]
+  display_name: "转换文本为浮点数"
   domain: vector-fields
   runtime: qgis
 spec:

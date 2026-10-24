@@ -104,7 +104,6 @@ function resetStores() {
     sessions: [],
     sessionsReady: false,
     activeSessionId: null,
-    sessionPanelCollapsed: false,
     sessionMutationTick: 0,
     lastMutatedSessionId: null,
     sessionAttachState: {},

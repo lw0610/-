@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_group_items
-  display_name: layout_group_items
+  keywords: ["版面元素", "组合版面元素", "打印版面", "地图排版"]
+  display_name: "组合版面元素"
   runtime: qgis
   domain: print-layout
 spec:

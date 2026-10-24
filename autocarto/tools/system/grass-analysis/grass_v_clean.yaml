@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: grass_v_clean
-  display_name: 矢量清理
+  keywords: ["矢量拓扑", "清理矢量拓扑", "地形分析", "矢量分析", "水文分析"]
+  display_name: "清理矢量拓扑"
   domain: grass-analysis
   runtime: qgis
 spec:

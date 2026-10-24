@@ -68,6 +68,13 @@ class SafeToolPackageMigrationTestCase(unittest.TestCase):
     def test_safe_packages_use_tools_tree_and_skill_tool_refs(self):
         root = _repo_root()
 
+        all_definitions = {}
+        for folder in (root / "autocarto/tools/system").iterdir():
+            if folder.is_dir():
+                all_definitions.update(_load_tool_index(folder))
+        all_references = set()
+        for package in (root / "autocarto/skills/system").glob("*/SKILL.md"):
+            all_references.update(_load_skill_front_matter(package).get("tools") or [])
         for package_name, domain_name in SAFE_PACKAGE_DOMAINS.items():
             new_tools_dir = root / "autocarto" / "tools" / "system" / domain_name
             skill_md_path = (
@@ -81,7 +88,12 @@ class SafeToolPackageMigrationTestCase(unittest.TestCase):
             front_matter = _load_skill_front_matter(skill_md_path)
             declared_tools = sorted(front_matter.get("tools") or [])
             tool_index = _load_tool_index(new_tools_dir)
-            self.assertEqual(declared_tools, sorted(tool_index))
+            # Packages may explicitly reuse a capability from another domain;
+            # internal tools may belong to a hidden auto-mounted package.
+            for name in declared_tools:
+                self.assertIn(name, all_definitions, f"{package_name}: {name}")
+            for name in tool_index:
+                self.assertIn(name, all_references, f"没有工具包声明能力 {name}")
 
             for tool_name, definition in tool_index.items():
                 self.assertEqual(definition.get("apiVersion"), "tool/v1")

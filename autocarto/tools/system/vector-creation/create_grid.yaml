@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: create_grid
-  display_name: 创建网格
+  keywords: ["矢量网格", "生成矢量网格", "矢量生成", "点线面", "空间网格"]
+  display_name: "创建矢量网格"
   domain: vector-creation
   runtime: qgis
 spec:
@@ -24,11 +25,11 @@ spec:
     description: 网格范围
   - name: HSPACING
     type: number
-    description: 水平间距
+    description: "水平间距（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: VSPACING
     type: number
-    description: 垂直间距
+    description: "垂直间距（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: CRS
     type: crs

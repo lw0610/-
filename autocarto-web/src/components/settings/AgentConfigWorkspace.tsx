@@ -17,7 +17,7 @@ import ListPanelHeader from "@/components/settings/ListPanelHeader";
 
 import DropdownMenu from "@/components/settings/DropdownMenu";
 import TabBar from "@/components/settings/TabBar";
-import { TagOption } from "@/components/settings/TagSelector";
+import AgentFlowSelection from "./AgentFlowSelection";
 import FullScreenSettingsDrawer from "@/components/settings/FullScreenSettingsDrawer";
 import { useSettingsActionStatus } from "@/hooks/useSettingsActionStatus";
 import {
@@ -52,7 +52,7 @@ function buildEmptyPlanConfig(): NonNullable<AgentConfigData["plan"]> {
     enabled: true,
     max_iterations: 100,
     shared: {
-      skill_packages: [],
+      tool_packages: [],
     },
     agents: {},
   };
@@ -298,46 +298,7 @@ export default function AgentConfigWorkspace() {
   const activeConfigName =
     configs.find((item) => item.is_active)?.config_name || "";
 
-  const skillOptions = useMemo<TagOption[]>(() => {
-    return skillPackages
-      .map((pkg) => {
-        const packageId = String(pkg.package_id || "").trim();
-        if (!packageId) {
-          return null;
-        }
-        const kind = String(pkg.kind || "").trim();
-        const scope = String(pkg.scope || "").trim();
-        const ownerConfig = String(pkg.owner_config || "").trim();
-        const kindBadge =
-          kind === "category"
-            ? "分类"
-            : kind === "workflow"
-              ? "流程"
-              : kind === "knowledge"
-                ? "知识"
-                : kind || undefined;
-        return {
-          value: packageId,
-          label: `${String(pkg.name || packageId)}${scope === "exclusive" ? " [专属]" : ""}`,
-          badge: kindBadge,
-          description: [
-            String(pkg.description || "").trim(),
-            scope === "exclusive" ? `归属 ${ownerConfig || "未指定方案"}` : "全局技能包",
-            pkg.tool_count ? `工具 ${pkg.tool_count}` : "",
-            pkg.enabled === false ? "已停用" : "",
-          ]
-            .filter(Boolean)
-            .join(" | "),
-          itemClassName:
-            scope === "exclusive"
-              ? "border border-blue-200 bg-blue-50/70 dark:border-blue-800 dark:bg-blue-900/10"
-              : pkg.enabled === false
-              ? "border border-amber-200 bg-amber-50/70 dark:border-amber-800 dark:bg-amber-900/10"
-              : "",
-        } as TagOption;
-      })
-      .filter((item): item is TagOption => item !== null);
-  }, [skillPackages]);
+  const toolPackages = useMemo(() => skillPackages.filter((item) => item.kind === "category" && !item.deprecated),[skillPackages]);
 
   const modelOptions = useMemo(() => {
     const providers = (llmProviders as LLMConfigPayload | null)?.providers ?? [];
@@ -884,6 +845,7 @@ export default function AgentConfigWorkspace() {
         >
           {selectedConfigName && configData ? (
             <div id="agent-config-detail" className="settings-anchor-target space-y-3">
+              <ActionBar dirty={isConfigDirty} status={actionStatus} right={<ActionButton variant="primary" disabled={!isConfigDirty || saving} onClick={() => void saveCurrentConfig()}>{saving ? "保存中..." : "保存当前方案"}</ActionButton>} />
               <div className="rounded border border-zinc-200 bg-zinc-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-950/55">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-1.5">
@@ -907,6 +869,9 @@ export default function AgentConfigWorkspace() {
                     saving={saving}
                     onChange={updateMeta}
                   />
+
+                  {(configData.migration_warnings || []).length > 0 && <AlertPanel tone="warning" title="配置迁移提示" message={<ul>{configData.migration_warnings?.map((warning,index) => <li key={`${warning.code}-${index}`}>{warning.message} · {warning.path}{warning.package ? ` · ${warning.package}` : ""}</li>)}</ul>} />}
+                  <AgentFlowSelection scheme={selectedConfigName} value={configData.flows} onChange={(flows) => updateDraftConfig((current) => ({...current,flows}))} />
 
                   <div className="rounded border border-zinc-200/60 bg-zinc-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-950/60 dark:shadow-zinc-950/30">
                     <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
@@ -970,7 +935,7 @@ export default function AgentConfigWorkspace() {
 
         <AgentCreateDialog
           open={createAgentOpen}
-          skillOptions={skillOptions}
+          toolPackages={toolPackages}
           modelOptions={modelOptions}
           onClose={() => setCreateAgentOpen(false)}
           onDirtyChange={setCreateAgentDirty}
@@ -984,7 +949,7 @@ export default function AgentConfigWorkspace() {
           mode="runtime"
           agentName={editingRuntimeAgentName}
           agent={editingRuntimeAgent}
-          skillOptions={skillOptions}
+          toolPackages={toolPackages}
           modelOptions={modelOptions}
           onClose={() => setEditingRuntimeAgentName("")}
           onDirtyChange={setRuntimeDrawerDirty}
@@ -1004,7 +969,7 @@ export default function AgentConfigWorkspace() {
           mode="plan"
           agentName={editingPlanAgentName}
           agent={editingPlanAgent}
-          skillOptions={skillOptions}
+          toolPackages={toolPackages}
           modelOptions={modelOptions}
           onClose={() => setEditingPlanAgentName("")}
           onDirtyChange={setPlanDrawerDirty}
@@ -1034,7 +999,7 @@ export default function AgentConfigWorkspace() {
             open={editingGlobalMode === "runtime"}
             mode="runtime"
             global={configData.runtime_shared}
-            skillOptions={skillOptions}
+            toolPackages={toolPackages}
             onClose={() => setEditingGlobalMode("")}
             onSave={(nextGlobal) => {
               updateRuntimeGlobal(nextGlobal);
@@ -1048,7 +1013,7 @@ export default function AgentConfigWorkspace() {
             open={editingGlobalMode === "plan"}
             mode="plan"
             global={configData.plan.shared}
-            skillOptions={skillOptions}
+            toolPackages={toolPackages}
             onClose={() => setEditingGlobalMode("")}
             onSave={(nextGlobal) => {
               updatePlanConfig({

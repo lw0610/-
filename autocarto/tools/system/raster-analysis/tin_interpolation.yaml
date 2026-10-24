@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: tin_interpolation
-  display_name: TIN插值
+  keywords: ["三角网插值", "分析三角网插值", "栅格分析", "地形分析", "空间插值"]
+  display_name: "计算三角网插值"
   domain: raster-analysis
   runtime: qgis
 spec:
@@ -21,7 +22,7 @@ spec:
     - 1
   - name: PIXEL_SIZE
     type: number
-    description: 像素大小
+    description: "像素大小（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.1
   - name: OUTPUT
     type: output_raster

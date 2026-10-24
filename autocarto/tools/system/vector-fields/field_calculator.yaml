@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: field_calculator
-  display_name: 字段计算器
+  keywords: ["按表达式计算字段", "属性字段", "字段计算", "属性连接"]
+  display_name: "按表达式计算字段"
   domain: vector-fields
   runtime: qgis
 spec:
@@ -30,11 +31,11 @@ spec:
     - 6
   - name: FIELD_LENGTH
     type: integer
-    description: 字段长度
+    description: "字段长度（字符位数，非负整数；具体限制由输出格式决定）"
     default: 0
   - name: FIELD_PRECISION
     type: integer
-    description: 字段精度
+    description: "字段精度（小数位数，非负整数）"
     default: 0
   - name: FORMULA
     type: expression

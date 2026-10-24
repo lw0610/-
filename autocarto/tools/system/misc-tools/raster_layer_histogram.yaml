@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: raster_layer_histogram
-  display_name: 栅格图层直方图
+  keywords: ["栅格直方图", "生成栅格直方图", "统计图表", "网格数据", "数据可视化"]
+  display_name: "生成栅格直方图"
   runtime: qgis
   domain: misc-tools
 spec:
@@ -14,11 +15,11 @@ spec:
     description: 输入栅格
   - name: BAND
     type: integer
-    description: 波段号
+    description: "波段号（从 1 开始的波段序号）"
     default: 1
   - name: BINS
     type: integer
-    description: 分组数量
+    description: "分组数量（数量，正整数）"
     default: 10
   - name: OUTPUT
     type: file

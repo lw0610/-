@@ -1,0 +1,258 @@
+{
+  "id": "statistical",
+  "flow_id": "statistical-choropleth",
+  "layout": "统计黄金样例",
+  "golden": "statistical",
+  "project_crs": "EPSG:3857",
+  "bindings": {},
+  "variables": {},
+  "inputs": {
+    "行政区数据": "${fixture}/statistical/regions.geojson",
+    "统计表": "${fixture}/statistical/values.csv",
+    "统计年份": 2020,
+    "地图标题": "湖北省 2020 年合成指标"
+  },
+  "model": {
+    "flow": {
+      "inputs": [
+        {
+          "key": "行政区数据",
+          "label": "行政区数据",
+          "type": "file",
+          "options": []
+        },
+        {
+          "key": "统计表",
+          "label": "统计表",
+          "type": "file",
+          "options": []
+        },
+        {
+          "key": "已有专题图层",
+          "label": "已有专题图层",
+          "type": "layer",
+          "options": []
+        },
+        {
+          "key": "统计年份",
+          "label": "统计年份",
+          "type": "number",
+          "options": []
+        },
+        {
+          "key": "指标",
+          "label": "指标",
+          "type": "text",
+          "options": []
+        },
+        {
+          "key": "单位",
+          "label": "单位",
+          "type": "text",
+          "options": []
+        },
+        {
+          "key": "数据来源",
+          "label": "数据来源",
+          "type": "text",
+          "options": []
+        },
+        {
+          "key": "排除地区",
+          "label": "排除地区",
+          "type": "text",
+          "options": []
+        },
+        {
+          "key": "纸张",
+          "label": "纸张",
+          "type": "text",
+          "options": []
+        },
+        {
+          "key": "输出格式",
+          "label": "输出格式",
+          "type": "text",
+          "options": []
+        },
+        {
+          "key": "地图标题",
+          "label": "地图标题",
+          "type": "text",
+          "options": []
+        }
+      ],
+      "input_constraints": [],
+      "triggers": [
+        "统计专题图",
+        "分级设色图"
+      ]
+    }
+  },
+  "steps": {
+    "s1": {
+      "actions": [
+        {
+          "tool": "data_prepare_statistical",
+          "params": {
+            "geojson_path": "${fixture}/statistical/regions.geojson",
+            "csv_path": "${fixture}/statistical/values.csv",
+            "year": 2020,
+            "output_dir": "${out}/derived",
+            "validate_only": true
+          },
+          "save": "validation",
+          "allow_failure": true
+        },
+        {
+          "tool": "data_prepare_statistical",
+          "params": {
+            "geojson_path": "${fixture}/statistical/regions.geojson",
+            "csv_path": "${fixture}/statistical/values.csv",
+            "year": 2020,
+            "output_dir": "${out}/derived",
+            "validate_only": false,
+            "allow_unmatched": true
+          },
+          "save": "prepared"
+        },
+        {
+          "tool": "data_load_vector",
+          "params": {
+            "path": {
+              "$ref": "prepared.data.paths.polygons_geojson"
+            },
+            "layer_name": "统计值"
+          },
+          "save": "theme"
+        },
+        {
+          "tool": "data_load_vector",
+          "params": {
+            "path": {
+              "$ref": "prepared.data.paths.polygons_geojson"
+            },
+            "layer_name": "缺失值底色",
+            "reuse_existing": false
+          },
+          "save": "gray"
+        },
+        {
+          "op": "layers",
+          "names": [
+            "统计值"
+          ],
+          "save": "theme_layers"
+        },
+        {
+          "op": "layers",
+          "names": [
+            "缺失值底色"
+          ],
+          "save": "gray_layers"
+        }
+      ],
+      "outputs": {
+        "专题图层": {
+          "$ref": "theme_layers"
+        },
+        "灰底图层": {
+          "$ref": "gray_layers"
+        },
+        "统计口径": {
+          "$json": "prepared.data"
+        },
+        "数据质量报告": {
+          "$ref": "prepared.data.paths.manifest"
+        }
+      }
+    },
+    "s2": {
+      "actions": [
+        {
+          "tool": "cartography_set_style",
+          "params": {
+            "layer": "缺失值底色",
+            "style_type": "simple",
+            "color": "#e5e7eb"
+          },
+          "save": "gray_style"
+        },
+        {
+          "tool": "cartography_graduated_style",
+          "params": {
+            "layer": "统计值",
+            "field": "stat_value",
+            "classes": 5,
+            "method": "quantile",
+            "color_ramp": "Blues"
+          },
+          "save": "graduated"
+        }
+      ],
+      "outputs": {
+        "分级结果": {
+          "$json": "graduated"
+        }
+      }
+    },
+    "s3": {
+      "actions": [
+        {
+          "tool": "layout_compose",
+          "params": {
+            "layout": "统计黄金样例",
+            "spec": "统计专题版式",
+            "paper": "A4",
+            "title": "湖北省 2020 年合成指标",
+            "map_layers": [
+              "统计值",
+              "缺失值底色"
+            ],
+            "extent_layers": [
+              "统计值"
+            ],
+            "legend_layers": [
+              "统计值"
+            ],
+            "legend_title": "合成指标（测试单位）",
+            "overview_text": "来源：合成回归夹具；方法：五级分位数；灰色表示缺失，零为有效数值。"
+          },
+          "save": "composed"
+        }
+      ],
+      "outputs": {
+        "版面": "统计黄金样例"
+      }
+    },
+    "s4": {
+      "actions": [
+        {
+          "tool": "export_print_layout",
+          "params": {
+            "layout": "统计黄金样例",
+            "output": "${out}/统计成果.png",
+            "dpi": 72
+          },
+          "save": "png"
+        }
+      ],
+      "outputs": {
+        "成果图": {
+          "$ref": "png.output"
+        }
+      }
+    }
+  },
+  "invariants": {
+    "unmatched_csv_regions": {
+      "$ref": "prepared.data.unmatched_csv_regions"
+    },
+    "missing_count": {
+      "$ref": "prepared.data.counts.missing_count"
+    },
+    "valid_count": {
+      "$ref": "prepared.data.counts.valid_count"
+    }
+  }
+}

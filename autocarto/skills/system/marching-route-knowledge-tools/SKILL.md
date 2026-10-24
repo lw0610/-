@@ -11,6 +11,11 @@ tags:
 tools:
 - marching_route_get_extraction_contract
 - marching_route_compile_dataset
+display_name: 路线知识
+domain: 系统
+system: false
+hidden: true
+auto_mount: executor:route_knowledge
 ---
 
 # 行军路线知识编译工具

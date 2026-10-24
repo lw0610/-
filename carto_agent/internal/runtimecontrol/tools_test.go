@@ -11,7 +11,7 @@ import (
 )
 
 func TestHandles(t *testing.T) {
-	if !Handles(ToolHITLRequest) || !Handles(ToolOutputGetInfo) {
+	if !Handles(ToolHITLRequest) || !Handles(ToolOutputGetInfo) || !Handles(ToolReferenceRead) {
 		t.Fatal("expected runtime-control tools to be handled")
 	}
 	if Handles("missing") {

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_add_attribute_table
-  display_name: layout_add_attribute_table
+  keywords: ["版面属性表", "添加版面属性表", "打印版面", "地图排版", "版面元素"]
+  display_name: "添加版面属性表"
   runtime: qgis
   domain: print-layout
 spec:
@@ -33,7 +34,7 @@ spec:
     description: 元素ID
   - name: max_features
     type: integer
-    description: 最大要素数
+    description: "最大要素数（数量，正整数）"
 execution:
   handler: handlers.layout_items.add_attribute_table_handler
   param_mapping:

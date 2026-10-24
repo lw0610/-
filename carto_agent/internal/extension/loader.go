@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode"
 
 	"gopkg.in/yaml.v3"
 )
@@ -93,11 +94,39 @@ func validateManifest(manifest Manifest) error {
 			}
 		}
 	}
-	if strings.TrimSpace(manifest.Metadata.Name) == "" {
-		return fmt.Errorf("extension metadata.name is required")
+	if err := validatePathComponent(manifest.Metadata.Name, "metadata.name"); err != nil {
+		return err
 	}
-	if strings.TrimSpace(manifest.Spec.Activation.Scope) == "" {
-		return fmt.Errorf("extension activation.scope is required")
+	switch manifest.Spec.Activation.Scope {
+	case "global":
+	case "exclusive":
+		if strings.TrimSpace(manifest.Spec.Activation.OwnerConfig) == "" {
+			return fmt.Errorf("extension activation.owner_config is required for exclusive scope")
+		}
+	default:
+		return fmt.Errorf("unsupported extension activation.scope %q", manifest.Spec.Activation.Scope)
+	}
+	if manifest.Spec.Activation.OwnerConfig != "" {
+		if err := validatePathComponent(manifest.Spec.Activation.OwnerConfig, "activation.owner_config"); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Names become directory or file components on both Unix and Windows.
+func validatePathComponent(value, field string) error {
+	if strings.TrimSpace(value) == "" {
+		return fmt.Errorf("extension %s is required", field)
+	}
+	if value == "." || value == ".." || strings.ContainsAny(value, `/\\:`) ||
+		strings.TrimSpace(value) != value || strings.HasSuffix(value, ".") {
+		return fmt.Errorf("extension %s must be a safe path component", field)
+	}
+	for _, char := range value {
+		if unicode.IsControl(char) {
+			return fmt.Errorf("extension %s must be a safe path component", field)
+		}
 	}
 	return nil
 }

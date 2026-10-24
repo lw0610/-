@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: buffer
-  display_name: 缓冲区
+  keywords: ["要素缓冲区", "生成要素缓冲区", "几何处理", "空间叠加", "几何修复"]
+  display_name: "创建要素缓冲区"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -15,11 +16,11 @@ spec:
   - name: DISTANCE
     type: number
     required: true
-    description: 缓冲距离
+    description: "缓冲距离（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 10.0
   - name: SEGMENTS
     type: integer
-    description: 线段数
+    description: "线段数（数量，正整数）"
     default: 5
   - name: DISSOLVE
     type: boolean

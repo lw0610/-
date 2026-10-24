@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_export_image
-  display_name: layout_export_image
+  keywords: ["版面图像", "输出版面图像", "打印版面", "地图排版", "版面元素"]
+  display_name: "导出版面图像"
   runtime: qgis
   domain: print-layout
 spec:
@@ -17,10 +18,16 @@ spec:
     description: 输出路径
   - name: dpi
     type: number
-    description: 导出 DPI
+    description: "导出 DPI（像素/英寸，正数）"
   - name: format
     type: string
     description: 图片格式
+  - name: purpose
+    type: enum
+    values: [final, review]
+    required: false
+    default: final
+    description: 导出用途；审查时自动选择分辨率并保证单页不超过一千六百万像素，返回实际使用的 DPI
 execution:
   handler: handlers.layout_advanced.export_image_handler
   param_mapping:
@@ -28,3 +35,4 @@ execution:
     output: '{{ output }}'
     dpi: '{{ dpi }}'
     format: '{{ format }}'
+    purpose: '{{ purpose }}'

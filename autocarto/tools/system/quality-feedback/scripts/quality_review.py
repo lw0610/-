@@ -648,6 +648,9 @@ def prepare_review(params: Mapping[str, Any]) -> Dict[str, Any]:
             "locked_content": locked_content,
             "layout_item_ids": dict(layout_item_ids),
             "layout_item_state": dict(layout_item_state),
+            "legal_anchors": {item_id: dict(state["anchor"])
+                              for item_id, state in layout_item_state["items"].items()
+                              if isinstance(state, Mapping) and isinstance(state.get("anchor"), Mapping) and state["anchor"]},
             "initial_export_dpi": initial_export_dpi,
             "derived_dpi": derived_dpi,
             "layout_snapshot": snapshot_metadata,

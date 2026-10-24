@@ -19,7 +19,7 @@ describe('ToolCatalogView', () => {
         items={[
           {
             name: 'save_skill_script',
-            description: '将脚本文件写入指定技能包目录。',
+            description: '将脚本文件写入指定工具包目录。',
             category: 'internal',
             source: 'bridge',
             backend: 'internal',
@@ -43,7 +43,7 @@ describe('ToolCatalogView', () => {
       />,
     )
 
-    expect(screen.getByText('统一工具目录')).toBeInTheDocument()
+    expect(screen.getByText('能力手册')).toBeInTheDocument()
     expect(screen.getByText('save_skill_script')).toBeInTheDocument()
     expect(screen.getByText('buffer')).toBeInTheDocument()
     expect(screen.getByText('可用')).toBeInTheDocument()

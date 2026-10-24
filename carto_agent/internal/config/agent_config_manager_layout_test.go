@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestAgentConfigManagerMigratesFlatConfigToFolderizedLayout(t *testing.T) {
+func TestAgentConfigManagerReadsFlatConfigWithoutWritingAndSavesV2(t *testing.T) {
 	tmpDir := t.TempDir()
 	legacyPath := filepath.Join(tmpDir, "custom.yaml")
 	legacyConfig := `version: "1.0"
@@ -35,11 +35,26 @@ runtime:
 	}
 
 	migratedPath := filepath.Join(tmpDir, "custom", "agent.yaml")
-	if _, err := os.Stat(migratedPath); err != nil {
-		t.Fatalf("expected migrated config at %s: %v", migratedPath, err)
+	if _, err := os.Stat(migratedPath); !os.IsNotExist(err) {
+		t.Fatal("read unexpectedly wrote canonical file")
 	}
-	if _, err := os.Stat(legacyPath); !os.IsNotExist(err) {
-		t.Fatalf("expected legacy flat config removed, err=%v", err)
+	data, err := manager.GetConfigData("custom")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = manager.SaveConfig("", "custom", data); err != nil {
+		t.Fatal(err)
+	}
+	backup, err := os.ReadFile(migratedPath + ".v1.bak")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(backup) != legacyConfig {
+		t.Fatal("flat legacy backup differs")
+	}
+	original, err := os.ReadFile(legacyPath)
+	if err != nil || string(original) != legacyConfig {
+		t.Fatal("flat source was changed")
 	}
 
 	reloaded := NewAgentConfigManager(tmpDir)

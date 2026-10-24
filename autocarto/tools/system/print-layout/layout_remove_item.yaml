@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_remove_item
-  display_name: layout_remove_item
+  keywords: ["版面元素", "删除版面元素", "打印版面", "地图排版"]
+  display_name: "移除版面元素"
   runtime: qgis
   domain: print-layout
 spec:

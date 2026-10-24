@@ -8,7 +8,9 @@ import (
 )
 
 func TestResolveRuntimeSkillDirsPrefersPluginBuiltinUserAndExclusive(t *testing.T) {
-	rootDir := t.TempDir()
+	rootDir := physicalPath(t, t.TempDir())
+	t.Setenv("AUTOCARTO_PROJECT_ROOT", rootDir)
+	t.Setenv("AUTOCARTO_ASSETS_ROOT", filepath.Join(rootDir, "autocarto"))
 	pluginDir := filepath.Join(rootDir, "autocarto", "skills", "system")
 	configBaseDir := filepath.Join(rootDir, "autocarto", "config")
 	builtinRuntimeDir := filepath.Join(rootDir, "autocarto", "skills", "system")
@@ -71,6 +73,8 @@ func TestResolveRuntimeSkillDirsWithPluginOverrideKeepsExplicitPluginDirOnlyOnce
 
 func TestResolveRuntimeToolDirsPrefersPluginBuiltinUserGlobalAndExclusive(t *testing.T) {
 	rootDir := t.TempDir()
+	t.Setenv("AUTOCARTO_PROJECT_ROOT", rootDir)
+	t.Setenv("AUTOCARTO_ASSETS_ROOT", filepath.Join(rootDir, "autocarto"))
 	pluginDir := filepath.Join(rootDir, "autocarto", "tools", "system")
 	configBaseDir := filepath.Join(rootDir, "autocarto", "config")
 	builtinRuntimeDir := filepath.Join(rootDir, "autocarto", "tools", "system")
@@ -346,17 +350,19 @@ plan:
 		}
 	}
 
-	assertLayer("global-category", "runtime/global", "skill_packages")
-	assertLayer("global-workflow", "runtime/global", "skill_packages")
-	assertLayer("private-category", "runtime/agent", "skill_packages")
-	assertLayer("share-workflow", "runtime/agent", "skill_packages")
-	assertLayer("plan-global-category", "plan/global", "skill_packages")
-	assertLayer("plan-private-workflow", "plan/agent", "skill_packages")
-	assertLayer("plan-share-workflow", "plan/agent", "skill_packages")
+	assertLayer("global-category", "runtime/global", "legacy_unresolved_packages")
+	assertLayer("global-workflow", "runtime/global", "legacy_unresolved_packages")
+	assertLayer("private-category", "runtime/agent", "legacy_unresolved_packages")
+	assertLayer("share-workflow", "runtime/agent", "legacy_unresolved_packages")
+	assertLayer("plan-global-category", "plan/global", "legacy_unresolved_packages")
+	assertLayer("plan-private-workflow", "plan/agent", "legacy_unresolved_packages")
+	assertLayer("plan-share-workflow", "plan/agent", "legacy_unresolved_packages")
 }
 
 func TestGetActiveToolCatalogIncludesCategorySkillTools(t *testing.T) {
 	rootDir := t.TempDir()
+	t.Setenv("AUTOCARTO_PROJECT_ROOT", rootDir)
+	t.Setenv("AUTOCARTO_ASSETS_ROOT", filepath.Join(rootDir, "autocarto"))
 	configDir := filepath.Join(rootDir, ".autocarto", "config", "agent_configs")
 	skillsDir := filepath.Join(rootDir, "autocarto", "skills", "system")
 	if err := os.MkdirAll(configDir, 0o755); err != nil {

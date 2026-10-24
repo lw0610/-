@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: merge_lines
-  display_name: 合并线
+  keywords: ["相接线段", "合并相接线段", "几何处理", "空间叠加", "几何修复"]
+  display_name: "合并相接线段"
   domain: vector-geometry
   runtime: qgis
 spec:

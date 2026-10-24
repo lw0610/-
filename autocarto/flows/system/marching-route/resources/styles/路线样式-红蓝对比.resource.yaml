@@ -1,0 +1,8 @@
+apiVersion: resource/v1
+id: route_style.red-blue
+type: route_style
+name: 路线样式-红蓝对比
+version: 1.0.0
+entry: 路线样式-红蓝对比.csv
+source:
+  author: AutoCarto

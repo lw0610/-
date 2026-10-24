@@ -1,4 +1,6 @@
 import { expect, test, type Page } from '@playwright/test'
+import type { RuntimeSnapshot } from '../../src/lib/api'
+import type { QGISInstance } from '../../src/types/instance'
 
 async function disableRealtimeWebSocket(page: Page) {
   await page.addInitScript(() => {
@@ -78,18 +80,18 @@ test.describe('Release Candidate Walk F3', () => {
     await disableRealtimeWebSocket(page)
     await mockDesktopRuntime(page)
 
-    let runtimeSnapshot = {
+    let runtimeSnapshot: RuntimeSnapshot = {
       services: {},
       instances: {
         items: [],
-        active_id: null,
+        active_id: undefined,
         instance_count: 0,
         running_count: 0,
       },
       stale: true,
     }
 
-    const runningInstance = {
+    const runningInstance: QGISInstance = {
       id: 'instance-f3-running',
       pid: 4101,
       qgis_version: '3.34',

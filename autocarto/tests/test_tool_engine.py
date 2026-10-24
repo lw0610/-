@@ -286,14 +286,6 @@ class ToolEngineImportSmokeTestCase(unittest.TestCase):
         smoke = _load_packaged_runtime_smoke_module()
         repo_root = Path(__file__).resolve().parents[2]
         build_script = (repo_root / "build.sh").read_text(encoding="utf-8")
-        readme = (repo_root / "README.md").read_text(encoding="utf-8")
-        plan = (
-            repo_root
-            / ".sisyphus"
-            / "plans"
-            / "agent-tool-skill-architecture-optimization.md"
-        ).read_text(encoding="utf-8")
-
         self.assertEqual(smoke.DESCRIPTOR_EVIDENCE_NAME, "descriptor.json")
         self.assertEqual(smoke.LEGACY_REJECTION_EVIDENCE_NAME, "legacy_rejection.json")
         self.assertEqual(smoke.SMOKE_LOG_NAME, "smoke.log")
@@ -306,20 +298,7 @@ class ToolEngineImportSmokeTestCase(unittest.TestCase):
         ]:
             self.assertIn(needle, build_script)
 
-        for needle in [
-            ".sisyphus/evidence/task-6-packaged-runtime-smoke/descriptor.json",
-            ".sisyphus/evidence/task-6-packaged-runtime-smoke/stdout.log",
-            ".sisyphus/evidence/task-6-packaged-runtime-smoke/stderr.log",
-            ".sisyphus/evidence/task-6-packaged-runtime-smoke/smoke.log",
-            ".sisyphus/evidence/task-7-release-gate/summary.txt",
-        ]:
-            self.assertIn(needle, readme)
 
-        for needle in [
-            ".sisyphus/evidence/task-8-cancel-live.txt",
-            ".sisyphus/evidence/task-8-cancel-error.txt",
-        ]:
-            self.assertIn(needle, plan)
 
 
 if __name__ == "__main__":

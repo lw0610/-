@@ -18,7 +18,7 @@ func TestUnifiedRegistryGovernance(t *testing.T) {
 	toolsDir := filepath.Join(root, "tools")
 	skillsDir := filepath.Join(root, "skills")
 	writeRegistryToolFixture(t, toolsDir, "buffer", skill.RuntimeIDCLI)
-	writeRegistryWorkflowPackageFixture(t, skillsDir, "buffer-workflow", "buffer")
+	writeRegistryCategoryPackageFixture(t, skillsDir, "buffer-tools", "buffer")
 
 	dynamicRegistry := skill.NewBridgeDynamicRegistry()
 	dynamicRegistry.RegisterInstanceTools("instance-a", []bridgepkg.ToolDefinition{{
@@ -53,15 +53,15 @@ func TestUnifiedRegistryGovernance(t *testing.T) {
 		t.Fatal("expected skill registry to inherit governed dynamic tool")
 	}
 
-	pkg, ok, err := governance.ResolveWorkflowPackage("buffer-workflow")
+	pkg, ok, err := governance.ResolveSkillPackage("buffer-tools")
 	if err != nil {
-		t.Fatalf("ResolveWorkflowPackage returned error: %v", err)
+		t.Fatalf("ResolveSkillPackage returned error: %v", err)
 	}
 	if !ok {
-		t.Fatal("expected governed workflow package to resolve")
+		t.Fatal("expected governed tool package to resolve")
 	}
-	if pkg.Workflow == nil || len(pkg.Workflow.Spec.Steps) != 1 || pkg.Workflow.Spec.Steps[0].Tool != "buffer" {
-		t.Fatalf("unexpected governed workflow package: %#v", pkg.Workflow)
+	if pkg.Kind != skill.SkillPackageKindCategory || len(pkg.ToolRefs) != 1 || pkg.ToolRefs[0] != "buffer" {
+		t.Fatalf("unexpected governed tool package: %#v", pkg)
 	}
 }
 
@@ -256,21 +256,5 @@ func writeRegistryCategoryPackageFixture(t *testing.T, rootDir, packageName, too
 	skillMarkdown := "---\nname: " + packageName + "\ndescription: " + packageName + "\nkind: category\ntools:\n  - " + toolName + "\n---\n\n# " + packageName + "\n"
 	if err := os.WriteFile(filepath.Join(packageDir, "SKILL.md"), []byte(skillMarkdown), 0o644); err != nil {
 		t.Fatalf("write SKILL.md: %v", err)
-	}
-}
-
-func writeRegistryWorkflowPackageFixture(t *testing.T, rootDir, packageName, toolName string) {
-	t.Helper()
-	packageDir := filepath.Join(rootDir, packageName)
-	if err := os.MkdirAll(packageDir, 0o755); err != nil {
-		t.Fatalf("mkdir workflow dir: %v", err)
-	}
-	skillMarkdown := "---\nname: " + packageName + "\ndescription: " + packageName + "\nkind: workflow\n---\n\n# " + packageName + "\n"
-	if err := os.WriteFile(filepath.Join(packageDir, "SKILL.md"), []byte(skillMarkdown), 0o644); err != nil {
-		t.Fatalf("write workflow SKILL.md: %v", err)
-	}
-	workflowYAML := "apiVersion: workflow/v1\nkind: serial_workflow\nmetadata:\n  name: " + packageName + "\nspec:\n  steps:\n    - id: step_1\n      type: tool\n      tool: " + toolName + "\n      with: {}\n"
-	if err := os.WriteFile(filepath.Join(packageDir, "workflow.yaml"), []byte(workflowYAML), 0o644); err != nil {
-		t.Fatalf("write workflow.yaml: %v", err)
 	}
 }

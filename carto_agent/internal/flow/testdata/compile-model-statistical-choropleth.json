@@ -1,0 +1,4 @@
+{
+  "flow": {"inputs":[{"key":"area_data","label":"行政区数据","type":"file","options":[]},{"key":"statistics","label":"统计表","type":"file","options":[]},{"key":"existing_layer","label":"已有专题图层","type":"layer","options":[]},{"key":"year","label":"统计年份","type":"number","options":[]},{"key":"indicator","label":"指标","type":"text","options":[]},{"key":"unit","label":"单位","type":"text","options":[]},{"key":"source","label":"数据来源","type":"text","options":[]},{"key":"excluded_areas","label":"排除地区","type":"text","options":[]},{"key":"paper","label":"纸张","type":"text","options":[]},{"key":"output_format","label":"输出格式","type":"text","options":[]},{"key":"title","label":"地图标题","type":"text","options":[]}],"input_constraints":[],"triggers":["统计专题图","分级设色图"]},
+  "tools": {"s1":["data_prepare_statistical"],"s2":["cartography_graduated_style"],"s3":["layout_compose"],"s4":["export_print_layout"]}
+}

@@ -1,0 +1,129 @@
+version: '1.0'
+meta:
+  default_execution_mode: build
+runtime:
+  global:
+    skill_packages:
+    - project-state
+    - vector-selection
+    - runtime-control
+  agents:
+    orchestrator:
+      display_name: 编排智能体
+      enabled: true
+      is_main: true
+      skill_packages:
+      - prompt-refinement
+      - traffic-map-orchestration
+      - print-layout-thematic
+      - marching-route-map-orchestration
+      - statistical-map-orchestration
+      prompts: {}
+    knowledge_engineer:
+      display_name: 制图知识抽取专家
+      enabled: true
+      skill_packages:
+      - marching-route-knowledge-tools
+      prompts: {}
+    data_engineer:
+      display_name: 数据工程专家
+      enabled: true
+      skill_packages:
+      - browser-data-acquisition
+      - gee-remote-sensing
+      - gee-scripting
+      - china-admin-boundaries
+      - data-loading
+      - vector-fields
+      - vector-selection
+      - crs-projection
+      - data-conversion
+      - geocoding
+      - file-operations
+      - data-loading-inspection
+      - marching-route-data-visualization
+      - attribute-cleaning
+      - crs-diagnosis-transform
+      - data-format-conversion
+      - sampling-random-selection
+      - conditional-feature-extraction
+      - statistical-data-tools
+      - statistical-data-preparation
+      prompts: {}
+    spatial_analyst:
+      display_name: 空间分析专家
+      enabled: true
+      skill_packages:
+      - gee-remote-sensing
+      - gee-scripting
+      - china-admin-boundaries
+      - vector-geometry
+      - vector-creation
+      - raster-analysis
+      - spatial-analysis
+      - network-analysis
+      - gdal-processing
+      - grass-analysis
+      - visibility-analysis
+      - geometry-repair-validation
+      - overlay-analysis
+      - buffer-proximity-analysis
+      - network-routing-analysis
+      - spatial-clustering
+      - interpolation-surface
+      - dem-terrain-derivatives
+      - raster-algebra
+      - raster-reclassify-stats
+      - viewshed-visibility-analysis
+      - watershed-hydrology-analysis
+      - accessibility-service-area
+      prompts: {}
+    cartographer:
+      display_name: 制图布局专家
+      enabled: true
+      skill_packages:
+      - cartography-styling
+      - print-layout
+      - canvas-navigation
+      - thematic-map-styling
+      - print-layout-standard
+      - print-layout-thematic
+      - print-layout-marching-route
+      - map-series-batch-export
+      - chart-visualization
+      - print-layout-statistical
+      prompts: {}
+    quality_feedback:
+      display_name: 质量反馈智能体
+      enabled: true
+      skill_packages:
+      - quality-feedback
+      prompts: {}
+    scripting_specialist:
+      display_name: 脚本与高级数据专家
+      enabled: true
+      skill_packages:
+      - gee-remote-sensing
+      - gee-scripting
+      - china-admin-boundaries
+      - browser-data-acquisition
+      - pyqgis-scripting
+      - point-cloud
+      - gps-data
+      - pyqgis-workflow
+      - pyqgis-batch-processing
+      - pyqgis-vector-analysis
+      - pyqgis-raster-analysis
+      - pyqgis-layout
+      - pyqgis-attribute-ops
+      - pyqgis-crs-transform
+      - pyqgis-data-loading
+      - pyqgis-geometry-ops
+      - pyqgis-interpolation
+      - pyqgis-styling
+      - pyqgis-terrain-ops
+      - pyqgis-spatial-query
+      - point-cloud-processing
+      - mesh-3d-analysis
+      - gps-field-data-import
+      prompts: {}

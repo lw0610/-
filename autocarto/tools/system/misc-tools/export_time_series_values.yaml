@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: export_time_series_values
-  display_name: 从网孔数据集中的点导出时间序列值
+  keywords: ["时间序列数值", "输出时间序列数值", "统计图表", "网格数据", "数据可视化"]
+  display_name: "导出时间序列数值"
   runtime: qgis
   domain: misc-tools
 spec:

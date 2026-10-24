@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_clip_vector_by_extent
+  keywords: ["按范围裁剪矢量", "栅格处理", "矢量处理", "空间分析"]
   display_name: 按范围裁剪矢量
   domain: gdal-processing
   runtime: qgis

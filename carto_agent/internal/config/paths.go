@@ -9,11 +9,12 @@ import (
 )
 
 const (
-	pluginRootRequiredMarker  = "skills/system"
-	pluginRootSearchDepth     = 8
-	runtimeHomeEnvVar         = "AUTOCARTO_HOME"
-	assetsRootEnvVar          = "AUTOCARTO_ASSETS_ROOT"
-	defaultWindowsRuntimeHome = `F:\AutoCarto`
+	pluginRootRequiredMarker = "skills/system"
+	pluginRootSearchDepth    = 8
+	runtimeHomeEnvVar        = "AUTOCARTO_HOME"
+	assetsRootEnvVar         = "AUTOCARTO_ASSETS_ROOT"
+	projectRootEnvVar        = "AUTOCARTO_PROJECT_ROOT"
+	defaultRuntimeDir        = "autocarto_data"
 )
 
 func DiscoverPluginRoot() string {
@@ -99,11 +100,81 @@ func resolveAutoCartoHomeFromEnv() (string, bool, error) {
 	return validatedPath, true, nil
 }
 
-func resolveDefaultAutoCartoHome() (string, bool) {
-	if runtime.GOOS == "windows" {
-		return filepath.Clean(defaultWindowsRuntimeHome), true
+// ResolveProjectRoot anchors relative configuration paths independently of the
+// process working directory. A project is the directory containing autocarto/.
+func ResolveProjectRoot() (string, error) {
+	if raw := strings.TrimSpace(os.Getenv(projectRootEnvVar)); raw != "" {
+		if !filepath.IsAbs(raw) {
+			return "", fmt.Errorf("%s 必须为绝对路径", projectRootEnvVar)
+		}
+		return filepath.Clean(raw), nil
 	}
-	return "", false
+	if raw := strings.TrimSpace(os.Getenv(assetsRootEnvVar)); filepath.IsAbs(raw) && isPluginRoot(raw) {
+		return filepath.Dir(filepath.Clean(raw)), nil
+	}
+	seeds := []string{}
+	if executable, err := os.Executable(); err == nil {
+		seeds = append(seeds, filepath.Dir(executable))
+	}
+	// During development binaries and tests may live in an external cache.
+	if _, source, _, ok := runtime.Caller(0); ok && filepath.IsAbs(source) {
+		seeds = append(seeds, filepath.Dir(source))
+	}
+	if cwd, err := os.Getwd(); err == nil {
+		seeds = append(seeds, cwd)
+	}
+	for _, seed := range seeds {
+		if pluginRoot := discoverPluginRootFromSeed(seed); pluginRoot != "" {
+			return filepath.Dir(pluginRoot), nil
+		}
+	}
+	return "", fmt.Errorf("未发现项目根目录，请设置 %s", projectRootEnvVar)
+}
+
+// ResolveProjectPath expands a saved path against the fixed project root. It
+// resolves names only; callers still enforce their own resource boundaries.
+func ResolveProjectPath(raw string) (string, error) {
+	path := strings.TrimSpace(raw)
+	if path == "" || strings.ContainsRune(path, '\x00') {
+		return "", fmt.Errorf("路径为空或包含非法字符")
+	}
+	if path == "~" || strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return "", err
+		}
+		if path == "~" {
+			path = home
+		} else {
+			path = filepath.Join(home, path[2:])
+		}
+	}
+	if filepath.IsAbs(path) {
+		return filepath.Clean(path), nil
+	}
+	root, err := ResolveProjectRoot()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(root, filepath.FromSlash(path)), nil
+}
+
+// PreferProjectRelativePath keeps files inside a movable project portable.
+// External datasets and application installations retain their absolute paths.
+func PreferProjectRelativePath(raw string) (string, error) {
+	absolute, err := ResolveProjectPath(raw)
+	if err != nil {
+		return "", err
+	}
+	root, err := ResolveProjectRoot()
+	if err != nil {
+		return "", err
+	}
+	rel, err := filepath.Rel(root, absolute)
+	if err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) && !filepath.IsAbs(rel) {
+		return filepath.ToSlash(rel), nil
+	}
+	return absolute, nil
 }
 
 func ResolveAutoCartoHome() (string, error) {
@@ -111,12 +182,9 @@ func ResolveAutoCartoHome() (string, error) {
 		if err != nil {
 			return "", err
 		}
-		return envHome, nil
+		return ResolveProjectPath(envHome)
 	}
-	if defaultHome, ok := resolveDefaultAutoCartoHome(); ok {
-		return defaultHome, nil
-	}
-	return "", fmt.Errorf("未配置桌面 app-local runtime home：请通过 %s 指向可写目录（config/data 由后端维护），不再接受 plugin root fallback", runtimeHomeEnvVar)
+	return ResolveProjectPath(defaultRuntimeDir)
 }
 
 func resolveAssetsRootFromEnv() (string, bool, error) {
@@ -124,7 +192,10 @@ func resolveAssetsRootFromEnv() (string, bool, error) {
 	if assetsRoot == "" {
 		return "", false, nil
 	}
-	cleaned := filepath.Clean(assetsRoot)
+	cleaned, err := ResolveProjectPath(assetsRoot)
+	if err != nil {
+		return "", true, err
+	}
 	if !isPluginRoot(cleaned) {
 		return "", true, fmt.Errorf("%s 指向的目录无效: %s，要求根目录包含 %s", assetsRootEnvVar, cleaned, pluginRootRequiredMarker)
 	}
@@ -236,4 +307,28 @@ func ResolveRuntimePortFile() (string, error) {
 		return "", err
 	}
 	return filepath.Join(dataDir, ".port"), nil
+}
+
+func ResolveBuiltinFlowsDir() string {
+	root, err := ResolveAssetsRoot()
+	if err != nil {
+		return ""
+	}
+	return filepath.Join(root, "flows", "system")
+}
+
+func ResolveUserFlowsDir() (string, error) {
+	root, err := ResolveAutoCartoHome()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(root, "flows"), nil
+}
+
+func ResolveResourceBindingsFile() (string, error) {
+	root, err := ResolveAutoCartoConfigDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(root, "resource_bindings.yaml"), nil
 }

@@ -7,6 +7,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	_ = os.Setenv("AUTOCARTO_DISABLE_KEYRING", "1")
 	runtimeHome, err := os.MkdirTemp("", "autocarto-websocket-runtime-*")
 	if err != nil {
 		panic(err)

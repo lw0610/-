@@ -188,11 +188,13 @@ def get_layers_info(params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
 
         layers_info = []
         for _, layer in layers.items():
-            if not include_invisible and not layer.isInScaleRange(
-                iface.mapCanvas().scale()
-            ):
+            node = project.layerTreeRoot().findLayer(layer.id())
+            visible = node is not None and node.isVisible()
+            if not include_invisible and not visible:
                 continue
-            layers_info.append(_get_layer_detailed_info(layer))
+            info = _get_layer_detailed_info(layer)
+            info["visible"] = visible
+            layers_info.append(info)
 
         layer_summaries = [
             _summarize_layer_info(layer_info) for layer_info in layers_info[:6]

@@ -1,0 +1,31 @@
+{
+  "validated_code_commit": "c4f7c3d1841c49b2987225136a777caf34feb2c4",
+  "command": "./build.sh check",
+  "exit_code": 0,
+  "go_build": "passed",
+  "go_vet": "passed",
+  "go_test_packages_passed": 39,
+  "frontend_lint": "passed",
+  "frontend_test_files": 78,
+  "frontend_tests_passed": 406,
+  "python_tests_passed": 371,
+  "python_tests_skipped": 3,
+  "python_subtests_passed": 836,
+  "qgis_test_modules_passed": 18,
+  "playwright_tests_passed": 7,
+  "next_build": "passed",
+  "sidecar_build": "passed",
+  "tauri_check": "passed",
+  "clean_git_archive_go_build": "passed",
+  "not_run": [
+    "online configured LLM timing/lifecycle acceptance",
+    "live user QGIS/Tauri UI",
+    "packaged runtime smoke",
+    "Linux release artifact tests"
+  ],
+  "logs": [
+    "/tmp/enio2-v3-build-check.log",
+    "/tmp/enio2-v3-build-check-attempt1.log",
+    "/tmp/enio2-v3-clean-build.log"
+  ]
+}

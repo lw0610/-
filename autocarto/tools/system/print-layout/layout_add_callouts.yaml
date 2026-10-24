@@ -1,0 +1,70 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layout_add_callouts
+  display_name: 添加图文标注
+  keywords:
+  - 图文标注
+  - 标注框
+  - 图片注记
+  - 引线避让
+  domain: print-layout
+  runtime: qgis
+spec:
+  description: 读取数据集或标注 CSV，创建图文标注框、图片、正文和引线，返回分组与实际元素 ID，可继续移动或检查。
+  parameters:
+  - name: layout
+    type: string
+    required: true
+    description: 目标版面名称
+  - name: map_item_id
+    type: string
+    default: main_map
+    description: 目标地图元素 ID，默认 main_map
+  - name: dataset_source
+    type: string
+    enum:
+    - current_session
+    - explicit
+    required: false
+    description: 数据来源：当前任务数据集或显式指定目录
+  - name: dataset_dir
+    type: string
+    description: 六表数据集目录；explicit 时必填，相对路径按项目根解析
+    required: false
+  - name: expected_table_counts
+    type: object
+    description: 可选六表行数断言，文件名到非负整数的映射
+    required: false
+  - name: expected_task_id
+    type: string
+    description: 可选任务编号断言，必须与数据集元数据一致
+    required: false
+  - name: callouts_csv
+    type: string
+    description: 图文标注 CSV 路径；与数据集参数二选一
+  - name: avoid_item_ids
+    type: array
+    items:
+      type: string
+    description: 需要避开的版面元素 ID；省略时避开主图之外的所有有 ID 元素，空数组表示不额外避让
+  - name: image_base_dir
+    type: string
+    description: 可选图片相对路径的基准目录；默认 CSV 或数据集所在目录
+  - name: input_crs
+    type: string
+    default: EPSG:4326
+    description: 标注锚点坐标系，默认 EPSG:4326
+execution:
+  handler: handlers.callouts.layout_add_callouts_handler
+  param_mapping:
+    layout: '{{ layout }}'
+    map_item_id: '{{ map_item_id }}'
+    dataset_source: '{{ dataset_source }}'
+    dataset_dir: '{{ dataset_dir }}'
+    expected_table_counts: '{{ expected_table_counts }}'
+    expected_task_id: '{{ expected_task_id }}'
+    callouts_csv: '{{ callouts_csv }}'
+    avoid_item_ids: '{{ avoid_item_ids }}'
+    image_base_dir: '{{ image_base_dir }}'
+    input_crs: '{{ input_crs }}'

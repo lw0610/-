@@ -3,6 +3,7 @@ package control
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/extension"
@@ -375,18 +376,16 @@ func (s *settingsMutationService) ImportSkill(sourcePath string, overwrite bool)
 }
 
 func (s *settingsMutationService) ImportSkillWithScope(sourcePath string, overwrite bool, scope, configName string) (map[string]any, error) {
+	skillImportOperationMu.Lock()
+	defer skillImportOperationMu.Unlock()
 	if s.skillCatalog == nil {
 		return nil, newSkillCatalogUnavailableError("settings_mutation")
 	}
-	if result, handled, err := s.importExtensionManifest(sourcePath); handled {
+	if result, handled, err := s.importExtensionManifest(sourcePath, overwrite); handled {
 		if err != nil {
 			return nil, err
 		}
-		mutation := s.newSkillMutationResult("skill_import", extractImportedSkillPaths(result)...)
-		if s.importedExtensionRequiresRuntimeRebuild(result) {
-			settings.ApplyActiveRuntimeMutation(settings.NewMutationBuilder(s.runtimeDiagnostics()), s.runtimeApplyProvider(), &mutation, "扩展技能包已导入，但运行时重建失败: ")
-		}
-		return settings.MutationEnvelope(result, mutation), nil
+		return s.skillImportEnvelope(result, s.importedExtensionRequiresRuntimeRebuild(result)), nil
 	}
 	var (
 		result map[string]any
@@ -403,10 +402,45 @@ func (s *settingsMutationService) ImportSkillWithScope(sourcePath string, overwr
 	if result == nil {
 		result = map[string]any{}
 	}
-	return settings.MutationEnvelope(result, s.newSkillMutationResult("skill_import", extractImportedSkillPaths(result)...)), nil
+	if s.snapshotRefresher != nil && len(extractImportedSkillPaths(result)) > 0 {
+		s.snapshotRefresher.RequestRefresh("skill_import")
+	}
+	return s.skillImportEnvelope(result, s.importedExtensionRequiresRuntimeRebuild(result)), nil
 }
 
-func (s *settingsMutationService) importExtensionManifest(sourcePath string) (map[string]any, bool, error) {
+var skillImportOperationMu sync.Mutex
+
+func (s *settingsMutationService) skillImportEnvelope(result map[string]any, requiresRebuild bool) map[string]any {
+	paths := extractImportedSkillPaths(result)
+	if len(paths) == 0 {
+		mutation := s.newMutationResult("skill_import")
+		mutation.Persisted = false
+		mutation.Idempotent = true
+		mutation.RequiredAction = settings.MutationRequiredActionNone
+		mutation.NextStep = "未写入任何技能，现有配置保持不变。"
+		return settings.MutationEnvelope(result, mutation)
+	}
+	mutation := s.newSkillMutationResult("skill_import", paths...)
+	mutation.NextStep = "在智能体配置中选择导入的技能包并保存，使相应角色加载技能；导入本身不会替换现有流程。"
+	if warnings, ok := result["warnings"].([]string); ok {
+		for _, warning := range warnings {
+			settings.AppendMutationWarning(&mutation, warning)
+		}
+	}
+	if requiresRebuild {
+		mutation.RequiredAction = settings.MutationRequiredActionRuntimeRebuild
+		if incomplete, _ := result["activation_incomplete"].(bool); incomplete {
+			settings.AppendMutationWarning(&mutation, "默认启停设置未完整应用，未自动重建运行时；请检查技能包启停状态后重新应用智能体配置。")
+		} else if len(s.listActiveRuns()) > 0 {
+			settings.AppendMutationWarning(&mutation, "存在运行中的任务，工具目录已保存，运行时重建已延后；任务结束后重新应用智能体配置。")
+		} else {
+			settings.ApplyActiveRuntimeMutation(settings.NewMutationBuilder(s.runtimeDiagnostics()), s.runtimeApplyProvider(), &mutation, "扩展技能包已导入，但运行时重建失败: ")
+		}
+	}
+	return settings.MutationEnvelope(result, mutation)
+}
+
+func (s *settingsMutationService) importExtensionManifest(sourcePath string, overwrite bool) (map[string]any, bool, error) {
 	looksLikeManifest, detectErr := extension.LooksLikeExtensionManifest(strings.TrimSpace(sourcePath))
 	if detectErr == nil && !looksLikeManifest {
 		return nil, false, nil
@@ -426,13 +460,43 @@ func (s *settingsMutationService) importExtensionManifest(sourcePath string) (ma
 	if s.agentConfigManager != nil {
 		configBaseDir = s.agentConfigManager.ConfigBaseDir()
 	}
-	importResult, err := extension.ImportManifest(manifest, managedCatalog.ManagedSkillsDir(), managedCatalog.ManagedToolsDir(), configBaseDir)
+	if strings.TrimSpace(configBaseDir) == "" {
+		return nil, true, fmt.Errorf("扩展导入需要已初始化的智能体配置目录")
+	}
+	metadataPath, metadataExists, err := extension.CheckManifestRegistration(manifest, configBaseDir)
 	if err != nil {
 		return nil, true, err
 	}
-	metadataPath, err := extension.RegisterManifest(manifest, importResult, configBaseDir)
+	if metadataExists && !overwrite {
+		return map[string]any{
+			"action": "import", "mode": "extension_manifest", "imported": []map[string]any{},
+			"skipped": []map[string]any{{
+				"name": manifest.Metadata.Name, "type": "extension_manifest", "source": strings.TrimSpace(sourcePath),
+				"target": metadataPath, "scope": manifest.Spec.Activation.Scope, "owner_config": manifest.Spec.Activation.OwnerConfig,
+				"reason": "同名扩展导入记录已存在；未启用覆盖，整个扩展未导入",
+			}},
+		}, true, nil
+	}
+	importResult, err := extension.ImportManifestWithOptions(manifest, managedCatalog.ManagedSkillsDir(), managedCatalog.ManagedToolsDir(), configBaseDir, extension.ImportOptions{Overwrite: overwrite})
 	if err != nil {
 		return nil, true, err
+	}
+	skippedItems := make([]map[string]any, 0, len(importResult.Skipped))
+	for _, item := range importResult.Skipped {
+		skippedItems = append(skippedItems, map[string]any{
+			"name": item.PackageID, "type": item.Type, "source": strings.TrimSpace(sourcePath),
+			"target": item.TargetDir, "scope": item.Scope, "owner_config": item.OwnerConfig, "reason": item.Reason,
+		})
+	}
+	if len(importResult.Resources) == 0 {
+		return map[string]any{"action": "import", "mode": "extension_manifest", "imported": []map[string]any{}, "skipped": skippedItems}, true, nil
+	}
+	warnings := []string{}
+	activationIncomplete := false
+	metadataPath, err = extension.RegisterManifest(manifest, importResult, configBaseDir)
+	if err != nil {
+		metadataPath = ""
+		warnings = append(warnings, "扩展资源已导入，但导入记录保存失败: "+err.Error())
 	}
 	if !manifest.Spec.Activation.EnabledByDefault {
 		for _, resource := range importResult.Resources {
@@ -440,7 +504,8 @@ func (s *settingsMutationService) importExtensionManifest(sourcePath string) (ma
 				continue
 			}
 			if err := managedCatalog.SetSkillPackageEnabledByScope(resource.PackageID, resource.Scope, resource.OwnerConfig, false); err != nil {
-				return nil, true, err
+				activationIncomplete = true
+				warnings = append(warnings, fmt.Sprintf("技能包 %s 已导入，但默认停用设置失败: %v", resource.PackageID, err))
 			}
 		}
 	}
@@ -465,7 +530,13 @@ func (s *settingsMutationService) importExtensionManifest(sourcePath string) (ma
 		"action":   "import",
 		"mode":     "extension_manifest",
 		"imported": importedItems,
-		"skipped":  []map[string]any{},
+		"skipped":  skippedItems,
+	}
+	if len(warnings) > 0 {
+		result["warnings"] = warnings
+	}
+	if activationIncomplete {
+		result["activation_incomplete"] = true
 	}
 	return result, true, nil
 }
@@ -613,11 +684,11 @@ func buildSkillAffectedPath(name string) string {
 
 func extractImportedSkillPaths(payload map[string]any) []string {
 	if payload == nil {
-		return []string{"skills"}
+		return nil
 	}
 	importedRaw, ok := payload["imported"].([]map[string]any)
 	if !ok || len(importedRaw) == 0 {
-		return []string{"skills"}
+		return nil
 	}
 	paths := make([]string, 0, len(importedRaw))
 	for _, item := range importedRaw {

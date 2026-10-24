@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: create_skill_package
+  display_name: "创建技能包"
+  keywords: ["技能包", "生成技能包", "方案配置", "工具管理", "技能创建"]
   domain: creator-tools
   runtime: internal
 spec:
@@ -9,16 +11,22 @@ spec:
   parameters:
   - name: package_id
     type: string
+    description: "新技能包编号，使用小写字母、数字和连字符"
   - name: name
     type: string
+    description: "技能包名称"
   - name: description
     type: string
+    description: "技能包的中文能力说明"
   - name: kind
     type: string
+    description: "包类型：category、workflow 或 knowledge"
   - name: runtime
     type: string
+    description: "运行环境：qgis、cli 或 internal"
   - name: body
     type: string
+    description: "技能包的 Markdown 使用说明正文"
 execution:
   backend_tool: create_skill_package
   param_mapping:

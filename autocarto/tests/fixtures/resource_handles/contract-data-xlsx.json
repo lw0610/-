@@ -1,0 +1,32 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data",
+  "digest": "sha256:6b4bfee843b7ed724ea4111cc982ecc7bb8a021a8135f76c479705e99f049c7b",
+  "entries": [
+    {
+      "description": "",
+      "exists": true,
+      "kind": "vector",
+      "name": "契约面",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/图层/测试面.geojson",
+      "required": true,
+      "sidecars_missing": []
+    }
+  ],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/契约清单.xlsx",
+  "format": "",
+  "id": "legacy.data_list.7ea36aef20",
+  "name": "契约清单",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/契约清单.xlsx",
+  "total_entries": 1,
+  "truncated": false,
+  "type": "data_list",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

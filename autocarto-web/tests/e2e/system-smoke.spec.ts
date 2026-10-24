@@ -1,6 +1,8 @@
 import { expect, test, type Page } from '@playwright/test'
 
-import { mockDesktopRuntime } from './helpers/desktopRuntime'
+import { DEFAULT_DESKTOP_RUNTIME_PORT, mockDesktopRuntime } from './helpers/desktopRuntime'
+
+const backendBaseURL = `http://127.0.0.1:${DEFAULT_DESKTOP_RUNTIME_PORT}`
 
 async function bodyText(page: Page) {
   return page.locator('body').innerText()
@@ -30,10 +32,10 @@ async function api<T>(request: any, method: 'GET' | 'POST' | 'PUT' | 'DELETE', u
   return payload.data as T
 }
 
-async function getRuntimeSkillPackages(request: any, configName: string) {
-  const profile = await api<any>(request, 'GET', `http://127.0.0.1:3000/api/agent-configs/${configName}/data`)
-  return Array.isArray(profile.runtime_shared?.skill_packages)
-    ? profile.runtime_shared.skill_packages.filter((item: unknown) => typeof item === 'string' && item.trim().length > 0)
+async function getRuntimeToolPackages(request: any, configName: string) {
+  const profile = await api<any>(request, 'GET', `${backendBaseURL}/api/agent-configs/${configName}/data`)
+  return Array.isArray(profile.runtime_shared?.tool_packages)
+    ? profile.runtime_shared.tool_packages.filter((item: unknown) => typeof item === 'string' && item.trim().length > 0)
     : []
 }
 
@@ -65,7 +67,7 @@ test('tool center page renders unified package workspace', async ({ page }) => {
   await waitForBodyState(page, /工具中心|API Error 404|File not found/)
   try {
     await expect(page.locator('#tool-center-list')).toContainText('工具中心')
-    await expect(page.locator('#tool-center-list')).toContainText('技能包目录')
+    await expect(page.locator('#tool-center-list')).toContainText('工具包目录')
     await expect(page.locator('#tool-center-list')).toBeVisible()
   } catch (error) {
     if (await isExplicitApiFailure(page)) {
@@ -127,7 +129,7 @@ test('about page renders project logo and tools settings route is reachable', as
   await expect(page.getByRole('heading', { level: 1, name: '关于' })).toBeVisible()
 
   await page.goto('/settings/tools.html', { waitUntil: 'networkidle' })
-  await expect(page.getByRole('heading', { level: 1, name: '工具与技能' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: '工具包与能力' })).toBeVisible()
   await expect(page.locator('#tool-center-list')).toContainText('工具中心')
 })
 
@@ -145,7 +147,9 @@ test('instances page renders qgis instance workspace', async ({ page }) => {
 
 test('agents package selection saves, activates, and keeps diagnostics reachable', async ({ page, request }) => {
   const configName = `e2e-package-${Date.now()}`
-  await api(request, 'POST', 'http://127.0.0.1:3000/api/agent-configs', { name: configName })
+  const before = await api<any>(request, 'GET', `${backendBaseURL}/api/agent-configs`)
+  const previousActive = before.configs?.find((item: { is_active?: boolean }) => item.is_active)?.config_name
+  await api(request, 'POST', `${backendBaseURL}/api/agent-configs`, { name: configName })
 
   await mockDesktopRuntime(page)
   await page.goto('/settings/agents.html', { waitUntil: 'networkidle' })
@@ -160,51 +164,46 @@ test('agents package selection saves, activates, and keeps diagnostics reachable
     await expect(page.locator('#agent-config-detail')).toBeVisible({ timeout: 15000 })
     await expect(page.getByText(`编辑智能体方案 · ${configName}`)).toBeVisible({ timeout: 15000 })
 
-    const runtimeGlobalSection = page.getByText('Runtime 全局配置').locator('xpath=../..')
-    await runtimeGlobalSection.getByRole('button', { name: '编辑' }).click()
-    await expect(page.getByRole('button', { name: '保存全局配置' })).toBeVisible()
-    const packageCheckboxes = page.getByRole('checkbox')
+    const schemeDialog = page.getByRole('dialog', { name: `编辑智能体方案 · ${configName}`, exact: true })
+    const runtimeGlobalSection = schemeDialog.getByText('所有执行角色共享的工具包', { exact: true }).locator('xpath=../..')
+    await runtimeGlobalSection.getByRole('button', { name: '编辑', exact: true }).click()
+    const sharedDialog = page.getByRole('dialog', { name: 'Runtime 共享工具包', exact: true })
+    const packageCheckboxes = sharedDialog.locator('input[type="checkbox"]:enabled')
     await expect.poll(async () => await packageCheckboxes.count(), { timeout: 30000 }).toBeGreaterThan(0)
+    // System packages are locked; deliberately select an editable category.
     await packageCheckboxes.first().check()
-    await page.getByRole('button', { name: '保存全局配置' }).click()
-    await page.locator('div.fixed.inset-0').last().getByRole('button', { name: '关闭', exact: true }).click()
+    await sharedDialog.getByRole('button', { name: '保存共享工具包', exact: true }).click()
+    await expect(sharedDialog).not.toBeVisible()
+    const saveConfigButton = schemeDialog.getByRole('button', { name: '保存当前方案', exact: true })
+    if (await saveConfigButton.isEnabled()) await saveConfigButton.click()
+    await schemeDialog.getByRole('button', { name: '关闭', exact: true }).click()
 
-    const saveConfigButton = page.getByRole('button', { name: '保存方案' })
-    if (await saveConfigButton.isEnabled()) {
-      await saveConfigButton.click()
-    }
-
-    await expect.poll(async () => (await getRuntimeSkillPackages(request, configName)).length, { timeout: 15000 }).toBeGreaterThan(0)
-    const runtimePackages = await getRuntimeSkillPackages(request, configName)
+    await expect.poll(async () => (await getRuntimeToolPackages(request, configName)).length, { timeout: 15000 }).toBeGreaterThan(0)
+    const runtimePackages = await getRuntimeToolPackages(request, configName)
     expect(runtimePackages.length).toBeGreaterThan(0)
 
     await page.getByRole('button', { name: '更多操作' }).click()
     await page.getByRole('button', { name: '设为激活' }).click()
 
     await expect.poll(async () => {
-      const snapshot = await api<any>(request, 'GET', 'http://127.0.0.1:3000/api/runtime/snapshot')
+      const snapshot = await api<any>(request, 'GET', `${backendBaseURL}/api/runtime/snapshot`)
       return snapshot.runtime_active_agent_config || snapshot.active_agent_config || snapshot.active_config || ''
     }, { timeout: 15000 }).toBe(configName)
 
     await expect.poll(async () => {
-      const catalog = await api<any>(request, 'GET', 'http://127.0.0.1:3000/api/tools/catalog?scope=configured')
-      const configuredItems = Array.isArray(catalog.catalog?.items) ? catalog.catalog.items : []
+      const catalog = await api<any>(request, 'GET', `${backendBaseURL}/api/tools/catalog?scope=global`)
+      const configuredItems = Array.isArray(catalog.catalog?.items) ? catalog.catalog.items : Array.isArray(catalog.items) ? catalog.items : []
       return configuredItems.length > 0 ? 'matched' : 'pending'
     }, { timeout: 15000 }).toBe('matched')
 
     await page.goto('/diagnostics.html')
     await expect(page.locator('#diagnostics-tools')).toContainText('工具目录')
-    await expect(page.locator('#diagnostics-tools')).toContainText(/尚未上报有效工具|技能包/)
+    await expect(page.locator('#diagnostics-tools')).toContainText(/尚未上报有效工具|工具包/)
 
     await page.goto('/chat.html')
     await expect(page.locator('body')).toContainText(/BUILD · 直接执行|开始对话吧|连接检查/)
-  } catch (error) {
-    if (await isExplicitApiFailure(page)) {
-      await expect(page.locator('body')).toContainText(/API Error 404|File not found/)
-      await page.goto('/diagnostics.html')
-      await expect(page.locator('body')).toContainText(/运行时诊断|API Error 404|File not found|设置工作区/)
-      return
-    }
-    throw error
+  } finally {
+    if (previousActive) await api(request, 'POST', `${backendBaseURL}/api/agent-configs/${encodeURIComponent(previousActive)}/activate`)
+    await api(request, 'DELETE', `${backendBaseURL}/api/agent-configs/${encodeURIComponent(configName)}`)
   }
 })

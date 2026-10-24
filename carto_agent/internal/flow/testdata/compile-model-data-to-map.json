@@ -1,0 +1,4 @@
+{
+  "flow": {"inputs":[{"key":"theme","label":"地图主题","type":"text","options":[]},{"key":"data_file","label":"数据文件","type":"file","options":[]},{"key":"data_folder","label":"数据文件夹","type":"folder","options":[]},{"key":"existing_layer","label":"已有图层","type":"layer","options":[]},{"key":"analysis","label":"分析要求","type":"text","options":[]},{"key":"paper","label":"纸张","type":"choice","options":[]},{"key":"output_format","label":"输出格式","type":"choice","options":[]},{"key":"title","label":"地图标题","type":"text","options":[]}],"input_constraints":[],"triggers":["数据成图","从数据制作地图"]},
+  "tools": {"s1":["get_layers_info"],"s2":["data_export_vector"],"s3":["check_validity"],"s4":["cartography_set_style"],"s5":["layout_compose"],"s6":["export_print_layout"]}
+}

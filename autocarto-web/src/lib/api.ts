@@ -224,6 +224,12 @@ export interface RuntimeToolRevisions {
 }
 
 export interface RuntimeSnapshot {
+  runtime_paths?: {
+    runtime_home: string;
+    data_dir: string;
+    log_file: string;
+    warnings: { code: string; message: string }[];
+  };
   version?: number;
   timestamp?: string;
   config_revision?: string;
@@ -336,6 +342,10 @@ export interface ToolCatalogPolicy {
 }
 
 export interface ToolCatalogCapability {
+  display_name?: string;
+  description?: string;
+  keywords?: string[];
+  package_id?: string;
   id: string;
   source?: string;
   capability_type?: string;
@@ -363,6 +373,7 @@ export interface ToolCatalogContract {
 }
 
 export interface ToolCatalogResponse {
+  items?: ToolCatalogCapability[];
   scope: ToolCatalogScope;
   config_name?: string;
   runtime_revision?: string;
@@ -692,6 +703,9 @@ function normalizeToolCatalogCapabilities(raw: unknown): ToolCatalogCapability[]
     }
     capabilities.push({
       id,
+      display_name: String(record.display_name || "").trim(), description: String(record.description || "").trim(),
+      keywords: Array.isArray(record.keywords) ? record.keywords.map(String) : [],
+      package_id: String(record.package_id || "").trim(),
       source: String(record?.source || "").trim() || undefined,
       capability_type:
         String(record?.capability_type || "").trim() || undefined,
@@ -763,6 +777,7 @@ function normalizeToolCatalogItemsFromContract(
   return items
     .map((item) => ({
       name: String(item.id || "").trim(),
+      display_name: item.display_name, description: item.description, keywords: item.keywords, package_id:item.package_id,
       source: String(item.source || "").trim(),
       backend: String(item.runtime_target || "").trim(),
       available: String(item.availability || "").trim() === "available",
@@ -788,7 +803,7 @@ export function normalizeToolCatalogResponse(
   const normalizedScope: ToolCatalogScope =
     scope === "active" || scope === "effective" ? scope : "global";
   const catalog = normalizeToolCatalogContract(
-    payload?.catalog,
+    payload?.catalog || (Array.isArray(payload?.items) ? payload : undefined),
     normalizedScope,
     typeof payload?.config_name === "string" ? payload.config_name : undefined,
   );
@@ -927,6 +942,7 @@ export function normalizeRuntimeSnapshot(
     plan_ready: fallbackPlanReady,
     mode_issues: modeIssues,
     mode_readiness: modeReadiness,
+    runtime_paths: snapshot?.runtime_paths,
     services,
     instances: {
       items: Array.isArray(instances.items) ? instances.items : [],
@@ -1055,10 +1071,20 @@ export interface AgentConfigSummary {
 }
 
 export interface AgentLLMConfig {
+  [key: string]: unknown;
   provider: string;
 }
 
+export type AgentRoleKind = "agent" | "executor";
+
+export interface MigrationWarning { code: string; path: string; package?: string; message: string; }
+export interface AgentFlowsConfig { enabled: string[]; [key: string]: unknown; }
+
 export interface PlanAgentDefData {
+  [key: string]: unknown;
+  kind?: AgentRoleKind;
+  tool_packages?: string[];
+  legacy_unresolved_packages?: string[];
   display_name: string;
   is_main?: boolean;
   mode?: string;
@@ -1068,6 +1094,12 @@ export interface PlanAgentDefData {
 }
 
 export interface AgentDefData {
+  [key: string]: unknown;
+  kind?: AgentRoleKind;
+  executor?: string;
+  flow_only?: boolean;
+  tool_packages?: string[];
+  legacy_unresolved_packages?: string[];
   display_name: string;
   description: string;
   is_main?: boolean;
@@ -1079,6 +1111,9 @@ export interface AgentDefData {
 }
 
 export interface AgentGlobalConfig {
+  [key: string]: unknown;
+  tool_packages?: string[];
+  legacy_unresolved_packages?: string[];
   skill_packages?: string[];
 }
 
@@ -1088,12 +1123,14 @@ export interface RuntimeConfig {
 }
 
 export interface AgentConfigMeta {
+  [key: string]: unknown;
   default_execution_mode: ExecutionMode;
   description: string;
   plan_enabled: boolean;
 }
 
 export interface PlanConfig {
+  [key: string]: unknown;
   enabled: boolean;
   max_iterations: number;
   shared: AgentGlobalConfig;
@@ -1112,6 +1149,10 @@ export interface AgentProfileDiagnostics {
 }
 
 export interface AgentConfigData {
+  [key: string]: unknown;
+  version?: string;
+  flows?: AgentFlowsConfig;
+  migration_warnings?: MigrationWarning[];
   meta: AgentConfigMeta;
   runtime_shared: AgentGlobalConfig;
   runtime_agents: Record<string, AgentDefData>;
@@ -1131,6 +1172,7 @@ interface AgentPlanAgentEntryPayload {
 }
 
 interface AgentPlanPayload {
+  [key: string]: unknown;
   enabled?: boolean;
   max_iterations?: number;
   shared?: AgentGlobalConfig;
@@ -1138,6 +1180,10 @@ interface AgentPlanPayload {
 }
 
 interface AgentProfilePayload {
+  [key: string]: unknown;
+  version?: string;
+  flows?: AgentFlowsConfig;
+  migration_warnings?: MigrationWarning[];
   meta?: AgentConfigMeta;
   runtime_shared?: AgentGlobalConfig;
   runtime_agents?: AgentRuntimeAgentEntryPayload[];
@@ -1146,65 +1192,37 @@ interface AgentProfilePayload {
   diagnostics?: AgentProfileDiagnostics;
 }
 
-function normalizeAgentGlobalConfig(
-  raw?: Partial<AgentGlobalConfig> | null,
-): AgentGlobalConfig {
-  return {
-    skill_packages: Array.isArray(raw?.skill_packages)
-      ? raw.skill_packages
-          .map((item) => String(item || "").trim())
-          .filter(Boolean)
-      : [],
+export function toolPackageSelections(raw?: { tool_packages?: string[]; skill_packages?: string[] } | null): string[] {
+  const values = Array.isArray(raw?.tool_packages) ? raw.tool_packages : raw?.skill_packages;
+  return Array.from(new Set((values || []).map((value) => String(value || "").trim()).filter(Boolean)));
+}
+
+export function normalizeAgentGlobalConfig(raw?: Partial<AgentGlobalConfig> | null): AgentGlobalConfig {
+  return { ...raw, tool_packages: toolPackageSelections(raw),
+    ...(Array.isArray(raw?.legacy_unresolved_packages) ? { legacy_unresolved_packages: [...raw.legacy_unresolved_packages] } : {}),
   };
 }
 
-function normalizeRuntimeAgentDef(
-  raw?: Partial<AgentDefData> | null,
-): AgentDefData {
+export function normalizeRuntimeAgentDef(raw?: Partial<AgentDefData> | null): AgentDefData {
   return {
-    display_name: String(raw?.display_name || ""),
-    description: String(raw?.description || ""),
-    is_main: Boolean(raw?.is_main),
-    deletable: Boolean(raw?.deletable),
-    enabled: raw?.enabled !== false,
-    llm: {
-      provider: String(raw?.llm?.provider || ""),
-    },
-    skill_packages: Array.isArray(raw?.skill_packages)
-      ? raw.skill_packages
-          .map((item) => String(item || "").trim())
-          .filter(Boolean)
-      : [],
-    prompts: Object.fromEntries(
-      Object.entries(raw?.prompts || {}).map(([key, value]) => [
-        key,
-        String(value || ""),
-      ]),
-    ),
+    ...raw,
+    display_name: String(raw?.display_name || ""), description: String(raw?.description || ""),
+    is_main: Boolean(raw?.is_main), deletable: Boolean(raw?.deletable), enabled: raw?.enabled !== false,
+    ...(raw?.kind ? {kind:raw.kind} : {}),
+    llm: { ...raw?.llm, provider: String(raw?.llm?.provider || "") },
+    tool_packages: toolPackageSelections(raw),
+    prompts: Object.fromEntries(Object.entries(raw?.prompts || {}).map(([key,value]) => [key,String(value ?? "")])),
   };
 }
 
-function normalizePlanAgentDef(
-  raw?: Partial<PlanAgentDefData> | null,
-): PlanAgentDefData {
+export function normalizePlanAgentDef(raw?: Partial<PlanAgentDefData> | null): PlanAgentDefData {
   return {
-    display_name: String(raw?.display_name || ""),
-    is_main: Boolean(raw?.is_main),
+    ...raw,
+    display_name: String(raw?.display_name || ""), is_main: Boolean(raw?.is_main),
     mode: String(raw?.mode || "readonly_plus").trim() || "readonly_plus",
-    llm: {
-      provider: String(raw?.llm?.provider || ""),
-    },
-    skill_packages: Array.isArray(raw?.skill_packages)
-      ? raw.skill_packages
-          .map((item) => String(item || "").trim())
-          .filter(Boolean)
-      : [],
-    prompts: Object.fromEntries(
-      Object.entries(raw?.prompts || {}).map(([key, value]) => [
-        key,
-        String(value || ""),
-      ]),
-    ),
+    llm: { ...raw?.llm, provider: String(raw?.llm?.provider || "") },
+    tool_packages: toolPackageSelections(raw),
+    prompts: Object.fromEntries(Object.entries(raw?.prompts || {}).map(([key,value]) => [key,String(value ?? "")])),
   };
 }
 
@@ -1245,7 +1263,7 @@ function normalizeAgentDiagnostics(
   };
 }
 
-function normalizeAgentProfilePayload(
+export function normalizeAgentProfilePayload(
   payload?: AgentProfilePayload | AgentConfigData | null,
 ): AgentConfigData {
   const runtimeShared = normalizeAgentGlobalConfig(payload?.runtime_shared);
@@ -1295,6 +1313,7 @@ function normalizeAgentProfilePayload(
         .map(([name, agent]) => [name, normalizePlanAgentDef(agent)] as const),
     );
     normalizedPlan = {
+      ...planPayload,
       enabled:
         typeof planPayload.enabled === "boolean"
           ? planPayload.enabled
@@ -1309,7 +1328,12 @@ function normalizeAgentProfilePayload(
     };
   }
   return {
+    ...payload,
+    version: String(payload?.version || "1.0"),
+    flows: payload?.flows ? { ...payload.flows, enabled: [...(payload.flows.enabled || [])] } : undefined,
+    migration_warnings: Array.isArray(payload?.migration_warnings) ? payload.migration_warnings.map((warning) => ({ ...warning })) : [],
     meta: {
+      ...payload?.meta,
       default_execution_mode: payload?.meta?.default_execution_mode ?? "build",
       description: String(payload?.meta?.description || ""),
       plan_enabled:
@@ -1325,34 +1349,32 @@ function normalizeAgentProfilePayload(
   };
 }
 
-function serializeAgentProfilePayload(data: AgentConfigData) {
+export function serializeAgentProfilePayload(data: AgentConfigData) {
+  const legacy = !String(data.version || "1.0").startsWith("2.");
+  const packages = <T extends AgentGlobalConfig | AgentDefData | PlanAgentDefData>(raw: T): T => {
+    const next = { ...raw };
+    if (legacy) {
+      next.skill_packages = toolPackageSelections(raw);
+      delete next.tool_packages;
+    } else {
+      next.tool_packages = toolPackageSelections(raw);
+      delete next.skill_packages;
+    }
+    return next;
+  };
   return {
+    ...data,
+    version: legacy ? "1.0" : "2.0",
     has_plan: Boolean(data.has_plan),
-    meta: {
-      ...data.meta,
-      plan_enabled: Boolean(data.has_plan && data.plan?.enabled),
-    },
-    runtime_shared: data.runtime_shared,
-    runtime_agents: Object.entries(data.runtime_agents || {}).map(
-      ([name, agent]) => ({
-        name,
-        agent,
-      }),
-    ),
-    plan:
-      data.has_plan && data.plan
-        ? {
-            enabled: Boolean(data.plan.enabled),
-            max_iterations: data.plan.max_iterations,
-            shared: data.plan.shared,
-            agents: Object.entries(data.plan.agents || {}).map(
-              ([name, agent]) => ({
-                name,
-                agent,
-              }),
-            ),
-          }
-        : undefined,
+    meta: { ...data.meta, plan_enabled: Boolean(data.has_plan && data.plan?.enabled) },
+    runtime_shared: packages(data.runtime_shared),
+    runtime_agents: Object.entries(data.runtime_agents || {}).map(([name,agent]) => ({ name, agent: packages(agent) })),
+    plan: data.has_plan && data.plan ? {
+      ...data.plan,
+      enabled: Boolean(data.plan.enabled), max_iterations: data.plan.max_iterations,
+      shared: packages(data.plan.shared),
+      agents: Object.entries(data.plan.agents || {}).map(([name,agent]) => ({ name, agent: packages(agent) })),
+    } : undefined,
   };
 }
 
@@ -1375,6 +1397,8 @@ export interface SessionMessageRecord {
 }
 
 export interface SessionRecord {
+  flow_run?: import('@/features/flow-run/types').FlowRunState | null;
+  flow_run_event_seq?: number;
   session_id: string;
   name: string;
   name_auto_generated?: boolean;
@@ -1454,9 +1478,19 @@ export interface SkillReference {
   source: string;
 }
 
-export type SkillPackageKind = "category" | "workflow" | "knowledge" | string;
+// Tool packages use category. Unknown strings are retained only while reading
+// earlier catalogs so retired entries can be filtered instead of misclassified.
+export type SkillPackageKind = string;
 
 export interface SkillPackageFrontMatter {
+  display_name?: string;
+  domain?: string;
+  system?: boolean;
+  hidden?: boolean;
+  auto_mount?: string;
+  deprecated?: boolean;
+  tools?: string[];
+  tool_refs?: string[];
   name?: string;
   description?: string;
   kind?: SkillPackageKind;
@@ -1477,6 +1511,12 @@ export interface SkillPackageToolDefinition {
 }
 
 export interface SkillPackageSummary {
+  display_name?: string;
+  domain?: string;
+  system?: boolean;
+  hidden?: boolean;
+  auto_mount?: string;
+  deprecated?: boolean;
   package_id: string;
   name: string;
   description?: string;
@@ -1522,6 +1562,7 @@ function normalizeSkillPackageScope(
 }
 
 export interface SkillPackageDetail extends SkillPackageSummary {
+  tool_refs?: string[];
   front_matter?: SkillPackageFrontMatter;
   markdown_body?: string;
   tools: SkillPackageToolDefinition[];
@@ -1545,6 +1586,8 @@ export interface SkillImportResult {
 }
 
 export interface ToolCatalogItem {
+  display_name?: string;
+  keywords?: string[];
   name: string;
   description?: string;
   category?: string;
@@ -1567,6 +1610,9 @@ function normalizeSkillPackageSummary(
   return {
     package_id: String(raw?.package_id || "").trim(),
     name: String(raw?.name || raw?.package_id || "").trim(),
+    display_name: String(raw?.display_name || "").trim(), domain: String(raw?.domain || "").trim(),
+    system: raw?.system === true, hidden: raw?.hidden === true, deprecated: raw?.deprecated === true,
+    auto_mount: String(raw?.auto_mount || "").trim(),
     description: String(raw?.description || "").trim(),
     kind: String(raw?.kind || "").trim(),
     backend: String(raw?.backend || "").trim(),
@@ -1599,8 +1645,10 @@ function normalizeSkillPackageDetail(
 ): SkillPackageDetail {
   return {
     ...normalizeSkillPackageSummary(raw),
+    tool_refs: Array.isArray(raw?.tool_refs) ? [...raw.tool_refs] : [...(raw?.front_matter?.tools || raw?.front_matter?.tool_refs || [])],
     front_matter: raw?.front_matter
       ? {
+          ...raw.front_matter,
           name: String(raw.front_matter.name || "").trim(),
           description: String(raw.front_matter.description || "").trim(),
           kind: String(raw.front_matter.kind || "").trim(),
@@ -1681,11 +1729,31 @@ export class ApiClient {
   }
 
   private async request<T>(path: string, options?: RequestInit, timeoutMs = REQUEST_TIMEOUT_MS): Promise<T> {
+    const signal = withTimeoutSignal(options?.signal, timeoutMs);
+    try {
+      return await this.fetchResponse<T>(path, { ...options, signal });
+    } catch (error) {
+      if (!(error instanceof ApiError) && signal.aborted) {
+        // WebKit may throw AbortError ("Fetch is aborted") even when the
+        // actual cause, recorded on the signal, is a timeout.
+        if (signal.reason?.name === "TimeoutError") {
+          const method = options?.method?.toUpperCase() || "GET";
+          const advice = method === "GET" || method === "HEAD"
+            ? "请稍后重试。"
+            : "更改可能已保存，请刷新查看结果后再重试。";
+          throw new ApiError(`请求等待超过 ${Math.ceil(timeoutMs / 1000)} 秒，${advice}`, 0, "REQUEST_TIMEOUT");
+        }
+        throw new ApiError("请求已取消。", 0, "REQUEST_ABORTED");
+      }
+      throw error;
+    }
+  }
+
+  private async fetchResponse<T>(path: string, options: RequestInit): Promise<T> {
     const url = `${this.baseURL}${path}`;
     const res = await fetch(url, {
       ...options,
       headers: buildControlContractHeaders(options?.headers),
-      signal: withTimeoutSignal(options?.signal, timeoutMs),
     });
 
     if (!res.ok) {
@@ -1741,11 +1809,11 @@ export class ApiClient {
     }, options?.timeoutMs);
   }
 
-  async put<T>(path: string, body?: unknown): Promise<T> {
+  async put<T>(path: string, body?: unknown, options?: { timeoutMs?: number }): Promise<T> {
     return this.request<T>(path, {
       method: "PUT",
       body: body ? JSON.stringify(body) : undefined,
-    });
+    }, options?.timeoutMs);
   }
 
   async patch<T>(path: string, body?: unknown): Promise<T> {
@@ -2165,7 +2233,7 @@ export class ApiClient {
     return this.get<Record<string, unknown>>("/api/settings/workspace");
   }
 
-  // 技能
+  // 工具包；路径名称保留服务端兼容接口。
   async getSkills() {
     const data = await this.get<{ skills: SkillItem[] }>("/api/skills");
     return data.skills ?? [];

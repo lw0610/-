@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: shortest_path_point_to_point
-  display_name: 最短路径(点到点)
+  keywords: ["两点最短路径", "分析两点最短路径", "路径分析", "最短路径", "服务范围"]
+  display_name: "计算两点最短路径"
   domain: network-analysis
   runtime: qgis
 spec:

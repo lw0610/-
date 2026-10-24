@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: hitl_request
-  display_name: hitl_request
+  keywords: ["人工确认", "请求人工确认", "运行控制", "执行产物"]
+  display_name: "请求人工确认"
   domain: runtime-control
   runtime: internal
 spec:

@@ -1,0 +1,19 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: reference_read
+  display_name: 读取参考资料
+  domain: runtime-control
+  runtime: internal
+  keywords: [参考资料, 方法说明, 文档读取, 对照表]
+spec:
+  description: 读取工具包参考资料、流程资源文档或资源库文本，返回 UTF-8 内容及截断提示。
+  parameters:
+    - name: path
+      type: string
+      required: true
+      description: 工具包相对路径“包编号/references/文件”，或允许资源目录内的绝对文件路径；支持 md、txt、csv、json、yaml，最多返回200 KiB。
+execution:
+  backend_tool: reference_read
+  param_mapping:
+    path: '{{ path }}'

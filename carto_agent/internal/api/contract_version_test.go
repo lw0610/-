@@ -183,7 +183,7 @@ func TestHTTPDegradedEnvelope(t *testing.T) {
 		t.Fatalf("unexpected %s: %q", httpSupportedContractVersionsHeader, got)
 	}
 	payload, envelope := decodeEnvelopeResponse(t, rr)
-	assertEnvelopeResponse(t, payload, envelope, "DISCOVERY_DESCRIPTOR_UNAVAILABLE", "discovery", "runtime_descriptor")
+	assertEnvelopeResponse(t, payload, envelope, "DISCOVERY_DESCRIPTOR_INVALID", "discovery", "runtime_descriptor")
 	if envelope == nil {
 		t.Fatal("expected structured envelope")
 	}

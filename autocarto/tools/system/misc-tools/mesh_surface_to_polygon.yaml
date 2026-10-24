@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: mesh_surface_to_polygon
-  display_name: 表面转多边形
+  keywords: ["网格表面为面", "转为网格表面为面", "统计图表", "网格数据", "数据可视化"]
+  display_name: "转换网格表面为面"
   runtime: qgis
   domain: misc-tools
 spec:

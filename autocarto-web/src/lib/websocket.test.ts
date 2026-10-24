@@ -117,6 +117,27 @@ describe('WebSocketClient authority-only behavior', () => {
     expect(second.idempotency_key).toBe(first.idempotency_key)
   })
 
+  it('sends flow tasks with the server-required identity and keeps explicit retry identity', () => {
+    vi.stubGlobal('WebSocket', FakeWebSocket)
+    const client = new WebSocketClient('ws://127.0.0.1:50321/ws')
+    client.connect('sid-flow')
+    const socket = FakeWebSocket.latest!
+    socket.readyState = FakeWebSocket.OPEN
+    const flow = { id: 'demo', inputs: { source: { $ref: 'current_user_message' } } }
+    expect(client.sendTask('原文', 'sid-flow', { flow })).toBe(true)
+    expect(client.sendTask('再次运行', 'sid-flow', { flow })).toBe(true)
+    const first = socket.sentMessages[0] as Record<string, unknown>
+    const next = socket.sentMessages[1] as Record<string, unknown>
+    expect(first).toMatchObject({ type: 'task', session_id: 'sid-flow', content: '原文', data: { flow } })
+    expect(first.idempotency_key).toEqual(expect.stringMatching(/^task-.+/))
+    expect(first.request_id).toBe(first.idempotency_key)
+    expect(next.idempotency_key).not.toBe(first.idempotency_key)
+    expect(client.sendTask('重试', 'sid-flow', { flow, request_id: 'request-stable', idempotency_key: 'task-stable' })).toBe(true)
+    expect(socket.sentMessages[2]).toMatchObject({ request_id: 'request-stable', idempotency_key: 'task-stable', data: { flow, request_id: 'request-stable', idempotency_key: 'task-stable' } })
+    expect(client.sendTask('无会话', ' ', { flow })).toBe(false)
+    expect(socket.sentMessages).toHaveLength(3)
+  })
+
   it('refreshes cancel idempotency after the backend confirms cancellation', () => {
     vi.stubGlobal('WebSocket', FakeWebSocket)
     vi.spyOn(Date, 'now')

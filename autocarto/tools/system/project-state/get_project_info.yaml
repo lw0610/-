@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: get_project_info
-  display_name: get_project_info
+  keywords: ["地图工程信息", "查询地图工程信息", "地图工程", "图层状态", "工程管理"]
+  display_name: "读取地图工程信息"
   domain: project-state
   runtime: qgis
 spec:

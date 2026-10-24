@@ -54,8 +54,8 @@ func TestAgentConfigCreateCloneAndGetDataEndpoints(t *testing.T) {
 	if _, exists := runtimeShared["common_tools"]; exists {
 		t.Fatalf("runtime_shared should not expose common_tools anymore: %#v", runtimeShared)
 	}
-	if skills, ok := runtimeShared["skill_packages"].([]any); !ok || len(skills) == 0 {
-		t.Fatalf("expected runtime_shared.skill_packages in profile data: %#v", runtimeShared)
+	if skills, ok := runtimeShared["tool_packages"].([]any); !ok || len(skills) == 0 {
+		t.Fatalf("expected runtime_shared.tool_packages in profile data: %#v", runtimeShared)
 	}
 	runtimeAgents, ok := dataMap["runtime_agents"].([]any)
 	if !ok {

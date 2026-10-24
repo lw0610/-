@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: validate_skill_definition
+  display_name: "校验工具定义"
+  keywords: ["工具定义", "校验工具定义", "方案配置", "工具管理", "技能创建"]
   domain: creator-tools
   runtime: internal
 spec:
@@ -9,6 +11,7 @@ spec:
   parameters:
   - name: definition
     type: object
+    description: "待校验的工具定义对象"
     required: true
 execution:
   backend_tool: validate_skill_definition

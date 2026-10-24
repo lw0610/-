@@ -7,6 +7,7 @@ import (
 	"reflect"
 
 	"github.com/autocarto/carto_agent/internal/knowledge"
+	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/autocarto/carto_agent/internal/toolsession"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/tool"
@@ -78,10 +79,56 @@ func createKnowledgeReview(ctx context.Context, store *knowledge.ReviewStore, so
 		SessionID: toolsession.SessionIDFromContext(ctx), ProjectPath: knowledgeReviewProject(ctx),
 		InstanceID: toolsession.InstanceIDFromContext(ctx), SessionDir: contract.RuntimeSessionDir,
 		SourceText: source, Contract: contract, OriginalResult: original, Graph: graph,
-		CompileArgs: args, TraceFile: trace, OriginalCacheInfo: cache, Assets: assets,
+		CompileArgs: args, ResourceScope: knowledgeResourceSnapshot(ctx), TraceFile: trace, OriginalCacheInfo: cache, Assets: assets,
 		ExtractionStatus: current.Status, PendingIssues: knowledge.ExtractionPendingIssues(current),
 		ReusedFrom: reusedFrom,
 	})
+}
+
+// Only backend context supplies this snapshot. ReviewView and model input do not
+// expose it, and resumption must match the session that owns the saved review.
+func knowledgeResourceSnapshot(ctx context.Context) *resource.Scope {
+	scope, ok := resource.ScopeFromContext(ctx)
+	if !ok {
+		return nil
+	}
+	selected := resource.Scope{FlowID: scope.FlowID, FlowDir: scope.FlowDir, Lock: scope.Lock}
+	for _, item := range scope.Linked {
+		if item != nil && (item.Type == "route_style" || item.Type == "symbols") {
+			selected.Linked = append(selected.Linked, item.Clone())
+		}
+	}
+	return &selected
+}
+
+func knowledgeReviewResourceContext(ctx context.Context, review *knowledge.Review) (context.Context, error) {
+	if review == nil || review.SessionID == "" || review.SessionID != toolsession.SessionIDFromContext(ctx) {
+		return nil, fmt.Errorf("知识核对资源作用域与当前会话不一致；草稿仍保留")
+	}
+	for _, key := range []string{"route_style", "symbols"} {
+		handle, ok := review.CompileArgs[key].(map[string]any)
+		if !ok {
+			continue
+		}
+		if review.ResourceScope == nil {
+			return nil, fmt.Errorf("知识核对缺少已保存的资源作用域，不能恢复 %s；请确认流程资源声明已保存后重新开始抽取", key)
+		}
+		id, _ := handle["id"].(string)
+		matched := false
+		for _, linked := range review.ResourceScope.Linked {
+			if linked != nil && id != "" && linked.ID == id && linked.Type == key {
+				matched = true
+				break
+			}
+		}
+		if !matched {
+			return nil, fmt.Errorf("知识核对保存的资源作用域缺少 %s「%s」；请确认流程资源声明已保存后重新开始抽取", key, id)
+		}
+	}
+	if review.ResourceScope != nil {
+		ctx = resource.WithScope(ctx, *review.ResourceScope)
+	}
+	return resource.WithInternalHandles(ctx), nil
 }
 
 // KnowledgeReviewInfo is intentionally small and safe to persist in chat history.
@@ -159,6 +206,11 @@ func (a *knowledgeSubAgent) Resume(ctx context.Context, info *adk.ResumeInfo, _ 
 }
 
 func (a *knowledgeSubAgent) compileReviewedKnowledge(ctx context.Context, store *knowledge.ReviewStore, review *knowledge.Review) (map[string]any, error) {
+	var scopeErr error
+	ctx, scopeErr = knowledgeReviewResourceContext(ctx, review)
+	if scopeErr != nil {
+		return nil, scopeErr
+	}
 	prepared, problems := knowledge.PrepareReviewCompilation(review)
 	if len(problems) > 0 {
 		return nil, fmt.Errorf("制图数据适配失败: %s", problems[0].Message)
@@ -228,6 +280,11 @@ func (a *knowledgeSubAgent) compileReviewedKnowledge(ctx context.Context, store 
 // ValidateKnowledgeReview uses the same Python validator as the compiler, but
 // with validate_only so no data table is written before user confirmation.
 func ValidateKnowledgeReview(ctx context.Context, store *knowledge.ReviewStore, review *knowledge.Review, compiler tool.BaseTool) ([]knowledge.ReviewError, error) {
+	var scopeErr error
+	ctx, scopeErr = knowledgeReviewResourceContext(ctx, review)
+	if scopeErr != nil {
+		return nil, scopeErr
+	}
 	if review.Contract.ReviewProtocolVersion != 1 || compiler == nil {
 		return nil, fmt.Errorf("插件核对接口不可用，请更新并连接对应实例")
 	}
@@ -239,10 +296,16 @@ func ValidateKnowledgeReview(ctx context.Context, store *knowledge.ReviewStore, 
 	if err != nil {
 		return nil, err
 	}
-	output, err := invokeWorkflowTool(ctx, compiler, knowledgeCompileTool, map[string]any{
+	args := map[string]any{
 		"source_text": review.SourceText, "contract_id": review.Contract.ContractID,
 		"knowledge_json": prepared, "review_context": token, "validate_only": true,
-	})
+	}
+	for _, key := range []string{"route_style", "symbols"} {
+		if value, exists := review.CompileArgs[key]; exists {
+			args[key] = value
+		}
+	}
+	output, err := invokeRuntimeTool(ctx, compiler, knowledgeCompileTool, args)
 	if err != nil {
 		return nil, err
 	}

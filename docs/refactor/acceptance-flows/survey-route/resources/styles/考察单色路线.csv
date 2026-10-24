@@ -1,0 +1,4 @@
+﻿拓扑,阵营,路线类型,绘制方式,样式编号,线宽系数,图例名称,preset_ref,default_sides,reference_style_id,label_paths,auto_width_group
+standard,neutral,standard,bezier_arrow,route_blue_reference,,路线,standard_neutral,friendly、enemy、neutral,route_blue_reference,true,false
+branch,neutral,branch,branch_bezier,route_blue_reference,,路线,branch_neutral,friendly、enemy、neutral,route_blue_reference,true,false
+multi_start,neutral,multi_start,multi_start_bezier,route_blue_reference,,路线,multi_start_neutral,friendly、enemy、neutral,route_blue_reference,true,false

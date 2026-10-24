@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: export_mesh_faces
-  display_name: 导出网孔面
+  keywords: ["网格面", "输出网格面", "统计图表", "网格数据", "数据可视化"]
+  display_name: "导出网格面"
   runtime: qgis
   domain: misc-tools
 spec:

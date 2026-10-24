@@ -75,7 +75,11 @@ printf '{"success":true,"output":{"cwd":"%s","payload":%s,"mode":"%s"},"error":"
 	if !ok {
 		t.Fatalf("unexpected output type: %#v", result.Output)
 	}
-	if got, _ := output["cwd"].(string); got != toolPackageDir {
+	physicalDir, err := filepath.EvalSymlinks(toolPackageDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, _ := output["cwd"].(string); got != physicalDir {
 		t.Fatalf("unexpected cwd: got=%q want=%q", got, toolPackageDir)
 	}
 	if got, _ := output["mode"].(string); got != "project-123" {

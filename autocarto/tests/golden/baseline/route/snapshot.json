@@ -1,0 +1,418 @@
+{
+  "driver": "legacy",
+  "elements": {
+    "border": {
+      "outer_rect_mm": {
+        "height": 486.585088,
+        "width": 724.85,
+        "x": 58.075,
+        "y": 53.707456
+      },
+      "rect_mm": {
+        "height": 480.285088,
+        "width": 718.55,
+        "x": 61.225,
+        "y": 56.857456
+      },
+      "type": "QgsLayoutItemShape"
+    },
+    "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_body": {
+      "font": {
+        "size": 5.5,
+        "unit": 4
+      },
+      "rect_mm": {
+        "height": 13.277273,
+        "width": 38.4,
+        "x": 631.853529,
+        "y": 308.583163
+      },
+      "text": "1934年11月26日，红二十五军在方城县独\n树镇七里岗附近遭到敌军堵截。部队在风\n雪和饥寒中展开激战，吴焕先、徐海东等\n指挥反击，稳住阵地，随后乘夜突围，于\n27日进入伏牛山区，保存了主力。",
+      "type": "QgsLayoutItemLabel"
+    },
+    "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_box": {
+      "rect_mm": {
+        "height": 73.577273,
+        "width": 42.0,
+        "x": 630.053529,
+        "y": 250.083163
+      },
+      "type": "QgsLayoutItemShape"
+    },
+    "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_image": {
+      "rect_mm": {
+        "height": 55.2,
+        "width": 38.4,
+        "x": 631.853529,
+        "y": 251.883163
+      },
+      "type": "QgsLayoutItemPicture"
+    },
+    "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_leader_1": {
+      "rect_mm": {
+        "height": 52.788636,
+        "width": 18.0,
+        "x": 612.053529,
+        "y": 282.871799
+      },
+      "type": "QgsLayoutItemPolyline"
+    },
+    "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_leader_2": {
+      "rect_mm": {
+        "height": 44.788636,
+        "width": 18.0,
+        "x": 612.053529,
+        "y": 290.871799
+      },
+      "type": "QgsLayoutItemPolyline"
+    },
+    "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_body": {
+      "font": {
+        "size": 5.5,
+        "unit": 4
+      },
+      "rect_mm": {
+        "height": 13.277273,
+        "width": 38.4,
+        "x": 696.133437,
+        "y": 399.873856
+      },
+      "text": "1934年11月16日，红二十五军从河南罗山\n县何家冲出发，开始长征。部队以“中国工\n农红军北上抗日第二先遣队”为旗号，在程\n子华、吴焕先、徐海东等率领下西进，踏\n上由鄂豫皖向陕北转移的征程。",
+      "type": "QgsLayoutItemLabel"
+    },
+    "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_box": {
+      "rect_mm": {
+        "height": 35.273273,
+        "width": 42.0,
+        "x": 694.333437,
+        "y": 379.677856
+      },
+      "type": "QgsLayoutItemShape"
+    },
+    "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_image": {
+      "rect_mm": {
+        "height": 16.896,
+        "width": 38.4,
+        "x": 696.133437,
+        "y": 381.477856
+      },
+      "type": "QgsLayoutItemPicture"
+    },
+    "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_leader_1": {
+      "rect_mm": {
+        "height": 33.163964,
+        "width": 18.0,
+        "x": 676.333437,
+        "y": 393.787165
+      },
+      "type": "QgsLayoutItemPolyline"
+    },
+    "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_leader_2": {
+      "rect_mm": {
+        "height": 26.109309,
+        "width": 18.0,
+        "x": 676.333437,
+        "y": 400.84182
+      },
+      "type": "QgsLayoutItemPolyline"
+    },
+    "legend": {
+      "entries": [
+        {
+          "labels": [
+            "起点",
+            "会师",
+            "战斗",
+            "会议",
+            "途经点"
+          ],
+          "layer": "points"
+        },
+        {
+          "labels": [
+            "河流线"
+          ],
+          "layer": "河流线"
+        },
+        {
+          "labels": [
+            "铁路"
+          ],
+          "layer": "铁路"
+        },
+        {
+          "labels": [
+            "省域"
+          ],
+          "layer": "省域"
+        },
+        {
+          "labels": [
+            "军标箭头"
+          ],
+          "layer": "军标箭头"
+        }
+      ],
+      "fonts": {
+        "body": {
+          "size": 2.5,
+          "unit": 0
+        },
+        "title": {
+          "size": 3.5,
+          "unit": 0
+        }
+      },
+      "rect_mm": {
+        "height": 81.603984,
+        "width": 23.05,
+        "x": 63.075,
+        "y": 453.68856
+      },
+      "type": "QgsLayoutItemLegend"
+    },
+    "main_map": {
+      "rect_mm": {
+        "height": 476.585088,
+        "width": 714.85,
+        "x": 63.075,
+        "y": 58.707456
+      },
+      "type": "QgsLayoutItemMap"
+    },
+    "north_arrow": {
+      "rect_mm": {
+        "height": 30.0,
+        "width": 20.0,
+        "x": 63.075,
+        "y": 58.707456
+      },
+      "type": "QgsLayoutItemPicture"
+    },
+    "overview": {
+      "font": {
+        "size": 2.5,
+        "unit": 0
+      },
+      "rect_mm": {
+        "height": 8.093182,
+        "width": 88.622727,
+        "x": 689.302273,
+        "y": 58.707456
+      },
+      "text": "固定六表包含路线、专题点和两条图文注记；本图用于检查旧工具的版面与样式\n输出。",
+      "type": "QgsLayoutItemLabel"
+    },
+    "scalebar": {
+      "font": {
+        "size": 2.0,
+        "unit": 0
+      },
+      "rect_mm": {
+        "height": 13.096236,
+        "width": 79.001935,
+        "x": 698.923,
+        "y": 522.196
+      },
+      "segments": 4,
+      "type": "QgsLayoutItemScaleBar",
+      "units_per_segment": 30.0
+    },
+    "title": {
+      "font": {
+        "size": 11.5,
+        "unit": 0
+      },
+      "rect_mm": {
+        "height": 17.029545,
+        "width": 116.031818,
+        "x": 362.484091,
+        "y": 36.67791
+      },
+      "text": "固定路线数据回归样例",
+      "type": "QgsLayoutItemLabel"
+    }
+  },
+  "invariants": {
+    "callout_count": 2,
+    "point_count": 81,
+    "route_count": 16
+  },
+  "layers": {
+    "RouteBezier_route_blue_reference": {
+      "feature_count": 12,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "SINGLE: FILL SYMBOL (4 layers) color 161,169,218,128,rgb:0.6313725,0.6627451,0.854902,0.5019608",
+      "renderer_sha256": "dd34c7839fa84ccfe992891d66b38f72195bdf06075661a3f15a8474b62905e6",
+      "renderer_type": "singleSymbol"
+    },
+    "RouteBezier_route_red_reference": {
+      "feature_count": 4,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "SINGLE: FILL SYMBOL (4 layers) color 248,162,145,132,rgb:0.972549,0.6352941,0.5686275,0.5176471",
+      "renderer_sha256": "4710011db4835011df6b488a410da3d21857410b23ef6a7346756b05650d5653",
+      "renderer_type": "singleSymbol"
+    },
+    "points": {
+      "feature_count": 81,
+      "label_field": "name",
+      "labeling_type": "simple",
+      "labels_enabled": true,
+      "renderer_dump": "Rule-based renderer:\nRULE  - scale [0,0] - filter  - symbol []\n  RULE 起点 - scale [0,0] - filter \"name\" IN ('何家冲', '庾家河', '掌曲', '沣峪口') - symbol MARKER SYMBOL (1 layers) color 35,35,35,255,rgb:0.1372549,0.1372549,0.1372549,1\n\n  RULE 会师 - scale [0,0] - filter \"name\" IN ('永坪镇') - symbol MARKER SYMBOL (1 layers) color 35,35,35,255,rgb:0.1372549,0.1372549,0.1372549,1\n\n  RULE 战斗 - scale [0,0] - filter \"name\" IN ('四坡村', '天水', '板桥镇', '独树镇七里岗', '秦安', '隆德') - symbol MARKER SYMBOL (1 layers) color 35,35,35,255,rgb:0.1372549,0.1372549,0.1372549,1\n\n  RULE 会议 - scale [0,0] - filter \"name\" IN ('豹子川') - symbol MARKER SYMBOL (1 layers) color 35,35,35,255,rgb:0.1372549,0.1372549,0.1372549,1\n\n  RULE 途经点 - scale [0,0] - filter \"name\" IN ('三关口', '下寺湾', '下汤', '东华池', '东双河', '两当', '二天门', '保安寨', '兴隆镇', '刘庄铺', '利桥', '南阳', '卢氏', '双石铺', '叫河', '叶县', '商县', '四十里铺', '四十里铺镇', '固原', '大石河', '太白镇', '孤石滩', '安口窑', '安塞', '安宁', '平凉', '平氏', '庆阳原区', '庙子', '新阳镇', '方城', '月河店', '朱堂', '枣阳', '栗园', '栾川', '桐柏', '梁园', '武山', '江口', '泌阳', '洛南', '熊背', '王店', '瓦亭', '甘谷', '界碑口', '留侯镇', '白水镇', '白沙川', '神林', '葛牌镇', '蓝田', '襄阳', '谷城', '贾楼', '赤城', '邓州', '郧西', '铁锁关', '陶湾', '青石桥', '静宁', '高桥', '高老山', '魏店', '鸿仪河', '黄龙寺') - symbol MARKER SYMBOL (1 layers) color 35,35,35,255,rgb:0.1372549,0.1372549,0.1372549,1\n",
+      "renderer_sha256": "07eda1ed57132083819ccebed63cee125a4aba41e9765f1278e048e400b4cb3e",
+      "renderer_type": "RuleRenderer"
+    },
+    "公路": {
+      "feature_count": 62,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "SINGLE: LINE SYMBOL (2 layers) color 0,0,0,255,rgb:0,0,0,1",
+      "renderer_sha256": "4ea2705f0458288ea2cd9e0f923b73e33427db28b0dbacb911459f5d53dc86cc",
+      "renderer_type": "singleSymbol"
+    },
+    "军标箭头": {
+      "feature_count": 0,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "SINGLE: MARKER SYMBOL (1 layers) color 0,0,0,255,rgb:0,0,0,1",
+      "renderer_sha256": "850c4aaea436464731ce3bc89860abe87486f254cae30d5a87e22dcd59fff0b5",
+      "renderer_type": "singleSymbol"
+    },
+    "县级城市驻地": {
+      "feature_count": 660,
+      "label_field": "name",
+      "labeling_type": "simple",
+      "labels_enabled": true,
+      "renderer_dump": "SINGLE: MARKER SYMBOL (2 layers) color 0,0,0,0,rgb:0,0,0,0",
+      "renderer_sha256": "37a195eb9baa406f863d6a92dcf7041dc3b2e1eb18be47f1df94c3c81d2e8fc8",
+      "renderer_type": "singleSymbol"
+    },
+    "国军路线名称": {
+      "feature_count": 12,
+      "label_field": "",
+      "labeling_type": "rule-based",
+      "labels_enabled": true,
+      "renderer_dump": "SINGLE: LINE SYMBOL (1 layers) color 35,35,35,255,rgb:0.1372549,0.1372549,0.1372549,1",
+      "renderer_sha256": "7923122432db2433cc034f8224bbb7bee6acbe93730a3c411e69cd64b49eaff2",
+      "renderer_type": "singleSymbol"
+    },
+    "国道": {
+      "feature_count": 73,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "SINGLE: LINE SYMBOL (1 layers) color 255,185,87,255,rgb:1,0.7254902,0.3411765,1",
+      "renderer_sha256": "f406e3b43ef5b9251197e6baa067a0a1ea02dc1ef62d0e9371bf8fdd1eedd42e",
+      "renderer_type": "singleSymbol"
+    },
+    "地区界线": {
+      "feature_count": 1,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "SINGLE: LINE SYMBOL (2 layers) color 35,153,233,255,rgb:0.1372549,0.6,0.9137255,1",
+      "renderer_sha256": "7ead1be54ac509e3074fe9c0e479c406b45b79bc67d0306e285f31996abed6f8",
+      "renderer_type": "singleSymbol"
+    },
+    "河流线": {
+      "feature_count": 334,
+      "label_field": "NAME",
+      "labeling_type": "simple",
+      "labels_enabled": true,
+      "renderer_dump": "SINGLE: LINE SYMBOL (1 layers) color 166,206,227,255,rgb:0.6509804,0.8078431,0.8901961,1",
+      "renderer_sha256": "e1187057e057f070e57c4b2ad0729dea3945dddb2c9a94e13c635819ad983a07",
+      "renderer_type": "singleSymbol"
+    },
+    "河流面": {
+      "feature_count": 8978,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "SINGLE: FILL SYMBOL (1 layers) color 166,206,227,255,rgb:0.6509804,0.8078431,0.8901961,1",
+      "renderer_sha256": "29cae33b8789ef616ff850074dfbc7458fe46e8bdc2596ee643810912e563e9e",
+      "renderer_type": "singleSymbol"
+    },
+    "省域": {
+      "feature_count": 11,
+      "label_field": "NAME",
+      "labeling_type": "simple",
+      "labels_enabled": true,
+      "renderer_dump": "SINGLE: FILL SYMBOL (1 layers) color 255,255,255,255,rgb:1,1,1,1",
+      "renderer_sha256": "f55844bde944d30205eeb2f26f4c8ea599c8d7a374beea17f679f971bcd3d19d",
+      "renderer_type": "singleSymbol"
+    },
+    "铁路": {
+      "feature_count": 7,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "SINGLE: LINE SYMBOL (2 layers) color 0,0,0,255,rgb:0,0,0,1",
+      "renderer_sha256": "4ea2705f0458288ea2cd9e0f923b73e33427db28b0dbacb911459f5d53dc86cc",
+      "renderer_type": "singleSymbol"
+    }
+  },
+  "main_map": {
+    "crs": "EPSG:4004",
+    "extent": {
+      "xmax": 116.00000000000001,
+      "xmin": 104.0,
+      "ymax": 38.000309238483524,
+      "ymin": 30.0
+    },
+    "layers": [
+      "RouteBezier_route_blue_reference",
+      "RouteBezier_route_red_reference",
+      "points",
+      "国军路线名称",
+      "县级城市驻地",
+      "地区界线",
+      "铁路",
+      "国道",
+      "公路",
+      "河流线",
+      "河流面",
+      "省域"
+    ]
+  },
+  "metadata": {
+    "external_inputs": {
+      "<external:basemap>": "provided by environment; never copied",
+      "<external:renderer>": "provided by environment; never copied"
+    },
+    "fixture_sha256": {
+      "route_dataset/callouts.csv": "718ab6523c8ca5ea3646f7ef866142f4b1976084d9ce7ebe7adaa693f5d7b62b",
+      "route_dataset/compile_manifest.json": "99233202275beb4c2c1f84c5a99777b32a0bc2cee34c4c834c582c22d0869e6b",
+      "route_dataset/fixture_provenance.json": "6593c700a76f89a80b765d7b79406a4265dc013fd8f45148a29ad9f5a7061737",
+      "route_dataset/images/389d18861265fe23fb5519ef245f2014235a0fccc28512cb46ea308f80741b1a.png": "389d18861265fe23fb5519ef245f2014235a0fccc28512cb46ea308f80741b1a",
+      "route_dataset/images/3b2d1bc9aeef729a7132c7d3bb4aa442ac9970b2e817c9db343e136a020cbf18.png": "3b2d1bc9aeef729a7132c7d3bb4aa442ac9970b2e817c9db343e136a020cbf18",
+      "route_dataset/places.csv": "9f30fa4ecae07b1a2e648fffd8d28d611351322b108636cf19eed67e783d4ef9",
+      "route_dataset/points.csv": "f7fe79bdef439ba931663a40c3cd2659bc45768db783e5d8b51daad8314e9253",
+      "route_dataset/route_paths.csv": "64b2d5a5cba9fde05232639b0343dee18dc427523bb918f1ab1894f6ac37e853",
+      "route_dataset/routes.csv": "f7d495a5b2745ac9cc653117627ed348927382be6922f3a474e38cac8e1026f2",
+      "route_dataset/symbol_mapping.csv": "d3b9bd8786ce79153fc99510ce5885c6e790c57632c670d38e67138772023c15",
+      "route_dataset/symbols/battle.svg": "c0178067f6efdaa754923b6976850591c8c103e3bf8ac9cd64169bb9b7688bbd",
+      "route_dataset/symbols/meeting.svg": "7afe7846e893940739e8480b32f0b5ec7754be6935f2fc2007e3422ae3eeae56",
+      "route_dataset/symbols/rendezvous.svg": "d8cce68b5c799db1fde76ec77e4fd3b951321046b1a732e2e36bab39656086c5",
+      "route_dataset/symbols/start_flag.svg": "98da8e489aa9ee66804a1fce189845f310dec1a8b6b80134f32daf3f883bbbdc",
+      "route_dataset/symbols/waypoint.svg": "9eb498fa63f0ac98ce7cad34fedc6e0a4ca1175e4e9993af432ee6c97a58eb51",
+      "route_dataset/validation_report.json": "700c8cf1e2844b217a0c9de64f2259e262b0d8f7d59e0c1470d3be8b50be5896",
+      "statistical/fixture_provenance.json": "90cdb22198224b8a0372df43ba750e08885f41f731338c8e139a5950ba57ab8d",
+      "statistical/regions.geojson": "0751942fdec09f56ec4e29d2bc3eb6491e1e03623b16940844f9fe457b066573",
+      "statistical/values.csv": "f4e2693eaa7fbee68e5220813a2f1f44ff9df328ee708cb4bdb8f188beec5d27"
+    },
+    "preview_dpi": 72,
+    "qgis_version": "3.44.10-Solothurn"
+  },
+  "page_size_mm": {
+    "height": 594.0,
+    "width": 841.0
+  },
+  "scenario": "route",
+  "schema_version": "autocarto-golden/v1"
+}

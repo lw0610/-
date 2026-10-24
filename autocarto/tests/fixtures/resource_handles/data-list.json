@@ -1,0 +1,32 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data",
+  "digest": "sha256:060f2c85d0e390e34a8c9dfad36251bdf73bf0e55cfd543fb50e0146f4495778",
+  "entries": [
+    {
+      "description": "真实小型矢量",
+      "exists": true,
+      "kind": "vector",
+      "name": "测试面",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/图层/测试面.geojson",
+      "required": true,
+      "sidecars_missing": []
+    }
+  ],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/数据清单.csv",
+  "format": "",
+  "id": "legacy.data_list.00d18259f2",
+  "name": "数据清单",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/data/数据清单.csv",
+  "total_entries": 1,
+  "truncated": false,
+  "type": "data_list",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

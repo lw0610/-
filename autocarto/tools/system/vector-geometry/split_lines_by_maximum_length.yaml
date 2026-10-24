@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: split_lines_by_maximum_length
-  display_name: 按最大长度分割线
+  keywords: ["按最大长度拆分线", "几何处理", "空间叠加", "几何修复"]
+  display_name: "按最大长度拆分线"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: LENGTH
     type: number
-    description: 最大长度
+    description: "最大长度（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 10.0
   - name: OUTPUT
     type: output_layer

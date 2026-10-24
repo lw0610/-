@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_lock_item
-  display_name: layout_lock_item
+  keywords: ["元素锁定状态", "切换元素锁定状态", "打印版面", "地图排版", "版面元素"]
+  display_name: "切换元素锁定状态"
   runtime: qgis
   domain: print-layout
 spec:

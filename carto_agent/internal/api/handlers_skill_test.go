@@ -22,6 +22,11 @@ func TestSkillPackageEndpointsExposePackageDataAndToggle(t *testing.T) {
 	skillsDir := t.TempDir()
 	writeSkillPackageTestFile(t, filepath.Join(skillsDir, "demo-package", "SKILL.md"), `---
 name: demo-package
+display_name: 演示工具包
+domain: 系统
+system: false
+hidden: true
+auto_mount: plan_main
 description: demo package
 kind: category
 backend: compute
@@ -81,6 +86,9 @@ execution:
 		pkg := raw.(map[string]any)
 		if pkg["package_id"] == "demo-package" {
 			foundDemo = true
+			if pkg["display_name"] != "演示工具包" || pkg["domain"] != "系统" || pkg["system"] != false || pkg["hidden"] != true || pkg["auto_mount"] != "plan_main" {
+				t.Fatalf("v2 package metadata lost in public response: %#v", pkg)
+			}
 			break
 		}
 	}
@@ -490,7 +498,8 @@ func TestSkillMutationEndpointsSupportExplicitExclusiveScope(t *testing.T) {
 	writeSkillPackageTestFile(t, importPath, `---
 name: imported-scoped-package
 description: imported scoped package
-kind: workflow
+kind: category
+tools: [fixture_tool]
 ---
 
 # imported

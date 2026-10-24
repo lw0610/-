@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: cartography_set_style
-  display_name: cartography_set_style
+  keywords: ["图层样式", "配置图层样式", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置图层样式"
   runtime: qgis
   domain: cartography
 spec:
@@ -20,7 +21,7 @@ spec:
     description: 颜色 (十六进制格式)
   - name: size
     type: number
-    description: 符号大小
+    description: "符号尺寸（毫米）"
   - name: field
     type: string
     description: 分类字段名称

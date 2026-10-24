@@ -200,14 +200,12 @@ func TestQueryBuildCapabilitiesUsesPluginSkillsDirOverride(t *testing.T) {
 	pluginSkillsDir := filepath.Join(t.TempDir(), "plugin-skills")
 	writeTestPackage(t, pluginSkillsDir, "plugin-category", "plugin_query_tool")
 
-	agentYAML := `version: '1.0'
+	agentYAML := `version: '2.0'
 meta:
   default_execution_mode: build
   plan_enabled: true
 runtime:
-  global:
-    skill_packages:
-      - plugin-category
+  shared_tool_packages: [plugin-category]
   agents:
     orchestrator:
       display_name: 编排智能体

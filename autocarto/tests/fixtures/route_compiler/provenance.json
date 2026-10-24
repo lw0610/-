@@ -1,0 +1,12 @@
+{
+  "source": "T43 修改前实际 compiler 编译已有 graph_fixture，未手写预期表",
+  "compiler_sha256": "5d32ca4485067173e33e22dd19946527478b2af1dc36203c9f55efc0d436089d",
+  "tables": {
+    "callouts.csv": "a2753cb033c4a571d2a93b9dd14541c3f848f0e2d940b82c1901640156f6ce76",
+    "symbol_mapping.csv": "d3b9bd8786ce79153fc99510ce5885c6e790c57632c670d38e67138772023c15",
+    "routes.csv": "bae1273341ba37fc3980f1f1da72427db10ba6c388265e42a42d817c61efb3ac",
+    "places.csv": "e994067556e3323bb687bbe07c1462eec3e3039c4f508fd961f690ee75af2883",
+    "points.csv": "0050bfb8998ec3e54daa8b6076321f359f6884278a2a896feb5a329279c1145a",
+    "route_paths.csv": "fa6bdd2c760f98fec9fca0779e444f45b691b0c412b382663b05126ef226ee35"
+  }
+}

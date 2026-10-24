@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: dbscan_clustering
-  display_name: DBSCAN聚类
+  keywords: ["密度空间聚类", "分析密度空间聚类", "空间分析", "空间统计", "空间聚类"]
+  display_name: "计算密度空间聚类"
   domain: spatial-analysis
   runtime: qgis
 spec:
@@ -14,12 +15,12 @@ spec:
     description: 输入点图层
   - name: MIN_SIZE
     type: integer
-    description: 最小聚类大小
+    description: "最小聚类大小（数量，正整数）"
     default: 5
   - name: EPS
     type: number
     required: true
-    description: 邻域半径
+    description: "邻域半径（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
   - name: OUTPUT
     type: output_layer
     description: 输出图层

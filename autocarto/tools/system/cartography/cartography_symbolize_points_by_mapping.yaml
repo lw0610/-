@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: cartography_symbolize_points_by_mapping
-  display_name: cartography_symbolize_points_by_mapping
+  keywords: ["按映射设置点符号", "符号样式", "地图标注", "图层渲染"]
+  display_name: "按映射设置点符号"
   runtime: qgis
   domain: cartography
 spec:

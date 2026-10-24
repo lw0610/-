@@ -121,10 +121,10 @@ func TestEmbeddedExclusiveSkillFilesUseUnifiedRuntimeMetadata(t *testing.T) {
 	}
 }
 
-func TestDefaultBuiltinSkillsStayWorkflowOrKnowledgeOnly(t *testing.T) {
+func TestBuiltinSkillPackagesKeepToolDefinitionsSeparate(t *testing.T) {
 	t.Parallel()
 
-	root := repoSamplePath(t, "carto_agent/defaults/skills")
+	root := repoSamplePath(t, "autocarto/skills/system")
 	problems := make([]string, 0)
 
 	err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, walkErr error) error {
@@ -153,15 +153,15 @@ func TestDefaultBuiltinSkillsStayWorkflowOrKnowledgeOnly(t *testing.T) {
 			}
 			kindNode, ok := yamlMappingValue(rootNode, "kind")
 			if !ok {
-				problems = append(problems, fmt.Sprintf("%s: kind is missing", rel))
+				// Legacy Markdown packages infer their kind in the loader.
 				return nil
 			}
 			kind := strings.ToLower(strings.TrimSpace(kindNode.Value))
-			if kind != string(SkillPackageKindWorkflow) && kind != string(SkillPackageKindKnowledge) {
-				problems = append(problems, fmt.Sprintf("%s: kind=%q should stay workflow/knowledge only", rel, kind))
+			if kind != string(SkillPackageKindCategory) && kind != string(SkillPackageKindWorkflow) && kind != string(SkillPackageKindKnowledge) {
+				problems = append(problems, fmt.Sprintf("%s: unsupported package kind %q", rel, kind))
 			}
 		case strings.Contains(rel, "/tools/"):
-			problems = append(problems, fmt.Sprintf("%s: defaults/skills should not contain tools/*.yaml", rel))
+			problems = append(problems, fmt.Sprintf("%s: skill packages should not contain tools/*.yaml", rel))
 		}
 		return nil
 	})
@@ -170,7 +170,7 @@ func TestDefaultBuiltinSkillsStayWorkflowOrKnowledgeOnly(t *testing.T) {
 	}
 	if len(problems) > 0 {
 		sort.Strings(problems)
-		t.Fatalf("defaults skill directory breaches role boundary:\n%s", strings.Join(problems, "\n"))
+		t.Fatalf("builtin skill directory breaches package/tool boundary:\n%s", strings.Join(problems, "\n"))
 	}
 }
 

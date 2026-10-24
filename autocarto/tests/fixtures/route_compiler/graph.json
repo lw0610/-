@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "task": {
+    "task_id": "route_test",
+    "title": "路线",
+    "map_type": "marching_route",
+    "input_crs": "EPSG:4326"
+  },
+  "spatial_entities": [
+    {
+      "entity_id": "a",
+      "name": "甲地",
+      "entity_kind": "place",
+      "factual": true,
+      "map_role": "route_node",
+      "evidence_refs": [
+        "e1"
+      ],
+      "lon": 109.8,
+      "lat": 33.5,
+      "coordinate_source": "gazetteer",
+      "geocoding": {
+        "provider": "tianditu",
+        "status": "resolved",
+        "original_name": "甲地",
+        "query": "某县甲地",
+        "modern_name": "甲地",
+        "administrative_hint": "某县",
+        "candidates": [
+          {
+            "name": "甲地",
+            "address": "某县甲地",
+            "lon": 109.8,
+            "lat": 33.5,
+            "source_id": "poi-a"
+          }
+        ]
+      }
+    },
+    {
+      "entity_id": "b",
+      "name": "乙地",
+      "entity_kind": "place",
+      "factual": true,
+      "map_role": "route_node",
+      "evidence_refs": [
+        "e1"
+      ],
+      "lon": 110.1,
+      "lat": 34.0,
+      "coordinate_source": "gazetteer",
+      "geocoding": {
+        "status": "confirmed"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "route_id": "route",
+      "name": "甲至乙",
+      "topology": "standard",
+      "side": "friendly",
+      "confidence": 1,
+      "evidence_refs": [
+        "e1"
+      ],
+      "paths": [
+        {
+          "path_id": "path",
+          "role": "main",
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_type": "spatial_entity",
+              "ref_id": "a"
+            },
+            {
+              "ref_type": "spatial_entity",
+              "ref_id": "b"
+            }
+          ]
+        }
+      ],
+      "enabled": true
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "e1",
+      "quote": "部队从甲地到乙地。"
+    }
+  ],
+  "actors": [],
+  "events": [],
+  "point_presentations": [],
+  "callouts": [],
+  "output_constraints": {
+    "self_intersection_policy": "allow_with_overpass"
+  }
+}

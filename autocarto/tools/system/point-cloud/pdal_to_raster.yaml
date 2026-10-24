@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: pdal_to_raster
-  display_name: 点云转栅格
+  keywords: ["点云为栅格", "转为点云为栅格", "点云数据", "激光点云"]
+  display_name: "转换点云为栅格"
   domain: point-cloud
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入点云文件
   - name: RESOLUTION
     type: number
-    description: 栅格分辨率
+    description: "栅格分辨率（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: OUTPUT
     type: output_raster

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: mean_and_standard_deviation_plot
-  display_name: 均值和标准差图
+  keywords: ["均值标准差图", "生成均值标准差图", "统计图表", "网格数据", "数据可视化"]
+  display_name: "生成均值标准差图"
   runtime: qgis
   domain: misc-tools
 spec:

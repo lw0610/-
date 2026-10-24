@@ -15,11 +15,13 @@ import (
 const (
 	ToolHITLRequest   = "hitl_request"
 	ToolOutputGetInfo = "output_get_info"
+	ToolReferenceRead = "reference_read"
+	ToolResourceGet   = "resource_get"
 )
 
 func Handles(toolName string) bool {
 	switch strings.TrimSpace(toolName) {
-	case ToolHITLRequest, ToolOutputGetInfo:
+	case ToolHITLRequest, ToolOutputGetInfo, ToolReferenceRead, ToolResourceGet, ToolFlowStart, ToolFlowPreview:
 		return true
 	default:
 		return false
@@ -32,6 +34,12 @@ func Invoke(ctx context.Context, toolName string, args map[string]any) (any, err
 		return hitl.Invoke(ctx, args)
 	case ToolOutputGetInfo:
 		return getOutputInfo(ctx, args)
+	case ToolResourceGet:
+		return getResource(ctx, args)
+	case ToolReferenceRead:
+		return readReference(ctx, stringArg(args, "path"))
+	case ToolFlowStart, ToolFlowPreview:
+		return invokeFlowTool(ctx, toolName, args)
 	default:
 		return nil, fmt.Errorf("unsupported runtime-control tool: %s", strings.TrimSpace(toolName))
 	}

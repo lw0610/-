@@ -1,0 +1,24 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: flow_preview
+  display_name: 预览流程
+  domain: runtime-control
+  runtime: internal
+  keywords: [流程, 预览, 输入检查, 执行计划]
+spec:
+  description: 只读预览当前方案流程的步骤、诊断与输入检查结果，不启动任何步骤。
+  parameters:
+    - name: flow_id
+      type: string
+      required: true
+      description: 流程编号。
+    - name: inputs
+      type: object
+      required: false
+      description: 可选输入值，用于检查必填项与约束。
+execution:
+  backend_tool: flow_preview
+  param_mapping:
+    flow_id: '{{ flow_id }}'
+    inputs: '{{ inputs }}'

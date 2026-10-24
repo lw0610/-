@@ -3,6 +3,7 @@ package settings
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -36,6 +37,43 @@ func resetDefaultLoggerForTest(t *testing.T) {
 type stubSkillReferenceProvider struct {
 	refs          map[string][]config.SkillReference
 	exclusiveDirs map[string]string
+}
+
+func TestDeprecatedMethodPackagesHiddenFromListsButRemainReadable(t *testing.T) {
+	for _, governed := range []bool{false, true} {
+		t.Run(fmt.Sprintf("governed=%t", governed), func(t *testing.T) {
+			root := t.TempDir()
+			writePackageFile(t, root, "old-method", "SKILL.md", "---\nname: old-method\nkind: workflow\ndescription: 旧方法\ndeprecated: true\n---\n方法正文\n")
+			writePackageFile(t, root, "current", "SKILL.md", "---\nname: current\nkind: category\ndescription: 新工具包\n---\n方法正文\n")
+			cfg := FileSkillServiceConfig{UserSkillsDir: root, GlobalSkillsDir: root, SkillsDir: root}
+			if governed {
+				governance := &stubRuntimeRegistryGovernance{skillDirs: []string{root}}
+				cfg.ResolveRuntimeRegistryGovernance = func() RuntimeRegistryGovernance { return governance }
+			}
+			svc := NewFileSkillServiceWithConfig(cfg, nil)
+			items, err := svc.ListSkillPackages()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(items) != 1 || items[0].Name != "current" {
+				t.Fatalf("deprecated method listed: %#v", items)
+			}
+			items, err = svc.ListSkillPackagesByScope(SkillPackageScopeGlobal, "")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(items) != 1 || items[0].Name != "current" {
+				t.Fatalf("deprecated method in scoped list: %#v", items)
+			}
+			detail, err := svc.GetSkillPackage("old-method")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !detail.Deprecated || !detail.FrontMatter.Deprecated || detail.MarkdownBody == "" {
+				t.Fatalf("migration detail lost: %#v", detail)
+			}
+		})
+	}
 }
 
 type stubRuntimeRegistryGovernance struct {
@@ -137,10 +175,6 @@ func (s stubRuntimeRegistryGovernance) LoadSkillRegistry() (*skill.Registry, err
 		}
 	}
 	return registry, nil
-}
-
-func (s *stubRuntimeRegistryGovernance) ResolveWorkflowPackage(packageName string) (skill.SkillPackage, bool, error) {
-	return s.ResolveSkillPackage(packageName)
 }
 
 func (s *stubRuntimeRegistryGovernance) ResolveSkillPackage(packageName string) (skill.SkillPackage, bool, error) {
@@ -374,7 +408,8 @@ func TestFileSkillServiceImportSkillDefaultsToUserWritableDirEvenWithActiveExclu
 	writeRawPackageFile(t, sourceFile, `---
 name: imported-exclusive-skill
 description: imported from file
-kind: workflow
+kind: category
+tools: [fixture_tool]
 ---
 
 # imported

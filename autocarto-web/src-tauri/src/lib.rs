@@ -12,6 +12,7 @@ use tauri::Manager;
 use tauri_plugin_dialog::{DialogExt, FilePath};
 use tauri_plugin_shell::process::CommandChild;
 use tauri_plugin_shell::ShellExt;
+mod local_output;
 
 struct ManagedSidecar {
     child: CommandChild,
@@ -37,8 +38,8 @@ const PLUGIN_ROOT_SEARCH_DEPTH: usize = 8;
 const RUNTIME_HOME_ENV_VAR: &str = "AUTOCARTO_HOME";
 const ASSETS_ROOT_ENV_VAR: &str = "AUTOCARTO_ASSETS_ROOT";
 const DESKTOP_PARENT_PID_ENV_VAR: &str = "AUTOCARTO_DESKTOP_PARENT_PID";
-#[cfg(target_os = "windows")]
-const WINDOWS_DEFAULT_RUNTIME_HOME: &str = r"F:\AutoCarto";
+const PROJECT_ROOT_ENV_VAR: &str = "AUTOCARTO_PROJECT_ROOT";
+const DEFAULT_RUNTIME_DIR: &str = "autocarto_data";
 #[cfg(target_os = "windows")]
 const WEBVIEW2_USER_DATA_ENV_VAR: &str = "WEBVIEW2_USER_DATA_FOLDER";
 
@@ -56,21 +57,68 @@ fn build_error(message: impl Into<String>) -> Box<dyn Error> {
     ))
 }
 
-#[cfg(target_os = "windows")]
 fn configure_default_runtime_environment() {
-    let runtime_home = PathBuf::from(WINDOWS_DEFAULT_RUNTIME_HOME);
-    if std::env::var_os(RUNTIME_HOME_ENV_VAR).is_none() {
-        std::env::set_var(RUNTIME_HOME_ENV_VAR, &runtime_home);
+    // Share the same anchor with the Go sidecar and QGIS child processes.
+    if let Ok(root) = resolve_project_root() {
+        std::env::set_var(PROJECT_ROOT_ENV_VAR, root);
     }
+    #[cfg(target_os = "windows")]
     if std::env::var_os(WEBVIEW2_USER_DATA_ENV_VAR).is_none() {
-        let webview_data_dir = runtime_home.join("webview2");
-        let _ = fs::create_dir_all(&webview_data_dir);
-        std::env::set_var(WEBVIEW2_USER_DATA_ENV_VAR, webview_data_dir);
+        if let Ok(home) =
+            resolve_runtime_home_from_env(std::env::var(RUNTIME_HOME_ENV_VAR).ok().as_deref())
+        {
+            std::env::set_var(WEBVIEW2_USER_DATA_ENV_VAR, home.join("webview2"));
+        }
     }
 }
 
-#[cfg(not(target_os = "windows"))]
-fn configure_default_runtime_environment() {}
+fn resolve_project_root() -> Result<PathBuf, String> {
+    if let Ok(raw) = std::env::var(PROJECT_ROOT_ENV_VAR) {
+        if !raw.trim().is_empty() {
+            let path = expand_env_path(&raw)?;
+            if !path.is_absolute() {
+                return Err(format!("{PROJECT_ROOT_ENV_VAR} 必须为绝对路径"));
+            }
+            return Ok(path);
+        }
+    }
+    if let Ok(raw) = std::env::var(ASSETS_ROOT_ENV_VAR) {
+        let path = expand_env_path(&raw)?;
+        if path.is_absolute() && is_plugin_root(&path) {
+            if let Some(parent) = path.parent() {
+                return Ok(parent.to_path_buf());
+            }
+        }
+    }
+    let executable = std::env::current_exe().ok();
+    if let Some(path) = executable.as_ref() {
+        // A portable macOS application keeps writable data beside its .app.
+        if let Some(bundle) = path
+            .ancestors()
+            .find(|p| p.extension().map(|e| e == "app").unwrap_or(false))
+        {
+            if let Some(parent) = bundle.parent() {
+                return Ok(parent.to_path_buf());
+            }
+        }
+        if let Some(root) = path.parent().and_then(discover_plugin_root_from_seed) {
+            return Ok(root.parent().unwrap_or(&root).to_path_buf());
+        }
+    }
+    let source = Path::new(env!("CARGO_MANIFEST_DIR"));
+    if let Some(root) = discover_plugin_root_from_seed(source) {
+        return Ok(root.parent().unwrap_or(&root).to_path_buf());
+    }
+    Err(format!("未发现项目根目录，请设置 {PROJECT_ROOT_ENV_VAR}"))
+}
+
+fn resolve_project_path(raw: &str) -> Result<PathBuf, String> {
+    let path = expand_env_path(raw)?;
+    if path.is_absolute() {
+        return Ok(path);
+    }
+    Ok(resolve_project_root()?.join(path))
+}
 
 fn is_plugin_root(path: &Path) -> bool {
     path.join("skills").join("system").is_dir()
@@ -139,14 +187,12 @@ fn resolve_runtime_home_from_env(env_home: Option<&str>) -> Result<PathBuf, Stri
     if let Some(raw_home) = env_home {
         let trimmed = raw_home.trim();
         if !trimmed.is_empty() {
-            let expanded_home = expand_env_path(trimmed)?;
+            let expanded_home = resolve_project_path(trimmed)?;
             return validate_runtime_home(&expanded_home, "AUTOCARTO_HOME 指向的目录");
         }
     }
 
-    Err(format!(
-		"未配置桌面 app-local runtime home：请通过 {RUNTIME_HOME_ENV_VAR} 指向可写目录（config/data 由后端维护），不再接受 plugin root fallback"
-	))
+    Ok(resolve_project_root()?.join(DEFAULT_RUNTIME_DIR))
 }
 
 fn resolve_assets_root_from_sources(
@@ -157,7 +203,7 @@ fn resolve_assets_root_from_sources(
     if let Some(raw_assets_root) = env_assets_root {
         let trimmed = raw_assets_root.trim();
         if !trimmed.is_empty() {
-            let expanded_assets_root = expand_env_path(trimmed)?;
+            let expanded_assets_root = resolve_project_path(trimmed)?;
             return validate_assets_root(&expanded_assets_root, "AUTOCARTO_ASSETS_ROOT 指向的目录");
         }
     }
@@ -227,24 +273,9 @@ fn resolve_bundled_assets_root(app: &tauri::AppHandle) -> Option<PathBuf> {
     None
 }
 
-#[cfg(target_os = "windows")]
-fn default_runtime_home_for_app(_app: &tauri::AppHandle) -> Result<PathBuf, String> {
-    Ok(PathBuf::from(WINDOWS_DEFAULT_RUNTIME_HOME))
-}
-
-#[cfg(not(target_os = "windows"))]
-fn default_runtime_home_for_app(app: &tauri::AppHandle) -> Result<PathBuf, String> {
-    app.path()
-        .app_local_data_dir()
-        .map_err(|e| format!("resolve desktop app-local runtime home failed: {e}"))
-}
-
-fn resolve_runtime_home_for_app(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+fn resolve_runtime_home_for_app(_app: &tauri::AppHandle) -> Result<PathBuf, String> {
     let env_home = std::env::var(RUNTIME_HOME_ENV_VAR).ok();
-    if let Ok(runtime_home) = resolve_runtime_home_from_env(env_home.as_deref()) {
-        return Ok(runtime_home);
-    }
-    default_runtime_home_for_app(app)
+    resolve_runtime_home_from_env(env_home.as_deref())
 }
 
 fn prepare_sidecar_launch(app: &tauri::AppHandle) -> Result<PreparedSidecarLaunch, String> {
@@ -858,6 +889,18 @@ async fn pick_qgis_project(app: tauri::AppHandle) -> Result<Option<String>, Stri
 }
 
 #[tauri::command]
+async fn open_local_path(path: String) -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        local_output::validate_input(&path)?;
+        let resolved = resolve_project_path(&path)?;
+        let target = local_output::validate_existing(&resolved)?;
+        local_output::open(&target)
+    })
+    .await
+    .map_err(|error| format!("打开成果失败：{error}"))?
+}
+
+#[tauri::command]
 async fn pick_qgis_project_directory(app: tauri::AppHandle) -> Result<Option<String>, String> {
     pick_dialog_directory(app, "选择 QGIS 工程目录失败").await
 }
@@ -919,6 +962,7 @@ pub fn run() {
             pick_file_path,
             pick_directory_path,
             pick_qgis_executable,
+            open_local_path,
             get_backend_runtime,
         ])
         .plugin(tauri_plugin_dialog::init())
@@ -1003,31 +1047,47 @@ mod tests {
     }
 
     #[test]
-    fn resolve_autocarto_home_requires_runtime_home_env() {
+    fn runtime_home_is_project_relative_and_independent_of_cwd() {
         let _lock = ENV_AND_CWD_LOCK.lock().expect("lock env and cwd");
-        let root_dir = make_temp_root("autocarto-tauri-root");
-        let _plugin_root = create_plugin_root(&root_dir);
-
-        let original_cwd = std::env::current_dir().expect("current dir");
-        let original_home = std::env::var_os(RUNTIME_HOME_ENV_VAR);
-        std::env::remove_var(RUNTIME_HOME_ENV_VAR);
-        std::env::set_current_dir(&root_dir).expect("set current dir");
-
-        let err =
-            resolve_autocarto_home().expect_err("runtime home must not fallback to plugin root");
-
-        std::env::set_current_dir(original_cwd).expect("restore current dir");
-        match original_home {
-            Some(value) => std::env::set_var(RUNTIME_HOME_ENV_VAR, value),
-            None => std::env::remove_var(RUNTIME_HOME_ENV_VAR),
+        let root = make_temp_root("autocarto-project-home");
+        let previous_root = std::env::var_os(PROJECT_ROOT_ENV_VAR);
+        let original_cwd = std::env::current_dir().unwrap();
+        std::env::set_var(PROJECT_ROOT_ENV_VAR, &root);
+        let default = resolve_runtime_home_from_env(None).unwrap();
+        let relative = resolve_runtime_home_from_env(Some("custom/runtime")).unwrap();
+        std::env::set_current_dir(std::env::temp_dir()).unwrap();
+        let after = resolve_runtime_home_from_env(Some("custom/runtime")).unwrap();
+        std::env::set_current_dir(original_cwd).unwrap();
+        match previous_root {
+            Some(value) => std::env::set_var(PROJECT_ROOT_ENV_VAR, value),
+            None => std::env::remove_var(PROJECT_ROOT_ENV_VAR),
         }
-        let _ = fs::remove_dir_all(&root_dir);
+        assert_eq!(default, root.join("autocarto_data"));
+        assert_eq!(relative, root.join("custom/runtime"));
+        assert_eq!(after, relative);
+        assert!(!default.exists());
+        let _ = fs::remove_dir_all(root);
+    }
 
-        assert!(err.contains("app-local"), "unexpected error: {err}");
-        assert!(
-            err.contains(RUNTIME_HOME_ENV_VAR),
-            "unexpected error: {err}"
-        );
+    #[test]
+    fn local_output_resolves_relative_to_project_from_any_cwd() {
+        let _lock = ENV_AND_CWD_LOCK.lock().expect("lock env and cwd");
+        let root = make_temp_root("enio2-local-output");
+        fs::create_dir_all(root.join("outputs")).unwrap();
+        fs::write(root.join("outputs/map.pdf"), "result").unwrap();
+        let previous_root = std::env::var_os(PROJECT_ROOT_ENV_VAR);
+        let previous_cwd = std::env::current_dir().unwrap();
+        std::env::set_var(PROJECT_ROOT_ENV_VAR, &root);
+        std::env::set_current_dir(std::env::temp_dir()).unwrap();
+        let resolved = resolve_project_path("outputs/map.pdf").unwrap();
+        let target = local_output::validate_existing(&resolved).unwrap();
+        std::env::set_current_dir(previous_cwd).unwrap();
+        match previous_root {
+            Some(value) => std::env::set_var(PROJECT_ROOT_ENV_VAR, value),
+            None => std::env::remove_var(PROJECT_ROOT_ENV_VAR),
+        }
+        assert_eq!(target, root.join("outputs/map.pdf").canonicalize().unwrap());
+        fs::remove_dir_all(root).unwrap();
     }
 
     #[test]
@@ -1048,15 +1108,6 @@ mod tests {
         let _ = fs::remove_dir_all(Path::new(&custom_home_parent));
 
         assert_eq!(port_file, custom_home.join("data").join(".port"));
-    }
-
-    #[cfg(target_os = "windows")]
-    #[test]
-    fn default_windows_runtime_home_uses_f_drive_autocarto() {
-        assert_eq!(
-            PathBuf::from(WINDOWS_DEFAULT_RUNTIME_HOME),
-            PathBuf::from(r"F:\AutoCarto")
-        );
     }
 
     #[test]

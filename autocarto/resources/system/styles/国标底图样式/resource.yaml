@@ -1,0 +1,8 @@
+apiVersion: resource/v1
+id: style_set.gb-basemap
+type: style_set
+name: 国标底图样式
+version: 1.0.0
+entry: 对照表.csv
+source:
+  author: AutoCarto

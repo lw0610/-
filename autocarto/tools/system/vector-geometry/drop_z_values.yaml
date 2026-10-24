@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: drop_z_values
-  display_name: 丢弃Z/M值
+  keywords: ["高程与测量值", "删除高程与测量值", "几何处理", "空间叠加", "几何修复"]
+  display_name: "移除高程与测量值"
   domain: vector-geometry
   runtime: qgis
 spec:

@@ -78,7 +78,7 @@ func TestResolveSessionDirPreservesRelativeRuntimeHome(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	absRuntime, err := filepath.Abs(relativeRuntime)
+	absRuntime, err := ResolveProjectPath(relativeRuntime)
 	if err != nil {
 		t.Fatal(err)
 	}

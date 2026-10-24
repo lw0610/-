@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: convert_points_to_lines
-  display_name: 点转线
+  keywords: ["点为线", "连接点为线", "格式转换", "数据转换"]
+  display_name: "连接点为线"
   domain: data-conversion
   runtime: qgis
 spec:

@@ -1,0 +1,169 @@
+{
+  "driver": "legacy",
+  "elements": {
+    "legend": {
+      "entries": [
+        {
+          "labels": [
+            "0 - 39",
+            "39 - 78",
+            "78 - 117",
+            "117 - 156",
+            "156 - 195"
+          ],
+          "layer": "统计值"
+        }
+      ],
+      "fonts": {
+        "body": {
+          "size": 2.5,
+          "unit": 0
+        },
+        "title": {
+          "size": 3.5,
+          "unit": 0
+        }
+      },
+      "rect_mm": {
+        "height": 46.203984,
+        "width": 39.175,
+        "x": 223.0,
+        "y": 55.0
+      },
+      "type": "QgsLayoutItemLegend"
+    },
+    "main_map": {
+      "rect_mm": {
+        "height": 155.0,
+        "width": 205.0,
+        "x": 12.0,
+        "y": 32.0
+      },
+      "type": "QgsLayoutItemMap"
+    },
+    "north_arrow": {
+      "rect_mm": {
+        "height": 22.0,
+        "width": 15.0,
+        "x": 194.0,
+        "y": 36.0
+      },
+      "type": "QgsLayoutItemPicture"
+    },
+    "overview": {
+      "font": {
+        "size": 2.5,
+        "unit": 0
+      },
+      "rect_mm": {
+        "height": 4.040909,
+        "width": 83.415909,
+        "x": 12.0,
+        "y": 194.0
+      },
+      "text": "来源：合成回归夹具；方法：五级分位数；灰色表示缺失，零为有效数值。",
+      "type": "QgsLayoutItemLabel"
+    },
+    "scalebar": {
+      "font": {
+        "size": 2.0,
+        "unit": 0
+      },
+      "rect_mm": {
+        "height": 13.096236,
+        "width": 59.921739,
+        "x": 145.0,
+        "y": 173.0
+      },
+      "segments": 4,
+      "type": "QgsLayoutItemScaleBar",
+      "units_per_segment": 50.0
+    },
+    "title": {
+      "font": {
+        "size": 5.5,
+        "unit": 0
+      },
+      "rect_mm": {
+        "height": 8.370455,
+        "width": 59.459091,
+        "x": 12.0,
+        "y": 8.0
+      },
+      "text": "湖北省 2020 年合成指标",
+      "type": "QgsLayoutItemLabel"
+    }
+  },
+  "invariants": {
+    "missing_count": 1,
+    "unmatched_csv_regions": [
+      "未匹配示例区"
+    ],
+    "valid_count": 16
+  },
+  "layers": {
+    "统计值": {
+      "feature_count": 17,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "GRADUATED: attr stat_value\n0 - 39::0 - 39::FILL SYMBOL (1 layers) color 247,251,255,255,rgb:0.9686275,0.9843137,1,1\n39 - 78::39 - 78::FILL SYMBOL (1 layers) color 198,219,239,255,rgb:0.7764706,0.8588235,0.9372549,1\n78 - 117::78 - 117::FILL SYMBOL (1 layers) color 107,174,214,255,rgb:0.4196078,0.6823529,0.8392157,1\n117 - 156::117 - 156::FILL SYMBOL (1 layers) color 33,113,181,255,rgb:0.1294118,0.4431373,0.7098039,1\n156 - 195::156 - 195::FILL SYMBOL (1 layers) color 8,48,107,255,rgb:0.0313725,0.1882353,0.4196078,1\n",
+      "renderer_sha256": "767f15146db6148b6b15297994f855d0728cab5677ec19ff6f1515fe08723534",
+      "renderer_type": "graduatedSymbol"
+    },
+    "缺失值底色": {
+      "feature_count": 17,
+      "label_field": "",
+      "labeling_type": null,
+      "labels_enabled": false,
+      "renderer_dump": "SINGLE: FILL SYMBOL (1 layers) color 229,231,235,255,rgb:0.8980392,0.9058824,0.9215686,1",
+      "renderer_sha256": "ee009d36abad083c4debb734ae3439eb0860b37eca9c9865a7f0876722d19d6a",
+      "renderer_type": "singleSymbol"
+    }
+  },
+  "main_map": {
+    "crs": "EPSG:3857",
+    "extent": {
+      "xmax": 12953404.891029093,
+      "xmin": 12037763.017245099,
+      "ymax": 4002381.756303738,
+      "ymin": 3310067.1688085226
+    },
+    "layers": [
+      "统计值",
+      "缺失值底色"
+    ]
+  },
+  "metadata": {
+    "external_inputs": {},
+    "fixture_sha256": {
+      "route_dataset/callouts.csv": "718ab6523c8ca5ea3646f7ef866142f4b1976084d9ce7ebe7adaa693f5d7b62b",
+      "route_dataset/compile_manifest.json": "99233202275beb4c2c1f84c5a99777b32a0bc2cee34c4c834c582c22d0869e6b",
+      "route_dataset/fixture_provenance.json": "6593c700a76f89a80b765d7b79406a4265dc013fd8f45148a29ad9f5a7061737",
+      "route_dataset/images/389d18861265fe23fb5519ef245f2014235a0fccc28512cb46ea308f80741b1a.png": "389d18861265fe23fb5519ef245f2014235a0fccc28512cb46ea308f80741b1a",
+      "route_dataset/images/3b2d1bc9aeef729a7132c7d3bb4aa442ac9970b2e817c9db343e136a020cbf18.png": "3b2d1bc9aeef729a7132c7d3bb4aa442ac9970b2e817c9db343e136a020cbf18",
+      "route_dataset/places.csv": "9f30fa4ecae07b1a2e648fffd8d28d611351322b108636cf19eed67e783d4ef9",
+      "route_dataset/points.csv": "f7fe79bdef439ba931663a40c3cd2659bc45768db783e5d8b51daad8314e9253",
+      "route_dataset/route_paths.csv": "64b2d5a5cba9fde05232639b0343dee18dc427523bb918f1ab1894f6ac37e853",
+      "route_dataset/routes.csv": "f7d495a5b2745ac9cc653117627ed348927382be6922f3a474e38cac8e1026f2",
+      "route_dataset/symbol_mapping.csv": "d3b9bd8786ce79153fc99510ce5885c6e790c57632c670d38e67138772023c15",
+      "route_dataset/symbols/battle.svg": "c0178067f6efdaa754923b6976850591c8c103e3bf8ac9cd64169bb9b7688bbd",
+      "route_dataset/symbols/meeting.svg": "7afe7846e893940739e8480b32f0b5ec7754be6935f2fc2007e3422ae3eeae56",
+      "route_dataset/symbols/rendezvous.svg": "d8cce68b5c799db1fde76ec77e4fd3b951321046b1a732e2e36bab39656086c5",
+      "route_dataset/symbols/start_flag.svg": "98da8e489aa9ee66804a1fce189845f310dec1a8b6b80134f32daf3f883bbbdc",
+      "route_dataset/symbols/waypoint.svg": "9eb498fa63f0ac98ce7cad34fedc6e0a4ca1175e4e9993af432ee6c97a58eb51",
+      "route_dataset/validation_report.json": "700c8cf1e2844b217a0c9de64f2259e262b0d8f7d59e0c1470d3be8b50be5896",
+      "statistical/fixture_provenance.json": "90cdb22198224b8a0372df43ba750e08885f41f731338c8e139a5950ba57ab8d",
+      "statistical/regions.geojson": "0751942fdec09f56ec4e29d2bc3eb6491e1e03623b16940844f9fe457b066573",
+      "statistical/values.csv": "f4e2693eaa7fbee68e5220813a2f1f44ff9df328ee708cb4bdb8f188beec5d27"
+    },
+    "preview_dpi": 72,
+    "qgis_version": "3.44.10-Solothurn"
+  },
+  "page_size_mm": {
+    "height": 210.0,
+    "width": 297.0
+  },
+  "scenario": "statistical",
+  "schema_version": "autocarto-golden/v1"
+}

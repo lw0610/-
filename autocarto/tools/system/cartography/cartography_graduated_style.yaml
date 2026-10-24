@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: cartography_graduated_style
-  display_name: cartography_graduated_style
+  keywords: ["分级设色", "配置分级设色", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置分级设色"
   runtime: qgis
   domain: cartography
 spec:

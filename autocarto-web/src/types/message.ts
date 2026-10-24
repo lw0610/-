@@ -96,6 +96,8 @@ export interface InterruptContext {
 }
 
 export interface InterruptRequestData {
+  flow_run_id?: string
+  step_id?: string
   checkpoint_id?: string
   interrupt_contexts?: InterruptContext[]
 }

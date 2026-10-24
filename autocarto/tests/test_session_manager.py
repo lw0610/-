@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import mock
 
@@ -97,8 +98,9 @@ class SessionManagerTestCase(unittest.TestCase):
             mock.patch.dict("os.environ", {"AUTOCARTO_HOME": tmp_dir}, clear=False),
         ):
             base_dir = manager._resolve_sessions_base_dir("")
+            expected = str(Path(tmp_dir).resolve() / "data/sessions/no_project")
 
-        self.assertEqual(base_dir, f"{tmp_dir}/data/sessions/no_project")
+        self.assertEqual(base_dir, expected)
 
     @mock.patch("autocarto.core.session_manager.switch_session_log")
     @mock.patch(

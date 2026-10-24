@@ -16,7 +16,19 @@ func (s *DeepServer) SaveSessionWithOperation(sessionData map[string]any, projec
 
 // LoadSession 导出的会话加载方法
 func (s *DeepServer) LoadSession(sessionID, projectPath string) (map[string]any, error) {
-	return s.loadSessionFromFile(sessionID, projectPath)
+	data, err := s.loadSessionFromFile(sessionID, projectPath)
+	if err != nil {
+		return nil, err
+	}
+	flow, flowErr := s.flowSnapshot(sessionID, projectPath)
+	if flowErr != nil {
+		return nil, flowErr
+	}
+	data["flow_run"] = flow
+	if flow != nil {
+		data["flow_run_event_seq"] = flow.EventSeq
+	}
+	return data, nil
 }
 
 // ListSessions 导出的会话列表方法

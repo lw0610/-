@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_merge
-  display_name: 栅格镶嵌
+  keywords: ["多个栅格", "镶嵌多个栅格", "栅格处理", "矢量处理", "空间分析"]
+  display_name: "镶嵌多个栅格"
   domain: gdal-processing
   runtime: qgis
 spec:

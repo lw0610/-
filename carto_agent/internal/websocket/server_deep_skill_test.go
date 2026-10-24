@@ -23,6 +23,8 @@ func writeSkillFile(t *testing.T, skillsDir, skillName, description, content str
 		"---",
 		"name: " + skillName,
 		"description: " + description,
+		"kind: category",
+		"tools: [get_project_info]",
 		"---",
 		"",
 		content,
@@ -46,11 +48,18 @@ func writeRawFile(t *testing.T, path, raw string) {
 
 func enterIsolatedWorkingDir(t *testing.T) {
 	t.Helper()
+	t.Setenv("AUTOCARTO_HOME", t.TempDir())
 	originalWD, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Getwd failed: %v", err)
 	}
 	isolatedDir := t.TempDir()
+	assetsDir := filepath.Join(isolatedDir, "autocarto")
+	if err := os.MkdirAll(filepath.Join(assetsDir, "skills", "system"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("AUTOCARTO_PROJECT_ROOT", isolatedDir)
+	t.Setenv("AUTOCARTO_ASSETS_ROOT", assetsDir)
 	if err := os.Chdir(isolatedDir); err != nil {
 		t.Fatalf("Chdir failed: %v", err)
 	}
@@ -131,6 +140,8 @@ func TestSkillIdentifierUsesDirectoryName(t *testing.T) {
 	skillFilePath := filepath.Join(skillsDir, "folder-id", "SKILL.md")
 	writeRawFile(t, skillFilePath, strings.Join([]string{
 		"---",
+		"kind: category",
+		"tools: [get_project_info]",
 		"name: Display Name",
 		"description: desc",
 		"---",
@@ -174,6 +185,8 @@ func TestImportSkillFromFile(t *testing.T) {
 	sourceFile := filepath.Join(sourceDir, "import-me.md")
 	writeRawFile(t, sourceFile, strings.Join([]string{
 		"---",
+		"kind: category",
+		"tools: [get_project_info]",
 		"name: imported-file-skill",
 		"description: imported from file",
 		"---",
@@ -220,6 +233,8 @@ func TestImportSkillFromSingleDirectory(t *testing.T) {
 	sourceSkillPath := filepath.Join(sourceDir, "SKILL.md")
 	writeRawFile(t, sourceSkillPath, strings.Join([]string{
 		"---",
+		"kind: category",
+		"tools: [get_project_info]",
 		"name: imported-dir-skill",
 		"description: imported from dir",
 		"---",
@@ -250,6 +265,8 @@ func TestImportSkillFromBatchDirectory(t *testing.T) {
 	batchDir := t.TempDir()
 	writeRawFile(t, filepath.Join(batchDir, "alpha", "SKILL.md"), strings.Join([]string{
 		"---",
+		"kind: category",
+		"tools: [get_project_info]",
 		"name: alpha-skill",
 		"description: alpha",
 		"---",
@@ -258,6 +275,8 @@ func TestImportSkillFromBatchDirectory(t *testing.T) {
 	}, "\n"))
 	writeRawFile(t, filepath.Join(batchDir, "beta", "SKILL.md"), strings.Join([]string{
 		"---",
+		"kind: category",
+		"tools: [get_project_info]",
 		"description: beta without explicit name",
 		"---",
 		"",
@@ -295,6 +314,8 @@ func TestImportSkillConflictSkipsByDefault(t *testing.T) {
 	sourceFile := filepath.Join(sourceDir, "conflict.md")
 	writeRawFile(t, sourceFile, strings.Join([]string{
 		"---",
+		"kind: category",
+		"tools: [get_project_info]",
 		"name: conflict-skill",
 		"description: new",
 		"---",
@@ -416,9 +437,10 @@ func TestScopedSkillMutationHelpersTargetExclusiveLayer(t *testing.T) {
 	importSource := filepath.Join(t.TempDir(), "scoped-import.md")
 	writeRawFile(t, importSource, strings.Join([]string{
 		"---",
+		"tools: [get_project_info]",
 		"name: imported-scoped-skill",
 		"description: imported from scoped helper",
-		"kind: workflow",
+		"kind: category",
 		"---",
 		"",
 		"# imported",
@@ -468,9 +490,10 @@ func TestDefaultSkillMutationHelpersKeepGlobalTargetWithExclusiveOverlayPresent(
 	importSource := filepath.Join(t.TempDir(), "default-import.md")
 	writeRawFile(t, importSource, strings.Join([]string{
 		"---",
+		"tools: [get_project_info]",
 		"name: imported-default-global-skill",
 		"description: imported default global",
-		"kind: workflow",
+		"kind: category",
 		"---",
 		"",
 		"# imported default global",

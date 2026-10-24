@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: export_mesh_edges
-  display_name: 导出网孔边线
+  keywords: ["网格边线", "输出网格边线", "统计图表", "网格数据", "数据可视化"]
+  display_name: "导出网格边线"
   runtime: qgis
   domain: misc-tools
 spec:

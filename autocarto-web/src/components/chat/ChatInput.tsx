@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, type ReactNode } from 'react'
 import type { ExecutionMode } from '@/types/message'
 import Chip from '@/components/common/Chip'
 import { cn } from '@/lib/utils'
 
 interface Props {
-  onSend: (content: string) => void
+  onSend: (content: string) => void | boolean | Promise<void | boolean>
+  flowControls?: ReactNode
+  sendBlocked?: boolean
   onCancel?: () => void
   disabled?: boolean
   running?: boolean
@@ -19,8 +21,11 @@ export default function ChatInput({
   disabled,
   running,
   executionMode = 'build',
+  flowControls,
+  sendBlocked,
 }: Props) {
   const [input, setInput] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const isBuildMode = executionMode === 'build'
 
@@ -38,20 +43,22 @@ export default function ChatInput({
       tone: 'amber' as const,
     }
 
-  const handleSend = useCallback(() => {
+  const handleSend = useCallback(async () => {
     const trimmed = input.trim()
-    if (!trimmed || disabled || running) return
-    onSend(trimmed)
-    setInput('')
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
-    }
-  }, [input, disabled, onSend, running])
+    if (!trimmed || disabled || running || submitting || sendBlocked) return
+    setSubmitting(true)
+    try {
+      const sent = await onSend(trimmed)
+      if (sent === false) return
+      setInput('')
+      if (textareaRef.current) textareaRef.current.style.height = 'auto'
+    } finally { setSubmitting(false) }
+  }, [input, disabled, onSend, running, submitting, sendBlocked])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSend()
+      void handleSend()
     }
   }
 
@@ -71,6 +78,7 @@ export default function ChatInput({
           : 'border-chip-amber-border bg-gradient-to-b from-chip-amber-bg to-surface-overlay',
       )}
     >
+      {flowControls}
       <div
         className={cn(
           'relative rounded border transition-all duration-150',
@@ -96,8 +104,8 @@ export default function ChatInput({
             <span className="text-[9px] text-text-faint">Enter 发送 · Shift+Enter 换行</span>
           </div>
           <button
-            onClick={running ? onCancel : handleSend}
-            disabled={running ? !onCancel : disabled || !input.trim()}
+            onClick={running ? onCancel : () => void handleSend()}
+            disabled={running ? !onCancel : disabled || submitting || sendBlocked || !input.trim()}
             title={running ? '取消当前任务' : isBuildMode ? '发送并立即执行' : '发送分析请求'}
             className={cn(
               'flex h-7 w-7 items-center justify-center rounded text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50',

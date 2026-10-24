@@ -31,7 +31,7 @@ func TestAddGetUpdateRemoveAgent(t *testing.T) {
 
 	updated := *created
 	updated.Description = "更新后的描述"
-	updated.SkillPackages = []string{"vector-analysis"}
+	updated.ToolPackages = []string{"vector-geometry"}
 	if err := acm.UpdateAgent("default", "vector_helper", updated); err != nil {
 		t.Fatalf("UpdateAgent failed: %v", err)
 	}
@@ -43,8 +43,8 @@ func TestAddGetUpdateRemoveAgent(t *testing.T) {
 	if refreshed.Description != "更新后的描述" {
 		t.Fatalf("unexpected description: %s", refreshed.Description)
 	}
-	if len(refreshed.SkillPackages) != 1 || refreshed.SkillPackages[0] != "vector-analysis" {
-		t.Fatalf("unexpected skill packages: %+v", refreshed.SkillPackages)
+	if len(refreshed.ToolPackages) != 1 || refreshed.ToolPackages[0] != "vector-geometry" {
+		t.Fatalf("unexpected skill packages: %+v", refreshed.ToolPackages)
 	}
 
 	if err := acm.RemoveAgent("default", "vector_helper"); err != nil {

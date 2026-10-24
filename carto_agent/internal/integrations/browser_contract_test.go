@@ -36,11 +36,11 @@ func TestBrowserDispatchGuidanceReachesActualModelToolInfo(t *testing.T) {
 		t.Fatal(err)
 	}
 	runtimeConfig := config.ConvertToRuntimeSkillConfig(&profile, skillsRoot, "", t.TempDir(), "default")
-	if slices.Contains(runtimeConfig.GetAgentMiddlewareSkills("data_engineer"), "browser-data-acquisition") {
-		t.Fatal("browser category unexpectedly became a readable workflow")
+	if !slices.Contains(runtimeConfig.GetAgentMiddlewareSkills("data_engineer"), "browser-data-acquisition") {
+		t.Fatal("assigned browser tool package methods must be readable")
 	}
-	// Category prose is absent from the readable skill catalog, so guidance
-	// must survive the actual YAML -> registry -> model-facing adapter path.
+	// Tool descriptions must preserve dispatch guidance through the real
+	// YAML -> registry -> model-facing adapter path, as well as package methods.
 	for _, name := range []string{"browser_list_tools", "browser_call_tool"} {
 		if !slices.Contains(runtimeConfig.GetAgentAllowedTools("data_engineer"), name) {
 			t.Fatalf("data_engineer lacks %s", name)

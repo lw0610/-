@@ -1,0 +1,8 @@
+apiVersion: resource/v1
+id: symbols.route-arrow
+type: symbols
+name: 图例
+version: 1.0.0
+entry: 对照表.csv
+source:
+  author: AutoCarto

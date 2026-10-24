@@ -144,6 +144,5 @@ test("resolveSessionAttachBlockFromNormalizedMessage detects explicit attach rep
         session_id: "sid-live",
       },
     }),
-    null,
   ).toBeNull();
 });

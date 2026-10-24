@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: idw_interpolation
-  display_name: IDW插值
+  keywords: ["反距离加权插值", "分析反距离加权插值", "栅格分析", "地形分析", "空间插值"]
+  display_name: "计算反距离加权插值"
   domain: raster-analysis
   runtime: qgis
 spec:
@@ -14,11 +15,11 @@ spec:
     description: 插值数据配置
   - name: DISTANCE_COEFFICIENT
     type: number
-    description: 距离系数
+    description: "距离加权幂指数（无单位，正数）"
     default: 2.0
   - name: PIXEL_SIZE
     type: number
-    description: 像素大小
+    description: "像素大小（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 0.1
   - name: OUTPUT
     type: output_raster

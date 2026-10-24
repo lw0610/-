@@ -1,0 +1,32 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:aced60943b8f64a95086cf930be78b58b443c562266337a8319f552097974008",
+  "entries": [
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "军标箭头",
+      "event_types": [],
+      "exists": true,
+      "format": "png",
+      "kind": "symbol",
+      "name": "route_arrow",
+      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/图例/路线箭头.png",
+      "priority": 0,
+      "size": 7,
+      "symbol_type": "route_arrow"
+    }
+  ],
+  "entry": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/图例/对照表.csv",
+  "format": "",
+  "id": "symbols.route-arrow",
+  "name": "图例",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/图例",
+  "total_entries": 1,
+  "truncated": false,
+  "type": "symbols",
+  "version": "1.0.0",
+  "warnings": []
+}

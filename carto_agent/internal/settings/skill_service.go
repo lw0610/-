@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"gopkg.in/yaml.v3"
@@ -88,6 +89,12 @@ const (
 type SkillPackageSummary struct {
 	PackageID     string   `json:"package_id"`
 	Name          string   `json:"name"`
+	DisplayName   string   `json:"display_name,omitempty"`
+	Domain        string   `json:"domain,omitempty"`
+	System        bool     `json:"system"`
+	Hidden        bool     `json:"hidden"`
+	AutoMount     string   `json:"auto_mount"`
+	Deprecated    bool     `json:"deprecated,omitempty"`
 	Description   string   `json:"description,omitempty"`
 	Kind          string   `json:"kind,omitempty"`
 	Backend       string   `json:"backend,omitempty"`
@@ -324,7 +331,7 @@ func (s *FileSkillService) ListSkillPackages() ([]SkillPackageSummary, error) {
 				logger.Warn("读取 governed 技能包失败 %s: %v", pkg.Name, loadErr)
 				continue
 			}
-			if !ok {
+			if !ok || detail.Deprecated {
 				continue
 			}
 			visible[detail.PackageID] = detail.Summary()
@@ -384,7 +391,9 @@ func (s *FileSkillService) ListSkillPackages() ([]SkillPackageSummary, error) {
 				logger.Warn("读取技能包失败 %s: %v", entry.Name(), loadErr)
 				continue
 			}
-			visible[detail.PackageID] = detail.Summary()
+			if !detail.Deprecated {
+				visible[detail.PackageID] = detail.Summary()
+			}
 		}
 	}
 	packages := make([]SkillPackageSummary, 0, len(visible))
@@ -444,7 +453,9 @@ func (s *FileSkillService) ListSkillPackagesByScope(scope, configName string) ([
 				logger.Warn("读取技能包失败 %s: %v", entry.Name(), loadErr)
 				continue
 			}
-			packages = append(packages, detail.Summary())
+			if !detail.Deprecated {
+				packages = append(packages, detail.Summary())
+			}
 		}
 	}
 	sort.Slice(packages, func(i, j int) bool {
@@ -819,6 +830,8 @@ func (s *FileSkillService) ImportSkill(sourcePath string, overwrite bool) (map[s
 }
 
 func (s *FileSkillService) importSkillToLocation(sourcePath string, overwrite bool, targetLocation skillPackageLocation) (map[string]any, error) {
+	skillImportMu.Lock()
+	defer skillImportMu.Unlock()
 	if err := s.ensureSkillsDir(); err != nil {
 		return nil, err
 	}
@@ -830,7 +843,7 @@ func (s *FileSkillService) importSkillToLocation(sourcePath string, overwrite bo
 	if err != nil {
 		return nil, fmt.Errorf("解析 source_path 失败: %w", err)
 	}
-	stat, err := os.Stat(absPath)
+	stat, err := os.Lstat(absPath)
 	if err != nil {
 		return nil, fmt.Errorf("读取 source_path 失败: %w", err)
 	}
@@ -844,6 +857,9 @@ func (s *FileSkillService) importSkillToLocation(sourcePath string, overwrite bo
 
 	switch {
 	case stat.Mode().IsRegular():
+		if !strings.EqualFold(filepath.Ext(absPath), ".md") {
+			return nil, fmt.Errorf("请选择 Markdown 技能文件、包含 SKILL.md 的文件夹或有效的扩展清单")
+		}
 		result["mode"] = "file"
 		imported, skipped, importErr := s.importSkillFromFile(absPath, DefaultSkillNameFromPath(absPath), overwrite, targetLocation)
 		if importErr != nil {
@@ -961,6 +977,17 @@ func (s *FileSkillService) defaultImportLocation(scope, configName string) (skil
 }
 
 func (s *FileSkillService) importSkillFromFile(sourceSkillPath, fallbackName string, overwrite bool, targetLocation skillPackageLocation) (map[string]any, map[string]any, error) {
+	var sourcePackageDir string
+	if strings.EqualFold(filepath.Base(sourceSkillPath), "SKILL.md") {
+		sourcePackageDir = filepath.Dir(sourceSkillPath)
+		if err := validateLegacySkillImportDirectory(sourcePackageDir); err != nil {
+			return nil, nil, err
+		}
+	}
+	info, err := os.Lstat(sourceSkillPath)
+	if err != nil || !info.Mode().IsRegular() {
+		return nil, nil, fmt.Errorf("技能文件必须是普通 Markdown 文件: %s", sourceSkillPath)
+	}
 	data, err := os.ReadFile(sourceSkillPath)
 	if err != nil {
 		return nil, nil, fmt.Errorf("读取 skill 文件失败: %w", err)
@@ -969,9 +996,17 @@ func (s *FileSkillService) importSkillFromFile(sourceSkillPath, fallbackName str
 	if err != nil {
 		return nil, nil, fmt.Errorf("解析 skill 文件失败: %w", err)
 	}
-	packageKind := strings.ToLower(strings.TrimSpace(fmt.Sprint(frontMatter["kind"])))
-	if packageKind == skill.SkillPackageKindCategory {
-		return nil, nil, &SkillMutationUnsupportedError{Operation: "import", Target: sourceSkillPath, Reason: "legacy skill 导入仅支持 markdown-only workflow/knowledge package，不支持 category package"}
+	packageKind := strings.ToLower(strings.TrimSpace(stringValue(frontMatter["kind"])))
+	metadataRaw, err := yaml.Marshal(frontMatter)
+	if err != nil {
+		return nil, nil, err
+	}
+	var metadata skill.SkillFrontMatter
+	if err := yaml.Unmarshal(metadataRaw, &metadata); err != nil {
+		return nil, nil, err
+	}
+	if err := skill.ValidateToolPackageImport(skill.SkillPackage{Kind: packageKind, FrontMatter: metadata}); err != nil {
+		return nil, nil, &SkillMutationUnsupportedError{Operation: "import", Target: sourceSkillPath, Reason: err.Error()}
 	}
 	packageName := SanitizeSkillName(stringValue(frontMatter["name"]))
 	if packageName == "" {
@@ -982,7 +1017,22 @@ func (s *FileSkillService) importSkillFromFile(sourceSkillPath, fallbackName str
 	}
 	targetDir := filepath.Join(targetLocation.Dir, packageName)
 	targetPath := filepath.Join(targetDir, "SKILL.md")
-	if existingDetail, detailErr := s.GetSkillPackage(packageName); detailErr == nil {
+	if err := validateSkillImportPaths(sourceSkillPath, sourcePackageDir, targetDir); err != nil {
+		return nil, nil, err
+	}
+	if !overwrite {
+		if _, lookupErr := s.findVisiblePackageLocation(packageName); lookupErr == nil {
+			return nil, map[string]any{"name": packageName, "source": sourceSkillPath, "reason": "同名 skill 已存在，已跳过"}, nil
+		} else {
+			var missing *SkillPackageNotFoundError
+			if !errors.As(lookupErr, &missing) {
+				return nil, nil, lookupErr
+			}
+		}
+	}
+	// Also check the chosen writable layer: a visible overlay must not hide an
+	// existing or malformed target directory from the overwrite check.
+	if _, statErr := os.Lstat(targetDir); statErr == nil {
 		if !overwrite {
 			return nil, map[string]any{
 				"name":   packageName,
@@ -990,30 +1040,30 @@ func (s *FileSkillService) importSkillFromFile(sourceSkillPath, fallbackName str
 				"reason": "同名 skill 已存在，已跳过",
 			}, nil
 		}
-		if existingDetail.HasTools || existingDetail.HasConfig || existingDetail.Kind == skill.SkillPackageKindCategory {
-			return nil, nil, &SkillMutationUnsupportedError{Operation: "import", Target: packageName, Reason: "legacy skill 导入不支持覆盖包含 tools/config 的技能包"}
+		if err := validateLegacySkillImportDirectory(targetDir); err != nil {
+			return nil, nil, err
 		}
-	}
-	if packageKind == "" {
-		frontMatter["kind"] = skill.SkillPackageKindWorkflow
+	} else if !os.IsNotExist(statErr) {
+		return nil, nil, statErr
 	}
 	frontMatter["name"] = packageName
 	normalized, buildErr := buildSkillPackageDocument(frontMatter, body)
 	if buildErr != nil {
 		return nil, nil, buildErr
 	}
-	if err := os.MkdirAll(targetDir, 0o755); err != nil {
-		return nil, nil, fmt.Errorf("创建目标目录失败: %w", err)
-	}
-	if err := os.WriteFile(targetPath, []byte(normalized), 0o644); err != nil {
-		return nil, nil, fmt.Errorf("写入目标 skill 失败: %w", err)
+	if err := installSkillImport(sourcePackageDir, targetDir, normalized); err != nil {
+		return nil, nil, err
 	}
 	return map[string]any{
-		"name":   packageName,
-		"source": sourceSkillPath,
-		"target": targetPath,
+		"name":         packageName,
+		"source":       sourceSkillPath,
+		"target":       targetPath,
+		"scope":        targetLocation.Scope,
+		"owner_config": targetLocation.OwnerConfig,
 	}, nil, nil
 }
+
+var skillImportMu sync.Mutex
 
 func (s *FileSkillService) loadSkillPackageDetailAt(skillName string, location skillPackageLocation) (SkillPackageDetail, error) {
 	toolRegistry, err := s.loadRuntimeToolRegistry()
@@ -1065,6 +1115,12 @@ func (s *FileSkillService) loadSkillPackageDetailAtWithRegistry(skillName string
 		SkillPackageSummary: SkillPackageSummary{
 			PackageID:     packageID,
 			Name:          name,
+			DisplayName:   pkg.DisplayName,
+			Domain:        pkg.Domain,
+			System:        pkg.System,
+			Hidden:        pkg.Hidden,
+			AutoMount:     pkg.AutoMount,
+			Deprecated:    pkg.FrontMatter.Deprecated,
 			Description:   strings.TrimSpace(pkg.FrontMatter.Description),
 			Kind:          strings.TrimSpace(pkg.Kind),
 			Backend:       strings.TrimSpace(pkg.FrontMatter.Backend),
@@ -1280,9 +1336,14 @@ func buildSkillPackageDocument(frontMatter map[string]any, body string) (string,
 }
 
 func validateLegacySkillImportDirectory(packageDir string) error {
+	if _, err := os.Stat(filepath.Join(packageDir, "workflow.yaml")); err == nil {
+		return &SkillMutationUnsupportedError{Operation: "import", Target: packageDir, Reason: "串行 workflow.yaml 已下线，请使用 FLOW.md 流程包"}
+	} else if !os.IsNotExist(err) {
+		return err
+	}
 	for _, name := range []string{"config.yaml", "config.yml"} {
 		if _, err := os.Stat(filepath.Join(packageDir, name)); err == nil {
-			return &SkillMutationUnsupportedError{Operation: "import", Target: packageDir, Reason: "legacy skill 导入仅支持 markdown-only package，不支持包含 config.yaml 的技能包"}
+			return &SkillMutationUnsupportedError{Operation: "import", Target: packageDir, Reason: "含 config.yaml 的工具包请使用扩展清单导入"}
 		}
 	}
 	toolsDir := filepath.Join(packageDir, "tools")
@@ -1314,7 +1375,7 @@ func validateLegacySkillImportDirectory(packageDir string) error {
 		return fmt.Errorf("读取工具目录失败: %w", walkErr)
 	}
 	if unsupported {
-		return &SkillMutationUnsupportedError{Operation: "import", Target: packageDir, Reason: "legacy skill 导入仅支持 markdown-only package，不支持包含 tools/*.yaml 的技能包"}
+		return &SkillMutationUnsupportedError{Operation: "import", Target: packageDir, Reason: "含 tools/*.yaml 工具定义的目录请使用扩展清单导入"}
 	}
 	return nil
 }

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: terrain_ruggedness
-  display_name: 地形粗糙度
+  keywords: ["地形粗糙度", "分析地形粗糙度", "空间分析", "空间统计", "空间聚类"]
+  display_name: "计算地形粗糙度"
   domain: spatial-analysis
   runtime: qgis
 spec:

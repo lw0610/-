@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: symmetric_difference
-  display_name: 对称差集
+  keywords: ["图层对称差集", "分析图层对称差集", "几何处理", "空间叠加", "几何修复"]
+  display_name: "计算图层对称差集"
   domain: vector-geometry
   runtime: qgis
 spec:

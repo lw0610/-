@@ -75,7 +75,7 @@ func TestCreateRuntimeSkillToolFilterUsesCategorySkillsOnly(t *testing.T) {
 	}
 }
 
-func TestGetAgentMiddlewareSkillsSkipsCategoryPackages(t *testing.T) {
+func TestGetAgentMiddlewareSkillsSkipsShortCategoryPackages(t *testing.T) {
 	runtimeConfig := &RuntimeSkillConfig{
 		Global: RuntimeSkillGlobalConfig{
 			SkillPackages: []string{"project-state", "prompt-refinement"},

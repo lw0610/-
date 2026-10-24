@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: raster_reclassify
-  display_name: 栅格重分类
+  keywords: ["栅格数值", "重分类栅格数值", "栅格分析", "地形分析", "空间插值"]
+  display_name: "重分类栅格数值"
   domain: raster-analysis
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入栅格
   - name: RASTER_BAND
     type: integer
-    description: 波段号
+    description: "波段号（从 1 开始的波段序号）"
     default: 1
   - name: TABLE
     type: matrix

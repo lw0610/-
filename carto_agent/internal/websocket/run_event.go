@@ -74,6 +74,8 @@ func buildRunEventMessageWithOptions(msg Message, options runEventOptions) (Mess
 
 func normalizeRunEventType(msg Message) string {
 	switch msg.Type {
+	case MsgTypeFlowEvent:
+		return stringValue(msg.Data["event"])
 	case MsgTypeThinking:
 		return "thinking"
 	case MsgTypeResponse:

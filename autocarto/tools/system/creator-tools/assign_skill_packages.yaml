@@ -2,6 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: assign_skill_packages
+  display_name: "分配能力工具包"
+  keywords: ["能力工具包", "分配能力工具包", "方案配置", "工具管理", "技能创建"]
   domain: creator-tools
   runtime: internal
 spec:
@@ -9,17 +11,22 @@ spec:
   parameters:
   - name: config_name
     type: string
+    description: "目标智能体方案编号"
     required: true
   - name: mode
     type: string
+    description: "方案配置区段：runtime 或 plan；Build 模式对应 runtime"
     required: true
   - name: target
     type: string
+    description: "分配目标类型：global 或 agent"
     required: true
   - name: agent_name
     type: string
+    description: "目标智能体名称；target 为 agent 时必填"
   - name: skill_packages
     type: array
+    description: "技能包编号组成的字符串数组"
     required: true
 execution:
   backend_tool: assign_skill_packages

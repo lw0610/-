@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestDefaultAgentConfigRefreshPreservesUnknownPackages(t *testing.T) {
+func TestDefaultAgentConfigPreservesUserRolesPromptsAndUnknownPackages(t *testing.T) {
 	tmpDir := t.TempDir()
 	defaultDir := filepath.Join(tmpDir, "default")
 	if err := os.MkdirAll(defaultDir, 0o755); err != nil {
@@ -111,45 +111,39 @@ plan:
 		t.Fatalf("expected runtime and plan after refresh: %+v", data)
 	}
 
-	embedded := builtInDefaultAgentConfig()
-	if embedded == nil || embedded.Runtime == nil || embedded.Plan == nil {
-		t.Fatal("expected embedded default config")
+	if len(data.Runtime.Agents) != 5 {
+		t.Fatalf("startup added or deleted user roles: %v", sortedAgentNames(data.Runtime.Agents))
 	}
-
-	gotRuntimeAgents := sortedAgentNames(data.Runtime.Agents)
-	wantRuntimeAgents := sortedAgentNames(embedded.Runtime.Agents)
-	if len(gotRuntimeAgents) != len(wantRuntimeAgents) {
-		t.Fatalf("unexpected runtime agents after refresh: got=%v want=%v", gotRuntimeAgents, wantRuntimeAgents)
+	if data.Runtime.Agents["orchestrator"].Prompts["static_instructions"] != "legacy orchestrator prompt" || data.Plan.Agents["planner"].Prompts["runtime_mode_instruction"] != "legacy runtime instruction" {
+		t.Fatal("startup overwrote editable user prompts")
 	}
-	for i, want := range wantRuntimeAgents {
-		if gotRuntimeAgents[i] != want {
-			t.Fatalf("unexpected runtime agents after refresh: got=%v want=%v", gotRuntimeAgents, wantRuntimeAgents)
+	for _, check := range []struct {
+		got  []string
+		want string
+	}{
+		{data.Runtime.LegacyUnresolvedPackages, "third-party-global"},
+		{data.Runtime.Agents["orchestrator"].LegacyUnresolvedPackages, "third-party-orchestrator"},
+		{data.Runtime.Agents["scripting_specialist"].LegacyUnresolvedPackages, "third-party-script"},
+		{data.Plan.Global.LegacyUnresolvedPackages, "third-party-plan"},
+	} {
+		if !containsNormalized(check.got, check.want) {
+			t.Errorf("unknown package not preserved: %s", check.want)
 		}
 	}
-
-	if data.Runtime.Agents["orchestrator"].Prompts["static_instructions"] != embedded.Runtime.Agents["orchestrator"].Prompts["static_instructions"] {
-		t.Fatalf("expected orchestrator prompt refreshed to embedded default")
+	if data.Flows == nil || !containsNormalized(data.Flows.Enabled, "data-to-map") {
+		t.Fatal("legacy workflow did not become a flow reference")
 	}
-	if data.Plan.Agents["planner"].Prompts["runtime_mode_instruction"] != embedded.Plan.Agents["planner"].Prompts["runtime_mode_instruction"] {
-		t.Fatalf("expected planner runtime prompt refreshed to embedded default")
+	if raw, err := os.ReadFile(configPath); err != nil || string(raw) != legacyConfig {
+		t.Fatal("read changed the user's saved file", err)
 	}
-	if !containsString(data.Runtime.Global.SkillPackages, "third-party-global") {
-		t.Fatalf("expected runtime global third-party package preserved: %v", data.Runtime.Global.SkillPackages)
+	warned := map[string]bool{}
+	for _, warning := range data.MigrationWarnings {
+		if warning.Code == "LEGACY_PACKAGE_UNRESOLVED" {
+			warned[warning.Package] = true
+		}
 	}
-	if !containsString(data.Runtime.Agents["scripting_specialist"].SkillPackages, "third-party-script") {
-		t.Fatalf("expected scripting third-party package preserved: %v", data.Runtime.Agents["scripting_specialist"].SkillPackages)
-	}
-	if !containsString(data.Runtime.Agents["orchestrator"].SkillPackages, "third-party-orchestrator") {
-		t.Fatalf("expected orchestrator third-party package preserved: %v", data.Runtime.Agents["orchestrator"].SkillPackages)
-	}
-	if !containsString(data.Plan.Global.SkillPackages, "third-party-plan") {
-		t.Fatalf("expected plan third-party package preserved: %v", data.Plan.Global.SkillPackages)
-	}
-	if containsString(data.Runtime.Agents["orchestrator"].SkillPackages, "data-to-map-full-pipeline") {
-		t.Fatalf("expected retired built-in package removed from orchestrator: %v", data.Runtime.Agents["orchestrator"].SkillPackages)
-	}
-	if containsString(data.Runtime.Agents["orchestrator"].SkillPackages, "third-party-script") {
-		t.Fatalf("unexpected third-party script package leaked into orchestrator: %v", data.Runtime.Agents["orchestrator"].SkillPackages)
+	if len(warned) != 4 {
+		t.Fatal("unresolved package warnings missing", data.MigrationWarnings)
 	}
 	if _, err := os.Stat(exclusiveSkillPath); err != nil {
 		t.Fatalf("expected exclusive skill file preserved: %v", err)

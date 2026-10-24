@@ -1,0 +1,58 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: route_draw
+  display_name: 绘制数据集路线
+  keywords:
+  - 路线绘制
+  - 路线数据集
+  - 路线标注
+  - 路线样式
+  domain: route-cartography
+  runtime: qgis
+spec:
+  description: 仅绘制已校验六表中的路线及名称标注，返回每条路线回执、实际图层名称与 ID 和数据集信息。
+  parameters:
+  - name: dataset_source
+    type: string
+    enum:
+    - current_session
+    - explicit
+    required: true
+    description: 数据来源：当前任务数据集或显式指定目录
+  - name: dataset_dir
+    type: string
+    description: 六表数据集目录；explicit 时必填，相对路径按项目根解析
+  - name: expected_table_counts
+    type: object
+    description: 可选六表行数断言，文件名到非负整数的映射
+  - name: expected_task_id
+    type: string
+    description: 可选任务编号断言，必须与数据集元数据一致
+  - name: route_style
+    type: resource
+    resource_type: route_style
+    default_resource: route_style.mono
+    description: 路线样式资源的名称、编号或路径；数据集中非空样式编号仍优先
+  - name: renderer_plugin_dir
+    type: string
+    description: 可选渲染插件目录；省略时在当前 QGIS profile 按配置的插件名查找
+  - name: label_layer_name
+    type: string
+    default: 路线名称
+    description: 路线名称标注图层名称，默认路线名称
+  - name: strict
+    type: boolean
+    default: true
+    description: 是否对缺地点或不完整路径报错，默认 true
+execution:
+  handler: handlers.route_tools.route_draw_handler
+  param_mapping:
+    dataset_source: '{{ dataset_source }}'
+    dataset_dir: '{{ dataset_dir }}'
+    expected_table_counts: '{{ expected_table_counts }}'
+    expected_task_id: '{{ expected_task_id }}'
+    route_style: '{{ route_style }}'
+    renderer_plugin_dir: '{{ renderer_plugin_dir }}'
+    label_layer_name: '{{ label_layer_name }}'
+    strict: '{{ strict }}'

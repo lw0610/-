@@ -18,6 +18,10 @@ import { useInstanceStore } from '@/stores/instanceStore'
 import { useKnowledgeReview } from '@/features/knowledge-review/useKnowledgeReview'
 import { parseReviewReference } from '@/features/knowledge-review/model'
 import KnowledgeReviewDialog from '@/features/knowledge-review/KnowledgeReviewDialog'
+import { useFlowComposer } from '@/features/flow-run/useFlowComposer'
+import FlowComposer from '@/features/flow-run/FlowComposer'
+import { useFlowRunStore } from '@/features/flow-run/store'
+import { useChatStore } from '@/stores/chatStore'
 
 export default function ChatPanel() {
   const review = useKnowledgeReview()
@@ -36,6 +40,10 @@ export default function ChatPanel() {
   const messaging = useChatMessaging({
     ensureSession: session.ensureSession,
   })
+  const composer = useFlowComposer(messaging.handleSend)
+  const flowSessionId = useChatStore(state => state.sessionId) || ''
+  const flowRuns = useFlowRunStore(state => state.runs)
+  const blockedFlows = useFlowRunStore(state => state.blocked)
   const instances = useInstanceStore((s) => s.instances)
   const activeInstanceId = useInstanceStore((s) => s.activeInstanceId)
   const runningCount = useInstanceStore((s) => s.runningCount)
@@ -71,6 +79,9 @@ export default function ChatPanel() {
         <div className="relative min-h-0 flex-1 overflow-hidden">
           <MessageList
             messages={messaging.messages}
+            flowRuns={flowRuns[flowSessionId]}
+            flowBlocked={blockedFlows[flowSessionId]}
+            onResumeFlow={messaging.handleResumeFlow}
             workflowBlocks={messaging.workflowBlocks}
             focusedWorkflowBlockId={session.focusedWorkflowBlockId}
             onOpenWorkflowBlock={session.handleOpenWorkflowBlock}
@@ -89,7 +100,7 @@ export default function ChatPanel() {
 
         {messaging.isThinking && <ThinkingIndicator />}
 
-        {messaging.activeInterrupt && !parseReviewReference(messaging.activeInterrupt) && (
+        {messaging.activeInterrupt && !messaging.activeInterrupt.flow_run_id && !parseReviewReference(messaging.activeInterrupt) && (
           <div className="mx-auto w-full max-w-4xl shrink-0 px-3 pb-1.5">
             <InterruptCard
               interrupt={messaging.activeInterrupt}
@@ -106,7 +117,9 @@ export default function ChatPanel() {
         )}
 
         <ChatInput
-          onSend={messaging.handleSend}
+          onSend={composer.send}
+          sendBlocked={composer.blocked}
+          flowControls={<FlowComposer composer={composer} disabled={chatDisabled || messaging.isRunning} mode={context.executionMode}/>}
           onCancel={messaging.handleCancel}
           disabled={chatDisabled}
           running={messaging.isRunning}

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_create
-  display_name: layout_create
+  keywords: ["打印版面", "生成打印版面", "地图排版", "版面元素"]
+  display_name: "创建打印版面"
   runtime: qgis
   domain: print-layout
 spec:
@@ -14,10 +15,10 @@ spec:
     description: 布局名称
   - name: page_width
     type: number
-    description: 页面宽度
+    description: "自定义页面宽度（毫米，正数）"
   - name: page_height
     type: number
-    description: 页面高度
+    description: "自定义页面高度（毫米，正数）"
   - name: units
     type: string
     description: 单位 (mm/cm/inches/pixels)

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_item_frame
-  display_name: layout_set_item_frame
+  keywords: ["元素边框", "配置元素边框", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置元素边框"
   runtime: qgis
   domain: print-layout
 spec:
@@ -21,7 +22,7 @@ spec:
     description: 边框颜色
   - name: width
     type: number
-    description: 边框宽度
+    description: "边框线宽（毫米，非负）"
   - name: enabled
     type: boolean
     description: 是否启用边框

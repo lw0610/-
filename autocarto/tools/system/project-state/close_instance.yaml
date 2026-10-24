@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: close_instance
-  display_name: close_instance
+  keywords: ["地图实例", "关闭地图实例", "地图工程", "图层状态", "工程管理"]
+  display_name: "关闭地图实例"
   domain: project-state
   runtime: qgis
 spec:

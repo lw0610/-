@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: create_spatial_index
+  keywords: ["空间索引", "生成空间索引", "几何处理", "空间叠加", "几何修复"]
   display_name: 创建空间索引
   domain: vector-geometry
   runtime: qgis

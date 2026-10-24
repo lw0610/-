@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: clip
-  display_name: 裁剪
+  keywords: ["按叠加图层裁剪", "几何处理", "空间叠加", "几何修复"]
+  display_name: "按叠加图层裁剪"
   domain: vector-geometry
   runtime: qgis
 spec:

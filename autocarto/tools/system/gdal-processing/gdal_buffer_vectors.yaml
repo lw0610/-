@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_buffer_vectors
-  display_name: 矢量缓冲区
+  keywords: ["矢量缓冲区", "生成矢量缓冲区", "栅格处理", "矢量处理", "空间分析"]
+  display_name: "创建矢量缓冲区"
   domain: gdal-processing
   runtime: qgis
 spec:
@@ -15,7 +16,7 @@ spec:
   - name: DISTANCE
     type: number
     required: true
-    description: 缓冲距离
+    description: "缓冲距离（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
   - name: DISSOLVE
     type: boolean
     description: 是否融合结果

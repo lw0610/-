@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: extract_by_extent
-  display_name: 按范围提取
+  keywords: ["按范围提取要素", "几何处理", "空间叠加", "几何修复"]
+  display_name: "按范围提取要素"
   domain: vector-geometry
   runtime: qgis
 spec:

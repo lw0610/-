@@ -5,6 +5,8 @@ from autocarto.tools.system._shared.layout_module_loader import load_layout_hand
 __all__ = [
     "add_map_item_handler",
     "set_map_extent_handler",
+    "get_item_corners_handler",
+    "set_map_scale_handler",
     "add_legend_handler",
     "add_scalebar_handler",
     "add_label_handler",
@@ -20,16 +22,12 @@ __all__ = [
     "align_items_handler",
     "add_overview_handler",
     "add_decorative_border_handler",
-    "add_file_overview_to_layout_handler",
 ]
 
 
 def __getattr__(name):
     if name not in __all__:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-    if name == "add_file_overview_to_layout_handler":
-        from autocarto.tools.system._shared.layout_file_overview_impl import add_file_overview_to_layout_handler
-        return add_file_overview_to_layout_handler
     return load_layout_handler(
         "autocarto.tools.system._shared.print_layout_items_impl", name,
         Path(__file__).resolve().parents[2] / "_shared" / "print_layout_items_impl.py",

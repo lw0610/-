@@ -33,6 +33,8 @@ declare -a CHECK_HEADLESS_E2E_SPECS=(
     "tests/e2e/backend-reconnect.spec.ts"
     "tests/e2e/diagnostics-page.spec.ts"
     "tests/e2e/services-page.spec.ts"
+    "tests/e2e/flow-center.spec.ts"
+    "tests/e2e/flow-run.spec.ts"
 )
 
 APP_VERSION=""
@@ -111,7 +113,11 @@ detect_python() {
     if [ -n "$PYTHON_BIN" ]; then
         return 0
     fi
-    if command -v python3 >/dev/null 2>&1; then
+    if [ -x "/Applications/QGIS-LTR.app/Contents/MacOS/python" ]; then
+        PYTHON_BIN="/Applications/QGIS-LTR.app/Contents/MacOS/python"
+    elif [ -x "/Applications/QGIS.app/Contents/MacOS/python" ]; then
+        PYTHON_BIN="/Applications/QGIS.app/Contents/MacOS/python"
+    elif command -v python3 >/dev/null 2>&1; then
         PYTHON_BIN="python3"
     elif command -v python >/dev/null 2>&1; then
         PYTHON_BIN="python"
@@ -214,6 +220,15 @@ with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
             parts = set(rel.parts)
             if parts & exclude_dirs:
                 continue
+            plugin_rel = path.relative_to(base)
+            if plugin_rel.parts[0] == 'data':
+                continue
+            if path.name in {'.master_key', 'secrets.enc', '.port'}:
+                continue
+            if plugin_rel.as_posix() == 'config/plugin_config.yaml':
+                continue
+            if path.suffix in {'.db', '.sqlite'} or path.name.endswith(('.db-wal', '.db-shm')):
+                continue
             if path.suffix in exclude_suffixes:
                 continue
             if path.is_dir():
@@ -221,7 +236,7 @@ with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
             zf.write(path, rel.as_posix())
 print(archive)
 PY
-    ok "插件压缩包已生成�?archive_path"
+    ok "插件压缩包已生成：$archive_path"
 }
 
 copy_artifact_if_exists() {
@@ -304,7 +319,7 @@ require_dir() {
     local path="$1"
     local guidance="$2"
     if [ ! -d "$path" ]; then
-        add_preflight_error "$guidance（缺少目录: $path）"
+        add_preflight_error "${guidance}（缺少目录: $path）"
     fi
 }
 
@@ -312,7 +327,7 @@ require_file() {
     local path="$1"
     local guidance="$2"
     if [ ! -f "$path" ]; then
-        add_preflight_error "$guidance（缺少文件: $path）"
+        add_preflight_error "${guidance}（缺少文件: $path）"
     fi
 }
 
@@ -327,6 +342,13 @@ require_command() {
 
 check_repo_layout() {
     local command_name="$1"
+
+    case "$command_name" in
+        build|dev|dist|plugin|app|dmg|deb|appimage|check)
+            require_dir "$PLUGIN_DIR/flows/system" "缺少内置流程目录，无法完整打包运行资产"
+            require_dir "$PLUGIN_DIR/resources/system" "缺少内置资源库目录，无法完整打包运行资产"
+            ;;
+    esac
 
     case "$command_name" in
         deps)
@@ -789,7 +811,7 @@ deploy_plugin() {
     fi
 
     info "同步 autocarto 插件�?$QGIS_PLUGINS_DIR/autocarto"
-    rsync -a --delete --exclude='logs' --exclude='.session' --exclude='__pycache__' "$PLUGIN_DIR/" "$QGIS_PLUGINS_DIR/autocarto/"
+    rsync -a --delete --exclude='/data/' --exclude='.master_key' --exclude='secrets.enc' --exclude='.port' --exclude='/config/plugin_config.yaml' --exclude='*.db' --exclude='*.db-wal' --exclude='*.db-shm' --exclude='*.sqlite' --exclude='logs' --exclude='.session' --exclude='__pycache__' "$PLUGIN_DIR/" "$QGIS_PLUGINS_DIR/autocarto/"
 
     ok "QGIS 插件部署完成�?QGIS_PLUGINS_DIR"
 }
@@ -1017,12 +1039,12 @@ run_packaged_runtime_smoke_gate() {
     if [ "$status" -ne 0 ]; then
         failure_reason="$(extract_packaged_smoke_failure_reason)"
         write_packaged_smoke_gate_summary "$mode" "FAIL" "$artifact_path" "failed" "$failure_reason"
-        [ -n "$failure_reason" ] && warn "packaged smoke 失败原因�?failure_reason"
+        [ -n "$failure_reason" ] && warn "packaged smoke 失败原因：$failure_reason"
         return "$status"
     fi
 
     write_packaged_smoke_gate_summary "$mode" "PASS" "$artifact_path" "passed"
-    ok "Packaged Runtime Smoke 通过�?artifact_path"
+    ok "Packaged Runtime Smoke 通过：$artifact_path"
 }
 
 run_go_build_gate() {
@@ -1042,7 +1064,8 @@ run_go_vet_gate() {
 run_go_test_gate() {
     (
         cd "$AGENT_DIR"
-        go test ./...
+        # Keep subprocess startup/idle-deadline tests independent of other packages.
+        go test -p 1 ./...
     )
 }
 
@@ -1063,18 +1086,12 @@ run_frontend_unit_gate() {
 run_python_gate() {
     (
         cd "$ROOT_DIR"
-        "$PYTHON_BIN" -m pytest autocarto/tests/ -v
+        "$PYTHON_BIN" "$ROOT_DIR/scripts/refactor/run_python_tests.py"
     )
 }
 
-cleanup_playwright_ports() {
-    local frontend_port="${AUTOCARTO_PLAYWRIGHT_FRONTEND_PORT:-3005}"
-    local backend_port="${AUTOCARTO_TEST_RUNTIME_PORT:-50001}"
-    local proxy_port="${AUTOCARTO_PLAYWRIGHT_PROXY_PORT:-50002}"
-    lsof -ti:"$frontend_port" | xargs -r kill || true
-    lsof -ti:"$backend_port" | xargs -r kill || true
-    lsof -ti:"$proxy_port" | xargs -r kill || true
-}
+# Check servers own their child processes; occupied ports are never evicted.
+cleanup_playwright_ports() { :; }
 
 run_headless_e2e_gate() {
     (
@@ -1122,12 +1139,12 @@ run_check_step() {
 print_check_banner() {
     step "Wave 6 架构门禁（Task 10）"
     info "Wave Gate：Wave 6 / Task 10 tightened verification gate"
-    info "本次运行证据�?(current_check_evidence_relative)"
-    info "默认 check 证据�?CHECK_EVIDENCE_RELATIVE"
-    info "packaged check 证据�?CHECK_PACKAGED_EVIDENCE_RELATIVE"
-    info "live check 证据�?CHECK_LIVE_EVIDENCE_RELATIVE"
+    info "本次运行证据：$(current_check_evidence_relative)"
+    info "默认 check 证据：$CHECK_EVIDENCE_RELATIVE"
+    info "packaged check 证据：$CHECK_PACKAGED_EVIDENCE_RELATIVE"
+    info "live check 证据：$CHECK_LIVE_EVIDENCE_RELATIVE"
     info "headless Playwright：ENABLED（默认）"
-    info "失败归档目录�?CHECK_FAILURE_ARCHIVE_RELATIVE"
+    info "失败归档目录：$CHECK_FAILURE_ARCHIVE_RELATIVE"
     if is_live_e2e_enabled; then
         info "live-QGIS：ENABLED（AUTOCARTO_LIVE_E2E=1）"
     else
@@ -1135,8 +1152,8 @@ print_check_banner() {
     fi
     if is_packaged_smoke_enabled; then
         info "packaged smoke：ENABLED（AUTOCARTO_PACKAGED_SMOKE=1）"
-        info "packaged smoke 证据目录�?PACKAGED_SMOKE_EVIDENCE_RELATIVE"
-        info "release gate 摘要目录�?PACKAGED_SMOKE_GATE_EVIDENCE_RELATIVE"
+        info "packaged smoke 证据目录：$PACKAGED_SMOKE_EVIDENCE_RELATIVE"
+        info "release gate 摘要目录：$PACKAGED_SMOKE_GATE_EVIDENCE_RELATIVE"
     else
         warn "packaged smoke：SKIPPED（原因：未设置 AUTOCARTO_PACKAGED_SMOKE=1）"
     fi
@@ -1146,12 +1163,12 @@ print_check_summary() {
     local status="$1"
 
     step "架构门禁汇总"
-    info "本次运行证据�?(current_check_evidence_relative)"
-    info "默认 check 证据�?CHECK_EVIDENCE_RELATIVE"
-    info "packaged check 证据�?CHECK_PACKAGED_EVIDENCE_RELATIVE"
-    info "live check 证据�?CHECK_LIVE_EVIDENCE_RELATIVE"
+    info "本次运行证据：$(current_check_evidence_relative)"
+    info "默认 check 证据：$CHECK_EVIDENCE_RELATIVE"
+    info "packaged check 证据：$CHECK_PACKAGED_EVIDENCE_RELATIVE"
+    info "live check 证据：$CHECK_LIVE_EVIDENCE_RELATIVE"
     info "headless Playwright：ENABLED（默认）"
-    info "失败归档目录�?CHECK_FAILURE_ARCHIVE_RELATIVE"
+    info "失败归档目录：$CHECK_FAILURE_ARCHIVE_RELATIVE"
     if is_live_e2e_enabled; then
         info "live-QGIS：ENABLED（AUTOCARTO_LIVE_E2E=1）"
     else
@@ -1159,8 +1176,8 @@ print_check_summary() {
     fi
     if is_packaged_smoke_enabled; then
         info "packaged smoke：ENABLED（AUTOCARTO_PACKAGED_SMOKE=1）"
-        info "packaged smoke 证据目录�?PACKAGED_SMOKE_EVIDENCE_RELATIVE"
-        info "release gate 摘要目录�?PACKAGED_SMOKE_GATE_EVIDENCE_RELATIVE"
+        info "packaged smoke 证据目录：$PACKAGED_SMOKE_EVIDENCE_RELATIVE"
+        info "release gate 摘要目录：$PACKAGED_SMOKE_GATE_EVIDENCE_RELATIVE"
     else
         warn "packaged smoke：SKIPPED（原因：未设置 AUTOCARTO_PACKAGED_SMOKE=1）"
     fi
@@ -1194,8 +1211,20 @@ run_check_pipeline() {
     return 0
 }
 
-run_check() {
+run_check() (
     local status=0
+    local check_runtime
+    check_runtime="$(mktemp -d "${TMPDIR:-/tmp}/autocarto-check.XXXXXX")"
+    trap '"$PYTHON_BIN" -c "import shutil,sys; shutil.rmtree(sys.argv[1])" "$check_runtime"' EXIT
+    export AUTOCARTO_HOME="$check_runtime"
+    export AUTOCARTO_PROJECT_ROOT="$ROOT_DIR"
+    export AUTOCARTO_ASSETS_ROOT="$PLUGIN_DIR"
+    export AUTOCARTO_DISABLE_KEYRING=1
+    export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-offscreen}"
+    export PYTHONPATH="$PLUGIN_DIR/tests/golden/.runtime/deps:$ROOT_DIR${PYTHONPATH:+:$PYTHONPATH}"
+    # Both listeners must be free; the supervisors fail honestly on conflicts.
+    export AUTOCARTO_TEST_RUNTIME_PORT="${AUTOCARTO_TEST_RUNTIME_PORT:-50141}"
+    export AUTOCARTO_PLAYWRIGHT_FRONTEND_PORT="${AUTOCARTO_PLAYWRIGHT_FRONTEND_PORT:-50142}"
 
     print_check_banner
 
@@ -1206,7 +1235,7 @@ run_check() {
 
     print_check_summary "$status"
     return "$status"
-}
+)
 
 run_deps() {
     step "Install Frontend Dependencies"
@@ -1393,6 +1422,8 @@ AutoCarto AI 构建脚本
 说明:
   - 脚本不会自动安装依赖；缺失依赖时会在预检阶段失败并给出修复指引。
   - 前端依赖缺失时，请先运行：./build.sh deps
+  - 校验已有发行包：AUTOCARTO_PACKAGED_SMOKE=1 ./build.sh check
+  - 发行包检查记录：.sisyphus/evidence/task-10-build-check-packaged.txt
   - build/dev 需要现成的 QGIS 插件目录；若尚未创建，请先启动一次 QGIS。
 EOF
 }

@@ -1,0 +1,68 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:4e16f5619811548b4bf4eb2a6c44343dc49ecc60c91518b13bd952e376083b2e",
+  "entries": [
+    {
+      "aliases": [
+        "keep"
+      ],
+      "description": "保留QML",
+      "exists": true,
+      "geometry": "polygon",
+      "kind": "style",
+      "label_field": "",
+      "label_mode": "keep",
+      "layer": "保留标注",
+      "name": "保留标注",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/标注样式/面样式.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/标注样式/面样式.qml"
+    },
+    {
+      "aliases": [
+        "off"
+      ],
+      "description": "关闭",
+      "exists": true,
+      "geometry": "polygon",
+      "kind": "style",
+      "label_field": "",
+      "label_mode": "off",
+      "layer": "关闭标注",
+      "name": "关闭标注",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/标注样式/面样式.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/标注样式/面样式.qml"
+    },
+    {
+      "aliases": [
+        "field"
+      ],
+      "description": "覆盖字段",
+      "exists": true,
+      "geometry": "polygon",
+      "kind": "style",
+      "label_field": "NAME",
+      "label_mode": "field",
+      "layer": "字段标注",
+      "name": "字段标注",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/标注样式/面样式.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/标注样式/面样式.qml"
+    }
+  ],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/标注样式/对照表.csv",
+  "format": "",
+  "id": "legacy.style_set.66b33b9068",
+  "name": "标注样式",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/标注样式",
+  "total_entries": 3,
+  "truncated": false,
+  "type": "style_set",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

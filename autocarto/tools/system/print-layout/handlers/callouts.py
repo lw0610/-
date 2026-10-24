@@ -1,0 +1,1 @@
+from autocarto.tools.system._shared.callouts_impl import layout_add_callouts_handler

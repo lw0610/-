@@ -119,6 +119,8 @@ type RuntimeState struct {
 // ToolCatalogItem 表示 middleware 聚合后的工具目录项。
 type ToolCatalogItem struct {
 	Name                string         `json:"name"`
+	DisplayName         string         `json:"display_name,omitempty"`
+	Keywords            []string       `json:"keywords,omitempty"`
 	ProviderID          string         `json:"provider_id,omitempty"`
 	RawName             string         `json:"raw_name,omitempty"`
 	Description         string         `json:"description,omitempty"`

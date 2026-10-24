@@ -1,11 +1,45 @@
 package config
 
 import (
+	"bytes"
 	"errors"
 	"os"
 	"path/filepath"
 	"testing"
 )
+
+func TestSecretsManagerExplicitDisableUsesOnlyEncryptedLocalStorage(t *testing.T) {
+	for _, value := range []string{"1", "true", " TRUE "} {
+		t.Run(value, func(t *testing.T) {
+			t.Setenv("AUTOCARTO_DISABLE_KEYRING", value)
+			dir := t.TempDir()
+			manager, err := NewSecretsManager(dir)
+			if err != nil || manager.keyring != nil {
+				t.Fatal("explicit disable still selected an OS keyring backend", err)
+			}
+			if err := manager.SetAPIKey("isolated-test-provider", "test-only-local-value"); err != nil {
+				t.Fatal(err)
+			}
+			raw, err := os.ReadFile(filepath.Join(dir, "secrets.enc"))
+			if err != nil || bytes.Contains(raw, []byte("test-only-local-value")) {
+				t.Fatal("local fallback is not encrypted", err)
+			}
+			reloaded, err := NewSecretsManager(dir)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if value, err := reloaded.GetAPIKey("isolated-test-provider"); err != nil || value != "test-only-local-value" {
+				t.Fatal("encrypted fallback did not round-trip", err)
+			}
+			if err := reloaded.DeleteAPIKey("isolated-test-provider"); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := reloaded.GetAPIKey("isolated-test-provider"); err == nil {
+				t.Fatal("local key deletion failed")
+			}
+		})
+	}
+}
 
 type fakeKeyringBackend struct {
 	values    map[string]string

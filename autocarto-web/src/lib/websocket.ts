@@ -247,6 +247,20 @@ export class WebSocketClient {
     return sent
   }
 
+  sendTask(content: string, sessionId: string, data: Record<string, unknown>) {
+    const sid = sessionId.trim()
+    if (!sid) return false
+    const requestId = typeof data.request_id === 'string' && data.request_id.trim()
+      ? data.request_id.trim() : `task-${generateId()}`
+    const idempotencyKey = typeof data.idempotency_key === 'string' && data.idempotency_key.trim()
+      ? data.idempotency_key.trim() : requestId
+    const sent = this.send({ type: 'task', content, session_id: sid,
+      request_id: requestId, idempotency_key: idempotencyKey,
+      data: { ...data, request_id: requestId, idempotency_key: idempotencyKey } })
+    if (sent && sid) this.cancelIdempotencyKeys.delete(sid)
+    return sent
+  }
+
   sendModelSwitch(providerName: string) {
     return this.send({
       type: 'model_quick_switch',

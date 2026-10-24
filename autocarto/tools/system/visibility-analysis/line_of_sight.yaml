@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: line_of_sight
-  display_name: 视线分析
+  keywords: ["两点通视", "分析两点通视", "可视域", "通视分析", "地形遮挡"]
+  display_name: "分析两点通视"
   domain: visibility-analysis
   runtime: qgis
 spec:
@@ -22,15 +23,15 @@ spec:
       description: 终点坐标
     - name: BAND
       type: integer
-      description: DEM波段号
+      description: "DEM波段号（从 1 开始的波段序号）"
       default: 1
     - name: OBSERVER_HEIGHT
       type: number
-      description: 起点附加高度
+      description: "起点附加高度（与输入地形高程的垂直单位一致）"
       default: 0.0
     - name: TARGET_HEIGHT
       type: number
-      description: 终点附加高度
+      description: "终点附加高度（与输入地形高程的垂直单位一致）"
       default: 0.0
     - name: SAMPLE_INTERVAL
       type: number

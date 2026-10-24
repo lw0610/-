@@ -1,0 +1,81 @@
+{
+  "source_directory": "/tmp/enio2-v42-acceptance-20261023",
+  "execution": "real QGIS tools and Go Controller; deterministic role/model adapters",
+  "scenarios": [
+    {
+      "scenario": "route-no-review",
+      "status": "completed",
+      "inputs_unchanged": true,
+      "comparison": {
+        "success": true,
+        "differences": [],
+        "preview": {
+          "algorithm": "dhash64",
+          "distance": 1,
+          "diagnostic_only": true
+        }
+      },
+      "outputs": [
+        "固定路线数据回归样例.pdf"
+      ]
+    },
+    {
+      "scenario": "route-with-review",
+      "status": "completed",
+      "inputs_unchanged": true,
+      "comparison": {
+        "success": true,
+        "differences": [],
+        "preview": {
+          "algorithm": "dhash64",
+          "distance": 1,
+          "diagnostic_only": true
+        }
+      },
+      "outputs": [
+        "初版.png",
+        "初版_quality_20261023T073336Z_2837ff68_final.png",
+        "初版_quality_20261023T073336Z_2837ff68_original.png",
+        "初版_quality_20261023T073336Z_2837ff68_review.json",
+        "固定路线数据回归样例.pdf"
+      ]
+    },
+    {
+      "scenario": "statistical",
+      "status": "completed",
+      "inputs_unchanged": true,
+      "comparison": {
+        "success": true,
+        "differences": [],
+        "preview": {
+          "algorithm": "dhash64",
+          "distance": 0,
+          "diagnostic_only": true
+        }
+      },
+      "outputs": [
+        "统计成果.png"
+      ]
+    },
+    {
+      "scenario": "province-density",
+      "status": "completed",
+      "inputs_unchanged": true,
+      "comparison": null,
+      "outputs": [
+        "人口密度.pdf",
+        "人口密度.png"
+      ]
+    },
+    {
+      "scenario": "survey-route",
+      "status": "completed",
+      "inputs_unchanged": true,
+      "comparison": null,
+      "outputs": [
+        "考察路线.pdf",
+        "考察路线.png"
+      ]
+    }
+  ]
+}

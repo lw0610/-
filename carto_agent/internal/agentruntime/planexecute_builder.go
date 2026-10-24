@@ -27,27 +27,27 @@ func (f *Factory) buildPlanComponents(ctx context.Context, activeConfigName stri
 	}
 
 	skillDirs := config.ResolveRuntimeSkillDirsWithPlugin(f.config.PluginSkillsDir, f.config.BuiltinSkillsDir, f.config.UserSkillsDir, f.config.ConfigBaseDir, activeConfigName)
-	packageTools, err := subagents.LoadPackageToolsMultiDir(skillDirs...)
+	packageCatalog, err := subagents.LoadPackageCatalogMultiDir(skillDirs...)
 	if err != nil {
 		return nil, fmt.Errorf("load package tools: %w", err)
 	}
-	plannerRuntimeSkillConfig := buildPlanRuntimeSkillConfig(planCfg, planAgentDef, packageTools)
+	plannerRuntimeSkillConfig := buildPlanRuntimeSkillConfig(planCfg, planAgentDef, packageCatalog)
 	if err := validatePlanConfigRuntime(ctx, planAgentDef, planCfg); err != nil {
 		return nil, fmt.Errorf("validate plan runtime: %w", err)
 	}
 
-	selectedTools := selectPlanTools(ctx, f.config.BaseTools, planCfg, planAgentDef, packageTools)
+	selectedTools := selectPlanTools(ctx, f.config.BaseTools, planCfg, planAgentDef, packageCatalog)
 	selectedTools = dedupeToolsByName(ctx, selectedTools)
 	if len(selectedTools) == 0 {
 		globalPackages := []string(nil)
 		if planCfg != nil {
-			globalPackages = append(globalPackages, planCfg.Global.SkillPackages...)
+			globalPackages = append(globalPackages, planCfg.Global.ToolPackages...)
 		}
 		agentPackages := []string(nil)
 		if planAgentDef != nil {
-			agentPackages = append(agentPackages, planAgentDef.SkillPackages...)
+			agentPackages = append(agentPackages, planAgentDef.ToolPackages...)
 		}
-		return nil, fmt.Errorf("plan mode 未选择到任何可用工具: package_tools=%d global_skill_packages=%v agent_skill_packages=%v", len(packageTools), globalPackages, agentPackages)
+		return nil, fmt.Errorf("plan mode 未选择到任何可用工具: package_tools=%d global_skill_packages=%v agent_skill_packages=%v", len(packageCatalog.Tools), globalPackages, agentPackages)
 	}
 	instruction := planInstruction(ctx, planAgentDef, selectedTools)
 	var middlewares []adk.AgentMiddleware

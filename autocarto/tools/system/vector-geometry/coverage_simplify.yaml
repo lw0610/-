@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: coverage_simplify
-  display_name: 简化Coverage
+  keywords: ["面覆盖几何", "简化面覆盖几何", "几何处理", "空间叠加", "几何修复"]
+  display_name: "简化面覆盖几何"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -15,7 +16,7 @@ spec:
   - name: TOLERANCE
     type: number
     required: true
-    description: 简化容差
+    description: "简化容差（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
     default: 1.0
   - name: OUTPUT
     type: output_layer

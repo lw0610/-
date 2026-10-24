@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: generate_elevation_profile_image
-  display_name: 生成高程剖面图像
+  keywords: ["高程剖面图", "生成高程剖面图", "统计图表", "网格数据", "数据可视化"]
+  display_name: "生成高程剖面图"
   runtime: qgis
   domain: misc-tools
 spec:
@@ -18,11 +19,11 @@ spec:
     description: DEM栅格
   - name: WIDTH
     type: integer
-    description: 图像宽度
+    description: "图像宽度（像素，正整数）"
     default: 800
   - name: HEIGHT
     type: integer
-    description: 图像高度
+    description: "图像高度（像素，正整数）"
     default: 600
   - name: OUTPUT
     type: file

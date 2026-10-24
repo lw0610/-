@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: resource_get
+  display_name: 查看资源
+  domain: runtime-control
+  runtime: internal
+  keywords: [资源, 资源名称, 文件清单, 资源编号]
+spec:
+  description: 按名称或编号查看经过统一解析的资源及其实际条目；流程内可使用本步骤资源名称。
+  parameters:
+    - name: name
+      type: string
+      required: true
+      description: 资源名称或编号。
+    - name: type
+      type: string
+      description: 可选资源类型；不指定时按名称匹配。
+    - name: offset
+      type: integer
+      default: 0
+      description: 条目起始位置，从0开始。
+    - name: limit
+      type: integer
+      default: 200
+      description: 本页最多条目数，范围1至1000。
+execution:
+  backend_tool: resource_get
+  param_mapping:
+    name: '{{ name }}'
+    type: '{{ type }}'
+    offset: '{{ offset }}'
+    limit: '{{ limit }}'

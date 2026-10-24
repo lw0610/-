@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: join_attributes_by_location_summary
-  display_name: 按位置连接属性(汇总)
+  keywords: ["按位置汇总连接属性", "属性字段", "字段计算", "属性连接"]
+  display_name: "按位置汇总连接属性"
   domain: vector-fields
   runtime: qgis
 spec:

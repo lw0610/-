@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: pdal_clip
-  display_name: 点云裁剪
+  keywords: ["点云数据", "裁剪点云数据", "激光点云"]
+  display_name: "裁剪点云数据"
   domain: point-cloud
   runtime: qgis
 spec:

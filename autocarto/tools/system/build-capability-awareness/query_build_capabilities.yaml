@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: query_build_capabilities
-  display_name: query_build_capabilities
+  keywords: ["可用能力", "查询可用能力", "能力查询", "工具发现", "方案规划"]
+  display_name: "查询可用能力"
   domain: build-capability-awareness
   runtime: internal
 spec:

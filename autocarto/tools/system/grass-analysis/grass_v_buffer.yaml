@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: grass_v_buffer
-  display_name: GRASS缓冲区
+  keywords: ["几何缓冲区", "生成几何缓冲区", "地形分析", "矢量分析", "水文分析"]
+  display_name: "创建几何缓冲区"
   domain: grass-analysis
   runtime: qgis
 spec:
@@ -15,7 +16,7 @@ spec:
   - name: distance
     type: number
     required: true
-    description: 缓冲距离
+    description: "缓冲距离（所用坐标系的地图单位；投影坐标通常为米，地理坐标为度）"
   - name: output
     type: output_layer
     description: 输出图层

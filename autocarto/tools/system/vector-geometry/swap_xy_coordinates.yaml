@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: swap_xy_coordinates
-  display_name: 交换XY坐标
+  keywords: ["平面坐标轴", "交换平面坐标轴", "几何处理", "空间叠加", "几何修复"]
+  display_name: "交换平面坐标轴"
   domain: vector-geometry
   runtime: qgis
 spec:

@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: get_canvas_info
-  display_name: get_canvas_info
+  keywords: ["画布状态", "查询画布状态", "地图画布", "地图缩放", "显示范围"]
+  display_name: "读取画布状态"
   domain: canvas-navigation
   runtime: qgis
 spec:

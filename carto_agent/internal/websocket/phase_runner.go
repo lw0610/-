@@ -37,14 +37,19 @@ func (s *DeepServer) runAgentPhase(
 		checkpointID = strings.TrimSpace(options.runID)
 	}
 	taskCtx := withToolSessionContext(ctx, sessionID, projectPath, boundInstanceID)
+	taskCtx = s.withFlowService(taskCtx, sessionID)
 	taskCtx = s.withGEEProgress(taskCtx, conn, sessionID, options.modePhase)
 	taskCtx = deepagent.WithKnowledgeReview(taskCtx, s.KnowledgeReviewStore())
 	// Preserve source before model compression/delegation without enabling ADK
 	// SessionValues' automatic FString formatting of JSON-bearing agent prompts.
-	for i := len(input) - 1; i >= 0; i-- {
-		if input[i] != nil && input[i].Role == schema.User {
-			taskCtx = knowledge.WithOriginalSource(taskCtx, input[i].Content)
-			break
+	if options.originalSource != nil {
+		taskCtx = knowledge.WithOriginalSource(taskCtx, *options.originalSource)
+	} else {
+		for i := len(input) - 1; i >= 0; i-- {
+			if input[i] != nil && input[i].Role == schema.User {
+				taskCtx = knowledge.WithOriginalSource(taskCtx, input[i].Content)
+				break
+			}
 		}
 	}
 	s.markSessionRuntimeRunning(sessionID, checkpointID, options.executionMode, options.modePhase, projectPath, boundInstanceID)

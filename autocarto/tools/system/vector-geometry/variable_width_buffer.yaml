@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: variable_width_buffer
-  display_name: 可变宽度缓冲区
+  keywords: ["按测量值创建缓冲区", "几何处理", "空间叠加", "几何修复"]
+  display_name: "按测量值创建缓冲区"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: SEGMENTS
     type: integer
-    description: 线段数
+    description: "线段数（数量，正整数）"
     default: 16
   - name: OUTPUT
     type: output_layer

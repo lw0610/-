@@ -2,6 +2,7 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: add_unique_value_index_field
+  keywords: ["唯一值索引字段", "添加唯一值索引字段", "属性字段", "字段计算", "属性连接"]
   display_name: 添加唯一值索引字段
   domain: vector-fields
   runtime: qgis

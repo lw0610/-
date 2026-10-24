@@ -1,8 +1,10 @@
+import threading
 import unittest
 from typing import Any, Dict, cast
 from unittest.mock import patch
 
-from autocarto.tools.system._shared.pyqgis_executor_impl import ScriptExecutor
+from autocarto.tools.system._shared.pyqgis_executor_impl import ScriptExecutor, ScriptTask, ScriptStatus
+import autocarto.tools.system._shared.pyqgis_executor_impl as pyqgis_executor_impl
 from autocarto.tools.system._shared.pyqgis_tools_impl import (
     pyqgis_get_task_status,
     pyqgis_submit_script,
@@ -83,3 +85,51 @@ class ScriptExecutorContractTestCase(unittest.TestCase):
         self.assertEqual(task_dict["status"], "succeeded")
         self.assertEqual(task_dict["result"], "ok")
         self.assertEqual(len(runner_calls), 1)
+
+    def test_terminal_state_publishes_result_error_and_completion_together(self):
+        for script_result, terminal, expected_result, expected_error in (
+            ({"result": "ok"}, ScriptStatus.SUCCEEDED, "ok", None),
+            ({"error": "broken"}, ScriptStatus.FAILED, None, "broken"),
+            ({"timeout": True}, ScriptStatus.FAILED, None, "脚本执行超时"),
+        ):
+            with self.subTest(terminal=terminal, script_result=script_result):
+                publishing = threading.Event()
+                release = threading.Event()
+                observed = []
+
+                class ObservedTask(ScriptTask):
+                    def __setattr__(self, name, value):
+                        if name == "status" and value in (
+                            ScriptStatus.SUCCEEDED,
+                            ScriptStatus.FAILED,
+                            ScriptStatus.CANCELED,
+                        ):
+                            # Freeze the writer at the public terminal transition.
+                            # Readers must never observe terminal status with a
+                            # result/error/completion timestamp still unpublished.
+                            observed.append((self.result, self.error, self.completed_at))
+                            publishing.set()
+                            if not release.wait(timeout=5):
+                                raise RuntimeError("terminal publication was not released")
+                        super().__setattr__(name, value)
+
+                executor = ScriptExecutor(max_concurrent=1)
+                with patch.object(pyqgis_executor_impl, "ScriptTask", ObservedTask), patch.object(
+                    executor, "_run_script_with_timeout", return_value=script_result
+                ):
+                    task_id = executor.submit("result = 'ok'")
+                    try:
+                        self.assertTrue(publishing.wait(timeout=5))
+                        self.assertEqual(len(observed), 1)
+                        result, error, completed_at = observed[0]
+                        self.assertEqual(result, expected_result)
+                        self.assertEqual(error, expected_error)
+                        self.assertIsNotNone(completed_at)
+                    finally:
+                        release.set()
+                        task = executor.wait_for_task(task_id, timeout=5)
+                    self.assertIsNotNone(task)
+                    self.assertEqual(task["status"], terminal.value)
+                    self.assertEqual(task["result"], expected_result)
+                    self.assertEqual(task["error"], expected_error)
+                    self.assertIsNotNone(task["completed_at"])

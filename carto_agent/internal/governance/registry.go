@@ -8,6 +8,5 @@ import (
 type GovernedRegistry interface {
 	LoadToolRegistry() (*toolpkg.Registry, error)
 	LoadSkillRegistry() (*skill.Registry, error)
-	ResolveWorkflowPackage(packageName string) (skill.SkillPackage, bool, error)
 	ResolveSkillPackage(packageName string) (skill.SkillPackage, bool, error)
 }

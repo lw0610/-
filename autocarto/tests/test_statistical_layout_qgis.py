@@ -1,4 +1,5 @@
 """Real QGIS layout regression; run only in an isolated headless process."""
+from autocarto.tests.support.resource_handles import load_handle, resolve_handle
 import importlib.util
 from pathlib import Path
 import tempfile
@@ -27,10 +28,10 @@ class StatisticalLayoutQgisTestCase(unittest.TestCase):
         cls.profile = tempfile.TemporaryDirectory(prefix="autocarto-stat-layout-")
         cls.app = QgsApplication([], False, cls.profile.name)
         cls.app.initQgis()
-        from autocarto.tools.system._shared import print_layout_items_impl, print_layout_advanced_impl, cartography_style_impl
+        from autocarto.tools.system._shared import print_layout_items_impl, print_layout_advanced_impl, style_thematic_impl
         cls.items = print_layout_items_impl
         cls.advanced = print_layout_advanced_impl
-        cls.styles = cartography_style_impl
+        cls.styles = style_thematic_impl
 
     @classmethod
     def tearDownClass(cls):
@@ -142,12 +143,12 @@ class StatisticalLayoutQgisTestCase(unittest.TestCase):
         bad = self.style_legend(legend_layers=["duplicate"])
         self.assertFalse(bad["success"], bad)
         self.assertEqual([node.layerId() for node in legend.model().rootGroup().findLayers()], [second.id(), first.id()])
-        with_arrow = self.style_legend(legend_layers=[first.id()], include_military_arrow=True)
+        with_arrow = self.style_legend(legend_layers=[first.id()], legend_symbols=load_handle("route-arrow"), legend_extra_items=[{"label": "路线箭头", "symbol_type": "route_arrow"}])
         self.assertTrue(with_arrow["success"], with_arrow)
-        self.assertEqual([item["name"] for item in with_arrow["data"]["legend_layers"]], ["duplicate", "军标箭头"])
-        self.assertTrue(self.style_legend(legend_layers=[first.id()], include_military_arrow=True)["success"])
+        self.assertEqual([item["name"] for item in with_arrow["data"]["legend_layers"]], ["duplicate", "路线箭头"])
+        self.assertTrue(self.style_legend(legend_layers=[first.id()], legend_symbols=load_handle("route-arrow"), legend_extra_items=[{"label": "路线箭头", "symbol_type": "route_arrow"}])["success"])
         self.assertEqual(len(self.project.mapLayers()), 3)
-        without_arrow = self.style_legend()
+        without_arrow = self.style_legend(legend_extra_items=[])
         self.assertTrue(without_arrow["success"], without_arrow)
         self.assertEqual([item["id"] for item in without_arrow["data"]["legend_layers"]], [first.id()])
 

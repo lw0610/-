@@ -262,7 +262,7 @@ func (s *ReviewStore) Create(in ReviewCreateInput) (*Review, error) {
 		return nil, err
 	}
 	now := time.Now().UTC().Format(time.RFC3339Nano)
-	r := &Review{Version: 1, ReviewID: uuid.NewString(), SessionID: in.SessionID, ProjectPath: reviewProjectPath(in.ProjectPath), SessionDir: in.SessionDir, InstanceID: in.InstanceID, SourceText: in.SourceText, SourceSHA256: in.Contract.SourceSHA256, CompatibilityKey: key, Contract: in.Contract, OriginalResult: in.OriginalResult, OriginalCacheInfo: in.OriginalCacheInfo, CompileArgs: in.CompileArgs, TraceFile: in.TraceFile, Graph: in.Graph, Revision: 1, Status: ReviewAwaiting, Errors: []ReviewError{}, Assets: in.Assets, CreatedAt: now, UpdatedAt: now}
+	r := &Review{Version: 1, ReviewID: uuid.NewString(), SessionID: in.SessionID, ProjectPath: reviewProjectPath(in.ProjectPath), SessionDir: in.SessionDir, InstanceID: in.InstanceID, SourceText: in.SourceText, SourceSHA256: in.Contract.SourceSHA256, CompatibilityKey: key, Contract: in.Contract, OriginalResult: in.OriginalResult, OriginalCacheInfo: in.OriginalCacheInfo, CompileArgs: in.CompileArgs, ResourceScope: in.ResourceScope, TraceFile: in.TraceFile, Graph: in.Graph, Revision: 1, Status: ReviewAwaiting, Errors: []ReviewError{}, Assets: in.Assets, CreatedAt: now, UpdatedAt: now}
 	r.InitialGraph, r.ExtractionStatus, r.PendingIssues = in.Graph, in.ExtractionStatus, in.PendingIssues
 	if err = validateReviewPendingIssues(r.PendingIssues); err != nil {
 		return nil, err

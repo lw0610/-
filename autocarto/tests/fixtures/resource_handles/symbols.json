@@ -1,0 +1,55 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:4b071cb808a82983aba94dd4043b9d626e400f0ba44993b72391feea7de64830",
+  "entries": [
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "起点",
+      "event_types": [
+        "出发"
+      ],
+      "exists": true,
+      "format": "svg",
+      "kind": "symbol",
+      "name": "start_flag",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/symbols/通用符号/point.svg",
+      "priority": 2,
+      "size": 4,
+      "symbol_type": "start_flag"
+    },
+    {
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "description": "途经点",
+      "event_types": [
+        "抵达"
+      ],
+      "exists": true,
+      "format": "svg",
+      "kind": "symbol",
+      "name": "waypoint",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/symbols/通用符号/point.svg",
+      "priority": 1,
+      "size": 4,
+      "symbol_type": "waypoint"
+    }
+  ],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/symbols/通用符号/对照表.csv",
+  "format": "",
+  "id": "legacy.symbols.f0ac00b86d",
+  "name": "通用符号",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/symbols/通用符号",
+  "total_entries": 2,
+  "truncated": false,
+  "type": "symbols",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

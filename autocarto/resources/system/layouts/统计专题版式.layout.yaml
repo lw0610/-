@@ -1,0 +1,44 @@
+name: 统计专题版式
+description: 主图上方标题、右侧原生图例、下方来源和统计口径说明，不添加装饰边框或固定专题符号
+font_family: Noto Sans CJK SC
+page:
+  default_paper: A4
+  default_orientation: landscape
+  # T01 统计基线：297×210 mm；主图 (12,32,205,155)，右侧为图例区域。
+  reference_size_mm: {width: 297, height: 210}
+  margins_mm: {top: 32, right: 80, bottom: 23, left: 12}
+fonts_mm:
+  A0: {title: 15, legend_title: 4, legend_body: 3, scalebar: 2.5, overview_title: 4, overview_body: 3}
+  A1: {title: 11.5, legend_title: 3.5, legend_body: 2.5, scalebar: 2, overview_title: 3.5, overview_body: 2.5}
+  A2: {title: 9, legend_title: 3, legend_body: 2.5, scalebar: 2, overview_title: 3, overview_body: 2.5}
+  A3: {title: 8, legend_title: 2.5, legend_body: 2, scalebar: 2, overview_title: 2.5, overview_body: 2}
+  # 统计基线的 A4 图例使用 3.5/2.5 mm，保留其独立字号，不套用路线 A4 的较小图例。
+  A4: {title: 5.5, legend_title: 3.5, legend_body: 2.5, scalebar: 2, overview_title: 3.5, overview_body: 2.5}
+elements:
+  main_map: {fill: content_area}
+  grid: {enabled: false, density: sparse}
+  title:
+    anchor: {to: page, at: top_left, placement: inside, offset_mm: {x: 12, y: 8}, scale_offset_with_page: true}
+    bold: true
+    frame: false
+    background: false
+  overview:
+    optional: true
+    anchor: {to: page, at: top_left, placement: inside, offset_mm: {x: 12, y: 194}, scale_offset_with_page: true}
+    max_width_ratio: 1
+    frame: false
+    background: false
+  legend:
+    anchor: {to: page, at: top_left, placement: inside, offset_mm: {x: 223, y: 55}, scale_offset_with_page: true}
+    font_family: Arial
+    width_mm: 60
+    height_mm: 70
+    frame: true
+  scalebar:
+    anchor: {to: page, at: top_left, placement: inside, offset_mm: {x: 145, y: 173}, scale_offset_with_page: true}
+    max_width_mm: 50
+  north_arrow:
+    anchor: {to: page, at: top_left, placement: inside, offset_mm: {x: 194, y: 36}, scale_offset_with_page: true}
+    width_mm: 15
+    height_mm: 22
+    svg: arrows/NorthArrow_03.svg

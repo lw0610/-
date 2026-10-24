@@ -2,11 +2,12 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layer_set_marker_symbol
-  display_name: layer_set_marker_symbol
+  keywords: ["点标记符号", "配置点标记符号", "符号样式", "地图标注", "图层渲染"]
+  display_name: "设置点标记符号"
   runtime: qgis
   domain: cartography
 spec:
-  description: 根据图层类型设置点图层符号和标注
+  description: 根据图层类型读取内置 QML 设置点图层符号和标注；建议改用按样式集上样式
   parameters:
   - name: layer
     type: string
@@ -23,6 +24,8 @@ spec:
     type: string
     required: true
     description: 标注字段名称
+policy:
+  visibility: hidden
 execution:
   handler: handlers.style.set_marker_symbol_handler
   param_mapping:

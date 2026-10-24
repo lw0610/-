@@ -1,0 +1,39 @@
+{
+  "api_version": "resource-handle/v1",
+  "base_dir": "",
+  "digest": "sha256:bbee59fbdefaad32efeaae72918fc1ea11701ad8e41c16996b988767ef5f1901",
+  "entries": [
+    {
+      "aliases": [
+        "测试面",
+        "区域"
+      ],
+      "description": "",
+      "exists": true,
+      "geometry": "polygon",
+      "kind": "style",
+      "label_field": "NAME",
+      "label_mode": "field",
+      "layer": "契约面",
+      "name": "契约面",
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/契约样式/面样式.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/契约样式/面样式.qml"
+    }
+  ],
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/契约样式/mapping.xlsx",
+  "format": "",
+  "id": "legacy.style_set.722214904e",
+  "name": "契约样式",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/契约样式",
+  "total_entries": 1,
+  "truncated": false,
+  "type": "style_set",
+  "version": "0.0.0",
+  "warnings": [
+    {
+      "code": "FLOW_RESOURCE_MANIFEST_MISSING",
+      "message": "资源没有清单，可升级以获得稳定编号。"
+    }
+  ]
+}

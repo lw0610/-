@@ -22,7 +22,7 @@ func TestCreateManagedConfigAndAssignManagedSkillPackages(t *testing.T) {
 	if updated.Runtime == nil {
 		t.Fatalf("expected runtime config after assign")
 	}
-	got := updated.Runtime.Global.SkillPackages
+	got := updated.Runtime.SharedToolPackages
 	if len(got) != 2 || got[0] != "runtime-control" || got[1] != "skill-management" {
 		t.Fatalf("unexpected runtime global skill packages: %#v", got)
 	}

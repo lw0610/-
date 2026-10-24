@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: set_z_value
-  display_name: 设置Z值
+  keywords: ["几何高程值", "配置几何高程值", "几何处理", "空间叠加", "几何修复"]
+  display_name: "设置几何高程值"
   domain: vector-geometry
   runtime: qgis
 spec:
@@ -14,7 +15,7 @@ spec:
     description: 输入图层
   - name: Z_VALUE
     type: number
-    description: Z值
+    description: "几何高程值（与输入数据的垂直坐标单位一致）"
     default: 0.0
   - name: OUTPUT
     type: output_layer

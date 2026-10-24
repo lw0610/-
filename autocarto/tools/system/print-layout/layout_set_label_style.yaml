@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_set_label_style
-  display_name: layout_set_label_style
+  keywords: ["文本标签样式", "配置文本标签样式", "打印版面", "地图排版", "版面元素"]
+  display_name: "设置文本标签样式"
   runtime: qgis
   domain: print-layout
 spec:
@@ -42,10 +43,14 @@ spec:
     description: 边框颜色
   - name: frame_width
     type: number
-    description: 边框宽度
+    description: "边框线宽（毫米，非负）"
   - name: width
     type: number
     description: 换行参考宽度(mm)
+  - name: unlock_font
+    type: boolean
+    required: false
+    description: 本次调用是否明确允许修改版式锁定的字号；默认不允许，其他文字样式仍可修改
 execution:
   handler: handlers.layout_advanced.set_label_style_handler
   param_mapping:
@@ -61,3 +66,4 @@ execution:
     frame_color: '{{ frame_color }}'
     frame_width: '{{ frame_width }}'
     width: '{{ width }}'
+    unlock_font: '{{ unlock_font }}'

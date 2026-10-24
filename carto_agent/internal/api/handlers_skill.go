@@ -170,6 +170,7 @@ func (a *API) handleSaveSkill(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	a.InvalidateFlowEnvironment()
 	a.realtimeHub.BroadcastSkillCatalogChanged("refresh", "api", strings.TrimSpace(name))
 	Success(w, result)
 }
@@ -199,6 +200,7 @@ func (a *API) handleDeleteSkill(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	a.InvalidateFlowEnvironment()
 	a.realtimeHub.BroadcastSkillCatalogChanged("refresh", "api", strings.TrimSpace(name))
 	Success(w, result)
 }
@@ -269,6 +271,7 @@ func (a *API) handleToggleSkillPackage(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	a.InvalidateFlowEnvironment()
 	a.realtimeHub.BroadcastSkillCatalogChanged("refresh", "api", strings.TrimSpace(name))
 	pkg, pkgErr := a.getSkillPackageWithScope(name, scope, configName)
 	if pkgErr != nil {
@@ -296,6 +299,7 @@ func (a *API) handleMigrateSkillPackages(w http.ResponseWriter, r *http.Request)
 		Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	a.InvalidateFlowEnvironment()
 	a.realtimeHub.BroadcastSkillCatalogChanged("refresh", "api", "")
 	Success(w, result)
 }
@@ -332,6 +336,7 @@ func (a *API) handleImportSkill(w http.ResponseWriter, r *http.Request) {
 		importedCount = len(importedRaw)
 	}
 	if importedCount > 0 {
+		a.InvalidateFlowEnvironment()
 		a.realtimeHub.BroadcastSkillCatalogChanged("refresh", "api", "")
 	}
 	Success(w, result)

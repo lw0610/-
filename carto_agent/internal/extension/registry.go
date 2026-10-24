@@ -32,19 +32,49 @@ type RegisteredResourceState struct {
 	TargetDir string `yaml:"target_dir,omitempty"`
 }
 
-func RegisterManifest(manifest *Manifest, result *ImportResult, configBaseDir string) (string, error) {
-	if manifest == nil || result == nil {
-		return "", fmt.Errorf("extension manifest and import result are required")
+// CheckManifestRegistration validates the destination without changing files.
+// Call this before importing resources to detect existing records and unusable
+// metadata paths while the import can still be skipped without side effects.
+func CheckManifestRegistration(manifest *Manifest, configBaseDir string) (path string, exists bool, err error) {
+	if manifest == nil {
+		return "", false, fmt.Errorf("extension manifest is required")
+	}
+	if err := validatePathComponent(manifest.Metadata.Name, "metadata.name"); err != nil {
+		return "", false, err
 	}
 	baseDir := strings.TrimSpace(configBaseDir)
 	if baseDir == "" {
-		return "", fmt.Errorf("config base dir is required")
+		return "", false, fmt.Errorf("config base dir is required")
 	}
 	metadataDir := filepath.Join(baseDir, "extensions")
+	metadataDir, err = canonicalTargetPath(metadataDir)
+	if err != nil {
+		return "", false, err
+	}
+	metadataPath := filepath.Join(metadataDir, strings.TrimSpace(manifest.Metadata.Name)+".yaml")
+	if info, err := os.Lstat(metadataPath); err == nil {
+		if !info.Mode().IsRegular() {
+			return "", false, fmt.Errorf("extension metadata target must be a regular file: %s", metadataPath)
+		}
+		return metadataPath, true, nil
+	} else if !os.IsNotExist(err) {
+		return "", false, err
+	}
+	return metadataPath, false, nil
+}
+
+func RegisterManifest(manifest *Manifest, result *ImportResult, configBaseDir string) (string, error) {
+	if result == nil {
+		return "", fmt.Errorf("extension manifest and import result are required")
+	}
+	metadataPath, _, err := CheckManifestRegistration(manifest, configBaseDir)
+	if err != nil {
+		return "", err
+	}
+	metadataDir := filepath.Dir(metadataPath)
 	if err := os.MkdirAll(metadataDir, 0o755); err != nil {
 		return "", err
 	}
-	metadataPath := filepath.Join(metadataDir, strings.TrimSpace(manifest.Metadata.Name)+".yaml")
 	record := RegisteredMetadata{
 		APIVersion: manifest.APIVersion,
 		Kind:       manifest.Kind,
@@ -71,7 +101,27 @@ func RegisterManifest(manifest *Manifest, result *ImportResult, configBaseDir st
 	if err != nil {
 		return "", err
 	}
-	if err := os.WriteFile(metadataPath, raw, 0o644); err != nil {
+	temp, err := os.CreateTemp(metadataDir, ".extension-metadata-*")
+	if err != nil {
+		return "", err
+	}
+	defer os.Remove(temp.Name())
+	if err := temp.Chmod(0o644); err != nil {
+		_ = temp.Close()
+		return "", err
+	}
+	if _, err := temp.Write(raw); err != nil {
+		_ = temp.Close()
+		return "", err
+	}
+	if err := temp.Sync(); err != nil {
+		_ = temp.Close()
+		return "", err
+	}
+	if err := temp.Close(); err != nil {
+		return "", err
+	}
+	if err := os.Rename(temp.Name(), metadataPath); err != nil {
 		return "", err
 	}
 	return metadataPath, nil

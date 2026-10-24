@@ -144,7 +144,8 @@ def extract_and_compile_task_knowledge(
     model: Any,
     output_dir: Path | str,
     *,
-    symbol_assets_dir: Optional[Path | str] = None,
+    route_style: dict,
+    symbols: dict,
     overwrite: bool = False,
     instructions: str = "",
 ) -> Any:
@@ -157,6 +158,7 @@ def extract_and_compile_task_knowledge(
         graph,
         output_dir,
         source_text=source_text,
-        symbol_assets_dir=symbol_assets_dir,
+        route_style=route_style,
+        symbols=symbols,
         overwrite=overwrite,
     )

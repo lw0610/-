@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: distance_to_nearest_hub
-  display_name: 到最近中心距离
+  keywords: ["最近中心距离", "分析最近中心距离", "空间分析", "空间统计", "空间聚类"]
+  display_name: "计算最近中心距离"
   domain: spatial-analysis
   runtime: qgis
 spec:

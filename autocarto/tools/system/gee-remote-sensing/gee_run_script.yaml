@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gee_run_script
-  display_name: 执行 GEE 遥感脚本
+  keywords: ["云端遥感脚本", "执行云端遥感脚本", "遥感影像", "云端计算", "影像下载"]
+  display_name: "执行云端遥感脚本"
   domain: gee-remote-sensing
   runtime: internal
 spec:

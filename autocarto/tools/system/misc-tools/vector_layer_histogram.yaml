@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: vector_layer_histogram
-  display_name: 矢量图层直方图
+  keywords: ["字段直方图", "生成字段直方图", "统计图表", "网格数据", "数据可视化"]
+  display_name: "生成字段直方图"
   runtime: qgis
   domain: misc-tools
 spec:
@@ -18,7 +19,7 @@ spec:
     description: 数值字段
   - name: BINS
     type: integer
-    description: 分组数量
+    description: "分组数量（数量，正整数）"
     default: 10
   - name: OUTPUT
     type: file

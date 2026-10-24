@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: crs_reproject_vector
-  display_name: 矢量重投影
+  keywords: ["矢量投影", "转为矢量投影", "坐标系", "投影转换", "坐标转换"]
+  display_name: "转换矢量投影"
   domain: crs-projection
   runtime: qgis
 spec:

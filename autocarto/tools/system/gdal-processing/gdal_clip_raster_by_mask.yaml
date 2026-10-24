@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: gdal_clip_raster_by_mask
-  display_name: 按掩膜图层裁剪栅格
+  keywords: ["按掩膜裁剪栅格", "栅格处理", "矢量处理", "空间分析"]
+  display_name: "按掩膜裁剪栅格"
   domain: gdal-processing
   runtime: qgis
 spec:

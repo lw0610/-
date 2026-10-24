@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_rename
-  display_name: layout_rename
+  keywords: ["打印版面", "重命名打印版面", "地图排版", "版面元素"]
+  display_name: "重命名打印版面"
   runtime: qgis
   domain: print-layout
 spec:

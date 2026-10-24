@@ -2,7 +2,8 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: layout_get_item_properties
-  display_name: layout_get_item_properties
+  keywords: ["版面元素属性", "查询版面元素属性", "打印版面", "地图排版", "版面元素"]
+  display_name: "读取版面元素属性"
   runtime: qgis
   domain: print-layout
 spec:

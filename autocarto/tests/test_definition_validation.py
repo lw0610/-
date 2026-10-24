@@ -1,10 +1,79 @@
 import unittest
 from pathlib import Path
+import re
+
+import yaml
 
 from autocarto.core.tool_engine.definitions import ToolDefinitionLoader
 
 
 class DefinitionValidationTestCase(unittest.TestCase):
+    def test_category_packages_have_v2_metadata_and_cover_system_tools(self):
+        plugin_root = Path(__file__).resolve().parents[1]
+        tools = set()
+        for path in (plugin_root / "tools/system").rglob("*.yaml"):
+            definition = yaml.safe_load(path.read_text(encoding="utf-8-sig"))
+            if definition.get("kind") in {"Tool", "ToolPackage"}:
+                tools.add(definition["metadata"]["name"])
+        visible_owners = {name: [] for name in tools}
+        hidden_owners = {name: [] for name in tools}
+        domains = {"数据", "在线数据", "矢量", "栅格与分析", "制图", "版面与输出", "脚本", "质检", "系统"}
+        for path in (plugin_root / "skills/system").glob("*/SKILL.md"):
+            text = path.read_text(encoding="utf-8-sig")
+            front_matter = yaml.safe_load(text.split("---", 2)[1])
+            if front_matter.get("kind") != "category":
+                continue
+            with self.subTest(package=path.parent.name):
+                self.assertRegex(front_matter.get("display_name", ""), r"[\u4e00-\u9fff]")
+                self.assertIn(front_matter.get("domain"), domains)
+                self.assertIsInstance(front_matter.get("system"), bool)
+                self.assertIsInstance(front_matter.get("hidden"), bool)
+                auto_mount = front_matter.get("auto_mount", "")
+                self.assertIsInstance(auto_mount, str)
+                if auto_mount:
+                    self.assertTrue(front_matter["hidden"])
+                    self.assertTrue(auto_mount in {"main", "plan_main"} or (auto_mount.startswith("executor:") and bool(auto_mount.removeprefix("executor:"))))
+                declared = set(front_matter.get("tools", []))
+                self.assertFalse(declared - tools, f"工具包引用不存在的工具: {declared - tools}")
+                owners = hidden_owners if front_matter["hidden"] else visible_owners
+                for name in declared:
+                    owners[name].append(path.parent.name)
+        for name in sorted(tools):
+            with self.subTest(tool=name):
+                visible = sorted(visible_owners[name])
+                hidden = sorted(hidden_owners[name])
+                self.assertLessEqual(len(visible), 1, f"工具属于多个可见工具包: {visible}")
+                self.assertTrue(visible or hidden, "工具没有可见归属或明确的隐藏包登记")
+                self.assertFalse(visible and hidden, f"工具同时属于可见和隐藏包: {visible} / {hidden}")
+
+    def test_builtin_tool_discovery_metadata_is_chinese_and_structured(self):
+        tools_root = Path(__file__).resolve().parents[1] / "tools" / "system"
+        names = set()
+        for path in sorted(tools_root.rglob("*.yaml")):
+            definition = yaml.safe_load(path.read_text(encoding="utf-8-sig"))
+            if definition.get("kind") not in {"Tool", "ToolPackage"}:
+                continue
+            metadata = definition["metadata"]
+            with self.subTest(path=path.relative_to(tools_root).as_posix()):
+                name = metadata["name"]
+                self.assertNotIn(name, names)
+                names.add(name)
+                display_name = metadata.get("display_name", "")
+                self.assertNotEqual(display_name, name)
+                self.assertIsNotNone(re.search(r"[\u4e00-\u9fff]", display_name))
+                self.assertGreaterEqual(len(display_name), 4)
+                self.assertLessEqual(len(display_name), 12)
+                self.assertRegex(definition["spec"]["description"], r"[\u4e00-\u9fff]")
+                keywords = metadata.get("keywords", [])
+                self.assertIsInstance(keywords, list)
+                for keyword in keywords:
+                    self.assertIsInstance(keyword, str)
+                    self.assertTrue(keyword.strip())
+                    self.assertRegex(keyword, r"[\u4e00-\u9fff]")
+                for parameter in definition["spec"].get("parameters", []):
+                    self.assertRegex(parameter.get("description", ""), r"[\u4e00-\u9fff]")
+        self.assertTrue(names, "系统工具目录不能为空")
+
     def _authority_manifest(self):
         return [
             {

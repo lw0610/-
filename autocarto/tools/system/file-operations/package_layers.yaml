@@ -2,11 +2,12 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: package_layers
-  display_name: 打包图层
+  keywords: ["图层数据", "打包图层数据", "文件管理", "数据文件"]
+  display_name: "打包图层数据"
   domain: file-operations
   runtime: qgis
 spec:
-  description: 将多个图层打包为GeoPackage。默认输出到autoc/exports目录
+  description: "将输入图层打包为 GeoPackage 文件，返回实际输出路径。未指定输出时使用当前运行环境的默认导出目录。"
   parameters:
   - name: LAYERS
     type: multi_layer

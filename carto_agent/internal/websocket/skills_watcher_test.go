@@ -34,7 +34,7 @@ func (s *snapshotListingOnlyCatalog) GetSkillPackage(name string) (settings.Skil
 
 func TestCollectSkillsSnapshotReusesListedPathsAndSeesPackageAddRemove(t *testing.T) {
 	skillsDir := t.TempDir()
-	writeWatcherFile(t, filepath.Join(skillsDir, "first", "SKILL.md"), "---\nname: first\ndescription: first\nkind: workflow\n---\n")
+	writeWatcherFile(t, filepath.Join(skillsDir, "first", "SKILL.md"), "---\nname: first\ndescription: first\nkind: category\n---\n")
 	catalog := &snapshotListingOnlyCatalog{FileSkillService: settings.NewFileSkillService(skillsDir, nil)}
 	server := &DeepServer{skillCatalogStore: catalog}
 	before, err := server.collectSkillsSnapshot()
@@ -42,7 +42,7 @@ func TestCollectSkillsSnapshotReusesListedPathsAndSeesPackageAddRemove(t *testin
 		t.Fatal(err)
 	}
 	assertSnapshotKeyContains(t, before, "first/SKILL.md")
-	writeWatcherFile(t, filepath.Join(skillsDir, "second", "SKILL.md"), "---\nname: second\ndescription: second\nkind: workflow\n---\n")
+	writeWatcherFile(t, filepath.Join(skillsDir, "second", "SKILL.md"), "---\nname: second\ndescription: second\nkind: category\n---\n")
 	if err := os.RemoveAll(filepath.Join(skillsDir, "first")); err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +62,7 @@ func TestCollectSkillsSnapshotReusesListedPathsAndSeesPackageAddRemove(t *testin
 func TestWatchSkillsDirectorySkipsUnchangedCatalogAndInvalidatesOnToolYAML(t *testing.T) {
 	t.Setenv("AUTOCARTO_ASSETS_ROOT", t.TempDir())
 	skillsDir, toolsDir := t.TempDir(), t.TempDir()
-	writeWatcherFile(t, filepath.Join(skillsDir, "demo", "SKILL.md"), "---\nname: demo\ndescription: demo\nkind: workflow\n---\n")
+	writeWatcherFile(t, filepath.Join(skillsDir, "demo", "SKILL.md"), "---\nname: demo\ndescription: demo\nkind: category\n---\n")
 	catalog := &snapshotListingOnlyCatalog{FileSkillService: settings.NewFileSkillService(skillsDir, nil)}
 	catalog.RuntimeToolDirs = []string{toolsDir}
 	refresher := &stubCapabilityRefreshRequester{}
@@ -172,7 +172,7 @@ func TestWatchSkillsDirectoryKeepsRunningWhenPrimarySkillsDirMissingButOverlayRo
 	enterIsolatedWorkingDir(t)
 	missingDir := filepath.Join(t.TempDir(), "missing-skills")
 	pluginDir := t.TempDir()
-	writeWatcherFile(t, filepath.Join(pluginDir, "plugin-package", "SKILL.md"), "---\nname: plugin-package\ndescription: plugin\nkind: workflow\n---\n")
+	writeWatcherFile(t, filepath.Join(pluginDir, "plugin-package", "SKILL.md"), "---\nname: plugin-package\ndescription: plugin\nkind: category\n---\n")
 
 	server := NewDeepServer(0, nil)
 	server.userSkillsDir = missingDir
@@ -302,14 +302,14 @@ func TestWatchSkillsDirectoryRequestsCapabilityRefreshAfterDebouncedChange(t *te
 	}
 }
 
-func TestCollectSkillsSnapshotTracksOverlayRootsAndWorkflowFiles(t *testing.T) {
+func TestCollectSkillsSnapshotTracksOverlayRootsAndConfigFiles(t *testing.T) {
 	enterIsolatedWorkingDir(t)
 	globalDir := t.TempDir()
 	userDir := t.TempDir()
 
-	writeWatcherFile(t, filepath.Join(globalDir, "global-package", "SKILL.md"), "---\nname: global-package\ndescription: global\nkind: workflow\n---\n")
-	writeWatcherFile(t, filepath.Join(userDir, "workflow-package", "SKILL.md"), "---\nname: workflow-package\ndescription: workflow\nkind: workflow\n---\n")
-	writeWatcherFile(t, filepath.Join(userDir, "workflow-package", "workflow.yaml"), "apiVersion: workflow/v1\nkind: serial_workflow\nmetadata:\n  name: workflow-package\nspec:\n  steps: []\n")
+	writeWatcherFile(t, filepath.Join(globalDir, "global-package", "SKILL.md"), "---\nname: global-package\ndescription: global\nkind: category\n---\n")
+	writeWatcherFile(t, filepath.Join(userDir, "overlay-package", "SKILL.md"), "---\nname: overlay-package\ndescription: workflow\nkind: category\n---\n")
+	writeWatcherFile(t, filepath.Join(userDir, "overlay-package", "config.yaml"), "enabled: true\n")
 
 	server := &DeepServer{builtinSkillsDir: globalDir, userSkillsDir: userDir, skillsDir: userDir}
 	snapshot, err := server.collectSkillsSnapshot()
@@ -317,7 +317,7 @@ func TestCollectSkillsSnapshotTracksOverlayRootsAndWorkflowFiles(t *testing.T) {
 		t.Fatalf("collectSkillsSnapshot error: %v", err)
 	}
 	assertSnapshotKeyContains(t, snapshot, filepath.ToSlash(filepath.Join("global-package", "SKILL.md")))
-	assertSnapshotKeyContains(t, snapshot, filepath.ToSlash(filepath.Join("workflow-package", "workflow.yaml")))
+	assertSnapshotKeyContains(t, snapshot, filepath.ToSlash(filepath.Join("overlay-package", "config.yaml")))
 }
 
 func TestWatchSkillsDirectoryRequestsCapabilityRefreshAfterExclusiveOverlayChange(t *testing.T) {
@@ -326,9 +326,9 @@ func TestWatchSkillsDirectoryRequestsCapabilityRefreshAfterExclusiveOverlayChang
 	globalDir := t.TempDir()
 	userDir := t.TempDir()
 
-	writeWatcherFile(t, filepath.Join(globalDir, "global-package", "SKILL.md"), "---\nname: global-package\ndescription: global\nkind: workflow\n---\n")
-	writeWatcherFile(t, filepath.Join(userDir, "workflow-package", "SKILL.md"), "---\nname: workflow-package\ndescription: workflow\nkind: workflow\n---\n")
-	writeWatcherFile(t, filepath.Join(userDir, "workflow-package", "workflow.yaml"), "apiVersion: workflow/v1\nkind: serial_workflow\nmetadata:\n  name: workflow-package\nspec:\n  steps: []\n")
+	writeWatcherFile(t, filepath.Join(globalDir, "global-package", "SKILL.md"), "---\nname: global-package\ndescription: global\nkind: category\n---\n")
+	writeWatcherFile(t, filepath.Join(userDir, "overlay-package", "SKILL.md"), "---\nname: overlay-package\ndescription: workflow\nkind: category\n---\n")
+	writeWatcherFile(t, filepath.Join(userDir, "overlay-package", "config.yaml"), "enabled: true\n")
 
 	server := NewDeepServer(0, nil)
 	server.builtinSkillsDir = globalDir
@@ -345,7 +345,7 @@ func TestWatchSkillsDirectoryRequestsCapabilityRefreshAfterExclusiveOverlayChang
 	}()
 
 	waitForWatcherCondition(t, 5*time.Second, func() bool { return len(server.getSkillsSnapshot()) > 0 })
-	writeWatcherFile(t, filepath.Join(userDir, "workflow-package", "workflow.yaml"), "apiVersion: workflow/v1\nkind: serial_workflow\nmetadata:\n  name: workflow-package\nspec:\n  steps:\n    - id: report\n      type: tool\n      tool: get_layers_info\n")
+	writeWatcherFile(t, filepath.Join(userDir, "overlay-package", "config.yaml"), "enabled: false\n")
 
 	waitForWatcherCondition(t, 2*time.Second, func() bool {
 		return len(refresher.Reasons()) > 0
@@ -362,8 +362,8 @@ func TestWatchSkillsDirectoryIgnoresHiddenLowerLayerChanges(t *testing.T) {
 	globalDir := t.TempDir()
 	userDir := t.TempDir()
 
-	writeWatcherFile(t, filepath.Join(globalDir, "shared-package", "SKILL.md"), "---\nname: shared-package\ndescription: global\nkind: workflow\n---\n")
-	writeWatcherFile(t, filepath.Join(userDir, "shared-package", "SKILL.md"), "---\nname: shared-package\ndescription: user\nkind: workflow\n---\n")
+	writeWatcherFile(t, filepath.Join(globalDir, "shared-package", "SKILL.md"), "---\nname: shared-package\ndescription: global\nkind: category\n---\n")
+	writeWatcherFile(t, filepath.Join(userDir, "shared-package", "SKILL.md"), "---\nname: shared-package\ndescription: user\nkind: category\n---\n")
 
 	server := NewDeepServer(0, nil)
 	server.builtinSkillsDir = globalDir
@@ -380,7 +380,7 @@ func TestWatchSkillsDirectoryIgnoresHiddenLowerLayerChanges(t *testing.T) {
 	}()
 
 	waitForWatcherCondition(t, 5*time.Second, func() bool { return len(server.getSkillsSnapshot()) > 0 })
-	writeWatcherFile(t, filepath.Join(globalDir, "shared-package", "SKILL.md"), "---\nname: shared-package\ndescription: global changed\nkind: workflow\n---\n")
+	writeWatcherFile(t, filepath.Join(globalDir, "shared-package", "SKILL.md"), "---\nname: shared-package\ndescription: global changed\nkind: category\n---\n")
 	time.Sleep(skillsWatcherPollInterval + skillsWatcherDebounce + 150*time.Millisecond)
 	close(stopCh)
 	<-doneCh
@@ -393,7 +393,7 @@ func TestWatchSkillsDirectoryRefreshesWhenVisibleOverlaySourceChangesWithSameFil
 	enterIsolatedWorkingDir(t)
 	globalDir := t.TempDir()
 	userDir := t.TempDir()
-	raw := "---\nname: shared-package\ndescription: same package\nkind: workflow\n---\n"
+	raw := "---\nname: shared-package\ndescription: same package\nkind: category\n---\n"
 	globalSkillPath := filepath.Join(globalDir, "shared-package", "SKILL.md")
 	writeWatcherFile(t, globalSkillPath, raw)
 	fixedTime := time.Unix(1711111111, 0)
