@@ -1,0 +1,30 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: geodata_thumbnail
+  display_name: 生成地理文件缩略图
+  keywords: [缩略图, 地理数据预览]
+  domain: data-loading
+  runtime: qgis
+spec:
+  description: 使用临时图层生成PNG缩略图，不修改QGIS工程，也不覆盖已有文件。
+  parameters:
+    - {name: path, type: string, required: true, description: 地理文件路径}
+    - {name: output_path, type: string, required: true, description: 会话临时目录中的新PNG路径}
+    - {name: size, type: integer, default: 512, description: 边长像素，64至2048}
+    - {name: layer_name, type: string, description: 多图层文件的子图层名称}
+    - {name: x_field, type: string, description: CSV的X坐标列}
+    - {name: y_field, type: string, description: CSV的Y坐标列}
+    - {name: crs, type: string, description: CSV坐标的已知坐标系}
+  artifacts:
+    - {field: data.path, role: intermediate}
+execution:
+  handler: handlers.geodata.thumbnail_handler
+  param_mapping:
+    path: '{{ path }}'
+    output_path: '{{ output_path }}'
+    size: '{{ size }}'
+    layer_name: '{{ layer_name }}'
+    x_field: '{{ x_field }}'
+    y_field: '{{ y_field }}'
+    crs: '{{ crs }}'

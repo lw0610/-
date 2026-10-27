@@ -90,6 +90,7 @@ type Provider struct {
 	onCatalogChanged     func()
 	dynamicToolRegistry  DynamicToolRegistry
 	toolContractProvider ToolContractProvider
+	loadTileKey          func() (string, error) // private injection point; never part of tool args
 }
 
 type DynamicToolRegistry interface {
@@ -231,6 +232,26 @@ func (p *Provider) ListTools(ctx context.Context) ([]ToolDefinition, error) {
 
 // InvokeTool 调用交互工具。
 func (p *Provider) InvokeTool(ctx context.Context, toolName string, args map[string]any) (*InvokeResult, error) {
+	toolName = strings.TrimSpace(toolName)
+	for name := range args {
+		if strings.TrimSpace(name) == privateCredentialsKey {
+			return nil, fmt.Errorf("工具参数不能包含私有凭据字段")
+		}
+	}
+	privateTileLoad := toolName == "data_load_tiles"
+	if privateTileLoad {
+		if ctx == nil {
+			return nil, fmt.Errorf("瓦片加载缺少系统调用上下文")
+		}
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		var err error
+		args, err = authorizedTileArgs(ctx, args)
+		if err != nil {
+			return nil, err
+		}
+	}
 	targetID, plugin, err := p.resolveTargetPlugin(args)
 	if err != nil {
 		return nil, err
@@ -238,6 +259,16 @@ func (p *Provider) InvokeTool(ctx context.Context, toolName string, args map[str
 	params := cloneToolParams(args)
 	if targetID != "" {
 		params["target_instance_id"] = targetID
+	}
+	privateKey := ""
+	if privateTileLoad {
+		privateKey, err = p.tileCredential()
+		if err != nil {
+			return nil, err
+		}
+		// This is the final outbound bridge copy, after schema validation and
+		// trace arguments were captured. Never attach this map to tool results.
+		params[privateCredentialsKey] = map[string]any{"tianditu": privateKey}
 	}
 	requestID := uuid.NewString()
 	pending := &pendingRequest{ch: make(chan pendingResponse, 1)}
@@ -249,6 +280,9 @@ func (p *Provider) InvokeTool(ctx context.Context, toolName string, args map[str
 		"tool_name":  strings.TrimSpace(toolName),
 		"params":     params,
 	}}); err != nil {
+		if privateTileLoad {
+			return nil, fmt.Errorf("%s", redactTileText(err.Error(), privateKey))
+		}
 		return nil, err
 	}
 
@@ -259,6 +293,9 @@ func (p *Provider) InvokeTool(ctx context.Context, toolName string, args map[str
 	case result := <-pending.ch:
 		if result.invoke == nil {
 			return nil, fmt.Errorf("plugin tool invoke returned nil result")
+		}
+		if privateTileLoad {
+			return redactTileResult(result.invoke, privateKey), nil
 		}
 		return result.invoke, nil
 	}

@@ -12,8 +12,10 @@ import (
 	"time"
 
 	"github.com/autocarto/carto_agent/internal/config"
+	"github.com/autocarto/carto_agent/internal/datasource"
 	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
 	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/integrations"
 	"github.com/autocarto/carto_agent/internal/llm"
 	"github.com/autocarto/carto_agent/internal/settings"
 	"github.com/autocarto/carto_agent/internal/skill"
@@ -112,6 +114,11 @@ func (a *API) loadFlowEnvironmentUncached(ctx context.Context, scheme string) (f
 		return flow.Environment{}, err
 	}
 	env := flow.Environment{Scheme: scheme, SchemeRevision: revisionOf(settings.ExpandAgentProfileView(profile)), Roles: []flow.RoleSpec{}, Packages: []flow.PackageSpec{}, Capabilities: []flow.CapabilitySpec{}}
+	if profile.FlowPolicy != nil {
+		env.RoleFill = profile.FlowPolicy.RoleFill
+		env.RoleMapping = profile.FlowPolicy.RoleMapping
+		env.AutoAcquire = profile.FlowPolicy.AutoAcquire
+	}
 	if profile.Flows != nil {
 		enabled := append([]string{}, profile.Flows.Enabled...)
 		env.EnabledFlows = &enabled
@@ -148,7 +155,7 @@ func (a *API) loadFlowEnvironmentUncached(ctx context.Context, scheme string) (f
 		if id == "" {
 			id = summary.Name
 		}
-		entry := flow.PackageSpec{ID: id, DisplayName: summary.DisplayName, Tools: uniqueFlowStrings(detail.ToolRefs), Enabled: summary.Enabled}
+		entry := flow.PackageSpec{ID: id, DisplayName: summary.DisplayName, Tools: uniqueFlowStrings(detail.ToolRefs), Enabled: summary.Enabled, Kind: summary.Kind, Hidden: summary.Hidden}
 		for _, definition := range detail.Tools {
 			name := definition.Metadata.Name
 			entry.Tools = uniqueFlowStrings(append(entry.Tools, name))
@@ -202,6 +209,7 @@ func (a *API) loadFlowEnvironmentUncached(ctx context.Context, scheme string) (f
 			providerName = agent.LLM.Provider
 		}
 	}
+	env.MainProvider = providerName
 	env.CatalogRevision = revisionOf(struct {
 		Packages     []flow.PackageSpec
 		Capabilities []flow.CapabilitySpec
@@ -211,6 +219,14 @@ func (a *API) loadFlowEnvironmentUncached(ctx context.Context, scheme string) (f
 		settings, err := a.configService.GetFullConfig()
 		if err == nil {
 			provider := settings.GetActiveProvider()
+			if env.MainProvider == "" && provider != nil {
+				env.MainProvider = provider.Name
+			}
+			for _, configured := range settings.LLM.Providers {
+				if configured.Vision {
+					env.VisionProviders = append(env.VisionProviders, configured.Name)
+				}
+			}
 			if settings.FlowCompile.Provider != "" {
 				providerName = settings.FlowCompile.Provider
 			}
@@ -226,6 +242,43 @@ func (a *API) loadFlowEnvironmentUncached(ctx context.Context, scheme string) (f
 			}
 		}
 	}
+	assets, assetsErr := config.ResolveAssetsRoot()
+	home, homeErr := config.ResolveAutoCartoHome()
+	if assetsErr == nil && homeErr == nil {
+		env.DataSources, err = datasource.Load(filepath.Join(assets, "tools", "system", "data-acquisition", "assets"), filepath.Join(home, "sources"))
+		if err != nil {
+			return env, fmt.Errorf("加载数据来源目录：%w", err)
+		}
+	}
+	env.Integrations = map[string]bool{}
+	env.Secrets = map[string]bool{}
+	if a.configService != nil {
+		if services, e := a.configService.GetIntegrationsConfig(); e == nil {
+			raw, _ := json.Marshal(services)
+			var enabled map[string]struct {
+				Enabled bool `json:"enabled"`
+			}
+			_ = json.Unmarshal(raw, &enabled)
+			for id, service := range enabled {
+				env.Integrations[id] = service.Enabled
+			}
+		}
+		for _, name := range a.configService.ConfiguredSecretNames() {
+			env.Secrets[name] = true
+		}
+		acquisition := a.configService.GetAcquisitionConfig()
+		env.MaxDownloadMB = acquisition.MaxDownloadMB
+		env.WebSearchEnabled = acquisition.WebSearchEnabled
+	}
+	env.PackageReady = func(id string) bool {
+		p, ok := packageByID[id]
+		return ok && integrations.PackageReady(p.Tools, env.Integrations)
+	}
+	sourceRevision := ""
+	if env.DataSources != nil {
+		sourceRevision = env.DataSources.Revision
+	}
+	env.CatalogRevision = revisionOf([]any{env.CatalogRevision, sourceRevision, env.Integrations, env.Secrets})
 	return env, nil
 }
 

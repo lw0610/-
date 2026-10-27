@@ -152,6 +152,7 @@ function buildDefaultProvider(seed = 1): LLMProviderConfig {
     max_tokens: 4096,
     temperature: 0.7,
     thinking_enabled: false,
+    vision: false,
     thinking_budget: 10240,
     max_context_tokens: 128000,
     max_context_usage: 90,
@@ -173,6 +174,7 @@ function normalizePayload(payload: LLMConfigPayload): LLMConfigPayload {
       max_tokens: item.max_tokens ?? 4096,
       temperature: item.temperature ?? 0.7,
       thinking_enabled: Boolean(item.thinking_enabled),
+      vision: Boolean(item.vision),
       thinking_budget: item.thinking_budget ?? 10240,
       max_context_tokens: item.max_context_tokens ?? 128000,
       max_context_usage: item.max_context_usage ?? 90,
@@ -992,6 +994,7 @@ export default function ModelConfigWorkspace() {
                         }))
                       }
                     />
+                    <CheckboxField label="支持读图（图片输入）" description="按模型实际能力设置，供需要读图的角色选择模型。" checked={Boolean(current.vision)} onChange={(next) => updateCurrent((item) => ({...item, vision: next}))} />
                     <Field label="思考预算">
                       <NumberInput
                         min={1}

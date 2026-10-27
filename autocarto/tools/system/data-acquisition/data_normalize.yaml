@@ -1,0 +1,86 @@
+{
+  "apiVersion": "tool/v1",
+  "kind": "Tool",
+  "metadata": {
+    "name": "data_normalize",
+    "display_name": "数据规范化",
+    "keywords": [
+      "数据规范化"
+    ],
+    "domain": "data-acquisition",
+    "runtime": "qgis"
+  },
+  "spec": {
+    "description": "数据规范化，不覆盖原件；仅接受系统已解析的参数，不读取数据清单。",
+    "parameters": [
+      {
+        "name": "input",
+        "type": "object",
+        "required": true,
+        "description": "原件路径或{path,layer}"
+      },
+      {
+        "name": "category",
+        "type": "string",
+        "required": false,
+        "description": "Go 已解析的类别编号"
+      },
+      {
+        "name": "expected_geometry",
+        "type": "string",
+        "required": false,
+        "description": "类别几何类型 point/line/polygon/raster"
+      },
+      {
+        "name": "filter",
+        "type": "string",
+        "required": false,
+        "description": "Go 合成的 QGIS 筛选表达式"
+      },
+      {
+        "name": "clip",
+        "type": "object",
+        "required": false,
+        "description": "WGS84 外包范围或裁剪面文件路径"
+      },
+      {
+        "name": "fields",
+        "type": "object",
+        "required": false,
+        "description": "输出字段对应的候选来源字段列表"
+      },
+      {
+        "name": "standard_fields",
+        "type": "array",
+        "required": false,
+        "description": "需要保留的已有标准字段"
+      },
+      {
+        "name": "simplify_tolerance_m",
+        "type": "number",
+        "required": false,
+        "description": "简化容差，单位米"
+      },
+      {
+        "name": "output",
+        "type": "string",
+        "required": true,
+        "description": "新输出文件路径"
+      }
+    ]
+  },
+  "execution": {
+    "handler": "handlers.normalize.normalize_handler",
+    "param_mapping": {
+      "input": "{{ input }}",
+      "category": "{{ category }}",
+      "expected_geometry": "{{ expected_geometry }}",
+      "filter": "{{ filter }}",
+      "clip": "{{ clip }}",
+      "fields": "{{ fields }}",
+      "standard_fields": "{{ standard_fields }}",
+      "simplify_tolerance_m": "{{ simplify_tolerance_m }}",
+      "output": "{{ output }}"
+    }
+  }
+}

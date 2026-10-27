@@ -1,0 +1,26 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: geodata_inspect
+  display_name: 查看地理文件信息
+  keywords: [文件信息, 坐标系, 数据核验, 字段, 子图层]
+  domain: data-loading
+  runtime: qgis
+spec:
+  description: 只读检查地理文件，不加载到工程；返回全部或指定子图层、字段、数量、范围、坐标系和有限样本。
+  parameters:
+    - {name: path, type: string, required: true, description: 地理文件路径}
+    - {name: layer_name, type: string, description: 可选子图层名称}
+    - {name: sample_limit, type: integer, default: 5, description: 每层样本数，0至200}
+    - {name: x_field, type: string, description: CSV经度或X坐标列}
+    - {name: y_field, type: string, description: CSV纬度或Y坐标列}
+    - {name: crs, type: string, description: CSV坐标的已知坐标系}
+execution:
+  handler: handlers.geodata.inspect_handler
+  param_mapping:
+    path: '{{ path }}'
+    layer_name: '{{ layer_name }}'
+    sample_limit: '{{ sample_limit }}'
+    x_field: '{{ x_field }}'
+    y_field: '{{ y_field }}'
+    crs: '{{ crs }}'

@@ -11,9 +11,21 @@ import (
 // Credentials remain in Earth Engine's own credential store. This configuration
 // contains only runtime preferences, never OAuth tokens or browser cookies.
 type IntegrationsConfig struct {
+	OSM     OSMConfig     `yaml:"osm" json:"osm"`
 	GEE     GEEConfig     `yaml:"gee" json:"gee"`
 	Browser BrowserConfig `yaml:"browser" json:"browser"`
 	Web     WebDataConfig `yaml:"web" json:"web"`
+}
+
+type OSMConfig struct {
+	Enabled             bool     `yaml:"enabled" json:"enabled"`
+	Endpoints           []string `yaml:"endpoints" json:"endpoints"`
+	NominatimURL        string   `yaml:"nominatim_url" json:"nominatim_url"`
+	ProxyURL            string   `yaml:"proxy_url" json:"proxy_url"`
+	TimeoutSeconds      int      `yaml:"timeout_seconds" json:"timeout_seconds"`
+	TotalTimeoutSeconds int      `yaml:"total_timeout_seconds" json:"total_timeout_seconds"`
+	MaxAttempts         int      `yaml:"max_attempts" json:"max_attempts"`
+	MaxResponseMB       int      `yaml:"max_response_mb" json:"max_response_mb"`
 }
 
 type GEEConfig struct {
@@ -40,6 +52,21 @@ type WebDataConfig struct {
 }
 
 func (c *IntegrationsConfig) SetDefaults() {
+	if c.OSM.TimeoutSeconds == 0 {
+		c.OSM.TimeoutSeconds = 120
+	}
+	if c.OSM.TotalTimeoutSeconds == 0 {
+		c.OSM.TotalTimeoutSeconds = 600
+	}
+	if c.OSM.MaxAttempts == 0 {
+		c.OSM.MaxAttempts = 3
+	}
+	if c.OSM.MaxResponseMB == 0 {
+		c.OSM.MaxResponseMB = 200
+	}
+	if c.OSM.Endpoints == nil {
+		c.OSM.Endpoints = []string{}
+	}
 	if strings.TrimSpace(c.GEE.Python) == "" {
 		c.GEE.Python = "python3"
 	}
@@ -67,7 +94,29 @@ func (c *IntegrationsConfig) SetDefaults() {
 }
 
 func (c IntegrationsConfig) Validate() error {
-	for name, seconds := range map[string]int{"gee": c.GEE.TimeoutSeconds, "browser": c.Browser.TimeoutSeconds, "web": c.Web.TimeoutSeconds} {
+	if c.OSM.TotalTimeoutSeconds < 1 || c.OSM.TotalTimeoutSeconds > 7200 {
+		return fmt.Errorf("OSM total_timeout_seconds 必须在 1–7200 之间")
+	}
+	if c.OSM.MaxAttempts < 1 || c.OSM.MaxAttempts > 8 {
+		return fmt.Errorf("OSM max_attempts 必须在 1–8 之间")
+	}
+	if c.OSM.MaxResponseMB < 1 || c.OSM.MaxResponseMB > 200 {
+		return fmt.Errorf("OSM max_response_mb 必须在 1–200 之间")
+	}
+	if len(c.OSM.Endpoints) > 16 {
+		return fmt.Errorf("OSM 节点最多16个")
+	}
+	for _, address := range append(append([]string{}, c.OSM.Endpoints...), c.OSM.NominatimURL, c.OSM.ProxyURL) {
+		if address == "" {
+			continue
+		}
+		u, err := url.Parse(address)
+		if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Hostname() == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" {
+			return fmt.Errorf("OSM地址必须是无密码、查询参数和片段的HTTP(S)地址")
+		}
+	}
+
+	for name, seconds := range map[string]int{"gee": c.GEE.TimeoutSeconds, "browser": c.Browser.TimeoutSeconds, "web": c.Web.TimeoutSeconds, "osm": c.OSM.TimeoutSeconds} {
 		if seconds < 1 || seconds > 3600 {
 			return fmt.Errorf("%s timeout_seconds 必须在 1–3600 之间", name)
 		}
@@ -130,6 +179,7 @@ func (cs *ConfigService) GetIntegrationsConfig() (IntegrationsConfig, error) {
 		return IntegrationsConfig{}, fmt.Errorf("config not loaded")
 	}
 	c := cs.config.Integrations
+	c.OSM.Endpoints = append([]string{}, c.OSM.Endpoints...)
 	if c.Browser.Args != nil {
 		c.Browser.Args = append([]string{}, c.Browser.Args...)
 	}

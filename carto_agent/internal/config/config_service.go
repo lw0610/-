@@ -202,6 +202,7 @@ func (cs *ConfigService) buildLLMConfigView(includeAPIKey bool) map[string]any {
 			"max_tokens":                  provider.MaxTokens,
 			"temperature":                 provider.Temperature,
 			"thinking_enabled":            provider.ThinkingEnabled,
+			"vision":                      provider.Vision,
 			"thinking_budget":             provider.ThinkingBudget,
 			"max_context_tokens":          provider.MaxContextTokens,
 			"max_context_usage":           provider.MaxContextUsage,
@@ -622,6 +623,26 @@ func applyConfigMutation(cfg *Config, path string, value any) error {
 	}
 	trimmedPath := strings.TrimSpace(path)
 	switch trimmedPath {
+	case "acquisition":
+		if value == nil {
+			return fmt.Errorf("acquisition 必须是配置对象")
+		}
+		raw, err := yaml.Marshal(value)
+		if err != nil {
+			return err
+		}
+		next := cfg.Acquisition.WithDefaults()
+		fallback := *next.AutoFallback
+		next.AutoFallback = &fallback
+		decoder := yaml.NewDecoder(strings.NewReader(string(raw)))
+		decoder.KnownFields(true)
+		if err := decoder.Decode(&next); err != nil {
+			return err
+		}
+		if err := next.Validate(); err != nil {
+			return err
+		}
+		cfg.Acquisition = next
 	case "integrations":
 		integrations, err := decodeIntegrationsConfig(value)
 		if err != nil {
@@ -986,6 +1007,9 @@ func (cs *ConfigService) SaveLLMConfig(llmConfig map[string]any) error {
 		}
 		if temp, ok := toFloat(provider["temperature"]); ok {
 			cfg.Temperature = temp
+		}
+		if vision, ok := provider["vision"].(bool); ok {
+			cfg.Vision = vision
 		}
 		if thinkingEnabled, ok := provider["thinking_enabled"].(bool); ok {
 			cfg.ThinkingEnabled = thinkingEnabled

@@ -1,0 +1,30 @@
+{
+  "apiVersion": "data_source/v1",
+  "id": "source.builtin.cn-admin",
+  "name": "中国行政区边界（内置）",
+  "kind": "offline_asset",
+  "version": "1.0.0",
+  "compliance": "cn_reference",
+  "priority": 50,
+  "provides": [
+    {
+      "category": "admin.division",
+      "tool": "admin_boundary_extract",
+      "fields": {
+        "name": "name",
+        "code": "adcode"
+      }
+    }
+  ],
+  "coverage": {
+    "regions": [
+      "CN"
+    ]
+  },
+  "license": "上游声明来自天地图，数据许可待核实",
+  "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）",
+  "refresh_days": 0,
+  "notes": [
+    "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实"
+  ]
+}

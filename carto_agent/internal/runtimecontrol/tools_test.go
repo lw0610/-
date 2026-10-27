@@ -167,3 +167,25 @@ func TestGetOutputInfoMissingDirectoryKeepsEmptyListingFields(t *testing.T) {
 		t.Fatalf("read-only lookup must not create the directory: %v", err)
 	}
 }
+
+func TestGetOutputInfoIncludesExportsAndPreservesLegacyCounts(t *testing.T) {
+	t.Setenv("AUTOCARTO_HOME", t.TempDir())
+	session := skill.SessionContext{SessionID: "all-files", ProjectPath: filepath.Join(t.TempDir(), "map.qgz")}
+	dir, err := config.ResolveSessionDir(session.ProjectPath, session.SessionID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"exports/map.pdf", "output/data.csv"} {
+		path := filepath.Join(dir, name)
+		os.MkdirAll(filepath.Dir(path), 0700)
+		os.WriteFile(path, []byte("test"), 0600)
+	}
+	result, err := getOutputInfo(skill.WithSessionContext(context.Background(), session), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	info := result["info"].(map[string]any)
+	if info["files_count"] != 1 || info["session_files_count"] != 2 {
+		t.Fatalf("%#v", info)
+	}
+}

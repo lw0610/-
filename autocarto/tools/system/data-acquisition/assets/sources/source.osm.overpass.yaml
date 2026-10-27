@@ -1,0 +1,191 @@
+{
+  "apiVersion": "data_source/v1",
+  "id": "source.osm.overpass",
+  "name": "OpenStreetMap 在线查询",
+  "kind": "overpass",
+  "version": "1.0.0",
+  "compliance": "open",
+  "priority": 50,
+  "provides": [
+    {
+      "category": "transport.railway",
+      "tags": [
+        "railway=rail"
+      ],
+      "types": "way",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "class": [
+          "highway",
+          "railway",
+          "place",
+          "usage"
+        ]
+      }
+    },
+    {
+      "category": "transport.road.major",
+      "tags": [
+        "[\"highway\"~\"^(motorway|trunk|primary|secondary)$\"]"
+      ],
+      "types": "way",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "ref": "ref",
+        "class": [
+          "highway",
+          "railway",
+          "place",
+          "usage"
+        ]
+      }
+    },
+    {
+      "category": "transport.road.expressway",
+      "tags": [
+        "highway=motorway"
+      ],
+      "types": "way",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "ref": "ref"
+      }
+    },
+    {
+      "category": "transport.road.national",
+      "tags": [
+        "[\"highway\"~\"^(trunk|primary|secondary)$\"][\"ref\"~\"(^|;)G[0-9]{3}(;|$)\"]"
+      ],
+      "types": "way",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "ref": "ref"
+      }
+    },
+    {
+      "category": "transport.station",
+      "tags": [
+        "railway=station",
+        "public_transport=station"
+      ],
+      "types": "node,way,relation",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "class": [
+          "highway",
+          "railway",
+          "place",
+          "usage"
+        ]
+      }
+    },
+    {
+      "category": "transport.metro",
+      "tags": [
+        "railway=subway",
+        "railway=light_rail"
+      ],
+      "types": "way",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ]
+      }
+    },
+    {
+      "category": "hydro.river_line",
+      "tags": [
+        "waterway=river"
+      ],
+      "types": "way,relation",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ]
+      }
+    },
+    {
+      "category": "hydro.water_polygon",
+      "tags": [
+        "natural=water",
+        "waterway=riverbank"
+      ],
+      "types": "way,relation",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ]
+      }
+    },
+    {
+      "category": "settlement.place",
+      "tags": [
+        "[\"place\"~\"^(city|town|village|hamlet)$\"]"
+      ],
+      "types": "node",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "class": [
+          "highway",
+          "railway",
+          "place",
+          "usage"
+        ]
+      }
+    }
+  ],
+  "endpoints": "osmdata",
+  "hosts": [
+    "lz4.overpass-api.de",
+    "z.overpass-api.de",
+    "overpass-api.de",
+    "overpass.osm.jp",
+    "overpass.kumi.systems",
+    "overpass.private.coffee",
+    "overpass.openstreetmap.fr",
+    "maps.mail.ru",
+    "api.openstreetmap.org"
+  ],
+  "coverage": {
+    "regions": [
+      "world"
+    ]
+  },
+  "scale": {
+    "max_denominator": 4000000
+  },
+  "limits": {
+    "max_features": 30000,
+    "max_extents": 12,
+    "timeout_seconds": 120,
+    "max_mb": 200,
+    "max_area_km2": 1000000
+  },
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors",
+  "requires": [
+    "integration:osm"
+  ],
+  "refresh_days": 30
+}

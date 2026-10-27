@@ -56,6 +56,7 @@ const (
 
 // DeepServer 基于 DeepAgents 的 WebSocket 服务器
 type DeepServer struct {
+	flowLifecycle             context.Context
 	eventSequenceMu           sync.Mutex
 	flowMu                    sync.Mutex
 	flowCompiler              flowrun.Compiler
@@ -997,8 +998,12 @@ func (s *DeepServer) writeMessageFrames(conn *websocket.Conn, frames [][]byte) e
 }
 
 // Progress may be dropped under backpressure: the latest state is retained in
-// the session projection. A stalled UI must not hold up GEE process cleanup.
+// the session projection. A stalled UI must not hold up download cleanup.
 func (s *DeepServer) writeGEEProgressFrames(conn *websocket.Conn, frames [][]byte) error {
+	return s.writeDownloadProgressFrames(conn, frames)
+}
+
+func (s *DeepServer) writeDownloadProgressFrames(conn *websocket.Conn, frames [][]byte) error {
 	writeMu := s.getConnWriteMu(conn)
 	if writeMu == nil {
 		return fmt.Errorf("connection write lock unavailable")
@@ -1446,11 +1451,12 @@ func (s *DeepServer) sendSessionMessageSequenced(conn *websocket.Conn, msg Messa
 	}
 
 	var lastErr error
-	geeProgress := msg.Type == MsgTypeAgentWorkflow && msg.Phase == "progress" && stringValue(msg.Data["source"]) == "gee"
+	source := stringValue(msg.Data["source"])
+	downloadProgress := msg.Type == MsgTypeAgentWorkflow && msg.Phase == "progress" && (source == "gee" || source == "osm")
 	for _, clientConn := range connections {
 		var writeErr error
-		if geeProgress {
-			writeErr = s.writeGEEProgressFrames(clientConn, frames)
+		if downloadProgress {
+			writeErr = s.writeDownloadProgressFrames(clientConn, frames)
 		} else {
 			writeErr = s.writeMessageFrames(clientConn, frames)
 		}

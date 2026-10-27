@@ -29,11 +29,11 @@ func (RouteKnowledgeExecutor) BuildInput(step flow.StepPlan, run *RunState) ([]*
 		if !referenced[input.Key] {
 			continue
 		}
-		if input.Type == "conversation_text" && provided(run.Inputs[input.Key]) {
+		if input.Type == "conversation_text" && provided(EffectiveInputs(run)[input.Key]) {
 			foundSource = true
 		}
 		if input.Label == "重新抽取" {
-			value := run.Inputs[input.Key]
+			value := EffectiveInputs(run)[input.Key]
 			if value == nil {
 				continue
 			}

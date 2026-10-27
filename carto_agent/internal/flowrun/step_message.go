@@ -56,7 +56,7 @@ func BuildStepMessage(step flow.StepPlan, run *RunState) (string, bool, error) {
 	}
 	inputs := []string{}
 	for _, input := range run.Plan.Inputs {
-		value := run.Inputs[input.Key]
+		value := EffectiveInputs(run)[input.Key]
 		if !provided(value) {
 			continue
 		}
@@ -70,6 +70,9 @@ func BuildStepMessage(step flow.StepPlan, run *RunState) (string, bool, error) {
 			text = string(raw)
 		}
 		inputs = append(inputs, input.Label+"："+text)
+	}
+	if len(run.SourceNotes) > 0 {
+		inputs = append(inputs, "数据来源说明："+strings.Join(run.SourceNotes, "；"))
 	}
 	upstream := map[string]any{}
 	for _, previous := range run.Steps {

@@ -10,9 +10,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/autocarto/carto_agent/internal/acquire"
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/flowrun"
+	"github.com/autocarto/carto_agent/internal/testutil"
 	"github.com/gorilla/mux"
 	"gopkg.in/yaml.v3"
 )
@@ -20,13 +22,16 @@ import (
 // Python 内容验收通过此辅助测试调用真正的 Go 解析器、编译器和 HTTP 接口。
 func TestBuiltinFlowsParseAndCompile(t *testing.T) {
 	a, manager, project, home := realFlowAPI(t)
-	profiles := []string{"v1", "v2", "current"}
+	profiles := []string{"v1", "v2", "current", "zttzt"}
 	for _, version := range profiles {
 		path := filepath.Join("testdata", "builtin_flows-"+version+"-profile.yaml")
 		if version == "current" {
 			path = filepath.Join(project, "carto_agent", "defaults", "agent_configs", "default", "agent.yaml")
 		}
 		raw, err := os.ReadFile(path)
+		if version == "zttzt" {
+			raw, err = []byte(testutil.V4ZttztProfileYAML), nil
+		}
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -41,7 +46,7 @@ func TestBuiltinFlowsParseAndCompile(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if got.Version != "2.0" || got.Runtime.Agents["knowledge_engineer"].Executor != "route_knowledge" {
+		if got.Version != "2.0" || version != "zttzt" && got.Runtime.Agents["knowledge_engineer"].Executor != "route_knowledge" {
 			t.Fatal("迁移/目标方案未保留专用执行器")
 		}
 	}
@@ -192,10 +197,11 @@ func TestBuiltinFlowsParseAndCompile(t *testing.T) {
 				}
 			}
 			if id == "marching-route" {
-				if len(plan.Steps) != 11 || len(plan.Resources[0].Entries) != 8 || len(plan.InputConstraints) != 1 {
+				business := builtinBusinessSteps(plan)
+				if len(business) != 11 || len(plan.Resources[0].Entries) != 8 || len(plan.InputConstraints) != 1 || len(plan.Acquisition.Items) != 8 {
 					t.Fatal("路线完整步骤、资源或互斥约束不符")
 				}
-				rule := plan.Steps[0].Condition.Rule
+				rule := business[0].Condition.Rule
 				for _, test := range []struct {
 					dataset     any
 					force, want bool
@@ -206,7 +212,7 @@ func TestBuiltinFlowsParseAndCompile(t *testing.T) {
 						t.Fatalf("已有数据集/重抽优先级错误：%+v %v", test, err)
 					}
 				}
-				if plan.Steps[9].OnFailure != "stop" || plan.Steps[9].ExpectedOutputs[0].Type != "review_final" || plan.Steps[10].Condition.Rule.Op != "falsy" {
+				if business[9].OnFailure != "stop" || business[9].ExpectedOutputs[0].Type != "review_final" || business[10].Condition.Rule.Op != "falsy" {
 					t.Fatal("质量终态与非审查导出条件错误")
 				}
 				for _, input := range plan.Inputs {
@@ -223,16 +229,60 @@ func TestBuiltinFlowsParseAndCompile(t *testing.T) {
 					}
 				}
 			}
+			if version == "current" {
+				expectedRoles := map[string]string{"数据工程专家": "data_engineer", "制图布局专家": "cartographer", "空间分析专家": "spatial_analyst", "质量反馈智能体": "quality_feedback", "制图知识抽取专家": "knowledge_engineer"}
+				for _, slot := range plan.RoleSlots {
+					if slot.Resolution.RoleID != expectedRoles[slot.Name] {
+						t.Fatalf("默认方案绑定改变：%s %+v", id, slot)
+					}
+				}
+			}
+			if id == "traffic-route" && version == "current" {
+				env, e := a.loadFlowEnvironment(context.Background(), "builtin-current")
+				if e != nil {
+					t.Fatal(e)
+				}
+				planning := env.AcquisitionEnvironment()
+				planning.Integrations = map[string]bool{"osm": true}
+				for _, scope := range []struct{ region, level string }{{"郑州市", "市"}, {"410105", "县"}} {
+					result, issues := acquire.Plan(context.Background(), plan, map[string]any{"交通数据": map[string]any{"$acquire": true}, "区域": scope.region, "行政区级别": scope.level}, planning, nil)
+					if len(issues) > 0 {
+						t.Fatal(issues)
+					}
+					found := false
+					for _, item := range result.Items {
+						if item.Category == "admin.division" {
+							found = true
+							if item.Chosen == nil || item.Chosen.SourceID != "source.builtin.cn-admin" || item.Params["level"] != scope.level || item.Params["within"] != scope.region {
+								t.Fatalf("交通范围/层级没有选中正确行政区来源：%+v", item)
+							}
+						}
+					}
+					if !found {
+						t.Fatal("交通清单缺少行政区项")
+					}
+				}
+			}
 			for _, resource := range plan.Resources {
 				for _, entry := range resource.Entries {
-					if !entry.Exists {
+					if !entry.Exists && !entry.ExistsUnknown {
 						t.Fatalf("资源条目不存在：%+v", entry)
 					}
 				}
 			}
-			results = append(results, map[string]any{"flow_id": id, "scheme": "builtin-" + version, "steps": len(plan.Steps), "diagnostics": plan.Diagnostics, "actual_basemap": actualBasemap})
+			results = append(results, map[string]any{"flow_id": id, "scheme": "builtin-" + version, "steps": len(builtinBusinessSteps(plan)), "system_steps": len(plan.Steps) - len(builtinBusinessSteps(plan)), "diagnostics": plan.Diagnostics, "actual_basemap": actualBasemap})
 		}
 	}
 	encoded, _ := json.Marshal(results)
 	t.Log("BUILTIN_FLOW_RESULT=" + string(encoded))
+}
+
+func builtinBusinessSteps(plan *flow.FlowPlan) []flow.StepPlan {
+	steps := []flow.StepPlan{}
+	for _, step := range plan.Steps {
+		if step.Kind != "acquire" {
+			steps = append(steps, step)
+		}
+	}
+	return steps
 }

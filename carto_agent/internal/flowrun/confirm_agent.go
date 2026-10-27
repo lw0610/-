@@ -13,6 +13,7 @@ import (
 )
 
 type ConfirmationRequest struct {
+	Category    string
 	Title       string
 	Description string
 	Options     []hitl.RequestOption
@@ -35,7 +36,11 @@ func (a *ConfirmAgent) Run(ctx context.Context, _ *adk.AgentInput, _ ...adk.Agen
 	return iter
 }
 func (a *ConfirmAgent) interrupt(ctx context.Context) *adk.AgentEvent {
-	return adk.StatefulInterrupt(ctx, hitl.InterruptPayload{Type: "decision", Title: a.request.Title, Description: a.request.Description, Options: a.request.Options, Default: a.request.Default, SelectMode: "single", Required: true, Category: "flow_confirmation"}, confirmationState{Request: a.request})
+	category := a.request.Category
+	if category == "" {
+		category = "flow_confirmation"
+	}
+	return adk.StatefulInterrupt(ctx, hitl.InterruptPayload{Type: "decision", Title: a.request.Title, Description: a.request.Description, Options: a.request.Options, Default: a.request.Default, SelectMode: "single", Required: true, Category: category}, confirmationState{Request: a.request})
 }
 func (a *ConfirmAgent) Resume(ctx context.Context, info *adk.ResumeInfo, _ ...adk.AgentRunOption) *adk.AsyncIterator[*adk.AgentEvent] {
 	iter, gen := adk.NewAsyncIteratorPair[*adk.AgentEvent]()

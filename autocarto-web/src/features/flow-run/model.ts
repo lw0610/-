@@ -1,5 +1,6 @@
 import type { FlowInput } from '@/features/flows/types'
 import type { FlowEvent, FlowRunState, FlowStepState, FlowSubmission } from './types'
+import { acquisitionChoice, canAcquire, sourceMode } from './acquisition'
 
 export const record = (value: unknown): Record<string, unknown> =>
   value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
@@ -8,9 +9,9 @@ export const choiceValues = (input: FlowInput) => [...new Set([
   ...(input.default !== undefined && input.default !== null ? [String(input.default)] : []),
   ...(input.options || []),
 ])]
-export function inputDefaults(inputs: FlowInput[]) {
-  return Object.fromEntries(inputs.filter(input => input.type !== 'conversation_text' && (input.default != null || input.type === 'boolean'))
-    .map(input => [input.key, input.default ?? false]))
+export function inputDefaults(inputs: FlowInput[], policy?: string) {
+  return Object.fromEntries(inputs.filter(input => input.type !== 'conversation_text' && (input.default != null || input.type === 'boolean' || canAcquire(input, policy)))
+    .map(input => [input.key, input.default ?? (canAcquire(input, policy) ? {$acquire: true} : false)]))
 }
 export function prepareFlowSubmission(id: string, inputs: FlowInput[], values: Record<string, unknown>): { flow: FlowSubmission; errors: string[] } {
   const result: Record<string, unknown> = {}, errors: string[] = []
@@ -19,12 +20,18 @@ export function prepareFlowSubmission(id: string, inputs: FlowInput[], values: R
       result[input.key] = { $ref: 'current_user_message' }
       continue
     }
-    const value = values[input.key] ?? input.default
+    const value = values[input.key] === null ? null : values[input.key] ?? input.default
     if (value === undefined || value === null || typeof value === 'string' && !value.trim()) {
       if (input.required) errors.push(`请填写${input.label}`)
       continue
     }
-    if (input.type === 'number') {
+    const mode = sourceMode(value)
+    if (mode === 'auto' || mode === 'fill') {
+      const choice = acquisitionChoice(value)
+      if (!input.acquirable || input.modes && !input.modes.includes(mode)) errors.push(`${input.label}当前不允许自动获取`)
+      else if (mode === 'fill' && !choice.path?.trim()) errors.push(`请选择${input.label}需要补齐的文件夹`)
+      else result[input.key] = {...choice}
+    } else if (input.type === 'number') {
       const number = Number(value)
       if (!Number.isFinite(number)) errors.push(`${input.label}需要有效数字`)
       else result[input.key] = number
@@ -61,9 +68,10 @@ export function applyFlowEvent(current: FlowRunState | undefined, event: FlowEve
     status: 'running', started_at: now, name: String(payload.name || ''), steps: [], result: { deliverables: {}, issues: [], summary: '' },
   }
   if (event.event === 'flow.started') {
+    if (payload.plan && Array.isArray(record(payload.plan).steps)) run.plan = payload.plan as import('@/features/flows/types').FlowPlan
     run.steps = (Array.isArray(payload.steps) ? payload.steps : []).map((value, index) => {
       const step = record(value)
-      return { id: String(step.id), index: Number(step.index || index + 1), title: String(step.title || ''), role: String(step.role_label || step.role || (step.kind === 'confirm' ? '用户' : '')), status: 'pending', attempts: [], outputs: {} }
+      return { id: String(step.id), index: Number(step.index ?? index + 1), title: String(step.title || ''), role: String(step.role_label || step.role || (step.kind === 'confirm' ? '用户' : '')), status: 'pending', attempts: [], outputs: {} }
     })
     return run
   }
@@ -81,11 +89,27 @@ export function applyFlowEvent(current: FlowRunState | undefined, event: FlowEve
     run.resource_change = null
     run.status = String(payload.status || 'completed')
     run.finished_at = run.finished_at || now
-    run.result = { deliverables: record(payload.deliverables), issues: Array.isArray(payload.issues) ? payload.issues.map(String) : [], summary: String(payload.summary || '') }
+    run.result = { ...payload, deliverables: record(payload.deliverables), issues: Array.isArray(payload.issues) ? payload.issues.map(String) : [], summary: String(payload.summary || '') }
     run.run_json_path = String(payload.run_json_path || '')
     return run
   }
   if (terminalFlow(run.status)) return current || run
+  if (event.event.startsWith('flow.acquire_')) {
+    const acquisition=run.acquisition || {items:[]}
+    if(event.event==='flow.acquire_planned') {
+      const plan=record(payload.plan || payload.acquisition_plan || payload)
+      if(Array.isArray(plan.items))acquisition.plan={items:plan.items as import('@/features/flows/types').AcquisitionItem[]}
+    } else {
+      const key=String(payload.key||'')
+      if(!key)return current || run
+      const previous=acquisition.items.find(item=>item.key===key)
+      const next={...previous,...payload,key,status:String(payload.status||payload.stage||(event.event==='flow.acquire_failed'?'failed':event.event==='flow.acquire_confirmation'?'waiting_user':event.event==='flow.acquire_item_done'?'completed':event.event==='flow.acquire_item_started'?'running':'pending'))}
+      acquisition.items=[...acquisition.items.filter(item=>item.key!==key),next]
+      if(event.event==='flow.acquire_failed'||event.event==='flow.acquire_confirmation')run.status='waiting_user'
+    }
+    run.acquisition=acquisition
+    return run
+  }
   const stepId = String(payload.step_id || '')
   if (!stepId) return current || run
   let step = run.steps.find(step => step.id === stepId)

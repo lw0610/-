@@ -7,19 +7,23 @@ metadata:
   domain: data-loading
   runtime: qgis
 spec:
-  description: 导出矢量图层
+  description: 导出矢量图层；修正本会话生成的 GeoJSON 时，用 replace_source 指定旧文件，验证后原路径替换并刷新已加载图层，避免另存出重复结果。
   parameters:
     - name: layer
       type: string
       required: true
-      description: 图层名称
+      description: 修正后或待导出的图层 ID 或唯一名称
     - name: output
       type: string
-      description: 输出文件路径（可选）
+      description: 普通导出的输出文件路径；原位修正时省略，沿用 replace_source
       default: ''
     - name: format
       type: string
       description: 输出格式（可选）
+      default: ''
+    - name: replace_source
+      type: string
+      description: 需修正的旧 GeoJSON 文件绝对路径。仅限本会话生成目录；写入验证成功后替换原文件并刷新同源图层，失败保留原文件。普通另存或处理外部输入时省略。
       default: ''
 execution:
   handler: handlers.loader.export_vector_handler
@@ -27,3 +31,4 @@ execution:
     layer: '{{ layer }}'
     output: '{{ output }}'
     format: '{{ format }}'
+    replace_source: '{{ replace_source }}'

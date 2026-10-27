@@ -5,6 +5,7 @@ import { flowApi } from '@/features/flows/api'
 import type { ToolCapability } from '@/features/flows/types'
 import type { FlowPreview } from './types'
 import { record } from './model'
+import type { Message } from '@/types/message'
 
 export function parseFlowPreview(value: unknown): FlowPreview | null {
   if (typeof value === 'string') {
@@ -18,10 +19,30 @@ export function parseFlowPreview(value: unknown): FlowPreview | null {
   }
   return null
 }
+
+type PreviewMessage = Pick<Message, 'type' | 'phase' | 'content' | 'data'>
+
+export function isFlowPreviewMessage(message: PreviewMessage): boolean {
+  return Boolean(message.data?.flow_preview) || message.data?.tool === 'flow_preview' && (message.phase === 'tool_result' || message.type === 'tool')
+}
+
+// Build agents may inspect candidate flows before deciding to use ordinary
+// tools. That inspection is process detail, not a user-facing Plan preview.
+// Prefer the event's recorded mode so replay and switching sessions/modes do
+// not reinterpret an old event using the currently selected composer mode.
+export function flowPreviewForMessage(message: PreviewMessage): FlowPreview | null {
+  if (!isFlowPreviewMessage(message)) return null
+  const preview = parseFlowPreview(message.data?.flow_preview || message.data?.result || message.content)
+  if (!preview) return null
+  const phase = String(message.data?.mode_phase || '')
+  const mode = preview.execution_mode || message.data?.execution_mode || (phase === 'planning' ? 'plan' : phase === 'building' ? 'build' : undefined)
+  return mode === 'plan' ? preview : null
+}
+
 export default function FlowPreviewCard({ preview }: { preview: FlowPreview }) {
   const [capabilities, setCapabilities] = useState<ToolCapability[]>([])
   useEffect(() => { let current = true; void flowApi.capabilities().then(value => { if (current) setCapabilities(value) }).catch(() => undefined); return () => { current = false } }, [])
-  return <section aria-label={`流程预览 ${preview.name || preview.plan.name}`} className="mb-3 rounded border border-amber-300 bg-surface-raised p-3 dark:border-amber-800"><h2 className="mb-2 text-sm font-semibold">流程预览：{preview.name || preview.plan.name}</h2><p className="mb-2 text-xs text-amber-700">当前只做预览。切换到 Build 后可执行此流程。</p>
+  return <section aria-label={`流程预览 ${preview.name || preview.plan.name}`} className="mb-3 rounded border border-amber-300 bg-surface-raised p-3 dark:border-amber-800"><h2 className="mb-2 text-sm font-semibold">流程预览：{preview.name || preview.plan.name}</h2><p className="mb-2 text-xs text-amber-700">这是流程步骤与输入的预览，不代表流程已经开始执行。</p>
     {preview.diagnostics?.map((item, index) => <p key={index} className={item.level === 'error' ? 'mb-1 text-xs text-red-700' : 'mb-1 text-xs text-amber-700'}>{item.level === 'error' ? '错误' : item.level === 'warning' ? '警告' : '提示'}：{item.message}</p>)}
     {preview.input_check?.missing?.length ? <p className="mb-2 text-xs text-amber-700">需要补充：{preview.input_check.missing.map(String).join('、')}</p> : preview.input_check?.valid && <p className="mb-2 text-xs text-green-700">输入已齐全。</p>}
     <StepPreview plan={preview.plan} capabilities={capabilities}/>

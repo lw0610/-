@@ -30,6 +30,7 @@ def backend_results(tmp_path_factory):
         "AUTOCARTO_ASSETS_ROOT": str(ROOT / "autocarto"),
         "AUTOCARTO_HOME": str(runtime),
         "GOPROXY": "off",
+        "AUTOCARTO_DISABLE_KEYRING": "1",
     })
     result = subprocess.run(
         [executable, "test", "./internal/api", "-run", "^TestBuiltinFlowsParseAndCompile$", "-count=1", "-v"],
@@ -42,7 +43,7 @@ def backend_results(tmp_path_factory):
 
 
 def test_builtin_flows_use_real_parser_compiler_and_both_scheme_contracts(backend_results):
-    expected = {(scheme, flow_id) for scheme in ("builtin-v1", "builtin-v2", "builtin-current") for flow_id in EXPECTED_STEPS}
+    expected = {(scheme, flow_id) for scheme in ("builtin-v1", "builtin-v2", "builtin-current", "builtin-zttzt") for flow_id in EXPECTED_STEPS}
     assert {(result["scheme"], result["flow_id"]) for result in backend_results} == expected
     for result in backend_results:
         assert result["steps"] == EXPECTED_STEPS[result["flow_id"]]
@@ -59,7 +60,8 @@ def test_exactly_four_builtin_flows_have_portable_business_instructions():
         front = yaml.safe_load(raw.split("---", 2)[1])
         assert front["编号"] == flow_id
         assert front["名称"]
-        assert re.fullmatch(r"\d+\.\d+\.\d+", front["版本"])
+        assert front["版本"] == "3.0.0"
+        assert "## 参与角色" in raw
         assert not re.search(r"/Users/|[A-Za-z]:[\\/]|\.\.\\|autocarto_data", raw), flow_id
 
 
@@ -88,6 +90,8 @@ def test_route_basemap_has_eight_required_relative_original_sources():
         assert row["路径"] == row["名称"] + ".shp"
         assert row["类型"] == "矢量"
         assert row["必需"] == "是"
+        assert row["类别"]
+        assert row["字段"] == {"省域": "NAME", "县级城市驻地": "name", "河流线": "NAME"}.get(row["名称"], "")
         assert not Path(row["路径"]).is_absolute()
         assert ".." not in Path(row["路径"]).parts
 

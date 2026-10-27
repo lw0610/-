@@ -1,0 +1,59 @@
+{
+  "apiVersion": "tool/v1",
+  "kind": "Tool",
+  "metadata": {
+    "name": "osm_probe",
+    "display_name": "统计 OSM 要素",
+    "keywords": [
+      "OSM数据",
+      "开放地图",
+      "统计 OSM 要素"
+    ],
+    "domain": "osm-data",
+    "runtime": "internal"
+  },
+  "spec": {
+    "description": "统计 OSM 要素；只使用全量OSM公共服务，报告部分失败、字段取舍和真实输出路径。",
+    "parameters": [
+      {
+        "name": "extents",
+        "type": "array",
+        "required": true,
+        "description": "范围列表 area:R编号 / bbox:南,西,北,东 / around:米,纬度,经度 / file:WGS84面"
+      },
+      {
+        "name": "tags",
+        "type": "array",
+        "required": false,
+        "description": "标签并集，例如 railway=rail"
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "description": "指定键时统计值分布"
+      },
+      {
+        "name": "types",
+        "type": "string",
+        "required": false,
+        "description": "node,way,relation 或 nwr"
+      }
+    ]
+  },
+  "execution": {
+    "backend_tool": "osm_probe",
+    "param_mapping": {
+      "extents": "{{ extents }}",
+      "tags": "{{ tags }}",
+      "key": "{{ key }}",
+      "types": "{{ types }}"
+    }
+  },
+  "policy": {
+    "visibility": "public",
+    "authorization_scopes": [
+      "tool.invoke"
+    ]
+  }
+}

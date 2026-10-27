@@ -71,6 +71,7 @@ type AgentProfileDiagnosticsView struct {
 
 type AgentProfileView struct {
 	Version           string                         `json:"version"`
+	FlowPolicy        *config.FlowPolicyConfig       `json:"flow_policy,omitempty"`
 	Flows             *config.FlowConfig             `json:"flows,omitempty"`
 	MigrationWarnings []config.MigrationWarning      `json:"migration_warnings,omitempty"`
 	Meta              config.AgentConfigMeta         `json:"meta"`
@@ -86,6 +87,7 @@ func BuildAgentProfileView(configName string, data *config.AgentConfigData, diag
 	if data != nil {
 		profile.Version = data.Version
 		profile.Flows = cloneProfileFlows(data.Flows)
+		profile.FlowPolicy = config.CloneFlowPolicy(data.FlowPolicy)
 		profile.MigrationWarnings = append([]config.MigrationWarning(nil), data.MigrationWarnings...)
 		profile.Meta = cloneAgentConfigMeta(data.Meta)
 		if data.Runtime != nil {
@@ -113,7 +115,7 @@ func ExpandAgentProfileView(profile AgentProfileView) *config.AgentConfigData {
 	meta.PlanEnabled = hasPlan && profile.Plan.Enabled
 
 	result := &config.AgentConfigData{
-		Meta: meta, Version: profile.Version, Flows: cloneProfileFlows(profile.Flows),
+		Meta: meta, Version: profile.Version, Flows: cloneProfileFlows(profile.Flows), FlowPolicy: config.CloneFlowPolicy(profile.FlowPolicy),
 		Runtime: &config.RuntimeConfig{
 			Global:             config.GlobalAgentConfig{SkillPackages: append([]string(nil), profile.RuntimeShared.SkillPackages...)},
 			SharedToolPackages: append([]string(nil), profile.RuntimeShared.ToolPackages...), LegacyUnresolvedPackages: append([]string(nil), profile.RuntimeShared.LegacyUnresolvedPackages...),

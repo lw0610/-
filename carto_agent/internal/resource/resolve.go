@@ -160,8 +160,30 @@ func (l *Library) resolveDataList(r *ResolvedResource, request Request) {
 			r.problem("error", "FLOW_RESOURCE_INVALID", row.line, "数据类型无法识别，请填写矢量/vector 或栅格/raster。", "")
 		}
 		rawPath := filepath.FromSlash(row.values["path"])
+		overridden := false
+		if override := request.EntryOverrides[entry.Name]; override != "" {
+			if !filepath.IsAbs(override) {
+				r.problem("error", "FLOW_RESOURCE_INVALID", row.line, "逐项数据覆盖必须使用绝对路径："+entry.Name, "")
+				continue
+			}
+			rawPath = override
+			overridden = true
+			entry.Extra["origin"] = request.EntryOrigins[entry.Name]
+			if entry.Extra["origin"] == "" {
+				entry.Extra["origin"] = "override"
+			}
+		} else if request.EntryOverrides != nil {
+			entry.Extra["origin"] = "user"
+		}
 		entry.Path = rawPath
-		if filepath.IsAbs(rawPath) {
+		if layerID := request.EntryLayerIDs[entry.Name]; layerID != "" {
+			entry.LayerID = layerID
+			entry.Exists = true
+			entry.Extra["origin"] = "acquired"
+			r.Entries = append(r.Entries, entry)
+			continue
+		}
+		if filepath.IsAbs(rawPath) && !overridden {
 			r.problem("warning", "FLOW_RESOURCE_PATH_EXTERNAL", row.line, "数据清单包含外部绝对路径："+entry.Name, "")
 		}
 		if deferred && !filepath.IsAbs(rawPath) {

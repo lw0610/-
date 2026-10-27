@@ -55,6 +55,27 @@ class BuildDistLayoutTestCase(unittest.TestCase):
             with zipfile.ZipFile(archive) as bundle:
                 self.assertEqual(set(bundle.namelist()), {"autocarto/" + name for name in retained})
 
+    def test_check_cleanup_preserves_runtime_logs_and_sessions(self):
+        import shlex
+        shell = (REPO_ROOT / "build.sh").read_text()
+        cleanup = "clean_local_artifacts() {" + shell.split("clean_local_artifacts() {", 1)[1].split("\n}", 1)[0] + "\n}"
+        self.assertIn("clean_local_artifacts 1 1\n        run_check", shell)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            plugin = root / "autocarto"
+            markers = [plugin / "logs" / "keep.log", plugin / ".session" / "keep.json"]
+            for marker in markers:
+                marker.parent.mkdir(parents=True, exist_ok=True)
+                marker.write_text("synthetic runtime fixture", encoding="utf-8")
+            variables = {"PLUGIN_DIR": plugin, "TAURI_DIR": root / "tauri", "WEB_DIR": root / "web", "DIST_DIR": root / "dist", "BINARIES_DIR": root / "binaries"}
+            script = "\n".join(f"{key}={shlex.quote(str(value))}" for key, value in variables.items())
+            script += "\nstep() { :; }\ninfo() { :; }\nok() { :; }\npreserve_release_artifacts_snapshot() { :; }\nrestore_release_artifacts_snapshot() { :; }\n"
+            script += cleanup + "\nclean_local_artifacts 1 1\n"
+            result = subprocess.run(["bash", "-c", script], capture_output=True, text=True, timeout=10)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            for marker in markers:
+                self.assertEqual(marker.read_text(), "synthetic runtime fixture")
+
     def test_desktop_manifest_includes_flow_packages(self):
         config = json.loads((REPO_ROOT / "autocarto-web/src-tauri/tauri.conf.json").read_text())
         resources = config["bundle"]["resources"]
@@ -67,7 +88,9 @@ class BuildDistLayoutTestCase(unittest.TestCase):
             config["bundle"]["resources"]["../../autocarto/resources/system/"],
             "autocarto/resources/system/",
         )
-        for group in ("data", "styles", "layouts", "symbols", "docs"):
+        # The public library contains only layouts/styles since v3. Retired
+        # data/symbol/docs groups can be empty locally and are not tracked by Git.
+        for group in ("styles", "layouts"):
             self.assertTrue((REPO_ROOT / "autocarto/resources/system" / group).is_dir())
 
     def test_build_scripts_require_flow_and_resource_assets(self):

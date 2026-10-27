@@ -16,15 +16,17 @@ type Diagnostic = shareddiagnostic.Diagnostic
 
 // FlowDoc 只记录确定性解析结果，不包含方案、模型或运行时绑定。
 type FlowDoc struct {
-	Meta          FlowMetadata  `json:"meta"`
-	Applicability string        `json:"applicability"`
-	Inputs        []InputDoc    `json:"inputs"`
-	Resources     []ResourceDoc `json:"resources"`
-	Steps         []StepDoc     `json:"steps"`
-	Rules         []string      `json:"rules"`
-	Deliverables  string        `json:"deliverables"`
-	Notes         []DocSection  `json:"notes"`
-	Diagnostics   []Diagnostic  `json:"diagnostics"`
+	RoleSlots     []RoleSlotDoc    `json:"role_slots"`
+	Requirements  []RequirementDoc `json:"requirements"`
+	Meta          FlowMetadata     `json:"meta"`
+	Applicability string           `json:"applicability"`
+	Inputs        []InputDoc       `json:"inputs"`
+	Resources     []ResourceDoc    `json:"resources"`
+	Steps         []StepDoc        `json:"steps"`
+	Rules         []string         `json:"rules"`
+	Deliverables  string           `json:"deliverables"`
+	Notes         []DocSection     `json:"notes"`
+	Diagnostics   []Diagnostic     `json:"diagnostics"`
 }
 
 type InputDoc struct {
@@ -52,17 +54,19 @@ type ResourceDoc struct {
 }
 
 type StepDoc struct {
-	ID              string              `json:"id"`
-	Index           int                 `json:"index"`
-	Title           string              `json:"title"`
-	Role            string              `json:"role,omitempty"`
-	Condition       *ConditionDoc       `json:"condition,omitempty"`
-	Instructions    string              `json:"instructions"`
-	Completion      string              `json:"completion,omitempty"`
-	ExpectedOutputs []OutputDeclaration `json:"expected_outputs"`
-	Refs            DocRefs             `json:"refs"`
-	OnFailure       string              `json:"on_failure"`
-	Line            int                 `json:"line,omitempty"`
+	Capabilities         []string            `json:"capabilities"`
+	OptionalCapabilities []string            `json:"optional_capabilities"`
+	ID                   string              `json:"id"`
+	Index                int                 `json:"index"`
+	Title                string              `json:"title"`
+	Role                 string              `json:"role,omitempty"`
+	Condition            *ConditionDoc       `json:"condition,omitempty"`
+	Instructions         string              `json:"instructions"`
+	Completion           string              `json:"completion,omitempty"`
+	ExpectedOutputs      []OutputDeclaration `json:"expected_outputs"`
+	Refs                 DocRefs             `json:"refs"`
+	OnFailure            string              `json:"on_failure"`
+	Line                 int                 `json:"line,omitempty"`
 }
 
 type ConditionDoc struct {
@@ -106,4 +110,31 @@ type DocSection struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
 	Line    int    `json:"line,omitempty"`
+}
+
+// RoleSlotDoc describes a requested role without binding it to a scheme.
+type RoleSlotDoc struct {
+	Name        string   `json:"name"`
+	Description string   `json:"description,omitempty"`
+	Packages    []string `json:"packages"`
+	Executor    string   `json:"executor,omitempty"`
+	NeedsVision bool     `json:"needs_vision,omitempty"`
+	SchemeOnly  bool     `json:"scheme_only,omitempty"`
+	Line        int      `json:"line,omitempty"`
+}
+
+// RequirementDoc preserves author-supplied names and references for later binding.
+type RequirementDoc struct {
+	Name               string            `json:"name"`
+	List               string            `json:"list,omitempty"`
+	Category           string            `json:"category,omitempty"`
+	Level              string            `json:"level,omitempty"`
+	Extent             string            `json:"extent"`
+	Scale              string            `json:"scale"`
+	Params             map[string]string `json:"params"`
+	Fields             map[string]string `json:"fields"`
+	RecommendedSources []string          `json:"recommended_sources"`
+	ExcludedSources    []string          `json:"excluded_sources"`
+	Acquisition        string            `json:"acquisition"`
+	Line               int               `json:"line,omitempty"`
 }

@@ -144,7 +144,7 @@ export interface ErrorEvidence {
   correlation_id?: string;
 }
 
-export type IntegrationService = "gee" | "browser";
+export type IntegrationService = "gee" | "browser" | "osm";
 
 export interface IntegrationCheckResult {
   service?: IntegrationService;
@@ -1079,6 +1079,7 @@ export type AgentRoleKind = "agent" | "executor";
 
 export interface MigrationWarning { code: string; path: string; package?: string; message: string; }
 export interface AgentFlowsConfig { enabled: string[]; [key: string]: unknown; }
+export interface FlowPolicyConfig {role_fill?:'auto'|'flow_role'|'strict';auto_acquire?:'ask'|'allow'|'deny';role_mapping?:Record<string,Record<string,string>>;[key:string]:unknown}
 
 export interface PlanAgentDefData {
   [key: string]: unknown;
@@ -1149,6 +1150,7 @@ export interface AgentProfileDiagnostics {
 }
 
 export interface AgentConfigData {
+  flow_policy?: FlowPolicyConfig;
   [key: string]: unknown;
   version?: string;
   flows?: AgentFlowsConfig;
@@ -1180,6 +1182,7 @@ interface AgentPlanPayload {
 }
 
 interface AgentProfilePayload {
+  flow_policy?: FlowPolicyConfig;
   [key: string]: unknown;
   version?: string;
   flows?: AgentFlowsConfig;
@@ -1728,10 +1731,10 @@ export class ApiClient {
     this.baseURL = typeof baseURL === "string" ? baseURL : "";
   }
 
-  private async request<T>(path: string, options?: RequestInit, timeoutMs = REQUEST_TIMEOUT_MS): Promise<T> {
+  private async request<T>(path: string, options?: RequestInit, timeoutMs = REQUEST_TIMEOUT_MS, envelope = false): Promise<T> {
     const signal = withTimeoutSignal(options?.signal, timeoutMs);
     try {
-      return await this.fetchResponse<T>(path, { ...options, signal });
+      return await this.fetchResponse<T>(path, { ...options, signal }, envelope);
     } catch (error) {
       if (!(error instanceof ApiError) && signal.aborted) {
         // WebKit may throw AbortError ("Fetch is aborted") even when the
@@ -1749,7 +1752,7 @@ export class ApiClient {
     }
   }
 
-  private async fetchResponse<T>(path: string, options: RequestInit): Promise<T> {
+  private async fetchResponse<T>(path: string, options: RequestInit, envelope = false): Promise<T> {
     const url = `${this.baseURL}${path}`;
     const res = await fetch(url, {
       ...options,
@@ -1795,7 +1798,7 @@ export class ApiClient {
         envelope,
       );
     }
-    return json.data as T;
+    return (envelope ? json : json.data) as T;
   }
 
   async get<T>(path: string): Promise<T> {
@@ -1807,6 +1810,13 @@ export class ApiClient {
       method: "POST",
       body: body ? JSON.stringify(body) : undefined,
     }, options?.timeoutMs);
+  }
+
+  async postEnvelope<T>(path: string, body?: unknown): Promise<ApiResponse<T> & Record<string, unknown>> {
+    return this.request<ApiResponse<T> & Record<string, unknown>>(path, {
+      method: "POST",
+      body: body ? JSON.stringify(body) : undefined,
+    }, REQUEST_TIMEOUT_MS, true);
   }
 
   async put<T>(path: string, body?: unknown, options?: { timeoutMs?: number }): Promise<T> {

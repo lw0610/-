@@ -40,6 +40,10 @@ types:
         - {key: path, aliases: [路径], required: true}
         - {key: type, aliases: [类型], values: {矢量: vector, vector: vector, 栅格: raster, raster: raster}}
         - {key: required, aliases: [必需], kind: boolean, default: true}
+        - {key: category, aliases: [类别]}
+        - {key: fields, aliases: [字段]}
+        - {key: acquire, aliases: [自动获取], kind: boolean, default: true}
+        - {key: source_hint, aliases: [推荐来源], kind: list}
         - {key: description, aliases: [说明]}
       unique: [name]
 

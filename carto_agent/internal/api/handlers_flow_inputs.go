@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -44,7 +45,24 @@ func (a *API) handleCheckFlowInputs(w http.ResponseWriter, r *http.Request) {
 		flowError(w, err)
 		return
 	}
-	Success(w, flowrun.ValidateInputs(plan, request.Values, root))
+	if plan.Acquisition == nil {
+		Success(w, flowrun.ValidateInputs(plan, request.Values, root))
+		return
+	}
+	compiler, err := a.FlowCompiler()
+	if err != nil {
+		flowError(w, err)
+		return
+	}
+	env, err := compiler.AcquisitionEnvironment(r.Context(), plan.Scheme)
+	if err != nil {
+		flowError(w, err)
+		return
+	}
+	linked, problems := flowrun.ValidateInputsWithAcquisition(r.Context(), plan, request.Values, root, env, nil)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(map[string]any{"success": true, "data": problems, "acquisition_plan": linked.Acquisition})
 }
 func (a *API) handleFlowInputMemory(w http.ResponseWriter, r *http.Request) {
 	if !ensureHTTPControlContractVersion(w, r, "flow_input_memory") {
@@ -67,7 +85,7 @@ func (a *API) handleFlowInputMemory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodGet {
-		values, err := memory.Get(id)
+		values, err := memory.GetValues(id)
 		if err != nil {
 			flowError(w, err)
 			return
@@ -84,12 +102,53 @@ func (a *API) handleFlowInputMemory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var request struct {
-		Value string `json:"value"`
+		Value any `json:"value"`
 	}
 	if !decodeFlowRequest(w, r, &request) {
 		return
 	}
-	if err = setInputMemoryValue(memory, item, label, request.Value); err != nil {
+	if _, marked, _ := flow.ParseInputChoice(request.Value); marked {
+		plan, planErr := a.inputPlan(r.Context(), id, r.URL.Query().Get("scheme"))
+		if planErr != nil {
+			flowError(w, planErr)
+			return
+		}
+		root, rootErr := config.ResolveProjectRoot()
+		if rootErr != nil {
+			flowError(w, rootErr)
+			return
+		}
+		selected := flow.InputPlan{}
+		found := false
+		for _, input := range plan.Inputs {
+			if input.Label == label {
+				selected = input
+				found = true
+				break
+			}
+		}
+		if !found || !selected.Remember {
+			flowError(w, fmt.Errorf("该输入不允许记住选择"))
+			return
+		}
+		normalized, issue := flowrun.ValidateAcquisitionChoice(plan, selected, request.Value, root)
+		if issue != nil {
+			flowError(w, fmt.Errorf("%s", issue.Message))
+			return
+		}
+		if err = memory.SetChoice(id, label, normalized); err != nil {
+			flowError(w, err)
+			return
+		}
+		Success(w, map[string]bool{"saved": true})
+		return
+	}
+	value, ok := request.Value.(string)
+	if !ok {
+		flowError(w, fmt.Errorf("输入记忆值必须是路径或来源选择"))
+		return
+	}
+	if err = setInputMemoryValue(memory, item, label, value); err != nil {
 		flowError(w, err)
 		return
 	}

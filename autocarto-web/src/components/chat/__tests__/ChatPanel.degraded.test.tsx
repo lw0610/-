@@ -148,7 +148,7 @@ vi.mock('../MessageList', () => ({
   ),
 }))
 
-vi.mock('../RightInspector', () => ({
+vi.mock('@/components/workspace/SessionWorkspace', () => ({
   __esModule: true,
   default: () => <div data-testid="right-inspector" />,
 }))

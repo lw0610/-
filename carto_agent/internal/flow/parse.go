@@ -20,12 +20,15 @@ var (
 		"适用场景": "applicability", "什么时候使用": "applicability", "触发条件": "applicability", "适用范围": "applicability",
 		"需要准备": "inputs", "输入": "inputs", "需要用户提供": "inputs", "准备内容": "inputs",
 		"使用的资源": "resources", "资源": "resources", "引用资源": "resources",
+		"参与角色": "roles", "角色分工": "roles", "需要的角色": "roles",
+		"数据需求": "requirements", "数据来源": "requirements", "数据获取": "requirements",
 		"步骤": "steps", "流程步骤": "steps", "操作步骤": "steps",
 		"必须遵守": "rules", "注意事项": "rules", "禁止事项": "rules", "通用规则": "rules", "约束": "rules",
 		"交付": "deliverables", "交付成果": "deliverables", "输出": "deliverables", "成果": "deliverables",
 	}
 	fieldAliases = map[string]string{
 		"负责": "role", "执行者": "role", "负责角色": "role", "角色": "role",
+		"能力": "capabilities", "需要能力": "capabilities",
 		"条件": "condition", "执行条件": "condition", "何时执行": "condition", "仅当": "condition",
 		"做法": "instructions", "操作": "instructions", "要求": "instructions", "内容": "instructions", "具体做法": "instructions",
 		"完成标准": "completion", "完成条件": "completion", "产出": "completion", "验收": "completion",
@@ -49,7 +52,7 @@ func Parse(raw string) *FlowDoc {
 	raw = normalizeMarkdown(raw)
 	meta, body, offset, diagnostics := parseFrontmatter(raw)
 	doc := &FlowDoc{
-		Meta: meta, Inputs: []InputDoc{}, Resources: []ResourceDoc{}, Steps: []StepDoc{},
+		RoleSlots: []RoleSlotDoc{}, Requirements: []RequirementDoc{}, Meta: meta, Inputs: []InputDoc{}, Resources: []ResourceDoc{}, Steps: []StepDoc{},
 		Rules: []string{}, Notes: []DocSection{}, Diagnostics: diagnostics,
 	}
 	seen := map[string]bool{}
@@ -73,6 +76,10 @@ func Parse(raw string) *FlowDoc {
 			parseInputs(doc, section.content, contentLine)
 		case "resources":
 			parseResources(doc, section.content, contentLine)
+		case "roles":
+			parseRoleSlots(doc, section.content, contentLine)
+		case "requirements":
+			parseRequirements(doc, section.content, contentLine)
 		case "steps":
 			for _, stepSection := range headings(section.content, 3) {
 				index := len(doc.Steps) + 1
@@ -107,6 +114,7 @@ func Parse(raw string) *FlowDoc {
 			}
 		}
 	}
+	validateRoleSlotUses(doc, seen["roles"])
 	resolveReferences(doc)
 	return doc
 }
@@ -513,6 +521,7 @@ func parseStep(doc *FlowDoc, section markdownSection, index, line int) StepDoc {
 		}
 	}
 	step.Role, step.Instructions, step.Completion = values["role"], values["instructions"], values["completion"]
+	step.Capabilities, step.OptionalCapabilities = parseStepCapabilities(values["capabilities"])
 	if raw := values["condition"]; raw != "" {
 		step.Condition = &ConditionDoc{Text: raw, Rule: ParseCondition(raw)}
 		if step.Condition.Rule == nil {
@@ -690,6 +699,9 @@ func resolveReferences(doc *FlowDoc) {
 		}
 		for _, match := range quotedNames.FindAllStringSubmatch(raw, -1) {
 			name := strings.TrimSpace(match[1])
+			if name == "数据来源说明" {
+				continue
+			}
 			if seen[name] {
 				continue
 			}

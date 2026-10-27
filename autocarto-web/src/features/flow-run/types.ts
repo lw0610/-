@@ -1,4 +1,10 @@
-import type { FlowPlan } from '@/features/flows/types'
+import type { AcquisitionPlan, FlowPlan } from '@/features/flows/types'
+
+export interface AcquisitionItemState {
+  key:string;status:string;source_id?:string;store_key?:string;bytes?:number;total?:number;stage?:string;notes?:string[];error?:string;required?:boolean;choices?:unknown[]
+  output?:{paths?:string[];count?:number;extent?:unknown;layer_id?:string;layer_definition?:Record<string,unknown>};attempts?:unknown[]
+}
+export interface AcquisitionState {plan?:AcquisitionPlan;items:AcquisitionItemState[]}
 
 export type ResourceResumeChoice = 'continue_snapshot' | 'restart'
 
@@ -41,6 +47,7 @@ export interface FlowStepState {
 // The wire names match internal/flowrun.RunState. Optional fields are absent
 // until their event arrives; a session snapshot supplies the complete state.
 export interface FlowRunState {
+  acquisition?: AcquisitionState
   resource_change?: { fingerprint: string; message: string } | null
   api_version: string
   flow_run_id: string
@@ -69,6 +76,7 @@ export interface FlowBlocked {
   reasons: { code?: string; message: string }[]
 }
 export interface FlowPreview {
+  execution_mode?: 'build' | 'plan'
   flow_id: string
   name?: string
   plan: FlowPlan

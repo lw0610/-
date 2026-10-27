@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import MessageBubble from './MessageBubble'
 import type { ReviewReference, ReviewSummary } from '@/features/knowledge-review/model'
 import FlowProgressCard from '@/features/flow-run/FlowProgressCard'
-import FlowPreviewCard, { parseFlowPreview } from '@/features/flow-run/FlowPreviewCard'
+import FlowPreviewCard, { flowPreviewForMessage, isFlowPreviewMessage } from '@/features/flow-run/FlowPreviewCard'
 import type { FlowRunState, FlowBlocked, ResourceResumeChoice } from '@/features/flow-run/types'
 
 interface Props {
@@ -41,11 +41,6 @@ function extractCheckpointId(message: Message): string {
   const snake = typeof data.checkpoint_id === 'string' ? data.checkpoint_id : ''
   const camel = typeof data.checkpointId === 'string' ? data.checkpointId : ''
   return (snake || camel).trim()
-}
-
-function previewForMessage(message: Message) {
-  return parseFlowPreview(message.data?.flow_preview ||
-    (message.data?.tool === 'flow_preview' && message.phase === 'tool_result' ? message.data.result || message.content : null))
 }
 
 function buildWorkflowMessages(workflowBlocks: WorkflowBlock[], existingMessages: Message[]) {
@@ -163,9 +158,9 @@ export default function MessageList({
   )
 
   const visibleMessages = useMemo(() => {
-    const baseMessages = messages.filter(
-      (msg) => msg.type !== 'tool' && msg.type !== 'thinking' || Boolean(previewForMessage(msg)),
-    )
+    const baseMessages = messages.filter(msg => isFlowPreviewMessage(msg)
+      ? Boolean(flowPreviewForMessage(msg))
+      : msg.type !== 'tool' && msg.type !== 'thinking')
     const generatedWorkflowMessages = buildWorkflowMessages(workflowBlocks, baseMessages)
     const sorted = [...baseMessages, ...generatedWorkflowMessages].sort((a, b) => a.timestamp - b.timestamp)
 
@@ -232,7 +227,7 @@ export default function MessageList({
   }, [visibleMessages, flowRuns])
 
   const renderMessage = (msg: Message) => {
-    const preview = previewForMessage(msg)
+    const preview = flowPreviewForMessage(msg)
     if (preview) return <FlowPreviewCard key={msg.id} preview={preview}/>
     const checkpointId = msg.type === 'interrupt' ? extractCheckpointId(msg) : ''
     const fallbackData = asRecord(msg.data)

@@ -29,6 +29,7 @@ export type WorkflowBlockStatus = 'running' | 'completed' | 'error'
 
 export interface WorkflowToolCard {
   id: string
+  callId?: string
   tool: string
   status: 'running' | 'completed' | 'failed'
   args?: Record<string, unknown>

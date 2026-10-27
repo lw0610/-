@@ -44,6 +44,7 @@ func (a *API) setupFlowRoutes(r *mux.Router) {
 	r.HandleFunc("/flows", a.handleFlows).Methods("GET", "POST", "OPTIONS")
 	r.HandleFunc("/flows/bindings/status", a.handleFlowBindingStatus).Methods("GET", "OPTIONS")
 	r.HandleFunc("/flows/import", a.handleImportFlow).Methods("POST", "OPTIONS")
+	r.HandleFunc("/flows/{id}/roles", a.handleFlowRoles).Methods("GET", "PUT", "OPTIONS")
 	r.HandleFunc("/flows/{id}/export", a.handleExportFlow).Methods("POST", "OPTIONS")
 	r.HandleFunc("/flows/{id}/copy", a.handleCopyFlow).Methods("POST", "OPTIONS")
 	r.HandleFunc("/flows/{id}/resources/repair", a.handleRepairFlowResource).Methods("POST", "OPTIONS")

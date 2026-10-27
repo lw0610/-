@@ -18,6 +18,8 @@ type Config struct {
 
 	FlowCompile FlowCompileConfig `yaml:"flow_compile"`
 
+	Acquisition AcquisitionConfig `yaml:"acquisition"`
+
 	// Image 2 工具服务配置（不参与聊天模型选择）
 	Image2 Image2Config `yaml:"image2"`
 
@@ -111,6 +113,7 @@ type LLMConfig struct {
 
 // LLMProviderConfig 单个 LLM 提供商配置
 type LLMProviderConfig struct {
+	Vision                bool    `yaml:"vision"`                  // 该模型支持图片输入，由用户明确声明。
 	Name                  string  `yaml:"name"`                    // 配置名称
 	Provider              string  `yaml:"provider"`                // 提供商类型 (openai/anthropic/google/ollama)
 	Model                 string  `yaml:"model"`                   // 模型名称
@@ -676,6 +679,7 @@ func findConfigFile() string {
 
 // setDefaults 设置默认值
 func (c *Config) setDefaults() {
+	c.Acquisition = c.Acquisition.WithDefaults()
 	c.FlowCompile = c.FlowCompile.WithDefaults()
 	c.Integrations.SetDefaults()
 	if c.Image2.Enabled == nil {

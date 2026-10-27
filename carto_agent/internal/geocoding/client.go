@@ -29,12 +29,13 @@ var providerRequests = rate.NewLimiter(rate.Every(250*time.Millisecond), 1)
 
 // Candidate is an actual provider POI, never a model-generated coordinate.
 type Candidate struct {
-	Name     string  `json:"name"`
-	Address  string  `json:"address"`
-	Lon      float64 `json:"lon"`
-	Lat      float64 `json:"lat"`
-	SourceID string  `json:"source_id,omitempty"`
-	TypeName string  `json:"type_name,omitempty"`
+	CountyCode string  `json:"county_code,omitempty"`
+	Name       string  `json:"name"`
+	Address    string  `json:"address"`
+	Lon        float64 `json:"lon"`
+	Lat        float64 `json:"lat"`
+	SourceID   string  `json:"source_id,omitempty"`
+	TypeName   string  `json:"type_name,omitempty"`
 }
 
 type searchResult struct {
@@ -159,7 +160,7 @@ func (r *Resolver) search(ctx context.Context, query, admin string) (searchResul
 		if name == "" {
 			continue
 		}
-		c := Candidate{Name: name, Address: str(poi["address"]), Lon: lon, Lat: lat, SourceID: str(poi["hotPointID"]), TypeName: str(poi["typeName"])}
+		c := Candidate{Name: name, Address: str(poi["address"]), Lon: lon, Lat: lat, SourceID: str(poi["hotPointID"]), TypeName: str(poi["typeName"]), CountyCode: str(poi["countyCode"])}
 		key := fmt.Sprintf("%s|%.8f|%.8f", c.Name, c.Lon, c.Lat)
 		if !seen[key] {
 			result.Candidates = append(result.Candidates, c)
@@ -220,4 +221,14 @@ func safeCode(code string) string {
 func str(value any) string { s, _ := value.(string); return s }
 func validCoordinate(lon, lat float64) bool {
 	return !math.IsNaN(lon) && !math.IsNaN(lat) && !math.IsInf(lon, 0) && !math.IsInf(lat, 0) && lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90
+}
+
+// SearchCandidates exposes the existing bounded, redacted and rate-limited provider
+// search to deterministic acquisition; it never invokes a language model.
+func (r *Resolver) SearchCandidates(ctx context.Context, query, admin string) ([]Candidate, error) {
+	if strings.TrimSpace(r.Key) == "" {
+		return nil, errors.New("未配置天地图服务器端 Key")
+	}
+	result, err := r.throttledSearch(ctx, query, admin)
+	return result.Candidates, err
 }

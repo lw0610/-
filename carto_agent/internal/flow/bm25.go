@@ -17,6 +17,8 @@ type CapabilitySpec struct {
 }
 
 type PackageSpec struct {
+	Kind        string   `json:"kind,omitempty"`
+	Hidden      bool     `json:"hidden,omitempty"`
 	ID          string   `json:"id"`
 	DisplayName string   `json:"display_name"`
 	Tools       []string `json:"tools"`

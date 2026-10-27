@@ -1,0 +1,31 @@
+{
+  "apiVersion": "data_source/v1",
+  "id": "source.geocode.cn-base-lines",
+  "name": "中国专题底图线数据（GeoCode）",
+  "kind": "offline_asset",
+  "version": "1.0.0",
+  "compliance": "unknown",
+  "priority": 50,
+  "provides": [
+    {
+      "category": "admin.boundary_line",
+      "path": "china_thematic_base_wgs84.gpkg",
+      "layer": "border"
+    },
+    {
+      "category": "hydro.coastline",
+      "path": "china_thematic_base_wgs84.gpkg",
+      "layer": "coast"
+    },
+    {
+      "category": "admin.maritime_line",
+      "path": "china_thematic_base_wgs84.gpkg",
+      "layer": "ninedash"
+    }
+  ],
+  "status": "experimental",
+  "license": "数据许可未核实",
+  "notes": [
+    "上游代码 MIT 不代表地理数据许可；数据文件未随本来源发布"
+  ]
+}

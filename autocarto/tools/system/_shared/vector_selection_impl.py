@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from autocarto.utils.redaction import redact_sensitive_text
 
 from qgis.core import QgsExpression, QgsFeature, QgsProject, QgsVectorLayer, QgsWkbTypes
 
@@ -62,7 +63,7 @@ def _clone_selected_features(layer: QgsVectorLayer, output_ref: Any) -> QgsVecto
 def _build_output_layer_ref(layer: QgsVectorLayer) -> Dict[str, Any]:
     return {
         "name": layer.name(),
-        "source": str(layer.source() or "").strip(),
+        "source": redact_sensitive_text(layer.source()).strip(),
         "feature_count": int(layer.featureCount()),
         "geometry_type": QgsWkbTypes.displayString(layer.wkbType()),
         "fields": [field.name() for field in layer.fields()],

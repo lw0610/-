@@ -1,0 +1,168 @@
+{
+  "apiVersion": "data_source/v1",
+  "id": "source.osm.geofabrik-china",
+  "name": "OpenStreetMap 中国区域提取包",
+  "kind": "http_file",
+  "version": "1.0.0",
+  "compliance": "open",
+  "priority": 50,
+  "provides": [
+    {
+      "category": "transport.railway",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "class": [
+          "highway",
+          "railway",
+          "place",
+          "usage"
+        ]
+      },
+      "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+      "layer": "lines",
+      "filter": "railway = 'rail'"
+    },
+    {
+      "category": "transport.road.major",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "ref": "ref",
+        "class": [
+          "highway",
+          "railway",
+          "place",
+          "usage"
+        ]
+      },
+      "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+      "layer": "lines",
+      "filter": "highway IN ('motorway','trunk','primary','secondary')"
+    },
+    {
+      "category": "transport.road.expressway",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "ref": "ref"
+      },
+      "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+      "layer": "lines",
+      "filter": "highway = 'motorway'"
+    },
+    {
+      "category": "transport.road.national",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "ref": "ref"
+      },
+      "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+      "layer": "lines",
+      "filter": "highway IN ('trunk','primary','secondary') AND regexp_match(ref, '(^|;)G[0-9]{3}(;|$)')"
+    },
+    {
+      "category": "transport.station",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "class": [
+          "highway",
+          "railway",
+          "place",
+          "usage"
+        ]
+      },
+      "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+      "layer": "points",
+      "filter": "railway = 'station' OR public_transport = 'station'"
+    },
+    {
+      "category": "transport.metro",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ]
+      },
+      "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+      "layer": "lines",
+      "filter": "railway IN ('subway','light_rail')"
+    },
+    {
+      "category": "hydro.river_line",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ]
+      },
+      "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+      "layer": "lines",
+      "filter": "waterway = 'river'"
+    },
+    {
+      "category": "hydro.water_polygon",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ]
+      },
+      "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+      "layer": "multipolygons",
+      "filter": "natural = 'water' OR waterway = 'riverbank'"
+    },
+    {
+      "category": "settlement.place",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ],
+        "class": [
+          "highway",
+          "railway",
+          "place",
+          "usage"
+        ]
+      },
+      "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+      "layer": "points",
+      "filter": "place IN ('city','town','village','hamlet')"
+    }
+  ],
+  "hosts": [
+    "download.geofabrik.de"
+  ],
+  "coverage": {
+    "regions": [
+      "CN"
+    ]
+  },
+  "size_mb": 1536,
+  "limits": {
+    "max_mb": 2048,
+    "min_area_km2": 1000000
+  },
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors, Geofabrik",
+  "requires": [
+    "integration:web"
+  ],
+  "refresh_days": 30,
+  "notes": [
+    "2026-10-25 官方目录约 1.5 GB；最新全国 Shapefile 包不可用，使用 PBF；实际体量以响应为准"
+  ]
+}

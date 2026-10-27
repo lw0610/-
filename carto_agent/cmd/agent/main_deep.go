@@ -383,7 +383,16 @@ func runDeepAgent() {
 					BaseTools:          baseTools,
 				})
 			case integrations.Handles(toolName):
-				return integrations.Invoke(invokeCtx, toolName, args, configService)
+				return integrations.Invoke(invokeCtx, toolName, args, configService, func(gisCtx context.Context, gisName string, gisArgs map[string]any) (any, error) {
+					if wsServer != nil {
+						wsServer.InjectToolRuntimeArgs(gisCtx, gisArgs)
+					}
+					response, err := qgisInvokeTool(gisCtx, gisName, gisArgs)
+					if err != nil {
+						return nil, err
+					}
+					return response.Output, nil
+				})
 			case fileops.Handles(toolName):
 				return fileops.Invoke(invokeCtx, toolName, args)
 			case runtimecontrol.Handles(toolName):
@@ -691,6 +700,7 @@ func runDeepAgent() {
 		logger.Fatal("初始化流程编译器失败: %v", flowErr)
 	}
 	// Flow previews are built locally on save/read. Do not start background model analysis.
+	wsServer.SetFlowLifecycleContext(lifecycleCtx)
 	if err := wsServer.SetFlowCompiler(flowCompiler); err != nil {
 		logger.Fatal("初始化流程运行时失败: %v", err)
 	}

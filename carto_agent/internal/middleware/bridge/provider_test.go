@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -541,9 +542,9 @@ func TestProviderDefaultInstanceSourceCanBeOverridden(t *testing.T) {
 func TestProviderProjectEventTriggersHookAndUpdatesProjectPath(t *testing.T) {
 	bridgeProvider, conn, cleanup := setupBridgeProviderTest(t)
 	defer cleanup()
-	called := 0
+	var called atomic.Int32
 	bridgeProvider.SetCatalogChangedHook(func() {
-		called++
+		called.Add(1)
 	})
 
 	sendInstanceConnect(t, conn, "inst-project")
@@ -577,7 +578,7 @@ func TestProviderProjectEventTriggersHookAndUpdatesProjectPath(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			beforeCalls := called
+			beforeCalls := called.Load()
 			payload := map[string]any{}
 			if tc.projectPath != "" {
 				payload["project_path"] = tc.projectPath
@@ -595,7 +596,7 @@ func TestProviderProjectEventTriggersHookAndUpdatesProjectPath(t *testing.T) {
 			deadline := time.Now().Add(3 * time.Second)
 			for time.Now().Before(deadline) {
 				instance := bridgeProvider.InstanceRegistry().Get("inst-project")
-				if instance != nil && instance.ProjectPath == tc.expectedPath && called > beforeCalls {
+				if instance != nil && instance.ProjectPath == tc.expectedPath && called.Load() > beforeCalls {
 					return
 				}
 				time.Sleep(20 * time.Millisecond)
@@ -608,7 +609,7 @@ func TestProviderProjectEventTriggersHookAndUpdatesProjectPath(t *testing.T) {
 			if instance.ProjectPath != tc.expectedPath {
 				t.Fatalf("unexpected updated project path for %s: %q", tc.eventType, instance.ProjectPath)
 			}
-			if called <= beforeCalls {
+			if called.Load() <= beforeCalls {
 				t.Fatalf("expected project event %s to trigger catalog/state hook", tc.eventType)
 			}
 		})

@@ -1,0 +1,78 @@
+{
+  "apiVersion": "data_source/v1",
+  "id": "source.gee.catalog",
+  "name": "Google Earth Engine 数据集",
+  "kind": "gee",
+  "version": "1.0.0",
+  "compliance": "open",
+  "priority": 50,
+  "provides": [
+    {
+      "category": "terrain.dem",
+      "dataset": "COPERNICUS/DEM/GLO30_2024_1",
+      "template": "dem.py",
+      "defaults": {
+        "bands": "DEM",
+        "scale": "30"
+      }
+    },
+    {
+      "category": "landcover",
+      "dataset": "ESA/WorldCover/v200",
+      "template": "landcover.py",
+      "defaults": {
+        "bands": "Map",
+        "scale": "10",
+        "year": "2021"
+      }
+    },
+    {
+      "category": "imagery.optical",
+      "dataset": "COPERNICUS/S2_SR_HARMONIZED",
+      "template": "optical.py",
+      "defaults": {
+        "bands": "B4,B3,B2",
+        "scale": "10",
+        "start": "2025-01-01",
+        "end": "2026-01-01",
+        "cloud_max": "20"
+      }
+    },
+    {
+      "category": "population.grid",
+      "dataset": "WorldPop/GP/100m/pop",
+      "template": "population.py",
+      "defaults": {
+        "bands": "population",
+        "scale": "100",
+        "year": "2020"
+      }
+    },
+    {
+      "category": "nightlight",
+      "dataset": "NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG",
+      "template": "nightlight.py",
+      "defaults": {
+        "bands": "avg_rad",
+        "scale": "500",
+        "start": "2025-01-01",
+        "end": "2026-01-01"
+      }
+    }
+  ],
+  "hosts": [
+    "earthengine.googleapis.com",
+    "earthengine-highvolume.googleapis.com"
+  ],
+  "requires": [
+    "integration:gee"
+  ],
+  "status": "active",
+  "license": "Copernicus WorldDEM-30 / Sentinel条款；WorldCover与WorldPop CC BY 4.0；VIIRS public domain",
+  "notes": [
+    "2026-10-25已核实Google Earth Engine官方目录的数据集、波段与许可；云端权限和网络仍取决于用户环境。",
+    "Copernicus旧GLO30已弃用，改为GLO30_2024_1；这是包含建筑与植被的DSM，不是裸地DTM。",
+    "WorldCover v200固定为2021；WorldPop默认2020且本来源仅支持2000–2020。光学与灯光默认2025日历年，查询记录保留显式时段，可在条目参数中修改。",
+    "光学影像使用场景云量阈值及SCL云/阴影掩膜；灯光仅保留cf_cvg>0像素；保留数据集各自许可和署名要求。"
+  ]
+}

@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestResourceCaptureKindsConflictReplacementAndCleanup(t *testing.T) {
@@ -48,7 +49,7 @@ func TestResourceCaptureKindsConflictReplacementAndCleanup(t *testing.T) {
 			call := func(replace string, want int, valid bool) map[string]any {
 				t.Helper()
 				done := make(chan bool, 1)
-				go func() { respond(valid); done <- true }()
+				go func() { defer close(done); respond(valid) }()
 				payload := map[string]any{"instance_id": "capture-instance", "kind": kind, "name": "保存资源", "layout": "版面", "layers": []string{"layer-id"}}
 				if replace != "" {
 					payload["replace_id"] = replace
@@ -57,9 +58,13 @@ func TestResourceCaptureKindsConflictReplacementAndCleanup(t *testing.T) {
 				req := httptest.NewRequest("POST", "/api/resources/capture", bytes.NewReader(raw))
 				w := httptest.NewRecorder()
 				router.ServeHTTP(w, req)
-				<-done
 				if w.Code != want {
 					t.Fatalf("%d %s", w.Code, w.Body.String())
+				}
+				select {
+				case <-done:
+				case <-time.After(6 * time.Second):
+					t.Fatal("capture bridge response did not complete")
 				}
 				var body map[string]any
 				_ = json.Unmarshal(w.Body.Bytes(), &body)

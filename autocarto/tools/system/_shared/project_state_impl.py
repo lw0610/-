@@ -1,4 +1,5 @@
 import logging
+from autocarto.utils.redaction import redact_sensitive_text
 import math
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -643,7 +644,7 @@ def _get_layer_detailed_info(layer: QgsMapLayer) -> Dict[str, Any]:
                 "fields": fields_info,
                 "selected_feature_count": layer.selectedFeatureCount(),
                 "data_provider": layer.providerType(),
-                "source": layer.source(),
+                "source": redact_sensitive_text(layer.source()),
             }
         )
     elif isinstance(layer, QgsRasterLayer):
@@ -655,7 +656,7 @@ def _get_layer_detailed_info(layer: QgsMapLayer) -> Dict[str, Any]:
             {
                 "bands": bands_info,
                 "data_provider": layer.providerType(),
-                "source": layer.source(),
+                "source": redact_sensitive_text(layer.source()),
             }
         )
 

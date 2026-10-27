@@ -16,22 +16,23 @@ import (
 
 // 消息类型常量
 const (
-	MsgTypeStatus         = "status"    // 状态更新
-	MsgTypeThinking       = "thinking"  // 思考中
-	MsgTypeTool           = "tool"      // 工具调用
-	MsgTypeAgent          = "agent"     // 子智能体调用
-	MsgTypeResponse       = "response"  // 最终响应
-	MsgTypeError          = "error"     // 错误
-	MsgTypeCancelled      = "cancelled" // 已取消
-	MsgTypeTaskCreate     = "task"
-	MsgTypeTaskCancel     = "cancel"
-	MsgTypeTaskRetry      = "task_retry"
-	MsgTypeTaskAck        = "task_ack"
-	MsgTypeFlowEvent      = "flow_event"
-	MsgTypeFlowCompile    = "flow_compile"
-	MsgTypeRunEvent       = "run_event"        // 统一运行事件
-	MsgTypeTaskListUpdate = "task_list_update" // 任务列表更新
-	MsgTypeAgentWorkflow  = "agent_workflow"   // 智能体工作流事件
+	MsgTypeStatus              = "status"    // 状态更新
+	MsgTypeThinking            = "thinking"  // 思考中
+	MsgTypeTool                = "tool"      // 工具调用
+	MsgTypeAgent               = "agent"     // 子智能体调用
+	MsgTypeResponse            = "response"  // 最终响应
+	MsgTypeError               = "error"     // 错误
+	MsgTypeCancelled           = "cancelled" // 已取消
+	MsgTypeTaskCreate          = "task"
+	MsgTypeTaskCancel          = "cancel"
+	MsgTypeTaskRetry           = "task_retry"
+	MsgTypeTaskAck             = "task_ack"
+	MsgTypeFlowEvent           = "flow_event"
+	MsgTypeSessionFilesChanged = "session_files_changed"
+	MsgTypeFlowCompile         = "flow_compile"
+	MsgTypeRunEvent            = "run_event"        // 统一运行事件
+	MsgTypeTaskListUpdate      = "task_list_update" // 任务列表更新
+	MsgTypeAgentWorkflow       = "agent_workflow"   // 智能体工作流事件
 
 	// 配置管理
 	MsgTypeConfigGet      = "config_get"       // 获取配置

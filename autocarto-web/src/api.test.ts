@@ -15,6 +15,13 @@ import {
 } from "@/test-support/runtimeContract";
 
 describe("ApiClient structured error parsing", () => {
+  test("preserves optional metadata when an endpoint requests the envelope", async () => {
+    const envelope = { success: true, data: [], acquisition_plan: { items: [{ key: 'roads' }] } };
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async () => new Response(JSON.stringify(envelope), { headers: { 'Content-Type': 'application/json' } })));
+    const client = new ApiClient('http://localhost:3000');
+    expect(await client.postEnvelope('/api/flows/demo/inputs/check', { values: {} })).toEqual(envelope);
+    expect(await client.post('/api/flows/demo/inputs/check', { values: {} })).toEqual([]);
+  });
   afterEach(() => {
     vi.restoreAllMocks();
   });

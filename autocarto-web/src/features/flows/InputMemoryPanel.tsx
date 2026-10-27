@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react'
 import { flowApi } from './api'
 import { buttonClass, InputPreview } from './PreviewPanels'
 import PathDialog from './PathDialog'
-import type { FlowInput } from './types'
+import type { AcquisitionChoice, FlowInput } from './types'
+import { sourceMode, sourcePath } from '@/features/flow-run/acquisition'
 
 export default function InputMemoryPanel({ id, inputs }: { id: string; inputs: FlowInput[] }) {
-  const [values, setValues] = useState<Record<string, string>>({})
+  const [values, setValues] = useState<Record<string, string | AcquisitionChoice>>({})
   const [editing, setEditing] = useState<FlowInput | null>(null)
   const [error, setError] = useState(''), [busy, setBusy] = useState(false)
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function InputMemoryPanel({ id, inputs }: { id: string; inputs: F
   return <div className="space-y-3">
     <InputPreview inputs={inputs}/>
     {!!remembered.length && <section aria-label="本机记住的输入" className="space-y-3"><h3 className="text-sm font-medium">本机上次选择</h3><p className="text-xs text-zinc-500">仅用于下次预填，不随流程复制或导出。</p>
-      {remembered.map(input => <div key={input.key} className="rounded border p-3 text-xs"><p>{input.label}：<span className="break-all">{values[input.key] || '尚未记住'}</span></p><div className="mt-2 flex gap-2">
+      {remembered.map(input => <div key={input.key} className="rounded border p-3 text-xs"><p>{input.label}：<span className="break-all">{sourceMode(values[input.key])==='auto'?'自动获取':sourceMode(values[input.key])==='fill'?`提供文件夹并补齐：${sourcePath(values[input.key])}`:sourcePath(values[input.key]) || '尚未记住'}</span></p><div className="mt-2 flex gap-2">
         <button className={buttonClass} disabled={busy} onClick={() => setEditing(input)}>选择{input.label}{input.type === 'folder' ? '文件夹' : '文件'}</button>
         <button className={buttonClass} disabled={busy || !values[input.key]} onClick={async () => {
           setBusy(true); setError('')
@@ -30,7 +31,7 @@ export default function InputMemoryPanel({ id, inputs }: { id: string; inputs: F
       </div></div>)}
     </section>}
     {error && <p role="alert" className="text-xs text-red-700">{error}</p>}
-    {editing && <PathDialog title={`设置「${editing.label}」的本机上次选择`} fields={[{ key: 'value', label: '路径', initial: values[editing.key], picker: editing.type === 'folder' ? 'directory' : 'file' }]} onClose={() => setEditing(null)} onSubmit={async data => {
+    {editing && <PathDialog title={`设置「${editing.label}」的本机上次选择`} fields={[{ key: 'value', label: '路径', initial: sourcePath(values[editing.key]), picker: editing.type === 'folder' ? 'directory' : 'file' }]} onClose={() => setEditing(null)} onSubmit={async data => {
       await flowApi.setInputMemory(id, editing.key, data.value)
       setValues(await flowApi.inputMemory(id))
     }}/>} 

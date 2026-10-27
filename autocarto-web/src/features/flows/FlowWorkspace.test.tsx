@@ -4,6 +4,7 @@ import FlowWorkspace from './FlowWorkspace'
 import { useConnectionStore } from '@/stores/connectionStore'
 import type { FlowDetail, FlowSummary, ResolvedResource, Diagnostic } from './types'
 const mocks = vi.hoisted(() => ({
+  roles:vi.fn(),setRoles:vi.fn(),
   inputMemory: vi.fn(),
   setInputMemory: vi.fn(),
   clearInputMemory: vi.fn(),
@@ -104,6 +105,16 @@ beforeEach(() => {
   mocks.create.mockResolvedValue(detail)
 })
 describe('flow center', () => {
+  it('opens the role mapping tab from an error fix without changing the flow text',async()=>{
+    mocks.get.mockResolvedValue({...detail,diagnostics:[{level:'error',code:'FLOW_ROLE_NOT_FOUND',message:'缺少角色',fix:{action:'map_role'}}]})
+    mocks.roles.mockResolvedValue({flow_id:'demo',scheme:'default',role_fill:'auto',role_mapping:{},role_slots:[],scheme_roles:[],flow_roles:[]})
+    render(<FlowWorkspace/>)
+    fireEvent.click(await screen.findByRole('button',{name:/示例流程.*处理用户数据/}))
+    fireEvent.click(await screen.findByRole('button',{name:'设置角色对应'}))
+    await waitFor(()=>expect(mocks.roles).toHaveBeenCalledWith('demo','default'))
+    expect(screen.getByRole('button',{name:'角色对应'})).toHaveAttribute('aria-pressed','true')
+    expect(screen.getByRole('textbox',{name:'流程内容'})).toHaveValue(detail.flow_md)
+  })
   it('shows the saved preview without compiling and keeps unsaved edits local', async () => {
     mocks.get.mockResolvedValue({
       ...detail,

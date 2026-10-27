@@ -208,6 +208,15 @@ compat_layers:
     governs: []
     status: read_only_compat
 
+  - id: inspector_workspace_state_v4
+    path: autocarto-web/src/stores/uiStore.ts
+    why_temporary: '保留 inspectorOpen、setInspectorOpen 与 toggleInspectorOpen 一个版本，内部映射到会话工作区状态，供既有聊天状态桥迁移。'
+    remove_in_wave: after_workspace_v4_next_release
+    evidence_required: ['工作区已发布满一个版本，所有客户端改用 workspace 接口且聊天状态桥已迁移。']
+    blocking_tests: ['cd autocarto-web && npm test -- src/components/workspace/SessionWorkspace.test.tsx']
+    governs: []
+    status: wrapper_only
+
 completed_removals:
   - id: flow_resource_absolute_path_code
     path: carto_agent/internal/resource/resolver.go

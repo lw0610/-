@@ -1,0 +1,58 @@
+{
+  "apiVersion": "tool/v1",
+  "kind": "Tool",
+  "metadata": {
+    "name": "data_derive",
+    "display_name": "数据派生",
+    "keywords": [
+      "数据派生"
+    ],
+    "domain": "data-acquisition",
+    "runtime": "qgis"
+  },
+  "spec": {
+    "description": "数据派生，不覆盖原件；仅接受系统已解析的参数，不读取数据清单。",
+    "parameters": [
+      {
+        "name": "input",
+        "type": "object",
+        "required": true,
+        "description": "原件路径或{path,layer}"
+      },
+      {
+        "name": "method",
+        "type": "string",
+        "required": true,
+        "description": "取值：polygon_to_boundary_lines/point_on_surface/hillshade"
+      },
+      {
+        "name": "boundary_kind",
+        "type": "string",
+        "required": false,
+        "description": "共享行政界线级别名称"
+      },
+      {
+        "name": "include_outer",
+        "type": "boolean",
+        "required": false,
+        "description": "是否包含无法区分国界与海岸线的外围界线"
+      },
+      {
+        "name": "output",
+        "type": "string",
+        "required": true,
+        "description": "新输出文件路径"
+      }
+    ]
+  },
+  "execution": {
+    "handler": "handlers.derive.derive_handler",
+    "param_mapping": {
+      "input": "{{ input }}",
+      "method": "{{ method }}",
+      "boundary_kind": "{{ boundary_kind }}",
+      "include_outer": "{{ include_outer }}",
+      "output": "{{ output }}"
+    }
+  }
+}

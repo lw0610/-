@@ -39,6 +39,7 @@ func (s *DeepServer) runAgentPhase(
 	taskCtx := withToolSessionContext(ctx, sessionID, projectPath, boundInstanceID)
 	taskCtx = s.withFlowService(taskCtx, sessionID)
 	taskCtx = s.withGEEProgress(taskCtx, conn, sessionID, options.modePhase)
+	taskCtx = s.withOSMProgress(taskCtx, conn, sessionID, options.modePhase)
 	taskCtx = deepagent.WithKnowledgeReview(taskCtx, s.KnowledgeReviewStore())
 	// Preserve source before model compression/delegation without enabling ADK
 	// SessionValues' automatic FString formatting of JSON-bearing agent prompts.

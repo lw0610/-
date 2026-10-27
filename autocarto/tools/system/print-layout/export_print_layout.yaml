@@ -8,6 +8,9 @@ metadata:
   domain: print-layout
 spec:
   description: 导出布局为图片
+  artifacts:
+    - {field: artifact_paths, role: deliverable}
+    - {field: output, role: deliverable}
   parameters:
   - name: LAYOUT
     type: string

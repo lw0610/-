@@ -13,6 +13,7 @@ from qgis.core import (
 )
 
 from autocarto.core.paths import get_project_root, resolve_project_path
+from autocarto.utils.redaction import redact_sensitive_text
 from autocarto.tools.system._shared.data_loading_support import (
     DataLoadingError, boolean_parameter, normalized_data_source, split_data_source,
 )
@@ -67,7 +68,7 @@ def _resolve_loading_source(raw_path, kind):
 
 def _layer_data(layer, reused):
     geometry_type = QgsWkbTypes.geometryDisplayString(layer.geometryType()) if isinstance(layer, QgsVectorLayer) else "Raster"
-    return {"layer_id": layer.id(), "layer_name": layer.name(), "source": layer.source(),
+    return {"layer_id": layer.id(), "layer_name": layer.name(), "source": redact_sensitive_text(layer.source()),
             "crs": _crs_label(layer.crs()), "geometry_type": geometry_type, "reused": reused}
 
 
@@ -166,7 +167,7 @@ def export_vector_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     try:
         from qgis.core import QgsVectorFileWriter
 
-        sync_session_context_from_params(params)
+        session = sync_session_context_from_params(params)
         layer_name = params.get("layer")
         output_path = params.get("output")
         output_format = str(params.get("format") or "").strip()
@@ -174,13 +175,22 @@ def export_vector_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         if not layer_name:
             return {"success": False, "output": "", "info": "错误：缺少图层名称参数"}
 
-        layers = QgsProject.instance().mapLayersByName(layer_name)
+        exact = QgsProject.instance().mapLayer(str(layer_name))
+        layers = [exact] if exact is not None else QgsProject.instance().mapLayersByName(str(layer_name))
         if not layers:
             return {
                 "success": False,
                 "output": "",
                 "info": f"错误：未找到图层 '{layer_name}'",
             }
+        if len(layers) != 1:
+            raise DataLoadingError("ambiguous_layer", "同名图层不止一个，请提供明确的图层 ID",
+                                   {"layer_ids": [layer.id() for layer in layers]})
+        if not isinstance(layers[0], QgsVectorLayer) or not layers[0].isValid():
+            raise DataLoadingError("invalid_vector_layer", "导出输入必须是有效的矢量图层")
+        if params.get("replace_source") not in (None, ""):
+            from autocarto.tools.system._shared.vector_source_replace import replace_vector_source
+            return replace_vector_source(layers[0], params, session)
 
         ext_map = {
             "ESRI Shapefile": ".shp",
@@ -231,6 +241,8 @@ def export_vector_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             "info": f"矢量图层导出成功: {output_path}",
         }
 
+    except DataLoadingError as e:
+        return {"success": False, "output": "", "info": str(e), "error_type": e.code, "data": e.details}
     except Exception as e:
         return {"success": False, "output": "", "info": f"导出矢量图层失败: {str(e)}"}
 
@@ -279,23 +291,34 @@ def load_list_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             entry = {"name": row["name"], "path": source, "status": "missing", "layer_id": "",
                      "crs": "", "geometry_type": "", "message": "", "required": row["required"]}
             try:
+                layer_id = row.get("layer_id")
+                if layer_id:
+                    existing = QgsProject.instance().mapLayer(layer_id)
+                    expected = QgsVectorLayer if row["kind"] == "vector" else QgsRasterLayer
+                    if not isinstance(existing, expected) or not existing.isValid():
+                        raise DataLoadingError("input_missing", "已准备的图层不在当前工程中，请重新准备数据: " + row["name"])
+                    entry.update(status="failed", message="待复用")
+                    plans.append((entry, source, row["kind"], existing))
+                    entries.append(entry)
+                    continue
                 if not row["exists"]:
                     raise DataLoadingError("input_missing", "数据文件不存在: " + source)
                 source, resolution = _resolve_loading_source(source, row["kind"])
                 entry.update(path=source, status="failed", message="待加载")
-                plans.append((entry, source, row["kind"]))
+                plans.append((entry, source, row["kind"], None))
             except DataLoadingError as exc:
                 entry["message"] = str(exc)
             entries.append(entry)
         blocking = [entry for entry in entries if entry["status"] == "missing" and entry["required"]]
         if strict and blocking:
-            for entry, _, _ in plans:
+            for entry, _, _, _ in plans:
                 entry["message"] = "严格检查未通过，未加载任何图层"
             return {"success": False, "output": "", "info": "必需数据缺失，未加载任何图层",
                     "error_type": "data_list_required_missing", "resource": handle_summary(handle), "warnings": handle.get("warnings", []), "data": {"entries": entries, "crs_summary": {}, "loaded_count": 0, "reused_count": 0}}
         summary = {}
-        for entry, source, kind in plans:
-            result = _load_data_layer({"path": source, "layer_name": entry["name"], "reuse_existing": reuse}, kind)
+        for entry, source, kind, existing in plans:
+            result = ({"success": True, "data": _layer_data(existing, True), "info": "复用系统已准备的图层"}
+                      if existing is not None else _load_data_layer({"path": source, "layer_name": entry["name"], "reuse_existing": reuse}, kind))
             if result.get("success"):
                 data = result["data"]
                 entry.update(status="reused" if data["reused"] else "loaded", layer_id=data["layer_id"],

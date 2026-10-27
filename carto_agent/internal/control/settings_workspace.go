@@ -36,6 +36,7 @@ func buildSettingsWorkspaceData() map[string]any {
 				"hidden":   true,
 				"priority": 45,
 			},
+			{"key": "acquisition", "href": "/settings/acquisition", "label": "数据获取", "hint": "管理数据来源、已获取数据和下载限制", "routes": []string{"/settings/acquisition"}, "priority": 48},
 			{
 				"key":      "services",
 				"href":     "/settings/services",

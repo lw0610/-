@@ -1,0 +1,29 @@
+{
+  "apiVersion": "tool/v1",
+  "kind": "Tool",
+  "metadata": {
+    "name": "osm_check_environment",
+    "display_name": "检查 OSM 服务",
+    "keywords": [
+      "OSM数据",
+      "开放地图",
+      "检查 OSM 服务"
+    ],
+    "domain": "osm-data",
+    "runtime": "internal"
+  },
+  "spec": {
+    "description": "检查 OSM 服务；只使用全量OSM公共服务，报告部分失败、字段取舍和真实输出路径。",
+    "parameters": []
+  },
+  "execution": {
+    "backend_tool": "osm_check_environment",
+    "param_mapping": {}
+  },
+  "policy": {
+    "visibility": "public",
+    "authorization_scopes": [
+      "tool.invoke"
+    ]
+  }
+}

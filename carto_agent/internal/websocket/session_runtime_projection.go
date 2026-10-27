@@ -1,7 +1,9 @@
 package websocket
 
 import (
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 
@@ -277,13 +279,12 @@ func firstNonNil(values ...any) any {
 	return nil
 }
 
-func (s *DeepServer) ensureSessionRuntimeProjection(sessionID string) *sessionRuntimeProjection {
+// Caller holds s.mu throughout reads or updates of the returned projection.
+func (s *DeepServer) ensureSessionRuntimeProjectionLocked(sessionID string) *sessionRuntimeProjection {
 	sid := strings.TrimSpace(sessionID)
 	if sid == "" {
 		return nil
 	}
-	s.mu.Lock()
-	defer s.mu.Unlock()
 	if s.sessionRuntimeProjections == nil {
 		s.sessionRuntimeProjections = make(map[string]*sessionRuntimeProjection)
 	}
@@ -314,7 +315,9 @@ func (s *DeepServer) updateSessionRuntimeProjectionState(state SessionRuntimeSta
 	if sid == "" {
 		return
 	}
-	projection := s.ensureSessionRuntimeProjection(sid)
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	projection := s.ensureSessionRuntimeProjectionLocked(sid)
 	if projection == nil {
 		return
 	}
@@ -367,7 +370,9 @@ func (s *DeepServer) applySessionWorkflowMessage(msg Message) bool {
 	default:
 		return false
 	}
-	projection := s.ensureSessionRuntimeProjection(sid)
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	projection := s.ensureSessionRuntimeProjectionLocked(sid)
 	if projection == nil {
 		return false
 	}
@@ -423,6 +428,31 @@ func (p *sessionRuntimeProjection) appendWorkflowEvent(msg Message, timestamp in
 	phase := strings.ToLower(strings.TrimSpace(msg.Phase))
 	if phase == "" {
 		phase = "thinking"
+	}
+	// Downloads may outlive a delegation block. Update their original row and
+	// never reopen a completed download when a delayed heartbeat is replayed.
+	if phase == "progress" && stringValue(msg.Data["source"]) == "osm" {
+		key := stringValue(msg.Data["request_key"])
+		if key != "" {
+			for bi := range p.WorkflowBlocks {
+				for ei, old := range p.WorkflowBlocks[bi].Entries {
+					if old.Phase != "progress" || stringValue(old.Data["source"]) != "osm" || stringValue(old.Data["request_key"]) != key {
+						continue
+					}
+					if terminalOSMProgress(stringValue(old.Data["download_phase"])) {
+						return
+					}
+					if entry := buildWorkflowEntry(msg, timestamp); entry != nil {
+						entry.ID = old.ID
+						p.WorkflowBlocks[bi].Entries[ei] = *entry
+						p.WorkflowBlocks[bi].UpdatedAt = timestamp
+						p.WorkflowBlocks[bi].Summary = msg.Content
+						p.RuntimeSummary = msg.Content
+					}
+					return
+				}
+			}
+		}
 	}
 	incomingAgent := strings.TrimSpace(msg.Agent)
 	if incomingAgent == "" {
@@ -568,8 +598,18 @@ func buildWorkflowEntry(msg Message, timestamp int64) *workflowEntry {
 	case "thinking":
 		entryType = "thinking"
 	}
+	entryID := "entry-" + time.UnixMilli(timestamp).UTC().Format("20060102150405.000")
+	if phase == "progress" && stringValue(data["request_key"]) != "" {
+		// Parallel callbacks can arrive in the same millisecond. The request
+		// identity also stays stable after restoring the persisted projection.
+		source := stringValue(data["source"])
+		if source == "" {
+			source = "runtime"
+		}
+		entryID = fmt.Sprintf("entry-progress-%s-%x", source, sha256.Sum256([]byte(source+"\x00"+stringValue(data["request_key"]))))
+	}
 	return &workflowEntry{
-		ID:        "entry-" + time.UnixMilli(timestamp).UTC().Format("20060102150405.000"),
+		ID:        entryID,
 		Type:      entryType,
 		Content:   content,
 		Phase:     phase,

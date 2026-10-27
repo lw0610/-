@@ -21,7 +21,9 @@ import (
 	"github.com/autocarto/carto_agent/internal/prompts"
 	"github.com/autocarto/carto_agent/internal/runtimepersist"
 	"github.com/autocarto/carto_agent/internal/session"
+	"github.com/autocarto/carto_agent/internal/sessionfiles"
 	"github.com/autocarto/carto_agent/internal/sessionmeta"
+	tooldefinition "github.com/autocarto/carto_agent/internal/tool"
 	"github.com/autocarto/carto_agent/internal/toolsession"
 )
 
@@ -383,7 +385,7 @@ func (s *DeepServer) processTask(ctx context.Context, conn *websocket.Conn, msg 
 				s.sendSessionError(conn, sessionID, err.Error())
 				return
 			}
-			s.sendSessionMessage(conn, Message{Type: MsgTypeAgentWorkflow, SessionID: sessionID, Phase: "tool_result", Data: map[string]any{"tool": "flow_preview", "status": "completed", "result": preview}})
+			s.sendSessionMessage(conn, Message{Type: MsgTypeAgentWorkflow, SessionID: sessionID, Phase: "tool_result", Data: withModePhaseData(map[string]any{"tool": "flow_preview", "status": "completed", "result": preview}, modeStatePhasePlanning)})
 			s.sendModeState(conn, sessionID, execMode, modeStatePhaseCompleted)
 			return
 		}
@@ -487,6 +489,18 @@ func (s *DeepServer) consumeEvents(
 	toolActivitySeen := false
 	emittedWorkflowTexts := make(map[string]struct{})
 	result := consumeEventsResult{}
+	fileStore, _ := sessionfiles.New(projectPath, sessionID)
+	artifactDefinitions := map[string]tooldefinition.ToolDefinition{}
+	if fileStore != nil {
+		fileStore.OnChange(func(change sessionfiles.Change) {
+			s.sendSessionMessage(nil, Message{Type: MsgTypeSessionFilesChanged, SessionID: sessionID, Data: map[string]any{"session_id": sessionID, "added": change.Added, "updated": change.Updated}})
+		})
+		if definitions, err := tooldefinition.LoadCanonicalDefinitions(); err == nil {
+			for _, definition := range definitions {
+				artifactDefinitions[definition.Metadata.Name] = definition
+			}
+		}
+	}
 
 	if strings.TrimSpace(options.titleSeed) != "" {
 		go s.tryAutoTitleSession(sessionID, projectPath, options.titleSeed)
@@ -567,6 +581,7 @@ func (s *DeepServer) consumeEvents(
 							Content:          fmt.Sprintf("调用工具: %s", toolName),
 							Data: withModePhaseData(map[string]interface{}{
 								"tool":      toolName,
+								"call_id":   toolCall.ID,
 								"tool_args": toolArgs,
 								"status":    "running",
 							}, options.modePhase),
@@ -589,6 +604,9 @@ func (s *DeepServer) consumeEvents(
 
 					assessment := determineToolStatus(mv.ToolName, lastContent)
 					if assessment.Status == "completed" {
+						if fileStore != nil {
+							registerToolArtifacts(fileStore, artifactDefinitions[mv.ToolName], mv.ToolName, currentAgent, mv.Message, options)
+						}
 						summary := lastContent
 						if len(summary) > 2048 {
 							summary = summary[:2048]
@@ -617,6 +635,7 @@ func (s *DeepServer) consumeEvents(
 
 					toolData := map[string]interface{}{
 						"tool":          mv.ToolName,
+						"call_id":       mv.Message.ToolCallID,
 						"status":        assessment.Status,
 						"result":        lastContent,
 						"status_source": assessment.Source,
@@ -1055,6 +1074,7 @@ func (s *DeepServer) resumeTask(ctx context.Context, conn *websocket.Conn, pendi
 	logger.Info("恢复任务执行: checkpoint=%s, targets=%d", pending.CheckpointID, len(targets))
 	resumeCtx := withToolSessionContext(ctx, pending.SessionID, pending.ProjectPath, pending.BoundInstanceID)
 	resumeCtx = s.withGEEProgress(resumeCtx, conn, pending.SessionID, pending.ModePhase)
+	resumeCtx = s.withOSMProgress(resumeCtx, conn, pending.SessionID, pending.ModePhase)
 	resumeCtx = deepagent.WithKnowledgeReview(resumeCtx, s.KnowledgeReviewStore())
 	resumeCtx = s.withFlowService(resumeCtx, pending.SessionID)
 	if pending.FlowOptions.originalSource != nil {

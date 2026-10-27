@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/autocarto/carto_agent/internal/resource/bindings"
@@ -64,7 +65,9 @@ func TestV50AllFlowRoutesStayNonblocking(t *testing.T) {
 	defer cancel()
 	jobs := flow.NewEnrichmentManager(compiler, flow.EnrichmentOptions{})
 	jobs.Start(lifecycle)
-	api := &API{}
+	configDir := filepath.Join(root, "runtime/config/agent_configs")
+	write(filepath.Join(configDir, "test/agent.yaml"), "version: '2.0'\nruntime:\n  agents:\n    main:\n      kind: agent\n      display_name: 主角色\n      enabled: true\n      is_main: true\n")
+	api := NewAPI(nil, config.NewAgentConfigManager(configDir), nil, nil, "", nil)
 	api.SetFlowStore(store)
 	api.SetResourceLibrary(library)
 	api.SetFlowCompiler(compiler)
@@ -78,6 +81,8 @@ func TestV50AllFlowRoutesStayNonblocking(t *testing.T) {
 	cases := []routeCase{
 		{"GET", "/api/flows", "/api/flows", nil, 200},
 		{"GET", "/api/flows/{id}", "/api/flows/base-flow", nil, 200},
+		{"GET", "/api/flows/{id}/roles", "/api/flows/base-flow/roles", nil, 200},
+		{"PUT", "/api/flows/{id}/roles", "/api/flows/base-flow/roles", map[string]any{"mapping": map[string]string{}}, 200},
 		{"GET", "/api/flows/bindings/status", "/api/flows/bindings/status", nil, 200},
 		{"PUT", "/api/flows/{id}", "/api/flows/base-flow", map[string]any{"flow_md": raw}, 200},
 		{"POST", "/api/flows", "/api/flows", map[string]any{"flow_md": strings.Replace(raw, "base-flow", "created-flow", 1)}, 200},

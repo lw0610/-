@@ -92,7 +92,7 @@ func (r *InstanceRegistry) Register(req RegisterRequest) error {
 	if exists {
 		eventType = "changed"
 	}
-	r.emitEvent(InstanceEvent{Type: eventType, Instance: inst})
+	r.emitEventLocked(InstanceEvent{Type: eventType, Instance: inst})
 	r.persistInstance(inst)
 
 	logger.Info("InstanceRegistry: 实例已注册 %s (PID=%d, source=%s)", req.InstanceID, req.PID, source)
@@ -112,7 +112,7 @@ func (r *InstanceRegistry) Unregister(instanceID string) error {
 	delete(r.instances, instanceID)
 	inst.Status = "stopped"
 	inst.UpdatedAt = time.Now()
-	r.emitEvent(InstanceEvent{Type: "removed", Instance: inst})
+	r.emitEventLocked(InstanceEvent{Type: "removed", Instance: inst})
 	r.persistInstance(inst)
 
 	logger.Info("InstanceRegistry: 实例已注销 %s", instanceID)
@@ -144,7 +144,7 @@ func (r *InstanceRegistry) Heartbeat(instanceID string) error {
 		inst.Services[name] = svc
 	}
 
-	r.emitEvent(InstanceEvent{Type: "changed", Instance: inst})
+	r.emitEventLocked(InstanceEvent{Type: "changed", Instance: inst})
 	r.persistInstance(inst)
 	return nil
 }
@@ -169,7 +169,7 @@ func (r *InstanceRegistry) HandleEvent(instanceID string, event EventRequest) er
 	}
 
 	inst.UpdatedAt = time.Now()
-	r.emitEvent(InstanceEvent{Type: "changed", Instance: inst})
+	r.emitEventLocked(InstanceEvent{Type: "changed", Instance: inst})
 	r.persistInstance(inst)
 	r.persistEvent(instanceID, event)
 
@@ -183,9 +183,7 @@ func (r *InstanceRegistry) GetAll() []*QGISInstance {
 	db := r.db
 	result := make([]*QGISInstance, 0, len(r.instances))
 	for _, inst := range r.instances {
-		cp := *inst
-		cp.Services = copyServices(inst.Services)
-		result = append(result, &cp)
+		result = append(result, copyInstance(inst))
 	}
 	r.mu.RUnlock()
 
@@ -228,14 +226,12 @@ func (r *InstanceRegistry) Get(instanceID string) *QGISInstance {
 
 	r.mu.RLock()
 	db := r.db
-	inst, ok := r.instances[instanceID]
+	inst := copyInstance(r.instances[instanceID])
 	r.mu.RUnlock()
-	if !ok {
+	if inst == nil {
 		return queryRunningInstanceByID(db, instanceID)
 	}
-	cp := *inst
-	cp.Services = copyServices(inst.Services)
-	return &cp
+	return inst
 }
 
 // Events 返回事件通道（供 WebSocket 广播）
@@ -317,13 +313,16 @@ func (r *InstanceRegistry) cleanup() {
 			inst.Status = "dead"
 			inst.UpdatedAt = now
 			delete(r.instances, id)
-			r.emitEvent(InstanceEvent{Type: "removed", Instance: inst})
+			r.emitEventLocked(InstanceEvent{Type: "removed", Instance: inst})
 			r.persistInstance(inst)
 		}
 	}
 }
 
-func (r *InstanceRegistry) emitEvent(event InstanceEvent) {
+// emitEventLocked publishes an independent snapshot while the caller holds r.mu.
+// Consumers may retain or modify it without racing later registry updates.
+func (r *InstanceRegistry) emitEventLocked(event InstanceEvent) {
+	event.Instance = copyInstance(event.Instance)
 	select {
 	case r.eventCh <- event:
 	default:
@@ -462,6 +461,16 @@ func scanPersistedRunningInstance(scanner rowScanner) (*QGISInstance, error) {
 		Source:             source,
 	}
 	return inst, nil
+}
+
+// copyInstance requires the registry lock when src is an internal instance.
+func copyInstance(src *QGISInstance) *QGISInstance {
+	if src == nil {
+		return nil
+	}
+	cp := *src
+	cp.Services = copyServices(src.Services)
+	return &cp
 }
 
 func copyServices(src map[string]ServiceInfo) map[string]ServiceInfo {

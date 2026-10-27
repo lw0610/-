@@ -10,20 +10,32 @@ import (
 	"sync"
 	"time"
 
+	"github.com/autocarto/carto_agent/internal/datasource"
 	"github.com/autocarto/carto_agent/internal/resource"
 )
 
 // Environment 由生产装配层从当前方案和正式工具目录创建，不含任何凭据。
 type Environment struct {
-	Scheme          string
-	SchemeRevision  string
-	CatalogRevision string
-	Roles           []RoleSpec
-	Packages        []PackageSpec
-	Capabilities    []CapabilitySpec
-	EnabledFlows    *[]string // nil 表示全部启用；空列表表示全部禁用。
-	Model           JSONModel
-	ModelName       string
+	DataSources      *datasource.Catalog
+	Integrations     map[string]bool
+	Secrets          map[string]bool
+	AutoAcquire      string
+	WebSearchEnabled bool
+	MaxDownloadMB    int
+	RoleFill         string
+	RoleMapping      map[string]map[string]string
+	MainProvider     string
+	VisionProviders  []string
+	PackageReady     func(string) bool
+	Scheme           string
+	SchemeRevision   string
+	CatalogRevision  string
+	Roles            []RoleSpec
+	Packages         []PackageSpec
+	Capabilities     []CapabilitySpec
+	EnabledFlows     *[]string // nil 表示全部启用；空列表表示全部禁用。
+	Model            JSONModel
+	ModelName        string
 }
 
 type CompilerOptions struct {
@@ -355,6 +367,7 @@ func (c *Compiler) buildPlan(ctx context.Context, source *compilationSource, mod
 			}
 		}
 	}
+	resolveRoleSlots(plan, doc, env)
 	plan.InputConstraints = declaredConstraints(doc.Inputs, plan.Inputs, plan.InputConstraints)
 	for index, step := range doc.Steps {
 		if err := ctx.Err(); err != nil {
@@ -364,17 +377,7 @@ func (c *Compiler) buildPlan(ctx context.Context, source *compilationSource, mod
 		if step.Condition != nil {
 			compiled.Condition = &ConditionDoc{Text: step.Condition.Text, Rule: cloneRule(step.Condition.Rule)}
 		}
-		role, ds := bindRole(step, env.Roles)
-		plan.Diagnostics = append(plan.Diagnostics, ds...)
-		if step.Role == "用户" || step.Role == "人工" {
-			compiled.Kind = "confirm"
-		} else if role != nil {
-			compiled.Role, compiled.RoleLabel, compiled.Executor = role.ID, role.DisplayName, role.Executor
-			compiled.Kind = "agent"
-			if role.Kind == "executor" {
-				compiled.Kind = "executor"
-			}
-		}
+		resolveStepRole(plan, &compiled, step, doc, env)
 		compiled.Enrichment = StepEnrichmentNone
 		if env.Model != nil && mode != enrichSaved {
 			compiled.Enrichment = StepEnrichmentPending
@@ -413,6 +416,8 @@ func (c *Compiler) buildPlan(ctx context.Context, source *compilationSource, mod
 		plan.PlanStatus = PlanStatusPartial
 	}
 	completeDiagnostics(doc, plan, env)
+	buildRequirements(doc, plan, source.resources, env)
+	gradeRoleDiagnostics(plan, nil, nil)
 	plan.CompileDiagnostics = append([]Diagnostic{}, plan.Diagnostics...)
 	return plan, nil
 }

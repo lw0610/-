@@ -1,0 +1,223 @@
+// Package datasource loads declarative acquisition catalogs without network or model calls.
+package datasource
+
+import (
+	"fmt"
+	"gopkg.in/yaml.v3"
+	"strings"
+)
+
+type Strings []string
+
+func (s *Strings) UnmarshalYAML(n *yaml.Node) error {
+	if n.Kind == yaml.ScalarNode {
+		if n.Tag != "!!str" {
+			return fmt.Errorf("字段候选必须为字符串")
+		}
+		*s = []string{n.Value}
+		return nil
+	}
+	var values []string
+	if err := n.Decode(&values); err != nil {
+		return err
+	}
+	*s = values
+	return nil
+}
+
+type Parameter struct {
+	Values   []string `yaml:"values,omitempty" json:"values,omitempty"`
+	Required bool     `yaml:"required,omitempty" json:"required,omitempty"`
+}
+type Field struct {
+	Meaning  string `yaml:"meaning" json:"meaning"`
+	Required bool   `yaml:"required,omitempty" json:"required,omitempty"`
+}
+type Alias struct {
+	Name   string            `yaml:"name" json:"name"`
+	Params map[string]string `yaml:"params,omitempty" json:"params,omitempty"`
+}
+type Derivation struct {
+	From    string            `yaml:"from" json:"from"`
+	Method  string            `yaml:"method" json:"method"`
+	Params  map[string]string `yaml:"params,omitempty" json:"params,omitempty"`
+	Quality string            `yaml:"quality,omitempty" json:"quality,omitempty"`
+	Note    string            `yaml:"note,omitempty" json:"note,omitempty"`
+}
+type Generalization struct {
+	MaxDenominator int      `yaml:"max_denominator,omitempty" json:"max_denominator,omitempty"`
+	KeepClass      []string `yaml:"keep_class" json:"keep_class"`
+}
+type Validation struct {
+	MinFeatures   int     `yaml:"min_features" json:"min_features"`
+	NameFillRatio float64 `yaml:"name_fill_ratio" json:"name_fill_ratio"`
+}
+type Category struct {
+	ID          string               `yaml:"id" json:"id"`
+	Name        string               `yaml:"name" json:"name"`
+	Geometry    string               `yaml:"geometry" json:"geometry"`
+	Params      map[string]Parameter `yaml:"params,omitempty" json:"params,omitempty"`
+	Aliases     []Alias              `yaml:"aliases,omitempty" json:"aliases,omitempty"`
+	Fields      map[string]Field     `yaml:"fields,omitempty" json:"fields,omitempty"`
+	Derive      []Derivation         `yaml:"derive,omitempty" json:"derive,omitempty"`
+	Generalize  []Generalization     `yaml:"generalize,omitempty" json:"generalize,omitempty"`
+	SimplifyMM  float64              `yaml:"simplify_mm,omitempty" json:"simplify_mm,omitempty"`
+	Sensitivity string               `yaml:"sensitivity,omitempty" json:"sensitivity,omitempty"`
+	Validate    Validation           `yaml:"validate" json:"validate"`
+}
+type Coverage struct {
+	Regions []string  `yaml:"regions,omitempty" json:"regions,omitempty"`
+	BBox    []float64 `yaml:"bbox,omitempty" json:"bbox,omitempty"`
+}
+type Scale struct {
+	MinDenominator int `yaml:"min_denominator,omitempty" json:"min_denominator,omitempty"`
+	MaxDenominator int `yaml:"max_denominator,omitempty" json:"max_denominator,omitempty"`
+}
+type Limits struct {
+	MinAreaKM2     float64 `yaml:"min_area_km2,omitempty" json:"min_area_km2,omitempty"`
+	MaxAreaKM2     float64 `yaml:"max_area_km2,omitempty" json:"max_area_km2,omitempty"`
+	MaxFeatures    int     `yaml:"max_features,omitempty" json:"max_features,omitempty"`
+	MaxExtents     int     `yaml:"max_extents,omitempty" json:"max_extents,omitempty"`
+	TimeoutSeconds int     `yaml:"timeout_seconds,omitempty" json:"timeout_seconds,omitempty"`
+	MaxMB          int     `yaml:"max_mb,omitempty" json:"max_mb,omitempty"`
+}
+type Provide struct {
+	Category string             `yaml:"category" json:"category"`
+	Tags     []string           `yaml:"tags,omitempty" json:"tags,omitempty"`
+	Types    string             `yaml:"types,omitempty" json:"types,omitempty"`
+	Fields   map[string]Strings `yaml:"fields,omitempty" json:"fields,omitempty"`
+	URL      string             `yaml:"url,omitempty" json:"url,omitempty"`
+	Path     string             `yaml:"path,omitempty" json:"path,omitempty"`
+	Tool     string             `yaml:"tool,omitempty" json:"tool,omitempty"`
+	Dataset  string             `yaml:"dataset,omitempty" json:"dataset,omitempty"`
+	Layer    string             `yaml:"layer,omitempty" json:"layer,omitempty"`
+	Params   map[string]string  `yaml:"params,omitempty" json:"params,omitempty"`
+	Defaults map[string]string  `yaml:"defaults,omitempty" json:"defaults,omitempty"`
+	Filter   string             `yaml:"filter,omitempty" json:"filter,omitempty"`
+	Template string             `yaml:"template,omitempty" json:"template,omitempty"`
+}
+type Source struct {
+	APIVersion  string    `yaml:"apiVersion" json:"api_version"`
+	ID          string    `yaml:"id" json:"id"`
+	Name        string    `yaml:"name" json:"name"`
+	Kind        string    `yaml:"kind" json:"kind"`
+	Version     string    `yaml:"version,omitempty" json:"version,omitempty"`
+	Root        string    `yaml:"root,omitempty" json:"root,omitempty"`
+	Endpoints   string    `yaml:"endpoints,omitempty" json:"endpoints,omitempty"`
+	Hosts       []string  `yaml:"hosts,omitempty" json:"hosts,omitempty"`
+	Coverage    Coverage  `yaml:"coverage,omitempty" json:"coverage,omitempty"`
+	Scale       Scale     `yaml:"scale,omitempty" json:"scale,omitempty"`
+	Limits      Limits    `yaml:"limits,omitempty" json:"limits,omitempty"`
+	License     string    `yaml:"license,omitempty" json:"license,omitempty"`
+	Attribution string    `yaml:"attribution,omitempty" json:"attribution,omitempty"`
+	Compliance  string    `yaml:"compliance,omitempty" json:"compliance,omitempty"`
+	Requires    []string  `yaml:"requires,omitempty" json:"requires,omitempty"`
+	RefreshDays int       `yaml:"refresh_days,omitempty" json:"refresh_days,omitempty"`
+	Priority    int       `yaml:"priority,omitempty" json:"priority,omitempty"`
+	Provides    []Provide `yaml:"provides" json:"provides"`
+	SizeMB      float64   `yaml:"size_mb,omitempty" json:"size_mb,omitempty"`
+	Status      string    `yaml:"status,omitempty" json:"status,omitempty"`
+	Notes       []string  `yaml:"notes,omitempty" json:"notes,omitempty"`
+	Builtin     bool      `yaml:"-" json:"builtin"`
+	File        string    `yaml:"-" json:"-"`
+}
+type Diagnostic struct {
+	Code     string `json:"code"`
+	Level    string `json:"level"`
+	Message  string `json:"message"`
+	SourceID string `json:"source_id,omitempty"`
+	File     string `json:"file,omitempty"`
+}
+type Catalog struct {
+	Regions     []Region     `json:"-"`
+	Categories  []Category   `json:"categories"`
+	Sources     []Source     `json:"sources"`
+	Diagnostics []Diagnostic `json:"diagnostics"`
+	Revision    string       `json:"revision"`
+}
+
+func (c *Catalog) Category(id string) *Category {
+	if c != nil {
+		for i := range c.Categories {
+			if c.Categories[i].ID == id {
+				return &c.Categories[i]
+			}
+		}
+	}
+	return nil
+}
+func (c *Catalog) Source(id string) *Source {
+	if c != nil {
+		for i := range c.Sources {
+			if c.Sources[i].ID == id {
+				return &c.Sources[i]
+			}
+		}
+	}
+	return nil
+}
+func (c *Catalog) ResolveCategory(name string, params map[string]string) (*Category, map[string]string, error) {
+	name = strings.TrimSpace(name)
+	for i := range c.Categories {
+		category := &c.Categories[i]
+		aliases := append([]Alias{{Name: category.ID}, {Name: category.Name}}, category.Aliases...)
+		for _, alias := range aliases {
+			if !strings.EqualFold(alias.Name, name) {
+				continue
+			}
+			merged := map[string]string{}
+			for key, value := range alias.Params {
+				merged[key] = value
+			}
+			for key, value := range params {
+				merged[key] = value
+			}
+			for key, spec := range category.Params {
+				if spec.Required && merged[key] == "" {
+					return category, merged, fmt.Errorf("%s缺少参数 %s", category.Name, key)
+				}
+				if merged[key] != "" && len(spec.Values) > 0 && !contains(spec.Values, merged[key]) {
+					return category, merged, fmt.Errorf("%s参数 %s 不支持 %s", category.Name, key, merged[key])
+				}
+			}
+			return category, merged, nil
+		}
+	}
+	return nil, nil, fmt.Errorf("未知数据类别：%s", name)
+}
+func (c *Catalog) SourcesFor(category string) []Source {
+	result := []Source{}
+	if c != nil {
+		for _, source := range c.Sources {
+			for _, provide := range source.Provides {
+				if provide.Category == category {
+					result = append(result, source)
+					break
+				}
+			}
+		}
+	}
+	return result
+}
+func contains(values []string, value string) bool {
+	for _, v := range values {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
+// TerritoryReason expresses catalog policy, not a certification of any data.
+func TerritoryReason(category *Category, source *Source, intersectsChina bool) string {
+	if category == nil || source == nil || !intersectsChina || category.Sensitivity != "cn_territory" {
+		return ""
+	}
+	if !source.Builtin && source.Kind == "local_folder" {
+		return ""
+	}
+	if source.Compliance != "cn_official" && source.Compliance != "cn_reference" {
+		return "疆域类数据不能使用境外开放数据或来源尚未核实的数据"
+	}
+	return ""
+}

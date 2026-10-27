@@ -53,6 +53,7 @@ class BuildCheckGateTestCase(unittest.TestCase):
                 line.startswith("playwright test ")
                 and "diagnostics-page.spec.ts" in line
                 and "services-page.spec.ts" in line
+                and "session-workspace.spec.ts" in line
                 and "backend-reconnect.spec.ts" in line
                 and "live-qgis-integration.spec.ts" not in line
                 for line in log_lines
@@ -82,6 +83,7 @@ class BuildCheckGateTestCase(unittest.TestCase):
                 and "backend-reconnect.spec.ts" in line
                 and "diagnostics-page.spec.ts" in line
                 and "services-page.spec.ts" in line
+                and "session-workspace.spec.ts" in line
                 for line in log_lines
             ),
             log_lines,

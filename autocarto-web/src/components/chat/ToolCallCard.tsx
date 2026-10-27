@@ -6,6 +6,9 @@ import { normalizeWorkflowToolStatus } from '@/lib/chat-message-utils'
 import { WorkflowToolCard } from '@/types/message'
 import { formatTimestamp } from '@/lib/utils'
 import { cn } from '@/lib/utils'
+import { useSessionFilesStore } from '@/hooks/useSessionFiles'
+import { useChatStore } from '@/stores/chatStore'
+import { useUIStore } from '@/stores/uiStore'
 
 interface Props {
   toolCard: WorkflowToolCard
@@ -120,6 +123,10 @@ function parseResultForView(toolCard: WorkflowToolCard): ParsedResultView {
 }
 
 export default function ToolCallCard({ toolCard }: Props) {
+  const sessionId = useChatStore(state => state.sessionId) || ''
+  const files = useSessionFilesStore(state => state.items[sessionId])
+  const registeredFiles = (files || []).filter(item => Boolean(toolCard.callId) && item.origin.call_id === toolCard.callId || item.origin.tool === toolCard.tool && Boolean(toolCard.result?.includes(item.path)))
+
   const [argsOpen, setArgsOpen] = useState(false)
   const [resultOpen, setResultOpen] = useState(true)
   const [extraOpen, setExtraOpen] = useState(false)
@@ -196,6 +203,7 @@ export default function ToolCallCard({ toolCard }: Props) {
         </span>
       </div>
 
+      {registeredFiles.length > 0 && <button className="mb-2 text-xs text-blue-600" onClick={() => useUIStore.getState().openWorkspace('files', registeredFiles.map(item => item.id))}>在文件区查看（{registeredFiles.length}）</button>}
       <div className="space-y-2">
         <div className="rounded-sm border border-zinc-200 bg-zinc-100 p-2 dark:border-zinc-800 dark:bg-zinc-950/60">
           <div className="mb-1 flex items-center justify-between">

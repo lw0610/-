@@ -8,6 +8,9 @@ metadata:
   domain: cartography
 spec:
   description: 导出布局为 PDF
+  artifacts:
+    - {field: artifact_paths, role: deliverable}
+    - {field: output, role: deliverable}
   parameters:
   - name: LAYOUT
     type: string

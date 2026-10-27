@@ -1,0 +1,51 @@
+{
+  "apiVersion": "tool/v1",
+  "kind": "Tool",
+  "metadata": {
+    "name": "archive_extract",
+    "display_name": "安全解压",
+    "keywords": [
+      "安全解压"
+    ],
+    "domain": "data-acquisition",
+    "runtime": "qgis"
+  },
+  "spec": {
+    "description": "安全解压，不覆盖原件；仅接受系统已解析的参数，不读取数据清单。",
+    "parameters": [
+      {
+        "name": "input",
+        "type": "string",
+        "required": true,
+        "description": "ZIP 或 TAR.GZ 文件"
+      },
+      {
+        "name": "output",
+        "type": "string",
+        "required": true,
+        "description": "数据仓 acquired 下的新临时目录"
+      },
+      {
+        "name": "max_files",
+        "type": "integer",
+        "required": false,
+        "description": "最多条目数，默认10000"
+      },
+      {
+        "name": "max_bytes",
+        "type": "integer",
+        "required": false,
+        "description": "最多解压字节数，默认2GB"
+      }
+    ]
+  },
+  "execution": {
+    "handler": "handlers.archive.extract_handler",
+    "param_mapping": {
+      "input": "{{ input }}",
+      "output": "{{ output }}",
+      "max_files": "{{ max_files }}",
+      "max_bytes": "{{ max_bytes }}"
+    }
+  }
+}

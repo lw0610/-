@@ -1,11 +1,9 @@
 package api
 
 import (
+	"github.com/autocarto/carto_agent/internal/testutil"
 	"os"
 	"testing"
 )
 
-func TestMain(m *testing.M) {
-	_ = os.Setenv("AUTOCARTO_DISABLE_KEYRING", "1")
-	os.Exit(m.Run())
-}
+func TestMain(m *testing.M) { os.Exit(testutil.RunIsolatedTests(m)) }

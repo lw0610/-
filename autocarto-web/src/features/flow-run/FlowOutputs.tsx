@@ -2,6 +2,9 @@
 import { useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { isDesktopRuntime } from '@/lib/config-form-helpers'
+import { useUIStore } from '@/stores/uiStore'
+import { useSessionFilesStore } from '@/hooks/useSessionFiles'
+import { useChatStore } from '@/stores/chatStore'
 
 function Value({ value, onPath }: { value: unknown; onPath: (path: string) => void }) {
   if (Array.isArray(value)) return <ul className="space-y-1">{value.map((item, index) => <li key={index}><Value value={item} onPath={onPath}/></li>)}</ul>
@@ -13,6 +16,10 @@ function Value({ value, onPath }: { value: unknown; onPath: (path: string) => vo
 }
 export default function FlowOutputs({ outputs }: { outputs: Record<string, unknown> }) {
   const [feedback, setFeedback] = useState('')
+  const sessionId = useChatStore(state => state.sessionId) || ''
+  const files = useSessionFilesStore(state => state.items[sessionId])
+  const outputText = JSON.stringify(outputs)
+  const registered = (files || []).filter(item => outputText.includes(item.path))
   const open = async (path: string) => {
     try {
       if (isDesktopRuntime()) { await invoke('open_local_path', { path }); setFeedback('') }
@@ -22,5 +29,5 @@ export default function FlowOutputs({ outputs }: { outputs: Record<string, unkno
       }
     } catch (error) { setFeedback(error instanceof Error ? error.message : `打开失败：${String(error)}`) }
   }
-  return <div className="text-xs"><dl className="space-y-1">{Object.entries(outputs).map(([label, value]) => <div key={label}><dt className="font-medium">{label}</dt><dd className="ml-2"><Value value={value} onPath={path => void open(path)}/></dd></div>)}</dl>{feedback && <p role="status" className="mt-1 text-amber-700">{feedback}</p>}</div>
+  return <div className="text-xs">{Object.keys(outputs).length>0&&<button type="button" className="mb-2 text-blue-600" onClick={()=>useUIStore.getState().openWorkspace('files',registered.map(item=>item.id))}>在文件区查看</button>}<dl className="space-y-1">{Object.entries(outputs).map(([label, value]) => <div key={label}><dt className="font-medium">{label}</dt><dd className="ml-2"><Value value={value} onPath={path => void open(path)}/></dd></div>)}</dl>{feedback && <p role="status" className="mt-1 text-amber-700">{feedback}</p>}</div>
 }

@@ -18,6 +18,7 @@ import ListPanelHeader from "@/components/settings/ListPanelHeader";
 import DropdownMenu from "@/components/settings/DropdownMenu";
 import TabBar from "@/components/settings/TabBar";
 import AgentFlowSelection from "./AgentFlowSelection";
+import FlowPolicySettings from "./FlowPolicySettings";
 import FullScreenSettingsDrawer from "@/components/settings/FullScreenSettingsDrawer";
 import { useSettingsActionStatus } from "@/hooks/useSettingsActionStatus";
 import {
@@ -872,6 +873,7 @@ export default function AgentConfigWorkspace() {
 
                   {(configData.migration_warnings || []).length > 0 && <AlertPanel tone="warning" title="配置迁移提示" message={<ul>{configData.migration_warnings?.map((warning,index) => <li key={`${warning.code}-${index}`}>{warning.message} · {warning.path}{warning.package ? ` · ${warning.package}` : ""}</li>)}</ul>} />}
                   <AgentFlowSelection scheme={selectedConfigName} value={configData.flows} onChange={(flows) => updateDraftConfig((current) => ({...current,flows}))} />
+                  <FlowPolicySettings value={configData.flow_policy} onChange={(flow_policy) => updateDraftConfig((current) => ({...current,flow_policy}))} />
 
                   <div className="rounded border border-zinc-200/60 bg-zinc-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-950/60 dark:shadow-zinc-950/30">
                     <div className="mb-2 flex flex-wrap items-start justify-between gap-3">

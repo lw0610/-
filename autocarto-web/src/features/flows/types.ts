@@ -87,8 +87,20 @@ export interface LibraryItem extends ResourceIdentity {
   path: string
   size: number
 }
-export interface InputProblem { label: string; level: string; code: string; message: string }
+export interface InputProblem { label: string; level: string; code: string; message: string; step?: string; acquirable?: boolean; item?: string; candidates?: string[] }
+export interface AcquisitionChoice { $acquire?: boolean; $fill?: boolean; path?: string; source?: string; sources?: Record<string,string>; files?: Record<string,string> }
+export interface DataSourceChoice { source_id:string;name:string;tier:number;license:string;estimated_mb?:number;cache_hit?:boolean;store_key?:string;acquired_at?:string;attribution?:string;needs_login?:boolean;derived_from?:string }
+export interface AcquisitionItem {
+ key:string;requirement:string;entry?:string;category:string;params:Record<string,string>;fields:Record<string,string>;input:string;input_type?:string;resource?:string;filename?:string;required:boolean;acquirable:boolean;available:boolean;mode:string;geometry?:string;user_path?:string
+ chosen?:DataSourceChoice|null;alternatives:DataSourceChoice[];excluded:{source_id:string;name:string;reasons:string[]}[];reasons:string[];notes:string[];scale_denominator:number
+ extent?:{bbox?:number[];path?:string;source?:string;region?:string;pending:boolean;dependency_step?:string;dependency_output?:string};extent_expression?:string;scale_expression?:string
+}
+export interface AcquisitionPlan {items:AcquisitionItem[]}
+export interface InputCheckPlan {problems:InputProblem[];acquisition_plan?:AcquisitionPlan}
 export interface FlowInput {
+  acquirable?: boolean
+  acquire_available?: boolean
+  modes?: ('user'|'auto'|'fill')[]
   remember?: boolean
   key: string
   label: string
@@ -105,6 +117,12 @@ export interface EnrichmentStatus {
   failed?: StepFailure[]; updated_at?: string
 }
 export interface FlowStep {
+  role_slot?: string
+  role_source?: string
+  required_packages?: string[]
+  granted_packages?: string[]
+  unresolved?: string
+  acquisition_requirement?: string
   enrichment?: 'ready' | 'pending' | 'failed' | 'none' 
   id: string
   index: number
@@ -125,6 +143,11 @@ export interface FlowStep {
   on_failure: string
 }
 export interface FlowPlan {
+  role_slots?: RoleSlot[]
+  flow_roles?: FlowRole[]
+  requirements?: DataRequirement[]
+  acquisition_plan?: AcquisitionPlan
+  auto_acquire?: 'ask'|'allow'|'deny'
   plan_status?: PlanStatus
   enrichment?: EnrichmentStatus
   api_version: string
@@ -141,6 +164,8 @@ export interface FlowPlan {
   diagnostics?: Diagnostic[]
 }
 export interface FlowSummary {
+  roles?: {scheme:number;augmented:number;flow_role:number;executor_default:number;unresolved:number;conditional_unresolved:number}
+  data?: {requirements:number;items:number;acquirable:number;available:number}
   id: string
   name: string
   description: string
@@ -151,6 +176,12 @@ export interface FlowSummary {
   plan_status?: PlanStatus
   diagnostics_summary: { errors: number; warnings: number; infos: number }
 }
+export interface RoleResolution {source:string;role_id?:string;role_label?:string;granted?:string[];reason?:string;note?:string}
+export interface RoleSlot {name:string;description?:string;packages:string[];executor?:string;needs_vision?:boolean;resolution:RoleResolution}
+export interface FlowRole {id:string;slot:string;display_name:string;description?:string;kind:string;executor?:string;tool_packages:string[];provider?:string}
+export interface SchemeRole {id:string;display_name:string;kind:string;executor?:string;enabled:boolean;is_main:boolean;tool_packages:string[]}
+export interface RoleMappingResponse {flow_id:string;scheme:string;role_fill:string;role_mapping:Record<string,string>;role_slots:RoleSlot[];scheme_roles:SchemeRole[];flow_roles:FlowRole[]}
+export interface DataRequirement {name:string;list?:string;category?:string;level?:string;extent:string;scale:string;params:Record<string,string>;fields:Record<string,string>;recommended_sources:string[];excluded_sources:string[];acquisition:string;line?:number}
 export interface FlowDetail {
   meta: { id: string; name: string; description?: string; version: string }
   source: 'builtin' | 'user'

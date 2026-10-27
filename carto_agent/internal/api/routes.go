@@ -30,6 +30,13 @@ func (a *API) SetupRoutes(router *mux.Router) {
 	// 配置
 	sub.HandleFunc("/integrations/check", a.handleCheckIntegration).Methods("POST", "OPTIONS")
 	sub.HandleFunc("/settings/workspace", a.handleSettingsWorkspace).Methods("GET", "OPTIONS")
+	sub.HandleFunc("/data-sources", a.handleDataSources).Methods("GET", "POST", "OPTIONS")
+	sub.HandleFunc("/data-sources/scan", a.handleScanDataSource).Methods("POST", "OPTIONS")
+	sub.HandleFunc("/data-sources/{id}", a.handleDataSources).Methods("PUT", "DELETE", "OPTIONS")
+	sub.HandleFunc("/data-store", a.handleDataStore).Methods("GET", "OPTIONS")
+	sub.HandleFunc("/data-store/clean-expired", a.handleDataStore).Methods("POST", "OPTIONS")
+	sub.HandleFunc("/data-store/{key}", a.handleDataStore).Methods("DELETE", "OPTIONS")
+	sub.HandleFunc("/acquisition/config", a.handleAcquisitionConfig).Methods("GET", "PUT", "OPTIONS")
 	sub.HandleFunc("/config", a.handleGetAllConfig).Methods("GET", "OPTIONS")
 	sub.HandleFunc("/config/batch", a.handleBatchSetConfig).Methods("PUT", "OPTIONS")
 	sub.HandleFunc("/config/{path:.*}", a.handleGetConfig).Methods("GET", "OPTIONS")
@@ -74,6 +81,7 @@ func (a *API) SetupRoutes(router *mux.Router) {
 	sub.HandleFunc("/skill-packages/{name}", a.handleGetSkillPackage).Methods("GET", "OPTIONS")
 
 	// 会话
+	a.setupSessionFileRoutes(sub)
 	sub.HandleFunc("/sessions/{id}/knowledge-reviews", a.handleListKnowledgeReviews).Methods("GET", "OPTIONS")
 	sub.HandleFunc("/sessions/{id}/knowledge-reviews/{review_id}", a.handleGetKnowledgeReview).Methods("GET", "OPTIONS")
 	sub.HandleFunc("/sessions/{id}/knowledge-reviews/{review_id}", a.handleSaveKnowledgeReview).Methods("PUT", "OPTIONS")

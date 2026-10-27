@@ -1,4 +1,5 @@
 export interface LLMProviderConfig {
+  vision?: boolean
   name: string
   provider: string
   model: string
@@ -152,6 +153,16 @@ export interface QGISConfig {
 }
 
 export interface IntegrationsConfig {
+  osm: {
+    enabled: boolean
+    endpoints: string[]
+    nominatim_url: string
+    proxy_url: string
+    timeout_seconds: number
+    total_timeout_seconds: number
+    max_attempts: number
+    max_response_mb: number
+  }
   gee: {
     enabled: boolean
     python: string

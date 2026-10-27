@@ -1,0 +1,615 @@
+{
+  "apiVersion": "data_category/v1",
+  "categories": [
+    {
+      "id": "admin.division",
+      "name": "行政区划面",
+      "geometry": "polygon",
+      "aliases": [
+        {
+          "name": "省域",
+          "params": {
+            "level": "省"
+          }
+        },
+        {
+          "name": "市域",
+          "params": {
+            "level": "市"
+          }
+        },
+        {
+          "name": "县域",
+          "params": {
+            "level": "县"
+          }
+        },
+        {
+          "name": "行政区面"
+        },
+        {
+          "name": "省级行政区",
+          "params": {
+            "level": "省"
+          }
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称",
+          "required": true
+        },
+        "code": {
+          "meaning": "六位行政区划代码"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0.95
+      },
+      "sensitivity": "cn_territory",
+      "params": {
+        "level": {
+          "values": [
+            "省",
+            "市",
+            "县"
+          ],
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "admin.boundary_line",
+      "name": "行政界线",
+      "geometry": "line",
+      "aliases": [
+        {
+          "name": "地区界线"
+        },
+        {
+          "name": "省界"
+        },
+        {
+          "name": "国界"
+        },
+        {
+          "name": "线状省界"
+        },
+        {
+          "name": "行政边界线"
+        }
+      ],
+      "fields": {
+        "kind": {
+          "meaning": "界线类型"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      },
+      "sensitivity": "cn_territory",
+      "derive": [
+        {
+          "from": "admin.division",
+          "params": {
+            "level": "省"
+          },
+          "method": "polygon_to_boundary_lines",
+          "note": "不能区分国界与海岸线；外围界线不能标为国界"
+        }
+      ]
+    },
+    {
+      "id": "admin.maritime_line",
+      "name": "海上境界线",
+      "geometry": "line",
+      "aliases": [
+        {
+          "name": "南海断续线"
+        },
+        {
+          "name": "境界线"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      },
+      "sensitivity": "cn_territory"
+    },
+    {
+      "id": "hydro.coastline",
+      "name": "海岸线",
+      "geometry": "line",
+      "aliases": [
+        {
+          "name": "海岸"
+        }
+      ],
+      "fields": {},
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "settlement.prefecture_seat",
+      "name": "地级驻地",
+      "geometry": "point",
+      "aliases": [
+        {
+          "name": "地级城市驻地"
+        },
+        {
+          "name": "城市驻地"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称",
+          "required": true
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0.95
+      },
+      "derive": [
+        {
+          "from": "admin.division",
+          "params": {
+            "level": "市"
+          },
+          "method": "point_on_surface",
+          "quality": "approximate",
+          "note": "代表点不是驻地实际位置"
+        }
+      ]
+    },
+    {
+      "id": "settlement.county_seat",
+      "name": "县级驻地",
+      "geometry": "point",
+      "aliases": [
+        {
+          "name": "县级城市驻地"
+        },
+        {
+          "name": "县城驻地"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称",
+          "required": true
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0.95
+      },
+      "derive": [
+        {
+          "from": "admin.division",
+          "params": {
+            "level": "县"
+          },
+          "method": "point_on_surface",
+          "quality": "approximate",
+          "note": "代表点不是驻地实际位置"
+        }
+      ]
+    },
+    {
+      "id": "settlement.place",
+      "name": "地名点",
+      "geometry": "point",
+      "aliases": [
+        {
+          "name": "居民地"
+        },
+        {
+          "name": "村镇"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称",
+          "required": true
+        },
+        "class": {
+          "meaning": "等级"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0.95
+      }
+    },
+    {
+      "id": "transport.railway",
+      "name": "铁路",
+      "geometry": "line",
+      "aliases": [
+        {
+          "name": "铁路线"
+        },
+        {
+          "name": "轨道交通干线"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称"
+        },
+        "class": {
+          "meaning": "等级"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "transport.road.expressway",
+      "name": "高速公路",
+      "geometry": "line",
+      "aliases": [
+        {
+          "name": "高速"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称"
+        },
+        "ref": {
+          "meaning": "编号"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "transport.road.major",
+      "name": "主要公路",
+      "geometry": "line",
+      "aliases": [
+        {
+          "name": "公路"
+        },
+        {
+          "name": "干线公路"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称"
+        },
+        "ref": {
+          "meaning": "编号"
+        },
+        "class": {
+          "meaning": "等级"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      },
+      "generalize": [
+        {
+          "max_denominator": 1000000,
+          "keep_class": [
+            "motorway",
+            "trunk",
+            "primary",
+            "secondary"
+          ]
+        },
+        {
+          "max_denominator": 4000000,
+          "keep_class": [
+            "motorway",
+            "trunk",
+            "primary"
+          ]
+        },
+        {
+          "keep_class": [
+            "motorway",
+            "trunk"
+          ]
+        }
+      ],
+      "simplify_mm": 0.2
+    },
+    {
+      "id": "transport.road.national",
+      "name": "国道",
+      "geometry": "line",
+      "aliases": [
+        {
+          "name": "普通国道"
+        }
+      ],
+      "fields": {
+        "ref": {
+          "meaning": "编号"
+        },
+        "name": {
+          "meaning": "中文名称"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "transport.station",
+      "name": "交通站点",
+      "geometry": "point",
+      "aliases": [
+        {
+          "name": "站点"
+        },
+        {
+          "name": "车站"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称"
+        },
+        "class": {
+          "meaning": "等级"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "transport.metro",
+      "name": "城市轨道",
+      "geometry": "line",
+      "aliases": [
+        {
+          "name": "地铁线"
+        },
+        {
+          "name": "轻轨"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "hydro.river_line",
+      "name": "河流线",
+      "geometry": "line",
+      "aliases": [
+        {
+          "name": "线状河流"
+        },
+        {
+          "name": "水系线"
+        },
+        {
+          "name": "河流"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "hydro.water_polygon",
+      "name": "水域面",
+      "geometry": "polygon",
+      "aliases": [
+        {
+          "name": "河流面"
+        },
+        {
+          "name": "面状河流"
+        },
+        {
+          "name": "湖泊"
+        },
+        {
+          "name": "水库"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "中文名称"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "terrain.dem",
+      "name": "数字高程模型",
+      "geometry": "raster",
+      "aliases": [
+        {
+          "name": "地形"
+        },
+        {
+          "name": "高程"
+        },
+        {
+          "name": "DEM"
+        }
+      ],
+      "fields": {},
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "terrain.hillshade",
+      "name": "地形晕渲",
+      "geometry": "raster",
+      "aliases": [
+        {
+          "name": "晕渲"
+        }
+      ],
+      "fields": {},
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      },
+      "derive": [
+        {
+          "from": "terrain.dem",
+          "method": "hillshade"
+        }
+      ]
+    },
+    {
+      "id": "imagery.optical",
+      "name": "光学影像",
+      "geometry": "raster",
+      "aliases": [
+        {
+          "name": "遥感影像"
+        },
+        {
+          "name": "卫星影像"
+        }
+      ],
+      "fields": {},
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "landcover",
+      "name": "地表覆盖",
+      "geometry": "raster",
+      "aliases": [
+        {
+          "name": "土地覆盖"
+        }
+      ],
+      "fields": {},
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "population.grid",
+      "name": "人口格网",
+      "geometry": "raster",
+      "aliases": [
+        {
+          "name": "人口分布"
+        }
+      ],
+      "fields": {},
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "nightlight",
+      "name": "夜间灯光",
+      "geometry": "raster",
+      "aliases": [
+        {
+          "name": "灯光"
+        }
+      ],
+      "fields": {},
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "stats.annual_indicator",
+      "name": "年度统计指标",
+      "geometry": "table",
+      "aliases": [
+        {
+          "name": "统计表"
+        },
+        {
+          "name": "统计数据"
+        }
+      ],
+      "fields": {
+        "region": {
+          "meaning": "地区"
+        },
+        "year": {
+          "meaning": "年份"
+        },
+        "value": {
+          "meaning": "数值"
+        },
+        "unit": {
+          "meaning": "单位"
+        },
+        "source": {
+          "meaning": "来源"
+        }
+      },
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      }
+    },
+    {
+      "id": "basemap.tiles",
+      "name": "在线底图",
+      "geometry": "tiles",
+      "aliases": [
+        {
+          "name": "天地图底图"
+        }
+      ],
+      "fields": {},
+      "validate": {
+        "min_features": 1,
+        "name_fill_ratio": 0
+      },
+      "sensitivity": "cn_territory"
+    }
+  ]
+}

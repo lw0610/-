@@ -16,7 +16,7 @@ spec:
     - name: inputs
       type: object
       required: false
-      description: 可选输入值，用于检查必填项与约束。
+      description: '可选输入值，用于检查必填项、数据需求与本次获取计划。支持 {$acquire: true} 和 {$fill: true, path: 真实文件夹路径}，遵循方案策略；不能指定 source 或 sources。此工具不下载数据、不启动步骤。'
 execution:
   backend_tool: flow_preview
   param_mapping:

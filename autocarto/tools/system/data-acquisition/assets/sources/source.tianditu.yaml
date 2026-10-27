@@ -1,0 +1,41 @@
+{
+  "apiVersion": "data_source/v1",
+  "id": "source.tianditu",
+  "name": "天地图",
+  "kind": "tianditu",
+  "version": "1.0.0",
+  "compliance": "cn_official",
+  "priority": 50,
+  "provides": [
+    {
+      "category": "settlement.county_seat",
+      "fields": {
+        "name": "name"
+      }
+    },
+    {
+      "category": "basemap.tiles"
+    }
+  ],
+  "hosts": [
+    "api.tianditu.gov.cn",
+    "t0.tianditu.gov.cn"
+  ],
+  "coverage": {
+    "regions": [
+      "CN"
+    ]
+  },
+  "requires": [
+    "secret:tianditu"
+  ],
+  "status": "experimental",
+  "license": "天地图服务条款",
+  "attribution": "天地图",
+  "notes": [
+    "2026-10-25已核实search2官方文档：queryType=12按9位gb限制行政区，候选含countyCode；只接受代码及县域范围吻合的政府驻地点。",
+    "未核实当前账号的具体日配额/QPS与批量使用授权，继续experimental；复用全局250ms请求间隔，429遵循Retry-After；实际配额以开发者控制台为准。",
+    "搜索V2的area仅含bound和中心点，不据此声明行政区面能力；未发布未核实的边界下载接口。",
+    "瓦片先生成无密钥图层定义；加载前必须明确确认密钥进入QGIS工程，最终绑定实例的私有通道才注入Key。来源、普通工具参数、回执与日志均脱敏；当前未验证能替代tk参数的QGIS认证配置。"
+  ]
+}

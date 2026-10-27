@@ -3,6 +3,8 @@ package flow
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/autocarto/carto_agent/internal/config"
@@ -12,6 +14,15 @@ import (
 // ResolveInputResources always clones the plan: an input choice belongs to one
 // run and must never enter the shared linked-plan cache.
 func ResolveInputResources(plan *FlowPlan, values map[string]any) *FlowPlan {
+	return ResolveInputResourcesWithOverrides(plan, values, nil)
+}
+
+// Row overrides retain a logical data list without copying independently cached
+// files into an artificial folder. Explicit row files always take precedence.
+func ResolveInputResourcesWithOverrides(plan *FlowPlan, values map[string]any, acquired map[string]map[string]string) *FlowPlan {
+	return ResolveInputResourcesWithLayers(plan, values, acquired, nil)
+}
+func ResolveInputResourcesWithLayers(plan *FlowPlan, values map[string]any, acquired, layers map[string]map[string]string) *FlowPlan {
 	result := cloneFlowPlan(plan)
 	if result == nil {
 		return nil
@@ -24,10 +35,46 @@ func ResolveInputResources(plan *FlowPlan, values map[string]any) *FlowPlan {
 		}
 		associated = true
 		value, _ := values[item.BaseDirFromInput].(string)
-		if value == "" {
+		choice, marked, _ := ParseInputChoice(values[item.BaseDirFromInput])
+		if marked {
+			value = choice.Path
+		}
+		overrides, origins := map[string]string{}, map[string]string{}
+		for name, path := range acquired[item.Key] {
+			existing := ""
+			if value != "" {
+				for _, entry := range item.Entries {
+					if entry.Name == name {
+						raw := entry.Extra["path"]
+						if raw == "" {
+							raw = entry.Path
+						}
+						existing = raw
+						if !filepath.IsAbs(existing) {
+							existing = filepath.Join(value, existing)
+						}
+						break
+					}
+				}
+			}
+			if info, err := os.Stat(existing); err == nil && info.Mode().IsRegular() {
+				continue
+			}
+			overrides[name] = path
+			origins[name] = "acquired"
+		}
+		for name, path := range choice.Files {
+			overrides[name] = path
+			origins[name] = "override"
+		}
+		if len(overrides) == 0 {
+			overrides = nil
+			origins = nil
+		}
+		if value == "" && len(overrides) == 0 && len(layers[item.Key]) == 0 {
 			continue
 		}
-		resolved := library.Resolve(context.Background(), resource.Ref{Type: item.Type, Name: item.Label, BaseDirFromInput: item.BaseDirFromInput, BaseDirOverride: value}, resource.Scope{FlowID: plan.FlowID, FlowDir: plan.FlowDir, Linked: []*resource.ResolvedResource{item.ResolvedResource()}})
+		resolved := library.Resolve(context.Background(), resource.Ref{Type: item.Type, Name: item.Label, BaseDirFromInput: item.BaseDirFromInput, BaseDirOverride: value, EntryOverrides: overrides, EntryOrigins: origins, EntryLayerIDs: layers[item.Key]}, resource.Scope{FlowID: plan.FlowID, FlowDir: plan.FlowDir, Linked: []*resource.ResolvedResource{item.ResolvedResource()}})
 		result.Resources[i] = ResourcePlanFromResolved(resolved)
 		result.Resources[i].EntryCount = len(resolved.Entries)
 	}

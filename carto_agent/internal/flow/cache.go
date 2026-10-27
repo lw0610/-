@@ -46,6 +46,20 @@ func (c *Compiler) fingerprint(ctx context.Context, source *compilationSource) (
 		Roles        []roleShape
 		Capabilities []capabilityShape
 	}{source.stored.FlowMD, c.options.Version, roles, capabilities})
+	roleDeclarations := len(source.doc.RoleSlots) > 0
+	for _, step := range source.doc.Steps {
+		roleDeclarations = roleDeclarations || len(step.Capabilities) > 0 || len(step.OptionalCapabilities) > 0
+	}
+	mapping := source.env.RoleMapping[source.stored.Meta.ID]
+	if roleDeclarations || len(mapping) > 0 || source.env.RoleFill != "" {
+		writeHashJSON(digest, struct {
+			Policy   string
+			Mapping  map[string]string
+			Packages []PackageSpec
+			Main     string
+			Vision   []string
+		}{policy(source.env), mapping, source.env.Packages, source.env.MainProvider, source.env.VisionProviders})
+	}
 	// Resource identity affects model context; data bytes and bindings do not.
 	writeHashJSON(digest, source.doc.Resources)
 	for _, item := range source.resources {

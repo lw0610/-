@@ -6,7 +6,8 @@ import ChatInput from './ChatInput'
 import ContextToolbar from './ContextToolbar'
 import InterruptCard from './InterruptCard'
 import MessageList from './MessageList'
-import RightInspector from './RightInspector'
+import SessionWorkspace from '@/components/workspace/SessionWorkspace'
+import { useSessionStore } from '@/stores/sessionStore'
 import ThinkingIndicator from './ThinkingIndicator'
 import ConfirmDialog from '@/components/common/ConfirmDialog'
 import { cn } from '@/lib/utils'
@@ -42,6 +43,7 @@ export default function ChatPanel() {
   })
   const composer = useFlowComposer(messaging.handleSend)
   const flowSessionId = useChatStore(state => state.sessionId) || ''
+  const workspaceProjectPath = useSessionStore(state => state.sessions.find(record => record.session_id === flowSessionId)?.project_path || '')
   const flowRuns = useFlowRunStore(state => state.runs)
   const blockedFlows = useFlowRunStore(state => state.blocked)
   const instances = useInstanceStore((s) => s.instances)
@@ -60,13 +62,13 @@ export default function ChatPanel() {
   return (
     <div
       className={cn(
-        'flex h-full min-h-0 overflow-hidden transition-colors duration-200',
+        'relative flex h-full min-h-0 overflow-hidden transition-colors duration-200',
         context.executionMode === 'build'
           ? 'bg-accent/5 dark:bg-accent/10'
           : 'bg-chip-amber-bg dark:bg-chip-amber-bg',
       )}
     >
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <div data-testid="chat-content" className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <ChatCapabilityBanner
           activeInstanceId={activeInstanceId}
           connected={messaging.connected}
@@ -154,15 +156,15 @@ export default function ChatPanel() {
         />
       </div>
 
-      {session.inspectorOpen && (
-        <RightInspector
+      <SessionWorkspace
+          sessionId={flowSessionId}
+          projectPath={workspaceProjectPath}
           tasks={messaging.tasks}
           pendingInterrupts={messaging.pendingInterrupts}
           workflowBlocks={messaging.workflowBlocks}
           focusedWorkflowBlockId={session.focusedWorkflowBlockId}
           onFocusWorkflowBlock={session.setFocusedWorkflowBlockId}
         />
-      )}
 
       <KnowledgeReviewDialog controller={review} />
       <ConfirmDialog

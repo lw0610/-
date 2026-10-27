@@ -682,5 +682,33 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(last["phase"], "completed")
 
 
+
+class FeatureDownloadTests(unittest.TestCase):
+    def test_bounded_feature_export_atomic_and_signed_url_redaction(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            records = []
+            payload = json.dumps({'type':'FeatureCollection','features':[{'type':'Feature','properties':{'name':'甲'},'geometry':{'type':'Point','coordinates':[114,30]}}]}).encode()
+            class Response(io.BytesIO):
+                def geturl(self): return 'https://earthengine.googleapis.com/download?token=hidden'
+            class Collection:
+                def limit(self, value): return self
+                def size(self): return types.SimpleNamespace(getInfo=lambda:1)
+                def getDownloadURL(self, **kwargs): return 'https://earthengine.googleapis.com/download?token=hidden'
+            opener = types.SimpleNamespace(open=lambda *args, **kwargs:Response(payload))
+            with patch.object(worker.urllib.request,'build_opener',return_value=opener):
+                downloader=worker.make_feature_downloader(root,records)
+                path=downloader(Collection(),'points.geojson')
+                self.assertTrue(Path(path).is_file())
+                self.assertEqual(records[0]['feature_count'],1)
+                self.assertNotIn('hidden',json.dumps(records))
+                with self.assertRaises(worker.RuntimeFailure): downloader(Collection(),'too-large.geojson',max_bytes=10)
+                self.assertFalse((root/'too-large.geojson').exists())
+                with self.assertRaises(worker.RuntimeFailure): downloader(Collection(),'points.geojson')
+                self.assertFalse(list(root.glob('.gee-features-*')))
+            class Bad(Collection):
+                def getDownloadURL(self, **kwargs):return 'https://example.invalid/secret'
+            with self.assertRaises(worker.RuntimeFailure):worker.make_feature_downloader(root,[])(Bad(),'bad.geojson')
+
 if __name__ == "__main__":
     unittest.main()

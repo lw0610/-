@@ -41,6 +41,7 @@ from qgis.core import (
 
 from autocarto.tools.system._shared import output_manager
 from autocarto.tools.system._shared.canvas_refresh import refresh_canvas
+from autocarto.tools.system._shared.layout_export_artifacts import ArtifactLayoutExporter
 from autocarto.tools.system._shared.layout_export_impl import (
     _export_result_message,
     _get_layout,
@@ -997,14 +998,20 @@ def export_image_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     except (TypeError, ValueError) as exc:
         return _result(False, "", f"导出前校验失败：{exc}")
     output_path = _resolve_export_path(output, f"{layout_name}{extension}", extension)
-    exporter = QgsLayoutExporter(layout)
+    exporter = ArtifactLayoutExporter(layout)
     settings = QgsLayoutExporter.ImageExportSettings()
     settings.dpi = dpi
     result = exporter.exportToImage(output_path, settings)
     if result != QgsLayoutExporter.Success:
         return _result(False, "", f"布局导出图片失败：{_export_result_message(result)}")
+    try:
+        paths = exporter.artifact_paths(output_path)
+    except ValueError as exc:
+        return _result(False, "", str(exc))
     refresh_canvas()
-    return _result(True, output_path, "布局图片导出成功", {"dpi": dpi, "purpose": purpose})
+    result = _result(True, paths[0], "布局图片导出成功", {"dpi": dpi, "purpose": purpose})
+    result["artifact_paths"] = paths
+    return result
 
 
 def export_svg_handler(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -1021,7 +1028,7 @@ def export_svg_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     if validation_error:
         return _result(False, "", f"导出前校验失败：{validation_error}")
     output_path = _resolve_export_path(output, f"{layout_name}.svg", ".svg")
-    exporter = QgsLayoutExporter(layout)
+    exporter = ArtifactLayoutExporter(layout)
     settings = QgsLayoutExporter.SvgExportSettings()
     if dpi is not None:
         settings.dpi = float(dpi)
@@ -1030,8 +1037,14 @@ def export_svg_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     result = exporter.exportToSvg(output_path, settings)
     if result != QgsLayoutExporter.Success:
         return _result(False, "", f"布局导出SVG失败：{_export_result_message(result)}")
+    try:
+        paths = exporter.artifact_paths(output_path)
+    except ValueError as exc:
+        return _result(False, "", str(exc))
     refresh_canvas()
-    return _result(True, output_path, "布局 SVG 导出成功")
+    result = _result(True, paths[0], "布局 SVG 导出成功")
+    result["artifact_paths"] = paths
+    return result
 
 
 def set_page_background_handler(params: Dict[str, Any]) -> Dict[str, Any]:

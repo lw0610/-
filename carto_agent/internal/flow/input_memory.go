@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"sync"
 	"time"
@@ -18,8 +19,9 @@ const InputMemoryAPIVersion = "flow-input-memory/v1"
 var inputMemoryLocks sync.Map
 
 type inputMemoryDocument struct {
-	APIVersion string                       `yaml:"apiVersion"`
-	Flows      map[string]map[string]string `yaml:"flows"`
+	APIVersion string                               `yaml:"apiVersion"`
+	Flows      map[string]map[string]string         `yaml:"flows"`
+	Choices    map[string]map[string]map[string]any `yaml:"choices,omitempty"`
 }
 
 // InputMemory persists only local file/folder choices, never flow package data.
@@ -65,7 +67,7 @@ func memoryValue(value string) (string, error) {
 }
 
 func (m *InputMemory) load() (inputMemoryDocument, []byte, error) {
-	doc := inputMemoryDocument{APIVersion: InputMemoryAPIVersion, Flows: map[string]map[string]string{}}
+	doc := inputMemoryDocument{APIVersion: InputMemoryAPIVersion, Flows: map[string]map[string]string{}, Choices: map[string]map[string]map[string]any{}}
 	if err := bindings.RejectSymlinks(m.path); err != nil {
 		return doc, nil, err
 	}
@@ -85,6 +87,22 @@ func (m *InputMemory) load() (inputMemoryDocument, []byte, error) {
 	}
 	if doc.Flows == nil {
 		doc.Flows = map[string]map[string]string{}
+	}
+	if doc.Choices == nil {
+		doc.Choices = map[string]map[string]map[string]any{}
+	}
+	for id, choices := range doc.Choices {
+		if err = ValidateID(id); err != nil {
+			return doc, nil, err
+		}
+		for label, value := range choices {
+			if err = memoryLabel(label); err != nil {
+				return doc, nil, err
+			}
+			if _, err = memoryChoice(value); err != nil {
+				return doc, nil, err
+			}
+		}
 	}
 	for id, values := range doc.Flows {
 		if err = ValidateID(id); err != nil {
@@ -175,6 +193,10 @@ func (m *InputMemory) setValues(flowID string, values map[string]string) error {
 	}
 	changed := false
 	for label, value := range values {
+		if _, exists := doc.Choices[flowID][label]; exists {
+			delete(doc.Choices[flowID], label)
+			changed = true
+		}
 		if doc.Flows[flowID][label] == value {
 			continue
 		}
@@ -207,17 +229,19 @@ func (m *InputMemory) DeleteFlow(flowID string) error {
 	if err != nil {
 		return err
 	}
-	if _, exists := doc.Flows[flowID]; !exists {
+	if _, exists := doc.Flows[flowID]; !exists && len(doc.Choices[flowID]) == 0 {
 		return nil
 	}
+	delete(doc.Choices, flowID)
 	delete(doc.Flows, flowID)
 	return m.save(doc)
 }
 
 func (m *InputMemory) Remember(flowID string, inputs []InputPlan, values map[string]any) error {
 	remember := map[string]string{}
+	choices := map[string]any{}
 	for _, input := range inputs {
-		if input.Type != "file" && input.Type != "folder" {
+		if input.Type != "file" && input.Type != "folder" && input.Type != "layer" {
 			continue
 		}
 		label := input.Label
@@ -226,6 +250,16 @@ func (m *InputMemory) Remember(flowID string, inputs []InputPlan, values map[str
 		}
 		if !input.Remember || values[input.Key] == nil {
 			remember[label] = ""
+			continue
+		}
+		if choice, marked, err := ParseInputChoice(values[input.Key]); marked {
+			if err != nil {
+				return err
+			}
+			choices[label] = choice.Value()
+			continue
+		}
+		if input.Type == "layer" {
 			continue
 		}
 		value, ok := values[input.Key].(string)
@@ -242,7 +276,15 @@ func (m *InputMemory) Remember(flowID string, inputs []InputPlan, values map[str
 		}
 		remember[label] = resolved
 	}
-	return m.setValues(flowID, remember)
+	if err := m.setValues(flowID, remember); err != nil {
+		return err
+	}
+	for label, value := range choices {
+		if err := m.SetChoice(flowID, label, value); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (m *InputMemory) backup(raw []byte) error {
@@ -285,6 +327,9 @@ func (m *InputMemory) mergeMigrated(values map[string]map[string]string) error {
 	changed := false
 	for flowID, inputs := range values {
 		for label, value := range inputs {
+			if _, exists := doc.Choices[flowID][label]; exists {
+				continue
+			}
 			if existing, exists := doc.Flows[flowID][label]; exists && existing != "" {
 				continue
 			}
@@ -301,5 +346,79 @@ func (m *InputMemory) mergeMigrated(values map[string]map[string]string) error {
 	if err = m.backup(raw); err != nil {
 		return err
 	}
+	return m.save(doc)
+}
+
+// GetValues returns path choices and source-mode choices without rewriting old files.
+func (m *InputMemory) GetValues(flowID string) (map[string]any, error) {
+	if err := ValidateID(flowID); err != nil {
+		return nil, err
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	doc, _, err := m.load()
+	if err != nil {
+		return nil, err
+	}
+	values := map[string]any{}
+	for label, path := range doc.Flows[flowID] {
+		values[label] = path
+	}
+	for label, choice := range doc.Choices[flowID] {
+		normalized, err := memoryChoice(choice)
+		if err != nil {
+			return nil, err
+		}
+		values[label] = normalized
+	}
+	return values, nil
+}
+func memoryChoice(value any) (map[string]any, error) {
+	choice, marked, err := ParseInputChoice(value)
+	if err != nil {
+		return nil, err
+	}
+	if !marked {
+		return nil, fmt.Errorf("记忆的来源方式必须为自动获取或补齐")
+	}
+	if choice.Mode == "fill" {
+		choice.Path, err = memoryValue(choice.Path)
+		if err != nil {
+			return nil, err
+		}
+	}
+	for name, path := range choice.Files {
+		choice.Files[name], err = memoryValue(path)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return choice.Value(), nil
+}
+func (m *InputMemory) SetChoice(flowID, label string, value any) error {
+	if err := ValidateID(flowID); err != nil {
+		return err
+	}
+	if err := memoryLabel(label); err != nil {
+		return err
+	}
+	normalized, err := memoryChoice(value)
+	if err != nil {
+		return err
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	doc, _, err := m.load()
+	if err != nil {
+		return err
+	}
+	if reflect.DeepEqual(doc.Choices[flowID][label], normalized) {
+		return nil
+	}
+	if doc.Choices[flowID] == nil {
+		doc.Choices[flowID] = map[string]map[string]any{}
+	}
+	doc.Choices[flowID][label] = normalized
+	delete(doc.Flows[flowID], label)
 	return m.save(doc)
 }

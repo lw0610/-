@@ -8,6 +8,7 @@ import {
   InterruptRequestData,
 } from '@/types/message'
 import { cn } from '@/lib/utils'
+import { isDesktopRuntime, pickFilePath } from '@/lib/config-form-helpers'
 
 const CUSTOM_INPUT_VALUE = '__custom_input__'
 const CUSTOM_INPUT_LABEL = '自定义回答'
@@ -325,6 +326,7 @@ function categoryLabel(raw: string) {
     return '参数选择'
   }
   if (value === 'flow_confirmation') return '流程确认'
+  if (value === 'flow_acquisition') return '数据获取'
   return raw.trim()
 }
 
@@ -412,6 +414,7 @@ export default function InterruptCard({
     () => buildInitialDecisionAnswers(info.decisions),
   )
   const [manualInput, setManualInput] = useState('')
+  const [fileError, setFileError] = useState('')
   const interactionDisabled = Boolean(submitting || resolvedState)
   const initializedInterruptRef = useRef('')
 
@@ -448,6 +451,7 @@ export default function InterruptCard({
     setActiveDecisionIndex(0)
     setDecisionAnswers(buildInitialDecisionAnswers(info.decisions))
     setManualInput('')
+    setFileError('')
   }, [
     initialPrimaryState,
     info,
@@ -526,12 +530,13 @@ export default function InterruptCard({
     if (!currentDecision) {
       return []
     }
-    if (info.category !== 'flow_confirmation' && currentDecision.category !== 'flow_confirmation' && (currentDecision.selectMode === 'single' || currentDecision.selectMode === 'multiple')) {
+    if (!['flow_confirmation','flow_acquisition'].includes(info.category) && !['flow_confirmation','flow_acquisition'].includes(currentDecision.category) && (currentDecision.selectMode === 'single' || currentDecision.selectMode === 'multiple')) {
       return appendCustomOption(currentDecision.options)
     }
     return currentDecision.options
   }, [currentDecision, info.category])
-  const primaryOptions = info.category === 'flow_confirmation' ? info.options : appendCustomOption(info.options)
+  const primaryOptions = ['flow_confirmation','flow_acquisition'].includes(info.category) ? info.options : appendCustomOption(info.options)
+  const acquisitionFile = info.category === 'flow_acquisition' && selectedOption === 'provide'
 
   const answeredDecisionCount = useMemo(
     () => info.decisions.filter((decision) => isDecisionAnswered(decision, decisionAnswers[decision.id])).length,
@@ -1021,11 +1026,14 @@ export default function InterruptCard({
       <div className="mb-2">
         <input
           className="h-6 w-full rounded-sm border border-zinc-200 bg-zinc-100 px-2 text-[11px] text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
-          placeholder="可选：补充确认信息"
+          aria-label={acquisitionFile ? '提供数据文件路径' : undefined}
+          placeholder={acquisitionFile ? '请填写要提供的数据文件路径' : '可选：补充确认信息'}
           value={manualInput}
           onChange={(e) => setManualInput(e.target.value)}
           disabled={interactionDisabled}
         />
+        {acquisitionFile && isDesktopRuntime() && <button type="button" className="mt-1 text-xs text-blue-600" disabled={interactionDisabled} onClick={async()=>{try{const path=await pickFilePath();if(path)setManualInput(path);setFileError('')}catch(error){setFileError(error instanceof Error?error.message:'选择数据文件失败')}}}>选择数据文件</button>}
+        {fileError && <p role="alert" className="text-xs text-red-600">{fileError}</p>}
       </div>
 
       {validationMessage && (
@@ -1056,7 +1064,7 @@ export default function InterruptCard({
             })}
           </div>
           <div className="flex items-center gap-2">
-          {info.category !== 'flow_confirmation' && <button
+          {!['flow_confirmation','flow_acquisition'].includes(info.category) && <button
             type="button"
             className="rounded-sm border border-zinc-200 px-2 py-1 text-[9px] text-zinc-600 hover:bg-zinc-100 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             onClick={() => {
@@ -1134,13 +1142,14 @@ export default function InterruptCard({
 
                 const manualText = manualInput.trim()
                 if (manualText) {
+                  if (info.category === 'flow_acquisition') payload.guidance = manualText
                   const existingText = typeof payload.text === 'string' ? payload.text : ''
                   payload.text = existingText ? `${existingText}\n补充：${manualText}` : manualText
                 }
 
                 onApprove(Object.keys(payload).length > 0 ? payload : undefined)
               }}
-              disabled={interactionDisabled || (info.decisions.length > 0 ? !allDecisionsAnswered : requiredUnfilled)}
+              disabled={interactionDisabled || (acquisitionFile && !manualInput.trim()) || (info.decisions.length > 0 ? !allDecisionsAnswered : requiredUnfilled)}
             >
               确认并继续
             </button>

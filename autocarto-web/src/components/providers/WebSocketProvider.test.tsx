@@ -430,6 +430,35 @@ describe('WebSocketProvider session attach recovery', () => {
     expect(updated[0].data?.status).toBe('response_received')
   })
 
+  it('keeps parallel OSM downloads separate across delegation and ignores late progress after completion or cancellation', async () => {
+    await act(async () => { render(<WebSocketProvider><div>OSM progress</div></WebSocketProvider>) })
+    const emit = (key: string, phase: string, content: string) => websocketHarness.emitMessage({
+      type: 'agent_workflow', session_id: 'sid-reconnect', agent: 'data_engineer',
+      phase: 'progress', content,
+      data: { source: 'osm', request_key: key, download_phase: phase, completed_bytes: 1024, total_bytes: 0 },
+    })
+    await act(async () => {
+      websocketHarness.emitConnection(true)
+      emit('osm:rivers', 'waiting', '正在请求 rivers.geojson')
+      emit('osm:railways', 'downloading', '正在下载 railways.geojson：已接收 0.01 MB')
+      websocketHarness.emitMessage({ type: 'agent_workflow', session_id: 'sid-reconnect', agent: 'orchestrator', phase: 'decision', content: '其他处理' })
+      emit('osm:rivers', 'completed', '已下载 rivers.geojson：3 个要素')
+      emit('osm:rivers', 'downloading', '过时心跳')
+      emit('osm:railways', 'cancelled', '下载已取消：railways.geojson')
+      emit('osm:railways', 'waiting', '过时等待')
+    })
+    const state = useChatStore.getState()
+    const blocks = state.sessionWorkflowBlocks['sid-reconnect']
+    const entries = blocks.flatMap(block => block.entries).filter(entry => entry.data?.source === 'osm')
+    expect(entries).toHaveLength(2)
+    expect(entries.map(entry => entry.data?.download_phase)).toEqual(['completed', 'cancelled'])
+    expect(entries[0].content).toContain('3 个要素')
+    expect(entries[1].content).toContain('已取消')
+    expect(entries.every(entry => entry.type === 'status' && entry.data?.percent === undefined)).toBe(true)
+    expect(blocks).toHaveLength(2)
+    expect(state.sessionMessages['sid-reconnect'] ?? []).toHaveLength(0)
+  })
+
   it('renders children without connecting when web runtime lacks an authoritative descriptor', async () => {
     tauriMocks.isDesktopRuntime.mockReturnValue(false)
     useConnectionStore.setState({
@@ -876,9 +905,26 @@ describe('WebSocketProvider session attach recovery', () => {
     render(<WebSocketProvider><AttachStateProbe /></WebSocketProvider>)
     await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
     const preview = { flow_id: 'demo', name: '流程', plan: { flow_id: 'demo', name: '流程', inputs: [], steps: [], resources: [] }, diagnostics: [], input_check: { valid: true, missing: [] } }
-    act(() => websocketHarness.emitMessage({ type: 'agent_workflow', content: '', session_id: 'sid-reconnect', phase: 'tool_result', data: { tool: 'flow_preview', result: JSON.stringify({ data: preview }) } }))
+    act(() => websocketHarness.emitMessage({ type: 'agent_workflow', content: '', session_id: 'sid-reconnect', phase: 'tool_result', data: { tool: 'flow_preview', mode_phase: 'planning', result: JSON.stringify({ data: preview }) } }))
     expect(useChatStore.getState().messages.at(-1)).toMatchObject({ type: 'status', data: { flow_preview: preview } })
     expect(useChatStore.getState().workflowBlocks).toEqual([])
+  })
+
+  it('keeps Build flow queries in process details while a background Plan preview stays in its own session', async () => {
+    render(<WebSocketProvider><AttachStateProbe /></WebSocketProvider>)
+    await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
+    useChatStore.setState({ executionMode: 'plan' })
+    const preview = { flow_id: 'demo', name: '示例流程', plan: { flow_id: 'demo', name: '示例流程', inputs: [], steps: [], resources: [] } }
+    await act(async () => {
+      websocketHarness.emitMessage({ type: 'agent_workflow', content: '内部查询', session_id: 'sid-reconnect', phase: 'tool_result', data: { tool: 'flow_preview', mode_phase: 'building', result: { ...preview, execution_mode: 'build' } } })
+      websocketHarness.emitMessage({ type: 'agent_workflow', content: '历史查询', session_id: 'sid-reconnect', phase: 'tool_result', data: { tool: 'flow_preview', result: preview } })
+      websocketHarness.emitMessage({ type: 'agent_workflow', content: '', session_id: 'other-preview-session', phase: 'tool_result', data: { tool: 'flow_preview', result: { ...preview, execution_mode: 'plan' } } })
+    })
+    const state = useChatStore.getState()
+    expect(state.messages.some(message => message.data?.flow_preview)).toBe(false)
+    expect(state.workflowBlocks.flatMap(block => block.entries).some(entry => entry.data?.tool === 'flow_preview')).toBe(true)
+    expect(state.sessionMessages['other-preview-session'].at(-1)).toMatchObject({ type: 'status', data: { execution_mode: 'plan', flow_preview: { execution_mode: 'plan' } } })
+    expect(state.sessionId).toBe('sid-reconnect')
   })
 
   it('shows fatal startup shell when unsupported protocol arrives during initial connect', async () => {

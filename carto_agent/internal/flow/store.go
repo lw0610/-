@@ -48,6 +48,8 @@ type StoredFlow struct {
 }
 
 type FlowSummary struct {
+	Data               map[string]int `json:"data,omitempty"`
+	Roles              map[string]int `json:"roles,omitempty"`
 	PlanStatus         string         `json:"plan_status"`
 	ID                 string         `json:"id"`
 	Name               string         `json:"name"`

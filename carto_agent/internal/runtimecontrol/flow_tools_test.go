@@ -2,6 +2,8 @@ package runtimecontrol
 
 import (
 	"context"
+	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -48,6 +50,27 @@ func TestFlowToolsRequireTrustedSessionService(t *testing.T) {
 		}
 		if _, err := Invoke(ctx, name, map[string]any{"flow_id": "test"}); err != nil {
 			t.Fatal("optional inputs failed", err)
+		}
+	}
+}
+
+func TestFlowToolsPassAcquisitionChoicesButRejectModelSourceOverrides(t *testing.T) {
+	for _, name := range []string{ToolFlowStart, ToolFlowPreview} {
+		service := &flowServiceStub{}
+		ctx := WithFlowService(context.Background(), service)
+		for _, choice := range []map[string]any{{"$acquire": true}, {"$fill": true, "path": "/fixture"}} {
+			if _, err := Invoke(ctx, name, map[string]any{"flow_id": "test", "inputs": map[string]any{"data": choice}}); err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(service.gotInputs["data"], choice) {
+				t.Fatal("choice changed", service.gotInputs)
+			}
+		}
+		for _, field := range []string{"source", "sources"} {
+			choice := map[string]any{"$acquire": true, field: "forbidden"}
+			if _, err := Invoke(ctx, name, map[string]any{"flow_id": "test", "inputs": map[string]any{"data": choice}}); err == nil || !strings.Contains(err.Error(), "FLOW_ORCHESTRATOR_SOURCE_FORBIDDEN") {
+				t.Fatal("accepted model source override", err)
+			}
 		}
 	}
 }

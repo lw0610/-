@@ -36,6 +36,7 @@ type ResolvedResource struct {
 	Problems         []Diagnostic    `json:"problems"`
 }
 type ResourceEntry struct {
+	LayerID       string            `json:"layer_id,omitempty"`
 	Name          string            `json:"name"`
 	Path          string            `json:"path"`
 	Kind          string            `json:"kind"`
@@ -46,7 +47,12 @@ type ResourceEntry struct {
 }
 
 // Request is private parser input; all public lookups use Resolver.
-type Request struct{ Key, ResourceID, Label, Type, Location, FlowID, FlowDir, Entry, BaseDir, BaseDirFromInput, BaseDirOverride string }
+type Request struct {
+	Key, ResourceID, Label, Type, Location, FlowID, FlowDir, Entry, BaseDir, BaseDirFromInput, BaseDirOverride string
+	EntryOverrides                                                                                             map[string]string
+	EntryOrigins                                                                                               map[string]string
+	EntryLayerIDs                                                                                              map[string]string
+}
 type LibraryItem struct {
 	ID           string         `json:"id"`
 	Name         string         `json:"name"`

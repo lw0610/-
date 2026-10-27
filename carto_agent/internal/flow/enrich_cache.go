@@ -105,8 +105,12 @@ func (c *Compiler) enrichmentUnits(source *compilationSource) []enrichmentUnit {
 		return validateFlowEnrichment(doc, inputs, raw)
 	}}}
 	catalog := newCapabilityIndex(env.Capabilities)
+	rolePlan := &FlowPlan{FlowID: source.stored.Meta.ID, Roles: env.Roles}
+	resolveRoleSlots(rolePlan, doc, env)
 	for index, step := range doc.Steps {
-		role, _ := bindRole(step, env.Roles)
+		resolved := StepPlan{ID: step.ID, RoleLabel: step.Role}
+		resolveStepRole(rolePlan, &resolved, step, doc, env)
+		role := effectiveStepRole(rolePlan, resolved, env)
 		var owned []string
 		if role != nil {
 			owned = role.Tools

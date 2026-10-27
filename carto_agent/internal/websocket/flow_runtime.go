@@ -55,7 +55,7 @@ func (s *DeepServer) SetFlowCompiler(compiler flowrun.Compiler) error {
 		return err
 	}
 	binding := flowRuntimeBinding{server: s}
-	controller, err := flowrun.NewController(flowrun.Options{Compiler: compiler, Runner: binding, Tools: binding, Model: binding, Events: binding, Store: flowrun.FileRunStore{}, Executors: registry})
+	controller, err := flowrun.NewController(flowrun.Options{Lifecycle: s.flowLifecycle, AcquisitionFactory: binding.acquisitionEngine, Compiler: compiler, Runner: binding, Tools: binding, Model: binding, Events: binding, Store: flowrun.FileRunStore{}, Executors: registry})
 	if err != nil {
 		return err
 	}
@@ -134,7 +134,11 @@ func (binding flowRuntimeBinding) Run(ctx context.Context, request flowrun.StepR
 		if buildErr != nil {
 			return flowrun.StepResult{}, buildErr
 		}
-		agent, err = builder.BuildRole(ctx, run.Scheme, cfg, request.Role.ID)
+		if request.Overlay != nil {
+			agent, err = builder.BuildRoleWithOverlay(ctx, run.Scheme, cfg, agentruntime.RoleOverlay{FlowRole: request.Overlay.FlowRole, RoleID: request.Overlay.RoleID, ExtraPackages: request.Overlay.ExtraPackages})
+		} else {
+			agent, err = builder.BuildRole(ctx, run.Scheme, cfg, request.Role.ID)
+		}
 		if err != nil {
 			return flowrun.StepResult{}, err
 		}
@@ -213,23 +217,41 @@ func (service sessionFlowService) PreviewFlow(ctx context.Context, id string, in
 	if plan == nil {
 		return nil, fmt.Errorf("流程计划不可用")
 	}
+	if err := validateOrchestratorAcquisition(plan, inputs); err != nil {
+		return nil, err
+	}
 	root, rootErr := config.ResolveProjectRoot()
 	if rootErr != nil {
 		return nil, rootErr
 	}
-	_, inputErr := flowrun.ResolveInputs(plan, inputs, service.session.OriginalSource, root)
+	resolved, inputErr := flowrun.ResolveInputs(plan, inputs, service.session.OriginalSource, root)
 	missing := []string{}
+	problems := []flowrun.InputProblem{}
 	if inputErr != nil {
 		var bad *flowrun.InputError
 		if errors.As(inputErr, &bad) {
 			for _, reason := range bad.Reasons {
 				missing = append(missing, reason.Message)
+				problems = append(problems, flowrun.InputProblem{Label: reason.Input, Level: "error", Code: reason.Code, Message: reason.Message, Acquirable: reason.Acquirable, Step: reason.Step, Item: reason.Item, Candidates: reason.Candidates})
 			}
 		} else {
 			missing = append(missing, inputErr.Error())
 		}
 	}
-	return map[string]any{"flow_id": plan.FlowID, "name": plan.Name, "plan": plan, "diagnostics": plan.Diagnostics, "input_check": map[string]any{"missing": missing, "valid": inputErr == nil && !plan.HasErrors()}}, nil
+	if inputErr == nil {
+		linked, issues, checkErr := checkedAcquisitionPreview(ctx, compiler, plan, resolved, root)
+		if checkErr != nil {
+			return nil, checkErr
+		}
+		plan = linked
+		problems = append(problems, issues...)
+		for _, problem := range issues {
+			if problem.Level == "error" {
+				missing = append(missing, problem.Message)
+			}
+		}
+	}
+	return map[string]any{"flow_id": plan.FlowID, "name": plan.Name, "execution_mode": string(service.session.Mode), "plan": plan, "requirements": plan.Requirements, "acquisition_plan": plan.Acquisition, "diagnostics": plan.Diagnostics, "input_check": map[string]any{"missing": missing, "problems": problems, "valid": len(missing) == 0 && !plan.HasErrors()}}, nil
 }
 
 func (service sessionFlowService) StartFlow(ctx context.Context, id string, inputs map[string]any) (map[string]any, error) {
@@ -271,18 +293,18 @@ func (service sessionFlowService) StartFlow(ctx context.Context, id string, inpu
 	if err = json.Unmarshal(raw, &copied); err != nil {
 		return nil, err
 	}
-	request := flowrun.StartRequest{FlowRunID: runID, SessionID: service.session.SessionID, SessionDir: sessionDir, ProjectRoot: root, FlowID: id, Scheme: service.session.Scheme, Inputs: copied, OriginalSource: service.session.OriginalSource, Origin: "orchestrator"}
+	request := flowrun.StartRequest{FlowRunID: runID, SessionID: service.session.SessionID, SessionDir: sessionDir, ProjectRoot: root, ProjectPath: service.session.ProjectPath, FlowID: id, Scheme: service.session.Scheme, Inputs: copied, OriginalSource: service.session.OriginalSource, Origin: "orchestrator"}
 	s := service.server
 	s.flowMu.Lock()
 	defer s.flowMu.Unlock()
 	if existing, ok := s.pendingFlows[request.SessionID]; ok {
 		if existing.FlowID == id && reflect.DeepEqual(existing.Inputs, copied) {
-			return map[string]any{"accepted": true, "flow_run_id": existing.FlowRunID}, nil
+			return map[string]any{"accepted": true, "flow_run_id": existing.FlowRunID, "acquire": plannedAcquisitionSummary(plan)}, nil
 		}
 		return nil, fmt.Errorf("本轮已登记另一个待启动流程")
 	}
 	s.pendingFlows[request.SessionID] = request
-	return map[string]any{"accepted": true, "flow_run_id": runID}, nil
+	return map[string]any{"accepted": true, "flow_run_id": runID, "acquire": plannedAcquisitionSummary(plan)}, nil
 }
 
 func (s *DeepServer) hasPendingFlow(sessionID string) bool {
@@ -390,7 +412,7 @@ func (s *DeepServer) runDirectFlow(ctx context.Context, run flowSessionContext, 
 	}
 	run.FlowRunID = id
 	s.setFlowContext(run)
-	return controller.Start(ctx, flowrun.StartRequest{FlowRunID: id, SessionID: run.SessionID, SessionDir: sessionDir, ProjectRoot: root, FlowID: request.ID, Scheme: run.Scheme, Inputs: request.Inputs, OriginalSource: run.OriginalSource, Origin: "direct"})
+	return controller.Start(ctx, flowrun.StartRequest{FlowRunID: id, SessionID: run.SessionID, SessionDir: sessionDir, ProjectRoot: root, ProjectPath: run.ProjectPath, FlowID: request.ID, Scheme: run.Scheme, Inputs: request.Inputs, OriginalSource: run.OriginalSource, Origin: "direct"})
 }
 
 func (s *DeepServer) findOriginalFlowSource(ctx context.Context, run flowSessionContext, dir, id string) (string, error) {
@@ -478,10 +500,10 @@ func (s *DeepServer) injectAvailableFlows(ctx context.Context, input []*schema.M
 		if len(app) > 300 {
 			app = app[:300]
 		}
-		summaries = append(summaries, map[string]any{"id": p.FlowID, "name": p.Name, "triggers": p.Triggers, "applicability": string(app), "inputs": p.Inputs})
+		summaries = append(summaries, map[string]any{"id": p.FlowID, "name": p.Name, "triggers": p.Triggers, "applicability": string(app), "inputs": flowInputSummaries(p.Inputs), "acquisition_policy": acquisitionPolicyRules(p.AutoAcquire)})
 	}
 	raw, _ := json.Marshal(summaries)
-	message := schema.SystemMessage("当前方案可运行流程：" + string(raw) + "\n匹配用户任务时可使用 flow_preview 查看步骤与输入、flow_start 登记执行。conversation_text 输入引用当前用户消息。输入不足先询问；规划模式只预览。")
+	message := schema.SystemMessage("当前方案可运行流程：" + string(raw) + "\n匹配用户任务时可使用 flow_preview 查看步骤与输入、flow_start 登记执行。conversation_text 输入引用当前用户消息。按各流程 acquisition_policy 处理缺失数据；其他必填输入缺失才询问。规划模式只预览。[flow_acquire:common] acquire_available=false 时不得传 $acquire/$fill；不得编造路径；source/sources 来源编号只由表单设置，编排工具不得指定；用户已提供数据时优先使用用户数据。")
 	result := append([]*schema.Message{}, input...)
 	return append(result, message)
 }

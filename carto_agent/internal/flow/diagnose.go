@@ -142,10 +142,6 @@ func completeDiagnostics(doc *FlowDoc, plan *FlowPlan, env Environment) {
 	for _, item := range plan.Resources {
 		resourcesByLabel[item.Label] = item.Key
 	}
-	roleByID := map[string]RoleSpec{}
-	for _, role := range env.Roles {
-		roleByID[role.ID] = role
-	}
 	capabilities := map[string]CapabilitySpec{}
 	for _, capability := range env.Capabilities {
 		capabilities[capability.Name] = capability
@@ -212,7 +208,10 @@ func completeDiagnostics(doc *FlowDoc, plan *FlowPlan, env Environment) {
 				})
 			}
 		}
-		role := roleByID[step.Role]
+		role := effectiveStepRole(plan, *step, env)
+		if role == nil {
+			role = &RoleSpec{DisplayName: step.RoleLabel}
+		}
 		if step.Kind == "executor" {
 			if executor, ok := FindExecutorSpec(step.Executor); ok {
 				for _, requiredType := range executor.RequiredInputTypes {

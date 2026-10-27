@@ -217,10 +217,13 @@ func TestFlowRuntimeRestoresWaitingCheckpointAcrossServerRestart(t *testing.T) {
 func TestFlowRuntimePreviewPlanAndQueuedStartTrustBoundary(t *testing.T) {
 	s, _, run := flowRuntimeFixture(t, []flow.StepPlan{flowWorkerStep()})
 	service := sessionFlowService{server: s, session: run}
-	if _, err := service.PreviewFlow(context.Background(), "test-flow", nil); err != nil {
-		t.Fatal(err)
+	if preview, err := service.PreviewFlow(context.Background(), "test-flow", nil); err != nil || preview["execution_mode"] != "build" {
+		t.Fatalf("internal Build preview lost its mode: %v %v", preview, err)
 	}
 	service.session.Mode = executionModePlan
+	if preview, err := service.PreviewFlow(context.Background(), "test-flow", nil); err != nil || preview["execution_mode"] != "plan" {
+		t.Fatalf("user-facing Plan preview lost its mode: %v %v", preview, err)
+	}
 	if _, err := service.StartFlow(context.Background(), "test-flow", nil); err == nil {
 		t.Fatal("Plan started flow")
 	}
@@ -284,6 +287,34 @@ func TestFlowRuntimeProcessTaskDirectAndOrchestrator(t *testing.T) {
 		})
 	}
 }
+func TestDirectPlanFlowPreviewCarriesModeWithoutStartingFlow(t *testing.T) {
+	s, factory, run := flowRuntimeFixture(t, []flow.StepPlan{flowWorkerStep()})
+	seedTestRunningInstance(s)
+	s.processTask(context.Background(), nil, Message{Type: "task", SessionID: run.SessionID, Content: run.OriginalSource, Data: map[string]any{
+		"project_path": run.ProjectPath, "mode": "plan", "flow": map[string]any{"id": "test-flow"},
+	}})
+	found := false
+	for _, event := range s.sessionRunEventBuffers[run.SessionID] {
+		data, _ := event.Data["payload"].(map[string]any)
+		if data["tool"] != "flow_preview" {
+			continue
+		}
+		found = true
+		result, _ := data["result"].(map[string]any)
+		if data["mode_phase"] != modeStatePhasePlanning || result["execution_mode"] != "plan" {
+			t.Fatalf("direct preview lost its planning marker: %+v", data)
+		}
+	}
+	if !found {
+		t.Fatalf("direct Plan preview was not emitted: %+v", s.sessionRunEventBuffers[run.SessionID])
+	}
+	_, controller := s.flowDependencies()
+	state, _ := controller.Snapshot(run.SessionID)
+	if state != nil || len(factory.roles) != 0 {
+		t.Fatal("preview must not start flow execution")
+	}
+}
+
 func TestFlowRuntimeCancelPausedAndStartupMarksOnlyRunning(t *testing.T) {
 	confirm := flow.StepPlan{ID: "approve", Index: 1, Kind: "confirm", Instructions: "确认继续"}
 	s, _, run := flowRuntimeFixture(t, []flow.StepPlan{confirm})
@@ -369,4 +400,12 @@ func TestFlowRuntimeVerificationCarriesTrustedSessionBinding(t *testing.T) {
 	if err != nil || state.Status != "completed" || calls != 1 {
 		t.Fatalf("verification failed: %+v %v calls=%d", state, err, calls)
 	}
+}
+
+func (f *runtimeFlowFactory) BuildRoleWithOverlay(ctx context.Context, scheme string, cfg *config.AgentConfigFile, overlay agentruntime.RoleOverlay) (adk.Agent, error) {
+	id := overlay.RoleID
+	if overlay.FlowRole != nil {
+		id = overlay.FlowRole.ID
+	}
+	return f.BuildRole(ctx, scheme, cfg, id)
 }

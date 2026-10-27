@@ -56,6 +56,7 @@ type ToolMetadata struct {
 }
 
 type ToolSpec struct {
+	Artifacts         []ToolArtifact  `yaml:"artifacts,omitempty" json:"artifacts,omitempty"`
 	Description       string          `yaml:"description" json:"description"`
 	CapabilitySummary string          `yaml:"capability_summary,omitempty" json:"capability_summary,omitempty"`
 	CapabilityDetails string          `yaml:"capability_details,omitempty" json:"capability_details,omitempty"`
@@ -64,6 +65,11 @@ type ToolSpec struct {
 	Parameters        []ToolParameter `yaml:"parameters,omitempty" json:"parameters,omitempty"`
 	Examples          []ToolExample   `yaml:"examples,omitempty" json:"examples,omitempty"`
 	Outputs           *ToolOutputs    `yaml:"outputs,omitempty" json:"outputs,omitempty"`
+}
+
+type ToolArtifact struct {
+	Field string `yaml:"field" json:"field"`
+	Role  string `yaml:"role,omitempty" json:"role,omitempty"`
 }
 
 type ToolParameter struct {
@@ -298,6 +304,7 @@ func (d *ToolDefinition) normalize() {
 
 func (d ToolDefinition) Clone() ToolDefinition {
 	cloned := d
+	cloned.Spec.Artifacts = append([]ToolArtifact(nil), d.Spec.Artifacts...)
 	cloned.Metadata.Keywords = append([]string(nil), d.Metadata.Keywords...)
 	cloned.Metadata.InstanceIDs = append([]string(nil), d.Metadata.InstanceIDs...)
 	cloned.Metadata.Tags = append([]string(nil), d.Metadata.Tags...)

@@ -28,7 +28,7 @@ func TestFailureSummaryPreservesCloudTaskAfterVerboseLogs(t *testing.T) {
 
 func TestIntegrationToolsUseSessionContextAndRespectDisabled(t *testing.T) {
 	t.Setenv("AUTOCARTO_HOME", t.TempDir())
-	for _, name := range []string{"gee_run_script", "browser_call_tool", "web_download_file"} {
+	for _, name := range []string{"gee_run_script", "browser_call_tool", "web_download_file", "osm_get_features"} {
 		_, err := Invoke(context.Background(), name, map[string]any{"session_id": "forged", "output_dir": t.TempDir()}, fixedConfig{})
 		if err == nil {
 			t.Fatalf("%s accepted model session override", name)

@@ -271,8 +271,8 @@ export default function TopBar() {
           {inChatPage && (
             <HeaderIconButton
               onClick={toggleInspectorOpen}
-              title={inspectorOpen ? '收起详情区' : '展开详情区'}
-              aria-label={inspectorOpen ? '收起详情区' : '展开详情区'}
+              title={inspectorOpen ? '收起工作区' : '展开工作区'}
+              aria-label={inspectorOpen ? '收起工作区' : '展开工作区'}
               active={inspectorOpen}
             >
               <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>

@@ -20,6 +20,7 @@ const initial: FlowDetail = {
     scheme: 'default',
     inputs: [{ key: 'file', label: '数据文件', type: 'file', required: true }],
     resources: [],
+    requirements: [{name:'数据文件',category:'roads',extent:'全国',scale:'自动',params:{},fields:{name:'name'},recommended_sources:[],excluded_sources:[],acquisition:'系统'}],
     steps: [
       {
         id: 's1',
@@ -66,6 +67,7 @@ test('flow center imports, copies, edits, previews and exports with the public c
   let remembered = false
   const memory: Record<string, string> = {}
   let compiles = 0
+  let roleMapping:Record<string,string> = {}
   await page.route('**/api/**', async (route) => {
     const request = route.request(),
       url = new URL(request.url()),
@@ -161,7 +163,14 @@ test('flow center imports, copies, edits, previews and exports with the public c
         })
         return
       }
-      if (action === 'copy') {
+      if(action==='roles') {
+        if(request.method()==='PUT') {
+          roleMapping=request.postDataJSON().mapping
+          flow.plan!.steps[0].role_label=roleMapping['数据检查']==='custom'?'自定义数据角色':'数据专家'
+          flow.plan!.steps[0].role_source=roleMapping['数据检查']?'mapping':'scheme_name'
+        }
+        data={flow_id:id,scheme:'default',role_fill:'auto',role_mapping:roleMapping,role_slots:[{name:'数据检查',packages:['project-state'],resolution:{source:'scheme_name',role_id:'data',role_label:flow.plan!.steps[0].role_label}}],scheme_roles:[{id:'custom',display_name:'自定义数据角色',kind:'agent',enabled:true,is_main:false,tool_packages:['project-state']}],flow_roles:[]}
+      } else if (action === 'copy') {
         const body = request.postDataJSON()
         const copy = {
           ...structuredClone(flow),
@@ -202,6 +211,16 @@ test('flow center imports, copies, edits, previews and exports with the public c
     'readonly',
   )
   await expect(page.getByText('1. 检查数据', { exact: true })).toBeVisible()
+  await page.getByRole('button',{name:'数据需求',exact:true}).click()
+  await expect(page.getByText('字段要求：name：name')).toBeVisible()
+  await page.getByRole('button',{name:'角色对应',exact:true}).click()
+  await page.getByRole('combobox',{name:'数据检查对应'}).selectOption('custom')
+  await page.getByRole('button',{name:'保存角色对应',exact:true}).click()
+  await expect.poll(()=>roleMapping).toEqual({'数据检查':'custom'})
+  await expect(page.getByText('角色对应已保存。',{exact:true})).toBeVisible()
+  await page.getByRole('button',{name:'步骤预览',exact:true}).click()
+  await expect(page.getByText('负责：自定义数据角色')).toBeVisible()
+  await expect(page.getByText('方案角色（已指定）')).toBeVisible()
   await page.getByRole('button', { name: '复制为我的流程' }).click()
   await page.getByRole('textbox', { name: '新流程编号' }).fill('my-flow')
   await page.getByRole('textbox', { name: '新流程名称' }).fill('我的数据流程')

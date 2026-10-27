@@ -6,6 +6,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/autocarto/carto_agent/internal/osmdata"
+	"github.com/autocarto/carto_agent/internal/sessionfiles"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,16 +24,19 @@ type ConfigProvider interface {
 }
 
 func Handles(name string) bool {
-	return geeruntime.Handles(name) || browserruntime.Handles(name) || webdata.Handles(name)
+	return osmdata.Handles(name) || geeruntime.Handles(name) || browserruntime.Handles(name) || webdata.Handles(name)
 }
 
-func Invoke(ctx context.Context, name string, args map[string]any, provider ConfigProvider) (any, error) {
+func Invoke(ctx context.Context, name string, args map[string]any, provider ConfigProvider, gisInvokers ...GISInvoker) (any, error) {
 	if provider == nil {
 		return nil, fmt.Errorf("扩展服务配置不可用")
 	}
 	c, err := provider.GetIntegrationsConfig()
 	if err != nil {
 		return nil, err
+	}
+	if name == "osm_check_environment" {
+		return diagnosticResult(Check(ctx, "osm", c))
 	}
 	if name == "gee_check_environment" {
 		return diagnosticResult(Check(ctx, "gee", c))
@@ -49,9 +54,39 @@ func Invoke(ctx context.Context, name string, args map[string]any, provider Conf
 	if err != nil {
 		return nil, fmt.Errorf("当前会话输出目录不可用: %w", err)
 	}
+	sessionRoot := root
 	root = filepath.Join(root, "output", "integrations")
 	var result any
 	switch {
+	case osmdata.Handles(name):
+		options := osmOptions(c, filepath.Join(sessionRoot, "output", "osm"), session.ProjectPath)
+		if name == "osm_get_objects" || name == "osm_get_features" {
+			if !options.Enabled {
+				return nil, fmt.Errorf("请先在设置 → 扩展服务启用 OSM")
+			}
+			// Enabling the integration authorizes downloads through this trusted
+			// session entry point; do not interrupt each new chat for confirmation.
+			options.Authorized = true
+		}
+		var osmResult *osmdata.Result
+		var gis GISInvoker
+		if len(gisInvokers) > 0 {
+			gis = gisInvokers[0]
+		}
+		osmResult, err = invokeOSM(ctx, name, args, options, gis)
+		result = osmResult
+		if osmResult != nil {
+			if store, e := sessionfiles.New(session.ProjectPath, session.SessionID); e == nil {
+				for _, path := range osmResult.ArtifactPaths {
+					if isOSMStagingPath(options.OutputDir, path) {
+						continue // Recovery files remain diagnostic, not delivered layers.
+					}
+					if _, e = store.Register(path, sessionfiles.Origin{Type: "osm", Tool: name, Label: "OSM 下载", License: "ODbL 1.0"}, sessionfiles.WithGroup("data")); e != nil {
+						osmResult.Warnings = append(osmResult.Warnings, "文件登记失败: "+e.Error())
+					}
+				}
+			}
+		}
 	case geeruntime.Handles(name):
 		result, err = geeruntime.Invoke(ctx, name, args, geeOptions(c, filepath.Join(root, "gee")))
 	case browserruntime.Handles(name):
@@ -113,6 +148,8 @@ func Check(ctx context.Context, service string, c config.IntegrationsConfig) map
 	var result any
 	var err error
 	switch strings.TrimSpace(service) {
+	case "osm":
+		result, err = osmdata.Invoke(ctx, "osm_check_environment", map[string]any{}, osmOptions(c, "", ""))
 	case "gee":
 		var dir string
 		dir, err = os.MkdirTemp("", "autocarto-gee-check-")
@@ -161,4 +198,8 @@ func geeOptions(c config.IntegrationsConfig, output string) geeruntime.Options {
 
 func browserOptions(c config.IntegrationsConfig, session, output string) browserruntime.Options {
 	return browserruntime.Options{Enabled: c.Browser.Enabled, Command: c.Browser.Command, Args: c.Browser.Args, Headless: c.Browser.Headless, Browser: c.Browser.Browser, TimeoutSeconds: c.Browser.TimeoutSeconds, OutputDir: output, SessionID: session}
+}
+
+func osmOptions(c config.IntegrationsConfig, output, project string) osmdata.Options {
+	return osmdata.Options{Enabled: c.OSM.Enabled, Endpoints: c.OSM.Endpoints, NominatimURL: c.OSM.NominatimURL, ProxyURL: c.OSM.ProxyURL, TimeoutSeconds: c.OSM.TimeoutSeconds, TotalTimeoutSeconds: c.OSM.TotalTimeoutSeconds, MaxAttempts: c.OSM.MaxAttempts, MaxResponseMB: c.OSM.MaxResponseMB, OutputDir: output, ProjectDir: filepath.Dir(project)}
 }

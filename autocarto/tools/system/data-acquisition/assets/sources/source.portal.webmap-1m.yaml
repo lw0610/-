@@ -1,0 +1,44 @@
+{
+  "apiVersion": "data_source/v1",
+  "id": "source.portal.webmap-1m",
+  "name": "全国地理信息资源目录服务系统 1:100 万公众版",
+  "kind": "portal",
+  "version": "1.0.0",
+  "compliance": "cn_official",
+  "priority": 50,
+  "provides": [
+    {
+      "category": "admin.division"
+    },
+    {
+      "category": "admin.boundary_line"
+    },
+    {
+      "category": "settlement.county_seat"
+    },
+    {
+      "category": "transport.railway"
+    },
+    {
+      "category": "transport.road.major"
+    },
+    {
+      "category": "hydro.river_line"
+    },
+    {
+      "category": "hydro.water_polygon"
+    }
+  ],
+  "hosts": [
+    "www.webmap.cn"
+  ],
+  "requires": [
+    "integration:browser",
+    "login:user"
+  ],
+  "status": "experimental",
+  "license": "需登录确认许可和再分发条件",
+  "notes": [
+    "需用户登录下载，不能绕过登录或验证码"
+  ]
+}

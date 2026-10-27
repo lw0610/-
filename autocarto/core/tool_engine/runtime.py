@@ -3,6 +3,7 @@ import json
 import logging
 import math
 from typing import Any, Callable, Dict, Optional, Tuple
+from autocarto.utils.redaction import redact_sensitive
 
 logger = logging.getLogger(__name__)
 
@@ -124,6 +125,7 @@ def extract_tool_error(result: Dict[str, Any]) -> str:
 
 
 def normalize_tool_result(result: Any) -> Any:
+    result = redact_sensitive(result)
     if not isinstance(result, dict):
         return result
 

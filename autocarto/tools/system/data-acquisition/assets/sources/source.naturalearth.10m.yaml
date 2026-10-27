@@ -1,0 +1,90 @@
+{
+  "apiVersion": "data_source/v1",
+  "id": "source.naturalearth.10m",
+  "name": "Natural Earth 1:1000 万",
+  "kind": "http_file",
+  "version": "1.0.0",
+  "compliance": "open",
+  "priority": 50,
+  "provides": [
+    {
+      "category": "transport.railway",
+      "url": "https://naturalearth.s3.amazonaws.com/10m_cultural/ne_10m_railroads.zip",
+      "fields": {
+        "name": [
+          "name_zh",
+          "name"
+        ],
+        "class": "featurecla"
+      }
+    },
+    {
+      "category": "transport.road.major",
+      "url": "https://naturalearth.s3.amazonaws.com/10m_cultural/ne_10m_roads.zip",
+      "fields": {
+        "name": [
+          "name_zh",
+          "name"
+        ],
+        "ref": "number",
+        "class": "type"
+      }
+    },
+    {
+      "category": "hydro.river_line",
+      "url": "https://naturalearth.s3.amazonaws.com/10m_physical/ne_10m_rivers_lake_centerlines.zip",
+      "fields": {
+        "name": [
+          "name_zh",
+          "name"
+        ]
+      }
+    },
+    {
+      "category": "hydro.water_polygon",
+      "url": "https://naturalearth.s3.amazonaws.com/10m_physical/ne_10m_lakes.zip",
+      "fields": {
+        "name": [
+          "name_zh",
+          "name"
+        ]
+      }
+    },
+    {
+      "category": "hydro.coastline",
+      "url": "https://naturalearth.s3.amazonaws.com/10m_physical/ne_10m_coastline.zip",
+      "fields": {}
+    },
+    {
+      "category": "settlement.place",
+      "url": "https://naturalearth.s3.amazonaws.com/10m_cultural/ne_10m_populated_places.zip",
+      "fields": {
+        "name": [
+          "NAME_ZH",
+          "NAME"
+        ],
+        "class": "FEATURECLA"
+      }
+    }
+  ],
+  "hosts": [
+    "naturalearth.s3.amazonaws.com"
+  ],
+  "coverage": {
+    "regions": [
+      "world"
+    ]
+  },
+  "scale": {
+    "min_denominator": 5000000
+  },
+  "license": "Public Domain",
+  "attribution": "Made with Natural Earth",
+  "requires": [
+    "integration:web"
+  ],
+  "refresh_days": 365,
+  "notes": [
+    "细节适用于小比例尺概览；中文名称以实际文件和字段核验结果为准"
+  ]
+}

@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .registry import ToolRegistry, _load_execution_bindings
 from .runtime import call_tool_handler, extract_tool_error
+from autocarto.utils.redaction import redact_sensitive_text
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +151,7 @@ def execute_tool(
         return {
             "success": False,
             "output": None,
-            "error": str(exc),
+            "error": redact_sensitive_text(exc),
             "output_layers": [],
         }
 

@@ -1,0 +1,52 @@
+{
+  "apiVersion": "tool/v1",
+  "kind": "Tool",
+  "metadata": {
+    "name": "osm_search",
+    "display_name": "查找 OSM 对象",
+    "keywords": [
+      "OSM数据",
+      "开放地图",
+      "查找 OSM 对象"
+    ],
+    "domain": "osm-data",
+    "runtime": "internal"
+  },
+  "spec": {
+    "description": "查找 OSM 对象；只使用全量OSM公共服务，报告部分失败、字段取舍和真实输出路径。",
+    "parameters": [
+      {
+        "name": "query",
+        "type": "string",
+        "required": true,
+        "description": "对象名称"
+      },
+      {
+        "name": "context",
+        "type": "string",
+        "required": false,
+        "description": "地区上下文"
+      },
+      {
+        "name": "category",
+        "type": "string",
+        "required": false,
+        "description": "标签类别提示"
+      }
+    ]
+  },
+  "execution": {
+    "backend_tool": "osm_search",
+    "param_mapping": {
+      "query": "{{ query }}",
+      "context": "{{ context }}",
+      "category": "{{ category }}"
+    }
+  },
+  "policy": {
+    "visibility": "public",
+    "authorization_scopes": [
+      "tool.invoke"
+    ]
+  }
+}

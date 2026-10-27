@@ -12,6 +12,9 @@ import (
 )
 
 type Ref struct {
+	EntryLayerIDs            map[string]string
+	EntryOverrides           map[string]string
+	EntryOrigins             map[string]string
 	Type, Name, ID, Location string
 	Key                      string
 	BaseDir                  string
@@ -78,7 +81,7 @@ func (l *Library) resolve(ctx context.Context, ref Ref, scope Scope) *ResolvedRe
 		}
 		if len(candidates) == 1 {
 			linked := candidates[0]
-			if (ref.BaseDir != "" || ref.BaseDirOverride != "") && linked.Type == "data_list" {
+			if (ref.BaseDir != "" || ref.BaseDirOverride != "" || len(ref.EntryOverrides) > 0 || len(ref.EntryLayerIDs) > 0) && linked.Type == "data_list" {
 				if ref.BaseDirFromInput == "" {
 					ref.BaseDirFromInput = linked.BaseDirFromInput
 				}

@@ -117,3 +117,18 @@ tool_server/tool_manager
 .sisyphus/
 .playwright-mcp/
 .codex/
+
+# Upload exclusions: local credentials, runtime files and desktop work products
+/auto-data/
+/.gomodcache/
+/outputs/
+/Eino.zip
+secrets.enc
+.active_agent_config
+/autocarto/config/config.yaml
+/autocarto/config/plugin_config.yaml
+/autocarto-web/src-tauri/target*/
+/autocarto-web/src-tauri/memory
+/autocarto-web/src-tauri/水系.*
+/autocarto-web/src-tauri/河流.*
+/autocarto-web/src-tauri/河流面.*

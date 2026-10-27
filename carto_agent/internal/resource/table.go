@@ -87,6 +87,12 @@ func rowsFromRecords(records [][]string, numbers []int, typ string) ([]tableRow,
 			}
 		}
 		for _, column := range Columns(typ) {
+			// Optional acquisition metadata does not change legacy resource snapshots.
+			if typ == "data_list" && (column.Key == "category" || column.Key == "fields" || column.Key == "acquire" || column.Key == "source_hint") {
+				if _, present := headers[column.Key]; !present {
+					continue
+				}
+			}
 			raw := row.values[column.Key]
 			if raw == "" && column.Required {
 				return nil, fmt.Errorf("对照表第 %d 行的 %s 不能为空", row.line, column.Key)

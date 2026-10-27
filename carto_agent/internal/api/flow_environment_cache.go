@@ -150,6 +150,7 @@ func flowEnvironmentMetadataRevision(ctx context.Context) (string, error) {
 	}
 	roots := []string{filepath.Join(assets, "tools"), filepath.Join(assets, "skills"), filepath.Join(home, "tools"), filepath.Join(home, "skills"), filepath.Join(configDir, "tools"), filepath.Join(configDir, "skills"), filepath.Join(configDir, "agent_configs"), filepath.Join(configDir, "agent_configs", ".active_agent_config"), filepath.Join(configDir, "config.yaml")}
 	sort.Strings(roots)
+	roots = append(roots, filepath.Join(home, "sources"), filepath.Join(configDir, "secrets.enc"))
 	hash := sha256.New()
 	for _, root := range roots {
 		err = filepath.WalkDir(root, func(path string, entry os.DirEntry, walkErr error) error {
@@ -184,6 +185,16 @@ func flowEnvironmentMetadataRevision(ctx context.Context) (string, error) {
 }
 func cloneFlowEnvironment(environment flow.Environment) flow.Environment {
 	result := environment
+	result.VisionProviders = append([]string{}, environment.VisionProviders...)
+	if environment.RoleMapping != nil {
+		result.RoleMapping = map[string]map[string]string{}
+		for id, mapping := range environment.RoleMapping {
+			result.RoleMapping[id] = map[string]string{}
+			for slot, role := range mapping {
+				result.RoleMapping[id][slot] = role
+			}
+		}
+	}
 	if environment.EnabledFlows != nil {
 		enabled := append([]string{}, (*environment.EnabledFlows)...)
 		result.EnabledFlows = &enabled

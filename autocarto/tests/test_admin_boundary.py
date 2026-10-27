@@ -122,3 +122,17 @@ def test_tool_assets_reject_paths_outside_private_directory(parts):
     from autocarto.tools.system._shared.tool_assets import tool_asset_path
     with pytest.raises(ValueError):
         tool_asset_path("admin-boundaries", *parts)
+
+
+def test_within_provinces_cities_municipalities_and_direct_counties():
+    rows, _, _, _ = boundary._select_within({'within':'全国','level':'省'})
+    assert len(rows)==34
+    rows, _, _, _ = boundary._select_within({'within':'河南省','level':'市'})
+    assert len(rows)==18 and all(f['properties']['adcode'].startswith('41') for f in rows)
+    assert any(f['properties']['adcode']=='419001' for f in rows)
+    rows, _, _, _ = boundary._select_within({'within':'北京市','level':'县'})
+    assert len(rows)==16 and all(f['properties']['adcode'].startswith('11') for f in rows)
+    rows, _, _, _ = boundary._select_within({'within':'419001','level':'县'})
+    assert len(rows)==1 and rows[0]['properties']['name']=='济源市'
+    with pytest.raises(boundary.BoundarySelectionError):
+        boundary._select_within({'within':'长安区','level':'县'})

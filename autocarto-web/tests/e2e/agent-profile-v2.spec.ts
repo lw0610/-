@@ -67,7 +67,7 @@ test('v2 scheme edits preserve role fields and expose only tools and flows',asyn
   expect(saved?.plan.agents[0].agent.mode).toBe('readonly')
   expect(saved?.runtime_agents.every(entry=>!('skill_packages' in entry.agent))).toBe(true)
   await page.getByRole('link',{name:'通用数据流程',exact:true}).click()
-  await expect(page).toHaveURL(/\/flows\?flow=demo&scheme=default$/)
+  await expect(page).toHaveURL(/\/flows\?flow=demo&scheme=default&tab=steps$/)
   await expect(page.getByRole('textbox',{name:'流程内容',exact:true})).toHaveValue(/检查数据/)
   await expect(page.getByRole('combobox',{name:'当前方案',exact:true})).toHaveValue('default')
   await page.goto('/settings/tools')

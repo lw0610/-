@@ -22,7 +22,7 @@ func (l *Library) resolveItem(item LibraryItem, ref Ref, scope Scope) *ResolvedR
 			key = "path:" + filepath.ToSlash(relative)
 		}
 	}
-	r := l.resolvePath(Request{Key: key, ResourceID: item.ID, Label: label, Type: item.Type, Location: ref.Location, FlowID: scope.FlowID, FlowDir: scope.FlowDir, Entry: item.Entry, BaseDir: ref.BaseDir, BaseDirFromInput: ref.BaseDirFromInput, BaseDirOverride: ref.BaseDirOverride}, item.Path, item.Owner)
+	r := l.resolvePath(Request{Key: key, ResourceID: item.ID, Label: label, Type: item.Type, Location: ref.Location, FlowID: scope.FlowID, FlowDir: scope.FlowDir, Entry: item.Entry, BaseDir: ref.BaseDir, BaseDirFromInput: ref.BaseDirFromInput, BaseDirOverride: ref.BaseDirOverride, EntryOverrides: ref.EntryOverrides, EntryOrigins: ref.EntryOrigins, EntryLayerIDs: ref.EntryLayerIDs}, item.Path, item.Owner)
 	r.Key = key
 	r.ID = item.ID
 	r.Label = label
@@ -154,6 +154,9 @@ func (r *ResolvedResource) Handle() map[string]any {
 		value["path"] = entry.Path
 		value["kind"] = entry.Kind
 		value["exists"] = entry.Exists
+		if entry.LayerID != "" {
+			value["layer_id"] = entry.LayerID
+		}
 		if entry.ExistsUnknown {
 			value["exists"] = nil
 		}

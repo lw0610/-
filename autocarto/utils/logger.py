@@ -14,6 +14,7 @@ import time
 from logging.handlers import RotatingFileHandler
 
 from ..core.paths import get_plugin_data_dir
+from .redaction import RedactingFormatter
 
 
 class _SafeRotatingFileHandler(RotatingFileHandler):
@@ -270,7 +271,7 @@ def _init_root_logger(log_dir):
     console_handler.setLevel(logging.INFO)
 
     # 格式化
-    formatter = logging.Formatter("%(asctime)s [%(name)s] [%(levelname)s] %(message)s")
+    formatter = RedactingFormatter("%(asctime)s [%(name)s] [%(levelname)s] %(message)s")
     console_handler.setFormatter(formatter)
 
     # 添加 handlers
@@ -321,7 +322,7 @@ def init_log_dir(log_dir):
 
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s [%(name)s] [%(levelname)s] %(message)s")
+    formatter = RedactingFormatter("%(asctime)s [%(name)s] [%(levelname)s] %(message)s")
     file_handler, actual_log_dir, err = _create_file_handler(
         log_dir, "autocarto.log", logging.DEBUG, formatter, fallback_subdir="logs"
     )
@@ -380,7 +381,7 @@ def switch_session_log(session_log_dir):
     if not session_log_dir:
         return
 
-    formatter = logging.Formatter(
+    formatter = RedactingFormatter(
         "%(asctime)s [SESSION] [%(name)s] [%(levelname)s] %(message)s"
     )
     handler, actual_session_log_dir, err = _create_file_handler(

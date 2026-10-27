@@ -9,6 +9,7 @@ import (
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/hitl"
+	"github.com/autocarto/carto_agent/internal/sessionfiles"
 	"github.com/autocarto/carto_agent/internal/skill"
 )
 
@@ -77,6 +78,19 @@ func getOutputInfo(ctx context.Context, args map[string]any) (map[string]any, er
 		"files":         []map[string]any{},
 		"subdirs_count": 0,
 		"subdirs":       []map[string]any{},
+	}
+	if session.SessionID != "" {
+		if store, err := sessionfiles.New(session.ProjectPath, session.SessionID); err == nil {
+			if items, err := store.List(false); err == nil {
+				groups := map[string][]sessionfiles.Item{}
+				for _, item := range items {
+					groups[item.Group] = append(groups[item.Group], item)
+				}
+				info["session_files"] = items
+				info["groups"] = groups
+				info["session_files_count"] = len(items)
+			}
+		}
 	}
 	entries, err := os.ReadDir(outputDir)
 	if err != nil {

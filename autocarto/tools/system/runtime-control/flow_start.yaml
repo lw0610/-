@@ -16,7 +16,7 @@ spec:
     - name: inputs
       type: object
       required: false
-      description: '按流程输入key提供值；原文类输入使用 {$ref: current_user_message}，不得重写原文。'
+      description: '按流程输入 key 提供值；原文类输入使用 {$ref: current_user_message}，不得重写原文。可获取且当前可用的数据按方案策略传 {$acquire: true}；已有文件夹补齐缺项传 {$fill: true, path: 真实文件夹路径}。禁止指定 source 或 sources，来源只由流程表单选择。'
 execution:
   backend_tool: flow_start
   param_mapping:

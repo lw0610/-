@@ -71,6 +71,9 @@ func (c *Controller) CheckResume(ctx context.Context, request ResumeRequest) (*R
 	if request.ResourceChoice != "" && request.ResourceChoice != "continue_snapshot" && request.ResourceChoice != "restart" {
 		return nil, fmt.Errorf("资源变化处理选择无效")
 	}
+	if err := c.validateResumeOverlays(ctx, state.Plan, state.Scheme); err != nil {
+		return nil, err
+	}
 	current, linkErr := c.options.Compiler.EnsureRunnable(ctx, state.FlowID, state.Scheme)
 	if current == nil {
 		if linkErr != nil {
@@ -78,7 +81,63 @@ func (c *Controller) CheckResume(ctx context.Context, request ResumeRequest) (*R
 		}
 		return nil, fmt.Errorf("恢复前流程校验未通过")
 	}
-	current = flow.ResolveInputResources(current, resumePlanInputs(state.Plan, current, state.Inputs))
+	resumeInputs := resumePlanInputs(state.Plan, current, state.Inputs)
+	for k, v := range state.AcquiredInputs {
+		skipLayers := map[string]bool{}
+		for _, resource := range state.Plan.Resources {
+			if resource.BaseDirFromInput == k {
+				for name := range state.LayerOverrides[resource.Key] {
+					skipLayers[name] = true
+				}
+			}
+		}
+
+		if original, ok := v.(map[string]any); ok {
+			files := map[string]any{}
+			for name, path := range original {
+				if !skipLayers[name] {
+					files[name] = path
+				}
+			}
+			choice, _, _ := flow.ParseInputChoice(resumeInputs[k])
+			marker := map[string]any{"$acquire": true, "files": files}
+			if choice.Path != "" {
+				marker = map[string]any{"$fill": true, "path": choice.Path, "files": files}
+			}
+			resumeInputs[k] = marker
+		} else if original, ok := v.(map[string]string); ok {
+			files := map[string]string{}
+			for name, path := range original {
+				if !skipLayers[name] {
+					files[name] = path
+				}
+			}
+			choice, _, _ := flow.ParseInputChoice(resumeInputs[k])
+			marker := map[string]any{"$acquire": true, "files": files}
+			if choice.Path != "" {
+				marker = map[string]any{"$fill": true, "path": choice.Path, "files": files}
+			}
+			resumeInputs[k] = marker
+		} else {
+			resumeInputs[k] = v
+		}
+	}
+	if current.Acquisition != nil {
+		var problems []InputProblem
+		var checkErr error
+		current, problems, checkErr = c.acquisitionInputPlan(ctx, current, resumeInputs, state.ProjectRoot)
+		if checkErr != nil {
+			return nil, checkErr
+		}
+		for _, p := range problems {
+			if p.Level == "error" {
+				return nil, &InputError{Reasons: []StartupIssue{{Code: p.Code, Input: p.Label, Step: p.Step, Item: p.Item, Acquirable: p.Acquirable, Candidates: p.Candidates, Message: p.Message}}}
+			}
+		}
+	} else {
+		current = flow.ResolveInputResources(current, resumeInputs)
+	}
+	current = flow.ResolveInputResourcesWithLayers(current, resumeInputs, state.EntryOverrides, state.LayerOverrides)
 	var invalid *flow.ValidationError
 	if linkErr != nil && !errors.As(linkErr, &invalid) {
 		return nil, linkErr
@@ -178,7 +237,7 @@ func (c *Controller) Restart(ctx context.Context, request ResumeRequest) (*RunSt
 			delete(inputs, input.Key)
 		}
 	}
-	start := StartRequest{SessionID: state.SessionID, SessionDir: state.SessionDir, ProjectRoot: state.ProjectRoot, FlowID: state.FlowID, Scheme: state.Scheme, Inputs: inputs, OriginalSource: request.OriginalSource, Origin: state.Origin}
+	start := StartRequest{SessionID: state.SessionID, SessionDir: state.SessionDir, ProjectRoot: state.ProjectRoot, ProjectPath: state.ProjectPath, FlowID: state.FlowID, Scheme: state.Scheme, Inputs: inputs, OriginalSource: request.OriginalSource, Origin: state.Origin}
 	if start.ProjectRoot == "" {
 		start.ProjectRoot = start.SessionDir
 	}

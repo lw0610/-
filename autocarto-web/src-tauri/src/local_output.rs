@@ -84,6 +84,18 @@ pub fn open(target: &Path) -> Result<(), String> {
     Ok(())
 }
 
+pub fn reveal(target: &Path) -> Result<(), String> {
+    if target.is_dir() { return open(target); }
+    #[cfg(target_os = "macos")]
+    let status = Command::new("/usr/bin/open").arg("-R").arg("--").arg(target).status();
+    #[cfg(target_os = "windows")]
+    let status = Command::new("explorer.exe").arg(format!("/select,{}", target.display())).status();
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    let status = Command::new("xdg-open").arg(target.parent().ok_or("文件没有所在目录")?).status();
+    if !status.map_err(|error| format!("显示文件位置失败：{error}"))?.success() { return Err("系统未能显示文件位置".into()); }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

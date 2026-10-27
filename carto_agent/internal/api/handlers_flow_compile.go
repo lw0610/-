@@ -61,6 +61,8 @@ func (a *API) decorateFlowSummaries(ctx context.Context, items []flow.FlowSummar
 			return err
 		}
 		item.PlanStatus = plan.PlanStatus
+		item.Roles = summarizeFlowRoles(plan)
+		item.Data = summarizeFlowData(plan)
 		item.DiagnosticsSummary = map[string]int{"errors": 0, "warnings": 0, "infos": 0}
 		for _, d := range plan.Diagnostics {
 			switch d.Level {

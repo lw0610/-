@@ -5,6 +5,7 @@ import (
 	"github.com/autocarto/carto_agent/internal/resource"
 	"time"
 
+	"github.com/autocarto/carto_agent/internal/acquire"
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/cloudwego/eino/schema"
 )
@@ -32,17 +33,20 @@ type RunStore interface {
 }
 
 type Options struct {
-	Compiler  Compiler
-	Runner    StepRunner
-	Tools     ToolInvoker
-	Model     ModelCaller
-	Events    EventSink
-	Store     RunStore
-	Executors *ExecutorRegistry
-	Now       func() time.Time
+	Lifecycle          context.Context
+	AcquisitionFactory func(context.Context, *RunState) (*acquire.Engine, error)
+	Compiler           Compiler
+	Runner             StepRunner
+	Tools              ToolInvoker
+	Model              ModelCaller
+	Events             EventSink
+	Store              RunStore
+	Executors          *ExecutorRegistry
+	Now                func() time.Time
 }
 
 type StartRequest struct {
+	ProjectPath    string
 	FlowRunID      string // Optional trusted reservation for flow_start; validated before use.
 	SessionID      string
 	SessionDir     string
@@ -64,6 +68,7 @@ type ResumeRequest struct {
 }
 
 type StepRequest struct {
+	Overlay        *RoleOverlaySpec
 	FlowID         string
 	FlowDir        string
 	Lock           *resource.Lock
@@ -151,29 +156,39 @@ type RunResult struct {
 	Issues       []string       `json:"issues"`
 	Summary      string         `json:"summary"`
 }
+type AcquisitionState struct {
+	Plan  flow.AcquisitionPlan `json:"plan"`
+	Items []acquire.ItemResult `json:"items"`
+}
 type RunState struct {
-	ResourceChange      *ResourceChange `json:"resource_change,omitempty"`
-	ResourceFingerprint string          `json:"resource_fingerprint,omitempty"`
-	EventSeq            int64           `json:"event_seq"`
-	APIVersion          string          `json:"api_version"`
-	ID                  string          `json:"flow_run_id"`
-	SessionID           string          `json:"session_id"`
-	SessionDir          string          `json:"session_dir"`
-	ProjectRoot         string          `json:"project_root,omitempty"`
-	FlowID              string          `json:"flow_id"`
-	FlowVersion         string          `json:"flow_version"`
-	PlanCacheKey        string          `json:"plan_cache_key"`
-	Scheme              string          `json:"scheme"`
-	Origin              string          `json:"origin"`
-	Status              string          `json:"status"`
-	StartedAt           time.Time       `json:"started_at"`
-	FinishedAt          *time.Time      `json:"finished_at,omitempty"`
-	Inputs              map[string]any  `json:"inputs"`
-	Cursor              int             `json:"cursor"`
-	Steps               []StepState     `json:"steps"`
-	Result              RunResult       `json:"result"`
-	RunJSONPath         string          `json:"run_json_path"`
-	Plan                *flow.FlowPlan  `json:"plan"`
+	LayerOverrides      map[string]map[string]string `json:"layer_overrides,omitempty"`
+	ProjectPath         string                       `json:"project_path,omitempty"`
+	Acquisition         *AcquisitionState            `json:"acquisition,omitempty"`
+	AcquiredInputs      map[string]any               `json:"acquired_inputs,omitempty"`
+	EntryOverrides      map[string]map[string]string `json:"entry_overrides,omitempty"`
+	SourceNotes         []string                     `json:"source_notes,omitempty"`
+	ResourceChange      *ResourceChange              `json:"resource_change,omitempty"`
+	ResourceFingerprint string                       `json:"resource_fingerprint,omitempty"`
+	EventSeq            int64                        `json:"event_seq"`
+	APIVersion          string                       `json:"api_version"`
+	ID                  string                       `json:"flow_run_id"`
+	SessionID           string                       `json:"session_id"`
+	SessionDir          string                       `json:"session_dir"`
+	ProjectRoot         string                       `json:"project_root,omitempty"`
+	FlowID              string                       `json:"flow_id"`
+	FlowVersion         string                       `json:"flow_version"`
+	PlanCacheKey        string                       `json:"plan_cache_key"`
+	Scheme              string                       `json:"scheme"`
+	Origin              string                       `json:"origin"`
+	Status              string                       `json:"status"`
+	StartedAt           time.Time                    `json:"started_at"`
+	FinishedAt          *time.Time                   `json:"finished_at,omitempty"`
+	Inputs              map[string]any               `json:"inputs"`
+	Cursor              int                          `json:"cursor"`
+	Steps               []StepState                  `json:"steps"`
+	Result              RunResult                    `json:"result"`
+	RunJSONPath         string                       `json:"run_json_path"`
+	Plan                *flow.FlowPlan               `json:"plan"`
 }
 type Event struct {
 	Event     string         `json:"event"`

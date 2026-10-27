@@ -9,6 +9,7 @@ import type {
   ResourceTypeDefinition,
 } from './types'
 import { resourceTypeLabel } from './editor'
+import {roleSourceLabel} from './roleLabels'
 export const buttonClass =
   'rounded border border-zinc-300 bg-white px-3 py-1.5 text-xs disabled:opacity-40 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800'
 export const fieldClass =
@@ -29,6 +30,7 @@ export function StepPreview({
   const names = new Map(
     capabilities.map((item) => [item.name, item.display_name || item.name]),
   )
+  const packages = new Map(capabilities.filter(item=>item.package_id).map(item=>[item.package_id!,item.package_display_name||item.package_id!]))
   if (!plan)
     return (
       <p className="text-sm text-zinc-500">
@@ -43,7 +45,7 @@ export function StepPreview({
           className="rounded border border-zinc-200 p-3 dark:border-zinc-800"
         >
           <h3 className="font-medium">
-            {step.index}. {step.title}
+            {step.kind === 'acquire' || step.acquisition_requirement ? '数据准备 · ' : `${step.index}. `}{step.title}
           </h3>
           <p className="mt-1 text-xs text-zinc-500">
             负责：
@@ -51,6 +53,11 @@ export function StepPreview({
               step.role ||
               (step.kind === 'confirm' ? '用户' : '系统自动')}
           </p>
+          {(step.kind === 'agent' || step.role_source || step.unresolved || step.granted_packages?.length) && <p className={`mt-1 text-xs ${step.unresolved?'text-amber-700':'text-blue-700'}`}>
+            {roleSourceLabel({source:step.role_source||'scheme_name',granted:step.granted_packages,reason:step.unresolved},packages)}
+            {step.unresolved && step.condition ? ' · 仅在条件满足时需要' : ''}
+          </p>}
+          {step.acquisition_requirement && <p className="mt-1 text-xs text-blue-700">系统步骤：获取数据（仅在自动获取或补齐时执行）</p>}
           {step.condition && (
             <p className="mt-1 text-xs">条件：{step.condition.text}</p>
           )}

@@ -29,6 +29,10 @@ func TestIntegrationsBatchConfigSaveReadAndReload(t *testing.T) {
 	// Include every field produced by IntegrationsConfigWorkspace.toConfig,
 	// including disabled GEE, empty strings and a browser argv array.
 	integrations := map[string]any{
+		"osm": map[string]any{
+			"enabled": false, "endpoints": []string{}, "nominatim_url": "", "proxy_url": "",
+			"timeout_seconds": 90, "total_timeout_seconds": 1800, "max_attempts": 5, "max_response_mb": 100,
+		},
 		"gee": map[string]any{
 			"enabled": false, "python": "python3", "project": "",
 			"proxy_url": "", "timeout_seconds": 300,
@@ -128,7 +132,10 @@ func assertSavedBrowserIntegration(t *testing.T, got config.IntegrationsConfig) 
 	if len(got.Browser.Args) != 2 || got.Browser.Args[1] != "@playwright/mcp@0.0.83" {
 		t.Fatalf("browser argv was not retained: %v", got.Browser.Args)
 	}
-	if got.GEE.Enabled || got.Web.Enabled {
+	if got.OSM.Enabled || got.GEE.Enabled || got.Web.Enabled {
 		t.Fatal("saving browser preferences enabled unrelated integrations")
+	}
+	if got.OSM.TimeoutSeconds != 90 || got.OSM.TotalTimeoutSeconds != 1800 || got.OSM.MaxAttempts != 5 || got.OSM.MaxResponseMB != 100 {
+		t.Fatalf("OSM download limits were not retained: %+v", got.OSM)
 	}
 }

@@ -89,7 +89,6 @@ export function useChatSession() {
   const focusedWorkflowBlockId = useUIStore((s) => s.focusedWorkflowBlockId)
   const inspectorOpen = useUIStore((s) => s.inspectorOpen)
   const setFocusedWorkflowBlockId = useUIStore((s) => s.setFocusedWorkflowBlockId)
-  const setInspectorOpen = useUIStore((s) => s.setInspectorOpen)
 
   const activeSessionId = useSessionStore((s) => s.activeSessionId)
   const sessionAttachState = useSessionStore((s) => s.sessionAttachState)
@@ -432,8 +431,8 @@ export function useChatSession() {
       return
     }
     setFocusedWorkflowBlockId(blockId)
-    setInspectorOpen(true)
-  }, [setFocusedWorkflowBlockId, setInspectorOpen])
+    useUIStore.getState().openWorkspace('process')
+  }, [setFocusedWorkflowBlockId])
 
   const activeSessionRecord = useMemo(
     () => sessions.find((item) => item.session_id === activeSessionId) || null,

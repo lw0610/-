@@ -22,6 +22,8 @@ import tempfile
 import threading
 import time
 import traceback
+import urllib.parse
+import urllib.request
 
 GEEDIM_VERSION = "2.0.0"
 DOWNLOAD_LOCK = threading.RLock()
@@ -615,6 +617,76 @@ def make_helpers(ee, root, tasks, downloads=None, *, download_root=None):
     return download_image, export_image_to_drive
 
 
+def make_feature_downloader(root, downloads):
+    root = Path(root).resolve()
+
+    def safe_download_url(address):
+        parsed = urllib.parse.urlparse(address)
+        hostname = (parsed.hostname or "").lower()
+        allowed = ("googleapis.com", "googleusercontent.com", "earthengine.google.com")
+        if parsed.scheme != "https" or parsed.username or parsed.password or not any(hostname == domain or hostname.endswith("." + domain) for domain in allowed):
+            raise RuntimeFailure("invalid_download_url", "Feature export URL is outside Earth Engine download services")
+        return address
+
+    class GoogleRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            safe_download_url(newurl)
+            return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+    def download_features(collection, filename, *, max_features=5000, max_bytes=25 * 1024 * 1024):
+        if isinstance(max_features, bool) or not isinstance(max_features, int) or not 1 <= max_features <= 50000:
+            raise RuntimeFailure("invalid_arguments", "max_features must be 1..50000")
+        if isinstance(max_bytes, bool) or not isinstance(max_bytes, int) or not 1 <= max_bytes <= 100 * 1024 * 1024:
+            raise RuntimeFailure("invalid_arguments", "max_bytes must be 1..100 MiB")
+        target = safe_output_path(root, filename)
+        if target.suffix.lower() != ".geojson":
+            raise RuntimeFailure("invalid_output_path", "download_features requires a .geojson filename")
+        record = {"download_id": len(downloads) + 1, "filename": str(filename), "status": "preparing", "kind": "vector"}
+        downloads.append(record)
+        temporary = None
+        try:
+            count = collection.limit(max_features + 1).size().getInfo()
+            if not isinstance(count, int) or count < 1 or count > max_features:
+                raise RuntimeFailure("feature_limit", "Feature count is empty or exceeds the allowed bound")
+            address = safe_download_url(collection.getDownloadURL(filetype="geojson", filename=target.stem))
+            target.parent.mkdir(parents=True, exist_ok=True)
+            descriptor, temporary = tempfile.mkstemp(prefix=".gee-features-", suffix=".geojson", dir=target.parent)
+            size = 0
+            digest = hashlib.sha256()
+            progress = DownloadProgress(root, record)
+            opener = urllib.request.build_opener(GoogleRedirect())
+            with os.fdopen(descriptor, "wb") as output, progress.heartbeat(), opener.open(address, timeout=120) as response:
+                safe_download_url(response.geturl())
+                while True:
+                    block = response.read(min(1024 * 1024, max_bytes - size + 1))
+                    if not block:
+                        break
+                    size += len(block)
+                    if size > max_bytes:
+                        raise RuntimeFailure("feature_size_limit", "Feature export exceeds the byte limit; reduce extent")
+                    output.write(block)
+                    digest.update(block)
+            document = json.loads(Path(temporary).read_text(encoding="utf-8"))
+            if document.get("type") != "FeatureCollection" or len(document.get("features", [])) != count:
+                raise RuntimeFailure("feature_export_incomplete", "Feature export count does not match the requested collection")
+            os.link(temporary, target)
+            record.update(status="completed", path=str(target), feature_count=count, bytes=size, sha256=digest.hexdigest())
+            journal_download(root, record)
+            progress.emit("completed", 100.0)
+            return str(target)
+        except Exception as exc:
+            code = exc.code if isinstance(exc, RuntimeFailure) else "feature_download_failed"
+            message = safe_diagnostic(exc)
+            record.update(status="failed", error_code=code, message=message)
+            journal_download(root, record)
+            raise RuntimeFailure(code, message) from None
+        finally:
+            if temporary:
+                Path(temporary).unlink(missing_ok=True)
+
+    return download_features
+
+
 def execute(payload):
     operation = payload["operation"]
     tasks = []
@@ -655,6 +727,7 @@ def execute(payload):
             script = Path(payload["script_path"])
             scope = {"__name__": "__main__", "__file__": str(script), "ee": ee, "output_dir": output_dir, "download_image": download, "export_image_to_drive": export}
             scope.update(make_workflow_helpers(ee, output_dir))
+            scope["download_features"] = make_feature_downloader(output_dir, downloads)
             exec(compile(script.read_text(encoding="utf-8"), str(script), "exec"), scope)
             if any(item.get("status") != "completed" for item in downloads):
                 raise RuntimeFailure("download_incomplete", "One or more requested local raster downloads failed. Caught exceptions or submitted cloud exports do not make local delivery complete; inspect downloads and retry failed outputs explicitly.")

@@ -9,6 +9,7 @@ it('shows saved steps directly without compilation progress or failure controls'
     inputs: [], resources: [], plan_status: 'enriching',
     enrichment: { done: 0, total: 2, failed: [{ step_id: 'two', title: '导出成果', reason: 'invalid_json' }] },
     steps: [
+      { id: 'acquire-one', index: 0, title: '获取底图', kind: 'acquire', acquisition_requirement: '底图', instructions: '准备流程所需底图。', on_failure: 'ask' },
       { id: 'one', index: 1, title: '读取数据', role_label: '数据角色', kind: 'agent', instructions: '读取用户选择的数据。', enrichment: 'pending', on_failure: 'ask' },
       { id: 'two', index: 2, title: '导出成果', role_label: '制图角色', kind: 'agent', instructions: '导出为 PDF。', enrichment: 'failed', condition: { text: '用户确认后' }, expected_outputs: [{ label: '地图', type: 'file', required: true, format: 'pdf' }], on_failure: 'stop' },
     ],
@@ -16,6 +17,8 @@ it('shows saved steps directly without compilation progress or failure controls'
   render(<StepPreview plan={plan} capabilities={[]} />)
   expect(screen.getByText('1. 读取数据')).toBeInTheDocument()
   expect(screen.getByText('2. 导出成果')).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: '数据准备 · 获取底图' })).toBeInTheDocument()
+  expect(screen.queryByText('0. 获取底图')).not.toBeInTheDocument()
   expect(screen.getByText('条件：用户确认后')).toBeInTheDocument()
   expect(screen.getByText('产出：地图 · file / pdf · 必需')).toBeInTheDocument()
   expect(screen.getByText('失败时：停止流程')).toBeInTheDocument()

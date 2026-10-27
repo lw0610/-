@@ -1,0 +1,21 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: data_load_tiles
+  display_name: 加载已确认的在线底图
+  domain: data-acquisition
+  runtime: qgis
+spec:
+  description: 系统专用。读取无密钥在线底图定义；仅在用户确认密钥会进入工程后，通过可信执行通道加载。不接收公开密钥参数。
+  parameters:
+    - {name: definition_path, type: string, required: true, description: 无密钥图层定义的绝对路径}
+    - {name: confirmed, type: boolean, required: true, description: 系统记录的用户确认结果}
+    - {name: authcfg, type: string, description: 认证配置引用；当前天地图查询认证不据此绕过确认}
+policy:
+  visibility: hidden
+execution:
+  handler: handlers.tiles.load_tiles_handler
+  param_mapping:
+    definition_path: '{{ definition_path }}'
+    confirmed: '{{ confirmed }}'
+    authcfg: '{{ authcfg }}'

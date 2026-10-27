@@ -8,6 +8,8 @@ import (
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/deepagent"
+	"github.com/autocarto/carto_agent/internal/geeruntime"
+	bridgepkg "github.com/autocarto/carto_agent/internal/middleware/bridge"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/tool"
@@ -85,6 +87,42 @@ func (f *Factory) InvokeFlowTool(ctx context.Context, name string, args map[stri
 	if name != "get_layers_info" && name != "layout_info" {
 		return nil, fmt.Errorf("流程上下文不允许调用工具: %s", name)
 	}
+	return f.invokeSystemFlowTool(ctx, name, args)
+}
+
+// InvokeAcquisitionTool is a separate deterministic system channel, never exposed as a model tool.
+func (f *Factory) InvokeAcquisitionTool(ctx context.Context, name string, args map[string]any) (any, error) {
+	name = normalizeToolName(name)
+	switch name {
+	case "admin_boundary_extract", "archive_extract", "data_normalize", "data_derive", "data_load_vector", "data_load_raster":
+	case "data_load_tiles":
+		var err error
+		ctx, err = bridgepkg.AuthorizeConfirmedTileLoad(ctx, args)
+		if err != nil {
+			return nil, err
+		}
+	case "gee_run_script":
+		template, _ := args["template"].(string)
+		params, _ := args["params"].(map[string]any)
+		if len(args) != 2 || template == "" || params == nil {
+			return nil, fmt.Errorf("获取通道仅允许系统 GEE 模板参数")
+		}
+		root, err := config.ResolveAssetsRoot()
+		if err != nil {
+			return nil, err
+		}
+		script, err := geeruntime.BuildAcquisitionScript(root, template, params)
+		if err != nil {
+			return nil, err
+		}
+		args = map[string]any{"code": script}
+	default:
+		return nil, fmt.Errorf("数据获取不允许调用工具: %s", name)
+	}
+	return f.invokeSystemFlowTool(ctx, name, args)
+}
+
+func (f *Factory) invokeSystemFlowTool(ctx context.Context, name string, args map[string]any) (any, error) {
 	var selected tool.BaseTool
 	for _, item := range f.config.BaseTools {
 		info, err := item.Info(ctx)

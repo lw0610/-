@@ -1,0 +1,29 @@
+{
+  "apiVersion": "data_source/v1",
+  "id": "source.portal.nbs",
+  "name": "国家统计局国家数据",
+  "kind": "portal",
+  "version": "1.0.0",
+  "compliance": "cn_official",
+  "priority": 50,
+  "provides": [
+    {
+      "category": "stats.annual_indicator",
+      "url": "https://data.stats.gov.cn/"
+    }
+  ],
+  "hosts": [
+    "data.stats.gov.cn",
+    "www.stats.gov.cn"
+  ],
+  "requires": [
+    "integration:browser",
+    "login:user"
+  ],
+  "status": "experimental",
+  "license": "国家统计局使用条款",
+  "attribution": "国家统计局",
+  "notes": [
+    "可能需要验证码；门户自动获取尚未启用"
+  ]
+}

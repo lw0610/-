@@ -4,6 +4,7 @@ import { normalizeToolCatalogResponse } from '@/lib/api'
 const api = vi.hoisted(() => ({
   get: vi.fn(),
   post: vi.fn(),
+  postEnvelope: vi.fn(),
   put: vi.fn(),
   delete: vi.fn(),
   getToolCatalog: vi.fn(),
@@ -12,6 +13,18 @@ vi.mock('@/lib/api', async original => ({ ...await original<typeof import('@/lib
 beforeEach(() => {
   vi.clearAllMocks()
   api.getToolCatalog.mockImplementation(async () => normalizeToolCatalogResponse(await api.get('/api/tools/catalog?scope=global')))
+})
+it('addresses role mappings within the selected scheme and sends the full mapping',async()=>{
+  await flowApi.roles('demo','custom')
+  expect(api.get).toHaveBeenCalledWith('/api/flows/demo/roles?scheme=custom')
+  await flowApi.setRoles('demo','custom',{制图:'flow_role'})
+  expect(api.put).toHaveBeenCalledWith('/api/flows/demo/roles?scheme=custom',{mapping:{制图:'flow_role'}})
+})
+it('keeps input errors and acquisition metadata from the same check response', async () => {
+  const plan = { items: [{ key: 'roads', input: '底图', status: 'ready' }] }
+  api.postEnvelope.mockResolvedValue({ success: true, data: [], acquisition_plan: plan })
+  expect(await flowApi.checkInputPlan('demo', 'review', { 底图: { $acquire: true } })).toEqual({ problems: [], acquisition_plan: plan })
+  expect(api.postEnvelope).toHaveBeenCalledWith('/api/flows/demo/inputs/check', { scheme: 'review', values: { 底图: { $acquire: true } } })
 })
 it('encodes identifiers and sends the documented import, save and resource fields', async () => {
   await flowApi.get('流程', '方案 1')

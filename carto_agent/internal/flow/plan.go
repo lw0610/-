@@ -47,6 +47,11 @@ type StepFailure struct {
 // FlowPlan 是方案相关的只读编译快照；运行前须通过 EnsureRunnable 检查当前指纹。
 // CompiledAt 是计划内容最后变化的时间：FLOW.md 保存时间与所用增强记录时间中较晚者。
 type FlowPlan struct {
+	Requirements       []RequirementDoc  `json:"requirements,omitempty"`
+	Acquisition        *AcquisitionPlan  `json:"acquisition_plan,omitempty"`
+	AutoAcquire        string            `json:"auto_acquire,omitempty"`
+	RoleSlots          []RoleSlotPlan    `json:"role_slots,omitempty"`
+	FlowRoles          []FlowRoleSpec    `json:"flow_roles,omitempty"`
 	PlanStatus         string            `json:"plan_status"`
 	Enrichment         EnrichmentStatus  `json:"enrichment"`
 	CompileKey         string            `json:"compile_key"`
@@ -87,13 +92,16 @@ type CompilerInfo struct {
 
 // InputPlan.Key 等于输入名称，基础计划与模型增强后的计划保持同一个键。
 type InputPlan struct {
-	Key         string   `json:"key"`
-	Label       string   `json:"label"`
-	Type        string   `json:"type"`
-	Required    bool     `json:"required"`
-	Default     any      `json:"default"`
-	Options     []string `json:"options"`
-	Description string   `json:"description"`
+	Acquirable       bool     `json:"acquirable,omitempty"`
+	AcquireAvailable bool     `json:"acquire_available,omitempty"`
+	Modes            []string `json:"modes,omitempty"`
+	Key              string   `json:"key"`
+	Label            string   `json:"label"`
+	Type             string   `json:"type"`
+	Required         bool     `json:"required"`
+	Default          any      `json:"default"`
+	Options          []string `json:"options"`
+	Description      string   `json:"description"`
 	// Remember 表示文件 / 文件夹输入在本机记住上次的选择。
 	Remember bool `json:"remember,omitempty"`
 }
@@ -152,15 +160,21 @@ func (r ResourcePlan) ResolvedResource() *resource.ResolvedResource {
 }
 
 type StepPlan struct {
-	ID           string        `json:"id"`
-	Index        int           `json:"index"`
-	Title        string        `json:"title"`
-	Kind         string        `json:"kind"`
-	Role         string        `json:"role"`
-	RoleLabel    string        `json:"role_label"`
-	Executor     string        `json:"executor,omitempty"`
-	Condition    *ConditionDoc `json:"condition"`
-	Instructions string        `json:"instructions"`
+	AcquisitionRequirement string        `json:"acquisition_requirement,omitempty"`
+	RoleSlot               string        `json:"role_slot,omitempty"`
+	RoleSource             string        `json:"role_source,omitempty"`
+	RequiredPackages       []string      `json:"required_packages,omitempty"`
+	GrantedPackages        []string      `json:"granted_packages,omitempty"`
+	Unresolved             string        `json:"unresolved,omitempty"`
+	ID                     string        `json:"id"`
+	Index                  int           `json:"index"`
+	Title                  string        `json:"title"`
+	Kind                   string        `json:"kind"`
+	Role                   string        `json:"role"`
+	RoleLabel              string        `json:"role_label"`
+	Executor               string        `json:"executor,omitempty"`
+	Condition              *ConditionDoc `json:"condition"`
+	Instructions           string        `json:"instructions"`
 	// Completion 保留原文，用于步骤消息及回执修复；不以推断产出替代验收原文。
 	Completion          string              `json:"completion"`
 	Refs                PlanRefs            `json:"refs"`
@@ -217,4 +231,35 @@ func (e *ValidationError) Error() string {
 		}
 	}
 	return fmt.Sprintf("流程存在 %d 个错误，请修复后再运行", count)
+}
+
+type RoleSlotPlan struct {
+	Name        string         `json:"name"`
+	Description string         `json:"description,omitempty"`
+	Packages    []string       `json:"packages"`
+	Executor    string         `json:"executor,omitempty"`
+	NeedsVision bool           `json:"needs_vision,omitempty"`
+	Resolution  RoleResolution `json:"resolution"`
+}
+type RoleResolution struct {
+	Source    string   `json:"source"`
+	RoleID    string   `json:"role_id,omitempty"`
+	RoleLabel string   `json:"role_label,omitempty"`
+	Granted   []string `json:"granted"`
+	Reason    string   `json:"reason,omitempty"`
+	Note      string   `json:"note,omitempty"`
+}
+type FlowRoleSpec struct {
+	ID           string   `json:"id"`
+	Slot         string   `json:"slot"`
+	DisplayName  string   `json:"display_name"`
+	Description  string   `json:"description,omitempty"`
+	Kind         string   `json:"kind"`
+	Executor     string   `json:"executor,omitempty"`
+	ToolPackages []string `json:"tool_packages"`
+	Provider     string   `json:"provider,omitempty"`
+}
+
+func (r FlowRoleSpec) RoleSpec() RoleSpec {
+	return RoleSpec{ID: r.ID, DisplayName: r.DisplayName, Description: r.Description, Kind: r.Kind, Executor: r.Executor, Enabled: true, FlowOnly: true, ToolPackages: append([]string{}, r.ToolPackages...)}
 }

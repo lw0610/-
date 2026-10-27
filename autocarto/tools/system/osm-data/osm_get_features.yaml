@@ -1,0 +1,87 @@
+{
+  "apiVersion": "tool/v1",
+  "kind": "Tool",
+  "metadata": {
+    "name": "osm_get_features",
+    "display_name": "按范围下载 OSM 要素",
+    "keywords": [
+      "OSM数据",
+      "开放地图",
+      "按范围下载 OSM 要素"
+    ],
+    "domain": "osm-data",
+    "runtime": "internal"
+  },
+  "spec": {
+    "description": "按范围下载 OSM 要素。国内行政区优先用内置原始边界 file: 路径；单一 file: 范围下载后通过已连接 QGIS 精确裁剪。仅 clipped=true 表示精裁已完成；返回真实输出路径、部分失败及裁剪状态。",
+    "parameters": [
+      {
+        "name": "extents",
+        "type": "array",
+        "required": true,
+        "description": "最多12个范围；行政区首选单一 file:/绝对路径/省界.geojson，与统计使用同一边界。bbox:南,西,北,东 只表示矩形，不能替代省界裁剪。"
+      },
+      {
+        "name": "tags",
+        "type": "array",
+        "required": true,
+        "description": "标签并集，键=值/键/键~正则/括号标签"
+      },
+      {
+        "name": "types",
+        "type": "string",
+        "required": false,
+        "description": "node,way,relation 或 nwr"
+      },
+      {
+        "name": "geometry",
+        "type": "string",
+        "required": false,
+        "description": "original或centroid"
+      },
+      {
+        "name": "fields",
+        "type": "array",
+        "required": false,
+        "description": "保留的标签键，中文制图加name:zh"
+      },
+      {
+        "name": "output",
+        "type": "string",
+        "required": false,
+        "description": "新GeoJSON文件名或当前工程内绝对路径"
+      },
+      {
+        "name": "overwrite",
+        "type": "boolean",
+        "required": false,
+        "description": "纠正同一次下载时设true，output沿用原路径，替换本会话OSM结果；不同数据省略"
+      },
+      {
+        "name": "timeout",
+        "type": "integer",
+        "required": false,
+        "description": "响应等待/停滞超时秒数，未指定时使用设置（默认120）；持续传输仍受设置中的总时限约束"
+      }
+    ]
+  },
+  "execution": {
+    "backend_tool": "osm_get_features",
+    "param_mapping": {
+      "extents": "{{ extents }}",
+      "tags": "{{ tags }}",
+      "types": "{{ types }}",
+      "geometry": "{{ geometry }}",
+      "fields": "{{ fields }}",
+      "output": "{{ output }}",
+      "overwrite": "{{ overwrite }}",
+      "timeout": "{{ timeout }}"
+    }
+  },
+  "policy": {
+    "visibility": "public",
+    "authorization_scopes": [
+      "tool.invoke"
+    ]
+  }
+}

@@ -28,8 +28,8 @@ func TestSettingsWorkspaceEndpoint(t *testing.T) {
 	if !ok {
 		t.Fatalf("unexpected tasks payload: %#v", data["tasks"])
 	}
-	if len(tasks) != 7 {
-		t.Fatalf("expected 7 tasks, got=%d payload=%#v", len(tasks), tasks)
+	if len(tasks) != 8 {
+		t.Fatalf("expected 8 tasks, got=%d payload=%#v", len(tasks), tasks)
 	}
 	firstTask, ok := tasks[0].(map[string]any)
 	if !ok {
@@ -59,6 +59,7 @@ func TestSettingsWorkspaceEndpoint(t *testing.T) {
 	}
 	var toolsTask map[string]any
 	var toolCenterTask map[string]any
+	var acquisitionTask map[string]any
 	var servicesTask map[string]any
 	var diagnosticsTask map[string]any
 	for _, item := range tasks {
@@ -71,13 +72,15 @@ func TestSettingsWorkspaceEndpoint(t *testing.T) {
 			toolsTask = record
 		case "tool-center":
 			toolCenterTask = record
+		case "acquisition":
+			acquisitionTask = record
 		case "services":
 			servicesTask = record
 		case "diagnostics":
 			diagnosticsTask = record
 		}
 	}
-	if toolsTask == nil || toolCenterTask == nil || servicesTask == nil || diagnosticsTask == nil {
+	if acquisitionTask == nil || toolsTask == nil || toolCenterTask == nil || servicesTask == nil || diagnosticsTask == nil {
 		t.Fatalf("expected tools/tool-center/services/diagnostics task entries, payload=%#v", tasks)
 	}
 	toolsRoutes, ok := toolsTask["routes"].([]any)
@@ -103,6 +106,9 @@ func TestSettingsWorkspaceEndpoint(t *testing.T) {
 			}
 		}
 		return false
+	}
+	if acquisitionTask["href"] != "/settings/acquisition" {
+		t.Fatalf("incorrect acquisition route: %+v", acquisitionTask)
 	}
 	if !containsRoute(toolsRoutes, "/settings/tools") {
 		t.Fatalf("expected tools routes to include /settings/tools, got=%#v", toolsRoutes)

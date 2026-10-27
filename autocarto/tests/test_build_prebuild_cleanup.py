@@ -18,7 +18,7 @@ class BuildPrebuildCleanupTestCase(unittest.TestCase):
         completed, repo_root = self._run_command("check")
 
         self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
-        self._assert_local_artifacts_removed(repo_root, expect_sidecar=True)
+        self._assert_local_artifacts_removed(repo_root, expect_sidecar=True, preserve_runtime=True)
         self.assertFalse((repo_root / "dist").exists())
 
     def test_check_preserves_release_artifacts_needed_by_dist_layout_gate(self):
@@ -299,7 +299,7 @@ class BuildPrebuildCleanupTestCase(unittest.TestCase):
         _ = (tools_root / "tool.yaml").write_text("tool: sample\n", encoding="utf-8")
 
     def _assert_local_artifacts_removed(
-        self, repo_root: Path, expect_sidecar: bool = False
+        self, repo_root: Path, expect_sidecar: bool = False, preserve_runtime: bool = False
     ) -> None:
         self.assertFalse((repo_root / "autocarto-web" / ".next").exists())
         self.assertFalse((repo_root / "autocarto-web" / "out").exists())
@@ -307,8 +307,12 @@ class BuildPrebuildCleanupTestCase(unittest.TestCase):
             (repo_root / "autocarto-web" / "src-tauri" / "target").exists()
         )
         self.assertFalse((repo_root / "autocarto" / "bin").exists())
-        self.assertFalse((repo_root / "autocarto" / "logs").exists())
-        self.assertFalse((repo_root / "autocarto" / ".session").exists())
+        if preserve_runtime:
+            self.assertEqual((repo_root / "autocarto" / "logs" / "stale.log").read_text(), "stale\n")
+            self.assertEqual((repo_root / "autocarto" / ".session" / "stale.session").read_text(), "stale\n")
+        else:
+            self.assertFalse((repo_root / "autocarto" / "logs").exists())
+            self.assertFalse((repo_root / "autocarto" / ".session").exists())
 
         binaries_dir = repo_root / "autocarto-web" / "src-tauri" / "binaries"
         if expect_sidecar:

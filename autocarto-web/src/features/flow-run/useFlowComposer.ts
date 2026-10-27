@@ -2,13 +2,14 @@
 import { useEffect, useRef, useState } from 'react'
 import api from '@/lib/api'
 import { flowApi } from '@/features/flows/api'
-import type { FlowDetail, FlowSummary, InputProblem } from '@/features/flows/types'
+import type { AcquisitionPlan, FlowDetail, FlowSummary, InputProblem } from '@/features/flows/types'
 import { useChatStore } from '@/stores/chatStore'
 import { useConnectionStore } from '@/stores/connectionStore'
 import { useInstanceStore } from '@/stores/instanceStore'
 import { useSessionStore } from '@/stores/sessionStore'
 import { inputDefaults, prepareFlowSubmission } from './model'
 import type { FlowSubmission } from './types'
+import { acquisitionDependencies, canAcquire, changeSourceMode } from './acquisition'
 
 export function useFlowComposer(onSend: (content: string, flow?: FlowSubmission) => Promise<boolean | void>) {
   const activeScheme = useChatStore(state => state.activeAgentConfig)
@@ -24,13 +25,14 @@ export function useFlowComposer(onSend: (content: string, flow?: FlowSubmission)
   const [loading, setLoading] = useState(false), [error, setError] = useState('')
   const [values, setValues] = useState<Record<string, unknown>>({})
   // A different input contract or destination invalidates its pending check.
-  const inputContract = JSON.stringify([detail?.plan?.compile_key, detail?.plan?.inputs, detail?.plan?.input_constraints])
+  const inputContract = JSON.stringify([detail?.plan?.compile_key, detail?.plan?.inputs, detail?.plan?.input_constraints, detail?.plan?.auto_acquire, detail?.plan?.acquisition_plan])
   const submissionState = useRef({ id, scheme, values, sid, instanceId, activeInstance, executionMode, inputContract })
   const previous = submissionState.current
   if (previous.id !== id || previous.scheme !== scheme || previous.values !== values || previous.sid !== sid || previous.instanceId !== instanceId || previous.activeInstance !== activeInstance || previous.executionMode !== executionMode || previous.inputContract !== inputContract) {
     submissionState.current = { id, scheme, values, sid, instanceId, activeInstance, executionMode, inputContract }
   }
   const [inputProblems, setInputProblems] = useState<InputProblem[]>([])
+  const [acquisitionPlan,setAcquisitionPlan] = useState<AcquisitionPlan | undefined>()
   const [checking, setChecking] = useState(false), [memoryError, setMemoryError] = useState('')
   const [layersKnown, setLayersKnown] = useState(false)
   const touched = useRef(new Set<string>())
@@ -59,13 +61,13 @@ export function useFlowComposer(onSend: (content: string, flow?: FlowSubmission)
     return () => { current = false }
   }, [ready, scheme, activeScheme, refresh])
   useEffect(() => {
-    setDetail(null); setValues({}); setErrors([]); setError(''); setInputProblems([]); setMemoryError(''); setChecking(false); touched.current.clear()
+    setDetail(null); setValues({}); setErrors([]); setError(''); setInputProblems([]); setAcquisitionPlan(undefined); setMemoryError(''); setChecking(false); touched.current.clear()
     if (!id || !ready) { setLoading(false); return }
     let current = true
     setLoading(true)
     void flowApi.get(id, scheme).then(result => {
       if (current) {
-        setDetail(result); setValues(inputDefaults(result.plan?.inputs || []))
+        setDetail(result); setAcquisitionPlan(result.plan?.acquisition_plan); setValues(inputDefaults(result.plan?.inputs || [],result.plan?.auto_acquire))
         void flowApi.inputMemory(id).then(memory => {
           if (!current) return
           const remembered = Object.fromEntries(Object.entries(memory).filter(([key]) => result.plan?.inputs.some(input => input.key === key && input.remember && ['file', 'folder'].includes(input.type)) && !touched.current.has(key)))
@@ -100,15 +102,18 @@ export function useFlowComposer(onSend: (content: string, flow?: FlowSubmission)
     setChecking(true)
     const timer = setTimeout(() => {
       const prepared = prepareFlowSubmission(id, detail.plan!.inputs, values)
-      void flowApi.checkInputs(id, scheme, (prepared.flow.inputs || {})).then(problems => {
-        if (current) setInputProblems(problems)
+      const checked=detail.plan!.acquisition_plan?.items.length
+        ? flowApi.checkInputPlan(id,scheme,prepared.flow.inputs||{})
+        : flowApi.checkInputs(id,scheme,prepared.flow.inputs||{}).then(problems=>({problems,acquisition_plan:undefined}))
+      void checked.then(result => {
+        if (current) { setInputProblems(result.problems); setAcquisitionPlan(result.acquisition_plan || detail.plan?.acquisition_plan) }
       }).catch(() => {
         if (current) setInputProblems([{ label: '', level: 'error', code: 'INPUT_CHECK_UNAVAILABLE', message: '输入校验暂不可用，请稍后重试。' }])
       }).finally(() => { if (current) setChecking(false) })
     }, 400)
     return () => { current = false; clearTimeout(timer) }
   }, [id, scheme, detail?.plan, values])
-  const layerProblems = layersKnown ? (detail?.plan?.inputs || []).filter(input => input.type === 'layer' && values[input.key] && !layers.some(layer => layer.id === values[input.key] || layer.name === values[input.key])).map(input => ({ label: input.label, level: 'error', code: 'INPUT_LAYER_MISSING', message: '当前工程中未找到所选图层，请重新选择。' })) : []
+  const layerProblems: InputProblem[] = layersKnown ? (detail?.plan?.inputs || []).filter(input => input.type === 'layer' && typeof values[input.key] === 'string' && values[input.key] && !layers.some(layer => layer.id === values[input.key] || layer.name === values[input.key])).map(input => ({ label: input.label, level: 'error', code: 'INPUT_LAYER_MISSING', message: '当前工程中未找到所选图层，请重新选择。' })) : []
   const problems = [...inputProblems, ...layerProblems]
   const unavailable = Boolean(id && !flows.some(flow => flow.id === id))
   const blocked = Boolean(id && (loading || error || unavailable || checking || problems.some(item => item.level === 'error') || !detail?.plan || detail.diagnostics.some(item => item.level === 'error')))
@@ -122,14 +127,17 @@ export function useFlowComposer(onSend: (content: string, flow?: FlowSubmission)
     const submission = submissionState.current
     for (const input of detail.plan.inputs) if (input.type === 'conversation_text') checkValues[input.key] = content
     try {
-      const checked = await flowApi.checkInputs(id, scheme, checkValues)
+      const result = detail.plan.acquisition_plan?.items.length ? await flowApi.checkInputPlan(id,scheme,checkValues) : {problems:await flowApi.checkInputs(id, scheme, checkValues),acquisition_plan:undefined}
       if (submission !== submissionState.current) return false
-      setInputProblems(checked)
-      if (checked.some(item => item.level === 'error')) return false
+      setInputProblems(result.problems)
+      if(result.acquisition_plan)setAcquisitionPlan(result.acquisition_plan)
+      if (result.problems.some(item => item.level === 'error')) return false
     } catch { if (submission === submissionState.current) setErrors(['输入校验失败，请重试。']); return false }
     return onSend(content, prepared.flow)
   }
-  return { flows, id, detail, loading, error, unavailable, blocked, values, errors, layers, layerError, inputProblems: problems, checking, memoryError,
+  return { flows, id, detail, loading, error, unavailable, blocked, values, errors, layers, layerError, inputProblems: problems, checking, memoryError, acquisitionPlan,
+    acquisitionRequiredInputs: acquisitionDependencies(acquisitionPlan?.items || [], values),
+    acquireMissing: () => setValues(current => Object.fromEntries([...Object.entries(current), ...(detail?.plan?.inputs || []).filter(input=>canAcquire(input,detail?.plan?.auto_acquire)&&!current[input.key]).map(input=>[input.key,changeSourceMode(current[input.key],'auto')])])),
     retry: () => setRefresh(value => value + 1),
     select: setId, setValue: (key: string, value: unknown) => { touched.current.add(key); setValues(current => ({ ...current, [key]: value })) }, send }
 }

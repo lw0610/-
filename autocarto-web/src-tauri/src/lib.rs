@@ -901,6 +901,16 @@ async fn open_local_path(path: String) -> Result<(), String> {
 }
 
 #[tauri::command]
+async fn reveal_local_path(path: String) -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        local_output::validate_input(&path)?;
+        let resolved = resolve_project_path(&path)?;
+        let target = local_output::validate_existing(&resolved)?;
+        local_output::reveal(&target)
+    }).await.map_err(|error| format!("显示文件位置失败：{error}"))?
+}
+
+#[tauri::command]
 async fn pick_qgis_project_directory(app: tauri::AppHandle) -> Result<Option<String>, String> {
     pick_dialog_directory(app, "选择 QGIS 工程目录失败").await
 }
@@ -963,6 +973,7 @@ pub fn run() {
             pick_directory_path,
             pick_qgis_executable,
             open_local_path,
+            reveal_local_path,
             get_backend_runtime,
         ])
         .plugin(tauri_plugin_dialog::init())

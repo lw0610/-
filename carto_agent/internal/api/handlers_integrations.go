@@ -26,8 +26,8 @@ func (a *API) handleCheckIntegration(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusBadRequest, "请提供有效的 service 参数")
 		return
 	}
-	if body.Service != "gee" && body.Service != "browser" {
-		Error(w, http.StatusBadRequest, "service 必须为 gee 或 browser")
+	if body.Service != "gee" && body.Service != "browser" && body.Service != "osm" {
+		Error(w, http.StatusBadRequest, "service 必须为 gee、browser 或 osm")
 		return
 	}
 	c, err := a.configService.GetIntegrationsConfig()

@@ -36,6 +36,8 @@ def handle_entries(handle: dict) -> list[dict]:
                 or not entry["name"].strip() or not isinstance(entry.get("kind"), str)
                 or not isinstance(entry.get("path"), str) or not isinstance(entry.get("exists"), bool)):
             raise ResourceHandleError("resource_handle_invalid", "资源句柄条目缺少规范化字段")
+        if "layer_id" in entry and (not isinstance(entry["layer_id"], str) or not entry["layer_id"].strip()):
+            raise ResourceHandleError("resource_handle_invalid", "资源句柄图层编号无效")
         if entry["path"]:
             # 数据源可带 provider 选项；选项仍由数据加载工具处理。
             _absolute_path(entry["path"].split("|", 1)[0])

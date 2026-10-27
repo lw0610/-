@@ -35,6 +35,7 @@ declare -a CHECK_HEADLESS_E2E_SPECS=(
     "tests/e2e/services-page.spec.ts"
     "tests/e2e/flow-center.spec.ts"
     "tests/e2e/flow-run.spec.ts"
+    "tests/e2e/session-workspace.spec.ts"
 )
 
 APP_VERSION=""
@@ -1286,6 +1287,7 @@ compute_sha256() {
 
 clean_local_artifacts() {
     local preserve_release_artifacts="${1:-0}"
+    local preserve_runtime_files="${2:-0}"
     local snapshot_dir=""
 
     if [ "$preserve_release_artifacts" = "1" ]; then
@@ -1307,8 +1309,10 @@ clean_local_artifacts() {
     fi
     rm -rf "$BINARIES_DIR" && info "清理 sidecar binaries/"
     rm -rf "$PLUGIN_DIR/bin" && info "清理 autocarto/bin/"
-    rm -rf "$PLUGIN_DIR/logs" && info "清理日志"
-    rm -rf "$PLUGIN_DIR/.session" && info "清理会话缓存"
+    if [ "$preserve_runtime_files" != "1" ]; then
+        rm -rf "$PLUGIN_DIR/logs" && info "清理日志"
+        rm -rf "$PLUGIN_DIR/.session" && info "清理会话缓存"
+    fi
     ok "清理完成"
 }
 
@@ -1487,7 +1491,7 @@ case "$CMD" in
         ;;
     check)
         preflight check
-        clean_local_artifacts 1
+        clean_local_artifacts 1 1
         run_check
         ;;
     deps)

@@ -1,5 +1,9 @@
 import api from '@/lib/api'
 import type {
+  AcquisitionChoice,
+  RoleMappingResponse,
+  AcquisitionPlan,
+  InputCheckPlan,
   InputProblem,
   CaptureRequest,
   ProjectLayout,
@@ -15,6 +19,8 @@ import type {
 const path = (id: string) => `/api/flows/${encodeURIComponent(id)}`
 const query = (scheme: string) => `?scheme=${encodeURIComponent(scheme)}`
 export const flowApi = {
+  roles: (id:string, scheme:string) => api.get<RoleMappingResponse>(`${path(id)}/roles${query(scheme)}`),
+  setRoles: (id:string, scheme:string, mapping:Record<string,string>) => api.put<RoleMappingResponse>(`${path(id)}/roles${query(scheme)}`, {mapping}),
   list: (scheme: string) =>
     api.get<FlowSummary[]>(`/api/flows${query(scheme)}`),
   bindingStatus: () => api.get<{ orphaned_count: number }>('/api/flows/bindings/status'),
@@ -41,13 +47,17 @@ export const flowApi = {
     }),
   bind: (id: string, resource_key: string, base_dir: string) =>
     api.put(`${path(id)}/bindings`, { resource_key, base_dir }),
-  inputMemory: (id: string) => api.get<Record<string, string>>(`${path(id)}/inputs/memory`),
-  setInputMemory: (id: string, label: string, value: string) =>
+  inputMemory: (id: string) => api.get<Record<string, string | AcquisitionChoice>>(`${path(id)}/inputs/memory`),
+  setInputMemory: (id: string, label: string, value: string | AcquisitionChoice) =>
     api.put(`${path(id)}/inputs/memory/${encodeURIComponent(label)}`, { value }),
   clearInputMemory: (id: string, label: string) =>
     api.delete(`${path(id)}/inputs/memory/${encodeURIComponent(label)}`),
   checkInputs: (id: string, scheme: string, values: Record<string, unknown>) =>
     api.post<InputProblem[]>(`${path(id)}/inputs/check`, { scheme, values }),
+  checkInputPlan: async (id: string, scheme: string, values: Record<string, unknown>): Promise<InputCheckPlan> => {
+    const response = await api.postEnvelope<InputProblem[]>(`${path(id)}/inputs/check`, {scheme, values})
+    return {problems: response.data || [], acquisition_plan: response.acquisition_plan as AcquisitionPlan | undefined}
+  },
   adoptResource: (id: string, resource_id: string, label: string, scheme = 'default') =>
     api.post<FlowDetail>(`${path(id)}/resources/adopt${query(scheme)}`, { resource_id, label }),
   repairResource: (id: string, action: string, resource_key: string, resource_id: string | undefined, scheme: string) =>

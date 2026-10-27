@@ -5,6 +5,7 @@ import MessageList from '@/components/chat/MessageList'
 import { useFlowComposer } from './useFlowComposer'
 import FlowComposer from './FlowComposer'
 import FlowOutputs from './FlowOutputs'
+import FlowProgressCard from './FlowProgressCard'
 import { useChatStore } from '@/stores/chatStore'
 import { useConnectionStore } from '@/stores/connectionStore'
 import { useSessionStore } from '@/stores/sessionStore'
@@ -47,6 +48,22 @@ beforeEach(() => {
   useSessionStore.setState({ activeSessionId: 'sid' }); useInstanceStore.setState({ activeInstanceId: 'other-instance' })
 })
 describe('flow conversation UI', () => {
+  it('labels system acquisition separately while keeping authored step numbers', async () => {
+    const steps = [
+      { id: 'acquire', index: 0, title: '获取底图', kind: 'acquire', acquisition_requirement: '底图', instructions: '准备底图', on_failure: 'ask' },
+      { id: 's1', index: 1, title: '绘制地图', kind: 'agent', instructions: '绘制地图', on_failure: 'ask' },
+    ]
+    const state = applyFlowEvent(undefined, { event: 'flow.started', session_id: 'sid', flow_run_id: 'r', payload: { flow_id: 'demo', steps, plan: { ...detail.plan!, steps } } })!
+    expect(state.steps[0].index).toBe(0)
+    const view = render(<FlowProgressCard run={state} messages={[]} renderMessage={() => null}/>)
+    expect(screen.getByRole('listitem', { name: '数据准备 获取底图' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '数据准备 · 获取底图' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '1. 绘制地图' })).toBeInTheDocument()
+    expect(screen.queryByRole('listitem', { name: /第 0 步/ })).not.toBeInTheDocument()
+    await act(async () => {})
+    view.unmount()
+  })
+
   it('does not send a stale flow when selection changes during final input validation', async () => {
     mocks.get.mockResolvedValue({ ...detail, plan: { ...detail.plan, inputs: [] } })
     window.history.replaceState({}, '', '/chat?flow=demo')
@@ -207,10 +224,34 @@ describe('flow conversation UI', () => {
   })
   it('shows Plan preview using the same step renderer and keeps normal messages visible', async () => {
     const plan = { ...detail.plan!, steps: [{ id: 'one', index: 1, title: '预览检查', role_label: '数据角色', kind: 'agent', instructions: '读取数据', expected_outputs: [], on_failure: 'ask' }] }
-    render(<MessageList {...baseProps} executionMode="plan" messages={[{ id: 'ordinary', type: 'assistant', content: '普通分析回复', timestamp: 1 }, { id: 'preview', type: 'status', content: '', timestamp: 2, data: { flow_preview: { flow_id: 'demo', name: '示例流程', plan, diagnostics: [], input_check: { valid: false, missing: ['数据文件'] } } } }]}/>)
+    render(<MessageList {...baseProps} executionMode="plan" messages={[{ id: 'ordinary', type: 'assistant', content: '普通分析回复', timestamp: 1 }, { id: 'preview', type: 'status', content: '', timestamp: 2, data: { flow_preview: { execution_mode: 'plan', flow_id: 'demo', name: '示例流程', plan, diagnostics: [], input_check: { valid: false, missing: ['数据文件'] } } } }]}/>)
     expect(screen.getByText('普通分析回复')).toBeInTheDocument()
     expect(screen.getByText('1. 预览检查')).toBeInTheDocument()
     expect(screen.getByText('需要补充：数据文件')).toBeInTheDocument()
+    await act(async () => {})
+  })
+  it.each(['build', 'plan'] as const)('does not show internal or unclassified historical flow queries in current %s mode', async mode => {
+    const preview = { flow_id: 'demo', plan: detail.plan }
+    render(<MessageList {...baseProps} executionMode={mode} messages={[
+      { id: 'reply', type: 'assistant', content: '数据已加载', timestamp: 1 },
+      { id: 'old-build', type: 'status', content: '流程预览：示例流程', timestamp: 2, data: { mode_phase: 'building', flow_preview: preview } },
+      { id: 'unknown', type: 'status', content: '流程预览：示例流程', timestamp: 3, data: { flow_preview: preview } },
+      { id: 'build-tool', type: 'tool', phase: 'tool_result', content: '', timestamp: 4, data: { tool: 'flow_preview', result: { ...preview, execution_mode: 'build' } } },
+    ]}/> )
+    expect(screen.getByText('数据已加载')).toBeVisible()
+    expect(screen.queryByText('流程预览：示例流程')).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: '流程预览 示例流程' })).not.toBeInTheDocument()
+    await act(async () => {})
+  })
+  it('keeps a recorded Plan preview when switching mode and shows real execution as progress', async () => {
+    const messages = [{ id: 'preview', type: 'status' as const, content: '', timestamp: 1, data: { flow_preview: { execution_mode: 'plan', flow_id: 'demo', plan: detail.plan } } }]
+    const view = render(<MessageList {...baseProps} executionMode="plan" messages={messages}/>)
+    expect(screen.getByRole('region', { name: '流程预览 示例流程' })).toBeVisible()
+    view.rerender(<MessageList {...baseProps} executionMode="build" messages={messages} flowRuns={[run()]}/>)
+    expect(screen.getByRole('region', { name: '流程预览 示例流程' })).toBeVisible()
+    expect(screen.getByRole('region', { name: '流程进度 示例流程' })).toBeVisible()
+    expect(screen.getByText('这是流程步骤与输入的预览，不代表流程已经开始执行。')).toBeVisible()
+    expect(screen.queryByText(/切换到 Build/)).not.toBeInTheDocument()
     await act(async () => {})
   })
   it('opens desktop output only on click and reports a native failure', async () => {
@@ -224,7 +265,7 @@ describe('flow conversation UI', () => {
   it('restores a raw persisted Plan tool result as a preview and copies paths in ordinary browsers', async () => {
     const copy = vi.fn(async () => {})
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: copy } })
-    render(<><MessageList {...baseProps} messages={[{ id: 'saved-tool', type: 'tool', phase: 'tool_result', timestamp: 1, content: '', data: { tool: 'flow_preview', result: JSON.stringify({ flow_id: 'demo', plan: detail.plan }) } }]}/><FlowOutputs outputs={{ 图件: 'outputs/map.pdf' }}/></>)
+    render(<><MessageList {...baseProps} messages={[{ id: 'saved-tool', type: 'tool', phase: 'tool_result', timestamp: 1, content: '', data: { tool: 'flow_preview', mode_phase: 'planning', result: JSON.stringify({ flow_id: 'demo', plan: detail.plan }) } }]}/><FlowOutputs outputs={{ 图件: 'outputs/map.pdf' }}/></>)
     expect(screen.getByRole('region', { name: '流程预览 示例流程' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'outputs/map.pdf' }))
     await waitFor(() => expect(copy).toHaveBeenCalledWith('outputs/map.pdf'))

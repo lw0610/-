@@ -19,12 +19,13 @@ import (
 )
 
 type execution struct {
-	mu         sync.Mutex
-	snapshotMu sync.RWMutex
-	published  *RunState
-	state      *RunState
-	source     string
-	cancel     context.CancelFunc
+	acquisition *acquisitionJobs
+	mu          sync.Mutex
+	snapshotMu  sync.RWMutex
+	published   *RunState
+	state       *RunState
+	source      string
+	cancel      context.CancelFunc
 }
 type Controller struct {
 	options  Options
@@ -38,6 +39,9 @@ type Controller struct {
 func NewController(options Options) (*Controller, error) {
 	if options.Compiler == nil || options.Runner == nil || options.Store == nil {
 		return nil, fmt.Errorf("流程控制器缺少编译器、步骤运行器或存储")
+	}
+	if options.Lifecycle == nil {
+		options.Lifecycle = context.Background()
 	}
 	if options.Now == nil {
 		options.Now = time.Now
@@ -97,10 +101,17 @@ func (c *Controller) preparePlan(ctx context.Context, request StartRequest, plan
 		return nil, nil, err
 	}
 	linked, problems := validateInputPlan(plan, inputs, request.ProjectRoot)
+	if plan.Acquisition != nil {
+		var checkErr error
+		linked, problems, checkErr = c.acquisitionInputPlan(ctx, plan, inputs, request.ProjectRoot)
+		if checkErr != nil {
+			return nil, nil, checkErr
+		}
+	}
 	reasons := []StartupIssue{}
 	for _, p := range problems {
 		if p.Level == "error" {
-			reasons = append(reasons, StartupIssue{Code: p.Code, Input: p.Label, Message: p.Message})
+			reasons = append(reasons, StartupIssue{Code: p.Code, Input: p.Label, Step: p.Step, Message: p.Message, Acquirable: p.Acquirable, Item: p.Item, Candidates: p.Candidates})
 		}
 	}
 	if len(reasons) > 0 {
@@ -144,7 +155,7 @@ func (c *Controller) startPreparedPlan(ctx context.Context, request StartRequest
 	if origin != "direct" && origin != "orchestrator" {
 		return nil, fmt.Errorf("流程启动来源无效")
 	}
-	state := &RunState{APIVersion: APIVersion, ID: id, SessionID: request.SessionID, SessionDir: request.SessionDir, ProjectRoot: request.ProjectRoot, FlowID: plan.FlowID, FlowVersion: plan.FlowVersion, PlanCacheKey: compileKey(plan), Scheme: plan.Scheme, Origin: origin, Status: "running", StartedAt: c.options.Now(), Inputs: inputs, Steps: []StepState{}, Plan: plan, RunJSONPath: path, Result: RunResult{Deliverables: map[string]any{}, Issues: []string{}}}
+	state := &RunState{APIVersion: APIVersion, ID: id, SessionID: request.SessionID, SessionDir: request.SessionDir, ProjectRoot: request.ProjectRoot, ProjectPath: request.ProjectPath, FlowID: plan.FlowID, FlowVersion: plan.FlowVersion, PlanCacheKey: compileKey(plan), Scheme: plan.Scheme, Origin: origin, Status: "running", StartedAt: c.options.Now(), Inputs: inputs, Steps: []StepState{}, Plan: plan, RunJSONPath: path, Result: RunResult{Deliverables: map[string]any{}, Issues: []string{}}}
 	for _, step := range plan.Steps {
 		state.Steps = append(state.Steps, StepState{ID: step.ID, Index: step.Index, Title: step.Title, Role: step.Role, Status: "pending", Attempts: []Attempt{}, Outputs: map[string]any{}})
 	}
@@ -186,7 +197,7 @@ func (c *Controller) startPreparedPlan(ctx context.Context, request StartRequest
 	for _, step := range plan.Steps {
 		steps = append(steps, map[string]any{"id": step.ID, "index": step.Index, "title": step.Title, "role_label": step.RoleLabel, "kind": step.Kind})
 	}
-	c.emit(processCtx, state.SessionID, id, "flow.started", map[string]any{"flow_run_id": id, "flow_id": state.FlowID, "name": plan.Name, "steps": steps})
+	c.emit(processCtx, state.SessionID, id, "flow.started", map[string]any{"flow_run_id": id, "flow_id": state.FlowID, "name": plan.Name, "steps": steps, "plan": plan})
 	err = c.advance(processCtx, e)
 	snapshot, cloneErr := cloneRun(state)
 	if err == nil {
@@ -205,6 +216,13 @@ func (c *Controller) NewRunID() (string, error) {
 func (c *Controller) save(ctx context.Context, e *execution) error {
 	if err := c.options.Store.Save(context.WithoutCancel(ctx), e.state); err != nil {
 		e.state.Status = "interrupted"
+		if e.acquisition != nil {
+			e.acquisition.cancel()
+		}
+		if e.cancel != nil {
+			e.cancel()
+		}
+		c.release(e)
 		return fmt.Errorf("保存流程运行记录失败: %w", err)
 	}
 	snapshot, err := cloneRun(e.state)
@@ -256,7 +274,17 @@ func (c *Controller) advance(ctx context.Context, e *execution) error {
 		if ctx.Err() != nil {
 			return c.finish(ctx, e, "cancelled", ctx.Err().Error())
 		}
+		c.startAcquisitionJobs(ctx, e)
 		step := run.Plan.Steps[run.Cursor]
+		if step.Kind == "acquire" {
+			if err := c.advanceAcquisition(ctx, e, step); err != nil {
+				return err
+			}
+			if IsTerminal(run.Status) || run.Status == "waiting_user" {
+				return nil
+			}
+			continue
+		}
 		state := &run.Steps[run.Cursor]
 		if !state.Condition.Evaluated && !state.AwaitingChoice {
 			condition, err := evaluateCondition(ctx, step, run, c.options.Model)
@@ -274,6 +302,17 @@ func (c *Controller) advance(ctx context.Context, e *execution) error {
 				c.emit(ctx, run.SessionID, run.ID, "flow.step_skipped", map[string]any{"flow_run_id": run.ID, "step_id": step.ID, "reason": condition.Reason})
 				continue
 			}
+		}
+		if step.Unresolved != "" && !state.AwaitingChoice {
+			now := c.options.Now()
+			state.LastFailure = step.Unresolved + "：本步所需执行者或工具包不可用，请跳过本步或停止流程。"
+			state.Attempts = append(state.Attempts, Attempt{RunID: fmt.Sprintf("flow-%s-s%02d-a%d", run.ID, step.Index, len(state.Attempts)+1), Mode: "step", StartedAt: now, FinishedAt: &now, Receipt: &Receipt{Status: "failed", Summary: state.LastFailure, Issues: []string{step.Unresolved}}, Verification: Verification{Errors: []string{state.LastFailure}}})
+			state.Status = "failed"
+			state.AwaitingChoice = true
+			if err := c.save(ctx, e); err != nil {
+				return err
+			}
+			c.emit(ctx, run.SessionID, run.ID, "flow.step_failed", map[string]any{"step_id": step.ID, "reason": state.LastFailure, "code": step.Unresolved})
 		}
 		mode := "step"
 		if state.AwaitingChoice {
@@ -329,8 +368,16 @@ func (c *Controller) advance(ctx context.Context, e *execution) error {
 func (c *Controller) buildRequest(step flow.StepPlan, run *RunState, source, mode string) (StepRequest, error) {
 	state := &run.Steps[run.Cursor]
 	request := StepRequest{FlowID: run.FlowID, FlowDir: run.Plan.FlowDir, Lock: run.Plan.Lock, SessionID: run.SessionID, SessionDir: run.SessionDir, FlowRunID: run.ID, RunID: fmt.Sprintf("flow-%s-s%02d-a%d", run.ID, step.Index, len(state.Attempts)+1), Step: step, OriginalSource: source, Mode: mode}
+	if step.Kind == "acquire" {
+		request.RunID = fmt.Sprintf("flow-%s-%s-a%d", run.ID, step.ID, len(state.Attempts)+1)
+	}
 	for _, resolved := range run.Plan.Resources {
 		request.Resources = append(request.Resources, resolved.ResolvedResource())
+	}
+	if mode == "acquire_choice" {
+		confirmation := acquisitionConfirmation(run, step)
+		request.Confirmation = &confirmation
+		return request, nil
 	}
 	if mode != "step" {
 		description := step.Instructions
@@ -338,12 +385,38 @@ func (c *Controller) buildRequest(step flow.StepPlan, run *RunState, source, mod
 			description = state.LastFailure
 		}
 		confirmation := confirmationForStep(description, step.Title, mode == "failure_choice")
+		if mode == "failure_choice" && step.Unresolved != "" {
+			confirmation.Default = "stop"
+			options := confirmation.Options[:0]
+			for _, option := range confirmation.Options {
+				if option.Value != "retry" {
+					options = append(options, option)
+				}
+			}
+			confirmation.Options = options
+		}
 		request.Confirmation = &confirmation
 		return request, nil
 	}
-	role, err := SelectRole(step, run.Plan.Roles)
+	if step.Unresolved != "" {
+		return request, fmt.Errorf("%s：步骤负责角色不可用", step.Unresolved)
+	}
+	roles := append([]flow.RoleSpec{}, run.Plan.Roles...)
+	for i := range run.Plan.FlowRoles {
+		r := &run.Plan.FlowRoles[i]
+		if r.ID == step.Role {
+			roles = append(roles, r.RoleSpec())
+			copy := *r
+			request.Overlay = &RoleOverlaySpec{FlowRole: &copy, ExtraPackages: append([]string{}, step.GrantedPackages...)}
+			break
+		}
+	}
+	role, err := SelectRole(step, roles)
 	if err != nil {
 		return request, err
+	}
+	if request.Overlay == nil && len(step.GrantedPackages) > 0 {
+		request.Overlay = &RoleOverlaySpec{RoleID: role.ID, ExtraPackages: append([]string{}, step.GrantedPackages...)}
 	}
 	request.Role = role
 	request.Step.Role = role.ID
@@ -408,6 +481,9 @@ func (c *Controller) handleResult(ctx context.Context, e *execution, result Step
 	attempt := &state.Attempts[len(state.Attempts)-1]
 	now := c.options.Now()
 	attempt.FinishedAt = &now
+	if attempt.Mode == "acquire_choice" {
+		return c.handleAcquisitionChoice(ctx, e, result, runErr)
+	}
 	if attempt.Mode == "failure_choice" {
 		if runErr != nil {
 			return c.finish(ctx, e, "failed", runErr.Error())
@@ -473,6 +549,7 @@ func (c *Controller) handleResult(ctx context.Context, e *execution, result Step
 		attempt.Receipt = &receipt
 		attempt.Verification = VerifyOutputs(ctx, step, receipt, run.ProjectRoot, c.options.Tools)
 		if receipt.Status == "completed" && attempt.Verification.OK {
+			c.registerFlowOutputs(run, step.ID, receipt.Outputs)
 			state.Outputs = receipt.Outputs
 			state.Status = "completed"
 			run.Cursor++
@@ -639,6 +716,9 @@ func (c *Controller) Resume(ctx context.Context, request ResumeRequest) (*RunSta
 
 func (c *Controller) finish(ctx context.Context, e *execution, status, issue string) error {
 	run := e.state
+	if e.acquisition != nil {
+		e.acquisition.cancel()
+	}
 	if IsTerminal(run.Status) {
 		return nil
 	}
@@ -669,6 +749,9 @@ func (c *Controller) finish(ctx context.Context, e *execution, status, issue str
 	run.FinishedAt = &now
 	label := map[string]string{"completed": "已完成", "completed_with_issues": "已完成，但有待处理问题", "failed": "未完成", "cancelled": "已取消"}[status]
 	lines := []string{fmt.Sprintf("流程「%s」%s。", run.Plan.Name, label)}
+	if len(run.SourceNotes) > 0 {
+		lines = append(lines, "数据来源说明：\n"+strings.Join(run.SourceNotes, "\n"))
+	}
 	if run.Plan.Deliverables != "" {
 		lines = append(lines, run.Plan.Deliverables)
 	}

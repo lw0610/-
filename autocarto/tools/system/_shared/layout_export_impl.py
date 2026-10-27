@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional
 from qgis.core import QgsLayoutExporter, QgsLayoutItemMap, QgsProject
 
 from autocarto.tools.system._shared.canvas_refresh import refresh_canvas
+from autocarto.tools.system._shared.layout_export_artifacts import ArtifactLayoutExporter
 from autocarto.tools.system._shared import output_manager
 
 logger = logging.getLogger(__name__)
@@ -151,7 +152,7 @@ def export_print_layout_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             }
 
         output_path = _resolve_export_path(output, f"{layout_name}.png", ".png")
-        exporter = QgsLayoutExporter(layout)
+        exporter = ArtifactLayoutExporter(layout)
         settings = QgsLayoutExporter.ImageExportSettings()
         if dpi is not None:
             settings.dpi = float(dpi)
@@ -165,10 +166,12 @@ def export_print_layout_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": f"布局导出图片失败：{error_msg}",
             }
 
+        paths = exporter.artifact_paths(output_path)
         refresh_canvas()
         return {
             "success": True,
-            "output": output_path,
+            "output": paths[0],
+            "artifact_paths": paths,
             "info": f"布局 '{layout_name}' 导出图片成功",
         }
     except Exception as e:
@@ -207,7 +210,7 @@ def export_layout_pdf_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             }
 
         output_path = _resolve_export_path(output, f"{layout_name}.pdf", ".pdf")
-        exporter = QgsLayoutExporter(layout)
+        exporter = ArtifactLayoutExporter(layout)
         settings = QgsLayoutExporter.PdfExportSettings()
         if dpi is not None:
             settings.dpi = float(dpi)
@@ -221,10 +224,12 @@ def export_layout_pdf_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": f"布局导出 PDF 失败：{error_msg}",
             }
 
+        paths = exporter.artifact_paths(output_path)
         refresh_canvas()
         return {
             "success": True,
-            "output": output_path,
+            "output": paths[0],
+            "artifact_paths": paths,
             "info": f"布局 '{layout_name}' 导出 PDF 成功",
         }
     except Exception as e:

@@ -12,6 +12,7 @@ import { asBool, asNumber, asRecord, asString } from "@/lib/config-utils";
 import type { IntegrationsConfig } from "@/types/config";
 
 export const DEFAULT_INTEGRATIONS: IntegrationsConfig = {
+  osm: { enabled: false, endpoints: [], nominatim_url: "", proxy_url: "", timeout_seconds: 120, total_timeout_seconds: 600, max_attempts: 3, max_response_mb: 200 },
   gee: { enabled: false, python: "python3", project: "", proxy_url: "", timeout_seconds: 300 },
   browser: { enabled: false, command: "npx", args: ["-y", "@playwright/mcp@0.0.83"], browser: "chrome", headless: false, timeout_seconds: 60 },
   web: { enabled: false, timeout_seconds: 60, max_download_mb: 100 },
@@ -26,8 +27,19 @@ function normalizeForm(raw: unknown): IntegrationForm {
   const gee = asRecord(config.gee);
   const browser = asRecord(config.browser);
   const web = asRecord(config.web);
+  const osm = asRecord(config.osm);
   const browserName = asString(browser.browser, DEFAULT_INTEGRATIONS.browser.browser);
   return {
+    osm: {
+      enabled: asBool(osm.enabled, false),
+      endpoints: Array.isArray(osm.endpoints) ? osm.endpoints.filter((value): value is string => typeof value === "string") : [],
+      nominatim_url: asString(osm.nominatim_url, ""),
+      proxy_url: asString(osm.proxy_url, ""),
+      timeout_seconds: asNumber(osm.timeout_seconds, DEFAULT_INTEGRATIONS.osm.timeout_seconds),
+      total_timeout_seconds: asNumber(osm.total_timeout_seconds, DEFAULT_INTEGRATIONS.osm.total_timeout_seconds),
+      max_attempts: asNumber(osm.max_attempts, DEFAULT_INTEGRATIONS.osm.max_attempts),
+      max_response_mb: asNumber(osm.max_response_mb, DEFAULT_INTEGRATIONS.osm.max_response_mb),
+    },
     gee: {
       enabled: asBool(gee.enabled, false),
       python: asString(gee.python, DEFAULT_INTEGRATIONS.gee.python),
@@ -58,6 +70,7 @@ const DEFAULT_FORM = normalizeForm(DEFAULT_INTEGRATIONS);
 function toConfig(form: IntegrationForm): IntegrationsConfig {
   const { argsText, ...browser } = form.browser;
   return {
+    osm: { ...form.osm, endpoints: form.osm.endpoints.map((v) => v.trim()).filter(Boolean), nominatim_url: form.osm.nominatim_url.trim(), proxy_url: form.osm.proxy_url.trim() },
     gee: { ...form.gee, python: form.gee.python.trim(), project: form.gee.project.trim(), proxy_url: form.gee.proxy_url.trim() },
     browser: { ...browser, command: browser.command.trim(), args: argsText.split(/\r?\n/).filter((arg) => arg.trim().length > 0) },
     web: { ...form.web },
@@ -67,9 +80,15 @@ function toConfig(form: IntegrationForm): IntegrationsConfig {
 function validate(form: IntegrationForm): string | null {
   if (!form.gee.python.trim()) return "请填写 Python 解释器。";
   if (!form.browser.command.trim()) return "请填写浏览器启动命令。";
-  const numbers = [form.gee.timeout_seconds, form.browser.timeout_seconds, form.web.timeout_seconds, form.web.max_download_mb];
+  if (!Number.isInteger(form.osm.total_timeout_seconds) || form.osm.total_timeout_seconds < 1 || form.osm.total_timeout_seconds > 7200) return "OSM 总时限须为 1–7200 秒的整数。";
+  if (!Number.isInteger(form.osm.max_attempts) || form.osm.max_attempts < 1 || form.osm.max_attempts > 8) return "OSM 最多节点尝试数须为 1–8 的整数。";
+  const numbers = [form.osm.timeout_seconds, form.osm.max_response_mb, form.gee.timeout_seconds, form.browser.timeout_seconds, form.web.timeout_seconds, form.web.max_download_mb];
   if (numbers.some((value) => !Number.isInteger(value) || value < 1)) return "超时和下载大小必须为大于等于 1 的整数。";
-  if ([form.gee.timeout_seconds, form.browser.timeout_seconds, form.web.timeout_seconds].some((value) => value > 3600)) return "超时最长为 3600 秒。";
+  if ([form.osm.timeout_seconds, form.gee.timeout_seconds, form.browser.timeout_seconds, form.web.timeout_seconds].some((value) => value > 3600)) return "超时最长为 3600 秒。";
+  if (form.osm.max_response_mb > 200) return "OSM 单次响应上限不能超过 200 MB。";
+  for (const address of [...form.osm.endpoints, form.osm.nominatim_url, form.osm.proxy_url].filter(Boolean)) {
+    try { const parsed = new URL(address); if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password || parsed.search || parsed.hash) return "OSM 地址须为无密码、查询参数或片段的 HTTP(S) 地址。"; } catch { return "OSM 地址格式无效。"; }
+  }
   if (form.web.max_download_mb > 1024) return "单文件下载上限不能超过 1024 MB。";
   if (form.gee.proxy_url.trim()) {
     try {
@@ -96,7 +115,7 @@ function CheckResult({ result, service }: { result?: IntegrationCheckResult; ser
       ? false
       : geeQueryReady && geeDownloadReady && geeRegionReady ? reportedOk : undefined
     : detail.command_available === false ? false : reportedOk;
-  const name = service === "gee" ? "GEE" : "浏览器";
+  const name = service === "gee" ? "GEE" : service === "osm" ? "OSM" : "浏览器";
   let message = result.error || asString(detail.command_error, "") || result.message || asString(detail.message, "") || asString(detail.note, "");
   if (!result.error && missingDownloader) {
     message = environment.download_ready === false
@@ -107,7 +126,7 @@ function CheckResult({ result, service }: { result?: IntegrationCheckResult; ser
       ? "GEE 已连接；研究区边界读取与检查尚未就绪。"
       : "GEE 已连接；尚未确认研究区边界处理依赖，请更新后台后重新检查。";
   } else if (ok === true) {
-    message = service === "browser"
+    message = service === "osm" ? "OSM 节点检查完成；连通性、延迟与 Nominatim 状态见详情。" : service === "browser"
       ? "已找到启动程序；这项检查不会打开网页，实际浏览任务会验证浏览器是否能启动。"
       : "GEE 已连接，边界处理与本地影像下载已就绪；实际任务仍需验证数据权限、网络和输出。";
   }
@@ -201,7 +220,7 @@ export default function IntegrationsConfigWorkspace() {
       const result = await api.checkIntegration(service, form[service].timeout_seconds);
       setResults((previous) => ({ ...previous, [service]: result }));
     } catch (failure) {
-      setError(getApiErrorMessage(failure, `${service === "gee" ? "GEE" : "浏览器"} 检查失败`));
+      setError(getApiErrorMessage(failure, `${service === "gee" ? "GEE" : service === "osm" ? "OSM" : "浏览器"} 检查失败`));
     } finally {
       checkInFlight.current = false;
       setChecking(null);
@@ -250,6 +269,24 @@ export default function IntegrationsConfigWorkspace() {
           <pre className="overflow-x-auto rounded bg-zinc-100 p-3 text-xs dark:bg-zinc-950"><code>{"npx -y @playwright/mcp@0.0.83 --help"}</code></pre>
           <ActionButton onClick={() => void check("browser")}>{checking === "browser" ? (saving ? "正在保存配置…" : "正在检查浏览器运行环境…") : isDirty ? "保存并检查浏览器运行环境" : "检查浏览器运行环境"}</ActionButton>
           <CheckResult service="browser" result={results.browser} />
+        </div>
+      </FormSection>
+      <FormSection title="开放地图数据（OSM）" description="查找和下载道路、铁路、水系、建筑与地名等开放地图数据。">
+        <div className="space-y-3">
+          <CheckboxField label="启用 OSM" checked={form.osm.enabled} onChange={(enabled) => update("osm", { enabled })} />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Overpass 全量节点（可选，每行一个）"><TextAreaInput rows={3} value={form.osm.endpoints.join("\n")} onChange={(event) => update("osm", { endpoints: event.target.value.split(/\r?\n/) })} placeholder="留空使用内置全量节点；请勿填写区域数据节点" /></Field>
+            <Field label="Nominatim 服务（可选）"><TextInput value={form.osm.nominatim_url} onChange={(event) => update("osm", { nominatim_url: event.target.value })} placeholder="留空使用官方服务" /></Field>
+            <Field label="OSM 代理（可选）"><TextInput value={form.osm.proxy_url} onChange={(event) => update("osm", { proxy_url: event.target.value })} placeholder="http://127.0.0.1:7890" /></Field>
+            <Field label="响应等待/停滞超时（秒）"><NumberInput min={1} max={3600} step={1} value={form.osm.timeout_seconds} onChange={(event) => update("osm", { timeout_seconds: Number(event.target.value) })} /></Field>
+            <Field label="OSM 总时限（秒）"><NumberInput min={1} max={7200} step={1} value={form.osm.total_timeout_seconds} onChange={(event) => update("osm", { total_timeout_seconds: Number(event.target.value) })} /></Field>
+            <Field label="最多节点尝试数"><NumberInput min={1} max={8} step={1} value={form.osm.max_attempts} onChange={(event) => update("osm", { max_attempts: Number(event.target.value) })} /></Field>
+            <Field label="单次响应上限（MB）"><NumberInput min={1} max={200} value={form.osm.max_response_mb} onChange={(event) => update("osm", { max_response_mb: Number(event.target.value) })} /></Field>
+          </div>
+          <p className="text-xs text-zinc-500">等待响应或传输停滞超过设定时间会尝试切换其他节点；持续收到数据时继续下载，但整次获取仍受总时限约束。达到节点尝试上限后停止，无效或不可用节点不会被无限重试。</p>
+          <p className="text-xs text-zinc-500">检查会访问公共 OSM 服务。启用后可按任务直接下载，文件保存到当前会话，并附来源与许可说明。</p>
+          <ActionButton onClick={() => void check("osm")}>{checking === "osm" ? "正在检查 OSM 服务…" : isDirty ? "保存并检查 OSM 服务" : "检查 OSM 服务"}</ActionButton>
+          <CheckResult service="osm" result={results.osm} />
         </div>
       </FormSection>
       <FormSection title="网页读取与文件下载" description="读取公开网页，并将在线数据文件下载到工作区。">

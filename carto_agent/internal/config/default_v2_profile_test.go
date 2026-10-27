@@ -33,7 +33,7 @@ func TestDefaultV2ProfileMatchesDeclaredRolesAndToolPackages(t *testing.T) {
 	want := map[string][]string{
 		"orchestrator":         {},
 		"knowledge_engineer":   {},
-		"data_engineer":        {"data-loading", "data-conversion", "file-operations", "crs-projection", "geocoding", "gps-data", "statistical-data-tools", "admin-boundaries", "browser-data-acquisition", "gee-remote-sensing", "vector-fields"},
+		"data_engineer":        {"data-loading", "data-conversion", "file-operations", "crs-projection", "geocoding", "gps-data", "statistical-data-tools", "admin-boundaries", "browser-data-acquisition", "gee-remote-sensing", "vector-fields", "osm-data"},
 		"spatial_analyst":      {"vector-geometry", "vector-creation", "raster-analysis", "gdal-processing", "grass-analysis", "spatial-analysis", "network-analysis", "visibility-analysis", "mesh-analysis", "gee-remote-sensing", "admin-boundaries"},
 		"cartographer":         {"cartography-styling", "route-cartography", "print-layout", "canvas-navigation", "charts"},
 		"quality_feedback":     {"quality-feedback"},

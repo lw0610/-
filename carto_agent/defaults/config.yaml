@@ -202,6 +202,15 @@ data_dir: data
 
 # Optional data runtimes; credentials stay in Earth Engine/browser stores.
 integrations:
+  osm:
+    enabled: false
+    endpoints: []
+    nominatim_url: ""
+    proxy_url: ""
+    timeout_seconds: 120 # 等待响应或传输停滞的超时
+    total_timeout_seconds: 600 # 整次获取（含切换节点）的总时限
+    max_attempts: 3
+    max_response_mb: 200
   gee:
     enabled: false
     python: python3

@@ -34,8 +34,10 @@ import PathDialog, { type DialogField } from './PathDialog'
 import InputMemoryPanel from './InputMemoryPanel'
 import ResourceLibrary from './ResourceLibrary'
 import PlanStatusBadge from './PlanStatusBadge'
+import RoleMappingPanel from './RoleMappingPanel'
+import DataRequirementsPanel from './DataRequirementsPanel'
 
-type Tab = 'steps' | 'resources' | 'inputs' | 'handbook'
+type Tab = 'steps' | 'resources' | 'inputs' | 'handbook' | 'requirements' | 'roles'
 type Dialog = 'new' | 'import' | 'copy' | 'export' | 'asset'
 export default function FlowWorkspace() {
   const ready = useConnectionStore((state) => state.backendReady)
@@ -70,6 +72,8 @@ export default function FlowWorkspace() {
     const query = new URLSearchParams(window.location.search)
     const linkedScheme = query.get('scheme')?.trim()
     linkedFlow.current = query.get('flow')?.trim() || ''
+    const linkedTab = query.get('tab')
+    if (['steps','resources','inputs','handbook','requirements','roles'].includes(linkedTab || '')) setTab(linkedTab as Tab)
     if (linkedScheme) setScheme(linkedScheme)
     // A link carries the selected scheme rather than the running scheme.
     if (linkedScheme || linkedFlow.current) schemeInitialized.current = true
@@ -197,6 +201,7 @@ export default function FlowWorkspace() {
   }
   const fixResource = (item: Diagnostic) => {
     const action = item.fix?.action
+    if (action === 'map_role') { setTab('roles'); return }
     if (action === 'choose_input_folder') {
       setTab('inputs')
       setNotice('可在输入页选择文件夹，或试运行时选择本次数据。')
@@ -482,6 +487,8 @@ export default function FlowWorkspace() {
                       {detail.diagnostics.filter(item => item.level === 'error').map((item, index) => (
                         <li key={`${item.code}-${index}`}>
                           {item.line ? `第 ${item.line} 行：` : ''}{item.message}
+                          {item.fix?.action==='map_role'&&<button className="ml-2 underline" onClick={()=>fixResource(item)}>设置角色对应</button>}
+                          {item.fix?.action==='open_models'&&<Link className="ml-2 underline" href="/settings/models-agents">配置模型读图能力</Link>}
                         </li>
                       ))}
                     </ul>
@@ -533,6 +540,8 @@ export default function FlowWorkspace() {
                           ['steps', '步骤预览'],
                           ['resources', '资源'],
                           ['inputs', '输入'],
+                          ['requirements', '数据需求'],
+                          ['roles', '角色对应'],
                           ['handbook', '能力手册'],
                         ] as const
                       ).map(([key, label]) => (
@@ -556,6 +565,14 @@ export default function FlowWorkspace() {
                       {tab === 'inputs' && (
                         <InputMemoryPanel id={detail.meta.id} inputs={detail.plan?.inputs || []} />
                       )}
+                      {tab === 'requirements' && <DataRequirementsPanel plan={detail.plan} />}
+                      {tab === 'roles' && <RoleMappingPanel key={`${detail.meta.id}/${scheme}`} id={detail.meta.id} scheme={scheme} capabilities={capabilities} disabled={busy||dirty} onSaved={async()=>{
+                        const id=detail.meta.id, ticket=requestSequence.current
+                        const updated=await flowApi.get(id,scheme)
+                        if(ticket!==requestSequence.current||currentScheme.current!==scheme)return
+                        setDetail(previous=>previous?.meta.id===id?updated:previous)
+                        await refreshAfterWrite()
+                      }} />}
                       {tab === 'handbook' && (
                         <Handbook capabilities={capabilities} />
                       )}

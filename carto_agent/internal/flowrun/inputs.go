@@ -3,22 +3,25 @@ package flowrun
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"math"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strconv"
 	"strings"
 
+	"github.com/autocarto/carto_agent/internal/datasource"
 	"github.com/autocarto/carto_agent/internal/flow"
 )
 
 type StartupIssue struct {
-	Code    string `json:"code"`
-	Input   string `json:"input,omitempty"`
-	Message string `json:"message"`
+	Acquirable bool                `json:"acquirable,omitempty"`
+	Item       string              `json:"item,omitempty"`
+	Candidates []datasource.Region `json:"candidates,omitempty"`
+	Step       string              `json:"step,omitempty"`
+	Code       string              `json:"code"`
+	Input      string              `json:"input,omitempty"`
+	Message    string              `json:"message"`
 }
 type InputError struct {
 	Reasons []StartupIssue `json:"reasons"`
@@ -65,6 +68,15 @@ func resolveInputs(plan *flow.FlowPlan, raw map[string]any, source, projectRoot 
 				value = nil
 			}
 		} else {
+			normalized, marked, issue := normalizeAcquisitionChoice(plan, input, value, projectRoot)
+			if issue != nil {
+				reasons = append(reasons, *issue)
+				continue
+			}
+			if marked {
+				resolved[input.Key] = normalized
+				continue
+			}
 			if ref, ok := value.(map[string]any); ok {
 				if ref["$ref"] == "current_user_message" {
 					value = source
@@ -81,7 +93,11 @@ func resolveInputs(plan *flow.FlowPlan, raw map[string]any, source, projectRoot 
 			value = converted
 		}
 		if input.Required && !provided(value) {
-			reasons = append(reasons, StartupIssue{Code: "FLOW_INPUT_REQUIRED", Input: input.Key, Message: "请提供" + input.Label})
+			message := "请提供" + input.Label
+			if input.Acquirable {
+				message += "，或选择自动获取"
+			}
+			reasons = append(reasons, StartupIssue{Code: "FLOW_INPUT_REQUIRED", Input: input.Key, Acquirable: input.Acquirable, Message: message})
 		}
 		resolved[input.Key] = value
 	}
@@ -181,46 +197,19 @@ func convertInput(input flow.InputPlan, value any, root string) (any, error) {
 		return nil, fmt.Errorf("不支持的输入类型 %s", input.Type)
 	}
 }
-func provided(value any) bool {
-	if value == nil {
-		return false
-	}
-	switch v := value.(type) {
-	case string:
-		return strings.TrimSpace(v) != ""
-	case map[string]any:
-		if v["$ref"] == "current_user_message" {
-			n, _ := json.Marshal(v["length"])
-			return string(n) != "0" && string(n) != "null"
-		}
-	}
-	v := reflect.ValueOf(value)
-	switch v.Kind() {
-	case reflect.Array, reflect.Slice, reflect.Map:
-		return v.Len() > 0
-	}
-	return true
-}
-func truthy(value any) bool {
-	if v, ok := value.(bool); ok {
-		return v
-	}
-	if value == nil {
-		return false
-	}
-	switch fmt.Sprint(value) {
-	case "false", "否", "0", "":
-		return false
-	}
-	return provided(value)
-}
+func provided(value any) bool { return flow.InputProvided(value) }
+func truthy(value any) bool   { return flow.InputTruthy(value) }
 
 // InputProblem is shared by the editing form and the run entrypoint.
 type InputProblem struct {
-	Label   string `json:"label"`
-	Level   string `json:"level"`
-	Code    string `json:"code"`
-	Message string `json:"message"`
+	Acquirable bool                `json:"acquirable,omitempty"`
+	Item       string              `json:"item,omitempty"`
+	Candidates []datasource.Region `json:"candidates,omitempty"`
+	Step       string              `json:"step,omitempty"`
+	Label      string              `json:"label"`
+	Level      string              `json:"level"`
+	Code       string              `json:"code"`
+	Message    string              `json:"message"`
 }
 
 func ValidateInputs(plan *flow.FlowPlan, values map[string]any, projectRoot string) []InputProblem {
@@ -241,12 +230,26 @@ func validateInputPlan(plan *flow.FlowPlan, values map[string]any, projectRoot s
 	if err != nil {
 		if invalid, ok := err.(*InputError); ok {
 			for _, reason := range invalid.Reasons {
-				problems = append(problems, InputProblem{Label: reason.Input, Level: "error", Code: reason.Code, Message: reason.Message})
+				problems = append(problems, InputProblem{Label: reason.Input, Level: "error", Code: reason.Code, Message: reason.Message, Step: reason.Step, Acquirable: reason.Acquirable, Item: reason.Item, Candidates: reason.Candidates})
 			}
 		}
 		return plan, problems
 	}
-	linked := flow.ResolveInputResources(plan, normalized)
+	for _, issue := range flow.RoleIssues(plan, normalized, flow.InputModes(normalized)) {
+		problems = append(problems, InputProblem{Step: issue.Step, Level: issue.Level, Code: issue.Code, Message: issue.Message})
+	}
+	resourceValues := map[string]any{}
+	for key, value := range normalized {
+		choice, marked, _ := flow.ParseInputChoice(value)
+		if marked {
+			if choice.Mode == "fill" {
+				resourceValues[key] = choice.Path
+			}
+		} else {
+			resourceValues[key] = value
+		}
+	}
+	linked := flow.ResolveInputResources(plan, resourceValues)
 	for _, diagnostic := range linked.LinkDiagnostics {
 		if diagnostic.Code == "FLOW_RESOURCE_CHECK_FAILED" {
 			problems = append(problems, InputProblem{Level: diagnostic.Level, Code: diagnostic.Code, Message: diagnostic.Message})

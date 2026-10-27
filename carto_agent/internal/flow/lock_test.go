@@ -333,8 +333,25 @@ func TestFlowBundledFolderAndLegacyPortability(t *testing.T) {
 	if len(lock.Resources) != 2 {
 		t.Fatal(lock)
 	}
+	if len(rs) != 3 {
+		t.Fatalf("expected flow data list and two bundled dependencies: %+v", rs)
+	}
 	for _, r := range rs {
-		if resource.HasErrors(r.Problems) || r.Owner != "bundled" {
+		if resource.HasErrors(r.Problems) {
+			t.Fatal(r)
+		}
+		if r.Type == "data_list" {
+			if r.Owner != "flow" || r.BaseDirFromInput != "交通数据" || len(r.Entries) != 5 {
+				t.Fatal("data declaration was not carried with flow", r)
+			}
+			for _, entry := range r.Entries {
+				if filepath.IsAbs(entry.Path) || !entry.ExistsUnknown || entry.Fields["category"] == "" {
+					t.Fatal("portable data list must defer external paths to receiver", entry)
+				}
+			}
+			continue
+		}
+		if r.Owner != "bundled" {
 			t.Fatal(r)
 		}
 		if r.Type == "style_set" && len(r.Entries) == 0 {

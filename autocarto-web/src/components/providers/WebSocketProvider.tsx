@@ -51,7 +51,7 @@ import { generateId } from "@/lib/utils";
 import { parseReviewReference } from "@/features/knowledge-review/model";
 import { useFlowRunStore } from "@/features/flow-run/store";
 import { terminalFlow } from "@/features/flow-run/model";
-import { parseFlowPreview } from "@/features/flow-run/FlowPreviewCard";
+import { flowPreviewForMessage } from "@/features/flow-run/FlowPreviewCard";
 import type { FlowEvent } from "@/features/flow-run/types";
 import {
   collectSessionAttachTargets,
@@ -300,6 +300,7 @@ function createWorkflowEntry(
     const tool = String(data.tool || "未知工具");
     const toolCard: WorkflowToolCard = {
       id: `tool-${timestamp}-${generateId()}`,
+      callId: typeof data.call_id === "string" ? data.call_id : undefined,
       tool,
       status:
         phase === "tool_call"
@@ -446,6 +447,7 @@ function appendOrMergeWorkflowEntry(
         },
         toolCard: {
           ...target.toolCard!,
+          callId: entry.toolCard.callId || target.toolCard?.callId,
           status: preserveTaskListCompletion ? "completed" : entryStatus,
           result: preserveTaskListCompletion
             ? target.toolCard?.result || entry.toolCard.result
@@ -606,6 +608,27 @@ export default function WebSocketProvider({
       let activeBlockId = state.sessionActiveWorkflowBlockId[sessionId] || null;
       let focusedBlockId =
         state.sessionFocusedWorkflowBlockId[sessionId] || null;
+
+      // A resumed or parallel download keeps one row even if agent delegation
+      // moved on. Late/replayed heartbeats must not replace its final result.
+      const progressData = asRecord(workflowMsg.data);
+      if (phase === "progress" && progressData.source === "osm" && progressData.request_key) {
+        for (let bi = 0; bi < blocks.length; bi += 1) {
+          const ei = blocks[bi].entries.findIndex(item => item.phase === "progress"
+            && item.data?.source === "osm"
+            && item.data?.request_key === progressData.request_key);
+          if (ei < 0) continue;
+          const previous = blocks[bi].entries[ei];
+          if (["completed", "partial", "failed", "cancelled"].includes(String(previous.data?.download_phase))) return;
+          const entry = createWorkflowEntry(workflowMsg, timestamp);
+          if (!entry) return;
+          const entries = [...blocks[bi].entries];
+          entries[ei] = { ...entry, id: previous.id };
+          blocks[bi] = { ...blocks[bi], entries, summary: String(workflowMsg.content || ""), updatedAt: timestamp };
+          setSessionWorkflowBlocks(sessionId, blocks);
+          return;
+        }
+      }
 
       let activeIndex = activeBlockId
         ? blocks.findIndex((item) => item.id === activeBlockId)
@@ -1048,9 +1071,9 @@ export default function WebSocketProvider({
 
       const processData = asRecord(msg.data);
       if ((msg.phase === "tool_result" || msg.type === "tool") && processData.tool === "flow_preview") {
-        const preview = parseFlowPreview(processData.result || msg.content);
+        const preview = flowPreviewForMessage({ type: "tool", phase: msg.phase, content: msg.content || "", data: processData });
         if (preview) {
-          appendSessionAwareMessage(sessionId, activeMessage, { type: "status", content: `流程预览：${preview.name || preview.plan.name}`, data: { ...processData, flow_preview: preview } });
+          appendSessionAwareMessage(sessionId, activeMessage, { type: "status", content: `流程预览：${preview.name || preview.plan.name}`, data: { ...processData, execution_mode: "plan", flow_preview: preview } });
           return;
         }
       }

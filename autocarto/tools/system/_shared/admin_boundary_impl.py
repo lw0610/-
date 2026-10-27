@@ -102,13 +102,44 @@ def _select_boundary(params):
     return matches[0], source, path
 
 
-def _verify_geometry(path, code):
+def _select_within(params):
+    within = params.get("within")
+    if not isinstance(within, str) or not within.strip():
+        raise BoundarySelectionError("invalid_arguments", "within 须为全国、上级行政区全名或六位代码")
+    if params.get("name") or params.get("code"):
+        raise BoundarySelectionError("invalid_arguments", "within 与 name/code 不可混用")
+    within = within.strip()
+    level, _, _ = _normalize_query(dict(params, name=within))
+    features, source, path = _load_boundary_features(level)
+    if within in ("全国", "中国", "100000"):
+        return features, source, path, {"name": "全国", "adcode": "100000", "level": level}
+    candidates = []
+    for parent_level in ("province", "city", "county"):
+        parents, _, _ = _load_boundary_features(parent_level)
+        candidates.extend(f for f in parents if f["properties"]["adcode"] == within or f["properties"]["name"] == within)
+    # Municipalities and directly administered counties occur at two data levels.
+    identities = {f["properties"]["adcode"]: f for f in candidates}
+    if not identities:
+        raise BoundarySelectionError("boundary_not_found", "未找到精确上级行政区")
+    if len(identities) > 1:
+        raise BoundarySelectionError("boundary_ambiguous", "上级行政区名称重名，请提供六位代码", [f["properties"] for f in identities.values()])
+    parent = next(iter(identities.values()))["properties"]
+    code = parent["adcode"]
+    prefix = code[:2] if code.endswith("0000") else code[:4] if code.endswith("00") else code
+    matches = [f for f in features if f["properties"]["adcode"].startswith(prefix)]
+    if not matches:
+        raise BoundarySelectionError("boundary_not_found", "此上级区域没有所选级别数据")
+    return matches, source, path, dict(parent, level=level)
+
+
+def _verify_geometry(path, code, layer=None, matches=None):
     from qgis.core import QgsFeatureRequest, QgsVectorLayer, QgsWkbTypes
 
-    layer = QgsVectorLayer(str(path), "boundary_source", "ogr")
+    layer = layer or QgsVectorLayer(str(path), "boundary_source", "ogr")
     if not layer.isValid() or layer.crs().authid() != "EPSG:4326":
         raise BoundarySelectionError("boundary_source_invalid", "QGIS 无法读取原始 WGS84 边界")
-    matches = list(layer.getFeatures(QgsFeatureRequest().setFilterExpression('"adcode" = \'' + code + "'")))
+    if matches is None:
+        matches = list(layer.getFeatures(QgsFeatureRequest().setFilterExpression('"adcode" = \'' + code + "'")))
     if len(matches) != 1:
         raise BoundarySelectionError("boundary_source_invalid", "QGIS 读取的边界代码不唯一")
     geometry = matches[0].geometry()
@@ -134,9 +165,25 @@ def _publish_exclusive(path, content):
 
 def extract_boundary_handler(params):
     try:
-        feature, source, path = _select_boundary(params)
-        selected = {key: feature["properties"][key] for key in ("name", "adcode", "gb", "level")}
-        geometry = _verify_geometry(path, selected["adcode"])
+        if params.get("within") is not None:
+            features, source, path, selected = _select_within(params)
+            from qgis.core import QgsVectorLayer
+            source_layer = QgsVectorLayer(str(path), "boundary_source", "ogr")
+            # GeoJSON has no attribute index: one filtered scan per county is
+            # quadratic. Index the selected codes in one read-only pass instead.
+            by_code = {feature["properties"]["adcode"]: [] for feature in features}
+            for item in source_layer.getFeatures():
+                code = str(item["adcode"])
+                if code in by_code:
+                    by_code[code].append(item)
+            checks = [_verify_geometry(path, code, source_layer, matches) for code, matches in by_code.items()]
+            bounds = [min(v["bounds"][0] for v in checks), min(v["bounds"][1] for v in checks), max(v["bounds"][2] for v in checks), max(v["bounds"][3] for v in checks)]
+            geometry = {"valid": True, "crs": "EPSG:4326", "bounds": bounds, "count": len(features), "vertices": sum(v["vertices"] for v in checks)}
+        else:
+            feature, source, path = _select_boundary(params)
+            features = [feature]
+            selected = {key: feature["properties"][key] for key in ("name", "adcode", "gb", "level")}
+            geometry = _verify_geometry(path, selected["adcode"])
         raw_output = params.get("output")
         if raw_output is not None and (not isinstance(raw_output, str) or not raw_output.strip()):
             raise BoundarySelectionError("invalid_arguments", "output 须为 GeoJSON 文件路径")
@@ -144,12 +191,12 @@ def extract_boundary_handler(params):
         if output.suffix.lower() != ".geojson":
             raise BoundarySelectionError("invalid_arguments", "output 仅支持 .geojson 文件")
         provenance_path = output.with_suffix(".provenance.json")
-        document = {"type": "FeatureCollection", "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}}, "features": [feature]}
+        document = {"type": "FeatureCollection", "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}}, "features": features}
         content = (json.dumps(document, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n").encode("utf-8")
         provenance = {"source": source, "selection": selected, "geometry": geometry,
                       "boundary_path": prefer_project_relative_path(str(output)),
                       "boundary_sha256": hashlib.sha256(content).hexdigest(),
-                      "processing": "精确提取原始单个面，保留坐标与属性；未简化、缓冲、修复或改变基准"}
+                      "processing": "精确提取原始面，保留坐标与属性；未简化、缓冲、修复或改变基准"}
         provenance_content = (json.dumps(provenance, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n").encode("utf-8")
         reused_output = False
         if output.exists() or provenance_path.exists() or output.is_symlink() or provenance_path.is_symlink():
@@ -166,10 +213,11 @@ def extract_boundary_handler(params):
                 raise
         from autocarto.tools.system._shared.data_loading_impl import load_vector_handler
 
-        loaded = load_vector_handler({"path": str(output), "layer_name": selected["name"], "reuse_existing": True})
+        loaded = load_vector_handler({"path": str(output), "layer_name": selected["name"], "reuse_existing": True}) if params.get("load", True) else {"success": True, "data": {}}
+        loaded["data"]["feature_count"] = len(features)
         if not loaded.get("success"):
             return loaded
-        return {"success": True, "output": str(output), "info": "行政区原始边界已提取并加载",
+        return {"success": True, "output": str(output), "info": "行政区原始边界已提取" + ("并加载" if params.get("load", True) else ""),
                 "data": dict(loaded["data"], selected=selected, geometry=geometry, source_record=source,
                              provenance_path=str(provenance_path), reused_output=reused_output,
                              artifact_paths=[str(output), str(provenance_path)])}

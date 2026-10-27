@@ -270,6 +270,11 @@ describe("online integration settings", () => {
     ["GEE 代理 URL（可选）", "socks5://127.0.0.1:1080", "代理地址须使用 http 或 https。"],
     ["GEE 无输出超时（秒）", "3601", "超时最长为 3600 秒。"],
     ["单文件下载上限（MB）", "1025", "单文件下载上限不能超过 1024 MB。"],
+    ["OSM 总时限（秒）", "0", "OSM 总时限须为 1–7200 秒的整数。"],
+    ["OSM 总时限（秒）", "7201", "OSM 总时限须为 1–7200 秒的整数。"],
+    ["最多节点尝试数", "0", "OSM 最多节点尝试数须为 1–8 的整数。"],
+    ["最多节点尝试数", "9", "OSM 最多节点尝试数须为 1–8 的整数。"],
+    ["最多节点尝试数", "1.5", "OSM 最多节点尝试数须为 1–8 的整数。"],
   ])("rejects invalid configuration in %s", async (label, value, message) => {
     render(<IntegrationsConfigWorkspace />);
     await screen.findByDisplayValue("example-project");
@@ -287,4 +292,39 @@ describe("online integration settings", () => {
     fireEvent.click(screen.getByRole("button", { name: "保存在线数据配置" }));
     await waitFor(() => expect(mocks.batchSetConfig).toHaveBeenCalled());
   });
+  it("saves OSM preferences before an explicit check without a page-load network request", async () => {
+    render(<IntegrationsConfigWorkspace />);
+    await screen.findByDisplayValue("example-project");
+    expect(screen.getByLabelText("启用 OSM")).not.toBeChecked();
+    expect(mocks.checkIntegration).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByLabelText("启用 OSM"));
+    fireEvent.change(screen.getByLabelText("Overpass 全量节点（可选，每行一个）"), { target: { value: "https://example.test/api/interpreter" } });
+    mocks.checkIntegration.mockResolvedValue({ service: "osm", success: true, result: { endpoints: [{ available: true }] } });
+    fireEvent.click(screen.getByRole("button", { name: "保存并检查 OSM 服务" }));
+    await waitFor(() => expect(mocks.checkIntegration).toHaveBeenCalledWith("osm", 120));
+    expect(mocks.batchSetConfig.mock.calls[0][0][0].value.osm).toEqual({ ...DEFAULT_INTEGRATIONS.osm, enabled: true, endpoints: ["https://example.test/api/interpreter"] });
+    expect(await screen.findByText("OSM 检查结果")).toBeInTheDocument();
+  });
+
+  it("loads legacy OSM preferences with bounded defaults and saves edited limits without starting a download", async () => {
+    mocks.getConfig.mockResolvedValue({ integrations: {
+      ...DEFAULT_INTEGRATIONS,
+      osm: { enabled: true, endpoints: [], nominatim_url: "", proxy_url: "", timeout_seconds: 90, max_response_mb: 100 },
+    } });
+    render(<IntegrationsConfigWorkspace />);
+    await waitFor(() => expect(screen.getByLabelText("响应等待/停滞超时（秒）")).toHaveValue(90));
+    expect(screen.getByLabelText("OSM 总时限（秒）")).toHaveValue(600);
+    expect(screen.getByLabelText("最多节点尝试数")).toHaveValue(3);
+    expect(screen.getByText(/持续收到数据时继续下载，但整次获取仍受总时限约束/)).toBeInTheDocument();
+    expect(screen.getByText(/启用后可按任务直接下载/)).toBeInTheDocument();
+    expect(screen.queryByText(/下载前会确认一次/)).not.toBeInTheDocument();
+    expect(mocks.batchSetConfig).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText("OSM 总时限（秒）"), { target: { value: "1800" } });
+    fireEvent.change(screen.getByLabelText("最多节点尝试数"), { target: { value: "5" } });
+    fireEvent.click(screen.getByRole("button", { name: "保存在线数据配置" }));
+    await waitFor(() => expect(mocks.batchSetConfig).toHaveBeenCalled());
+    expect(mocks.batchSetConfig.mock.calls[0][0][0].value.osm).toMatchObject({ enabled: true, timeout_seconds: 90, max_response_mb: 100, total_timeout_seconds: 1800, max_attempts: 5 });
+    expect(mocks.checkIntegration).not.toHaveBeenCalled();
+  });
+
 });

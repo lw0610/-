@@ -1,0 +1,59 @@
+{
+  "apiVersion": "tool/v1",
+  "kind": "Tool",
+  "metadata": {
+    "name": "osm_get_objects",
+    "display_name": "下载 OSM 对象",
+    "keywords": [
+      "OSM数据",
+      "开放地图",
+      "下载 OSM 对象"
+    ],
+    "domain": "osm-data",
+    "runtime": "internal"
+  },
+  "spec": {
+    "description": "下载 OSM 对象；只使用全量OSM公共服务，报告部分失败、字段取舍和真实输出路径。",
+    "parameters": [
+      {
+        "name": "ids",
+        "type": "array",
+        "required": true,
+        "description": "最多10个 R/W/N编号"
+      },
+      {
+        "name": "fields",
+        "type": "array",
+        "required": false,
+        "description": "保留的字段，中文制图加name:zh；*保留原标签JSON"
+      },
+      {
+        "name": "output",
+        "type": "string",
+        "required": false,
+        "description": "新GeoJSON文件名，默认本会话output/osm"
+      },
+      {
+        "name": "overwrite",
+        "type": "boolean",
+        "required": false,
+        "description": "纠正同一次下载时设true，output沿用原路径，替换本会话OSM结果；不同数据省略"
+      }
+    ]
+  },
+  "execution": {
+    "backend_tool": "osm_get_objects",
+    "param_mapping": {
+      "ids": "{{ ids }}",
+      "fields": "{{ fields }}",
+      "output": "{{ output }}",
+      "overwrite": "{{ overwrite }}"
+    }
+  },
+  "policy": {
+    "visibility": "public",
+    "authorization_scopes": [
+      "tool.invoke"
+    ]
+  }
+}
