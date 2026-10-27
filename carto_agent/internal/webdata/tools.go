@@ -28,12 +28,15 @@ import (
 
 type Options struct {
 	Enabled        bool
+	SearchProvider string
 	TimeoutSeconds int
 	MaxDownloadMB  int
 	OutputDir      string
 }
 
-func Handles(name string) bool { return name == "web_read_page" || name == "web_download_file" }
+func Handles(name string) bool {
+	return name == "web_search" || name == "web_read_page" || name == "web_download_file"
+}
 
 func Invoke(ctx context.Context, name string, args map[string]any, opts Options) (any, error) {
 	return invoke(ctx, name, args, opts, publicClient())
@@ -123,6 +126,9 @@ func invoke(ctx context.Context, name string, args map[string]any, opts Options,
 	}
 	if opts.TimeoutSeconds > 3600 || opts.MaxDownloadMB > 1024 {
 		return nil, fmt.Errorf("在线取数限制配置无效")
+	}
+	if name == "web_search" {
+		return search(ctx, args, opts, client)
 	}
 	raw, _ := args["url"].(string)
 	u, err := publicURL(raw)

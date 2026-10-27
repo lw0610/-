@@ -13,7 +13,7 @@
     "runtime": "internal"
   },
   "spec": {
-    "description": "统计 OSM 要素；只使用全量OSM公共服务，报告部分失败、字段取舍和真实输出路径。",
+    "description": "批量下载 OSM 前统计范围内匹配标签的要素数量；传 key 可查看该标签键的值分布，辅助选择完整的标签并集。仅统计，不下载文件；已选定少量对象 ID 时可直接用 osm_get_objects，无需范围统计。",
     "parameters": [
       {
         "name": "extents",

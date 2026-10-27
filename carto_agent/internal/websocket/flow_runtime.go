@@ -503,7 +503,7 @@ func (s *DeepServer) injectAvailableFlows(ctx context.Context, input []*schema.M
 		summaries = append(summaries, map[string]any{"id": p.FlowID, "name": p.Name, "triggers": p.Triggers, "applicability": string(app), "inputs": flowInputSummaries(p.Inputs), "acquisition_policy": acquisitionPolicyRules(p.AutoAcquire)})
 	}
 	raw, _ := json.Marshal(summaries)
-	message := schema.SystemMessage("当前方案可运行流程：" + string(raw) + "\n匹配用户任务时可使用 flow_preview 查看步骤与输入、flow_start 登记执行。conversation_text 输入引用当前用户消息。按各流程 acquisition_policy 处理缺失数据；其他必填输入缺失才询问。规划模式只预览。[flow_acquire:common] acquire_available=false 时不得传 $acquire/$fill；不得编造路径；source/sources 来源编号只由表单设置，编排工具不得指定；用户已提供数据时优先使用用户数据。")
+	message := schema.SystemMessage("当前方案可运行流程：" + string(raw) + "\n匹配用户任务时可使用 flow_preview 查看步骤与输入、flow_start 登记执行。conversation_text 输入引用当前用户消息。按各流程 acquisition_policy 处理缺失数据；其他必填输入缺失才询问。流程说明由前置步骤取得的可选数据缺失时留空，由该步骤使用专业角色的在线工具获取；未声明系统获取的数据输入也不传自动获取标记。规划模式只预览。[flow_acquire:common] acquire_available=false 时不得传 $acquire/$fill；不得编造路径；source/sources 来源编号只由表单设置，编排工具不得指定；用户已提供数据时优先使用用户数据。")
 	result := append([]*schema.Message{}, input...)
 	return append(result, message)
 }

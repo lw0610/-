@@ -2,12 +2,14 @@ package browserruntime
 
 import (
 	"context"
+	"encoding/csv"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"strings"
@@ -28,16 +30,17 @@ func TestPlaywrightSmoke(t *testing.T) {
 	if !chromeAvailable() {
 		t.Skip("Chrome unavailable; browser installation is intentionally skipped")
 	}
-	const csv = "id,name\n1,local browser smoke\n"
+	const fixtureCSV = "id,name\n1,local browser smoke\n"
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/fixture.csv" {
 			w.Header().Set("Content-Type", "text/csv")
 			w.Header().Set("Content-Disposition", `attachment; filename="fixture.csv"`)
-			_, _ = fmt.Fprint(w, csv)
+			_, _ = fmt.Fprint(w, fixtureCSV)
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_, _ = fmt.Fprint(w, `<!doctype html><html><title>AutoCarto browser fixture</title><body><h1>Local browser smoke</h1><a href="/fixture.csv" download>Download CSV</a></body></html>`)
+		_, _ = fmt.Fprint(w, `<!doctype html><html><title>AutoCarto browser fixture</title><body><h1>Local browser smoke</h1><a href="/fixture.csv" download>Download CSV</a><table id="statistics"><tr><th>地区</th><th>值</th></tr><tr><td>甲,省</td><td>0</td></tr><tr><td>乙&quot;省</td><td></td></tr><tr><td>丙
+省</td><td>12</td></tr></table></body></html>`)
 	}))
 	defer server.Close()
 	output, err := filepath.EvalSymlinks(t.TempDir())
@@ -57,7 +60,7 @@ func TestPlaywrightSmoke(t *testing.T) {
 	for _, tool := range catalog.(map[string]any)["tools"].([]map[string]any) {
 		known[tool["name"].(string)] = tool
 	}
-	for _, name := range []string{"browser_navigate", "browser_snapshot", "browser_click"} {
+	for _, name := range []string{"browser_navigate", "browser_snapshot", "browser_click", "browser_evaluate"} {
 		if known[name] == nil {
 			t.Fatalf("missing live tool %s", name)
 		}
@@ -105,8 +108,45 @@ func TestPlaywrightSmoke(t *testing.T) {
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
-	if err != nil || string(downloaded) != csv {
+	if err != nil || string(downloaded) != fixtureCSV {
 		t.Fatalf("CSV download failed: %v content=%q", err, downloaded)
+	}
+	// A dynamic portal may expose a real table but no CSV export. Validate the
+	// documented browser-only handoff: extract the observed table, escape CSV in
+	// the page, and download it via the same MCP context. No file-writing shell,
+	// hidden endpoint or additional reader is needed.
+	runSchema := known["browser_evaluate"]["inputSchema"].(map[string]any)
+	if _, ok := runSchema["properties"].(map[string]any)["function"]; !ok {
+		t.Fatalf("unrecognized browser_evaluate schema: %v", runSchema)
+	}
+	call("browser_evaluate", map[string]any{"function": `() => {
+    const rows = Array.from(document.querySelectorAll('#statistics tr'), row =>
+      Array.from(row.querySelectorAll('th,td'), cell => cell.textContent));
+    const csv = '\uFEFF' + rows.map(row => row.map(value =>
+      '"' + value.replace(/"/g, '""') + '"').join(',')).join('\r\n') + '\r\n';
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+    link.download = 'page-table.csv';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    return {rows: rows.length};
+}`})
+	deadline = time.Now().Add(5 * time.Second)
+	for time.Now().Before(deadline) {
+		downloaded, err = os.ReadFile(filepath.Join(output, "page-table.csv"))
+		if err == nil {
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+	if err != nil {
+		t.Fatalf("page-table CSV was not saved by MCP: %v", err)
+	}
+	rows, err := csv.NewReader(strings.NewReader(strings.TrimPrefix(string(downloaded), "\uFEFF"))).ReadAll()
+	wantRows := [][]string{{"地区", "值"}, {"甲,省", "0"}, {"乙\"省", ""}, {"丙\n省", "12"}}
+	if err != nil || !reflect.DeepEqual(rows, wantRows) {
+		t.Fatalf("page-table CSV changed real cells: %v rows=%q", err, rows)
 	}
 	m.mu.Lock()
 	command := m.sessions[opts.SessionID].command
@@ -117,7 +157,7 @@ func TestPlaywrightSmoke(t *testing.T) {
 	if len(m.sessions) != 0 || command.ProcessState == nil || !command.ProcessState.Exited() {
 		t.Fatal("MCP process did not exit on close")
 	}
-	t.Logf("Verified Playwright MCP %s: local navigation, accessibility snapshot, click, CSV download and process close", PlaywrightVersion)
+	t.Logf("Verified Playwright MCP %s: navigation, snapshot, file download, page-table Blob CSV (quoted cells, zero and missing values) and process close", PlaywrightVersion)
 }
 
 func chromeAvailable() bool {

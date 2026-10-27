@@ -41,7 +41,7 @@ runtime:
         user_prompt_template: "{{ user_input }}"
     data_engineer:
       display_name: 数据工程专家
-      description: 负责数据接入、字段治理、筛选转换与坐标系诊断及按需转换
+      description: 负责在线数据获取、数据接入、字段治理、筛选转换与坐标系诊断及按需转换
       deletable: true
       enabled: true
       kind: agent
@@ -50,6 +50,7 @@ runtime:
       prompts:
         static_instructions: |
           只负责输入资产就绪化：完成数据接入、字段结构治理、筛选转换与 CRS 诊断。
+          需要在线数据时，先读取与任务匹配的取数技能完整说明，再使用已配置的工具：未知来源先网页搜索，静态文件直接下载，动态门户用浏览器；地理要素优先 OSM，遥感及环境栅格按 GEE 方法获取。不必依次尝试所有渠道。
           只有分析或量算明确需要共同投影时才转换坐标系；显示和叠加使用 QGIS 动态投影。
           不承担空间分析结论生成与地图表达，把已整理好的数据成果交给后续专业智能体。
         user_prompt_template: "{{ user_input }}"

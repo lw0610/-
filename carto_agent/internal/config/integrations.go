@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-// Credentials remain in Earth Engine's own credential store. This configuration
-// contains only runtime preferences, never OAuth tokens or browser cookies.
+// Credentials remain in Earth Engine's store or the backend environment. This
+// configuration contains runtime preferences, never API keys, OAuth tokens or cookies.
 type IntegrationsConfig struct {
 	OSM     OSMConfig     `yaml:"osm" json:"osm"`
 	GEE     GEEConfig     `yaml:"gee" json:"gee"`
@@ -46,9 +46,10 @@ type BrowserConfig struct {
 }
 
 type WebDataConfig struct {
-	Enabled        bool `yaml:"enabled" json:"enabled"`
-	TimeoutSeconds int  `yaml:"timeout_seconds" json:"timeout_seconds"`
-	MaxDownloadMB  int  `yaml:"max_download_mb" json:"max_download_mb"`
+	Enabled        bool   `yaml:"enabled" json:"enabled"`
+	SearchProvider string `yaml:"search_provider" json:"search_provider"`
+	TimeoutSeconds int    `yaml:"timeout_seconds" json:"timeout_seconds"`
+	MaxDownloadMB  int    `yaml:"max_download_mb" json:"max_download_mb"`
 }
 
 func (c *IntegrationsConfig) SetDefaults() {
@@ -88,6 +89,9 @@ func (c *IntegrationsConfig) SetDefaults() {
 	if c.Web.TimeoutSeconds == 0 {
 		c.Web.TimeoutSeconds = 60
 	}
+	if c.Web.SearchProvider == "" {
+		c.Web.SearchProvider = "exa"
+	}
 	if c.Web.MaxDownloadMB == 0 {
 		c.Web.MaxDownloadMB = 100
 	}
@@ -123,6 +127,9 @@ func (c IntegrationsConfig) Validate() error {
 	}
 	if c.Web.MaxDownloadMB < 1 || c.Web.MaxDownloadMB > 1024 {
 		return fmt.Errorf("max_download_mb 必须在 1–1024 之间")
+	}
+	if c.Web.SearchProvider != "exa" && c.Web.SearchProvider != "parallel" {
+		return fmt.Errorf("web search_provider 必须为 exa 或 parallel")
 	}
 	for _, command := range []string{c.GEE.Python, c.Browser.Command} {
 		if strings.ContainsAny(command, "\x00\r\n") || len(command) > 4096 {

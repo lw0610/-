@@ -7,9 +7,11 @@ import (
 )
 
 var (
-	providedCondition = regexp.MustCompile(`^(未提供|提供了?)\s*「([^」]+)」\s*时执行$`)
-	valueCondition    = regexp.MustCompile(`^「([^」]+)」\s*为\s*(.+?)\s*时执行$`)
-	stepCondition     = regexp.MustCompile(`^第\s*([0-9]+)\s*步完成时执行$`)
+	providedCondition     = regexp.MustCompile(`^(未提供|提供了?)\s*「([^」]+)」\s*时执行$`)
+	missingAllCondition   = regexp.MustCompile(`^未提供\s*「[^」]+」(?:\s*且\s*未提供\s*「[^」]+」)+\s*时执行$`)
+	missingConditionInput = regexp.MustCompile(`未提供\s*「([^」]+)」`)
+	valueCondition        = regexp.MustCompile(`^「([^」]+)」\s*为\s*(.+?)\s*时执行$`)
+	stepCondition         = regexp.MustCompile(`^第\s*([0-9]+)\s*步完成时执行$`)
 )
 
 // ParseCondition 只转换规范列出的确定性句式，未识别的条件返回 nil。
@@ -22,6 +24,17 @@ func ParseCondition(raw string) *ConditionRule {
 			op = "not_provided"
 		}
 		return &ConditionRule{Op: op, Input: strings.TrimSpace(match[2])}
+	}
+	if missingAllCondition.MatchString(raw) {
+		rule := &ConditionRule{Op: "and"}
+		for _, match := range missingConditionInput.FindAllStringSubmatch(raw, -1) {
+			input := strings.TrimSpace(match[1])
+			if input == "" {
+				return nil
+			}
+			rule.Args = append(rule.Args, ConditionRule{Op: "not_provided", Input: input})
+		}
+		return rule
 	}
 	if match := valueCondition.FindStringSubmatch(raw); match != nil {
 		rule := &ConditionRule{Input: strings.TrimSpace(match[1])}

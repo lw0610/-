@@ -226,5 +226,6 @@ integrations:
     timeout_seconds: 60
   web:
     enabled: false
+    search_provider: exa
     timeout_seconds: 60
     max_download_mb: 100

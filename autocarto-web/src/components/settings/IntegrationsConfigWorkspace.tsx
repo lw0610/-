@@ -15,7 +15,7 @@ export const DEFAULT_INTEGRATIONS: IntegrationsConfig = {
   osm: { enabled: false, endpoints: [], nominatim_url: "", proxy_url: "", timeout_seconds: 120, total_timeout_seconds: 600, max_attempts: 3, max_response_mb: 200 },
   gee: { enabled: false, python: "python3", project: "", proxy_url: "", timeout_seconds: 300 },
   browser: { enabled: false, command: "npx", args: ["-y", "@playwright/mcp@0.0.83"], browser: "chrome", headless: false, timeout_seconds: 60 },
-  web: { enabled: false, timeout_seconds: 60, max_download_mb: 100 },
+  web: { enabled: false, search_provider: "exa", timeout_seconds: 60, max_download_mb: 100 },
 };
 
 type IntegrationForm = Omit<IntegrationsConfig, "browser"> & {
@@ -59,6 +59,7 @@ function normalizeForm(raw: unknown): IntegrationForm {
     },
     web: {
       enabled: asBool(web.enabled, false),
+      search_provider: web.search_provider === "parallel" ? "parallel" : "exa",
       timeout_seconds: asNumber(web.timeout_seconds, DEFAULT_INTEGRATIONS.web.timeout_seconds),
       max_download_mb: asNumber(web.max_download_mb, DEFAULT_INTEGRATIONS.web.max_download_mb),
     },
@@ -289,9 +290,11 @@ export default function IntegrationsConfigWorkspace() {
           <CheckResult service="osm" result={results.osm} />
         </div>
       </FormSection>
-      <FormSection title="网页读取与文件下载" description="读取公开网页，并将在线数据文件下载到工作区。">
+      <FormSection title="网页搜索、读取与下载" description="先搜索数据来源，再读取公开网页或将数据文件下载到工作区。">
         <div className="space-y-3">
-          <CheckboxField label="启用网页读取与下载" checked={form.web.enabled} onChange={(enabled) => update("web", { enabled })} />
+          <CheckboxField label="启用网页搜索、读取与下载" checked={form.web.enabled} onChange={(enabled) => update("web", { enabled })} />
+          <Field label="网页搜索服务"><SelectInput value={form.web.search_provider} onChange={(event) => update("web", { search_provider: event.target.value as "exa" | "parallel" })}><option value="exa">Exa</option><option value="parallel">Parallel</option></SelectInput></Field>
+          <p className="text-xs text-zinc-500">搜索使用所选服务，失败时不会自动切换。密钥可通过后端环境变量 EXA_API_KEY 或 PARALLEL_API_KEY 配置；未配置时尝试无密钥访问，是否可用取决于服务权限与额度。搜索请求最多等待 25 秒。</p>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="网页请求超时（秒）"><NumberInput min={1} max={3600} step={1} value={form.web.timeout_seconds} onChange={(event) => update("web", { timeout_seconds: Number(event.target.value) })} /></Field>
             <Field label="单文件下载上限（MB）"><NumberInput min={1} max={1024} step={1} value={form.web.max_download_mb} onChange={(event) => update("web", { max_download_mb: Number(event.target.value) })} /></Field>

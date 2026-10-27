@@ -16,7 +16,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 FLOWS = ROOT / "autocarto" / "flows" / "system"
-EXPECTED_STEPS = {"marching-route": 11, "statistical-choropleth": 4, "traffic-route": 4, "data-to-map": 6}
+EXPECTED_STEPS = {"marching-route": 11, "statistical-choropleth": 5, "traffic-route": 4, "data-to-map": 6}
 
 
 @pytest.fixture(scope="module")

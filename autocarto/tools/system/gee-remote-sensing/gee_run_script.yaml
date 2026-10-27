@@ -7,7 +7,7 @@ metadata:
   domain: gee-remote-sensing
   runtime: internal
 spec:
-  description: "使用独立 Python 执行 Earth Engine 脚本，先读取 gee-scripting skill 和对应参考流程。已初始化 ee，提供 output_dir、load_region、check_coverage、heartbeat、download_image、export_image_to_drive。按任务选择筛选、单日期拼接或时间合成方法，下载前检查整个研究区的有效覆盖；check_coverage 返回 0..1 浮点数。download_image 用 geedim 自动分块拼接本地 GeoTIFF，同会话相同请求可复用已完成文件，必须使用返回的真实路径，保持指定分辨率与数值类型，不需手写下载网格。按 GeoCode 的无输出超时执行，进度与阶段心跳延长等待，用户停止会终止本地执行。结果保留真实文件、脚本和进度；Drive 导出任务不代表本地下载完成。"
+  description: "使用独立 Python 执行 Earth Engine 脚本，先读取 gee-remote-sensing skill，并用 reference_read 读取其对应处理参考。已初始化 ee，提供 output_dir、load_region、check_coverage、heartbeat、download_image、export_image_to_drive。按任务选择筛选、单日期拼接或时间合成方法，下载前检查整个研究区的有效覆盖；check_coverage 返回 0..1 浮点数。download_image 用 geedim 自动分块拼接本地 GeoTIFF，同会话相同请求可复用已完成文件，必须使用返回的真实路径，保持指定分辨率与数值类型，不需手写下载网格。按 GeoCode 的无输出超时执行，进度与阶段心跳延长等待，用户停止会终止本地执行。结果保留真实文件、脚本和进度；Drive 导出任务不代表本地下载完成。"
   parameters:
     - name: code
       type: string

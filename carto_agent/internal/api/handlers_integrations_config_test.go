@@ -42,7 +42,7 @@ func TestIntegrationsBatchConfigSaveReadAndReload(t *testing.T) {
 			"browser": "chrome", "headless": true, "timeout_seconds": 60,
 		},
 		"web": map[string]any{
-			"enabled": false, "timeout_seconds": 60, "max_download_mb": 100,
+			"enabled": false, "search_provider": "parallel", "timeout_seconds": 60, "max_download_mb": 100,
 		},
 	}
 	body, err := json.Marshal(map[string]any{"items": []any{map[string]any{"path": "integrations", "value": integrations}}})
@@ -134,6 +134,9 @@ func assertSavedBrowserIntegration(t *testing.T, got config.IntegrationsConfig) 
 	}
 	if got.OSM.Enabled || got.GEE.Enabled || got.Web.Enabled {
 		t.Fatal("saving browser preferences enabled unrelated integrations")
+	}
+	if got.Web.SearchProvider != "parallel" {
+		t.Fatalf("web search provider was not retained: %+v", got.Web)
 	}
 	if got.OSM.TimeoutSeconds != 90 || got.OSM.TotalTimeoutSeconds != 1800 || got.OSM.MaxAttempts != 5 || got.OSM.MaxResponseMB != 100 {
 		t.Fatalf("OSM download limits were not retained: %+v", got.OSM)

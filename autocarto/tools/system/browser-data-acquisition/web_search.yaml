@@ -1,0 +1,43 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: web_search
+  keywords: ["网页搜索", "网络搜索", "查找数据源", "搜索统计数据"]
+  display_name: "搜索网页与数据来源"
+  domain: browser-data-acquisition
+  runtime: internal
+spec:
+  description: "通过配置的 Exa 或 Parallel MCP 服务搜索公开网页和数据来源，返回搜索服务的文本与来源链接。未知网址时先搜索，再用 web_read_page 核实来源；公开文件用 web_download_file 下载，动态网站用浏览器。服务不可用会明确报错，不会自动切换服务。"
+  parameters:
+    - name: query
+      type: string
+      required: true
+      description: "检索词，包含所需地区、指标、年份和来源条件；1–8192 字符"
+    - name: num_results
+      type: integer
+      required: false
+      description: "Exa 搜索结果数量，1–25，默认8；Parallel 不支持该选项"
+    - name: type
+      type: string
+      required: false
+      description: "Exa 搜索模式：auto/fast/deep，默认auto；Parallel 不支持该选项"
+    - name: livecrawl
+      type: string
+      required: false
+      description: "Exa 实时抓取方式：fallback/preferred，默认fallback；Parallel 不支持该选项"
+    - name: context_max_characters
+      type: integer
+      required: false
+      description: "返回文本上限，1000–100000，默认10000；Exa 同时将该值传给搜索服务"
+policy:
+  visibility: public
+  authorization_scopes:
+    - tool.invoke
+execution:
+  backend_tool: web_search
+  param_mapping:
+    query: '{{ query }}'
+    num_results: '{{ num_results }}'
+    type: '{{ type }}'
+    livecrawl: '{{ livecrawl }}'
+    context_max_characters: '{{ context_max_characters }}'

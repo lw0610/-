@@ -33,19 +33,34 @@ describe("online integration settings", () => {
     expect(mocks.batchSetConfig).not.toHaveBeenCalled();
   });
 
+  it("loads the saved search provider and keeps legacy web settings disabled", async () => {
+    mocks.getConfig.mockResolvedValueOnce({ integrations: { ...DEFAULT_INTEGRATIONS, web: { enabled: false, timeout_seconds: 90, max_download_mb: 80 } } });
+    render(<IntegrationsConfigWorkspace />);
+    await waitFor(() => expect(screen.getByLabelText("网页请求超时（秒）")).toHaveValue(90));
+    expect(screen.getByLabelText("网页搜索服务")).toHaveValue("exa");
+    expect(screen.getByLabelText("启用网页搜索、读取与下载")).not.toBeChecked();
+    expect(mocks.batchSetConfig).not.toHaveBeenCalled();
+    mocks.getConfig.mockResolvedValueOnce({ integrations: { ...DEFAULT_INTEGRATIONS, web: { ...DEFAULT_INTEGRATIONS.web, search_provider: "parallel" } } });
+    fireEvent.click(screen.getByRole("button", { name: "刷新在线数据配置" }));
+    await waitFor(() => expect(screen.getByLabelText("网页搜索服务")).toHaveValue("parallel"));
+    expect(screen.getByLabelText("启用网页搜索、读取与下载")).not.toBeChecked();
+    expect(mocks.batchSetConfig).not.toHaveBeenCalled();
+  });
+
   it("saves the complete integrations object through the existing config mutation API", async () => {
     render(<IntegrationsConfigWorkspace />);
     await screen.findByDisplayValue("example-project");
     fireEvent.change(screen.getByLabelText("Google Cloud 项目 ID"), { target: { value: "another-project" } });
     fireEvent.change(screen.getByLabelText("启动参数（每行一个）"), { target: { value: "-y\n@playwright/mcp@0.0.83\n--timeout-navigation\n60000\n" } });
-    fireEvent.click(screen.getByLabelText("启用网页读取与下载"));
+    fireEvent.click(screen.getByLabelText("启用网页搜索、读取与下载"));
+    fireEvent.change(screen.getByLabelText("网页搜索服务"), { target: { value: "parallel" } });
     expect(screen.getByRole("button", { name: "保存并检查 GEE 运行环境" })).toBeEnabled();
     fireEvent.click(screen.getByRole("button", { name: "保存在线数据配置" }));
     await waitFor(() => expect(mocks.batchSetConfig).toHaveBeenCalledWith([{ path: "integrations", value: {
       ...DEFAULT_INTEGRATIONS,
       gee: { ...DEFAULT_INTEGRATIONS.gee, enabled: true, project: "another-project" },
       browser: { ...DEFAULT_INTEGRATIONS.browser, enabled: true, args: ["-y", "@playwright/mcp@0.0.83", "--timeout-navigation", "60000"] },
-      web: { ...DEFAULT_INTEGRATIONS.web, enabled: true },
+      web: { ...DEFAULT_INTEGRATIONS.web, enabled: true, search_provider: "parallel" },
     } }]));
     await waitFor(() => expect(screen.getByRole("button", { name: "检查 GEE 运行环境" })).toBeEnabled());
     expect(mocks.checkIntegration).not.toHaveBeenCalled();

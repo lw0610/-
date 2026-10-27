@@ -92,7 +92,7 @@ func Invoke(ctx context.Context, name string, args map[string]any, provider Conf
 	case browserruntime.Handles(name):
 		result, err = browserruntime.Invoke(ctx, name, args, browserOptions(c, session.SessionID, filepath.Join(root, "browser")))
 	case webdata.Handles(name):
-		result, err = webdata.Invoke(ctx, name, args, webdata.Options{Enabled: c.Web.Enabled, TimeoutSeconds: c.Web.TimeoutSeconds, MaxDownloadMB: c.Web.MaxDownloadMB, OutputDir: filepath.Join(root, "downloads")})
+		result, err = webdata.Invoke(ctx, name, args, webdata.Options{Enabled: c.Web.Enabled, SearchProvider: c.Web.SearchProvider, TimeoutSeconds: c.Web.TimeoutSeconds, MaxDownloadMB: c.Web.MaxDownloadMB, OutputDir: filepath.Join(root, "downloads")})
 	default:
 		return nil, fmt.Errorf("未知扩展工具: %s", name)
 	}

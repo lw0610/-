@@ -107,6 +107,17 @@ func TestBuiltinFlowsParseAndCompile(t *testing.T) {
 		if selectedFlow == "marching-route" && request.Step == "s1" {
 			condition = &flow.ConditionRule{Op: "or", Args: []flow.ConditionRule{{Op: "not_provided", Input: "路线数据集"}, {Op: "truthy", Input: "重新抽取"}}}
 		}
+		if selectedFlow == "statistical-choropleth" {
+			// The builtin flow adds acquisition before the four original steps;
+			// the documentation example intentionally retains its own fixture.
+			fixture.Tools = map[string][]string{
+				"s1": {"browser_call_tool"},
+				"s2": {"data_prepare_statistical"},
+				"s3": {"cartography_graduated_style"},
+				"s4": {"layout_compose"},
+				"s5": {"export_print_layout"},
+			}
+		}
 		encoded, _ := json.Marshal(map[string]any{"suggested_tools": fixture.Tools[request.Step], "missing_capabilities": []string{}, "expected_outputs": []any{}, "condition": condition, "notes": "固定内容验收模型"})
 		return string(encoded), nil
 	})
@@ -190,6 +201,10 @@ func TestBuiltinFlowsParseAndCompile(t *testing.T) {
 			}
 			if plan.HasErrors() {
 				t.Fatalf("%s/%s 计划校验存在错误：%+v", version, id, plan.Diagnostics)
+			}
+			if id == "statistical-choropleth" {
+				assertStatisticalAgentAcquisitionPlan(t, plan)
+				assertStatisticalAgentAcquisitionPlan(t, withoutModel)
 			}
 			for _, d := range plan.Diagnostics {
 				if d.Code == "FLOW_COMPILE_LLM_FAILED" || d.Code == "FLOW_CAPABILITY_MISSING_IN_ROLE" || d.Code == "FLOW_REF_UNRESOLVED" || d.Code == "FLOW_CONDITION_UNPARSED" {

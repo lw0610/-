@@ -9,7 +9,7 @@ import { useInstanceStore } from '@/stores/instanceStore'
 import { useSessionStore } from '@/stores/sessionStore'
 import { inputDefaults, prepareFlowSubmission } from './model'
 import type { FlowSubmission } from './types'
-import { acquisitionDependencies, canAcquire, changeSourceMode } from './acquisition'
+import { acquisitionDependencies, canAcquire, changeSourceMode, sourceMode, sourcePath } from './acquisition'
 
 export function useFlowComposer(onSend: (content: string, flow?: FlowSubmission) => Promise<boolean | void>) {
   const activeScheme = useChatStore(state => state.activeAgentConfig)
@@ -70,7 +70,20 @@ export function useFlowComposer(onSend: (content: string, flow?: FlowSubmission)
         setDetail(result); setAcquisitionPlan(result.plan?.acquisition_plan); setValues(inputDefaults(result.plan?.inputs || [],result.plan?.auto_acquire))
         void flowApi.inputMemory(id).then(memory => {
           if (!current) return
-          const remembered = Object.fromEntries(Object.entries(memory).filter(([key]) => result.plan?.inputs.some(input => input.key === key && input.remember && ['file', 'folder'].includes(input.type)) && !touched.current.has(key)))
+          const remembered: Record<string, unknown> = {}
+          for (const [key, value] of Object.entries(memory)) {
+            const input = result.plan?.inputs.find(input => input.key === key)
+            if (!input?.remember || !['file', 'folder'].includes(input.type) || touched.current.has(key)) continue
+            const mode = sourceMode(value)
+            if ((mode === 'auto' || mode === 'fill') && (!canAcquire(input, result.plan?.auto_acquire) || input.modes && !input.modes.includes(mode))) {
+              // Flow revisions may remove acquisition or a particular mode. Keep
+              // a supplied local path, but never restore obsolete control flags.
+              const path = sourcePath(value)
+              if (typeof path === 'string' && path.trim()) remembered[key] = path
+              continue
+            }
+            remembered[key] = value
+          }
           setValues(values => ({ ...values, ...remembered }))
         }).catch(() => { if (current) setMemoryError('上次选择读取失败，请本次重新选择文件或文件夹。') })
       }

@@ -180,6 +180,7 @@ export interface IntegrationsConfig {
   }
   web: {
     enabled: boolean
+    search_provider: 'exa' | 'parallel'
     timeout_seconds: number
     max_download_mb: number
   }
