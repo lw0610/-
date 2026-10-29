@@ -1,0 +1,5 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+r1_phase1,第一阶段：西进陕南战略转移路线,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r2_phase2_loops12,第二阶段：回旋作战路线（第一段与第二段回旋）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r3_phase2_loop3,第二阶段第三段回旋：北出终南山路线,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r4_phase4,第四阶段：西征北上到达陕北路线,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass

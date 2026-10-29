@@ -1,0 +1,89 @@
+{
+  "date": "2025-11-29",
+  "mean_cloud": 0.29353033333333334,
+  "coverage": 0.9698,
+  "bands": [
+    "B4",
+    "B3",
+    "B2"
+  ],
+  "coverage_scale": 30,
+  "target_coverage": 0.99,
+  "meets_target": false,
+  "candidate_count": 10,
+  "checked_candidates": [
+    {
+      "date": "2026-01-13",
+      "mean_cloud": 0.007500666666666666,
+      "coverage": 0.9618
+    },
+    {
+      "date": "2025-11-14",
+      "mean_cloud": 0.014822,
+      "coverage": 0.9625
+    },
+    {
+      "date": "2025-10-28",
+      "mean_cloud": 0.026931499999999997,
+      "coverage": 0.4544
+    },
+    {
+      "date": "2025-11-19",
+      "mean_cloud": 0.05312416666666667,
+      "coverage": 0.9651
+    },
+    {
+      "date": "2025-12-27",
+      "mean_cloud": 0.06434700000000002,
+      "coverage": 0.454
+    },
+    {
+      "date": "2025-12-17",
+      "mean_cloud": 0.156354,
+      "coverage": 0.4574
+    },
+    {
+      "date": "2025-11-21",
+      "mean_cloud": 0.18359233333333333,
+      "coverage": 0.9609
+    },
+    {
+      "date": "2025-11-29",
+      "mean_cloud": 0.29353033333333334,
+      "coverage": 0.9698
+    },
+    {
+      "date": "2026-01-08",
+      "mean_cloud": 0.41933266666666674,
+      "coverage": 0.9633
+    },
+    {
+      "date": "2026-02-02",
+      "mean_cloud": 0.5092178333333334,
+      "coverage": 0.9578
+    }
+  ],
+  "scene_count": 6,
+  "image_ids": [
+    "COPERNICUS/S2_SR_HARMONIZED/20251129T030101_20251129T030907_T49RGP",
+    "COPERNICUS/S2_SR_HARMONIZED/20251129T030101_20251129T030907_T49RGQ",
+    "COPERNICUS/S2_SR_HARMONIZED/20251129T030101_20251129T030907_T50RKU",
+    "COPERNICUS/S2_SR_HARMONIZED/20251129T030101_20251129T030907_T50RKV",
+    "COPERNICUS/S2_SR_HARMONIZED/20251129T030101_20251129T030907_T50RLU",
+    "COPERNICUS/S2_SR_HARMONIZED/20251129T030101_20251129T030907_T50RLV"
+  ],
+  "scene_ids_truncated": false,
+  "method": "same_day_cloud_masked_mosaic",
+  "dataset": "COPERNICUS/S2_SR_HARMONIZED",
+  "search_start": "2025-10-01",
+  "search_end_exclusive": "2026-10-06",
+  "cloud_filter_lt": 70,
+  "export_scale_m": 10,
+  "export_crs": "EPSG:32650",
+  "roi": "武汉市行政区外接矩形（用户指定 WGS84 范围）",
+  "band_meaning": {
+    "B4": "Red",
+    "B3": "Green",
+    "B2": "Blue"
+  }
+}

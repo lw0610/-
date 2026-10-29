@@ -1,0 +1,182 @@
+- generic [ref=f2e2]:
+  - generic [ref=f2e3]:
+    - generic [ref=f2e5]:
+      - generic [ref=f2e7]:
+        - link "无障碍阅读" [ref=f2e8] [cursor=pointer]:
+          - /url: javascript:void(0);
+        - link "进入适老模式" [ref=f2e9] [cursor=pointer]:
+          - /url: javascript:void(0);
+      - generic [ref=f2e10]:
+        - link [ref=f2e12] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f2e15]:
+          - textbox "请输入您要搜索的内容" [ref=f2e16]
+          - button "Submit" [ref=f2e17] [cursor=pointer]
+    - list [ref=f2e20]:
+      - listitem [ref=f2e21]:
+        - link "首页" [ref=f2e22] [cursor=pointer]:
+          - /url: /
+      - listitem [ref=f2e23]:
+        - link "机构" [ref=f2e24] [cursor=pointer]:
+          - /url: /zjtj/zyld/
+      - listitem [ref=f2e25]:
+        - link "新闻" [ref=f2e26] [cursor=pointer]:
+          - /url: /zwxx/
+      - listitem [ref=f2e27]:
+        - link "数据" [ref=f2e28] [cursor=pointer]:
+          - /url: /tjfw/zxfb/
+      - listitem [ref=f2e29]:
+        - link "公开" [ref=f2e30] [cursor=pointer]:
+          - /url: /zfxxgk/
+      - listitem [ref=f2e31]:
+        - link "服务" [ref=f2e32] [cursor=pointer]:
+          - /url: /tjfw/
+      - listitem [ref=f2e33]:
+        - link "互动" [ref=f2e34] [cursor=pointer]:
+          - /url: /hdjl/
+      - listitem [ref=f2e35]:
+        - link "知识" [ref=f2e36] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zsk/
+      - listitem [ref=f2e37]:
+        - link "专题" [ref=f2e38] [cursor=pointer]:
+          - /url: /syztzl/
+  - generic [ref=f2e39]:
+    - paragraph [ref=f2e41]:
+      - text: 您当前所在位置：
+      - link "首页" [ref=f2e42] [cursor=pointer]:
+        - /url: /
+      - text: ">"
+      - link "数据" [ref=f2e43] [cursor=pointer]:
+        - /url: http://tjj.henan.gov.cn/tjfw/zxfb
+      - text: "> 数据发布"
+    - generic [ref=f2e44]:
+      - generic [ref=f2e45]:
+        - paragraph [ref=f2e46]: 河南省第七次全国人口普查公报（第二号）
+        - generic [ref=f2e47]: 来源：人普办 时间：2021-05-14
+      - generic [ref=f2e49]:
+        - paragraph [ref=f2e50]:
+          - generic:
+            - strong
+        - paragraph [ref=f2e51]:
+          - strong [ref=f2e53]: 河南省第七次全国人口普查公报（第二号）
+        - paragraph [ref=f2e54]:
+          - strong [ref=f2e56]: ──地区常住人口情况
+        - paragraph [ref=f2e57]
+        - paragraph [ref=f2e58]: 河南省统计局
+        - paragraph [ref=f2e59]: 河南省第七次全国人口普查领导小组办公室
+        - paragraph [ref=f2e60]: 2021年5月14日
+        - paragraph [ref=f2e61]
+        - paragraph [ref=f2e62]: 根据第七次全国人口普查结果，现将2020年11月1日零时全省分地区的常住人口有关数据公布如下：
+        - paragraph [ref=f2e63]
+        - paragraph [ref=f2e64]:
+          - img "河南省第七次全国人口普查公报（第二号）" [ref=f2e66]
+        - paragraph [ref=f2e67]
+        - paragraph [ref=f2e68]
+        - paragraph [ref=f2e69]: 注释：
+        - paragraph [ref=f2e70]: "[1]本公报数据均为初步汇总数据。"
+        - paragraph [ref=f2e71]: "[2]常住人口包括：居住在本乡镇街道且户口在本乡镇街道或户口待定的人；居住在本乡镇街道且离开户口登记地所在的乡镇街道半年以上的人；户口在本乡镇街道且外出不满半年或在境外工作学习的人。"
+        - paragraph [ref=f2e72]: "[3]指各省辖市、省直管县（市）的常住人口占全省常住人口的比重。"
+        - paragraph [ref=f2e73]: "[4]带＃的为省直管县（市），各省辖市数据含省直管县（市）。"
+        - paragraph [ref=f2e74]: "[5]部分数据因四舍五入的原因，存在总计与分项合计不等的情况。"
+        - paragraph [ref=f2e75]
+        - paragraph [ref=f2e76]
+  - generic [ref=f2e79]:
+    - combobox [ref=f2e80]:
+      - option "省直有关单位" [selected]
+      - option "河南省发展和改革委员会"
+      - option "河南省教育厅"
+      - option "河南省科学技术厅"
+      - option "河南省工业和信息化厅"
+      - option "河南省民族和宗教事务委员会"
+      - option "河南省公安厅"
+      - option "河南省民政厅"
+      - option "河南省司法厅"
+      - option "河南省财政厅"
+      - option "河南省水利厅"
+      - option "河南省人力资源和社会保障厅"
+      - option "河南省农业农村厅"
+      - option "河南省交通运输厅"
+      - option "河南省住房和城乡建设厅"
+      - option "河南省生态环境厅"
+      - option "河南省自然资源厅"
+    - combobox [ref=f2e81]:
+      - option "国家及各省统计局" [selected]
+      - option "国家统计局"
+      - option "北京"
+      - option "天津"
+      - option "河北"
+      - option "山西"
+      - option "内蒙古"
+      - option "辽宁"
+      - option "吉林"
+      - option "黑龙江"
+      - option "上海"
+      - option "江苏"
+      - option "浙江"
+      - option "安徽"
+      - option "福建"
+      - option "江西"
+      - option "山东"
+      - option "河南"
+      - option "湖北"
+      - option "湖南"
+      - option "广东"
+      - option "广西"
+      - option "海南"
+      - option "重庆"
+      - option "四川"
+      - option "贵州"
+      - option "云南"
+      - option "西藏"
+      - option "陕西"
+      - option "甘肃"
+      - option "青海"
+    - combobox [ref=f2e82]:
+      - option "各省辖市统计局" [selected]
+      - option "郑州市统计局"
+      - option "开封市统计局"
+      - option "洛阳市统计局"
+      - option "平顶山市统计局"
+      - option "安阳市统计局"
+      - option "鹤壁市统计局"
+      - option "新乡市统计局"
+      - option "焦作市统计局"
+      - option "濮阳市统计局"
+      - option "三门峡市统计局"
+      - option "南阳市统计局"
+      - option "商丘市统计局"
+      - option "信阳市统计局"
+      - option "周口市统计局"
+      - option "驻马店市统计局"
+      - option "济源产城融合示范区发展改革和统计局"
+    - combobox [ref=f2e83]:
+      - option "各省总队" [selected]
+      - option "天津总队"
+      - option "山西总队"
+      - option "江苏总队"
+      - option "浙江总队"
+      - option "安徽总队"
+      - option "河南总队"
+      - option "湖南总队"
+      - option "广东总队"
+      - option "云南总队"
+      - option "陕西总队"
+      - option "新疆总队"
+      - option "兵团总队"
+  - generic [ref=f2e86]:
+    - link [ref=f2e89] [cursor=pointer]:
+      - /url: https://bszs.conac.cn/sitename?method=show&id=096FFCCADFEE35F5E053022819ACF794
+    - generic [ref=f2e91]:
+      - paragraph [ref=f2e92]: Copyright 2006 All rights reserved.
+      - paragraph [ref=f2e93]:
+        - text: 版权所有：河南省统计局
+        - link "联系我们" [ref=f2e94] [cursor=pointer]:
+          - /url: /zjtj/jggk/jgsz/
+        - link "技术支持：大河网" [ref=f2e95] [cursor=pointer]:
+          - /url: https://www.dahe.cn/
+      - paragraph [ref=f2e96]:
+        - text: 郑公备：41010029000223 网站标识码：4100000066
+        - link "备案号：豫ICP备18019066号-2" [ref=f2e97] [cursor=pointer]:
+          - /url: https://beian.miit.gov.cn/
+      - paragraph [ref=f2e98]: 访问量：
+    - img [ref=f2e101] [cursor=pointer]

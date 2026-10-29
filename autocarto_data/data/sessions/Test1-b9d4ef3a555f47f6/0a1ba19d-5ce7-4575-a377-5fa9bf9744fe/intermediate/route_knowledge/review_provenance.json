@@ -1,0 +1,38 @@
+{
+  "graph_sha256": "aa361f4a82f4ac3596d657debc9c9064e7dd81b30a7d689e7bc8f838b7488201",
+  "inherited_provenance": [
+    {
+      "issue_resolutions": [
+        {
+          "action": "confirmed",
+          "explanation": "确认",
+          "issue_id": "c0001__u1",
+          "revision": 2,
+          "source": "human_review",
+          "subject_refs": [
+            "c0001__p2"
+          ]
+        },
+        {
+          "action": "confirmed",
+          "explanation": "确认",
+          "issue_id": "c0001__u2",
+          "revision": 2,
+          "source": "human_review",
+          "subject_refs": [
+            "c0001__p1"
+          ]
+        }
+      ],
+      "manual_records": [],
+      "review_id": "995b170b-bc8a-40ca-b9a0-289c7d3820e1",
+      "revision": 2
+    }
+  ],
+  "issue_resolutions": [],
+  "manual_records": [],
+  "review_id": "30705741-70ca-4b13-9535-15e6f3c9cc2f",
+  "revision": 1,
+  "source_sha256": "77d2291264373f5d5b2054c867966a03f4be87ce66587790528da56aa5466637",
+  "version": 1
+}

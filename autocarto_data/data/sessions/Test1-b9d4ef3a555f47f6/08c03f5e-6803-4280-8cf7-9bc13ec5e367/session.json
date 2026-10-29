@@ -1,0 +1,35 @@
+{
+  "archived": false,
+  "compression_history": [],
+  "context_stats": {
+    "compressed_count": 0,
+    "estimated_tokens": 0,
+    "message_count": 0,
+    "total_chars": 0,
+    "total_tokens": 0
+  },
+  "created_at": "2026-09-01T11:56:20+08:00",
+  "description": "",
+  "execution_mode": "build",
+  "last_message_preview": "[status] 已创建新会话。",
+  "llm_config": {},
+  "messages": [
+    {
+      "content": "已创建新会话。",
+      "msg_type": "status",
+      "role": "system",
+      "timestamp": "2026-09-01T03:59:48.129Z"
+    }
+  ],
+  "name": "会话 09-01 11:56",
+  "name_auto_generated": true,
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "run_intent": "execute",
+  "session_id": "08c03f5e-6803-4280-8cf7-9bc13ec5e367",
+  "snapshots": [],
+  "tags": [],
+  "title_source": "default",
+  "tool_calls": [],
+  "total_tokens_used": 0,
+  "updated_at": "2026-09-01T03:59:48.647Z"
+}

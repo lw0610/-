@@ -1,0 +1,158 @@
+{
+  "created_at": "2026-10-06T20:42:18.648128+08:00",
+  "reason": "用户要求清理刚刚GEE测试产生的垃圾；保留会话、日志、脚本和原有工程",
+  "session_id": "07a0bc47-e59f-4455-9994-d0b183341269",
+  "files": [
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-1545090687/wuhan_s2_20251129_south_rgb10m.tif",
+      "size": 403274024,
+      "allocated_bytes": 419438592,
+      "mtime_ns": 1791288681655955079,
+      "inode": 30610684,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-3899583895/wuhan_s2_20251129_north_rgb10m.tif",
+      "size": 373971678,
+      "allocated_bytes": 385884160,
+      "mtime_ns": 1791288653210140245,
+      "inode": 30610710,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-977744916/wuhan_s2_20251129_middle_rgb10m.tif",
+      "size": 411055296,
+      "allocated_bytes": 419438592,
+      "mtime_ns": 1791288684976941246,
+      "inode": 30610686,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-559157474/wuhan_s2_20251129_north_utm_rgb10m.tif",
+      "size": 398328421,
+      "allocated_bytes": 402661376,
+      "mtime_ns": 1791289130568001287,
+      "inode": 30612857,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-3151411289/wuhan_s2_20251129_middle_utm_rgb10m.tif",
+      "size": 442882888,
+      "allocated_bytes": 452993024,
+      "mtime_ns": 1791289435818246454,
+      "inode": 30613671,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-342805038/wuhan_s2_20251129_south_utm_rgb10m.tif",
+      "size": 436286009,
+      "allocated_bytes": 452993024,
+      "mtime_ns": 1791289471661721579,
+      "inode": 30613651,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_bounds.geojson",
+      "size": 849,
+      "allocated_bytes": 4096,
+      "mtime_ns": 1791287814098143746,
+      "inode": 30589506,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_s2_20251129_middle_utm_rgb10m.tif",
+      "size": 442882888,
+      "allocated_bytes": 442884096,
+      "mtime_ns": 1791289435818246454,
+      "inode": 30615883,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_s2_20251129_south_utm_rgb10m.tif",
+      "size": 436286009,
+      "allocated_bytes": 436289536,
+      "mtime_ns": 1791289471661721579,
+      "inode": 30616145,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_s2_20251129_north_utm_rgb10m.tif",
+      "size": 398328421,
+      "allocated_bytes": 398331904,
+      "mtime_ns": 1791289130568001287,
+      "inode": 30616445,
+      "device": 16777232
+    },
+    {
+      "path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_s2_20251129_rgb10m.tif",
+      "size": 1310728716,
+      "allocated_bytes": 1310732288,
+      "mtime_ns": 1791289550820268620,
+      "inode": 30616452,
+      "device": 16777232
+    }
+  ],
+  "test_boundary": {
+    "type": "FeatureCollection",
+    "name": "wuhan_bbox",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "武汉市行政区范围（外接矩形）",
+          "source": "用户指定经纬度范围"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                113.68333333333334,
+                29.966666666666665
+              ],
+              [
+                115.08333333333333,
+                29.966666666666665
+              ],
+              [
+                115.08333333333333,
+                31.366666666666667
+              ],
+              [
+                113.68333333333334,
+                31.366666666666667
+              ],
+              [
+                113.68333333333334,
+                29.966666666666665
+              ]
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "preserved_sha256": {
+    "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/session.json": "b6e386fe94620052664a55135166df0e0cc08ef1f3cef4e988a18ab83e0a597a",
+    "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz": "3abc53dcae833b2723a2037187c516cf61184e3f333c1d37b4faa77bb58cbdc0"
+  },
+  "deleted_paths": [
+    "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-1545090687/wuhan_s2_20251129_south_rgb10m.tif",
+    "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-3899583895/wuhan_s2_20251129_north_rgb10m.tif",
+    "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-977744916/wuhan_s2_20251129_middle_rgb10m.tif",
+    "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-559157474/wuhan_s2_20251129_north_utm_rgb10m.tif",
+    "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-3151411289/wuhan_s2_20251129_middle_utm_rgb10m.tif",
+    "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/07a0bc47-e59f-4455-9994-d0b183341269/output/integrations/gee/run-342805038/wuhan_s2_20251129_south_utm_rgb10m.tif",
+    "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_bounds.geojson",
+    "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_s2_20251129_middle_utm_rgb10m.tif",
+    "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_s2_20251129_south_utm_rgb10m.tif",
+    "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_s2_20251129_north_utm_rgb10m.tif",
+    "/home/shared-user/研究生/QGIS-agent/数据/底图数据/gee_wuhan/wuhan_s2_20251129_rgb10m.tif"
+  ],
+  "status": "completed",
+  "deleted_file_count": 11,
+  "logical_bytes_removed": 5054025199,
+  "allocated_bytes_removed": 5121650688,
+  "disk_free_change_bytes": 5121851392,
+  "completed_at": "2026-10-06T20:42:18.689969+08:00"
+}

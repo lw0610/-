@@ -1,0 +1,541 @@
+{
+  "captured_at": "2026-08-12T08:38:30.783957+00:00",
+  "layout_item_ids": {
+    "callouts": {
+      "co01": {
+        "body": "callout_co01_body",
+        "box": "callout_co01_box",
+        "leader": "callout_co01_leader",
+        "title": "callout_co01_title"
+      },
+      "co02": {
+        "body": "callout_co02_body",
+        "box": "callout_co02_box",
+        "leader": "callout_co02_leader",
+        "title": "callout_co02_title"
+      },
+      "co03": {
+        "body": "callout_co03_body",
+        "box": "callout_co03_box",
+        "leader": "callout_co03_leader",
+        "title": "callout_co03_title"
+      },
+      "co04": {
+        "body": "callout_co04_body",
+        "box": "callout_co04_box",
+        "leader": "callout_co04_leader",
+        "title": "callout_co04_title"
+      },
+      "co05": {
+        "body": "callout_co05_body",
+        "box": "callout_co05_box",
+        "leader": "callout_co05_leader",
+        "title": "callout_co05_title"
+      },
+      "co06": {
+        "body": "callout_co06_body",
+        "box": "callout_co06_box",
+        "leader": "callout_co06_leader",
+        "title": "callout_co06_title"
+      },
+      "co07": {
+        "body": "callout_co07_body",
+        "box": "callout_co07_box",
+        "leader": "callout_co07_leader",
+        "title": "callout_co07_title"
+      },
+      "co08": {
+        "body": "callout_co08_body",
+        "box": "callout_co08_box",
+        "leader": "callout_co08_leader",
+        "title": "callout_co08_title"
+      }
+    },
+    "standard": {
+      "decorative_border": "decorative_border_1",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "callout_co01_body": {
+        "item_id": "callout_co01_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 607.1713859332139,
+          "y": 319.93379474071213
+        },
+        "text": "1934年11月16日，红二十五军从河南省\n罗山县何家冲出发，开始长征。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "callout_co01_box": {
+        "item_id": "callout_co01_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 605.3713859332139,
+          "y": 313.30996661571214
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "callout_co01_leader": {
+        "item_id": "callout_co01_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.022178956272114,
+          "x": 587.3713859332139,
+          "y": 326.7167808518233
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 5.0
+      },
+      "callout_co01_title": {
+        "item_id": "callout_co01_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 607.1713859332139,
+          "y": 315.10996661571215
+        },
+        "text": "长征出发",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 3.0
+      },
+      "callout_co02_body": {
+        "item_id": "callout_co02_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 578.8592929631362,
+          "y": 294.34805146404955
+        },
+        "text": "红军在独树镇遭到国民党军堵截，发生\n激烈战斗。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 12.0
+      },
+      "callout_co02_box": {
+        "item_id": "callout_co02_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 577.0592929631363,
+          "y": 287.72422333904956
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 10.0
+      },
+      "callout_co02_leader": {
+        "item_id": "callout_co02_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.022178956272114,
+          "x": 559.0592929631363,
+          "y": 301.1310375751607
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 13.0
+      },
+      "callout_co02_title": {
+        "item_id": "callout_co02_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 578.8592929631362,
+          "y": 289.52422333904957
+        },
+        "text": "独树镇战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 11.0
+      },
+      "callout_co03_body": {
+        "item_id": "callout_co03_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 516.9921268433372,
+          "y": 282.60377586164697
+        },
+        "text": "红二十五军在庾家河与追击部队发生战\n斗。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 20.0
+      },
+      "callout_co03_box": {
+        "item_id": "callout_co03_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 515.1921268433373,
+          "y": 275.979947736647
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 18.0
+      },
+      "callout_co03_leader": {
+        "item_id": "callout_co03_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.022178956272114,
+          "x": 497.1921268433373,
+          "y": 289.3867619727581
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 21.0
+      },
+      "callout_co03_title": {
+        "item_id": "callout_co03_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 516.9921268433372,
+          "y": 277.779947736647
+        },
+        "text": "庾家河战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 19.0
+      },
+      "callout_co04_body": {
+        "item_id": "callout_co04_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 477.9921268433373,
+          "y": 320.0105900977581
+        },
+        "text": "红二十五军以庾家河为中心，逐步建立\n鄂豫陕革命根据地。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 24.0
+      },
+      "callout_co04_box": {
+        "item_id": "callout_co04_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 476.1921268433373,
+          "y": 313.3867619727581
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 22.0
+      },
+      "callout_co04_leader": {
+        "item_id": "callout_co04_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 0.0,
+          "x": 497.1921268433373,
+          "y": 301.3867619727581
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 25.0
+      },
+      "callout_co04_title": {
+        "item_id": "callout_co04_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 477.9921268433373,
+          "y": 315.1867619727581
+        },
+        "text": "鄂豫陕根据地",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 23.0
+      },
+      "callout_co05_body": {
+        "item_id": "callout_co05_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 472.32970824932187,
+          "y": 289.10507128440554
+        },
+        "text": "红二十五军在山阳袁家沟口与国民党军\n交战。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 28.0
+      },
+      "callout_co05_box": {
+        "item_id": "callout_co05_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 470.52970824932186,
+          "y": 282.48124315940555
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 26.0
+      },
+      "callout_co05_leader": {
+        "item_id": "callout_co05_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 0.0,
+          "x": 491.52970824932186,
+          "y": 295.8880573955167
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 29.0
+      },
+      "callout_co05_title": {
+        "item_id": "callout_co05_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 472.32970824932187,
+          "y": 284.28124315940556
+        },
+        "text": "袁家沟口战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 27.0
+      },
+      "callout_co06_body": {
+        "item_id": "callout_co06_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 425.1351140959749,
+          "y": 265.8262392867863
+        },
+        "text": "分两路向甘肃进军的部队在天水附近会\n合。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 32.0
+      },
+      "callout_co06_box": {
+        "item_id": "callout_co06_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 423.3351140959749,
+          "y": 259.2024111617863
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 30.0
+      },
+      "callout_co06_leader": {
+        "item_id": "callout_co06_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.022178956272114,
+          "x": 405.3351140959749,
+          "y": 272.60922539789743
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 33.0
+      },
+      "callout_co06_title": {
+        "item_id": "callout_co06_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 425.1351140959749,
+          "y": 261.0024111617863
+        },
+        "text": "天水会合",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 31.0
+      },
+      "callout_co07_body": {
+        "item_id": "callout_co07_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 434.1530400049627,
+          "y": 247.58066826162525
+        },
+        "text": "部队在四坡村遭遇由泾川、平凉方向前\n来堵截的国民党军。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 16.0
+      },
+      "callout_co07_box": {
+        "item_id": "callout_co07_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 432.3530400049627,
+          "y": 240.95684013662523
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 14.0
+      },
+      "callout_co07_leader": {
+        "item_id": "callout_co07_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.02217895627217,
+          "x": 414.3530400049627,
+          "y": 254.36365437273633
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 17.0
+      },
+      "callout_co07_title": {
+        "item_id": "callout_co07_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 434.1530400049627,
+          "y": 242.75684013662524
+        },
+        "text": "四坡村战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 15.0
+      },
+      "callout_co08_body": {
+        "item_id": "callout_co08_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 518.6698805008236,
+          "y": 217.59082163406168
+        },
+        "text": "1935年9月16日，红二十五军到达延川\n永坪镇，与陕甘红军会师，完成长征。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 8.0
+      },
+      "callout_co08_box": {
+        "item_id": "callout_co08_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 516.8698805008237,
+          "y": 210.96699350906167
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 6.0
+      },
+      "callout_co08_leader": {
+        "item_id": "callout_co08_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.02217895627217,
+          "x": 498.8698805008236,
+          "y": 224.37380774517277
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 9.0
+      },
+      "callout_co08_title": {
+        "item_id": "callout_co08_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 518.6698805008236,
+          "y": 212.76699350906168
+        },
+        "text": "永坪会师",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 7.0
+      },
+      "decorative_border_1": {
+        "item_id": "decorative_border_1",
+        "outer_rect_mm": {
+          "height": 517.9,
+          "width": 727.85,
+          "x": 56.57499999999999,
+          "y": 38.05000000000001
+        },
+        "rect_mm": {
+          "height": 511.59999999999997,
+          "width": 721.5500000000001,
+          "x": 59.72499999999999,
+          "y": 41.20000000000001
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 34.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 91.0712109375,
+          "width": 28.075000000000003,
+          "x": 63.07,
+          "y": 458.38
+        },
+        "title": "图例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 37.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 504.9,
+          "width": 714.85,
+          "x": 63.07499999999999,
+          "y": 44.55000000000001
+        },
+        "scale": 3291761.620242024,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 30.0,
+          "width": 20.0,
+          "x": 63.06999999999999,
+          "y": 44.55
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 40.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 15.597727272727273,
+          "width": 84.29318181818181,
+          "x": 693.63,
+          "y": 44.55
+        },
+        "text": "红二十五军长征路线综述：1934年11月16日，红二十五军从河南省罗山县何\n家冲出发开始长征。部队西进经独树镇激战突破封锁，抵达陕南庾家河后创\n建鄂豫陕革命根据地。后西进甘肃天水，回转途中于四坡村迎击敌军。1935\n年9月抵达陕甘根据地，与陕北红军会师，完成长征。全程途经豫、鄂、陕\n、甘四省。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 36.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 87.96834457295435,
+          "x": 689.957,
+          "y": 536.3539999999999
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 90.0,
+        "z_value": 38.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 185.30454545454546,
+          "x": 326.22,
+          "y": 27.06
+        },
+        "text": "中国工农红军第二十五军长征路线图",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 35.0
+      }
+    },
+    "layout": "红二十五军长征路线图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 594.0,
+      "width": 841.0
+    }
+  },
+  "layout_name": "红二十五军长征路线图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "1be55f16-173a-4825-9cce-7b8453a1b436",
+  "snapshot_id": "55912c70ea244961a3d50eca07ebe751"
+}

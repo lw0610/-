@@ -1,0 +1,1709 @@
+{
+  "actors": [
+    {
+      "actor_id": "ACT_FRIENDLY",
+      "aliases": [],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "E001",
+        "E005"
+      ],
+      "name": "友方部队（红二十五军）"
+    },
+    {
+      "actor_id": "ACT_ENEMY",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "E007"
+      ],
+      "name": "敌方部队"
+    }
+  ],
+  "callouts": [
+    {
+      "anchor_ref": "SE_SMX",
+      "anchor_ref_type": "spatial_entity",
+      "body": "红二十五军长征途经三门峡卢氏，在此宿营、休整，军部旧址所在地，是长征精神重要纪念地三门峡市文化广电和旅游局",
+      "callout_id": "CALLOUT_SMX",
+      "image_enabled": true,
+      "image_path": "/home/shared-user/研究生/QGIS-agent/数据/路线数据/henan_route_dataset_v2_better_controls/images/sanmenxia.png",
+      "leader_style": "double",
+      "preferred_side": "above",
+      "priority": 10,
+      "template": "image_top_text_bottom",
+      "title": "红二十五军长征纪念馆",
+      "width_mm": 30
+    },
+    {
+      "anchor_ref": "SE_LY",
+      "anchor_ref_type": "spatial_entity",
+      "body": "红二十五军长征途经洛阳南部山区，留有多处战斗与宿营遗址。",
+      "callout_id": "CALLOUT_LY",
+      "image_enabled": true,
+      "image_path": "/home/shared-user/研究生/QGIS-agent/数据/路线数据/henan_route_dataset_v2_better_controls/images/luoyang.png",
+      "leader_style": "double",
+      "preferred_side": "left",
+      "priority": 10,
+      "template": "image_top_text_bottom",
+      "title": "洛阳红25军长征纪念地",
+      "width_mm": 30
+    },
+    {
+      "anchor_ref": "SE_ZZ",
+      "anchor_ref_type": "spatial_entity",
+      "body": "纪念 1923 年京汉铁路工人大罢工，是中国工人运动重要里程碑，郑州红色地标。",
+      "callout_id": "CALLOUT_ZZ",
+      "image_enabled": true,
+      "image_path": "/home/shared-user/研究生/QGIS-agent/数据/路线数据/henan_route_dataset_v2_better_controls/images/zhengzhou.png",
+      "leader_style": "double",
+      "preferred_side": "upper_right",
+      "priority": 10,
+      "template": "image_top_text_bottom",
+      "title": "郑州二七纪念塔",
+      "width_mm": 30
+    },
+    {
+      "anchor_ref": "SE_XC",
+      "anchor_ref_type": "spatial_entity",
+      "body": "纪念许昌革命先烈，陈列抗战、解放战争时期文物与事迹。",
+      "callout_id": "CALLOUT_XC",
+      "image_enabled": true,
+      "image_path": "/home/shared-user/研究生/QGIS-agent/数据/路线数据/henan_route_dataset_v2_better_controls/images/xuchang.png",
+      "leader_style": "double",
+      "preferred_side": "lower_right",
+      "priority": 10,
+      "template": "image_top_text_bottom",
+      "title": "许昌革命烈士纪念馆",
+      "width_mm": 30
+    },
+    {
+      "anchor_ref": "SE_NY",
+      "anchor_ref_type": "spatial_entity",
+      "body": "桐柏是鄂豫皖、豫西、桐柏山三大根据地交汇地，中原军区旧址所在地。",
+      "callout_id": "CALLOUT_NY",
+      "image_enabled": true,
+      "image_path": "/home/shared-user/研究生/QGIS-agent/数据/路线数据/henan_route_dataset_v2_better_controls/images/nanyang.png",
+      "leader_style": "double",
+      "preferred_side": "lower_left",
+      "priority": 10,
+      "template": "image_top_text_bottom",
+      "title": "南阳桐柏革命纪念馆",
+      "width_mm": 30
+    }
+  ],
+  "events": [
+    {
+      "actor_refs": [],
+      "confidence": 0.95,
+      "description": "友方主线第一段起点出发",
+      "event_id": "EVT_DEPART_SMX",
+      "event_type": "departure",
+      "evidence_refs": [
+        "E001"
+      ],
+      "location_ref": "SE_SMX",
+      "name": "三门峡出发"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 0.9,
+      "description": "开封发生战斗，使用战斗符号",
+      "event_id": "EVT_BATTLE_KF",
+      "event_type": "battle",
+      "evidence_refs": [
+        "E009"
+      ],
+      "location_ref": "SE_KF",
+      "name": "开封战斗"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 0.9,
+      "description": "洛阳是重要会合节点，多条路线交汇",
+      "event_id": "EVT_MEETING_LY",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "E009"
+      ],
+      "location_ref": "SE_LY",
+      "name": "洛阳会合"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 0.95,
+      "description": "敌方两路在郑州汇合，郑州是重要会合节点",
+      "event_id": "EVT_MEETING_ZZ",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "E008",
+        "E009"
+      ],
+      "location_ref": "SE_ZZ",
+      "name": "郑州会合"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 0.9,
+      "description": "平顶山是重要会合节点，分叉连接点",
+      "event_id": "EVT_MEETING_PDS",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "E009"
+      ],
+      "location_ref": "SE_PDS",
+      "name": "平顶山会合"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 0.9,
+      "description": "南阳是重要会合节点，分叉路线主路径终点",
+      "event_id": "EVT_MEETING_NY",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "E009"
+      ],
+      "location_ref": "SE_NY",
+      "name": "南阳会合"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E001",
+      "quote": "第一段 R_MAIN_01 从三门峡（111.194，34.777）出发，依次经过陕州（111.104，34.721）、渑池（111.762，34.767）、义马（111.874，34.747）、新安（112.132，34.728），到达洛阳（112.454，34.619）。"
+    },
+    {
+      "evidence_id": "E002",
+      "quote": "第二段 R_MAIN_02 从洛阳出发，依次经过偃师（112.789，34.727）、巩义（112.972，34.754）、荥阳（113.383，34.787），到达郑州（113.625，34.747）。"
+    },
+    {
+      "evidence_id": "E003",
+      "quote": "第三段 R_MAIN_03 从郑州出发，依次经过中牟（114.022，34.718）、开封（114.307，34.798）、尉氏（114.193，34.411）、通许（114.467，34.480）、杞县（114.782，34.550）、兰考（114.821，34.823）、民权（115.148，34.648）、宁陵（115.314，34.455），到达商丘（115.657，34.415）。"
+    },
+    {
+      "evidence_id": "E004",
+      "quote": "第四段 R_MAIN_04 从商丘出发，依次经过虞城（115.863，34.400）、夏邑（116.131，34.237），到达永城（116.449，33.929）。"
+    },
+    {
+      "evidence_id": "E005",
+      "quote": "友方分叉路线 R_BRANCH_01 的主路径从洛阳出发，依次经过伊川（112.425，34.421）、汝阳（112.473，34.154）、汝州（112.844，34.167）、宝丰（113.054，33.869）、平顶山（113.192，33.766）、叶县（113.357，33.626）、方城（113.010，33.255），到达南阳（112.529，32.990）。"
+    },
+    {
+      "evidence_id": "E006",
+      "quote": "支路从平顶山向外分出，依次经过鲁山（112.906，33.738）、南召（112.429，33.490）、镇平（112.234，33.033），到达内乡（111.849，33.044）。"
+    },
+    {
+      "evidence_id": "E007",
+      "quote": "敌方多起点路线 R_ENEMY_01 有两条进入郑州的起点支路。第一条从新乡（113.927，35.303）出发，经获嘉（113.657，35.260）、原阳（113.940，35.067）后汇入郑州。第二条从焦作（113.241，35.215）出发，经修武（113.447，35.223）、武陟（113.397，35.099）、荥泽（113.454，34.889）后汇入郑州。"
+    },
+    {
+      "evidence_id": "E008",
+      "quote": "两路在郑州汇合后形成共同主路径，再从郑州依次经过新密（113.391，34.539）、登封（113.030，34.459）、巩义（112.972，34.754），最后到达洛阳。"
+    },
+    {
+      "evidence_id": "E009",
+      "quote": "三门峡是出发点，使用出发旗标；开封发生战斗，使用战斗符号；洛阳、郑州、平顶山和南阳是重要会合节点，使用会合符号；商丘、永城和内乡使用汇集点符号。"
+    },
+    {
+      "evidence_id": "E010",
+      "quote": "新乡、获嘉、原阳、焦作、修武、武陟、荥泽、新密和登封属于敌方路线，使用敌方节点符号。"
+    },
+    {
+      "evidence_id": "E011",
+      "quote": "另在许昌（113.852，34.035）设置会合点符号和图文标注，但许昌不属于上述六条当前启用的路线"
+    },
+    {
+      "evidence_id": "E012",
+      "quote": "豫西节点区（112.180，34.610）、豫中节点区（113.650，34.500）、豫东节点区（115.300，34.550）和豫南节点区（112.650，33.150）只作为带基地符号的区域背景标注"
+    },
+    {
+      "evidence_id": "E013",
+      "quote": "第一处图文标注锚定三门峡，优先放在锚点上方。"
+    },
+    {
+      "evidence_id": "E014",
+      "quote": "第二处图文标注锚定洛阳，优先放在锚点左侧。"
+    },
+    {
+      "evidence_id": "E015",
+      "quote": "第三处图文标注锚定郑州，优先放在锚点右上方。"
+    },
+    {
+      "evidence_id": "E016",
+      "quote": "第四处图文标注锚定许昌，优先放在锚点右下方。"
+    },
+    {
+      "evidence_id": "E017",
+      "quote": "第五处图文标注锚定南阳，优先放在锚点左下方。"
+    },
+    {
+      "evidence_id": "E018",
+      "quote": "全文坐标采用 EPSG:4326"
+    },
+    {
+      "evidence_id": "E019",
+      "quote": "其余路线控制点使用普通经过点符号。"
+    }
+  ],
+  "output_constraints": {
+    "self_intersection_policy": "allow_with_overpass"
+  },
+  "point_presentations": [
+    {
+      "anchor_ref": "SE_SMX",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_SMX",
+      "priority": 10,
+      "symbol_type": "start_flag",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_KF",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_KF",
+      "priority": 10,
+      "symbol_type": "battle",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_LY",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_LY",
+      "priority": 10,
+      "symbol_type": "meeting",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_ZZ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_ZZ",
+      "priority": 10,
+      "symbol_type": "meeting",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_PDS",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_PDS",
+      "priority": 10,
+      "symbol_type": "meeting",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_NY",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_NY",
+      "priority": 10,
+      "symbol_type": "meeting",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_SQ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_SQ",
+      "priority": 8,
+      "symbol_type": "rendezvous",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YC2",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YC2",
+      "priority": 8,
+      "symbol_type": "rendezvous",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_NX",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_NX",
+      "priority": 8,
+      "symbol_type": "rendezvous",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_XX",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_XX",
+      "priority": 5,
+      "symbol_type": "enemy_node",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_HJ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_HJ",
+      "priority": 5,
+      "symbol_type": "enemy_node",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YY",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YY",
+      "priority": 5,
+      "symbol_type": "enemy_node",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_JZ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_JZ",
+      "priority": 5,
+      "symbol_type": "enemy_node",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_XW",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_XW",
+      "priority": 5,
+      "symbol_type": "enemy_node",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_WZ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_WZ",
+      "priority": 5,
+      "symbol_type": "enemy_node",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_XZ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_XZ",
+      "priority": 5,
+      "symbol_type": "enemy_node",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_XM",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_XM",
+      "priority": 5,
+      "symbol_type": "enemy_node",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_DF",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_DF",
+      "priority": 5,
+      "symbol_type": "enemy_node",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_XC",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_XC",
+      "priority": 8,
+      "symbol_type": "meeting",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YXQ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YXQ",
+      "priority": 3,
+      "symbol_type": "base",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YZQ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YZQ",
+      "priority": 3,
+      "symbol_type": "base",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YDQ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YDQ",
+      "priority": 3,
+      "symbol_type": "base",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YNQ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YNQ",
+      "priority": 3,
+      "symbol_type": "base",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_SZ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_SZ",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_MC",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_MC",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YM",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YM",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_XA",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_XA",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YS",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YS",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_GY",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_GY",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_XY",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_XY",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_ZM",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_ZM",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_WS",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_WS",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_TX",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_TX",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_QX",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_QX",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_LK",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_LK",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_MQ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_MQ",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_NL",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_NL",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YC",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YC",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_XY2",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_XY2",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YC3",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YC3",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_RY",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_RY",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_RZ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_RZ",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_BF",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_BF",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_YX",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_YX",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_FC",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_FC",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_LS",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_LS",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_NZ",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_NZ",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_ZP",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_ZP",
+      "priority": 1,
+      "symbol_type": "waypoint",
+      "visible": true
+    }
+  ],
+  "routes": [
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "E001"
+      ],
+      "name": "友方主线第一段（三门峡—洛阳）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "SE_SMX",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_SZ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_MC",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_YM",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_XA",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_LY",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "R_MAIN_01_MAIN",
+          "role": "main"
+        }
+      ],
+      "route_id": "R_MAIN_01",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "E002"
+      ],
+      "name": "友方主线第二段（洛阳—郑州）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "SE_LY",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_YS",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_GY",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_XY",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_ZZ",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "R_MAIN_02_MAIN",
+          "role": "main"
+        }
+      ],
+      "route_id": "R_MAIN_02",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "E003"
+      ],
+      "name": "友方主线第三段（郑州—商丘）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "SE_ZZ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_ZM",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_KF",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_WS",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_TX",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_QX",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_LK",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_MQ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_NL",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_SQ",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "R_MAIN_03_MAIN",
+          "role": "main"
+        }
+      ],
+      "route_id": "R_MAIN_03",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "E004"
+      ],
+      "name": "友方主线第四段（商丘—永城）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "SE_SQ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_YC",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_XY2",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_YC2",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "R_MAIN_04_MAIN",
+          "role": "main"
+        }
+      ],
+      "route_id": "R_MAIN_04",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "E005",
+        "E006"
+      ],
+      "name": "友方分叉路线（洛阳—南阳/内乡）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "SE_LY",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_YC3",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_RY",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_RZ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_BF",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_PDS",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_YX",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_FC",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_NY",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "R_BRANCH_01_MAIN",
+          "role": "main"
+        },
+        {
+          "attach_ref": "SE_PDS",
+          "direction": "away_from_attach",
+          "nodes": [
+            {
+              "ref_id": "SE_LS",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_NZ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_ZP",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_NX",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "R_BRANCH_01_BRANCH",
+          "role": "branch"
+        }
+      ],
+      "route_id": "R_BRANCH_01",
+      "side": "friendly",
+      "style_ref": "friendly_branch_red",
+      "topology": "branch"
+    },
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "E007",
+        "E008"
+      ],
+      "name": "敌方多起点路线（新乡/焦作—洛阳）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "SE_ZZ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_XM",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_DF",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_GY",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_LY",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "R_ENEMY_01_MAIN",
+          "role": "main"
+        },
+        {
+          "attach_ref": "SE_ZZ",
+          "direction": "toward_attach",
+          "nodes": [
+            {
+              "ref_id": "SE_XX",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_HJ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_YY",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "R_ENEMY_01_INCOMING_1",
+          "role": "incoming"
+        },
+        {
+          "attach_ref": "SE_ZZ",
+          "direction": "toward_attach",
+          "nodes": [
+            {
+              "ref_id": "SE_JZ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_XW",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_WZ",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_XZ",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "R_ENEMY_01_INCOMING_2",
+          "role": "incoming"
+        }
+      ],
+      "route_id": "R_ENEMY_01",
+      "side": "enemy",
+      "style_ref": "enemy_multi_start_blue",
+      "topology": "multi_start"
+    }
+  ],
+  "schema_version": "1.0",
+  "spatial_entities": [
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_SMX",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E001",
+        "E009",
+        "E013"
+      ],
+      "factual": true,
+      "lat": 34.777,
+      "lon": 111.194,
+      "map_role": "route_node",
+      "name": "三门峡"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_SZ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E001"
+      ],
+      "factual": true,
+      "lat": 34.721,
+      "lon": 111.104,
+      "map_role": "route_node",
+      "name": "陕州"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_MC",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E001"
+      ],
+      "factual": true,
+      "lat": 34.767,
+      "lon": 111.762,
+      "map_role": "route_node",
+      "name": "渑池"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_YM",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E001"
+      ],
+      "factual": true,
+      "lat": 34.747,
+      "lon": 111.874,
+      "map_role": "route_node",
+      "name": "义马"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_XA",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E001"
+      ],
+      "factual": true,
+      "lat": 34.728,
+      "lon": 112.132,
+      "map_role": "route_node",
+      "name": "新安"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_LY",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E001",
+        "E002",
+        "E005",
+        "E008",
+        "E009",
+        "E014"
+      ],
+      "factual": true,
+      "lat": 34.619,
+      "lon": 112.454,
+      "map_role": "route_node",
+      "name": "洛阳"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_YS",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E002"
+      ],
+      "factual": true,
+      "lat": 34.727,
+      "lon": 112.789,
+      "map_role": "route_node",
+      "name": "偃师"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_GY",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E002",
+        "E008"
+      ],
+      "factual": true,
+      "lat": 34.754,
+      "lon": 112.972,
+      "map_role": "route_node",
+      "name": "巩义"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_XY",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E002"
+      ],
+      "factual": true,
+      "lat": 34.787,
+      "lon": 113.383,
+      "map_role": "route_node",
+      "name": "荥阳"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_ZZ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E002",
+        "E003",
+        "E007",
+        "E008",
+        "E009",
+        "E015"
+      ],
+      "factual": true,
+      "lat": 34.747,
+      "lon": 113.625,
+      "map_role": "route_node",
+      "name": "郑州"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_ZM",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E003"
+      ],
+      "factual": true,
+      "lat": 34.718,
+      "lon": 114.022,
+      "map_role": "route_node",
+      "name": "中牟"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_KF",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E003",
+        "E009"
+      ],
+      "factual": true,
+      "lat": 34.798,
+      "lon": 114.307,
+      "map_role": "route_node",
+      "name": "开封"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_WS",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E003"
+      ],
+      "factual": true,
+      "lat": 34.411,
+      "lon": 114.193,
+      "map_role": "route_node",
+      "name": "尉氏"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_TX",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E003"
+      ],
+      "factual": true,
+      "lat": 34.48,
+      "lon": 114.467,
+      "map_role": "route_node",
+      "name": "通许"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_QX",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E003"
+      ],
+      "factual": true,
+      "lat": 34.55,
+      "lon": 114.782,
+      "map_role": "route_node",
+      "name": "杞县"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_LK",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E003"
+      ],
+      "factual": true,
+      "lat": 34.823,
+      "lon": 114.821,
+      "map_role": "route_node",
+      "name": "兰考"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_MQ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E003"
+      ],
+      "factual": true,
+      "lat": 34.648,
+      "lon": 115.148,
+      "map_role": "route_node",
+      "name": "民权"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_NL",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E003"
+      ],
+      "factual": true,
+      "lat": 34.455,
+      "lon": 115.314,
+      "map_role": "route_node",
+      "name": "宁陵"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_SQ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E003",
+        "E004",
+        "E009"
+      ],
+      "factual": true,
+      "lat": 34.415,
+      "lon": 115.657,
+      "map_role": "route_node",
+      "name": "商丘"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_YC",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E004"
+      ],
+      "factual": true,
+      "lat": 34.4,
+      "lon": 115.863,
+      "map_role": "route_node",
+      "name": "虞城"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_XY2",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E004"
+      ],
+      "factual": true,
+      "lat": 34.237,
+      "lon": 116.131,
+      "map_role": "route_node",
+      "name": "夏邑"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_YC2",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E004",
+        "E009"
+      ],
+      "factual": true,
+      "lat": 33.929,
+      "lon": 116.449,
+      "map_role": "route_node",
+      "name": "永城"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_YC3",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E005"
+      ],
+      "factual": true,
+      "lat": 34.421,
+      "lon": 112.425,
+      "map_role": "route_node",
+      "name": "伊川"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_RY",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E005"
+      ],
+      "factual": true,
+      "lat": 34.154,
+      "lon": 112.473,
+      "map_role": "route_node",
+      "name": "汝阳"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_RZ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E005"
+      ],
+      "factual": true,
+      "lat": 34.167,
+      "lon": 112.844,
+      "map_role": "route_node",
+      "name": "汝州"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_BF",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E005"
+      ],
+      "factual": true,
+      "lat": 33.869,
+      "lon": 113.054,
+      "map_role": "route_node",
+      "name": "宝丰"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_PDS",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E005",
+        "E006",
+        "E009"
+      ],
+      "factual": true,
+      "lat": 33.766,
+      "lon": 113.192,
+      "map_role": "route_node",
+      "name": "平顶山"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_YX",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E005"
+      ],
+      "factual": true,
+      "lat": 33.626,
+      "lon": 113.357,
+      "map_role": "route_node",
+      "name": "叶县"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_FC",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E005"
+      ],
+      "factual": true,
+      "lat": 33.255,
+      "lon": 113.01,
+      "map_role": "route_node",
+      "name": "方城"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_NY",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E005",
+        "E009",
+        "E017"
+      ],
+      "factual": true,
+      "lat": 32.99,
+      "lon": 112.529,
+      "map_role": "route_node",
+      "name": "南阳"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_LS",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E006"
+      ],
+      "factual": true,
+      "lat": 33.738,
+      "lon": 112.906,
+      "map_role": "route_node",
+      "name": "鲁山"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_NZ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E006"
+      ],
+      "factual": true,
+      "lat": 33.49,
+      "lon": 112.429,
+      "map_role": "route_node",
+      "name": "南召"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_ZP",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E006"
+      ],
+      "factual": true,
+      "lat": 33.033,
+      "lon": 112.234,
+      "map_role": "route_node",
+      "name": "镇平"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_NX",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E006",
+        "E009"
+      ],
+      "factual": true,
+      "lat": 33.044,
+      "lon": 111.849,
+      "map_role": "route_node",
+      "name": "内乡"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_XX",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E007",
+        "E010"
+      ],
+      "factual": true,
+      "lat": 35.303,
+      "lon": 113.927,
+      "map_role": "route_node",
+      "name": "新乡"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_HJ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E007",
+        "E010"
+      ],
+      "factual": true,
+      "lat": 35.26,
+      "lon": 113.657,
+      "map_role": "route_node",
+      "name": "获嘉"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_YY",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E007",
+        "E010"
+      ],
+      "factual": true,
+      "lat": 35.067,
+      "lon": 113.94,
+      "map_role": "route_node",
+      "name": "原阳"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_JZ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E007",
+        "E010"
+      ],
+      "factual": true,
+      "lat": 35.215,
+      "lon": 113.241,
+      "map_role": "route_node",
+      "name": "焦作"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_XW",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E007",
+        "E010"
+      ],
+      "factual": true,
+      "lat": 35.223,
+      "lon": 113.447,
+      "map_role": "route_node",
+      "name": "修武"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_WZ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E007",
+        "E010"
+      ],
+      "factual": true,
+      "lat": 35.099,
+      "lon": 113.397,
+      "map_role": "route_node",
+      "name": "武陟"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_XZ",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E007",
+        "E010"
+      ],
+      "factual": true,
+      "lat": 34.889,
+      "lon": 113.454,
+      "map_role": "route_node",
+      "name": "荥泽"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_XM",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E008",
+        "E010"
+      ],
+      "factual": true,
+      "lat": 34.539,
+      "lon": 113.391,
+      "map_role": "route_node",
+      "name": "新密"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "entity_id": "SE_DF",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E008",
+        "E010"
+      ],
+      "factual": true,
+      "lat": 34.459,
+      "lon": 113.03,
+      "map_role": "route_node",
+      "name": "登封"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "description": "独立会合点符号与图文标注锚点，不属于任何启用路线",
+      "entity_id": "SE_XC",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E011",
+        "E016"
+      ],
+      "factual": true,
+      "lat": 34.035,
+      "lon": 113.852,
+      "map_role": "event_anchor",
+      "name": "许昌"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "description": "带基地符号的区域背景标注，不属于任何行军路线",
+      "entity_id": "SE_YXQ",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "E012"
+      ],
+      "factual": true,
+      "lat": 34.61,
+      "lon": 112.18,
+      "map_role": "background",
+      "name": "豫西节点区"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "description": "带基地符号的区域背景标注，不属于任何行军路线",
+      "entity_id": "SE_YZQ",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "E012"
+      ],
+      "factual": true,
+      "lat": 34.5,
+      "lon": 113.65,
+      "map_role": "background",
+      "name": "豫中节点区"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "description": "带基地符号的区域背景标注，不属于任何行军路线",
+      "entity_id": "SE_YDQ",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "E012"
+      ],
+      "factual": true,
+      "lat": 34.55,
+      "lon": 115.3,
+      "map_role": "background",
+      "name": "豫东节点区"
+    },
+    {
+      "coordinate_confidence": 1,
+      "coordinate_source": "source_text",
+      "description": "带基地符号的区域背景标注，不属于任何行军路线",
+      "entity_id": "SE_YNQ",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "E012"
+      ],
+      "factual": true,
+      "lat": 33.15,
+      "lon": 112.65,
+      "map_role": "background",
+      "name": "豫南节点区"
+    }
+  ],
+  "task": {
+    "input_crs": "EPSG:4326",
+    "map_type": "marching_route",
+    "task_id": "task_henan_route_v3",
+    "title": "豫西—豫东行军路线专题图（友方主线+分叉+敌方多起点汇入）"
+  }
+}

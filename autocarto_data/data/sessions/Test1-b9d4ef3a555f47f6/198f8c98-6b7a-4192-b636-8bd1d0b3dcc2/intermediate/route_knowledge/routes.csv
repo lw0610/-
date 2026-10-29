@@ -1,0 +1,14 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+r_initial,长征初期：何家冲到庾家河,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r_wheel,鄂豫陕大回旋,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r_counter1,第一次反围剿：蔡玉窑文公岭转战,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r_counter2,第一次反围剿：西进东返（独立行动）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r_second,第二次反围剿转战,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r_outer,外线行动：袁家沟口到沣峪口,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r_westnorth,西征北上：沣峪口到永坪,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+r_enemy_40_115,敌第四十军第一一五旅：方城到七里岗,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+r_enemy_cavalry,敌骑兵部队：叶县到保安寨,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+r_enemy_60_zhu,敌第六十师：五里川到朱阳关封锁,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+r_enemy_60_360,敌第三六〇团：鸡头关奔袭庾家河,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+r_enemy_35,敌第三十五师：隆德到板桥镇追击,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+r_enemy_110,东北军第一一〇师：甘泉到劳山推进,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass

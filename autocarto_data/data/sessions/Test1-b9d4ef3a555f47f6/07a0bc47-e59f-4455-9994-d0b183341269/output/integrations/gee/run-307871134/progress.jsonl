@@ -1,0 +1,96 @@
+{"type": "workflow_progress", "stage_id": 1, "stage": "Loading region: wuhan_bounds.geojson", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 1, "stage": "Loading region: wuhan_bounds.geojson", "phase": "completed", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "单日期影像筛选与覆盖检查", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 3, "stage": "按日期和平均云量筛选候选影像", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 3, "stage": "按日期和平均云量筛选候选影像", "phase": "completed", "elapsed_seconds": 12}
+{"type": "workflow_progress", "stage_id": 4, "stage": "检查候选 1/10：2026-01-13", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 5, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 5, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 14}
+{"type": "workflow_progress", "stage_id": 4, "stage": "检查候选 1/10：2026-01-13", "phase": "completed", "elapsed_seconds": 14}
+{"type": "workflow_progress", "stage_id": 6, "stage": "检查候选 2/10：2025-11-14", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 7, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "单日期影像筛选与覆盖检查", "phase": "running", "elapsed_seconds": 30}
+{"type": "workflow_progress", "stage_id": 6, "stage": "检查候选 2/10：2025-11-14", "phase": "running", "elapsed_seconds": 30}
+{"type": "workflow_progress", "stage_id": 7, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 30}
+{"type": "workflow_progress", "stage_id": 7, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 31}
+{"type": "workflow_progress", "stage_id": 6, "stage": "检查候选 2/10：2025-11-14", "phase": "completed", "elapsed_seconds": 31}
+{"type": "workflow_progress", "stage_id": 8, "stage": "检查候选 3/10：2025-10-28", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 9, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "单日期影像筛选与覆盖检查", "phase": "running", "elapsed_seconds": 60}
+{"type": "workflow_progress", "stage_id": 9, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 16}
+{"type": "workflow_progress", "stage_id": 8, "stage": "检查候选 3/10：2025-10-28", "phase": "completed", "elapsed_seconds": 16}
+{"type": "workflow_progress", "stage_id": 10, "stage": "检查候选 4/10：2025-11-19", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 11, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 11, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 10}
+{"type": "workflow_progress", "stage_id": 10, "stage": "检查候选 4/10：2025-11-19", "phase": "completed", "elapsed_seconds": 10}
+{"type": "workflow_progress", "stage_id": 12, "stage": "检查候选 5/10：2025-12-27", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 13, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "单日期影像筛选与覆盖检查", "phase": "running", "elapsed_seconds": 90}
+{"type": "workflow_progress", "stage_id": 13, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 10}
+{"type": "workflow_progress", "stage_id": 12, "stage": "检查候选 5/10：2025-12-27", "phase": "completed", "elapsed_seconds": 10}
+{"type": "workflow_progress", "stage_id": 14, "stage": "检查候选 6/10：2025-12-17", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 15, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 15, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 17}
+{"type": "workflow_progress", "stage_id": 14, "stage": "检查候选 6/10：2025-12-17", "phase": "completed", "elapsed_seconds": 17}
+{"type": "workflow_progress", "stage_id": 16, "stage": "检查候选 7/10：2025-11-21", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 17, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "单日期影像筛选与覆盖检查", "phase": "running", "elapsed_seconds": 120}
+{"type": "workflow_progress", "stage_id": 17, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 13}
+{"type": "workflow_progress", "stage_id": 16, "stage": "检查候选 7/10：2025-11-21", "phase": "completed", "elapsed_seconds": 13}
+{"type": "workflow_progress", "stage_id": 18, "stage": "检查候选 8/10：2025-11-29", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 19, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 19, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 9}
+{"type": "workflow_progress", "stage_id": 18, "stage": "检查候选 8/10：2025-11-29", "phase": "completed", "elapsed_seconds": 9}
+{"type": "workflow_progress", "stage_id": 20, "stage": "检查候选 9/10：2026-01-08", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 21, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 21, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 9}
+{"type": "workflow_progress", "stage_id": 20, "stage": "检查候选 9/10：2026-01-08", "phase": "completed", "elapsed_seconds": 9}
+{"type": "workflow_progress", "stage_id": 22, "stage": "检查候选 10/10：2026-02-02", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 23, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "单日期影像筛选与覆盖检查", "phase": "running", "elapsed_seconds": 150}
+{"type": "workflow_progress", "stage_id": 23, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 12}
+{"type": "workflow_progress", "stage_id": 22, "stage": "检查候选 10/10：2026-02-02", "phase": "completed", "elapsed_seconds": 12}
+{"type": "workflow_progress", "stage_id": 24, "stage": "记录所选观测场景", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 24, "stage": "记录所选观测场景", "phase": "completed", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "单日期影像筛选与覆盖检查", "phase": "completed", "elapsed_seconds": 159}
+{"type": "workflow_progress", "stage_id": 25, "stage": "下载影像到本地", "phase": "running", "elapsed_seconds": 0}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "preparing", "percent": null}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 0.0, "completed_bytes": 0, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 0.29566623712960605, "completed_bytes": 3871744, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 1.3733114140360068, "completed_bytes": 17983488, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 2.155290353812801, "completed_bytes": 28223488, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 3.232935530719202, "completed_bytes": 42335232, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 4.014914470495996, "completed_bytes": 52575232, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 4.606246944755209, "completed_bytes": 60318720, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 4.901913181884814, "completed_bytes": 64190464, "total_bytes": 1309498182}
+{"type": "workflow_progress", "stage_id": 25, "stage": "下载影像到本地", "phase": "running", "elapsed_seconds": 30}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 5.683892121661609, "completed_bytes": 74430464, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 6.76153729856801, "completed_bytes": 88542208, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 7.543516238344805, "completed_bytes": 98782208, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 7.83918247547441, "completed_bytes": 102653952, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 9.403140355028, "completed_bytes": 123133952, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 9.698806592157606, "completed_bytes": 127005696, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 10.776451769064007, "completed_bytes": 141117440, "total_bytes": 1309498182}
+{"type": "workflow_progress", "stage_id": 25, "stage": "下载影像到本地", "phase": "running", "elapsed_seconds": 60}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 11.072118006193612, "completed_bytes": 144989184, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 12.931742122876807, "completed_bytes": 169340928, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 13.227408360006413, "completed_bytes": 173212672, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 13.52307459713602, "completed_bytes": 177084416, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 14.305053536912814, "completed_bytes": 187324416, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 15.08703247668961, "completed_bytes": 197564416, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 15.869011416466403, "completed_bytes": 207804416, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 16.460343890725614, "completed_bytes": 215547904, "total_bytes": 1309498182}
+{"type": "workflow_progress", "stage_id": 25, "stage": "下载影像到本地", "phase": "running", "elapsed_seconds": 90}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 16.756010127855223, "completed_bytes": 219419648, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 17.537989067632015, "completed_bytes": 229659648, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 18.615634244538416, "completed_bytes": 243771392, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 19.693279421444817, "completed_bytes": 257883136, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 20.475258361221613, "completed_bytes": 268123136, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 20.77092459835122, "completed_bytes": 271994880, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 21.066590835480824, "completed_bytes": 275866624, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 22.63054871503441, "completed_bytes": 296346624, "total_bytes": 1309498182}
+{"type": "workflow_progress", "stage_id": 25, "stage": "下载影像到本地", "phase": "running", "elapsed_seconds": 120}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 23.708193891940812, "completed_bytes": 310458368, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 24.490172831717608, "completed_bytes": 320698368, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 24.785839068847213, "completed_bytes": 324570112, "total_bytes": 1309498182}
+{"type": "download_progress", "download_id": 1, "filename": "wuhan_s2_2025-11-29_rgb10m.tif", "phase": "downloading", "percent": 25.08150530597682, "completed_bytes": 328441856, "total_bytes": 1309498182}

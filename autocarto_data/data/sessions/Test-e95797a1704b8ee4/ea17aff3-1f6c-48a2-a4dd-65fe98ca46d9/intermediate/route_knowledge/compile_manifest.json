@@ -1,0 +1,22 @@
+{
+  "counts": {
+    "callouts.csv": 5,
+    "places.csv": 48,
+    "points.csv": 48,
+    "route_paths.csv": 50,
+    "routes.csv": 6,
+    "symbol_mapping.csv": 8
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "schema_version": "1.0",
+  "task_id": "task_henan_route_v3",
+  "title": "豫西—豫东行军路线专题图（友方主线+分叉+敌方多起点汇入）",
+  "warnings": []
+}

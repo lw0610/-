@@ -1,0 +1,143 @@
+{
+  "created_at": "2026-08-08T05:22:06.739630+00:00",
+  "images": {
+    "candidate": {
+      "byte_size": 7590782,
+      "dpi": {
+        "source": "png_pHYs",
+        "x": 72.009,
+        "y": 72.009
+      },
+      "height": 2416,
+      "mime_type": "image/png",
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-e95797a1704b8ee4/ea17aff3-1f6c-48a2-a4dd-65fe98ca46d9/exports/河南省行军路线综合图_初版_quality_20260808T052035Z_8a1a84ba_candidate.png",
+      "role": "candidate",
+      "sha256": "a5ef0407edd5176918668a0d08a5236d41aeb740ae1a837750fab077fe8a4c36",
+      "width": 3424
+    },
+    "final": {
+      "metadata": {
+        "byte_size": 3774398,
+        "dpi": {
+          "source": "png_pHYs",
+          "x": 299.999,
+          "y": 299.999
+        },
+        "height": 4960,
+        "mime_type": "image/png",
+        "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-e95797a1704b8ee4/ea17aff3-1f6c-48a2-a4dd-65fe98ca46d9/exports/河南省行军路线综合图_初版_quality_20260808T052035Z_8a1a84ba_final.png",
+        "role": "final",
+        "sha256": "3e0915165370f8ce9f60325905d02f05a544c6a0cb317716a972ea52244a97b4",
+        "width": 7015
+      },
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-e95797a1704b8ee4/ea17aff3-1f6c-48a2-a4dd-65fe98ca46d9/exports/河南省行军路线综合图_初版_quality_20260808T052035Z_8a1a84ba_final.png",
+      "role": "final"
+    },
+    "original": {
+      "byte_size": 3673360,
+      "dpi": {
+        "source": "png_pHYs",
+        "x": 299.999,
+        "y": 299.999
+      },
+      "height": 4960,
+      "mime_type": "image/png",
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-e95797a1704b8ee4/ea17aff3-1f6c-48a2-a4dd-65fe98ca46d9/exports/河南省行军路线综合图_初版_quality_20260808T052035Z_8a1a84ba_original.png",
+      "role": "original",
+      "sha256": "ceb04a0b4a6841931a8c2294829dbf88687d4d6a88519511a538a1d7839553ea",
+      "source_path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-e95797a1704b8ee4/ea17aff3-1f6c-48a2-a4dd-65fe98ca46d9/exports/河南省行军路线综合图_初版.png",
+      "width": 7015
+    }
+  },
+  "model": "gpt-image-2",
+  "request": {
+    "candidate_size": "3424x2416",
+    "output_format": "png",
+    "quality": "medium"
+  },
+  "review_context": {
+    "applied_suggestions": [
+      {
+        "instruction": "标题字号调整为8mm，字重设为Bold，字体使用SimHei",
+        "operation": "font_style",
+        "priority": "high",
+        "reason": "提升标题视觉层级与可读性",
+        "target": "title",
+        "target_item_ids": [
+          "title"
+        ]
+      },
+      {
+        "instruction": "图例content_margin设为8mm，统一行距",
+        "operation": "spacing",
+        "priority": "medium",
+        "reason": "优化图例内部间距与整体排版一致性",
+        "target": "legend",
+        "target_item_ids": [
+          "legend"
+        ]
+      },
+      {
+        "instruction": "数据综述文字设为2.8mm SimSun，宽度58mm自动换行",
+        "operation": "font_style",
+        "priority": "medium",
+        "reason": "改善综述文字排版与可读性",
+        "target": "overview",
+        "target_item_ids": [
+          "overview"
+        ]
+      },
+      {
+        "instruction": "新增#333333深灰色装饰边框",
+        "operation": "color",
+        "priority": "medium",
+        "reason": "增强图面整体框架感与视觉完整性",
+        "target": "decorative_border",
+        "target_item_ids": [
+          "decorative_border",
+          "decorative_border_v2"
+        ]
+      },
+      {
+        "instruction": "5处图文标注框已创建并定位到对应地理位置",
+        "operation": "move",
+        "priority": "high",
+        "reason": "补充关键地点的图文标注信息",
+        "target": "callouts",
+        "target_item_ids": [
+          "callout_sanmenxia",
+          "callout_luoyang",
+          "callout_zhengzhou",
+          "callout_xuchang",
+          "callout_nanyang"
+        ]
+      }
+    ],
+    "design_focus": "优化整体排版间距、标题层级、图例与数据综述的视觉平衡、配色协调性",
+    "layout_item_ids": {
+      "callouts": null,
+      "standard": {
+        "decorative_border": "decorative_border",
+        "legend": "legend",
+        "main_map": "main_map",
+        "north_arrow": "north_arrow",
+        "overview": "overview",
+        "scalebar": "scalebar",
+        "title": "title"
+      }
+    },
+    "locked_content": [
+      "主图范围与比例尺 (1:1,612,004)",
+      "底图8图层符号化样式",
+      "6条路线绘制与军标箭头（红色5个/蓝色1个）",
+      "48个控制点符号化（start_flag/battle/meeting/rendezvous/enemy_node/waypoint/base）",
+      "布局元素四角对齐位置",
+      "装饰边框尺寸与位置"
+    ],
+    "task_requirement": "制作\"河南省行军路线综合图\"，包含：6条行军路线（4条友方主线R_MAIN_01-04、1条友方分叉路线R_BRANCH_01、1条敌方多起点路线R_ENEMY_01）、48个控制点符号化（出发旗标、战斗符号、会合符号、汇集点符号、敌方节点符号、普通经过点符号、基地符号）、5处图文标注（image_enabled=true, image_top_text_bottom模板, 30mm宽, double双线引线）：三门峡-红二十五军长征纪念馆、洛阳-洛阳红25军长征纪念地、郑州-郑州二七纪念塔、许昌-许昌革命烈士纪念馆、南阳-南阳桐柏革命纪念馆、完整打印布局：主图、标题、图例、数据综述、比例尺、指北针、装饰边框、底图8图层"
+  },
+  "review_id": "20260808T052035Z_8a1a84ba",
+  "schema_version": "quality-feedback/v1",
+  "status": "final_ready",
+  "updated_at": "2026-08-08T05:27:50.972497+00:00"
+}
