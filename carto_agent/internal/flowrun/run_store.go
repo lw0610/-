@@ -107,7 +107,7 @@ func (s FileRunStore) MarkInterrupted(ctx context.Context, sessionDir string) ([
 		if err != nil {
 			return ids, err
 		}
-		if run.Status != "running" {
+		if run.CartoPlan == nil || run.Status != "running" {
 			continue
 		}
 		run.Status = "interrupted"

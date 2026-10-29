@@ -21,10 +21,15 @@ func TestStartMappingAcceptsSavedRevisionWithoutContentPrevalidation(t *testing.
 	server.knowledgeReviews = store
 	source := "已抽取原文"
 	hash := sha256.Sum256([]byte(source))
-	// Deliberately old protocol and incomplete content would fail prevalidation.
-	// The click still accepts the user's saved version; operational failures in
-	// the resumed task are a separate state transition, never a confirmation 422.
-	graph := knowledge.Graph{"routes": []any{}}
+	// Real but incomplete content remains usable: a known place need not have
+	// coordinates or an extracted route before accepting the saved revision.
+	// This deliberately old protocol would also fail full prevalidation; its
+	// operational failures belong to the resumed task. Entirely empty drafts
+	// are covered by the knowledge package's empty-extraction guard test.
+	graph := knowledge.Graph{
+		"routes":           []any{},
+		"spatial_entities": []any{map[string]any{"entity_id": "place:jiadi", "name": "甲地", "entity_kind": "real_place"}},
+	}
 	review, err := store.Create(knowledge.ReviewCreateInput{SessionID: "accept-content", SourceText: source, Contract: knowledge.Contract{ContractID: "legacy", SourceSHA256: hex.EncodeToString(hash[:]), JSONSchema: json.RawMessage(`{}`)}, OriginalResult: &knowledge.Result{Graph: graph}, Graph: graph})
 	if err != nil {
 		t.Fatal(err)

@@ -17,10 +17,19 @@ func TestDecodeModelIssuesReportsEveryInvalidQuestion(t *testing.T) {
 	if err == nil || issues != nil {
 		t.Fatalf("invalid response partially accepted: issues=%v err=%v", issues, err)
 	}
-	for _, want := range []string{"u1", "缺少对象", "u2", "原文未记载不能替代", "u3", "原文引用无效"} {
+	for _, want := range []string{"u2", "原文未记载不能替代", "u3", "原文引用无效"} {
 		if !strings.Contains(err.Error(), want) {
 			t.Fatalf("retry feedback missing %q: %v", want, err)
 		}
+	}
+}
+
+func TestGlobalSourceIssueDoesNotRequireInventedObject(t *testing.T) {
+	message := "原文未提供任何行军路线、地点或主体信息，无法构建知识图谱。"
+	rows := []modelIssue{{ID: "no_source", Kind: "route", Reason: "not_stated", Field: "paths", Message: message, SourceRefs: []string{"s1"}}}
+	issues, err := decodeModelIssues(rows, Graph{}, []EvidenceSource{{Ref: "s1", Text: "读取史料文件内容"}})
+	if err != nil || len(issues) != 1 || issues[0].Message != message || issues[0].Kind != "source" || len(issues[0].SubjectRefs) != 0 {
+		t.Fatalf("global source explanation was lost: %#v %v", issues, err)
 	}
 }
 

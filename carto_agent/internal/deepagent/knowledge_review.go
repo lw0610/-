@@ -3,6 +3,7 @@ package deepagent
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 
@@ -31,6 +32,7 @@ func init() {
 	schema.Register[map[string]int]()
 	schema.Register[[]any]()
 	schema.Register[[]map[string]any]()
+	schema.Register[[]knowledge.ReviewError]()
 }
 
 // WithKnowledgeReview enables the interactive review stage only for an actual
@@ -147,11 +149,24 @@ func KnowledgeReviewInfo(review *knowledge.Review) map[string]any {
 		}
 	}
 	counts["pending_issues"] = len(knowledge.ValidateReviewPending(review, review.Graph))
+	description := "可直接开始制图，也可以先修改抽取结果。"
+	if issues := knowledge.ValidateReviewPending(review, review.Graph); len(issues) > 0 {
+		description = issues[0].Message
+	} else if review.Status == knowledge.ReviewCompileFailed && len(review.Errors) > 0 {
+		description = review.Errors[0].Message
+	}
 	return map[string]any{
 		"type": "knowledge_review", "title": "知识抽取结果", "review_id": review.ReviewID,
 		"session_id": review.SessionID, "revision": review.Revision, "status": review.Status,
-		"summary": counts, "description": "可直接开始制图，也可以先修改抽取结果。",
+		"summary": counts, "description": description, "can_start": knowledge.HasExtractedContent(review.Graph),
+		"errors": review.View().Errors, "updated_at": review.UpdatedAt,
 	}
+}
+
+func knowledgeReviewUpdateEvent(agent string, info map[string]any) *adk.AgentEvent {
+	message := schema.AssistantMessage("", nil)
+	message.Extra = map[string]any{"knowledge_review_update": info}
+	return namedEvent(agent, adk.EventFromMessage(message, nil, schema.Assistant, ""))
 }
 
 func (a *knowledgeSubAgent) reviewInterrupt(ctx context.Context, review *knowledge.Review) *adk.AgentEvent {
@@ -189,20 +204,42 @@ func (a *knowledgeSubAgent) Resume(ctx context.Context, info *adk.ResumeInfo, _ 
 			fail(fmt.Errorf("核对版本未确认或已变化，不能使用过期版本制图"))
 			return
 		}
-		payload, err := a.compileReviewedKnowledge(ctx, store, review)
+		gen.Send(knowledgeReviewUpdateEvent(a.name, KnowledgeReviewInfo(review)))
+		payload, err := a.compileConfirmedKnowledge(ctx, store, review)
 		if err != nil {
-			updated, saveErr := store.Fail(review.SessionID, review.ReviewID, review.Revision, []knowledge.ReviewError{{Path: "$", Message: err.Error()}})
-			if saveErr != nil {
-				fail(fmt.Errorf("%v；保存失败状态: %w", err, saveErr))
+			var failure *knowledgeCompileFailure
+			if !errors.As(err, &failure) {
+				fail(err)
 				return
 			}
-			gen.Send(a.reviewInterrupt(ctx, updated))
+			info := KnowledgeReviewInfo(failure.review)
+			gen.Send(knowledgeReviewUpdateEvent(a.name, info))
+			encoded, _ := json.Marshal(failure.result())
+			gen.Send(namedEvent(a.name, adk.EventFromMessage(schema.AssistantMessage(string(encoded), nil), nil, schema.Assistant, "")))
 			return
 		}
+		gen.Send(knowledgeReviewUpdateEvent(a.name, payload["knowledge_review"].(map[string]any)))
 		encoded, _ := json.Marshal(map[string]any{"success": true, "data": payload})
 		gen.Send(namedEvent(a.name, adk.EventFromMessage(schema.AssistantMessage(string(encoded), nil), nil, schema.Assistant, "")))
 	}()
 	return iter
+}
+
+// A failed conversion returns to the orchestrator. Human confirmation concerns
+// the saved facts; correcting drawing parameters does not require a new review.
+func (a *knowledgeSubAgent) compileConfirmedKnowledge(ctx context.Context, store *knowledge.ReviewStore, review *knowledge.Review) (map[string]any, error) {
+	payload, err := a.compileReviewedKnowledge(ctx, store, review)
+	if err == nil {
+		return payload, nil
+	}
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
+	}
+	updated, saveErr := store.Fail(review.SessionID, review.ReviewID, review.Revision, []knowledge.ReviewError{{Path: "$", Message: err.Error()}})
+	if saveErr != nil {
+		return nil, fmt.Errorf("%v；保存失败状态: %w", err, saveErr)
+	}
+	return nil, &knowledgeCompileFailure{error: err, review: updated}
 }
 
 func (a *knowledgeSubAgent) compileReviewedKnowledge(ctx context.Context, store *knowledge.ReviewStore, review *knowledge.Review) (map[string]any, error) {
@@ -270,10 +307,11 @@ func (a *knowledgeSubAgent) compileReviewedKnowledge(ctx context.Context, store 
 	if err != nil {
 		return nil, err
 	}
-	payload["knowledge_review"] = map[string]any{"review_id": review.ReviewID, "revision": review.Revision, "status": "compiled"}
-	if _, err := store.Complete(review.SessionID, review.ReviewID, review.Revision, prepared, payload); err != nil {
+	completed, err := store.Complete(review.SessionID, review.ReviewID, review.Revision, prepared, payload)
+	if err != nil {
 		return nil, fmt.Errorf("数据表已生成，但已确认版本保存失败: %w", err)
 	}
+	payload["knowledge_review"] = KnowledgeReviewInfo(completed)
 	return payload, nil
 }
 

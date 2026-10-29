@@ -25,6 +25,15 @@ func (a OverpassAdapter) Fetch(ctx context.Context, r FetchRequest) (FetchResult
 	if r.Source == nil || r.Provide == nil || len(r.Extent.BBox) != 4 {
 		return FetchResult{}, fmt.Errorf("OSM 获取需要已确定的范围及来源")
 	}
+	if r.Progress != nil {
+		previous := osmdata.ProgressCallback(ctx)
+		ctx = osmdata.WithProgressCallback(ctx, func(p osmdata.Progress) {
+			if previous != nil {
+				previous(p)
+			}
+			r.Progress(Progress{Stage: p.Phase, Bytes: p.CompletedBytes, Total: p.TotalBytes, Percent: p.Percent, BytesPerSecond: p.BytesPerSecond, Message: p.Message})
+		})
+	}
 	invoke := a.Invoke
 	if invoke == nil {
 		invoke = osmdata.Invoke

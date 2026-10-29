@@ -118,15 +118,25 @@ func BuildStepMessage(step flow.StepPlan, run *RunState) (string, bool, error) {
 		upstreamText = ""
 	}
 	state := run.Steps[run.Cursor]
+	previousOutputs := ""
+	for i := len(state.Attempts) - 1; i >= 0; i-- {
+		if receipt := state.Attempts[i].Receipt; receipt != nil && len(receipt.Outputs) > 0 {
+			raw, _ := json.Marshal(receipt.Outputs)
+			previousOutputs = string(raw)
+			break
+		}
+	}
 	data := struct {
 		FlowName                                        string
 		Index, Total                                    int
 		Title, Instructions                             string
 		Rules, Resources, Inputs, Tools                 []string
 		Upstream, Completion, LastFailure, UserGuidance string
+		PreviousOutputs                                 string
 		Outputs                                         []flow.OutputDeclaration
 	}{
 		FlowName: run.Plan.Name, Index: step.Index, Total: len(run.Plan.Steps), Title: step.Title, Instructions: step.Instructions, Rules: run.Plan.Rules, Resources: resources, Inputs: inputs, Tools: step.SuggestedTools, Upstream: upstreamText, Completion: step.Completion, Outputs: step.ExpectedOutputs, LastFailure: state.LastFailure, UserGuidance: state.UserGuidance,
+		PreviousOutputs: previousOutputs,
 	}
 	// Old run snapshots predate enrichment metadata and retain their suggestions.
 	if step.Enrichment != "" && step.Enrichment != flow.StepEnrichmentReady {
@@ -136,5 +146,5 @@ func BuildStepMessage(step flow.StepPlan, run *RunState) (string, bool, error) {
 	if err = parsedStepTemplate.Execute(&buffer, data); err != nil {
 		return "", truncated, err
 	}
-	return strings.TrimSpace(buffer.String()), truncated, nil
+	return strings.TrimSpace(planStepContext(step, run) + buffer.String()), truncated, nil
 }

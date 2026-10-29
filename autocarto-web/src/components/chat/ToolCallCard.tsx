@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import MarkdownContent from './MarkdownContent'
-import { normalizeWorkflowToolStatus } from '@/lib/chat-message-utils'
+import { workflowToolStatusForDisplay } from '@/lib/chat-message-utils'
 import { WorkflowToolCard } from '@/types/message'
 import { formatTimestamp } from '@/lib/utils'
 import { cn } from '@/lib/utils'
@@ -14,17 +14,19 @@ interface Props {
   toolCard: WorkflowToolCard
 }
 
-const statusLabel: Record<WorkflowToolCard['status'], string> = {
+const statusLabel: Record<ReturnType<typeof workflowToolStatusForDisplay>, string> = {
   running: '调用中',
   completed: '已完成',
   failed: '失败',
+  finished: '已结束',
 }
 
-const statusClassName: Record<WorkflowToolCard['status'], string> = {
+const statusClassName: Record<ReturnType<typeof workflowToolStatusForDisplay>, string> = {
   running: 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
   completed:
     'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300',
   failed: 'border-red-300 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300',
+  finished: 'border-zinc-300 bg-zinc-50 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300',
 }
 
 interface ParsedResultView {
@@ -130,7 +132,7 @@ export default function ToolCallCard({ toolCard }: Props) {
   const [argsOpen, setArgsOpen] = useState(false)
   const [resultOpen, setResultOpen] = useState(true)
   const [extraOpen, setExtraOpen] = useState(false)
-  const toolStatus = normalizeWorkflowToolStatus(toolCard.status)
+  const toolStatus = workflowToolStatusForDisplay(toolCard)
   const toolName = String(toolCard.tool || '未知工具')
   const safeArgs = toolCard.args && typeof toolCard.args === 'object' ? toolCard.args : {}
   const startedAtText = isValidTimestamp(toolCard.startedAt) ? formatTimestamp(toolCard.startedAt) : '-'
@@ -184,7 +186,7 @@ export default function ToolCallCard({ toolCard }: Props) {
     }
 
     return {
-      label: '未知',
+      label: '已结束，结果未判定',
       className: 'border-zinc-300 bg-zinc-50 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300',
     }
   }, [parsedResult.effectiveSuccess, toolStatus])

@@ -117,43 +117,30 @@ func TestResourceArgumentsRejectInvalidAndUntrustedHandle(t *testing.T) {
 		t.Fatalf("got %v", err)
 	}
 }
-func TestResourceArgumentsUseLinkedSnapshotAndBaseDirBeforeValidation(t *testing.T) {
-	engine, backend, library, root := resourceEngine(t, "data_list", "")
-	flowDir := filepath.Join(root, "flow")
-	baseDir := filepath.Join(root, "data")
-	for _, p := range []string{flowDir, baseDir} {
-		if err := os.MkdirAll(p, 0755); err != nil {
-			t.Fatal(err)
+func TestRetiredResourceTypesDoNotReachRuntime(t *testing.T) {
+	for _, kind := range []string{"data_list", "data_folder", "style_set", "route_style", "symbols", "doc"} {
+		engine, backend, _, _ := resourceEngine(t, kind, "")
+		_, err := engine.Execute(context.Background(), "resource_tool", map[string]any{"selected": "old"})
+		if err == nil || backend.callCount != 0 {
+			t.Fatalf("retired type %s reached backend: %v", kind, err)
 		}
 	}
-	list := filepath.Join(flowDir, "list.csv")
-	os.WriteFile(list, []byte("name,path,type\n测试,data.geojson,vector\n"), 0644)
-	os.WriteFile(filepath.Join(baseDir, "data.geojson"), []byte(`{"type":"FeatureCollection","features":[]}`), 0644)
-	r := library.Resolve(context.Background(), resource.Ref{Type: "data_list", Name: "底图", Location: list}, resource.Scope{FlowID: "f", FlowDir: flowDir})
-	ctx := resource.WithScope(context.Background(), resource.Scope{FlowID: "f", FlowDir: flowDir, Linked: []*resource.ResolvedResource{r}})
-	_, err := engine.Execute(ctx, "resource_tool", map[string]any{"selected": "底图", "base_dir": baseDir})
+}
+
+func TestNestedStyleResourcesUseScopedResolver(t *testing.T) {
+	engine, _, _, root := resourceEngine(t, "style", "")
+	writeResource(t, root, "builtin", "style.sample", "示例样式", "")
+	schema := map[string]any{"type": "array", "items": map[string]any{"type": "object", "properties": map[string]any{"style": map[string]any{"type": "string", "x-resource-type": "style"}}}}
+	value := []any{map[string]any{"layer": "roads", "style": "示例样式"}}
+	out, err := engine.expandNestedResourceArgs(context.Background(), SkillDefinition{}, schema, value)
 	if err != nil {
 		t.Fatal(err)
 	}
-	handle := backend.lastReq.Params["selected"].(map[string]any)
-	if handle["base_dir"] != baseDir {
-		t.Fatalf("wrong base: %#v", handle)
+	nested := out.([]any)[0].(map[string]any)["style"].(map[string]any)
+	if nested["id"] != "style.sample" {
+		t.Fatal(nested)
 	}
-	entries := handle["entries"].([]map[string]any)
-	if entries[0]["path"] != filepath.Join(baseDir, "data.geojson") {
-		t.Fatal(entries)
-	}
-	// A deterministic executor may pass a handle, but it is resolved again against
-	// the linked scope, never trusted as an arbitrary dictionary of file paths.
-	r = library.Resolve(context.Background(), resource.Ref{Type: "data_list", Name: "底图", Location: list, BaseDir: baseDir}, resource.Scope{FlowID: "f", FlowDir: flowDir})
-	ctx = resource.WithScope(resource.WithInternalHandles(context.Background()), resource.Scope{FlowID: "f", FlowDir: flowDir, Linked: []*resource.ResolvedResource{r}})
-	forged := r.Handle()
-	forged["entry"] = "/untrusted/file"
-	_, err = engine.Execute(ctx, "resource_tool", map[string]any{"selected": forged})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if backend.lastReq.Params["selected"].(map[string]any)["entry"] != list {
-		t.Fatal("trusted marker bypassed resolver")
+	if value[0].(map[string]any)["style"] != "示例样式" {
+		t.Fatal("mutated trace arguments")
 	}
 }

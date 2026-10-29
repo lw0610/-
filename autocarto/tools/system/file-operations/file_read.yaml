@@ -1,0 +1,40 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: file_read
+  display_name: 读取文件
+  keywords: [文件读取, 文本, 图片, PDF, DOCX, XLSX, 目录]
+  domain: file-operations
+  runtime: internal
+spec:
+  description: "读取当前会话、已授权工程或用户明确提供的文件/目录；用户提供目录可列举并读取子文件，不能读取目录外的文件。UTF-8文本、DOCX正文与XLSX单元格可按行分页，每次最多64 KiB；XLSX包含工作表名与实际行号，不计算公式。图片(PNG/JPEG/GIF/WebP)与PDF默认返回真实媒体附件，最多50 MiB，需当前模型支持；PDF指定as_text=true时使用本机pdftotext提取正文，不支持扫描件OCR。解析失败应报告，不能把路径或任务要求当正文。相对路径以当前会话output为基准。"
+  parameters:
+    - name: path
+      type: string
+      required: true
+      description: "文件/目录路径；相对路径基于当前会话output"
+    - name: offset
+      type: integer
+      required: false
+      default: 1
+      description: "文本起始行或目录起始条目，1起计；仅文本/目录适用"
+    - name: limit
+      type: integer
+      required: false
+      default: 2000
+      description: "最多返回行/条目数，1–20000；仅文本/目录适用"
+    - name: as_text
+      type: boolean
+      required: false
+      default: false
+      description: "PDF需要本机提取正文时设为true，之后可按offset/limit分页；默认PDF/图片交给模型媒体能力，DOCX/XLSX自动解析文本"
+policy:
+  visibility: public
+  authorization_scopes: [tool.invoke]
+execution:
+  backend_tool: file_read
+  param_mapping:
+    path: '{{ path }}'
+    offset: '{{ offset }}'
+    limit: '{{ limit }}'
+    as_text: '{{ as_text }}'

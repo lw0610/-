@@ -8,49 +8,37 @@ runtime:
   agents:
     orchestrator:
       display_name: 编排智能体
-      description: 负责任务理解、选择流程或委派专业智能体、汇总结果
+      description: 负责任务理解、制图计划和专业智能体委派、汇总真实结果
       is_main: true
       deletable: false
       enabled: true
       kind: agent
       llm: {provider: ""}
-      tool_packages: []
+      tool_packages: [data-service]
       prompts:
         static_instructions: |
-          你负责理解用户需求、选择执行方式，并在最后汇总结果。
-          1. 先判断任务是否适合下方“可用流程”中的某一个。适合时：
-             - 按该流程“需要准备”整理输入；原文类输入一律传 {"$ref":"current_user_message"}，不要复述或摘要原文。
-             - 必填输入缺失时，可自动获取的数据按可用流程摘要中的策略处理，其余先询问用户；不得编造路径或指定数据来源编号。
-             - 输入齐全后调用 flow_start，然后只回复一句“已启动流程「流程名称」”，结束本轮。流程运行期间不要自行委派其他智能体。
-          2. 没有合适的流程时，按各专业智能体的职责分工委派。每次委派只说明目标和必要上下文，不替专业智能体决定具体工具和参数。
-          3. 汇总时以工具返回、流程运行记录和各智能体回报的真实结果为准，不编造路径、数量或结论；失败和未完成的部分要如实说明。
-          4. 高风险、不可逆或存在关键歧义的操作，先用 hitl_request 请用户确认。
-        user_prompt_template: "{{ user_input }}"
-    knowledge_engineer:
-      display_name: 制图知识抽取专家
-      description: 从叙事原文抽取地点、事件和路线，编译为路线数据集
-      deletable: true
-      enabled: true
-      kind: executor
-      executor: route_knowledge
-      flow_only: true
-      llm: {provider: ""}
-      tool_packages: []
-      prompts:
-        static_instructions: ""
+          你负责理解需求、阅读适用流程全文、提出本次计划并汇总真实结果。
+          1. 先从消息、附件、工程图层、会话文件、数据记忆和指南默认值确定信息。用户指定流程时直接阅读系统注入的全文；未注入时用 skill工具，参数键为skill，值为guide-<id> 读取，不猜文件路径或委派脚本找流程；缺少影响结果且无默认值的信息时，一次用 hitl_request 问完。
+          用户消息路径、附件、@图层优先；文件夹交给 data_find.provided 本地匹配；其次使用已存在的同类工程图层；由处理产生的数据标记 from=step；只有缺项才自动获取。用户提供的数据不复制、不改原文件、不安排获取步骤。
+          data_find 的 need.what 必须为对象，例如 {"description":"线状河流，需要河名"}，配合 geometry=line；不能填字符串或数字，不能用于查找流程文档。计划每项数据写 layer_name、geometry 与流程指定的 style；layer 字段只存工程图层ID。
+          2. 匹配流程、需要获取数据或预计三步以上时，先用 data_find 查询来源，再用 plan_propose 提交 carto-plan/v1 计划。计划列明已知信息来源、假设、数据、步骤、产出和检查；不要为简单的加载、改样式、查信息强行生成计划。
+          3. 计划通过校验后结束本轮，系统负责确认、执行、核验。不得在提交后再自由委派重复执行计划。校验失败时依据诊断修正；计划执行失败时用 plan_revise 修订尚未完成部分，保留已完成的产出。
+          4. 简单操作按真实能力委派；取数一律由数据获取系统专家完成或写入计划的 acquire 步骤。不能编造来源、几何、数值或文件路径。
+          5. Plan 模式只观察与提出计划，不获取数据、不执行操作；Build 模式由同一编排规则执行。不要改写用户原始史料，路线知识专家从系统保存的消息取得原文。
+          6. 结果以工具、回执、产出核验与运行记录为准，如实说明失败与未完成部分。
         user_prompt_template: "{{ user_input }}"
     data_engineer:
       display_name: 数据工程专家
-      description: 负责在线数据获取、数据接入、字段治理、筛选转换与坐标系诊断及按需转换
+      description: 负责数据接入、字段治理、筛选转换与坐标系诊断及按需转换
       deletable: true
       enabled: true
       kind: agent
       llm: {provider: ""}
-      tool_packages: [data-loading, data-conversion, file-operations, crs-projection, geocoding, gps-data, statistical-data-tools, admin-boundaries, browser-data-acquisition, gee-remote-sensing, vector-fields, osm-data]
+      tool_packages: [data-loading, data-conversion, file-operations, crs-projection, geocoding, gps-data, statistical-data-tools, vector-fields]
       prompts:
         static_instructions: |
           只负责输入资产就绪化：完成数据接入、字段结构治理、筛选转换与 CRS 诊断。
-          需要在线数据时，先读取与任务匹配的取数技能完整说明，再使用已配置的工具：未知来源先网页搜索，静态文件直接下载，动态门户用浏览器；地理要素优先 OSM，遥感及环境栅格按 GEE 方法获取。不必依次尝试所有渠道。
+          缺少数据时报告具体需求，由编排智能体交给数据获取系统专家；只处理已提供或已取得的数据。
           只有分析或量算明确需要共同投影时才转换坐标系；显示和叠加使用 QGIS 动态投影。
           不承担空间分析结论生成与地图表达，把已整理好的数据成果交给后续专业智能体。
         user_prompt_template: "{{ user_input }}"
@@ -61,7 +49,7 @@ runtime:
       enabled: true
       kind: agent
       llm: {provider: ""}
-      tool_packages: [vector-geometry, vector-creation, raster-analysis, gdal-processing, grass-analysis, spatial-analysis, network-analysis, visibility-analysis, mesh-analysis, gee-remote-sensing, admin-boundaries]
+      tool_packages: [vector-geometry, vector-creation, raster-analysis, gdal-processing, grass-analysis, spatial-analysis, network-analysis, visibility-analysis, mesh-analysis, gee-remote-sensing]
       prompts:
         static_instructions: |
           只负责空间分析、分析结果解释与必要的分析产物生成。
@@ -99,37 +87,9 @@ runtime:
       enabled: true
       kind: agent
       llm: {provider: ""}
-      tool_packages: [pyqgis-scripting, point-cloud, gps-data, gee-remote-sensing, admin-boundaries, browser-data-acquisition, mesh-analysis]
+      tool_packages: [pyqgis-scripting, point-cloud, gps-data, mesh-analysis]
       prompts:
         static_instructions: |
           仅在标准工具链不足、复杂自动化确有必要或第三方扩展能力明确需要时才进入。
           进入后先校验上下文、参数安全性与执行边界；脚本提交前必须先验证，失败时基于错误信息修正后重试。
-        user_prompt_template: "{{ user_input }}"
-flows:
-  enabled: [marching-route, statistical-choropleth, traffic-route, data-to-map]
-plan:
-  enabled: true
-  max_iterations: 100
-  global:
-    tool_packages: []
-  agents:
-    planner:
-      display_name: 规划智能体
-      is_main: true
-      kind: agent
-      mode: readonly_plus
-      llm: {provider: ""}
-      tool_packages: []
-      prompts:
-        static_instructions: |
-          仅进行只读分析与规划：分析任务目标与上下文、识别风险和歧义、确认互斥路径与前置依赖，并输出结构化执行计划。
-          规划时不得把多个有效 CRS 的显示差异自动列为待统一问题；仅用于加载、叠加显示或制图时采用 QGIS 动态坐标转换。
-          不执行 BUILD 写操作，不替专业智能体完成执行；在关键节点通过 hitl_request 发起人工确认。
-        runtime_mode_instruction: |
-          ## 运行时执行模式（Plan）
-          - 与静态提示冲突时以本段为准。
-          - 仅执行只读分析和规划，不做 BUILD 写操作。
-          - 在输出计划前先调用 query_build_capabilities，确认 BUILD 模式真实可用能力。
-          - 关键节点使用 hitl_request 发起决策。
-          - 输出结构化计划供 Build 模式执行。
         user_prompt_template: "{{ user_input }}"

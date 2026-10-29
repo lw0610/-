@@ -2,7 +2,7 @@ package flow
 
 import (
 	"fmt"
-	"github.com/autocarto/carto_agent/internal/resource"
+	"github.com/autocarto/carto_agent/internal/flow/legacy"
 	"regexp"
 	"strings"
 
@@ -180,6 +180,7 @@ func parseFrontmatter(raw string) (FlowMetadata, string, int, []Diagnostic) {
 					values[canonical] = strings.TrimSpace(value.Value)
 				}
 				meta.ID, meta.Name, meta.Description, meta.Author = values["id"], values["name"], values["description"], values["author"]
+				meta.Tags = declarationNames(values["tags"])
 				if values["version"] != "" {
 					meta.Version = values["version"]
 				}
@@ -202,6 +203,8 @@ func metadataKey(key string) string {
 		return "description"
 	case "版本", "version":
 		return "version"
+	case "标签", "tags":
+		return "tags"
 	case "作者", "author":
 		return "author"
 	}
@@ -482,8 +485,10 @@ func parseResources(doc *FlowDoc, raw string, baseLine int) {
 }
 
 func resourceType(raw, location string) string {
-	typ, _ := resource.TypeForWord(raw)
-	return typ
+	// This parser is retained only for legacy document migration. Its vocabulary
+	// must not shrink with the public v6 resource catalog.
+	types := map[string]string{"样式": "style", "版式": "layout", "版面": "layout", "样式集": "style_set", "底图数据": "data_list", "数据清单": "data_list", "数据文件夹": "data_folder", "路线样式": "route_style", "符号": "symbols", "参考": "doc", "参考文档": "doc", "文档": "doc"}
+	return types[strings.TrimSpace(raw)]
 }
 
 func parseStep(doc *FlowDoc, section markdownSection, index, line int) StepDoc {
@@ -523,9 +528,9 @@ func parseStep(doc *FlowDoc, section markdownSection, index, line int) StepDoc {
 	step.Role, step.Instructions, step.Completion = values["role"], values["instructions"], values["completion"]
 	step.Capabilities, step.OptionalCapabilities = parseStepCapabilities(values["capabilities"])
 	if raw := values["condition"]; raw != "" {
-		step.Condition = &ConditionDoc{Text: raw, Rule: ParseCondition(raw)}
+		step.Condition = &ConditionDoc{Text: raw, Rule: legacy.ParseCondition(raw)}
 		if step.Condition.Rule == nil {
-			doc.Diagnostics = append(doc.Diagnostics, diagnostic("info", "FLOW_CONDITION_UNPARSED", step.ID, line, "本步条件保留原文，需在编译时继续转换。"))
+			doc.Diagnostics = append(doc.Diagnostics, diagnostic("info", "FLOW_CONDITION_UNPARSED", step.ID, line, "本步条件保留原文，转换为指南后请人工检查。"))
 		}
 	}
 	if failure := values["failure"]; failure != "" {

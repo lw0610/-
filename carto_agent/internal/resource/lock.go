@@ -12,8 +12,9 @@ import (
 const LockAPIVersion = "flow-lock/v1"
 
 type Lock struct {
-	APIVersion string      `json:"api_version" yaml:"apiVersion"`
-	Resources  []LockEntry `json:"resources" yaml:"resources"`
+	DocumentFormat string      `json:"document_format,omitempty" yaml:"document_format,omitempty"`
+	APIVersion     string      `json:"api_version" yaml:"apiVersion"`
+	Resources      []LockEntry `json:"resources" yaml:"resources"`
 }
 type LockEntry struct {
 	Type    string `json:"type" yaml:"type"`
@@ -62,8 +63,8 @@ func (l *Lock) Validate() error {
 		if e.Source == "bundled" && e.Bundled == "" {
 			return fmt.Errorf("flow.lock 随包资源缺少路径")
 		}
-		if e.Bundled != "" && (strings.ContainsAny(e.Bundled, "\\:") || path.Clean(e.Bundled) != strings.TrimSuffix(e.Bundled, "/") || strings.TrimSuffix(e.Bundled, "/") != "resources/_deps/"+e.ID) {
-			return fmt.Errorf("flow.lock 随包资源路径必须是 resources/_deps/<编号>/")
+		if e.Bundled != "" && (strings.ContainsAny(e.Bundled, "\\:") || path.Clean(e.Bundled) != strings.TrimSuffix(e.Bundled, "/") || (strings.TrimSuffix(e.Bundled, "/") != "resources/_deps/"+e.ID && strings.TrimSuffix(e.Bundled, "/") != "deps/"+e.ID)) {
+			return fmt.Errorf("flow.lock 随包资源路径必须是 deps/<编号>/")
 		}
 	}
 	return nil

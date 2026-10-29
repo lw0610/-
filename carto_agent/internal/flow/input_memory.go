@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/autocarto/carto_agent/internal/config"
+	"github.com/autocarto/carto_agent/internal/flow/legacy"
 	"github.com/autocarto/carto_agent/internal/resource/bindings"
 	"gopkg.in/yaml.v3"
 )
@@ -24,7 +24,7 @@ type inputMemoryDocument struct {
 	Choices    map[string]map[string]map[string]any `yaml:"choices,omitempty"`
 }
 
-// InputMemory persists only local file/folder choices, never flow package data.
+// InputMemory reads and migrates local choices from earlier releases. New runs use DataMemory.
 // Instances referring to the same file share a process-wide lock.
 type InputMemory struct {
 	path string
@@ -237,56 +237,6 @@ func (m *InputMemory) DeleteFlow(flowID string) error {
 	return m.save(doc)
 }
 
-func (m *InputMemory) Remember(flowID string, inputs []InputPlan, values map[string]any) error {
-	remember := map[string]string{}
-	choices := map[string]any{}
-	for _, input := range inputs {
-		if input.Type != "file" && input.Type != "folder" && input.Type != "layer" {
-			continue
-		}
-		label := input.Label
-		if label == "" {
-			label = input.Key
-		}
-		if !input.Remember || values[input.Key] == nil {
-			remember[label] = ""
-			continue
-		}
-		if choice, marked, err := ParseInputChoice(values[input.Key]); marked {
-			if err != nil {
-				return err
-			}
-			choices[label] = choice.Value()
-			continue
-		}
-		if input.Type == "layer" {
-			continue
-		}
-		value, ok := values[input.Key].(string)
-		if !ok {
-			return fmt.Errorf("输入「%s」必须为文件或文件夹路径", label)
-		}
-		if strings.TrimSpace(value) == "" {
-			remember[label] = ""
-			continue
-		}
-		resolved, err := config.ResolveProjectPath(value)
-		if err != nil {
-			return err
-		}
-		remember[label] = resolved
-	}
-	if err := m.setValues(flowID, remember); err != nil {
-		return err
-	}
-	for label, value := range choices {
-		if err := m.SetChoice(flowID, label, value); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (m *InputMemory) backup(raw []byte) error {
 	if raw == nil {
 		return nil // No previous file exists to back up.
@@ -374,7 +324,7 @@ func (m *InputMemory) GetValues(flowID string) (map[string]any, error) {
 	return values, nil
 }
 func memoryChoice(value any) (map[string]any, error) {
-	choice, marked, err := ParseInputChoice(value)
+	choice, marked, err := legacy.ParseInputChoice(value)
 	if err != nil {
 		return nil, err
 	}
@@ -394,31 +344,4 @@ func memoryChoice(value any) (map[string]any, error) {
 		}
 	}
 	return choice.Value(), nil
-}
-func (m *InputMemory) SetChoice(flowID, label string, value any) error {
-	if err := ValidateID(flowID); err != nil {
-		return err
-	}
-	if err := memoryLabel(label); err != nil {
-		return err
-	}
-	normalized, err := memoryChoice(value)
-	if err != nil {
-		return err
-	}
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	doc, _, err := m.load()
-	if err != nil {
-		return err
-	}
-	if reflect.DeepEqual(doc.Choices[flowID][label], normalized) {
-		return nil
-	}
-	if doc.Choices[flowID] == nil {
-		doc.Choices[flowID] = map[string]map[string]any{}
-	}
-	doc.Choices[flowID][label] = normalized
-	delete(doc.Flows[flowID], label)
-	return m.save(doc)
 }

@@ -6,7 +6,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 FORMATS = ROOT / "carto_agent/internal/resource/formats/resource_formats.yaml"
-PUBLIC = {"layout", "style", "style_set"}
+PUBLIC = {"layout", "style"}
 
 
 def violations(library):
@@ -22,8 +22,8 @@ def violations(library):
         if not entry.is_relative_to(manifest.parent.resolve()) or not entry.is_file():
             errors.append(f"{manifest.relative_to(library)}: invalid entry")
             continue
-        if data["type"] == "style_set":
-            # The owning style set includes its mapping, QML files and supporting assets.
+        if manifest.name == "resource.yaml":
+            # Managed directories own their main file, preview, and supporting assets.
             owned.update(path for path in manifest.parent.rglob("*") if path.is_file())
         else:
             owned.add(entry)

@@ -187,5 +187,17 @@
   "requires": [
     "integration:osm"
   ],
-  "refresh_days": 30
+  "refresh_days": 30,
+  "handbook": {
+    "good_for": "区域道路、铁路、水系、站点、地名、建筑",
+    "not_for": "中国疆域表达；全国大体量下载",
+    "coverage": "全球；国内完整度因地区而异",
+    "scale": "通常适合 1:5万至1:400万，需按比例尺取舍",
+    "fields": "名称优先 name:zh，再取 name；道路分类 highway；编号 ref",
+    "cautions": "公共节点有限流；须署名 © OpenStreetMap contributors",
+    "examples": [
+      "湖南省主要河流",
+      "武汉市铁路"
+    ]
+  }
 }

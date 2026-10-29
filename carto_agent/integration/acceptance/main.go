@@ -1,4 +1,4 @@
-// 本程序是离线验收适配器：真实编译、控制器、存储和 QGIS 工具，固定角色动作，无模型请求。
+// 离线验收适配器：固定动作夹具生成 CartoPlan，使用真实角色选择、控制器、存储和 QGIS 工具；无模型或网络请求。
 package main
 
 import (
@@ -11,12 +11,16 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/autocarto/carto_agent/internal/api"
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/flowrun"
+	cartoplan "github.com/autocarto/carto_agent/internal/plan"
+	"github.com/autocarto/carto_agent/internal/planexec"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/autocarto/carto_agent/internal/settings"
 	"github.com/autocarto/carto_agent/internal/tool"
@@ -39,34 +43,13 @@ type scenario struct {
 	Python   string         `json:"python"`
 	Examples string         `json:"examples"`
 	Inputs   map[string]any `json:"inputs"`
-	Model    struct {
-		Flow       json.RawMessage                `json:"flow"`
-		Conditions map[string]*flow.ConditionRule `json:"conditions"`
-	} `json:"model"`
-	Steps map[string]struct {
+	Steps    map[string]struct {
+		Outputs map[string]any `json:"outputs"`
 		Actions []struct {
 			Tool string `json:"tool"`
 		} `json:"actions"`
 	} `json:"steps"`
 }
-type fixedModel struct{ s scenario }
-
-func (m fixedModel) Complete(_ context.Context, r flow.ModelRequest) (string, error) {
-	if r.Kind == "flow" {
-		return string(m.s.Model.Flow), nil
-	}
-	tools := []string{}
-	seen := map[string]bool{}
-	for _, a := range m.s.Steps[r.Step].Actions {
-		if a.Tool != "" && !seen[a.Tool] {
-			tools = append(tools, a.Tool)
-			seen[a.Tool] = true
-		}
-	}
-	b, e := json.Marshal(map[string]any{"suggested_tools": tools, "missing_capabilities": []string{}, "expected_outputs": []any{}, "condition": m.s.Model.Conditions[r.Step], "notes": "确定性验收模型夹具，无网络请求"})
-	return string(b), e
-}
-
 type bridge struct {
 	mu         sync.Mutex
 	in         io.WriteCloser
@@ -172,11 +155,6 @@ func run() error {
 	if e = yaml.Unmarshal(profileRaw, &profile); e != nil {
 		return e
 	}
-	// 只修改隔离的验收方案，允许导入两个新流程；不修改工作方案或默认文件。
-	if profile.Flows == nil {
-		profile.Flows = &config.FlowConfig{}
-	}
-	profile.Flows.Enabled = append(profile.Flows.Enabled, s.FlowID)
 	profileRaw, e = yaml.Marshal(profile)
 	if e != nil {
 		return e
@@ -209,7 +187,7 @@ func run() error {
 			return e
 		}
 	}
-	store, e := flow.NewDefaultStore(library)
+	store, e := flow.NewDefaultGuideStore(library)
 	if e != nil {
 		return e
 	}
@@ -236,21 +214,15 @@ func run() error {
 	}
 
 	a := api.NewAPI(nil, manager, nil, service, filepath.Join(assets, "skills/system"), nil)
-	a.SetFlowStore(store)
+	a.SetGuideStore(store)
 	a.SetResourceLibrary(library)
-	production, e := a.FlowCompiler()
+	env, e := a.PlanEnvironment(ctx, "acceptance")
 	if e != nil {
 		return e
 	}
-	base, e := production.BasePlan(ctx, s.FlowID, "acceptance")
+	guide, e := store.Resolve(ctx, s.FlowID, library)
 	if e != nil {
 		return e
-	}
-	if e = writeJSON(filepath.Join(s.Out, "diagnostics-fallback.json"), base.Diagnostics); e != nil {
-		return e
-	}
-	if base.HasErrors() {
-		return fmt.Errorf("正式方案校验错误：%+v", base.Diagnostics)
 	}
 	defs, e := tool.LoadAuthorityDefinitions(filepath.Join(assets, "tools/system"))
 	if e != nil {
@@ -260,45 +232,32 @@ func run() error {
 	if e = writeJSON(filepath.Join(s.Out, "authority-manifest.json"), manifest); e != nil {
 		return e
 	}
-	env := flow.Environment{Scheme: "acceptance", SchemeRevision: base.SchemeRevision, CatalogRevision: base.CatalogRevision, Roles: base.Roles, Model: fixedModel{s}, ModelName: "确定性验收夹具"}
-	packages, e := service.ListSkillPackages()
+	// The offline bridge supplies fixed image-review observations. It makes no
+	// real LLM calls; this fixture provider is explicitly recorded as such.
+	env.MainProvider = "offline-fixture"
+	env.VisionProviders = []string{"offline-fixture"}
+	visible, e := fixturePlan(s, env)
 	if e != nil {
 		return e
 	}
-	owners := map[string][]string{}
-	for _, p := range packages {
-		if p.Kind != "category" {
-			continue
-		}
-		d, e := service.GetSkillPackage(p.Name)
-		if e != nil {
-			return e
-		}
-		id := p.PackageID
-		if id == "" {
-			id = p.Name
-		}
-		env.Packages = append(env.Packages, flow.PackageSpec{ID: id, DisplayName: p.DisplayName, Tools: d.ToolRefs, Enabled: p.Enabled})
-		for _, name := range d.ToolRefs {
-			owners[name] = append(owners[name], id)
+	visible.Guide = &cartoplan.GuideRef{ID: s.FlowID, Version: guide.Doc.Meta.Version}
+	caps := map[string]bool{}
+	for _, p := range env.Packages {
+		if p.Enabled {
+			caps[p.ID] = true
 		}
 	}
-	for _, d := range defs {
-		if len(owners[d.Metadata.Name]) == 0 {
-			continue
-		}
-		env.Capabilities = append(env.Capabilities, flow.CapabilitySpec{Name: d.Metadata.Name, DisplayName: d.Metadata.DisplayName, Description: d.Spec.Description, Keywords: d.Metadata.Keywords, PackageIDs: owners[d.Metadata.Name]})
+	if e = cartoplan.RequireValid(visible, cartoplan.Environment{ProjectRoot: s.Root, Capabilities: caps}); e != nil {
+		return e
 	}
-	sort.Slice(env.Packages, func(i, j int) bool { return env.Packages[i].ID < env.Packages[j].ID })
-	sort.Slice(env.Capabilities, func(i, j int) bool { return env.Capabilities[i].Name < env.Capabilities[j].Name })
-	compiler := flow.NewCompiler(flow.CompilerOptions{Store: store, Resources: library, CacheDir: filepath.Join(home, "data/acceptance-cache"), LoadEnvironment: func(context.Context, string) (flow.Environment, error) { return env, nil }})
-	// Enrich explicitly inside this offline harness, using only its fixed model.
-	// Production request paths and Controller.Start use the nonblocking Plan.
-	plan, e := compiler.Compile(ctx, s.FlowID, "acceptance", false)
+	plan, inputs, e := planexec.Build(visible, planexec.BuildOptions{Environment: env, Guide: guide.Doc, Scope: guide.Scope, OriginalSource: "请使用本次明确提供的数据制作验收地图。"})
 	if e != nil {
 		return e
 	}
 	if e = writeJSON(filepath.Join(s.Out, "plan.json"), plan); e != nil {
+		return e
+	}
+	if e = writeJSON(filepath.Join(s.Out, "carto-plan.json"), visible); e != nil {
 		return e
 	}
 	command := exec.CommandContext(ctx, s.Python, filepath.Join(assets, "tests/integration/acceptance/qgis_worker.py"), os.Args[1])
@@ -331,7 +290,7 @@ func run() error {
 	resourceParameters := map[string][]tool.ToolParameter{}
 	for _, definition := range defs {
 		for _, parameter := range definition.Spec.Parameters {
-			if parameter.Type == "resource" {
+			if parameter.Type == "resource" || len(parameter.Schema) > 0 {
 				resourceParameters[definition.Metadata.Name] = append(resourceParameters[definition.Metadata.Name], parameter)
 			}
 		}
@@ -344,11 +303,11 @@ func run() error {
 		return e
 	}
 	defer eventfile.Close()
-	controller, e := flowrun.NewController(flowrun.Options{Compiler: compiler, Runner: b, Tools: b, Store: flowrun.FileRunStore{}, Events: &events{f: eventfile}})
+	controller, e := flowrun.NewController(flowrun.Options{Runner: b, Tools: b, Store: flowrun.FileRunStore{}, Events: &events{f: eventfile}})
 	if e != nil {
 		return e
 	}
-	state, e := controller.Start(ctx, flowrun.StartRequest{SessionID: s.ID, SessionDir: s.Out, ProjectRoot: s.Root, FlowID: s.FlowID, Scheme: "acceptance", Inputs: s.Inputs, OriginalSource: "请使用本次明确提供的数据制作验收地图。"})
+	state, e := controller.StartFromPlan(ctx, flowrun.StartRequest{SessionID: s.ID, SessionDir: s.Out, ProjectRoot: s.Root, FlowID: s.FlowID, Scheme: "acceptance", Inputs: inputs, CartoPlan: visible, Guide: guide.Doc, OriginalSource: "请使用本次明确提供的数据制作验收地图。"}, plan)
 	if e != nil {
 		return e
 	}
@@ -370,4 +329,113 @@ func run() error {
 	}
 	fmt.Println(state.RunJSONPath)
 	return nil
+}
+
+// fixturePlan adapts deterministic acceptance actions, not GUIDE prose, into a
+// concrete visible plan. This verifies execution and never claims LLM quality.
+func fixturePlan(s scenario, env flow.Environment) (*cartoplan.Plan, error) {
+	p := &cartoplan.Plan{APIVersion: cartoplan.APIVersion, ID: "cp-" + s.ID, Version: 1, Goal: "离线真实QGIS验收：" + s.ID}
+	keys := []string{}
+	for k := range s.Inputs {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	uses := []string{}
+	for _, name := range keys {
+		value := s.Inputs[name]
+		path, ok := value.(string)
+		if ok {
+			if _, err := os.Stat(path); err == nil {
+				id := fmt.Sprintf("d%d", len(p.Data)+1)
+				label := name
+				if label == "底图数据" {
+					label = "中国底图"
+				}
+				p.Data = append(p.Data, cartoplan.Data{ID: id, Name: label, From: "user", Path: path})
+				uses = append(uses, id)
+				continue
+			}
+		}
+		p.Facts = append(p.Facts, cartoplan.Fact{Name: name, Value: value, From: "固定验收夹具"})
+	}
+	owners := map[string]string{}
+	for _, pkg := range env.Packages {
+		if !pkg.Enabled || pkg.Hidden {
+			continue
+		}
+		for _, tool := range pkg.Tools {
+			if owners[tool] == "" {
+				owners[tool] = pkg.ID
+			}
+		}
+	}
+	steps := []string{}
+	for id := range s.Steps {
+		steps = append(steps, id)
+	}
+	sort.Slice(steps, func(i, j int) bool {
+		a, _ := strconv.Atoi(strings.TrimPrefix(steps[i], "s"))
+		b, _ := strconv.Atoi(strings.TrimPrefix(steps[j], "s"))
+		return a < b
+	})
+	previous := ""
+	for _, id := range steps {
+		if s.FlowID == "marching-route" {
+			review, _ := s.Inputs["质量审查"].(bool)
+			if !review && (id == "s7" || id == "s8" || id == "s9" || id == "s10") {
+				continue
+			}
+			if review && id == "s11" {
+				continue
+			}
+		}
+		fixture := s.Steps[id]
+		st := cartoplan.Step{ID: id, Title: "验收步骤 " + id, Uses: uses, Instructions: "执行固定动作配方并返回实际核验产出"}
+		if previous != "" {
+			st.DependsOn = []string{previous}
+		}
+		previous = id
+		seen := map[string]bool{}
+		for _, action := range fixture.Actions {
+			pkg := owners[action.Tool]
+			if pkg != "" && !seen[pkg] {
+				seen[pkg] = true
+				st.Capabilities = append(st.Capabilities, pkg)
+			}
+		}
+		if len(st.Capabilities) == 0 {
+			st.Capabilities = []string{"data-loading"}
+		}
+		sort.Strings(st.Capabilities)
+		labels := []string{}
+		for label := range fixture.Outputs {
+			labels = append(labels, label)
+		}
+		sort.Strings(labels)
+		for _, label := range labels {
+			o := flow.OutputDeclaration{Label: label, Type: "text"}
+			switch {
+			case label == "版面":
+				o.Type = "layout"
+			case label == "初审结果":
+				o.Type = "review_initial"
+			case label == "终审结果":
+				o.Type = "review_final"
+			case strings.Contains(label, "图层") || label == "参考底图":
+				o.Type = "layers"
+			case strings.Contains(label, "PDF"):
+				o.Type = "file"
+				o.Format = "pdf"
+			case strings.Contains(label, "PNG") || label == "成果图" || strings.Contains(label, "图片"):
+				o.Type = "file"
+				o.Format = "png"
+			}
+			st.Outputs = append(st.Outputs, o)
+		}
+		p.Steps = append(p.Steps, st)
+	}
+	if len(p.Steps) > 0 {
+		p.Deliverables = p.Steps[len(p.Steps)-1].Outputs
+	}
+	return p, nil
 }

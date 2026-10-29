@@ -1,39 +1,13 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
-import type { WorkflowBlock, WorkflowEntry } from '@/types/message'
+import type { WorkflowBlock } from '@/types/message'
 import AgentBlockView from '@/components/chat/AgentBlockView'
 import Chip from '@/components/common/Chip'
 import StateBlock from '@/components/common/StateBlock'
-function asRecord(value: unknown): Record<string, unknown> {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    return {}
-  }
-  return value as Record<string, unknown>
-}
-
-function isEntryActive(entry: WorkflowEntry): boolean {
-  if (entry.toolCard?.status === 'running') {
-    return true
-  }
-
-  const payload = asRecord(entry.data)
-  const status = String(
-    payload.status || payload.state || payload.progress || '',
-  ).toLowerCase()
-  return (
-    status === 'running' ||
-    status === 'active' ||
-    status === 'in_progress' ||
-    status === 'processing'
-  )
-}
-
 function isWorkflowBlockActive(block: WorkflowBlock): boolean {
-  if (block.status === 'running') {
-    return true
-  }
-  const entries = Array.isArray(block.entries) ? block.entries : []
-  return entries.some((entry) => isEntryActive(entry))
+  // A stopped attempt can retain its last running tool event when no result
+  // arrived. The attempt's terminal state must still stop the activity badge.
+  return block.status === 'running'
 }
 
 function SectionHeader({

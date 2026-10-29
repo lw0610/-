@@ -80,6 +80,17 @@ type PlanningEnvironment struct {
 	AutoAcquire   string
 	WebSearch     bool
 	MaxDownloadMB int
+
+	portalExploration bool
+}
+
+// RankPortalExploration preserves all ordinary source prerequisites, while
+// allowing a browser expert to explore portals without a deterministic adapter.
+// Experimental download/query adapters remain unavailable in both modes.
+func (e PlanningEnvironment) RankPortalExploration(item AcquisitionItem) AcquisitionItem {
+	e.portalExploration = true
+	e.CacheLookup = nil // A cached file cannot authorize a fresh portal operation.
+	return e.Rank(item)
 }
 
 func (e PlanningEnvironment) Rank(item AcquisitionItem) AcquisitionItem {
@@ -197,7 +208,7 @@ func (e PlanningEnvironment) sourceReasons(s Source, c *Category, item Acquisiti
 }
 func (e PlanningEnvironment) sourceReasonsForCache(s Source, c *Category, item AcquisitionItem, cached bool) []string {
 	reasons := []string{}
-	if s.Status == "experimental" {
+	if s.Status == "experimental" && !(e.portalExploration && s.Kind == "portal") {
 		reasons = append(reasons, "该来源尚未完成验证")
 	}
 	if s.Status == "disabled" {

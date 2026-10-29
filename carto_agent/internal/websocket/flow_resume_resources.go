@@ -2,10 +2,8 @@ package websocket
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"os"
-	"path/filepath"
+	"fmt"
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/flowrun"
@@ -33,7 +31,27 @@ func (s *DeepServer) checkFlowPendingResources(ctx context.Context, pending *Pen
 	if pending.FlowOptions.originalSource != nil {
 		source = *pending.FlowOptions.originalSource
 	}
-	return controller.CheckResume(ctx, flowrun.ResumeRequest{SessionID: pending.SessionID, SessionDir: dir, FlowRunID: pending.FlowOptions.flowRunID, OriginalSource: source, ResourceChoice: choice, ResourceFingerprint: fingerprint})
+	state, err := controller.CheckResume(ctx, flowrun.ResumeRequest{SessionID: pending.SessionID, SessionDir: dir, FlowRunID: pending.FlowOptions.flowRunID, OriginalSource: source, ResourceChoice: choice, ResourceFingerprint: fingerprint})
+	if err != nil {
+		return state, err
+	}
+	if err = checkPendingFlowAttempt(state, pending.CheckpointID); err != nil {
+		return state, err
+	}
+	return state, nil
+}
+
+// Reject a question from an earlier plan version before resuming its ADK
+// runner, so an old checkpoint cannot perform tools under the new data scope.
+func checkPendingFlowAttempt(state *flowrun.RunState, checkpointID string) error {
+	if state == nil || state.Status != "waiting_user" || state.Cursor < 0 || state.Cursor >= len(state.Steps) {
+		return fmt.Errorf("该确认断点已失效，请使用当前计划的待处理问题")
+	}
+	step := state.Steps[state.Cursor]
+	if step.Status != "waiting_user" || len(step.Attempts) == 0 || checkpointID == "" || step.Attempts[len(step.Attempts)-1].RunID != checkpointID {
+		return fmt.Errorf("确认断点与当前计划步骤不匹配，请使用当前计划的待处理问题")
+	}
+	return nil
 }
 
 func withRunResourceSnapshot(ctx context.Context, state *flowrun.RunState) context.Context {
@@ -45,44 +63,4 @@ func withRunResourceSnapshot(ctx context.Context, state *flowrun.RunState) conte
 		linked = append(linked, item.ResolvedResource())
 	}
 	return resource.WithScope(ctx, resource.Scope{FlowID: state.FlowID, FlowDir: state.Plan.FlowDir, Lock: state.Plan.Lock, Linked: linked})
-}
-
-func (s *DeepServer) discardOldFlowCheckpoint(ctx context.Context, sessionID, projectPath, flowRunID string, previous *PendingInterrupt) {
-	if pending, ok := s.getPendingInterrupt(sessionID); ok && pending.FlowOptions.flowRunID == flowRunID {
-		s.popPendingInterrupt(nil, sessionID)
-	}
-	checkpoint := ""
-	if previous != nil && previous.FlowOptions.flowRunID == flowRunID {
-		checkpoint = previous.CheckpointID
-	}
-	if checkpoint == "" {
-		// After a service restart the resource guard may run before the original
-		// pending interrupt is reattached. Its persisted descriptor still owns it.
-		if dir, err := config.ResolveSessionDir(projectPath, sessionID); err == nil {
-			if runPath, err := flowrun.RunPath(dir, flowRunID); err == nil {
-				descriptorPath := filepath.Join(filepath.Dir(runPath), "interrupt.json")
-				if info, err := os.Lstat(descriptorPath); err == nil && info.Mode().IsRegular() && info.Size() <= 1<<20 {
-					raw, err := os.ReadFile(descriptorPath)
-					var descriptor flowInterruptDescriptor
-					if err == nil && json.Unmarshal(raw, &descriptor) == nil && descriptor.SessionID == sessionID && descriptor.FlowRunID == flowRunID {
-						checkpoint = descriptor.CheckpointID
-					}
-				}
-			}
-		}
-	}
-	if checkpoint != "" {
-		_ = s.checkpointStore.Delete(ctx, checkpoint)
-	}
-}
-
-// A resource decision belongs to the already paused flow. It may use the task
-// envelope without admitting unrelated tasks into an occupied session.
-func (s *DeepServer) isPausedFlowResume(sessionID, projectPath string, data map[string]any) bool {
-	request, err := parseFlowRequest(data)
-	if err != nil || request == nil || request.ResumeRunID == "" {
-		return false
-	}
-	state, err := s.flowSnapshot(sessionID, projectPath)
-	return err == nil && state != nil && state.ID == request.ResumeRunID && state.SessionID == sessionID && (state.Status == "waiting_user" || state.Status == "interrupted")
 }

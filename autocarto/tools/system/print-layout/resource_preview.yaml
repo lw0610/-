@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: resource_preview
+  display_name: 生成资源预览
+  runtime: qgis
+  domain: print-layout
+spec:
+  description: 在独立临时工程中生成样式或版面 PNG 预览，不改变当前工程图层与版面。
+  parameters:
+    - {name: resource_path, type: string, required: true, description: 资源主文件的本机绝对路径}
+    - {name: resource_type, type: string, required: true, enum: [style, layout], description: 资源类型}
+    - {name: output_path, type: string, required: true, description: 系统分配的 PNG 输出路径}
+    - {name: label_field, type: string, description: 标注字段说明}
+    - {name: geometry, type: string, description: point、line、polygon 或 raster}
+    - {name: name, type: string, description: 预览中的示例标题}
+    - {name: layer_id, type: string, default: '', description: 可选的当前工程图层 ID；仅在独立副本中查看样式的实际数据效果}
+policy:
+  visibility: hidden
+execution:
+  handler: handlers.resource_preview.resource_preview_handler
+  param_mapping:
+    resource_path: '{{ resource_path }}'
+    resource_type: '{{ resource_type }}'
+    output_path: '{{ output_path }}'
+    label_field: '{{ label_field }}'
+    geometry: '{{ geometry }}'
+    name: '{{ name }}'
+    layer_id: '{{ layer_id }}'

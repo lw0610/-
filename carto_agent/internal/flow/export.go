@@ -13,7 +13,7 @@ import (
 )
 
 type ExportOptions struct {
-	IncludeDataFiles   bool
+	IncludeDataFiles   bool // Deprecated compatibility field, ignored: flow packages never contain data.
 	IncludeLibraryDeps bool
 	Library            *resource.Library
 }
@@ -45,14 +45,35 @@ func (s *Store) ExportWithOptions(id, target string, options ExportOptions) (str
 		return "", err
 	}
 	defer os.RemoveAll(stage)
-	if err = copyTree(item.Dir, stage, false); err != nil {
+	if err = os.WriteFile(filepath.Join(stage, "FLOW.md"), []byte(rewriteMetadata(item.FlowMD, id, item.Meta.Name)), 0600); err != nil {
 		return "", err
 	}
-	lock, err := ReadLock(stage)
+	lock, err := ReadLock(item.Dir)
 	if err != nil {
 		return "", err
 	}
 
+	doc := resourceDocumentWithLock(item.FlowMD, options.Library, lock)
+	lock = retainedLock(lock, doc)
+	lock.DocumentFormat = documentFormatV6
+	if options.Library != nil {
+		_, lock = resolveVisualResources(context.Background(), id, item.Dir, doc, lock, options.Library)
+	}
+	// The exported package has only its document, lock and referenced visual
+	// dependency snapshots. User data, backups and unreferenced files stay local.
+	for i := range lock.Resources {
+		e := &lock.Resources[i]
+		if e.Source == "bundled" && e.Bundled != "" {
+			if e.Type != "style" && e.Type != "layout" {
+				continue
+			}
+			target := "deps/" + e.ID + "/"
+			if err = resource.CopyPackage(filepath.Join(item.Dir, filepath.FromSlash(e.Bundled)), e.Type, filepath.Join(stage, filepath.FromSlash(target))); err != nil {
+				return "", err
+			}
+			e.Bundled = target
+		}
+	}
 	if options.IncludeLibraryDeps {
 		packed := map[string]string{}
 		for _, e := range lock.Resources {
@@ -68,7 +89,7 @@ func (s *Store) ExportWithOptions(id, target string, options ExportOptions) (str
 			if options.Library == nil {
 				return "", fmt.Errorf("导出公共依赖需要资源库")
 			}
-			deps := filepath.Join(stage, "resources", "_deps")
+			deps := filepath.Join(stage, "deps")
 			if err = os.MkdirAll(deps, 0700); err != nil {
 				return "", err
 			}
@@ -101,7 +122,7 @@ func (s *Store) ExportWithOptions(id, target string, options ExportOptions) (str
 			}
 			// Only the exported snapshot receives current effective version/digest.
 			*e = resource.LockResource(e.Type, e.Name, r)
-			e.Bundled = "resources/_deps/" + e.ID + "/"
+			e.Bundled = "deps/" + e.ID + "/"
 		}
 	}
 
@@ -137,13 +158,7 @@ func (s *Store) ExportWithOptions(id, target string, options ExportOptions) (str
 		if !i.Mode().IsRegular() {
 			return fmt.Errorf("不接受特殊文件")
 		}
-		if !options.IncludeDataFiles && strings.HasPrefix(filepath.ToSlash(rel), "resources/data/") {
-			switch strings.ToLower(filepath.Ext(rel)) {
-			case ".csv", ".xlsx", ".txt", ".md", ".yaml":
-			default:
-				return nil
-			}
-		}
+
 		total += i.Size()
 		if i.Size() > MaxFileBytes || total > MaxPackageBytes {
 			return fmt.Errorf("导出流程包超过大小上限")
@@ -189,77 +204,4 @@ func (s *Store) ExportWithOptions(id, target string, options ExportOptions) (str
 		return "", err
 	}
 	return target, nil
-}
-
-// AdoptResource moves an existing declaration to a private package copy in the
-// same atomic transaction used by flow saves. The library original is retained.
-func (s *Store) AdoptResource(ctx context.Context, id, resourceID, label string, library *resource.Library) (*StoredFlow, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	item, err := s.get(id)
-	if err != nil {
-		return nil, err
-	}
-	if item.Source != "user" {
-		return nil, ErrReadOnly
-	}
-	value, err := library.GetByID(resourceID)
-	if err != nil {
-		return nil, err
-	}
-	if value.Owner != "library_user" || resource.IsPublicType(value.Type) {
-		return nil, fmt.Errorf("只能将旧类型的用户资源移入流程")
-	}
-	doc := Parse(item.FlowMD)
-	var declaration *ResourceDoc
-	for i := range doc.Resources {
-		d := &doc.Resources[i]
-		if d.Label == label && publicDeclaration(*d) {
-			if declaration != nil {
-				return nil, fmt.Errorf("资源标签重复")
-			}
-			declaration = d
-		}
-	}
-	if declaration == nil {
-		return nil, fmt.Errorf("流程中没有该公共资源声明")
-	}
-	lock, err := ReadLock(item.Dir)
-	if err != nil {
-		return nil, err
-	}
-	linked := library.Resolve(ctx, resource.Ref{Type: declaration.Type, Name: label, Location: declaration.Location}, resource.Scope{FlowID: id, FlowDir: item.Dir, Lock: lock})
-	if linked.ID != resourceID {
-		return nil, fmt.Errorf("所选资源与流程声明不一致")
-	}
-	stage, err := os.MkdirTemp(s.UserDir, ".flow-adopt-")
-	if err != nil {
-		return nil, err
-	}
-	defer os.RemoveAll(stage)
-	if err = copyTree(item.Dir, stage, false); err != nil {
-		return nil, err
-	}
-	typ, _ := resource.TypeInfo(value.Type)
-	destination := filepath.Join(stage, "resources", typ.Group, resourceID)
-	if _, err = os.Lstat(destination); err == nil {
-		return nil, fmt.Errorf("流程内已存在该资源副本")
-	}
-	if !os.IsNotExist(err) {
-		return nil, err
-	}
-	if err = resource.CopyPackage(value.Root, value.Type, destination); err != nil {
-		return nil, err
-	}
-	primary, err := resource.BundledPath(destination, value.Type)
-	if err != nil {
-		return nil, err
-	}
-	relative, _ := filepath.Rel(stage, primary)
-	lines := strings.Split(strings.ReplaceAll(item.FlowMD, "\r\n", "\n"), "\n")
-	if declaration.Line < 1 || declaration.Line > len(lines) {
-		return nil, fmt.Errorf("资源声明位置无效")
-	}
-	lines[declaration.Line-1] = strings.Replace(lines[declaration.Line-1], declaration.Location, filepath.ToSlash(relative), 1)
-	return s.write(strings.Join(lines, "\n"), id, stage, true)
 }

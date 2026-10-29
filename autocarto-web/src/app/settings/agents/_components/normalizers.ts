@@ -109,22 +109,16 @@ export function normalizeConfigData(rawData: AgentConfigData): AgentConfigData {
   });
 
 	const normalizedMeta = normalizeConfigMeta(rawData.meta);
-	const hasPlan = Boolean(rawData.has_plan);
-	const normalizedPlan = hasPlan ? normalizePlanConfig(rawData.plan) : undefined;
-	if (hasPlan && !normalizedPlan) {
-		throw new Error("missing plan config in agent profile payload");
-	}
-	if (normalizedPlan) {
-		normalizedPlan.enabled = normalizedMeta.plan_enabled;
-	}
 
 	return {
     ...rawData,
 		meta: normalizedMeta,
 		runtime_shared: normalizeGlobalConfig(rawData.runtime_shared),
 		runtime_agents: runtimeAgents,
-		has_plan: hasPlan,
-		plan: normalizedPlan,
+		has_plan: false,
+		plan: undefined,
+    flows: undefined,
+    flow_policy: undefined,
 		diagnostics: rawData.diagnostics,
 	};
 }

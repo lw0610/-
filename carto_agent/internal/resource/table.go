@@ -169,7 +169,8 @@ func normalizeValue(column ColumnFormat, raw string) (any, error) {
 	return raw, nil
 }
 func validateTableRules(typ string, rows []tableRow) error {
-	spec := formatSet.Types[typ].Table
+	info, _ := TypeInfo(typ)
+	spec := info.Table
 	constraints := [][]string{}
 	for _, value := range spec.Unique {
 		switch v := value.(type) {

@@ -350,6 +350,11 @@ def _scalebar(layout, main, font, config):
 
 def compose_layout_handler(params):
     try:
+        handle = require_handle(params.get("spec"), "layout")
+        if handle.get("format") == "qpt":
+            from autocarto.tools.system._shared.print_layout_impl import import_layout_template_handler
+            mapped = dict(params, template=handle, name=params.get("layout"), texts={"标题": params.get("title", ""), "title": params.get("title", ""), "综述": params.get("overview_text", "")})
+            return import_layout_template_handler(mapped)
         from autocarto.tools.system._shared.layout_runtime import run_in_main_thread
         return run_in_main_thread(lambda: _compose(params))
     except Exception as exc:
@@ -374,7 +379,7 @@ def _compose(params):
     enabled = {role: overrides.get(role, config.get("enabled", True)) for role, config in configuration.items()}
     if not enabled.get("main_map", False):
         raise ValueError("不能关闭主地图框")
-    project = QgsProject.instance()
+    project = params.get("_project") or QgsProject.instance()
     manager = project.layoutManager()
     existing = manager.layoutByName(name)
     if existing is not None and params.get("replace_existing", True) is not True:

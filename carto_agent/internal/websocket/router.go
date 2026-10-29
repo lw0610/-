@@ -129,7 +129,12 @@ func (s *DeepServer) handleMessage(conn *websocket.Conn, message []byte) {
 	}
 	if sessionID != "" {
 		msg.SessionID = sessionID
-		s.cancelSessionTask(conn, sessionID)
+		if s.answerPendingClarification(conn, msg) {
+			return
+		}
+		if !s.hasPlanAwaitingRevision(sessionID) {
+			s.cancelSessionTask(conn, sessionID)
+		}
 	}
 
 	// 创建可取消的 context

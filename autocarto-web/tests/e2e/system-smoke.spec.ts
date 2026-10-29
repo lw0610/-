@@ -4,6 +4,8 @@ import { DEFAULT_DESKTOP_RUNTIME_PORT, mockDesktopRuntime } from './helpers/desk
 
 const backendBaseURL = `http://127.0.0.1:${DEFAULT_DESKTOP_RUNTIME_PORT}`
 
+test.use({ extraHTTPHeaders: { 'X-AutoCarto-Contract-Version': 'v1' } })
+
 async function bodyText(page: Page) {
   return page.locator('body').innerText()
 }
@@ -82,6 +84,7 @@ test('agents page renders package-aware configuration workspace', async ({ page 
   await mockDesktopRuntime(page)
   await page.goto('/settings/agents.html', { waitUntil: 'networkidle' })
   await expect(page).toHaveURL(/\/settings\/models-agents(\.html)?$/)
+  await page.getByRole('button', { name: '智能体方案', exact: true }).click()
   await waitForBodyState(page, /配置检索|方案目录|API Error 404|File not found/)
   try {
     await page.getByRole('button', { name: '智能体方案' }).click()
@@ -141,7 +144,7 @@ test('sessions page renders session management workspace', async ({ page }) => {
 
 test('instances page renders qgis instance workspace', async ({ page }) => {
   await page.goto('/instances.html')
-  await expect(page.locator('body')).toContainText('QGIS 实例管理')
+  await expect(page.locator('body')).toContainText('GIS 实例管理')
   await expect(page.locator('body')).toContainText(/新建 \/ 打开工程|暂无 QGIS 实例/)
 })
 

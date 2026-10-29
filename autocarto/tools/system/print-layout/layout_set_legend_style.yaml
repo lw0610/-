@@ -56,9 +56,8 @@ spec:
       type: string
     description: 图例显示图层ID或唯一名称数组；按此顺序重建图例，可恢复先前隐藏的图层。省略时保留当前图层，空数组清空。
   - name: legend_symbols
-    type: resource
-    resource_type: symbols
-    description: 额外图例使用的符号资源名称、编号或目录
+    type: string
+    description: 额外图例使用的符号预设名称（军标、图例或用户预设）
   - name: unlock_font
     type: boolean
     required: false

@@ -1,0 +1,18 @@
+{
+  "apiVersion": "resource/v1",
+  "id": "style.basemap-09d9d27346",
+  "type": "style",
+  "name": "县级城市驻地",
+  "version": "1.0.0",
+  "entry": "县级城市驻地.qml",
+  "geometry": "point",
+  "label_field": "name",
+  "description": "由原预设导出的符号和标注",
+  "tags": [
+    "县城驻地",
+    "县级驻地"
+  ],
+  "source": {
+    "author": "AutoCarto"
+  }
+}

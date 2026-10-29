@@ -623,6 +623,16 @@ func applyConfigMutation(cfg *Config, path string, value any) error {
 	}
 	trimmedPath := strings.TrimSpace(path)
 	switch trimmedPath {
+	case "plan.confirm":
+		text, err := coerceString(value)
+		if err != nil {
+			return err
+		}
+		next := CartographicPlanConfig{Confirm: text}
+		if err := next.Validate(); err != nil {
+			return err
+		}
+		cfg.Plan = next
 	case "acquisition":
 		if value == nil {
 			return fmt.Errorf("acquisition 必须是配置对象")
@@ -634,6 +644,8 @@ func applyConfigMutation(cfg *Config, path string, value any) error {
 		next := cfg.Acquisition.WithDefaults()
 		fallback := *next.AutoFallback
 		next.AutoFallback = &fallback
+		exclusive := *next.ExclusiveAgent
+		next.ExclusiveAgent = &exclusive
 		decoder := yaml.NewDecoder(strings.NewReader(string(raw)))
 		decoder.KnownFields(true)
 		if err := decoder.Decode(&next); err != nil {

@@ -53,13 +53,8 @@ func TestV2MigrationLegacyDefaultFixture(t *testing.T) {
 	if k.Kind != "executor" || k.Executor != "route_knowledge" || !k.FlowOnly {
 		t.Fatalf("executor migration: %+v", k)
 	}
-	if got.Flows == nil {
-		t.Fatal("no enabled flows")
-	}
-	for _, id := range []string{"marching-route", "statistical-choropleth", "traffic-route"} {
-		if !containsNormalized(got.Flows.Enabled, id) {
-			t.Errorf("missing %s", id)
-		}
+	if got.Flows != nil || got.Plan != nil {
+		t.Fatal("legacy per-scheme flows or independent planner survived migration")
 	}
 	if len(got.MigrationWarnings) != 0 {
 		t.Fatalf("unexpected warnings %+v", got.MigrationWarnings)
@@ -164,7 +159,7 @@ func TestV2MigrationReadOnlyBackupAndReload(t *testing.T) {
 	}
 }
 
-func TestV2MigrationFlowDefaultsAndJSONRoundTrip(t *testing.T) {
+func TestMigrationIgnoresPerSchemeFlowsAndKeepsRuntimeJSONRoundTrip(t *testing.T) {
 	for _, flows := range []*FlowConfig{nil, {Enabled: []string{}}} {
 		input := &AgentConfigFile{Version: "2.0", Flows: flows, Runtime: &RuntimeConfig{SharedToolPackages: []string{"charts"}, Agents: map[string]AgentDefData{"special": {Kind: "executor", Executor: "custom", FlowOnly: true, ToolPackages: []string{}, LegacyUnresolvedPackages: []string{"legacy"}, Enabled: true}}}}
 		got := normalizeAgentConfigFile(input)
@@ -173,8 +168,8 @@ func TestV2MigrationFlowDefaultsAndJSONRoundTrip(t *testing.T) {
 		if err := json.Unmarshal(raw, &decoded); err != nil {
 			t.Fatal(err)
 		}
-		if (decoded.Flows == nil) != (flows == nil) {
-			t.Fatal("all versus none flow semantics lost")
+		if decoded.Flows != nil {
+			t.Fatal("guide enablement must not be revived from per-scheme flow settings")
 		}
 		if !decoded.Runtime.Agents["special"].FlowOnly || decoded.Runtime.Agents["special"].Executor != "custom" {
 			t.Fatal("executor fields lost")
@@ -249,8 +244,8 @@ func TestV2MigrationRetainsOriginalRoleToolSets(t *testing.T) {
 				t.Errorf("%s lost %s", role, name)
 			}
 		}
-		if role == "cartographer" && !containsNormalized(after, "style_set_apply") {
-			t.Error("style set replacement is not authorized")
+		if role == "cartographer" && !containsNormalized(after, "layer_load_styles") {
+			t.Error("batch style replacement is not authorized")
 		}
 		t.Logf("%s: %d -> %d", role, len(before), len(after))
 	}

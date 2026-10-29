@@ -22,7 +22,7 @@ import { useChatStore } from '@/stores/chatStore'
 import { useInstanceStore } from '@/stores/instanceStore'
 import { useSessionStore } from '@/stores/sessionStore'
 import { useUIStore } from '@/stores/uiStore'
-import { useFlowRunStore } from '@/features/flow-run/store'
+import { useFlowRunStore } from '@/features/plan/store'
 
 export interface SessionRuntimeSettings {
   autoSnapshotBeforeCompress: boolean
@@ -126,6 +126,7 @@ export function useChatSession() {
   const applySessionRecord = useCallback<ApplySessionRecord>(
     (session, options) => {
       sessionRef.current = session
+      if (session) useFlowRunStore.getState().restorePlans(session.session_id, session.carto_plans)
       if (session && Object.prototype.hasOwnProperty.call(session, 'flow_run')) {
         useFlowRunStore.getState().restore(session.session_id, session.flow_run, session.flow_run_event_seq || Number(session.flow_run?.event_seq || 0))
       }

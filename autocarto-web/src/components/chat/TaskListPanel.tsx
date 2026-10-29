@@ -15,6 +15,11 @@ const statusLabel: Record<string, string> = {
   in_progress: '进行中',
   done: '已完成',
   blocked: '阻塞',
+  waiting_user: '等待确认',
+  interrupted: '已中断',
+  skipped: '已跳过',
+  failed: '失败',
+  cancelled: '已终止',
 }
 
 const statusBadgeClassName: Record<string, string> = {
@@ -33,6 +38,7 @@ const taskRowClassName: Record<string, string> = {
 
 function normalizeStatus(raw: unknown) {
   const status = String(raw || 'todo').trim().toLowerCase()
+  if (['waiting_user', 'interrupted', 'skipped', 'failed', 'cancelled'].includes(status)) return status
   if (status === 'done' || status === 'completed' || status === 'success' || status === 'succeeded') {
     return 'done'
   }
@@ -61,9 +67,9 @@ export default function TaskListPanel({ tasks, className }: Props) {
     let blocked = 0
     safeTasks.forEach((task) => {
       const status = normalizeStatus(task.status)
-      if (status === 'done') done += 1
+      if (status === 'done' || status === 'skipped') done += 1
       if (status === 'in_progress') running += 1
-      if (status === 'blocked') blocked += 1
+      if (['blocked', 'failed', 'interrupted'].includes(status)) blocked += 1
     })
     const progress = total > 0 ? Math.round((done / total) * 100) : 0
     return { total, done, running, blocked, progress }
@@ -129,8 +135,9 @@ export default function TaskListPanel({ tasks, className }: Props) {
           {safeTasks.map((task, idx) => {
             const status = normalizeStatus(task.status)
             const label = statusLabel[status] || status
-            const statusCls = statusBadgeClassName[status] || statusBadgeClassName.todo
-            const rowCls = taskRowClassName[status] || taskRowClassName.todo
+            const tone = ['blocked', 'failed', 'interrupted'].includes(status) ? 'blocked' : status === 'waiting_user' ? 'in_progress' : status === 'skipped' ? 'done' : status
+            const statusCls = statusBadgeClassName[tone] || statusBadgeClassName.todo
+            const rowCls = taskRowClassName[tone] || taskRowClassName.todo
             const taskContent = String(task.content || `任务 ${idx + 1}`)
             const taskPriority = String(task.priority || '').trim()
             const taskOwner = String(task.owner || '').trim()

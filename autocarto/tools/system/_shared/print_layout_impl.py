@@ -6,6 +6,8 @@ from uuid import uuid4
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.core import (
     QgsLayoutSize,
+    QgsLayoutItem,
+    QgsLayoutItemMap,
     QgsPrintLayout,
     QgsProject,
     QgsReadWriteContext,
@@ -273,10 +275,25 @@ def get_layout_info_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             type_name = type_names.get(item_type, f"类型{item_type}")
             info_lines.append(f"  - {type_name}: {count}")
 
+        # Keep the human summary and expose actual items for deterministic plan
+        # checks. A textual count cannot prove a title, north arrow or source note.
+        from autocarto.tools.system._shared.print_layout_advanced_impl import _item_properties
+        structured_items = []
+        for item in items:
+            if not isinstance(item, QgsLayoutItem):
+                continue
+            details = _item_properties(item)
+            details["role"] = str(item.customProperty("autocarto/compose_role", "")
+                                  or item.customProperty("autocarto/item_role", ""))
+            if isinstance(item, QgsLayoutItemMap):
+                details["grids"] = [{"name": grid.name(), "enabled": grid.enabled()}
+                                    for grid in item.grids().asList()]
+            structured_items.append(details)
         return {
             "success": True,
             "output": "\n".join(info_lines),
             "info": "布局信息获取成功",
+            "layout": {"name": layout.name(), "items": structured_items},
         }
 
     except Exception as e:
@@ -440,7 +457,11 @@ def import_layout_template_handler(params: Dict[str, Any]) -> Dict[str, Any]:
 
     try:
         from autocarto.tools.system._shared.resource_handle import require_handle, handle_entry_path, handle_summary
-        handle = require_handle(params.get("template"), "layout", formats=("qpt",))
+        handle = require_handle(params.get("template"), "layout")
+        if handle.get("format") == "layout_yaml":
+            from autocarto.tools.system._shared.layout_compose_impl import compose_layout_handler
+            texts = params.get("texts") or {}
+            return compose_layout_handler(dict(params, spec=handle, layout=params.get("name"), title=texts.get("标题", texts.get("title", params.get("name"))), overview_text=texts.get("综述", texts.get("overview", ""))))
         layout_name = str(params.get("name") or "").strip()
 
         if not layout_name:

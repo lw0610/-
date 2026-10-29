@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "source_project_unchanged": true,
+  "source_files_unchanged": true,
+  "pipeline": [
+    "actual PyQGIS tool exports",
+    "Library.ImportNamed",
+    "Store.Import",
+    "PlanExec.Build",
+    "Controller.StartFromPlan",
+    "actual QGIS resource-handle consumption",
+    "PNG/PDF export"
+  ],
+  "not_covered": [
+    "live capture HTTP transport",
+    "interactive UI",
+    "online model decisions"
+  ],
+  "source_sha256": {
+    "sources": {
+      "区域.geojson": "ee30251328d97e2a7cbd09532ddfdbda0c3326c11a51c23de1e982fbceede855"
+    },
+    "captured": {
+      "样式.qml": "d2031b7fcd95f2358918ebec67aba7fc9d32a85bfb7d59f1ac05bbc771bfe25b",
+      "版式.qpt": "2fcc21aa67441202ab9725e02d94c4bd06f4598d5dd2380139dc1e77c8719dcb"
+    }
+  },
+  "output": "capture-roundtrip/",
+  "resource_ids": [
+    "layout.u-d8c75e3a",
+    "style.u-320979ab"
+  ],
+  "rendered_color": "#207f91",
+  "label_field": "name",
+  "rendered_title": "工程模板复用验收"
+}

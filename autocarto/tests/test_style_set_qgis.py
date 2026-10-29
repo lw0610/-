@@ -61,7 +61,7 @@ def _layer(geometry, name):
 def test_style_set_xlsx_mapping_with_instruction_sheet_is_applied(style_project, tmp_path):
     import shutil
     from autocarto.tests.test_style_set import write_xlsx
-    from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
+    from autocarto.tests.support.legacy_style_set import apply_style_set_handler
     entry = next(value for value in PRESETS if value["geometry"] == "Polygon")
     shutil.copyfile(builtin_style_dir() / entry["style_file"], tmp_path / "selected.qml")
     write_xlsx(tmp_path / "对照表.xlsx", [[["说明页"]],
@@ -234,7 +234,7 @@ def test_basemap_line_helpers_build_equivalent_symbols(style_project):
 
 def test_style_set_eleven_resources_match_old_default_labels_and_repeat(style_project):
     from scripts.resources import export_basemap_styles as legacy
-    from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
+    from autocarto.tests.support.legacy_style_set import apply_style_set_handler
     expected, actual = {}, {}
     for index, entry in enumerate(PRESETS):
         reference = _layer(entry["geometry"], "reference_" + str(index))
@@ -268,7 +268,7 @@ def _custom_set(root, rows):
 
 
 def test_style_set_preflight_missing_fields_strict_unmatched_and_invalid_input_do_not_mutate(style_project):
-    from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
+    from autocarto.tests.support.legacy_style_set import apply_style_set_handler
     project, root = style_project
     layer = _layer("Point", "县级城市驻地")
     initial = _state(layer)
@@ -289,7 +289,7 @@ def test_style_set_preflight_missing_fields_strict_unmatched_and_invalid_input_d
 
 
 def test_style_set_rolls_back_all_changed_layers_when_qgis_rejects_qml(style_project):
-    from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
+    from autocarto.tests.support.legacy_style_set import apply_style_set_handler
     project, root = style_project
     first, second = _layer("Point", "A"), _layer("Point", "B")
     old = {layer.id(): _state(layer) for layer in (first, second)}
@@ -303,7 +303,7 @@ def test_style_set_rolls_back_all_changed_layers_when_qgis_rejects_qml(style_pro
 
 
 def test_style_set_unknown_qgis_renderer_is_rejected_before_mutation(style_project):
-    from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
+    from autocarto.tests.support.legacy_style_set import apply_style_set_handler
     project, root = style_project
     layer = _layer("Point", "A")
     before = _state(layer)
@@ -316,7 +316,7 @@ def test_style_set_unknown_qgis_renderer_is_rejected_before_mutation(style_proje
 
 def test_style_set_field_override_preserves_label_rules_and_filters(style_project):
     from qgis.core import QgsMapLayer, QgsPalLayerSettings, QgsRuleBasedLabeling
-    from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
+    from autocarto.tests.support.legacy_style_set import apply_style_set_handler
     project, root = style_project
     layer = _layer("Point", "A")
     rule_root = QgsRuleBasedLabeling.Rule(QgsPalLayerSettings())
@@ -349,7 +349,7 @@ def test_style_set_authority_binding_and_individual_qml_tools(style_project):
     layers = [_layer("Point", "县级城市驻地"), _layer("Polygon", "省域")]
     engine = QGISToolEngine(load_interactive_tools=False)
     engine.update_contract(execution_manifest=[{"name": "style_set_apply", "runtime": "qgis", "domain": "cartography",
-        "handler_file": str(get_plugin_root() / "tools/system/cartography/handlers/style_sets.py"), "handler_function": "apply_style_set_handler"}])
+        "handler_file": str(get_plugin_root() / "tests/support/legacy_style_set.py"), "handler_function": "apply_style_set_handler"}])
     result = execute_tool("style_set_apply", {"style_set": load_handle("gb-basemap"), "layers": [layer.id() for layer in layers], "strict": True}, engine=engine)
     assert result["success"], result
     assert [item["layer_id"] for item in result["output"]["data"]["applied"]] == [layer.id() for layer in layers]
@@ -365,7 +365,7 @@ def test_style_set_authority_binding_and_individual_qml_tools(style_project):
 
 
 def test_style_set_consumes_go_label_modes_and_resource_summary(style_project):
-    from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
+    from autocarto.tests.support.legacy_style_set import apply_style_set_handler
     handle = load_handle("style-set-modes")
     layers = {entry["name"]: _layer("Polygon", entry["name"]) for entry in handle["entries"]}
     result = apply_style_set_handler({"style_set": handle, "strict": True})
@@ -381,7 +381,7 @@ def test_style_set_consumes_go_label_modes_and_resource_summary(style_project):
 
 
 def test_style_tools_reject_unresolved_and_wrong_resource_types_without_mutation(style_project):
-    from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
+    from autocarto.tests.support.legacy_style_set import apply_style_set_handler
     from autocarto.tools.system._shared.style_basic_impl import load_style_handler
     layer = _layer("Polygon", "area")
     before = _state(layer)

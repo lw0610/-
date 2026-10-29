@@ -10,6 +10,10 @@ import (
 )
 
 type AcquisitionConfig struct {
+	NetworkPolicy    string  `yaml:"network_policy" json:"network_policy"`
+	FallbackPolicy   string  `yaml:"fallback_policy" json:"fallback_policy"`
+	ExclusiveAgent   *bool   `yaml:"exclusive_agent" json:"exclusive_agent"`
+	AgentModel       string  `yaml:"agent_model" json:"agent_model"`
 	MaxDownloadMB    int     `yaml:"max_download_mb" json:"max_download_mb"`
 	StoreMaxGB       float64 `yaml:"store_max_gb" json:"store_max_gb"`
 	Concurrency      int     `yaml:"concurrency" json:"concurrency"`
@@ -20,6 +24,16 @@ type AcquisitionConfig struct {
 }
 
 func (c AcquisitionConfig) WithDefaults() AcquisitionConfig {
+	if c.NetworkPolicy == "" {
+		c.NetworkPolicy = "direct"
+	}
+	if c.FallbackPolicy == "" {
+		c.FallbackPolicy = "ask"
+	}
+	if c.ExclusiveAgent == nil {
+		enabled := true
+		c.ExclusiveAgent = &enabled
+	}
 	if c.MaxDownloadMB <= 0 {
 		c.MaxDownloadMB = 2048
 	}
@@ -39,7 +53,15 @@ func (c AcquisitionConfig) WithDefaults() AcquisitionConfig {
 	return c
 }
 func (c AcquisitionConfig) FallbackEnabled() bool { return c.AutoFallback == nil || *c.AutoFallback }
+func (c AcquisitionConfig) Exclusive() bool       { return c.ExclusiveAgent == nil || *c.ExclusiveAgent }
 func (c AcquisitionConfig) Validate() error {
+	d := c.WithDefaults()
+	if d.NetworkPolicy != "direct" && d.NetworkPolicy != "confirm" && d.NetworkPolicy != "deny" {
+		return fmt.Errorf("联网获取策略无效")
+	}
+	if d.FallbackPolicy != "ask" && d.FallbackPolicy != "allow" && d.FallbackPolicy != "deny" {
+		return fmt.Errorf("数据获取兜底策略无效")
+	}
 	if strings.TrimSpace(c.OverpassEndpoint) != "" {
 		u, err := url.Parse(c.OverpassEndpoint)
 		if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Hostname() == "" || u.User != nil {

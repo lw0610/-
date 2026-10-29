@@ -1,0 +1,44 @@
+{
+  "verified_at": "2026-10-28T17:31:47.126766+08:00",
+  "launch": "npx tauri dev with inherited old-checkout HOME/ASSETS and no explicit PROJECT_ROOT",
+  "desktop_pid": 69858,
+  "backend_pid": 70064,
+  "qgis_pid": 70564,
+  "resolved_project_root": "/Users/zw/研究生/QGIS-agent/enio2",
+  "resolved_runtime_home": "/Users/zw/研究生/QGIS-agent/enio2/autocarto_data",
+  "resolved_assets_root": "/Users/zw/研究生/QGIS-agent/enio2/autocarto",
+  "runtime_revision": "default:30f6ec21aa43c3e3",
+  "mode_readiness": {
+    "build": {
+      "enabled": true,
+      "ready": true
+    },
+    "plan": {
+      "enabled": true,
+      "ready": true
+    }
+  },
+  "mode_issues": null,
+  "service_phase": "ready",
+  "running_instance_count": 1,
+  "tool_count": 334,
+  "data_source_count": 9,
+  "data_category_count": 23,
+  "data_catalog_diagnostics": [],
+  "chat_session_id": "d391064f-d9d2-4d2f-a566-fb49b0877477",
+  "chat_started_at": "2026-10-28T09:27:34.829Z",
+  "chat_completed_at": "2026-10-28T09:27:38.509Z",
+  "chat_runtime_status": "completed",
+  "chat_response": [
+    "连接测试成功"
+  ],
+  "chat_tool_calls": 0,
+  "chat_failure_code": null,
+  "project_file_unchanged": true,
+  "verification_source": "Production session persisted assistant reply and completed state; QGIS native UI says connected.",
+  "observer_note": "Initial observing connection did not capture a final response frame. Verified the completed result and assistant reply from the persisted production session instead; no second model task was sent.",
+  "limitations": [
+    "Full thematic map task not replayed",
+    "Download performance not tested"
+  ]
+}

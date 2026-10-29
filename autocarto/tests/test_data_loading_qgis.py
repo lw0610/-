@@ -138,7 +138,7 @@ def test_data_load_list_missing_required_prevents_all_loading_and_group_creation
     vanished.write_bytes(path.read_bytes())
     handle = resolve_handle(manifest, "data_list")
     vanished.unlink()  # 解析后文件消失：工具仍在任何修改前拒绝。
-    result = loader.load_list_handler({"data_list": handle, "group": "不应创建"})
+    result = loader.load_list_handler({"items": handle["entries"], "group": "不应创建"})
     assert result["success"] is False
     assert result["error_type"] == "data_list_required_missing"
     assert result["data"]["loaded_count"] == 0
@@ -152,8 +152,8 @@ def test_data_load_list_mixed_crs_optional_missing_and_repeated_group_are_truthf
     raster = _raster(root / "sources/image.tif")
     manifest = root / "sources/list.csv"
     _write_list(manifest, [["点", "points.geojson", "矢量", "是"], ["影像", raster.name, "栅格", "是"], ["可选", "absent.geojson", "", "否"]])
-    first = loader.load_list_handler({"data_list": resolve_handle(manifest, "data_list"), "group": "输入数据"})
-    second = loader.load_list_handler({"data_list": resolve_handle(manifest, "data_list"), "group": "输入数据"})
+    first = loader.load_list_handler({"items": resolve_handle(manifest, "data_list")["entries"], "group": "输入数据"})
+    second = loader.load_list_handler({"items": resolve_handle(manifest, "data_list")["entries"], "group": "输入数据"})
     assert first["success"] and second["success"], (first, second)
     assert [entry["status"] for entry in first["data"]["entries"]] == ["loaded", "loaded", "missing"]
     assert [entry["status"] for entry in second["data"]["entries"]] == ["reused", "reused", "missing"]
@@ -171,14 +171,14 @@ def test_data_load_list_selection_non_strict_missing_and_missing_columns(data_lo
     vanished.write_text('{"type":"FeatureCollection","features":[]}', encoding="utf-8")
     handle = resolve_handle(manifest, "data_list", base_dir=root / "sources")
     vanished.unlink()
-    filtered = loader.load_list_handler({"data_list": handle, "base_dir": str(root / "sources"), "names": ["点"]})
+    filtered = loader.load_list_handler({"items": handle["entries"], "base_dir": str(root / "sources"), "names": ["点"]})
     assert filtered["success"], filtered
     assert len(project.mapLayers()) == 1
-    partial = loader.load_list_handler({"data_list": handle, "strict": False})
+    partial = loader.load_list_handler({"items": handle["entries"], "strict": False})
     assert partial["success"] is False
     assert [entry["status"] for entry in partial["data"]["entries"]] == ["reused", "missing"]
-    assert partial["resource"]["id"] == handle["id"]
-    invalid_base = loader.load_list_handler({"data_list": handle, "base_dir": 42})
+    assert "resource" not in partial
+    invalid_base = loader.load_list_handler({"items": [{"name":"invalid","path":42}]})
     assert invalid_base["error_type"] == "invalid_arguments"
     manifest.write_text("名称,说明\n点,缺少路径\n", encoding="utf-8")
     with pytest.raises(ValueError, match="FLOW_RESOURCE_INVALID"):
@@ -248,7 +248,7 @@ def test_data_load_new_handlers_execute_through_authority_manifest(data_load_pro
         {"name": "admin_boundary_extract", "runtime": "qgis", "domain": "admin-boundaries",
          "handler_file": str(tools / "admin-boundaries/handlers/boundary.py"), "handler_function": "extract_boundary_handler"},
     ])
-    loaded = execute_tool("data_load_list", {"data_list": resolve_handle(manifest, "data_list")}, engine=engine)
+    loaded = execute_tool("data_load_list", {"items": resolve_handle(manifest, "data_list")["entries"]}, engine=engine)
     assert loaded["success"], loaded
     assert loaded["output"]["data"]["entries"][0]["status"] == "loaded"
     extracted = execute_tool("admin_boundary_extract", {"level": "省", "code": "420000"}, engine=engine)
@@ -261,8 +261,8 @@ def test_data_load_new_handlers_execute_through_authority_manifest(data_load_pro
 def test_data_load_list_rejects_raw_resource_paths_and_wrong_resource_types(data_load_project):
     from autocarto.tests.support.resource_handles import load_handle
     project, _, _, loader = data_load_project
-    for value, code in [("数据清单", "resource_handle_required"),
-                        (load_handle("style"), "resource_type_mismatch")]:
+    for value, code in [("数据清单", "invalid_arguments"),
+                        (load_handle("style"), "invalid_arguments")]:
         result = loader.load_list_handler({"data_list": value})
         assert result["success"] is False and result["error_type"] == code, result
     assert not project.mapLayers()

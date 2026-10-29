@@ -887,10 +887,21 @@ func parseOutputLayers(raw any) []OutputLayer {
 			continue
 		}
 		path := strings.TrimSpace(toolutils.ToString(layer["path"]))
-		if path == "" {
+		layerID := strings.TrimSpace(toolutils.ToString(layer["layer_id"]))
+		if path == "" && layerID == "" {
 			continue
 		}
-		layers = append(layers, OutputLayer{Path: path, AutoLoad: toolutils.ToBool(layer["auto_load"])})
+		encoded, err := json.Marshal(layer)
+		if err != nil {
+			continue
+		}
+		var ref OutputLayer
+		if json.Unmarshal(encoded, &ref) != nil {
+			continue
+		}
+		ref.Path, ref.LayerID = path, layerID
+		ref.AutoLoad = toolutils.ToBool(layer["auto_load"]) && layerID == ""
+		layers = append(layers, ref)
 	}
 	return layers
 }

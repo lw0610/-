@@ -3,6 +3,8 @@ package skill
 import (
 	"context"
 	"strings"
+
+	"github.com/autocarto/carto_agent/internal/compute"
 )
 
 const (
@@ -29,10 +31,7 @@ func NormalizeRuntime(raw string) string {
 	}
 }
 
-type OutputLayer struct {
-	Path     string `json:"path,omitempty"`
-	AutoLoad bool   `json:"auto_load,omitempty"`
-}
+type OutputLayer = compute.OutputLayer
 
 type BackendResult struct {
 	Success      bool          `json:"success"`
@@ -52,5 +51,8 @@ func cloneOutputLayers(src []OutputLayer) []OutputLayer {
 	}
 	out := make([]OutputLayer, len(src))
 	copy(out, src)
+	for i := range out {
+		out[i].Fields = append([]string(nil), src[i].Fields...)
+	}
 	return out
 }

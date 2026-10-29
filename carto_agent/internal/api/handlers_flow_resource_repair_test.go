@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"net/http/httptest"
 	"os"
@@ -42,9 +41,12 @@ func TestFlowResourceRepairAndExportAPI(t *testing.T) {
 	a := &API{}
 	a.SetResourceLibrary(library)
 	a.SetFlowStore(store)
-	a.SetFlowCompiler(flow.NewCompiler(flow.CompilerOptions{Store: store, Resources: library, CacheDir: filepath.Join(root, "cache"), LoadEnvironment: func(context.Context, string) (flow.Environment, error) {
-		return flow.Environment{Scheme: "default"}, nil
-	}}))
+	gs := flow.NewGuideStore(store, filepath.Join(root, "guides.yaml"))
+	if _, err := gs.MigrateLegacy(); err != nil {
+		t.Fatal(err)
+	}
+	a.SetGuideStore(gs)
+
 	router := mux.NewRouter()
 	a.SetupRoutes(router)
 	call := func(path string, body any, status int) map[string]any {
@@ -63,7 +65,7 @@ func TestFlowResourceRepairAndExportAPI(t *testing.T) {
 		}
 		return result
 	}
-	endpoint := "/api/flows/repair-flow/resources/repair?scheme=default"
+	endpoint := "/api/guides/repair-flow/resources/repair?scheme=default"
 	call(endpoint, map[string]string{"action": "choose_resource", "resource_key": "unresolved:style:说明", "resource_id": "style.second"}, 200)
 	item, err := store.Get("repair-flow")
 	if err != nil {
@@ -74,13 +76,13 @@ func TestFlowResourceRepairAndExportAPI(t *testing.T) {
 		t.Fatal(lock, err)
 	}
 	result := call(endpoint, map[string]string{"action": "update_lock", "resource_key": "library:style.second"}, 200)["data"].(map[string]any)
-	if result["meta"] == nil || result["plan"] == nil || result["diagnostics"] == nil {
+	if result["meta"] == nil || result["guide"] == nil || result["diagnostics"] == nil {
 		t.Fatalf("not a FlowDetail: %+v", result)
 	}
 	call(endpoint, map[string]string{"action": "choose_resource", "resource_key": "library:style.second", "resource_id": "style.missing"}, 400)
 	call(endpoint, map[string]string{"action": "unknown", "resource_key": "library:style.second"}, 400)
 	export := filepath.Join(root, "export.zip")
-	call("/api/flows/repair-flow/export", map[string]any{"target_path": export}, 200)
+	call("/api/guides/repair-flow/export", map[string]any{"target_path": export}, 200)
 	// Default include_library_deps=true produces a portable package.
 	empty := resource.NewLibrary(filepath.Join(root, "empty-builtin"), filepath.Join(root, "empty-user"), b)
 	dest := flow.NewStore("", filepath.Join(root, "imported"), b)
@@ -93,6 +95,7 @@ func TestFlowResourceRepairAndExportAPI(t *testing.T) {
 		t.Fatal(lock, err)
 	}
 	// A repository-owned flow can be inspected but all repair mutations are denied.
-	write(filepath.Join(store.BuiltinDir, "builtin-flow/FLOW.md"), raw)
-	call("/api/flows/builtin-flow/resources/repair", map[string]string{"action": "choose_resource", "resource_key": "unresolved:style:说明", "resource_id": "style.second"}, 403)
+	converted, _, _ := flow.ConvertLegacy(raw)
+	write(filepath.Join(store.BuiltinDir, "builtin-flow/GUIDE.md"), converted)
+	call("/api/guides/builtin-flow/resources/repair", map[string]string{"action": "choose_resource", "resource_key": "unresolved:style:说明", "resource_id": "style.second"}, 403)
 }

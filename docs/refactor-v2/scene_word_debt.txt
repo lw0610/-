@@ -51,3 +51,15 @@ carto_agent/internal/knowledge/prompts.go:会师:97bcb7ebfead
 carto_agent/internal/knowledge/prompts.go:行军:1f962b9a77d0
 carto_agent/internal/knowledge/review_route_adapter.go:行军:b4875d6cdc93
 carto_agent/internal/websocket/knowledge_review_resume.go:marching:02585b20e40f
+
+# v6：方案指定预设的名称说明、迁移映射及工具私有资产身份；仅登记下列精确内容行，不豁免执行代码或新增场景分支。
+autocarto/resources/migrations/v6.json:军标:5ffec23f53fa
+autocarto/resources/migrations/v6.json:军标:7a3ce8b6705a
+autocarto/resources/migrations/v6.json:军标:b537096e6c9d
+autocarto/resources/migrations/v6.json:军标:ca79c29dfbae
+autocarto/tools/system/marching-route-knowledge/marching_route_compile_dataset.yaml:军标:7ee674c16c5d
+autocarto/tools/system/print-layout/layout_compose.yaml:军标:84fac24fd133
+autocarto/tools/system/print-layout/layout_set_legend_style.yaml:军标:dbdc22e38249
+autocarto/tools/system/route-cartography/assets/resources/symbols/军标/resource.yaml:military:54a55127913b
+autocarto/tools/system/route-cartography/assets/resources/symbols/军标/resource.yaml:军标:aed30e3ab183
+autocarto/tools/system/route-cartography/route_points_build.yaml:军标:dc7cdb3f13a1

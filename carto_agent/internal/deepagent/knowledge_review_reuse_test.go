@@ -61,7 +61,8 @@ func TestConfirmedExtractionReuseStartsFromAcceptedSourceGraph(t *testing.T) {
 		return nil
 	}}
 	ctx := WithKnowledgeReview(toolsession.WithContext(context.Background(), "second", project, ""), store)
-	_, err = agent.extractAndCompile(ctx, &adk.AgentInput{Messages: []*schema.Message{schema.UserMessage(source)}}, nil)
+	request, _ := json.Marshal(map[string]any{"source_text": source, "route_style": "红蓝对比", "symbols": "军标"})
+	_, err = agent.extractAndCompile(ctx, &adk.AgentInput{Messages: []*schema.Message{schema.UserMessage(string(request))}}, nil)
 	var paused *knowledgeReviewPause
 	if !errors.As(err, &paused) {
 		t.Fatalf("confirmed reuse failed: %v", err)

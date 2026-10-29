@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -24,6 +25,11 @@ func (s *DeepServer) LoadSession(sessionID, projectPath string) (map[string]any,
 	if flowErr != nil {
 		return nil, flowErr
 	}
+	plans, planErr := s.ListPlans(context.Background(), sessionID, projectPath)
+	if planErr != nil {
+		return nil, planErr
+	}
+	data["carto_plans"] = plans
 	data["flow_run"] = flow
 	if flow != nil {
 		data["flow_run_event_seq"] = flow.EventSeq

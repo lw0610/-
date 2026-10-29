@@ -30,7 +30,7 @@ type flowEnvironmentCache struct {
 }
 
 // InvalidateFlowEnvironment is called only after a successful asset mutation.
-// It retains the Compiler instance and its independently keyed structure cache.
+// It invalidates only the cached local environment projection.
 func (a *API) InvalidateFlowEnvironment() {
 	cache := &a.flowEnvironments
 	cache.mu.Lock()
@@ -186,19 +186,7 @@ func flowEnvironmentMetadataRevision(ctx context.Context) (string, error) {
 func cloneFlowEnvironment(environment flow.Environment) flow.Environment {
 	result := environment
 	result.VisionProviders = append([]string{}, environment.VisionProviders...)
-	if environment.RoleMapping != nil {
-		result.RoleMapping = map[string]map[string]string{}
-		for id, mapping := range environment.RoleMapping {
-			result.RoleMapping[id] = map[string]string{}
-			for slot, role := range mapping {
-				result.RoleMapping[id][slot] = role
-			}
-		}
-	}
-	if environment.EnabledFlows != nil {
-		enabled := append([]string{}, (*environment.EnabledFlows)...)
-		result.EnabledFlows = &enabled
-	}
+
 	result.Roles = append([]flow.RoleSpec{}, environment.Roles...)
 	for i := range result.Roles {
 		result.Roles[i].ToolPackages = append([]string{}, environment.Roles[i].ToolPackages...)

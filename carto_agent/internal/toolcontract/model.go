@@ -53,12 +53,14 @@ type Spec struct {
 }
 
 type Parameter struct {
-	Name        string `yaml:"name" json:"name"`
-	Type        string `yaml:"type" json:"type"`
-	Required    bool   `yaml:"required,omitempty" json:"required,omitempty"`
-	Description string `yaml:"description,omitempty" json:"description,omitempty"`
-	Default     any    `yaml:"default,omitempty" json:"default,omitempty"`
-	Values      []any  `yaml:"values,omitempty" json:"values,omitempty"`
+	// Schema carries the complete JSON Schema for nested objects and arrays.
+	Schema      map[string]any `yaml:"schema,omitempty" json:"schema,omitempty"`
+	Name        string         `yaml:"name" json:"name"`
+	Type        string         `yaml:"type" json:"type"`
+	Required    bool           `yaml:"required,omitempty" json:"required,omitempty"`
+	Description string         `yaml:"description,omitempty" json:"description,omitempty"`
+	Default     any            `yaml:"default,omitempty" json:"default,omitempty"`
+	Values      []any          `yaml:"values,omitempty" json:"values,omitempty"`
 }
 
 type Example struct {
@@ -327,6 +329,7 @@ func cloneParameters(src []Parameter) []Parameter {
 	out := make([]Parameter, len(src))
 	copy(out, src)
 	for idx := range src {
+		out[idx].Schema = cloneMapAny(src[idx].Schema)
 		if len(src[idx].Values) > 0 {
 			out[idx].Values = append([]any(nil), src[idx].Values...)
 		}
@@ -358,7 +361,8 @@ func cloneOutput(src *Output) *Output {
 }
 
 func cloneMapAny(src map[string]any) map[string]any {
-	if len(src) == 0 {
+	// Empty objects are valid JSON Schemas; preserve {} instead of emitting null.
+	if src == nil {
 		return nil
 	}
 	out := make(map[string]any, len(src))

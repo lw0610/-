@@ -169,9 +169,12 @@ func (r *Review) View() ReviewView {
 	// resolution gate. Do not present that stale error as a current failure.
 	errors := make([]ReviewError, 0, len(r.Errors))
 	for _, issue := range r.Errors {
-		if issue.Code != "semantic_review_pending" {
+		if issue.Code != "semantic_review_pending" && issue.Code != "empty_extraction" {
 			errors = append(errors, issue)
 		}
+	}
+	if !HasExtractedContent(r.Graph) {
+		errors = append(errors, emptyExtractionError(r))
 	}
 	view := ReviewView{ReviewID: r.ReviewID, SessionID: r.SessionID, Revision: r.Revision, Status: r.Status, Graph: r.Graph, ExtractionStatus: r.ExtractionStatus, PendingIssues: visiblePendingIssues(r), Resolutions: r.Resolutions, SourceText: r.SourceText, SourceSHA256: r.SourceSHA256, Errors: errors, ApprovedRevision: r.ApprovedRevision, Dataset: r.Dataset, Assets: r.Assets, UpdatedAt: r.UpdatedAt}
 	view.CalloutImports = r.CalloutImports

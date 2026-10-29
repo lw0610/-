@@ -26,6 +26,7 @@ import (
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/flowrun"
 	bridgeprovider "github.com/autocarto/carto_agent/internal/middleware/bridge"
+	cartoplan "github.com/autocarto/carto_agent/internal/plan"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/autocarto/carto_agent/internal/resource/bindings"
 	"github.com/autocarto/carto_agent/internal/runtimecontrol"
@@ -38,7 +39,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// This opt-in test exercises the production compiler, role factory, ADK phase
+// This opt-in test exercises the production plan service, role factory, ADK phase
 // runner, controller, task WebSocket and reverse-WS QGIS tool path. Models are
 // deterministic offline fixtures; this is not evidence of real LLM planning.
 func TestProductionFlowWebSocketRealQGISLoadAndExport(t *testing.T) {
@@ -53,7 +54,7 @@ func TestProductionFlowWebSocketRealQGISLoadAndExport(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, origin := range []string{"direct", "orchestrator"} {
+	for _, origin := range []string{"selected_guide", "orchestrator"} {
 		t.Run(origin, func(t *testing.T) { runProductionQGISFlow(t, python, root, origin) })
 	}
 }
@@ -62,48 +63,28 @@ const qgisE2EFlowID = "qgis-load-export"
 const qgisE2EFlowMD = `---
 名称: 隔离矢量加载导出
 编号: qgis-load-export
-说明: 使用真实QGIS加载并导出隔离数据
+说明: 使用真实 QGIS 加载和导出隔离数据
 版本: 1.0.0
 ---
 
-## 适用场景
-验证生产流程与真实QGIS工具的连接。
+## 适用任务
+验证生产计划执行与真实 QGIS 工具连接。
 
-## 需要准备
-- 输入数据（必填）：GeoJSON 文件
-- 导出位置（必填）：新 GeoJSON 文件路径
+## 数据
+| 数据 | 内容 | 可以来自 |
+| --- | --- | --- |
+| 输入数据 | 数据集 | 用户 |
 
-## 步骤
-### 第1步 加载矢量
-- 负责：加载核验角色
-- 做法：调用 data_load_vector 加载「输入数据」，返回实际图层标识。
-- 完成标准：「已加载图层」（图层）
+## 制作要点
+### 加载和导出
+使用数据加载能力读取矢量并另存导出，保留属性与坐标。
 
-### 第2步 导出矢量
-- 负责：导出核验角色
-- 做法：调用 data_export_vector，将「已加载图层」导出到「导出位置」，不覆盖输入数据。
-- 完成标准：「导出文件」（文件，geojson）
+## 产出与检查
+- 「导出文件」（文件，格式：GeoJSON）
 
-## 必须遵守
-- 工具失败时停止并保留错误，不伪造文件和图层。
-
-## 交付
-- 导出文件路径。
+## 注意事项
+- 不覆盖输入数据。
 `
-
-type qgisE2ECompileModel struct{}
-
-func (qgisE2ECompileModel) Complete(_ context.Context, r flow.ModelRequest) (string, error) {
-	if r.Kind == "flow" {
-		return `{"inputs":[{"key":"input_data","label":"输入数据","type":"file","options":[]},{"key":"output_path","label":"导出位置","type":"text","options":[]}],"input_constraints":[],"triggers":["核验"]}`, nil
-	}
-	name, label, kind, format := "data_load_vector", "已加载图层", "layers", ""
-	if r.Step == "s2" {
-		name, label, kind, format = "data_export_vector", "导出文件", "file", "geojson"
-	}
-	raw, err := json.Marshal(map[string]any{"suggested_tools": []string{name}, "missing_capabilities": []string{}, "expected_outputs": []flow.OutputDeclaration{{Label: label, Type: kind, Format: format, Required: true}}, "condition": nil, "notes": "确定性离线验收夹具"})
-	return string(raw), err
-}
 
 type qgisE2EModel struct {
 	tool   string
@@ -145,8 +126,8 @@ func (m *qgisE2EModel) Generate(_ context.Context, messages []*schema.Message, o
 		if qgisE2EFailed(result) {
 			return nil, fmt.Errorf("real tool %s returned failure: %s", m.tool, text)
 		}
-		if m.tool == "flow_start" {
-			return schema.AssistantMessage("流程已登记，等待生产控制器执行。", nil), nil
+		if m.tool == "plan_propose" {
+			return schema.AssistantMessage("计划已登记，等待生产控制器执行。", nil), nil
 		}
 		value := m.output
 		if m.tool == "data_load_vector" {
@@ -364,16 +345,20 @@ func runProductionQGISFlow(t *testing.T, python, root, origin string) {
 		t.Fatal(err)
 	}
 	layerName := "验收矢量-" + origin
+	cartoPlan := &cartoplan.Plan{APIVersion: cartoplan.APIVersion, ID: "cp-qgis", Version: 1, Goal: "加载并导出隔离矢量", Guide: &cartoplan.GuideRef{ID: qgisE2EFlowID, Version: "1.0.0"}, Data: []cartoplan.Data{{ID: "input", Name: "输入数据", From: "user", Path: input}}, Steps: []cartoplan.Step{
+		{ID: "load", Title: "加载矢量", RoleHint: "loader", Capabilities: []string{"data-loading"}, Uses: []string{"input"}, Instructions: "加载实际文件并返回图层ID", Outputs: []flow.OutputDeclaration{{Label: "已加载图层", Type: "layers"}}},
+		{ID: "export", Title: "导出矢量", RoleHint: "exporter", Capabilities: []string{"data-loading"}, DependsOn: []string{"load"}, Instructions: "导出矢量并返回实际文件路径", Outputs: []flow.OutputDeclaration{{Label: "导出文件", Type: "file", Format: "geojson"}}},
+	}, Deliverables: []flow.OutputDeclaration{{Label: "导出文件", Type: "file", Format: "geojson"}}}
 	models := map[string]*qgisE2EModel{
-		"main":     {tool: "flow_start", args: map[string]any{"flow_id": qgisE2EFlowID, "inputs": map[string]any{"input_data": input, "output_path": output}}},
+		"main":     {tool: "plan_propose", args: map[string]any{"plan": cartoPlan}},
 		"loader":   {tool: "data_load_vector", args: map[string]any{"path": input, "layer_name": layerName, "reuse_existing": false}},
 		"exporter": {tool: "data_export_vector", args: map[string]any{"layer": layerName, "output": output, "format": "GeoJSON"}, output: output},
 	}
 	profile := &config.AgentConfigFile{Version: config.AgentConfigVersionV20, Runtime: &config.RuntimeConfig{Agents: map[string]config.AgentDefData{
 		"orchestrator": {Kind: "agent", Enabled: true, IsMain: true, DisplayName: "编排核验角色", ToolPackages: []string{"flow-control"}, LLM: config.AgentLLMConfig{Provider: "main"}, Prompts: map[string]string{"static_instructions": "按用户要求启动核验流程。"}},
-		"loader":       {Kind: "agent", Enabled: true, FlowOnly: true, DisplayName: "加载核验角色", ToolPackages: []string{"data-loading"}, LLM: config.AgentLLMConfig{Provider: "loader"}, Prompts: map[string]string{"static_instructions": "执行加载工具并返回真实图层标识。"}},
-		"exporter":     {Kind: "agent", Enabled: true, FlowOnly: true, DisplayName: "导出核验角色", ToolPackages: []string{"data-loading"}, LLM: config.AgentLLMConfig{Provider: "exporter"}, Prompts: map[string]string{"static_instructions": "执行导出工具并返回真实文件路径。"}},
-	}}, Flows: &config.FlowConfig{Enabled: []string{qgisE2EFlowID}}}
+		"loader":       {Kind: "agent", Enabled: true, DisplayName: "加载核验角色", ToolPackages: []string{"data-loading"}, LLM: config.AgentLLMConfig{Provider: "loader"}, Prompts: map[string]string{"static_instructions": "执行加载工具并返回真实图层标识。"}},
+		"exporter":     {Kind: "agent", Enabled: true, DisplayName: "导出核验角色", ToolPackages: []string{"data-loading"}, LLM: config.AgentLLMConfig{Provider: "exporter"}, Prompts: map[string]string{"static_instructions": "执行导出工具并返回真实文件路径。"}},
+	}}}
 	configBase := filepath.Join(home, "config")
 	governance := control.NewRegistryGovernance(control.RegistryGovernanceDeps{
 		ResolveToolDirs:  func() []string { return []string{filepath.Join(assets, "tools", "system")} },
@@ -401,13 +386,13 @@ func runProductionQGISFlow(t *testing.T, python, root, origin string) {
 		role := profile.Runtime.Agents[name]
 		roles = append(roles, flow.RoleSpec{ID: name, DisplayName: role.DisplayName, Kind: role.Kind, Enabled: role.Enabled, FlowOnly: role.FlowOnly, IsMain: role.IsMain, ToolPackages: runtimeConfig.GetAgentSkills(name), Tools: runtimeConfig.GetAgentAllowedTools(name)})
 	}
-	environment := flow.Environment{Scheme: "qgis-e2e", SchemeRevision: "isolated-e2e-v2", CatalogRevision: "real-authority", Roles: roles, Model: qgisE2ECompileModel{}, ModelName: "deterministic-offline-fixture"}
+	environment := flow.Environment{Scheme: "qgis-e2e", SchemeRevision: "isolated-e2e-v2", CatalogRevision: "real-authority", Roles: roles}
 	owners := map[string][]string{}
 	for _, pkg := range registry.Packages() {
 		if pkg.Kind != "category" {
 			continue
 		}
-		environment.Packages = append(environment.Packages, flow.PackageSpec{ID: pkg.Name, DisplayName: pkg.DisplayName, Enabled: pkg.Enabled, Tools: pkg.ToolRefs})
+		environment.Packages = append(environment.Packages, flow.PackageSpec{ID: pkg.Name, DisplayName: pkg.DisplayName, Enabled: pkg.Enabled, Kind: pkg.Kind, Tools: pkg.ToolRefs})
 		for _, name := range pkg.ToolRefs {
 			owners[name] = append(owners[name], pkg.Name)
 		}
@@ -417,19 +402,11 @@ func runProductionQGISFlow(t *testing.T, python, root, origin string) {
 			environment.Capabilities = append(environment.Capabilities, flow.CapabilitySpec{Name: definition.Metadata.Name, DisplayName: definition.Metadata.DisplayName, Description: definition.Spec.Description, Keywords: definition.Metadata.Keywords, PackageIDs: owners[definition.Metadata.Name]})
 		}
 	}
-	store := flow.NewStore(filepath.Join(home, "empty-builtins"), filepath.Join(home, "flows"), sharedResources.Bindings)
+	store := flow.NewGuideStore(flow.NewStore(filepath.Join(home, "empty-builtins"), filepath.Join(home, "flows"), sharedResources.Bindings), filepath.Join(home, "config", "guides.yaml"))
 	if _, err := store.Create(qgisE2EFlowMD, qgisE2EFlowID); err != nil {
 		t.Fatal(err)
 	}
-	compiler := flow.NewCompiler(flow.CompilerOptions{Store: store, Resources: sharedResources, CacheDir: filepath.Join(home, "compile-cache"), LoadEnvironment: func(context.Context, string) (flow.Environment, error) { return environment, nil }})
-	plan, err := compiler.EnsureCompiled(context.Background(), qgisE2EFlowID, "qgis-e2e")
-	if err != nil {
-		t.Fatalf("production compile: %v plan=%+v", err, plan)
-	}
-	if len(plan.Steps) != 2 || plan.Steps[0].Role != "loader" || plan.Steps[1].Role != "exporter" {
-		t.Fatalf("actual compiler selected unexpected steps: %+v", plan.Steps)
-	}
-	if err := s.SetFlowCompiler(compiler); err != nil {
+	if err := s.SetPlanRuntime(PlanRuntimeOptions{Guides: store, Resources: sharedResources, LoadEnvironment: func(context.Context, string) (flow.Environment, error) { return environment, nil }}); err != nil {
 		t.Fatal(err)
 	}
 	s.HandleLocalBridgeStateChanged()
@@ -444,9 +421,10 @@ func runProductionQGISFlow(t *testing.T, python, root, origin string) {
 	}
 	defer conn.Close()
 	data := map[string]any{"project_path": project, "instance_id": "t53-production-qgis", "mode": "build"}
-	if origin == "direct" {
-		data["flow"] = map[string]any{"id": qgisE2EFlowID, "inputs": map[string]any{"input_data": input, "output_path": output}}
+	if origin == "selected_guide" {
+		data["guide_id"] = qgisE2EFlowID
 	}
+	data["attachments"] = []map[string]any{{"path": input, "kind": "file"}}
 	if err := conn.WriteJSON(Message{Type: MsgTypeTaskCreate, SessionID: sessionID, RequestID: "qgis-" + origin, IdempotencyKey: "qgis-" + origin, Content: "加载隔离GeoJSON并导出新的GeoJSON文件。", Data: data}); err != nil {
 		t.Fatal(err)
 	}
@@ -498,7 +476,7 @@ func runProductionQGISFlow(t *testing.T, python, root, origin string) {
 	if err != nil || state == nil {
 		t.Fatalf("missing production controller snapshot: %v", err)
 	}
-	if state.Status != "completed" || state.Origin != origin || len(state.Steps) != 2 {
+	if state.Status != "completed" || state.Origin != "orchestrator" || state.CartoPlan == nil || len(state.Steps) != 2 {
 		t.Fatalf("unexpected production run: %+v", state)
 	}
 	for _, step := range state.Steps {
@@ -511,7 +489,7 @@ func runProductionQGISFlow(t *testing.T, python, root, origin string) {
 		t.Fatal(err)
 	}
 	var stored flowrun.RunState
-	if err := json.Unmarshal(persisted, &stored); err != nil || stored.Status != "completed" || stored.PlanCacheKey != plan.CompileKey {
+	if err := json.Unmarshal(persisted, &stored); err != nil || stored.Status != "completed" || stored.CartoPlan == nil || stored.CartoPlan.ID != cartoPlan.ID {
 		t.Fatalf("run.json lost completed plan: %v", err)
 	}
 	actualOutput, ok := state.Steps[1].Outputs["导出文件"].(string)
@@ -567,9 +545,9 @@ func runProductionQGISFlow(t *testing.T, python, root, origin string) {
 		t.Fatalf("real bridge calls were missing or repeated: %+v", counts)
 	}
 	sum := sha256.Sum256(source)
-	qgisE2EWrite(t, filepath.Join(home, "result.json"), map[string]any{"origin": origin, "status": state.Status, "real_qgis": true, "real_llm": false, "compiler": "production with deterministic JSON model", "role_factory": "production agentruntime.Factory", "source_sha256": hex.EncodeToString(sum[:]), "source_unchanged": true, "features": len(geo.Features), "bridge_calls": counts, "run_json": state.RunJSONPath, "export": actualOutput, "requested_output": output, "event_seq": lastSeq})
+	qgisE2EWrite(t, filepath.Join(home, "result.json"), map[string]any{"origin": origin, "status": state.Status, "real_qgis": true, "real_llm": false, "planner": "production plan_propose with deterministic model", "role_factory": "production agentruntime.Factory", "source_sha256": hex.EncodeToString(sum[:]), "source_unchanged": true, "features": len(geo.Features), "bridge_calls": counts, "run_json": state.RunJSONPath, "export": actualOutput, "requested_output": output, "event_seq": lastSeq})
 	qgisE2EWrite(t, filepath.Join(home, "events.json"), events)
 	qgisE2EWrite(t, filepath.Join(home, "bridge-calls.json"), calls)
-	qgisE2EWrite(t, filepath.Join(home, "plan.json"), plan)
+	qgisE2EWrite(t, filepath.Join(home, "plan.json"), cartoPlan)
 	t.Logf("production WS/QGIS %s passed; artifacts: %s", origin, home)
 }

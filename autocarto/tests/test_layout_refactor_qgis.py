@@ -57,7 +57,24 @@ def _run_case(case, output, manifest=None):
     from autocarto.tools.system._shared import print_layout_advanced_impl as advanced, print_layout_items_impl as items
     project, layer, layout, main = _scene()
     base = {"layout": layout.name()}
-    if case == "legend_extras":
+    if case == "plan_observation":
+        from qgis.core import QgsLayoutItemMapGrid
+        from autocarto.tools.system._shared.print_layout_impl import get_layout_info_handler
+        main.setCustomProperty("autocarto/compose_role", "main_map")
+        grid = QgsLayoutItemMapGrid("verification-grid", main)
+        main.grids().addGrid(grid)
+        grid.setEnabled(True)
+        note = _label(layout, "source_notes")
+        note.setText("来源：测试夹具；仅验证结构")
+        observed = get_layout_info_handler({"name": layout.name()})
+        assert observed["success"], observed
+        by_id = {item["item_id"]: item for item in observed["layout"]["items"]}
+        assert by_id["main_map"]["type"] == "QgsLayoutItemMap"
+        assert by_id["main_map"]["role"] == "main_map"
+        assert by_id["main_map"]["grids"] == [{"name": "verification-grid", "enabled": True}]
+        assert by_id["source_notes"]["text"] == note.text()
+        assert layout.itemById("source_notes").text() == "来源：测试夹具；仅验证结构"
+    elif case == "legend_extras":
         legend = QgsLayoutItemLegend(layout)
         legend.setId("legend")
         legend.setLinkedMap(main)
@@ -294,7 +311,7 @@ func main(){defs,err:=tool.LoadAuthorityDefinitions(os.Args[1]);if err!=nil{pani
     return path
 
 
-@pytest.mark.parametrize("case", ["legend_extras", "font_lock", "snapshot", "review_dpi", "bounds", "callout_bounds", "overview", "handlers_manifest", "scalebar_actual_geometry", "map_frame_extent_ratio"])
+@pytest.mark.parametrize("case", ["plan_observation", "legend_extras", "font_lock", "snapshot", "review_dpi", "bounds", "callout_bounds", "overview", "handlers_manifest", "scalebar_actual_geometry", "map_frame_extent_ratio"])
 def test_layout_refactor_qgis(case, tmp_path):
     if not qgis_available():
         pytest.skip("需要独立 QGIS Python 环境")

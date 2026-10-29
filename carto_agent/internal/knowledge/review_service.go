@@ -195,6 +195,35 @@ func (s *ReviewStore) Claim(sid, rid string, revision int64, requestID string) (
 	return r, true, nil
 }
 
+// RetryCompilation changes drawing presets for an unchanged, already-confirmed
+// revision. It preserves the user's original confirmation and extracted facts.
+func (s *ReviewStore) RetryCompilation(sid, rid string, revision int64, presets map[string]string) (*Review, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	r, err := s.getLocked(sid, rid)
+	if err != nil {
+		return nil, err
+	}
+	if r.Status != ReviewCompileFailed || r.Revision != revision || r.ClaimedRevision != revision || r.ClaimedAt == "" {
+		return nil, ErrReviewConflict
+	}
+	if r.CompileArgs == nil {
+		r.CompileArgs = map[string]any{}
+	}
+	for _, key := range []string{"route_style", "symbols"} {
+		if value, exists := presets[key]; exists {
+			r.CompileArgs[key] = value
+		}
+	}
+	r.Status = ReviewCompiling
+	r.Errors = []ReviewError{}
+	reviewTouch(r)
+	if err = s.writeLocked(r); err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
 func (s *ReviewStore) Complete(sid, rid string, revision int64, approvedGraph Graph, dataset map[string]any) (*Review, error) {
 	if err := ValidateReviewDraft(approvedGraph); err != nil {
 		return nil, err

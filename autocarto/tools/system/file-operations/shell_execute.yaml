@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: shell_execute
+  display_name: 执行本机命令
+  keywords: [命令, shell, Python, 文件转换, 表格处理]
+  domain: file-operations
+  runtime: internal
+spec:
+  description: "在本机shell执行当前任务所需命令，可调用实际安装的Python或文档处理程序。默认cwd为当前会话output，不是隔离沙箱；只处理任务文件，禁止读取凭据或修改用户原件，不假设已安装OCR/PDF/Excel依赖。返回退出码、合并输出、超时/取消和截断标记，输出保留头尾共64 KiB。非零退出码是失败，不表示成功。"
+  parameters:
+    - name: command
+      type: string
+      required: true
+      description: "实际shell命令；需正确转义路径，凭据不得写入命令"
+    - name: workdir
+      type: string
+      required: false
+      description: "工作目录，限当前会话output或其子目录，省略使用output"
+    - name: timeout_seconds
+      type: integer
+      required: false
+      default: 120
+      description: "超时秒数，1–600；超时/取消终止进程"
+policy:
+  visibility: public
+  authorization_scopes: [tool.invoke]
+execution:
+  backend_tool: shell_execute
+  param_mapping:
+    command: '{{ command }}'
+    workdir: '{{ workdir }}'
+    timeout_seconds: '{{ timeout_seconds }}'

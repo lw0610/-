@@ -63,10 +63,10 @@ func buildRuntimeHandlers(
 			handlers = append(handlers, reductionHandler)
 		}
 	default:
-		return handlers, nil
+		return withTaskMaterials(handlers), nil
 	}
 
-	return handlers, nil
+	return withTaskMaterials(handlers), nil
 }
 
 func buildSummarizationHandler(

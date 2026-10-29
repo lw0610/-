@@ -27,6 +27,7 @@ import (
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/control"
 	"github.com/autocarto/carto_agent/internal/creatortools"
+	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
 	"github.com/autocarto/carto_agent/internal/discovery"
 	"github.com/autocarto/carto_agent/internal/fileops"
@@ -231,16 +232,7 @@ func runDeepAgent() {
 			logger.Warn("LLM API Key 未配置，请通过设置页面配置后重启服务")
 		}
 
-		llmConfig := &llm.Config{
-			Provider:        activeProvider.Provider,
-			Model:           activeProvider.Model,
-			APIKey:          activeProvider.APIKey,
-			BaseURL:         activeProvider.BaseURL,
-			MaxTokens:       activeProvider.MaxTokens,
-			Temperature:     activeProvider.Temperature,
-			ThinkingEnabled: activeProvider.ThinkingEnabled,
-			ThinkingBudget:  activeProvider.ThinkingBudget,
-		}
+		llmConfig := config.ProviderToLLMConfig(activeProvider)
 		var err error
 		chatModel, err = llm.NewChatModel(llmConfig)
 		if err != nil {
@@ -333,16 +325,12 @@ func runDeepAgent() {
 	if resourceErr != nil {
 		logger.Fatal("初始化资源库失败: %v", resourceErr)
 	}
-	flowStore, flowStoreErr := flow.NewDefaultStore(resourceLibrary)
-	if flowStoreErr != nil {
-		logger.Fatal("初始化流程绑定迁移失败: %v", flowStoreErr)
+	guideStore, guideErr := flow.NewDefaultGuideStore(resourceLibrary)
+	if guideErr != nil {
+		logger.Fatal("初始化制图指南失败: %v", guideErr)
 	}
-	inputMemory, inputMemoryErr := flow.DefaultInputMemory()
-	if inputMemoryErr != nil {
-		logger.Fatal("初始化流程输入记忆失败: %v", inputMemoryErr)
-	}
-	if inputMemoryErr = flowStore.MigrateInputMemory(inputMemory, resourceLibrary); inputMemoryErr != nil {
-		logger.Fatal("迁移流程输入记忆失败，原配置及备份保留: %v", inputMemoryErr)
+	if _, guideErr = guideStore.MigrateLegacy(); guideErr != nil {
+		logger.Fatal("迁移制图指南失败（原文件保留）: %v", guideErr)
 	}
 	buildOptions := skill.BuildOptions{
 		ResourceResolver: resourceLibrary,
@@ -431,9 +419,12 @@ func runDeepAgent() {
 	// 创建统一 Runtime（仅在 ChatModel 可用时）
 	var runtime *agentruntime.Runtime
 	var buildAgentForServer agentruntime.Builder
+	var runtimeBuildErr error
 	if chatModel != nil {
 		runtimeFactory, err := agentruntime.NewFactory(&agentruntime.FactoryConfig{
 			DefaultChatModel:   chatModel,
+			AcquisitionConfig:  configService.GetAcquisitionConfig,
+			GuideBackend:       &deepagent.GuideBackend{Store: guideStore, Resources: resourceLibrary},
 			DefaultProviderCfg: cloneProviderConfig(cfg.GetActiveProvider()),
 			BaseTools:          baseTools,
 			MaxIterations:      cfg.Agent.LoopMaxIterations,
@@ -447,19 +438,18 @@ func runDeepAgent() {
 			ResolveChatModel: func(provider string) (model.ToolCallingChatModel, error) {
 				return resolveChatModelFromRuntimeConfig(cfg, provider)
 			},
-			ResolvePlanChatModel: func(provider string) (model.ToolCallingChatModel, error) {
-				return resolvePlanChatModelFromRuntimeConfig(cfg, provider)
-			},
 			ResolveProviderCfg: func(provider string) *config.LLMProviderConfig {
 				return cloneProviderConfig(cfg.GetProviderByName(provider))
 			},
 		})
 		if err != nil {
+			runtimeBuildErr = fmt.Errorf("创建 AgentRuntime 工厂失败: %w", err)
 			logger.Warn("创建 AgentRuntime 工厂失败: %v，服务将以受限模式运行", err)
 		} else {
 			buildAgentForServer = runtimeFactory
 			runtime, err = runtimeFactory.BuildActive(ctx, agentConfigManager)
 			if err != nil {
+				runtimeBuildErr = fmt.Errorf("创建 AgentRuntime 失败: %w", err)
 				logger.Warn("创建 AgentRuntime 失败: %v，服务将以受限模式运行", err)
 			} else {
 				logger.Info("AgentRuntime 创建成功: config=%s revision=%s", runtime.ActiveConfigName, runtime.Revision)
@@ -478,6 +468,7 @@ func runDeepAgent() {
 		initialAgent = runtime.BuildAgent
 	}
 	wsServer = websocket.NewDeepServer(port, initialAgent)
+	wsServer.SetRuntimeBuildError(runtimeBuildErr)
 	wsServer.SetLocalBridgeProvider(localBridgeProvider)
 	wsServer.SetLocalRuntimeProjection(buildLocalRuntimeSnapshot(localComputeRuntime))
 	var flowEnvironmentAPI atomic.Pointer[api.API]
@@ -694,15 +685,11 @@ func runDeepAgent() {
 	flowEnvironmentAPI.Store(apiHandler)
 	apiHandler.SetLocalBridgeProvider(localBridgeProvider)
 	apiHandler.SetResourceLibrary(resourceLibrary)
-	apiHandler.SetFlowStore(flowStore)
-	flowCompiler, flowErr := apiHandler.FlowCompiler()
-	if flowErr != nil {
-		logger.Fatal("初始化流程编译器失败: %v", flowErr)
-	}
-	// Flow previews are built locally on save/read. Do not start background model analysis.
+	apiHandler.SetGuideStore(guideStore)
+	apiHandler.SetPlanService(wsServer)
 	wsServer.SetFlowLifecycleContext(lifecycleCtx)
-	if err := wsServer.SetFlowCompiler(flowCompiler); err != nil {
-		logger.Fatal("初始化流程运行时失败: %v", err)
+	if err := wsServer.SetPlanRuntime(websocket.PlanRuntimeOptions{Guides: guideStore, Resources: resourceLibrary, LoadEnvironment: apiHandler.PlanEnvironment}); err != nil {
+		logger.Fatal("初始化制图计划运行时失败: %v", err)
 	}
 	apiHandler.SetupRoutes(router)
 
@@ -856,100 +843,6 @@ func resolveChatModelFromRuntimeConfig(baseCfg *config.Config, providerName stri
 	}
 
 	return llm.NewChatModel(config.ProviderToLLMConfig(provider))
-}
-
-func resolvePlanChatModelFromRuntimeConfig(baseCfg *config.Config, providerName string) (model.ToolCallingChatModel, error) {
-	trimmed := strings.TrimSpace(providerName)
-	if baseCfg == nil {
-		return nil, fmt.Errorf("配置为空")
-	}
-
-	candidates, err := resolvePlanProviderCandidatesFromRuntimeConfig(baseCfg, trimmed)
-	if err != nil {
-		return nil, err
-	}
-
-	var failureMessages []string
-	for _, provider := range candidates {
-		chatModel, resolveErr := buildPlanChatModelFromRuntimeProvider(provider, trimmed)
-		if resolveErr == nil {
-			return chatModel, nil
-		}
-		failureMessages = append(failureMessages, resolveErr.Error())
-	}
-
-	return nil, fmt.Errorf("%s", strings.Join(failureMessages, "; "))
-}
-
-func resolvePlanProviderCandidatesFromRuntimeConfig(baseCfg *config.Config, providerName string) ([]*config.LLMProviderConfig, error) {
-	trimmed := strings.TrimSpace(providerName)
-	if baseCfg == nil {
-		return nil, fmt.Errorf("配置为空")
-	}
-	if trimmed != "" {
-		provider := baseCfg.GetProviderByName(trimmed)
-		if provider == nil {
-			return nil, fmt.Errorf("未找到 provider: %s", trimmed)
-		}
-		return []*config.LLMProviderConfig{provider}, nil
-	}
-
-	candidates := make([]*config.LLMProviderConfig, 0, 2)
-	seen := make(map[string]struct{}, 2)
-	appendCandidate := func(provider *config.LLMProviderConfig) {
-		if provider == nil {
-			return
-		}
-		name := strings.TrimSpace(provider.Name)
-		if name == "" {
-			name = fmt.Sprintf("%s::%s", strings.TrimSpace(provider.Provider), strings.TrimSpace(provider.Model))
-		}
-		if name == "" {
-			return
-		}
-		if _, exists := seen[name]; exists {
-			return
-		}
-		seen[name] = struct{}{}
-		candidates = append(candidates, provider)
-	}
-
-	if quick := strings.TrimSpace(baseCfg.LLM.QuickModel); quick != "" {
-		appendCandidate(baseCfg.GetProviderByName(quick))
-	}
-	appendCandidate(baseCfg.GetActiveProvider())
-
-	if len(candidates) == 0 {
-		return nil, fmt.Errorf("未找到激活 provider")
-	}
-
-	return candidates, nil
-}
-
-func buildPlanChatModelFromRuntimeProvider(provider *config.LLMProviderConfig, providerName string) (model.ToolCallingChatModel, error) {
-	if provider == nil {
-		return nil, fmt.Errorf("planner model 不满足 planexecute 强制 tool-call 协议（provider=%s）: provider 未初始化", strings.TrimSpace(providerName))
-	}
-
-	normalized, err := llm.PrepareConfigForCapability(config.ProviderToLLMConfig(provider), llm.CapabilityPlanExecuteForcedToolChoice)
-	if err != nil {
-		targetName := strings.TrimSpace(provider.Name)
-		if targetName == "" {
-			targetName = strings.TrimSpace(providerName)
-		}
-		return nil, fmt.Errorf("planner model 不满足 planexecute 强制 tool-call 协议（provider=%s backend=%s model=%s）: %w", targetName, provider.Provider, provider.Model, err)
-	}
-
-	chatModel, err := llm.NewChatModel(normalized)
-	if err != nil {
-		targetName := strings.TrimSpace(provider.Name)
-		if targetName == "" {
-			targetName = strings.TrimSpace(providerName)
-		}
-		return nil, fmt.Errorf("planner model 不满足 planexecute 强制 tool-call 协议（provider=%s backend=%s model=%s）: %w", targetName, provider.Provider, provider.Model, err)
-	}
-
-	return chatModel, nil
 }
 
 func cloneProviderConfig(cfg *config.LLMProviderConfig) *config.LLMProviderConfig {

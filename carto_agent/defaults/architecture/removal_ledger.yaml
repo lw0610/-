@@ -59,6 +59,19 @@ compat_layers:
     governs: []
     status: v1_read_v2_write
 
+  - id: known_official_main_prompt_migration
+    path: carto_agent/internal/config/legacy_main_prompt.go
+    why_temporary: '仅以完整原文的 SHA-256 指纹识别两版未经编辑的旧官方主提示，在内存替换为当前内置规则并补齐其工具包；不保留旧执行入口，不改自定义提示，正常保存后才持久化。'
+    remove_in_wave: after_official_main_prompt_migration_two_releases
+    evidence_required:
+      - '迁移发布满两个版本，受支持的存量及导入方案已保存当前提示，旧官方方案导入支持窗口明确关闭。'
+      - '原配置可由用户备份恢复；删除指纹迁移后，配置加载与保存、当前流程读取和制图计划回归仍通过。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/config -run 'TestKnownLegacyMainPrompt|TestCustomizedFlowStartPrompt' -count=1
+      - cd carto_agent && go test ./internal/control -run 'TestV5RetiredExecutionMechanismsAbsent|TestCompatLayerRequiresRemovalCriteria' -count=1
+    governs: []
+    status: fingerprint_migration_only
+
 
   - id: resource_style_type_adjustment
     path: carto_agent/internal/resource/resolve.go
@@ -123,26 +136,16 @@ compat_layers:
     governs: []
     status: read_only_compat
 
-  - id: flow_ensure_compiled_alias
-    path: carto_agent/internal/flow/compile.go
-    why_temporary: 'EnsureCompiled 保留一个版本，内部只委托 EnsureRunnable；新运行入口已切换。'
-    remove_in_wave: after_flow_v2_next_release
-    evidence_required:
-      - '集成调用方均已使用 EnsureRunnable，旧入口发布满一个版本。'
-    blocking_tests:
-      - cd carto_agent && go test ./internal/flow ./internal/flowrun -count=1
-    governs: []
-    status: wrapper_only
 
   - id: flow_plan_v1_read_only
-    path: carto_agent/internal/flow/plan_legacy.go
+    path: carto_agent/internal/flow/history_decode.go
     why_temporary: '旧 run.json 的 cache_key / resolved_path 仅在反序列化时转换为 CompileKey / Root / Entry，新 API、缓存和运行记录不再输出旧字段。'
     remove_in_wave: after_flow_v2_next_release
     evidence_required:
       - '新客户端发布满一个版本，存量运行记录已恢复或归档。'
       - '删除只读转换不会丢失仍受支持的运行记录。'
     blocking_tests:
-      - cd carto_agent && go test ./internal/flow ./internal/flowrun -run 'TestLegacyPlan|TestResumeReadsLegacyPlan' -count=1
+      - cd carto_agent && go test ./internal/flow ./internal/flowrun -run 'TestLegacyPlan|TestLegacyRun' -count=1
     governs: []
     status: legacy_read_canonical_write
 
@@ -182,31 +185,16 @@ compat_layers:
     governs: []
     status: read_only_compat
 
-  - id: flow_bindings_input_memory_adapter_v2
-    path: carto_agent/internal/api/handlers_flow.go
-    why_temporary: '旧流程绑定接口仅为已关联的文件夹输入写入本机输入记忆；未关联清单返回 410 和 convert_to_input 指引。'
-    remove_in_wave: after_flow_v3_next_release
-    evidence_required: ['V41 输入表单已发布满一个版本，所有受支持客户端改用输入记忆接口。']
-    blocking_tests: ['cd carto_agent && go test ./internal/api -run TestFlowBinding -count=1']
-    governs: []
-    status: wrapper_only
+
   - id: resource_bindings_to_input_memory_v2
     path: carto_agent/internal/flow/input_memory_migration.go
-    why_temporary: '启动时将关联清单的 v1/v2 绑定迁移为本机输入记忆；未关联、冲突与 library 绑定保留只读兼容。'
+    why_temporary: '仅保留旧绑定到旧记忆的显式迁移函数与回归；v5 运行不写旧记忆，启动由 DataMemory.MigrateLegacy 将旧选择迁往 data_memory.yaml。'
     remove_in_wave: after_flow_v3_next_release
     evidence_required: ['资源绑定只读兼容窗口结束，关联输入迁移至少发布满一个版本。']
     blocking_tests: ['cd carto_agent && go test ./internal/flow ./internal/resource/bindings -run "TestInputMemory|TestBindingConsume" -count=1']
     governs: []
     status: legacy_read_canonical_write
 
-  - id: flow_run_v2_plan_key_upgrade
-    path: carto_agent/internal/flowrun/resume_legacy.go
-    why_temporary: '旧编译器运行快照按原输入键恢复；只在步骤语义、条件、产出、输入约束及相关角色授权完全相等时跨 v3 编译键算法升级。'
-    remove_in_wave: after_flow_v3_next_release
-    evidence_required: ['受支持的旧运行记录均完成或归档，v3 已发布满一个版本。']
-    blocking_tests: ['cd carto_agent && go test ./internal/flowrun -run TestLegacyV2Run -count=1']
-    governs: []
-    status: read_only_compat
 
   - id: inspector_workspace_state_v4
     path: autocarto-web/src/stores/uiStore.ts
@@ -217,7 +205,75 @@ compat_layers:
     governs: []
     status: wrapper_only
 
+  - id: guide_legacy_document_conversion_v5
+    path: carto_agent/internal/flow/convert.go
+    why_temporary: '仅在启动迁移或导入旧 FLOW.md 时纯解析并转为 GUIDE.md；legacy 中的声明、条件、旧来源标记解码不参与新计划执行。保留原文备份和转换报告。'
+    remove_in_wave: after_v5_legacy_import_support_window
+    evidence_required: ['所有受支持旧包完成转换且已过两个版本兼容窗口；删除旧解析器不影响 GUIDE 导入和历史记录展示。']
+    blocking_tests: ['cd carto_agent && go test ./internal/flow -run "TestGuideMigration|TestGuideExample|TestLegacyMemory" -count=1']
+    governs: []
+    status: migration_only
+
+  - id: guide_data_memory_migration_v5
+    path: carto_agent/internal/flow/data_memory.go
+    why_temporary: '旧 flow_input_memory.yaml 只在启动迁移时读取并备份，新的来源偏好与路径统一存 data_memory.yaml；旧标记不进入数据服务请求。'
+    remove_in_wave: after_v5_memory_two_releases
+    evidence_required: ['迁移发布满两个版本，受支持安装均已生成新版记忆，原始备份可以独立恢复。']
+    blocking_tests: ['cd carto_agent && go test ./internal/flow -run "TestDataMemory|TestLegacyMemory" -count=1']
+    governs: []
+    status: old_read_new_write
+
+  - id: ignored_scheme_flow_and_planner_config_v5
+    path: carto_agent/internal/config/agent_config_manager.go
+    why_temporary: '旧方案 flows、flow_policy、独立 plan 字段接受输入但归一化与保存时移除；旧 flow_compile 和默认流程环境变量无生效入口。GUIDE 启用统一存 guides.yaml。'
+    remove_in_wave: after_v5_config_two_releases
+    evidence_required: ['所有旧方案已备份并保存新版配置，旧客户端支持窗口关闭；未知字段拒绝不会阻止受支持导入。']
+    blocking_tests: ['cd carto_agent && go test ./internal/config ./internal/settings -count=1']
+    governs: []
+    status: ignored_input_removed_on_write
+
+  - id: readonly_legacy_run_metadata_v5
+    path: carto_agent/internal/flow/plan.go
+    why_temporary: '保留旧 run.json 的编译与增强元数据结构供历史展示；历史运行禁止恢复，新运行由 planexec 构造快照，不调用 FLOW 编译器。'
+    remove_in_wave: after_v5_run_history_support_window
+    evidence_required: ['受支持的旧运行记录已导出或超出保留期；去掉旧 JSON 字段不会丢失仍受支持历史展示。']
+    blocking_tests: ['cd carto_agent && go test ./internal/flow ./internal/flowrun -run "TestLegacyPlan|TestLegacyRun" -count=1']
+    governs: []
+    status: history_read_only
+
+  - id: hidden_file_downloader_v5
+    path: autocarto/tools/system/file-operations/file_downloader.yaml
+    why_temporary: '旧下载工具保留为隐藏兼容定义，不分配给普通角色；新取数统一进入数据服务并受系统专家和计划执行器授权控制。'
+    remove_in_wave: after_v5_download_clients_migrated
+    evidence_required: ['旧客户端不再调用该工具且数据服务取数回归覆盖全部受支持来源。']
+    blocking_tests: ['cd carto_agent && go test ./internal/dataservice ./internal/deepagent ./internal/control -count=1']
+    governs: []
+    status: hidden_compat_only
+
+  - id: resource_v5_migration_reader
+    path: carto_agent/internal/resource/migrate_v6.go
+    why_temporary: '仅迁移旧样式集、数据清单、符号和路线样式及读取旧运行快照；公开资源库只提供样式与版面。'
+    remove_in_wave: after_v6_migration_support_window
+    evidence_required:
+      - '存量用户资源与流程完成迁移并保留原始备份，重复执行无重复资源。'
+    blocking_tests:
+      - cd carto_agent && go test ./internal/resource -run V6 -count=1
+    governs: []
+    status: migration_only
+
 completed_removals:
+  - id: flow_ensure_compiled_alias
+    path: carto_agent/internal/flow/compile.go
+    removed_in_wave: refactor_v5_k50
+    evidence: ['旧入口及实现已删除；计划与指南 API、运行恢复回归覆盖新路径。']
+  - id: flow_bindings_input_memory_adapter_v2
+    path: carto_agent/internal/api/handlers_flow.go
+    removed_in_wave: refactor_v5_k50
+    evidence: ['旧入口及实现已删除；计划与指南 API、运行恢复回归覆盖新路径。']
+  - id: flow_run_v2_plan_key_upgrade
+    path: carto_agent/internal/flowrun/resume_legacy.go
+    removed_in_wave: refactor_v5_k50
+    evidence: ['旧入口及实现已删除；计划与指南 API、运行恢复回归覆盖新路径。']
   - id: flow_resource_absolute_path_code
     path: carto_agent/internal/resource/resolver.go
     removed_in_wave: refactor_v2_r70

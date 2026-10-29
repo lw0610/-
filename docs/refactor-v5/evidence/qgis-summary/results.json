@@ -1,0 +1,37 @@
+[
+  {
+    "inputs_unchanged": true,
+    "scenario": "route-no-review",
+    "success": true,
+    "output": "/private/tmp/enio2-v5-acceptance-20261027-final/route-no-review",
+    "returncode": 0
+  },
+  {
+    "inputs_unchanged": true,
+    "scenario": "route-with-review",
+    "success": true,
+    "output": "/private/tmp/enio2-v5-acceptance-20261027-final/route-with-review",
+    "returncode": 0
+  },
+  {
+    "inputs_unchanged": true,
+    "scenario": "statistical",
+    "success": true,
+    "output": "/private/tmp/enio2-v5-acceptance-20261027-final/statistical",
+    "returncode": 0
+  },
+  {
+    "inputs_unchanged": true,
+    "scenario": "province-density",
+    "success": true,
+    "output": "/private/tmp/enio2-v5-acceptance-20261027-final/province-density",
+    "returncode": 0
+  },
+  {
+    "inputs_unchanged": true,
+    "scenario": "survey-route",
+    "success": true,
+    "output": "/private/tmp/enio2-v5-acceptance-20261027-final/survey-route",
+    "returncode": 0
+  }
+]

@@ -10,6 +10,20 @@ import {
   WorkflowBlock,
 } from '@/types/message'
 import { generateId } from '@/lib/utils'
+import { parseReviewReference, reviewKey } from '@/features/knowledge-review/model'
+
+function refreshedReviewMessage(messages: Message[], incoming: Omit<Message, 'id' | 'timestamp'>): Message | undefined {
+  if (incoming.type !== 'interrupt') return undefined
+  const ref = parseReviewReference(incoming.data as unknown as InterruptRequestData)
+  if (!ref) return undefined
+  const previous = messages.find(message => {
+    const other = message.type === 'interrupt' ? parseReviewReference(message.data as unknown as InterruptRequestData) : null
+    return other && reviewKey(other) === reviewKey(ref)
+  })
+  const old = previous ? parseReviewReference(previous.data as unknown as InterruptRequestData) : null
+  if (old && ((old.revision || 0) > (ref.revision || 0) || (old.revision || 0) === (ref.revision || 0) && (Date.parse(old.updated_at || '') || 0) > (Date.parse(ref.updated_at || '') || 0))) return previous
+  return previous ? { ...previous, ...incoming, id: previous.id, timestamp: previous.timestamp } : undefined
+}
 
 function asRecord(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -233,10 +247,17 @@ export const useChatStore = create<ChatState>((set) => ({
         ? (state.sessionMessages[sid] || state.messages)
         : state.messages
 
+      const updatedReview = refreshedReviewMessage(currentMessages, msg)
+      if (updatedReview) {
+        output = updatedReview
+        const next = currentMessages.map(item => item.id === updatedReview.id ? updatedReview : item)
+        return { messages: next, ...(sid ? { sessionMessages: { ...state.sessionMessages, [sid]: next } } : {}) }
+      }
+
       if (msg.type === 'interrupt') {
         const incoming = asRecord(msg.data)
         const incomingCheckpoint = String(incoming.checkpoint_id || '').trim()
-        if (incomingCheckpoint) {
+        if (incomingCheckpoint && !parseReviewReference(incoming as unknown as InterruptRequestData)) {
           const existed = currentMessages.find((item) => {
             if (item.type !== 'interrupt') {
               return false
@@ -311,10 +332,17 @@ export const useChatStore = create<ChatState>((set) => ({
       }
       const currentMessages = state.sessionMessages[sid] || (state.sessionId === sid ? state.messages : [])
 
+      const updatedReview = refreshedReviewMessage(currentMessages, msg)
+      if (updatedReview) {
+        output = updatedReview
+        const next = currentMessages.map(item => item.id === updatedReview.id ? updatedReview : item)
+        return { sessionMessages: { ...state.sessionMessages, [sid]: next }, ...(state.sessionId === sid ? { messages: next } : {}) }
+      }
+
       if (msg.type === 'interrupt') {
         const incoming = asRecord(msg.data)
         const incomingCheckpoint = String(incoming.checkpoint_id || '').trim()
-        if (incomingCheckpoint) {
+        if (incomingCheckpoint && !parseReviewReference(incoming as unknown as InterruptRequestData)) {
           const existed = currentMessages.find((item) => {
             if (item.type !== 'interrupt') {
               return false
@@ -739,10 +767,7 @@ export const useChatStore = create<ChatState>((set) => ({
       const exists = currentInterrupts.some(
         (item) => String(item.checkpoint_id || '').trim() === checkpointId,
       )
-      if (exists) {
-        return state
-      }
-      const nextInterrupts = [...currentInterrupts, interrupt]
+      const nextInterrupts = exists ? currentInterrupts.map(item => item.checkpoint_id === checkpointId ? interrupt : item) : [...currentInterrupts, interrupt]
       return {
         pendingInterrupts: nextInterrupts,
         sessionPendingInterrupts: {
@@ -765,10 +790,7 @@ export const useChatStore = create<ChatState>((set) => ({
       const exists = currentInterrupts.some(
         (item) => String(item.checkpoint_id || '').trim() === checkpointId,
       )
-      if (exists) {
-        return state
-      }
-      const nextInterrupts = [...currentInterrupts, interrupt]
+      const nextInterrupts = exists ? currentInterrupts.map(item => item.checkpoint_id === checkpointId ? interrupt : item) : [...currentInterrupts, interrupt]
       const patch: Partial<ChatState> = {
         sessionPendingInterrupts: {
           ...state.sessionPendingInterrupts,

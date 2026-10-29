@@ -193,81 +193,57 @@ func TestFlowDependencyPortableRoundTrip(t *testing.T) {
 		t.Fatal(r.Problems)
 	}
 }
-func TestFlowUpgradeMigratesLocalAndPublicBindings(t *testing.T) {
+func TestLegacyFlowMigrationMovesVisualsAndPreservesDataBackup(t *testing.T) {
 	root := t.TempDir()
 	t.Setenv("AUTOCARTO_PROJECT_ROOT", root)
-	l := lockLibrary(t, root)
-	s, item := lockFlow(t, root, l, "resources/styles/说明.qml")
-	lockWrite(t, filepath.Join(item.Dir, "resources/styles/说明.qml"), "<qgis><!--legacy local--></qgis>")
-	_, r := lockResolve(t, s, l)
-	old := r.Key
-	if _, err := s.RepairResource(context.Background(), "test-flow", "upgrade_resource", old, "", l); err != nil {
+	library := lockLibrary(t, root)
+	store, item := lockFlow(t, root, library, "resources/styles/说明.qml")
+	lockWrite(t, filepath.Join(item.Dir, "resources/styles/说明.qml"), "<qgis/>")
+	raw := strings.Replace(item.FlowMD, "## 步骤", "- 底图数据「清单」：resources/data/list.csv\n## 步骤", 1)
+	lockWrite(t, filepath.Join(item.Dir, "FLOW.md"), raw)
+	lockWrite(t, filepath.Join(item.Dir, "resources/data/list.csv"), "名称,路径,类型,类别,说明\n河流,private.shp,矢量,河流线,真实河流\n")
+	legacyLock, _ := ReadLock(item.Dir)
+	legacyLock.DocumentFormat = ""
+	if err := writeLock(item.Dir, legacyLock); err != nil {
 		t.Fatal(err)
 	}
-	_, r = lockResolve(t, s, l)
-	if r.Legacy || r.ID == "" {
-		t.Fatal(r)
-	}
-	// Data-list path identity becomes a stable manifest identity and its existing
-	// bound external directory remains usable, even when it later disappears.
-	raw := strings.Replace(item.FlowMD, "样式「说明」：resources/styles/说明.qml", "底图数据「说明」：resources/data/list.csv", 1)
-	lockWrite(t, filepath.Join(item.Dir, "resources/data/list.csv"), "name,path\nroads,road.geojson\n")
-	data := filepath.Join(root, "data")
-	lockWrite(t, filepath.Join(data, "road.geojson"), `{"type":"FeatureCollection","features":[]}`)
-	if _, err := s.Save("test-flow", raw); err != nil {
+	guides := NewGuideStore(store, filepath.Join(root, "guides.json"))
+	store.SetLibrary(library)
+	if _, err := guides.MigrateLegacy(); err != nil {
 		t.Fatal(err)
 	}
-	_, r = lockResolve(t, s, l)
-	old = r.Key
-	if err := s.SetBinding("test-flow", r.Key, data); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := s.RepairResource(context.Background(), "test-flow", "upgrade_resource", old, "", l); err != nil {
-		t.Fatal(err)
-	}
-	_, r = lockResolve(t, s, l)
-	if r.Legacy || resource.HasErrors(r.Problems) {
-		t.Fatal(r)
-	}
-	snapshot, _ := s.Bindings.Snapshot()
-	if snapshot.Bindings["flow:test-flow/"+old] != "" || snapshot.Bindings["flow:test-flow/"+r.Key] == "" {
-		t.Fatal(snapshot)
-	}
-	// Public upgrades migrate user locks and both shared/per-flow binding keys.
-	lockWrite(t, filepath.Join(l.UserDir, "styles/公共.qml"), "<qgis><!--legacy public--></qgis>")
-	legacy := l.Resolve(context.Background(), resource.Ref{Type: "style", Name: "公共", Location: "公共资源库"}, resource.Scope{})
-	raw = strings.Replace(raw, "底图数据「说明」：resources/data/list.csv", "样式「说明」：公共资源库/"+legacy.ID, 1)
-	if _, err := s.Save("test-flow", raw); err != nil {
-		t.Fatal(err)
-	}
-	lockResolve(t, s, l)
-	if err := s.Bindings.Set("library:"+legacy.ID, data); err != nil {
-		t.Fatal(err)
-	}
-	if err := s.Bindings.Set("flow:test-flow/library:"+legacy.ID, data); err != nil {
-		t.Fatal(err)
-	}
-	updated, err := l.Upgrade(legacy.ID)
+	got, err := guides.Resolve(context.Background(), item.Meta.ID, library)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = s.MigrateResourceIdentity(legacy.ID, updated); err != nil {
+	if !strings.Contains(got.Doc.Body, "河流") || strings.Contains(got.Doc.Body, "private.shp") || len(got.Doc.Resources) != 1 {
+		t.Fatal(got.Doc)
+	}
+	if resource.HasErrors(got.Scope.Linked[0].Problems) {
+		t.Fatal(got.Scope.Linked[0].Problems)
+	}
+	for _, path := range []string{"FLOW.md.bak", ".resources-v5-backup/data/list.csv", "conversion-report.json"} {
+		if _, err = os.Stat(filepath.Join(item.Dir, path)); err != nil {
+			t.Fatal(path, err)
+		}
+	}
+	if _, err = os.Stat(filepath.Join(item.Dir, "resources")); !os.IsNotExist(err) {
+		t.Fatal("legacy resources remained active")
+	}
+	before, _ := os.ReadFile(filepath.Join(item.Dir, "FLOW.md"))
+	if _, err = guides.MigrateLegacy(); err != nil {
 		t.Fatal(err)
 	}
-	lock, r := lockResolve(t, s, l)
-	if lock.Resources[0].ID != updated.ID || r.ID != updated.ID {
-		t.Fatal(lock, r)
-	}
-	snapshot, _ = s.Bindings.Snapshot()
-	if snapshot.Bindings["library:"+updated.ID] == "" || snapshot.Bindings["flow:test-flow/library:"+updated.ID] == "" {
-		t.Fatal(snapshot)
+	after, _ := os.ReadFile(filepath.Join(item.Dir, "FLOW.md"))
+	if string(before) != string(after) {
+		t.Fatal("second migration changed document")
 	}
 }
 func TestBuiltinFlowLocksUpToDate(t *testing.T) {
 	project := compilerProject(t)
 	t.Setenv("AUTOCARTO_HOME", t.TempDir())
 	l := resource.NewLibrary(filepath.Join(project, "autocarto/resources/system"), filepath.Join(t.TempDir(), "resources"), nil)
-	for _, root := range []string{filepath.Join(project, "autocarto/flows/system"), filepath.Join(project, "docs/refactor/acceptance-flows")} {
+	for _, root := range []string{filepath.Join(project, "autocarto/flows/system")} {
 		entries, err := os.ReadDir(root)
 		if err != nil {
 			t.Fatal(err)
@@ -284,8 +260,8 @@ func TestBuiltinFlowLocksUpToDate(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			expected := &resource.Lock{APIVersion: resource.LockAPIVersion, Resources: []resource.LockEntry{}}
-			for _, d := range Parse(string(raw)).Resources {
+			expected := &resource.Lock{APIVersion: resource.LockAPIVersion, DocumentFormat: documentFormatV6, Resources: []resource.LockEntry{}}
+			for _, d := range resourceDocument(string(raw), l).Resources {
 				if !publicDeclaration(d) {
 					continue
 				}
@@ -330,32 +306,15 @@ func TestFlowBundledFolderAndLegacyPortability(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(lock.Resources) != 2 {
+	if len(lock.Resources) != 7 {
 		t.Fatal(lock)
 	}
-	if len(rs) != 3 {
-		t.Fatalf("expected flow data list and two bundled dependencies: %+v", rs)
+	if len(rs) != 7 {
+		t.Fatalf("expected only seven visual dependencies: %+v", rs)
 	}
 	for _, r := range rs {
-		if resource.HasErrors(r.Problems) {
+		if resource.HasErrors(r.Problems) || r.Owner != "bundled" || (r.Type != "style" && r.Type != "layout") {
 			t.Fatal(r)
-		}
-		if r.Type == "data_list" {
-			if r.Owner != "flow" || r.BaseDirFromInput != "交通数据" || len(r.Entries) != 5 {
-				t.Fatal("data declaration was not carried with flow", r)
-			}
-			for _, entry := range r.Entries {
-				if filepath.IsAbs(entry.Path) || !entry.ExistsUnknown || entry.Fields["category"] == "" {
-					t.Fatal("portable data list must defer external paths to receiver", entry)
-				}
-			}
-			continue
-		}
-		if r.Owner != "bundled" {
-			t.Fatal(r)
-		}
-		if r.Type == "style_set" && len(r.Entries) == 0 {
-			t.Fatal("missing folder contents")
 		}
 	}
 	// Existing public files without manifests remain portable through their lock
@@ -377,33 +336,17 @@ func TestFlowBundledFolderAndLegacyPortability(t *testing.T) {
 		t.Fatal(r)
 	}
 }
-func TestFlowRewriteTypeAndBuiltinLockImmutability(t *testing.T) {
+func TestBuiltinLockImmutability(t *testing.T) {
 	root := t.TempDir()
 	t.Setenv("AUTOCARTO_PROJECT_ROOT", root)
 	l := lockLibrary(t, root)
-	s, item := lockFlow(t, root, l, "resources/styles/说明.qml")
-	lockStyle(t, filepath.Join(item.Dir, "resources"), "style.notes", "说明", "1.0.0", "content")
-	raw := strings.Replace(item.FlowMD, "样式「说明」", "参考「说明」", 1)
-	if _, err := s.Save("test-flow", raw); err != nil {
-		t.Fatal(err)
-	}
-	_, r := lockResolve(t, s, l)
-	if _, err := s.RepairResource(context.Background(), "test-flow", "rewrite_type", r.Key, "", l); err != nil {
-		t.Fatal(err)
-	}
-	stored, err := s.Get("test-flow")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if Parse(stored.FlowMD).Resources[0].Type != "style" {
-		t.Fatal(stored.FlowMD)
-	}
+	s, item := lockFlow(t, root, l, "公共资源库")
 	lockWrite(t, filepath.Join(l.UserDir, "styles/共享.qml"), "<qgis><!--legacy--></qgis>")
 	old := l.Resolve(context.Background(), resource.Ref{Type: "style", Name: "共享", Location: "公共资源库"}, resource.Scope{})
 	builtin := filepath.Join(s.BuiltinDir, "builtin-flow")
-	lockWrite(t, filepath.Join(builtin, "FLOW.md"), strings.Replace(item.FlowMD, "resources/styles/说明.qml", "公共资源库/"+old.ID, 1))
+	lockWrite(t, filepath.Join(builtin, "FLOW.md"), item.FlowMD)
 	frozen := &resource.Lock{APIVersion: resource.LockAPIVersion, Resources: []resource.LockEntry{resource.LockResource("style", "说明", old)}}
-	if err = writeLock(builtin, frozen); err != nil {
+	if err := writeLock(builtin, frozen); err != nil {
 		t.Fatal(err)
 	}
 	before, _ := os.ReadFile(filepath.Join(builtin, "flow.lock"))
@@ -445,7 +388,7 @@ func TestFlowLockRejectsUnsafeBundleAndTampering(t *testing.T) {
 		t.Fatal(err)
 	}
 	pkg := filepath.Join(unpack, "test-flow")
-	lockWrite(t, filepath.Join(pkg, "resources/_deps/style.notes/说明.qml"), "tampered")
+	lockWrite(t, filepath.Join(pkg, "deps/style.notes/说明.qml"), "tampered")
 	dest := NewStore("", filepath.Join(root, "dest"), nil)
 	if _, err := dest.Import(pkg, ImportOptions{}, lockLibrary(t, t.TempDir())); err == nil {
 		t.Fatal("tampered package accepted")
@@ -490,43 +433,53 @@ func TestFlowBundleKeepsIdentityAgainstLocalOverride(t *testing.T) {
 		t.Fatalf("override silently replaced bundled snapshot: %+v", r)
 	}
 }
-func TestLegacyStyleFolderBundle(t *testing.T) {
+func TestLegacyStyleFolderMigratesToIndividualStyles(t *testing.T) {
 	root := t.TempDir()
 	t.Setenv("AUTOCARTO_PROJECT_ROOT", root)
 	library := lockLibrary(t, root)
-	lockWrite(t, filepath.Join(library.UserDir, "styles/说明/对照表.csv"), "layer,style_file\nroad,line.qml\n")
-	lockWrite(t, filepath.Join(library.UserDir, "styles/说明/line.qml"), "<qgis><layerGeometryType>1</layerGeometryType></qgis>")
-	store, item := lockFlow(t, root, library, "公共资源库")
-	if _, err := store.Save("test-flow", strings.Replace(item.FlowMD, "样式「说明」", "样式集「说明」", 1)); err != nil {
+	store, item := lockFlow(t, root, library, "resources/styles/说明")
+	lockWrite(t, filepath.Join(item.Dir, "resources/styles/说明/对照表.csv"), "图层,样式文件\nroad,line.qml\n")
+	lockWrite(t, filepath.Join(item.Dir, "resources/styles/说明/line.qml"), "<qgis><layerGeometryType>1</layerGeometryType></qgis>")
+	lockWrite(t, filepath.Join(item.Dir, "FLOW.md"), strings.Replace(item.FlowMD, "样式「说明」", "样式集「说明」", 1))
+	store.SetLibrary(library)
+	legacyLock, _ := ReadLock(item.Dir)
+	legacyLock.DocumentFormat = ""
+	if err := writeLock(item.Dir, legacyLock); err != nil {
 		t.Fatal(err)
 	}
-	_, r := lockResolve(t, store, library)
-	if resource.HasErrors(r.Problems) {
-		t.Fatal(r.Problems)
-	}
-	zip := filepath.Join(root, "legacy.zip")
-	if _, err := store.ExportWithOptions("test-flow", zip, ExportOptions{IncludeLibraryDeps: true, Library: library}); err != nil {
+	guides := NewGuideStore(store, filepath.Join(root, "guides.json"))
+	if _, err := guides.MigrateLegacy(); err != nil {
 		t.Fatal(err)
 	}
-	destRoot := t.TempDir()
-	empty := lockLibrary(t, destRoot)
-	dest := NewStore("", filepath.Join(destRoot, "flows"), nil)
-	if _, err := dest.Import(zip, ImportOptions{}, empty); err != nil {
+	got, err := guides.Resolve(context.Background(), item.Meta.ID, library)
+	if err != nil {
 		t.Fatal(err)
 	}
-	_, r = lockResolve(t, dest, empty)
-	if resource.HasErrors(r.Problems) || len(r.Entries) != 1 {
-		t.Fatal(r)
+	if len(got.Doc.Resources) != 1 || got.Doc.Resources[0].Type != "style" || resource.HasErrors(got.Scope.Linked[0].Problems) {
+		t.Fatal(got)
+	}
+	archive := filepath.Join(root, "migrated.zip")
+	if _, err = store.ExportWithOptions(item.Meta.ID, archive, ExportOptions{IncludeLibraryDeps: true, Library: library}); err != nil {
+		t.Fatal(err)
+	}
+	empty := lockLibrary(t, t.TempDir())
+	dest := NewGuideStore(NewStore("", filepath.Join(t.TempDir(), "flows"), nil), filepath.Join(t.TempDir(), "guides.json"))
+	if _, err = dest.Import(archive, ImportOptions{}, empty); err != nil {
+		t.Fatal(err)
+	}
+	linked, err := dest.Resolve(context.Background(), item.Meta.ID, empty)
+	if err != nil || len(linked.Scope.Linked) != 1 || resource.HasErrors(linked.Scope.Linked[0].Problems) {
+		t.Fatal(linked, err)
 	}
 }
 
-func TestExportReusesEffectiveOverrideAcrossLabels(t *testing.T) {
+func TestExportReusesEffectiveOverrideAndDeduplicatesReferences(t *testing.T) {
 	root := t.TempDir()
 	t.Setenv("AUTOCARTO_PROJECT_ROOT", root)
 	library := lockLibrary(t, root)
 	lockStyle(t, library.BuiltinDir, "style.notes", "说明", "1.0.0", "base")
 	store, item := lockFlow(t, root, library, "公共资源库/style.notes")
-	raw := strings.Replace(item.FlowMD, "## 步骤", "- 样式「另一个标签」：公共资源库/style.notes\n## 步骤", 1)
+	raw := strings.Replace(item.FlowMD, "## 步骤", "- 样式「说明」：公共资源库/style.notes\n## 步骤", 1)
 	if _, err := store.Save("test-flow", raw); err != nil {
 		t.Fatal(err)
 	}
@@ -534,7 +487,7 @@ func TestExportReusesEffectiveOverrideAcrossLabels(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(before.Resources) != 2 {
+	if len(before.Resources) != 1 {
 		t.Fatal(before)
 	}
 	override, err := library.Copy("style.notes", true, "覆盖版本")
@@ -561,7 +514,7 @@ func TestExportReusesEffectiveOverrideAcrossLabels(t *testing.T) {
 			t.Fatal(lock)
 		}
 	}
-	dirs, err := os.ReadDir(filepath.Join(imported.Dir, "resources/_deps"))
+	dirs, err := os.ReadDir(filepath.Join(imported.Dir, "deps"))
 	if err != nil || len(dirs) != 1 {
 		t.Fatal(dirs, err)
 	}

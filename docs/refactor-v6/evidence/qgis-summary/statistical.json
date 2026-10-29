@@ -1,0 +1,20 @@
+{
+  "scenario": "statistical",
+  "status": "completed",
+  "inputs_unchanged": true,
+  "steps": 4,
+  "output_files": [
+    "preview.png",
+    "project.qgz",
+    "exports/统计成果.png"
+  ],
+  "golden": {
+    "success": true,
+    "differences": [],
+    "preview": {
+      "algorithm": "dhash64",
+      "distance": 0,
+      "diagnostic_only": true
+    }
+  }
+}

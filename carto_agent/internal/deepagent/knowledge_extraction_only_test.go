@@ -89,7 +89,8 @@ func TestExtractionOnlyReachesEditableResultCompilesAndCachesWithoutReviewModel(
 	}
 	store := knowledge.NewReviewStore(filepath.Join(root, "reviews"))
 	ctx := WithKnowledgeReview(toolsession.WithContext(context.Background(), "session", filepath.Join(root, "project.qgz"), ""), store)
-	_, err := agent.extractAndCompile(ctx, &adk.AgentInput{Messages: []*schema.Message{schema.UserMessage(source)}}, func(p knowledge.Progress) {
+	request, _ := json.Marshal(map[string]any{"source_text": source, "route_style": "红蓝对比", "symbols": "军标"})
+	_, err := agent.extractAndCompile(ctx, &adk.AgentInput{Messages: []*schema.Message{schema.UserMessage(string(request))}}, func(p knowledge.Progress) {
 		if p.Stage == "semantic_review" {
 			t.Fatal("semantic review progress emitted")
 		}

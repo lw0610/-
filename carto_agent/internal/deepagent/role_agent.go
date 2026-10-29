@@ -18,6 +18,20 @@ func BuildRoleAgent(ctx context.Context, cfg *Config, roleName string) (adk.Agen
 		return nil, fmt.Errorf("角色运行配置未提供")
 	}
 	agentName := strings.TrimSpace(roleName)
+	if agentName == DataAcquisitionExpertName {
+		// A planned acquisition uses the same system-owned expert as ordinary
+		// delegation. Never synthesize a user role or bypass its guarded tools.
+		experts, err := createSystemExperts(ctx, cfg)
+		if err != nil {
+			return nil, fmt.Errorf("创建系统角色 %s: %w", agentName, err)
+		}
+		for _, expert := range experts {
+			if expert.Name(ctx) == agentName {
+				return expert, nil
+			}
+		}
+		return nil, fmt.Errorf("系统角色 %s 不可用：需要执行模式及已注册的数据服务工具", agentName)
+	}
 	agentConfig, exists := cfg.SkillRuntimeConfig.Agents[agentName]
 	if !exists || agentName == "" {
 		return nil, fmt.Errorf("角色不存在: %s", roleName)
@@ -49,6 +63,7 @@ func BuildRoleAgent(ctx context.Context, cfg *Config, roleName string) (adk.Agen
 
 	// 过滤工具
 	agentTools := filter.Filter(ctx, cfg.Tools)
+	agentTools = filterAcquisitionTools(ctx, cfg, agentTools, false)
 
 	chatModel := cfg.ChatModel
 	providerCfg := cloneProviderConfig(cfg.DefaultProviderCfg)
@@ -87,6 +102,7 @@ func BuildRoleAgent(ctx context.Context, cfg *Config, roleName string) (adk.Agen
 		return knowledgeAgent, nil
 	}
 
+	agentTools = subagents.WithAttachmentReadTool(ctx, agentTools, cfg.Tools)
 	instruction, err := buildSubAgentPrompt(ctx, agentName, agentConfig, agentTools, engine)
 	if err != nil {
 		return nil, fmt.Errorf("Runtime 智能体 %s 提示词失败: %w", agentName, err)

@@ -12,7 +12,7 @@
       "format": "svg",
       "kind": "symbol",
       "name": "waypoint",
-      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/waypoint.svg",
+      "path": "${REPO}/autocarto/tools/system/route-cartography/assets/resources/symbols/军标/waypoint.svg",
       "priority": 10,
       "size": 2.8,
       "symbol_type": "waypoint"
@@ -28,7 +28,7 @@
       "format": "svg",
       "kind": "symbol",
       "name": "start_flag",
-      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/start_flag.svg",
+      "path": "${REPO}/autocarto/tools/system/route-cartography/assets/resources/symbols/军标/start_flag.svg",
       "priority": 100,
       "size": 6.5,
       "symbol_type": "start_flag"
@@ -44,7 +44,7 @@
       "format": "svg",
       "kind": "symbol",
       "name": "battle",
-      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/battle.svg",
+      "path": "${REPO}/autocarto/tools/system/route-cartography/assets/resources/symbols/军标/battle.svg",
       "priority": 90,
       "size": 5.5,
       "symbol_type": "battle"
@@ -60,7 +60,7 @@
       "format": "svg",
       "kind": "symbol",
       "name": "meeting",
-      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/meeting.svg",
+      "path": "${REPO}/autocarto/tools/system/route-cartography/assets/resources/symbols/军标/meeting.svg",
       "priority": 80,
       "size": 5.2,
       "symbol_type": "meeting"
@@ -76,18 +76,18 @@
       "format": "svg",
       "kind": "symbol",
       "name": "rendezvous",
-      "path": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/rendezvous.svg",
+      "path": "${REPO}/autocarto/tools/system/route-cartography/assets/resources/symbols/军标/rendezvous.svg",
       "priority": 100,
       "size": 5.2,
       "symbol_type": "rendezvous"
     }
   ],
-  "entry": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标/对照表.csv",
+  "entry": "${REPO}/autocarto/tools/system/route-cartography/assets/resources/symbols/军标/对照表.csv",
   "format": "",
   "id": "symbols.military",
   "name": "军标",
   "owner": "flow",
-  "root": "${REPO}/autocarto/flows/system/marching-route/resources/symbols/军标",
+  "root": "${REPO}/autocarto/tools/system/route-cartography/assets/resources/symbols/军标",
   "total_entries": 5,
   "truncated": false,
   "type": "symbols",

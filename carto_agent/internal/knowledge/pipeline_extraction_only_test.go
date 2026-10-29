@@ -156,6 +156,52 @@ func TestExtractionOnlyPartialDraftRemainsReviewable(t *testing.T) {
 	}
 }
 
+func TestEmptyExtractionPreservesReasonWithoutReportingReadyToDraw(t *testing.T) {
+	source := "读取史料文件内容"
+	message := "原文未提供任何行军路线、地点或主体信息，无法构建知识图谱。"
+	cm := &extractionOnlyModel{change: func(g Graph, ref string) []modelIssue {
+		for _, collection := range graphCollections {
+			if collection.key != "evidence" {
+				g[collection.key] = []any{}
+			}
+		}
+		return []modelIssue{{ID: "no_content", Kind: "route", Reason: "not_stated", Field: "paths", Message: message, SourceRefs: []string{ref}}}
+	}}
+	r, err := NewPipeline(cm, DefaultConfig()).Run(context.Background(), source, extractionOnlyContract(source), nil)
+	var reviewErr *ExtractionNeedsReviewError
+	if !errors.As(err, &reviewErr) || r.Status != "needs_review" || len(cm.inputs) != 1 || len(r.Issues) != 1 || r.Issues[0].Message != message {
+		t.Fatalf("empty extraction was hidden or retried: result=%+v err=%v calls=%d", r, err, len(cm.inputs))
+	}
+	if err := ReviewableExtraction(r, source); err != nil {
+		t.Fatalf("empty result and its explanation should remain inspectable: %v", err)
+	}
+	review := &Review{Graph: r.Graph, OriginalResult: r, PendingIssues: ExtractionPendingIssues(r)}
+	if _, problems := PrepareReviewCompilation(review); len(problems) != 1 || problems[0].Code != "empty_extraction" || !strings.Contains(problems[0].Message, message) {
+		t.Fatalf("empty result allowed into compiler: %#v", problems)
+	}
+	if problems := ValidateReviewPending(review, r.Graph); len(problems) != 1 || problems[0].Code != "empty_extraction" {
+		t.Fatalf("empty result can be claimed for drawing: %#v", problems)
+	}
+	if view := review.View(); len(view.Errors) != 1 || !strings.Contains(view.Errors[0].Message, message) {
+		t.Fatalf("source failure not exposed in review: %#v", view.Errors)
+	}
+}
+
+func TestPartialFactsDoNotRequireEveryCollectionToBeNonempty(t *testing.T) {
+	source := "红军当时驻扎在甲地。"
+	cm := &extractionOnlyModel{change: func(g Graph, ref string) []modelIssue {
+		g["routes"] = []any{}
+		return []modelIssue{{ID: "no_route", Kind: "route", Reason: "not_stated", Field: "paths", Message: "原文没有交代移动路线。", SourceRefs: []string{ref}}}
+	}}
+	r, err := NewPipeline(cm, DefaultConfig()).Run(context.Background(), source, extractionOnlyContract(source), nil)
+	if err != nil || !HasExtractedContent(r.Graph) || r.Status != "ready_to_compile" || len(cm.inputs) != 1 || len(r.Issues) != 1 {
+		t.Fatalf("partial factual content was blocked: %+v %v", r, err)
+	}
+	if _, problems := PrepareReviewCompilation(&Review{Graph: r.Graph}); len(problems) != 0 {
+		t.Fatalf("missing routes blocked otherwise valid saved content: %#v", problems)
+	}
+}
+
 func TestExtractionCompletionRejectsAmbiguousOrIncompleteProtocol(t *testing.T) {
 	complete := ExtractionCompletion{Version: ExtractionProtocolVersion, ExtractionComplete: true, AdaptationComplete: true, SemanticSkipped: true}
 	for _, field := range []string{"extraction", "adaptation", "skipped", "attempted", "semantic_complete", "version"} {

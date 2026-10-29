@@ -1,0 +1,20 @@
+{
+  "apiVersion": "resource/v1",
+  "id": "style.basemap-90a7082089",
+  "type": "style",
+  "name": "省域面",
+  "version": "1.0.0",
+  "entry": "省域面.qml",
+  "geometry": "polygon",
+  "label_field": "NAME",
+  "description": "由原预设导出的符号和标注",
+  "tags": [
+    "省级行政区",
+    "省界面",
+    "省域外框",
+    "省域面"
+  ],
+  "source": {
+    "author": "AutoCarto"
+  }
+}

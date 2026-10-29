@@ -1,0 +1,18 @@
+{
+  "apiVersion": "resource/v1",
+  "id": "style.basemap-cd19de795c",
+  "type": "style",
+  "name": "河流面",
+  "version": "1.0.0",
+  "entry": "河流面.qml",
+  "geometry": "polygon",
+  "label_field": "无",
+  "description": "由原预设导出的符号和标注",
+  "tags": [
+    "面状河流",
+    "水域面"
+  ],
+  "source": {
+    "author": "AutoCarto"
+  }
+}

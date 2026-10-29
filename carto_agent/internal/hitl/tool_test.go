@@ -151,7 +151,7 @@ func TestHighRiskGuardBlocksUntilConfirmed(t *testing.T) {
 	rootCtx := interruptEvent.Action.Interrupted.InterruptContexts[0]
 	iter, err = runner.ResumeWithParams(ctx, "cp-guard", &adk.ResumeParams{
 		Targets: map[string]any{
-			rootCtx.ID: nil,
+			rootCtx.ID: map[string]any{"confirmed": true},
 		},
 	})
 	if err != nil {

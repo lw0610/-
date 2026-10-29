@@ -52,7 +52,7 @@ from autocarto.tools.system._shared.route_points_impl import (
 )
 from autocarto.tools.system._shared.style_common import _wrap_main_thread
 from autocarto.knowledge.visual_presets import load_route_styles, renderer_defaults
-from autocarto.tools.system._shared.resource_handle import handle_summary
+from autocarto.tools.system._shared.resource_handle import handle_summary, require_handle
 from autocarto.tools.system._shared.route_runtime_support import dataset_failure, renderer_directory, label_format
 from autocarto.tools.system._shared.callouts_impl import cartography_add_callouts_handler
 from autocarto.tools.system._shared.symbolize_mapping_impl import symbolize_points_by_mapping_handler
@@ -961,6 +961,8 @@ def _label_route_paths(route_items, scope, label_layer_name="路线名称"):
 def route_draw_handler(params):
     """只绘制数据集路线与其标签，不创建专题点或版面元素。"""
     try:
+        params = dict(params)
+        params["route_style"] = require_handle(params.get("route_style") or "单色", "route_style")
         resolved = resolve_route_dataset(params)
         plugin_dir = renderer_directory(params)
         route_styles = load_route_styles(params.get("route_style"))

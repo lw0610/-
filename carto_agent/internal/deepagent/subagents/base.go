@@ -113,6 +113,25 @@ func NewSubAgent(ctx context.Context, cfg *SubAgentConfig) (adk.Agent, error) {
 	})
 }
 
+// WithAttachmentReadTool reuses the registered adapter, including its enhanced
+// media result handling. No write or shell capability is granted by this baseline.
+func WithAttachmentReadTool(ctx context.Context, selected, catalog []tool.BaseTool) []tool.BaseTool {
+	for _, candidate := range selected {
+		info, err := candidate.Info(ctx)
+		if err == nil && info != nil && info.Name == "file_read" {
+			return selected
+		}
+	}
+	for _, candidate := range catalog {
+		info, err := candidate.Info(ctx)
+		if err == nil && info != nil && info.Name == "file_read" {
+			result := append([]tool.BaseTool(nil), selected...)
+			return append(result, candidate)
+		}
+	}
+	return selected
+}
+
 // ToolInfo 工具信息辅助结构
 type ToolInfo struct {
 	Name        string          `json:"name"`

@@ -3,19 +3,18 @@ package flow
 import (
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 )
 
-func TestV4MemoryKeepsSourceChoicesWithoutAcquiredValues(t *testing.T) {
+func TestLegacyMemoryReadsSourceChoicesWithoutRewriting(t *testing.T) {
 	root := t.TempDir()
 	memory := NewInputMemory(filepath.Join(root, "memory.yaml"))
 	old := filepath.Join(root, "old")
 	if err := memory.Set("test-flow", "旧路径", old); err != nil {
 		t.Fatal(err)
 	}
-	choice := map[string]any{"$fill": true, "path": root, "sources": map[string]any{"铁路": "source.fixture"}}
-	if err := memory.SetChoice("test-flow", "数据", choice); err != nil {
+	rawSource := "apiVersion: flow-input-memory/v1\nflows:\n  test-flow: {旧路径: '" + old + "'}\nchoices:\n  test-flow:\n    数据: {$fill: true, path: '" + root + "', sources: {铁路: source.fixture}}\n"
+	if err := os.WriteFile(memory.path, []byte(rawSource), 0600); err != nil {
 		t.Fatal(err)
 	}
 	values, err := memory.GetValues("test-flow")
@@ -31,8 +30,8 @@ func TestV4MemoryKeepsSourceChoicesWithoutAcquiredValues(t *testing.T) {
 		t.Fatal("aliased memory")
 	}
 	raw, _ := os.ReadFile(filepath.Join(root, "memory.yaml"))
-	if !strings.Contains(string(raw), "flow-input-memory/v1") {
-		t.Fatal("unnecessary disk version migration")
+	if string(raw) != rawSource {
+		t.Fatal("read rewrote legacy memory")
 	}
 	if err = memory.Set("test-flow", "数据", old); err != nil {
 		t.Fatal(err)

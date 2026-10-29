@@ -1,44 +1,13 @@
 import { expect, test, type Page, type Route } from '@playwright/test'
 
-const runtimePort = Number(process.env.AUTOCARTO_TEST_RUNTIME_PORT || '3000')
+import { DEFAULT_DESKTOP_RUNTIME_PORT, mockDesktopRuntime as mockHostRuntime } from './helpers/desktopRuntime'
+
+const runtimePort = DEFAULT_DESKTOP_RUNTIME_PORT
 const routeSuffix = '.html'
 
-async function mockDesktopRuntime(page: Page, port = 3000) {
-  await page.addInitScript((runtimePort) => {
-    const runtime = window as Window & {
-      __TAURI_INTERNALS__?: {
-        invoke?: (cmd: string, args?: unknown) => Promise<unknown>
-      }
-      __TAURI__?: Record<string, unknown>
-      WebSocket?: typeof window.WebSocket
-    }
-
-    const existingInvoke = runtime.__TAURI_INTERNALS__?.invoke
-
-    runtime.__TAURI_INTERNALS__ = {
-      ...(runtime.__TAURI_INTERNALS__ || {}),
-      invoke: async (cmd: string, args?: unknown) => {
-        if (cmd === 'get_backend_runtime') {
-          return {
-            port: runtimePort,
-            backend_url: `http://127.0.0.1:${runtimePort}`,
-            ws_url: `ws://127.0.0.1:${runtimePort}/ws`,
-            startup_error: '',
-          }
-        }
-        if (existingInvoke) {
-          return existingInvoke(cmd, args)
-        }
-        if (cmd === 'pick_qgis_project_directory') {
-          return null
-        }
-        throw new Error(`unexpected tauri invoke: ${cmd}`)
-      },
-    }
-    runtime.__TAURI__ = {
-      ...(runtime.__TAURI__ || {}),
-    }
-
+async function mockDesktopRuntime(page: Page, port = runtimePort) {
+  await mockHostRuntime(page, { port, nullCommands: ['pick_qgis_project_directory'] })
+  await page.addInitScript(() => {
     class MockWebSocket {
       static CONNECTING = 0
       static OPEN = 1
@@ -70,7 +39,7 @@ async function mockDesktopRuntime(page: Page, port = 3000) {
       writable: true,
       value: MockWebSocket,
     })
-  }, port)
+  })
 }
 
 async function fulfillJson(route: Route, data: unknown) {
@@ -187,6 +156,9 @@ test('degraded dictionary fixtures render on diagnostics, tool center, and insta
   await page.route('**/api/skills', async (route) => {
     await fulfillJson(route, { skills: [] })
   })
+  await page.route('**/api/skill-packages*', async (route) => {
+    await fulfillJson(route, { packages: [] })
+  })
   await page.route('**/api/runtime/snapshot', async (route) => {
     await fulfillJson(route, {
       runtime_revision: 'rev-degraded',
@@ -196,7 +168,7 @@ test('degraded dictionary fixtures render on diagnostics, tool center, and insta
         agent: {
           status: 'running',
           host: '127.0.0.1',
-          port: 3000,
+          port: runtimePort,
           diagnostics: {
             startup_error: '等待 plugin 注册完成后再开放连接。',
             suggested_actions: ['请等待实例重新注册后重试。'],
@@ -242,13 +214,13 @@ test('degraded dictionary fixtures render on diagnostics, tool center, and insta
   await expect(page.locator('body')).toContainText('请刷新工具目录或检查运行态注册是否完成。')
 
   await gotoRoute(page, `/tool-center${routeSuffix}`)
-  await page.getByRole('button', { name: '工具目录' }).click()
+  await page.getByRole('button', { name: '能力手册', exact: true }).click()
   await expect(page.locator('body')).toContainText('abnormal_empty')
   await expect(page.locator('body')).toContainText('工具目录异常为空，当前能力已降级。')
 
   toolCatalogPayload = abnormalEmptyToolCatalogPayload
   await gotoRoute(page, `/tool-center${routeSuffix}`)
-  await page.getByRole('button', { name: '工具目录' }).click()
+  await page.getByRole('button', { name: '能力手册', exact: true }).click()
   await expect(page.locator('body')).toContainText('工具目录异常为空，当前能力已降级。')
 
   await gotoRoute(page, `/instances${routeSuffix}`)

@@ -1,0 +1,177 @@
+{
+  "id": "survey-route",
+  "flow_id": "survey-route",
+  "layout": "考察路线验收",
+  "title_geometry": "route",
+  "project_crs": "EPSG:4326",
+  "variables": {},
+  "bindings": {},
+  "inputs": {
+    "路线数据集": "${root}/docs/refactor/acceptance-flows/survey-route/resources/data/route_dataset"
+  },
+  "steps": {
+    "s1": {
+      "actions": [
+        {
+          "tool": "data_load_list",
+          "params": {
+            "strict": true,
+            "items": [
+              {
+                "name": "参考区域",
+                "path": "${root}/docs/refactor/acceptance-flows/survey-route/resources/data/参考区域.geojson"
+              }
+            ]
+          },
+          "save": "loaded"
+        },
+        {
+          "op": "layers",
+          "names": [
+            "参考区域"
+          ],
+          "save": "base_layers"
+        }
+      ],
+      "outputs": {
+        "参考底图": {
+          "$ref": "base_layers"
+        }
+      }
+    },
+    "s2": {
+      "actions": [
+        {
+          "tool": "cartography_set_style",
+          "params": {
+            "layer": "参考区域",
+            "style_type": "simple",
+            "color": "#f1f5f9"
+          },
+          "save": "base_style"
+        },
+        {
+          "tool": "route_draw",
+          "params": {
+            "dataset_source": "explicit",
+            "dataset_dir": "${root}/docs/refactor/acceptance-flows/survey-route/resources/data/route_dataset",
+            "renderer_plugin_dir": "${renderer}",
+            "label_layer_name": "考察线路名称",
+            "strict": true,
+            "route_style": "考察单色路线"
+          },
+          "save": "drawn"
+        },
+        {
+          "tool": "route_points_build",
+          "params": {
+            "dataset_source": "explicit",
+            "dataset_dir": "${root}/docs/refactor/acceptance-flows/survey-route/resources/data/route_dataset",
+            "points_layer": "考察站点",
+            "default_symbol_types": [],
+            "strict": true
+          },
+          "save": "points"
+        },
+        {
+          "op": "layers",
+          "names": [
+            "考察站点"
+          ],
+          "save": "point_layers"
+        },
+        {
+          "op": "map_order",
+          "base_names": [
+            "参考区域"
+          ],
+          "save": "map_order"
+        }
+      ],
+      "outputs": {
+        "路线图层": {
+          "$ref": "drawn.data.layers"
+        },
+        "站点图层": {
+          "$ref": "point_layers"
+        }
+      }
+    },
+    "s3": {
+      "actions": [
+        {
+          "op": "extent",
+          "save": "map_extent"
+        },
+        {
+          "tool": "layout_compose",
+          "params": {
+            "layout": "考察路线验收",
+            "spec": "四角对齐版式",
+            "paper": "A4",
+            "title": "考察路线（验收示例）",
+            "overview_text": "南京—宣城—杭州是本示例自备的合成考察安排。三个站点和有向线路由六表提供，不代表实际道路或已发生的考察。",
+            "map_layers": {
+              "$ref": "map_order"
+            },
+            "legend_layers": [
+              "考察站点"
+            ],
+            "extent": {
+              "$ref": "map_extent"
+            }
+          },
+          "save": "composed"
+        }
+      ],
+      "outputs": {
+        "版面": "考察路线验收"
+      }
+    },
+    "s4": {
+      "actions": [
+        {
+          "tool": "export_print_layout",
+          "params": {
+            "layout": "考察路线验收",
+            "output": "${out}/考察路线.png",
+            "dpi": 120
+          },
+          "save": "png"
+        },
+        {
+          "tool": "export_layout_pdf",
+          "params": {
+            "layout": "考察路线验收",
+            "output": "${out}/考察路线.pdf",
+            "dpi": 120
+          },
+          "save": "pdf"
+        }
+      ],
+      "outputs": {
+        "成果 PNG": {
+          "$ref": "png.output"
+        },
+        "成果 PDF": {
+          "$ref": "pdf.output"
+        }
+      }
+    }
+  },
+  "invariants": {
+    "route_count": {
+      "$ref": "drawn.data.routes.count"
+    },
+    "point_count": {
+      "$ref": "points.data.points_layer.created_count"
+    }
+  },
+  "tool_presets": [
+    {
+      "name": "考察单色路线",
+      "kind": "styles",
+      "source": "${root}/docs/refactor/acceptance-flows/survey-route/resources/styles/考察单色路线.csv"
+    }
+  ]
+}

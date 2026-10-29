@@ -15,6 +15,10 @@ import (
 )
 
 func (a *API) resourceInstanceReady(w http.ResponseWriter, r *http.Request, instanceID, toolName string) bool {
+	return a.resourceInstanceReadyFor(w, r, instanceID, toolName, "resource_capture")
+}
+
+func (a *API) resourceInstanceReadyFor(w http.ResponseWriter, r *http.Request, instanceID, toolName, endpoint string) bool {
 	if instanceID == "" {
 		ErrorWithCode(w, 400, errCodeInstanceToolInvokeInvalid, "请选择 QGIS 工程")
 		return false
@@ -23,7 +27,7 @@ func (a *API) resourceInstanceReady(w http.ResponseWriter, r *http.Request, inst
 		ErrorWithCode(w, 503, errCodeInstanceToolInvokerMissing, "QGIS 工程尚未连接")
 		return false
 	}
-	if err := a.authorizeInstanceToolInvoke(r.Context(), toolName, "resource_capture", instanceID); err != nil {
+	if err := a.authorizeInstanceToolInvoke(r.Context(), toolName, endpoint, instanceID); err != nil {
 		var denied *instanceToolInvokeDeniedError
 		if errors.As(err, &denied) {
 			ErrorWithCode(w, 403, errCodeInstanceToolInvokeForbidden, denied.Error())
@@ -77,22 +81,21 @@ func (a *API) handleCaptureResource(w http.ResponseWriter, r *http.Request) {
 	if !decodeResourceRequest(w, r, &request) {
 		return
 	}
-	tools := map[string]string{"layout": "layout_save_template", "style": "layer_save_style", "style_set": "style_set_export"}
-	toolName := tools[request.Kind]
+	toolName := map[string]string{"layout": "layout_save_template", "style": "layer_save_style"}[request.Kind]
 	if toolName == "" {
-		resourceError(w, fmt.Errorf("只能保存版面、样式或样式集"))
+		resourceError(w, fmt.Errorf("只能保存样式或版面"))
 		return
 	}
-	if strings.TrimSpace(request.Name) == "" && request.ReplaceID == "" {
-		resourceError(w, fmt.Errorf("请填写保存名称"))
+	if request.Kind == "style" && len(request.Layers) == 0 {
+		resourceError(w, fmt.Errorf("请选择至少一个图层"))
 		return
 	}
 	if request.Kind == "layout" && request.Layout == "" {
 		resourceError(w, fmt.Errorf("请选择版面"))
 		return
 	}
-	if request.Kind == "style" && len(request.Layers) != 1 {
-		resourceError(w, fmt.Errorf("单图层样式须选择一个图层"))
+	if request.ReplaceID != "" && request.Kind == "style" && len(request.Layers) != 1 {
+		resourceError(w, fmt.Errorf("替换样式时请选择一个图层"))
 		return
 	}
 	if !a.resourceInstanceReady(w, r, strings.TrimSpace(request.InstanceID), toolName) {
@@ -114,7 +117,7 @@ func (a *API) handleCaptureResource(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if existing.Type != request.Kind {
-			resourceError(w, fmt.Errorf("替换资源类型与保存种类不一致"))
+			resourceError(w, fmt.Errorf("替换资源类型不一致"))
 			return
 		}
 	}
@@ -124,51 +127,78 @@ func (a *API) handleCaptureResource(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer cleanup()
-	params := map[string]any{"instance_id": request.InstanceID}
-	source := ""
-	switch request.Kind {
-	case "layout":
-		source = filepath.Join(stage, "layout.qpt")
-		params["layout"] = request.Layout
+	selected := request.Layers
+	if request.Kind == "layout" {
+		selected = []string{request.Layout}
+	}
+	result := &resource.ImportResult{Items: []*resource.ResolvedResource{}, Warnings: []string{}}
+	for i, selectedName := range selected {
+		params := map[string]any{"instance_id": request.InstanceID}
+		source := filepath.Join(stage, fmt.Sprintf("capture-%d.qml", i))
+		name := selectedName
+		if len(selected) == 1 && strings.TrimSpace(request.Name) != "" {
+			name = request.Name
+		}
+		if request.Kind == "layout" {
+			source = filepath.Join(stage, "layout.qpt")
+			params["layout"] = selectedName
+			if request.MainMapItem != "" {
+				params["main_map_item"] = request.MainMapItem
+			}
+		} else {
+			params["layer"] = selectedName
+		}
 		params["path"] = source
-		if request.MainMapItem != "" {
-			params["main_map_item"] = request.MainMapItem
+		ctx, cancel := context.WithTimeout(r.Context(), 60*time.Second)
+		response, invokeErr := bridgeprovider.NewComputeToolInvoker(a.localBridgeProvider).InvokeTool(ctx, toolName, params)
+		cancel()
+		if invokeErr != nil {
+			ErrorWithCodeAndDetails(w, 502, errCodeInstanceToolInvokeFailed, "从工程保存失败："+invokeErr.Error(), bridgeErrorDetailsFromError(invokeErr))
+			return
 		}
-	case "style":
-		source = filepath.Join(stage, "layer.qml")
-		params["layer"] = request.Layers[0]
-		params["path"] = source
-	case "style_set":
-		source = filepath.Join(stage, "styles")
-		params["directory"] = source
-		if len(request.Layers) > 0 {
-			params["layers"] = request.Layers
+		if response == nil || !response.Success {
+			message := "从工程保存失败"
+			if response != nil && response.Error != "" {
+				message += "：" + response.Error
+			}
+			ErrorWithCodeAndDetails(w, 502, errCodeInstanceToolInvokeFailed, message, bridgeErrorDetailsFromInvokeResponse(response))
+			return
 		}
-	}
-	ctx, cancel := context.WithTimeout(r.Context(), 60*time.Second)
-	defer cancel()
-	response, err := bridgeprovider.NewComputeToolInvoker(a.localBridgeProvider).InvokeTool(ctx, toolName, params)
-	if err != nil {
-		ErrorWithCodeAndDetails(w, 502, errCodeInstanceToolInvokeFailed, "从工程保存失败："+err.Error(), bridgeErrorDetailsFromError(err))
-		return
-	}
-	if response == nil || !response.Success {
-		message := "从工程保存失败"
-		if response != nil && response.Error != "" {
-			message += "：" + response.Error
+		if request.Kind == "style" && (len(selected) > 1 || strings.TrimSpace(request.Name) == "") {
+			if output, ok := response.Output.(map[string]any); ok {
+				if data, ok := output["data"].(map[string]any); ok {
+					if layerName, ok := data["layer_name"].(string); ok && strings.TrimSpace(layerName) != "" {
+						name = layerName
+					}
+				}
+			}
 		}
-		ErrorWithCodeAndDetails(w, 502, errCodeInstanceToolInvokeFailed, message, bridgeErrorDetailsFromInvokeResponse(response))
-		return
+		var item *resource.ResolvedResource
+		if request.ReplaceID != "" {
+			item, err = library.Replace(request.ReplaceID, source)
+		} else {
+			original := name
+			for n := 1; n < 10000; n++ {
+				item, err = library.ImportNamed(source, request.Kind, name)
+				if !errors.Is(err, resource.ErrConflict) || len(selected) == 1 {
+					break
+				}
+				name = fmt.Sprintf("%s（%d）", original, n+1)
+			}
+			if name != original {
+				result.Warnings = append(result.Warnings, original+" 已存在，已保存为 "+name)
+			}
+		}
+		if err != nil {
+			resourceError(w, err)
+			return
+		}
+		result.Items = append(result.Items, item)
 	}
-	var result *resource.ResolvedResource
-	if request.ReplaceID != "" {
-		result, err = library.Replace(request.ReplaceID, source)
+	a.queueResourcePreviews(library)
+	if len(result.Items) == 1 {
+		Success(w, result.Items[0])
 	} else {
-		result, err = library.ImportNamed(source, request.Kind, request.Name)
+		Success(w, result)
 	}
-	if err != nil {
-		resourceError(w, err)
-		return
-	}
-	Success(w, result)
 }

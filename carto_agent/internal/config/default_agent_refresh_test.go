@@ -107,14 +107,14 @@ plan:
 	if err != nil {
 		t.Fatalf("GetConfigData(default) failed: %v", err)
 	}
-	if data.Runtime == nil || data.Plan == nil {
-		t.Fatalf("expected runtime and plan after refresh: %+v", data)
+	if data.Runtime == nil || data.Plan != nil {
+		t.Fatalf("expected runtime with legacy planner omitted: %+v", data)
 	}
 
 	if len(data.Runtime.Agents) != 5 {
 		t.Fatalf("startup added or deleted user roles: %v", sortedAgentNames(data.Runtime.Agents))
 	}
-	if data.Runtime.Agents["orchestrator"].Prompts["static_instructions"] != "legacy orchestrator prompt" || data.Plan.Agents["planner"].Prompts["runtime_mode_instruction"] != "legacy runtime instruction" {
+	if data.Runtime.Agents["orchestrator"].Prompts["static_instructions"] != "legacy orchestrator prompt" {
 		t.Fatal("startup overwrote editable user prompts")
 	}
 	for _, check := range []struct {
@@ -124,14 +124,13 @@ plan:
 		{data.Runtime.LegacyUnresolvedPackages, "third-party-global"},
 		{data.Runtime.Agents["orchestrator"].LegacyUnresolvedPackages, "third-party-orchestrator"},
 		{data.Runtime.Agents["scripting_specialist"].LegacyUnresolvedPackages, "third-party-script"},
-		{data.Plan.Global.LegacyUnresolvedPackages, "third-party-plan"},
 	} {
 		if !containsNormalized(check.got, check.want) {
 			t.Errorf("unknown package not preserved: %s", check.want)
 		}
 	}
-	if data.Flows == nil || !containsNormalized(data.Flows.Enabled, "data-to-map") {
-		t.Fatal("legacy workflow did not become a flow reference")
+	if data.Flows != nil {
+		t.Fatal("legacy per-scheme flow selection survived migration")
 	}
 	if raw, err := os.ReadFile(configPath); err != nil || string(raw) != legacyConfig {
 		t.Fatal("read changed the user's saved file", err)

@@ -5,11 +5,14 @@ import { ExecutionMode, InterruptRequestData, Message, WorkflowBlock } from '@/t
 import { cn } from '@/lib/utils'
 import MessageBubble from './MessageBubble'
 import type { ReviewReference, ReviewSummary } from '@/features/knowledge-review/model'
-import FlowProgressCard from '@/features/flow-run/FlowProgressCard'
-import FlowPreviewCard, { flowPreviewForMessage, isFlowPreviewMessage } from '@/features/flow-run/FlowPreviewCard'
-import type { FlowRunState, FlowBlocked, ResourceResumeChoice } from '@/features/flow-run/types'
+import { activeExecutionBlockId } from '@/features/plan/workspace'
+import FlowProgressCard from '@/features/plan/FlowProgressCard'
+import PlanCard from '@/features/plan/PlanCard'
+import PlanProgress from '@/features/plan/PlanProgress'
+import type { FlowRunState, FlowBlocked, ResourceResumeChoice, PlanSnapshot } from '@/features/plan/types'
 
 interface Props {
+  plans?: PlanSnapshot[]
   flowRuns?: FlowRunState[]
   flowBlocked?: FlowBlocked
   onResumeFlow?: (run: FlowRunState, choice?: ResourceResumeChoice) => Promise<boolean>
@@ -118,6 +121,7 @@ export default function MessageList({
   flowRuns = [],
   flowBlocked,
   onResumeFlow,
+  plans = [],
 }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null)
   const isBuildMode = executionMode === 'build'
@@ -158,9 +162,13 @@ export default function MessageList({
   )
 
   const visibleMessages = useMemo(() => {
-    const baseMessages = messages.filter(msg => isFlowPreviewMessage(msg)
-      ? Boolean(flowPreviewForMessage(msg))
-      : msg.type !== 'tool' && msg.type !== 'thinking')
+    // Legacy sessions persisted process narration twice: as plain system
+    // messages without metadata and as full workflow entries. Only suppress an
+    // exact copy already available in the right inspector; keep decisions,
+    // final errors and all messages that cannot be identified this way.
+    const recordedProcess = new Set(workflowBlocks.flatMap(block => block.entries.map(entry => entry.content.trim()).filter(Boolean)))
+    const baseMessages = messages.filter(msg => msg.type !== 'tool' && msg.type !== 'thinking'
+      && !(msg.type === 'status' && !msg.phase && !msg.data && !msg.workflowBlockId && recordedProcess.has(msg.content.trim())))
     const generatedWorkflowMessages = buildWorkflowMessages(workflowBlocks, baseMessages)
     const sorted = [...baseMessages, ...generatedWorkflowMessages].sort((a, b) => a.timestamp - b.timestamp)
 
@@ -208,27 +216,24 @@ export default function MessageList({
     return [...deduped, ...generatedInterruptMessages].sort((a, b) => a.timestamp - b.timestamp)
   }, [messages, pendingInterrupts, workflowBlocks])
 
-  const runIds = new Set(flowRuns.map(run => run.flow_run_id))
+  const runIds = new Set([...flowRuns.map(run => run.flow_run_id), ...plans.flatMap(plan => plan.run ? [plan.run.flow_run_id] : [])])
   const belongsToFlow = (message: Message) => message.type !== 'user' && runIds.has(String(message.data?.flow_run_id || ''))
   const process: Message[] = [...new Map([...messages, ...visibleMessages].filter(belongsToFlow).filter(message => !message.workflowBlockId).map(message => [message.type === 'interrupt' ? extractCheckpointId(message) || message.id : message.id, message])).values()]
-  // Older persisted workflow blocks retain their tool entries as the source
-  // of process details; state still comes only from flow events / snapshots.
-  for (const block of workflowBlocks) for (const entry of block.entries) {
-    if (runIds.has(String(entry.data?.flow_run_id || ''))) process.push({ id: entry.id, type: entry.type === 'thinking' ? 'thinking' : entry.type === 'tool' ? 'tool' : 'status', timestamp: entry.timestamp, content: entry.content, phase: entry.phase, data: entry.data })
-  }
   const timeline = [
-    ...visibleMessages.filter(message => !belongsToFlow(message)).map(message => ({ id: message.id, timestamp: message.timestamp, message, run: undefined as FlowRunState | undefined })),
-    ...flowRuns.map(run => ({ id: `flow-${run.flow_run_id}`, timestamp: Date.parse(run.started_at) || 0, message: undefined as Message | undefined, run })),
+    ...visibleMessages.filter(message => !belongsToFlow(message)).map(message => ({ id: message.id, timestamp: message.timestamp, message, run: undefined as FlowRunState | undefined, plan: undefined as PlanSnapshot | undefined })),
+    ...flowRuns.filter(run => !plans.some(item => item.plan_id === run.plan_id || item.run?.flow_run_id === run.flow_run_id)).map(run => ({ id: `flow-${run.flow_run_id}`, timestamp: Date.parse(run.finished_at || run.started_at) || 0, message: undefined as Message | undefined, run, plan: undefined as PlanSnapshot | undefined })),
+    ...plans.map(plan => {
+      const run = flowRuns.find(run => run.plan_id === plan.plan_id || run.flow_run_id === plan.run?.flow_run_id) || plan.run
+      return { id: `plan-${plan.plan_id}`, timestamp: Date.parse(run?.finished_at || plan.created_at || plan.updated_at || '') || 0, message: undefined as Message | undefined, run, plan }
+    }),
   ].sort((a, b) => a.timestamp - b.timestamp)
   const hasContent = timeline.length > 0 || Boolean(flowBlocked)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [visibleMessages, flowRuns])
+  }, [visibleMessages, flowRuns, plans])
 
   const renderMessage = (msg: Message) => {
-    const preview = flowPreviewForMessage(msg)
-    if (preview) return <FlowPreviewCard key={msg.id} preview={preview}/>
     const checkpointId = msg.type === 'interrupt' ? extractCheckpointId(msg) : ''
     const fallbackData = asRecord(msg.data)
     const interruptData = checkpointId ? interruptByCheckpoint.get(checkpointId) || {
@@ -282,8 +287,10 @@ export default function MessageList({
       )}
 
       {flowBlocked && <section role="alert" className="mb-3 rounded border border-red-300 bg-surface-raised p-3 text-xs"><h2 className="font-medium">流程暂时无法启动：{flowBlocked.flow_id}</h2>{flowBlocked.reasons.map((reason, index) => <p key={index} className="mt-1">{reason.message}</p>)}</section>}
-      {timeline.map(item => item.run
-        ? <FlowProgressCard key={item.id} run={item.run} messages={process.filter(message => message.data?.flow_run_id === item.run?.flow_run_id)} renderMessage={renderMessage} onResume={onResumeFlow}/>
+      {timeline.map(item => item.plan
+        ? item.run ? <PlanProgress onOpenDetails={() => onOpenWorkflowBlock(activeExecutionBlockId(item.run!))} key={item.id} snapshot={item.plan} run={item.run} messages={process.filter(message => message.data?.flow_run_id === item.run?.flow_run_id)} renderMessage={renderMessage} executionMode={executionMode} /> : <PlanCard key={item.id} snapshot={item.plan} executionMode={executionMode} />
+        : item.run
+        ? <FlowProgressCard onOpenDetails={() => onOpenWorkflowBlock(activeExecutionBlockId(item.run!))} key={item.id} run={item.run} messages={process.filter(message => message.data?.flow_run_id === item.run?.flow_run_id)} renderMessage={renderMessage} onResume={item.run.carto_plan ? onResumeFlow : undefined}/>
         : item.message && renderMessage(item.message))}
       <div ref={bottomRef} />
     </div>

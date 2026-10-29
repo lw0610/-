@@ -8,8 +8,7 @@ tags:
 - cartography
 - styling
 tools:
-- style_set_apply
-- style_set_export
+- layer_load_styles
 - cartography_set_style
 - cartography_graduated_style
 - cartography_add_labels
@@ -34,9 +33,7 @@ auto_mount: ''
 
 # 符号与标注使用说明
 
-把已核验的工程样式保存为样式集时，使用 style_set_export，directory 指向空文件夹，layers 可指定图层名称或 ID；省略时导出全部可见矢量图层。工具自动导出 QML 并生成对照表，简单字段标注自动填入标注字段，表达式与规则标注保留在 QML 中。图层名称须唯一，存在同名图层时先明确选取或重命名。
-
-优先用 style_set_apply 批量设置，style_set 传样式集资源的名称、编号或资源目录路径；省略时使用工具声明的默认资源。匹配真实图层或别名，检查 applied、unmatched_layers 和 unused_styles。layer_load_style 的 style 参数选择单个 QML 样式资源；layer_save_style 的 path 指定导出位置。统一符号工具会替换渲染器，不应覆盖已核验的分级表达。
+单层套用使用 layer_load_style（style 为样式名称），多层使用 layer_load_styles，items 每项为 layer、style、可选 label_field。字段采用数据的真实名称，不为匹配样式改动用户数据。检查逐项返回的 label_field 与 warnings。保存样式使用 layer_save_style；资源库“从当前工程保存”可把多个图层分别保存为单个样式。
 
 ## 1. 确认制图数据
 
@@ -54,7 +51,7 @@ auto_mount: ''
 
 工具拒绝不存在或非数值字段、少于两个不同有限值、无效分类方法、未知或单色颜色带。空值和非有限值不参与分类，不等于零；将返回的数量与警告纳入数据说明。
 
-样式集用于复用底图符号，不能替代按字段分级，且会覆盖已有渲染器。分类、规则、热力图等其他表达方式需要其对应的真实工具或专门脚本能力。
+QML 样式用于复用底图符号，不能替代按字段分级，且会覆盖已有渲染器。分类、规则、热力图等其他表达方式需要其对应的真实工具或专门脚本能力。
 
 ## 3. 标注与结果核验
 

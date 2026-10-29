@@ -21,7 +21,7 @@ func TestDefaultV2ProfileMatchesDeclaredRolesAndToolPackages(t *testing.T) {
 	if err := yaml.Unmarshal(raw, &cfg); err != nil {
 		t.Fatal(err)
 	}
-	if cfg.Version != AgentConfigVersionV20 || cfg.Runtime == nil || cfg.Plan == nil {
+	if cfg.Version != AgentConfigVersionV20 || cfg.Runtime == nil || cfg.Plan != nil {
 		t.Fatal("default must already be v2, rather than depend on migration")
 	}
 	if bytes.Contains(raw, []byte("skill_packages:")) || bytes.Contains(raw, []byte("workflow_package:")) {
@@ -31,13 +31,12 @@ func TestDefaultV2ProfileMatchesDeclaredRolesAndToolPackages(t *testing.T) {
 		t.Fatal(cfg.Runtime.SharedToolPackages)
 	}
 	want := map[string][]string{
-		"orchestrator":         {},
-		"knowledge_engineer":   {},
-		"data_engineer":        {"data-loading", "data-conversion", "file-operations", "crs-projection", "geocoding", "gps-data", "statistical-data-tools", "admin-boundaries", "browser-data-acquisition", "gee-remote-sensing", "vector-fields", "osm-data"},
-		"spatial_analyst":      {"vector-geometry", "vector-creation", "raster-analysis", "gdal-processing", "grass-analysis", "spatial-analysis", "network-analysis", "visibility-analysis", "mesh-analysis", "gee-remote-sensing", "admin-boundaries"},
+		"orchestrator":         {"data-service"},
+		"data_engineer":        {"data-loading", "data-conversion", "file-operations", "crs-projection", "geocoding", "gps-data", "statistical-data-tools", "vector-fields"},
+		"spatial_analyst":      {"vector-geometry", "vector-creation", "raster-analysis", "gdal-processing", "grass-analysis", "spatial-analysis", "network-analysis", "visibility-analysis", "mesh-analysis", "gee-remote-sensing"},
 		"cartographer":         {"cartography-styling", "route-cartography", "print-layout", "canvas-navigation", "charts"},
 		"quality_feedback":     {"quality-feedback"},
-		"scripting_specialist": {"pyqgis-scripting", "point-cloud", "gps-data", "gee-remote-sensing", "admin-boundaries", "browser-data-acquisition", "mesh-analysis"},
+		"scripting_specialist": {"pyqgis-scripting", "point-cloud", "gps-data", "mesh-analysis"},
 	}
 	if len(cfg.Runtime.Agents) != len(want) {
 		t.Fatal("unexpected default role count")
@@ -47,22 +46,15 @@ func TestDefaultV2ProfileMatchesDeclaredRolesAndToolPackages(t *testing.T) {
 		if !reflect.DeepEqual(role.ToolPackages, packages) || !role.Enabled {
 			t.Errorf("%s packages=%v enabled=%v", name, role.ToolPackages, role.Enabled)
 		}
-		if name == "knowledge_engineer" {
-			if role.Kind != "executor" || role.Executor != "route_knowledge" || !role.FlowOnly || role.Prompts["static_instructions"] != "" || role.DisplayName != "制图知识抽取专家" {
-				t.Fatal("knowledge role must be an explicitly typed flow executor with step rules")
-			}
-		} else if role.Kind != "agent" || role.Executor != "" || role.FlowOnly {
-			t.Fatalf("ordinary role has executor semantics: %s", name)
+		if role.Kind != "agent" || role.Executor != "" || role.FlowOnly {
+			t.Fatalf("editable role has system executor semantics: %s", name)
 		}
 	}
 	if !cfg.Runtime.Agents["orchestrator"].IsMain || cfg.Runtime.Agents["cartographer"].DisplayName != "制图布局专家" || cfg.Runtime.Agents["quality_feedback"].LLM.Provider != "qwen" {
 		t.Fatal("main designation, flow display-name binding or review provider changed")
 	}
-	if cfg.Flows == nil || !reflect.DeepEqual(cfg.Flows.Enabled, []string{"marching-route", "statistical-choropleth", "traffic-route", "data-to-map"}) {
-		t.Fatal("all four builtin flows must be explicitly enabled")
-	}
-	if cfg.Plan.Agents["planner"].Kind != "agent" || len(cfg.Plan.Agents["planner"].ToolPackages) != 0 || len(cfg.Plan.Global.ToolPackages) != 0 || !cfg.Meta.PlanEnabled || cfg.Plan.Enabled == nil || !*cfg.Plan.Enabled {
-		t.Fatal("Plan should use its system and hidden auto-mounted packages")
+	if cfg.Flows != nil || cfg.Plan != nil {
+		t.Fatal("guide enablement or system expert should not be encoded as a scheme flow or planner")
 	}
 	if err := validateAgentConfig(normalizeAgentConfigFile(&cfg)); err != nil {
 		t.Fatal(err)
@@ -96,11 +88,10 @@ func TestDefaultV2ProjectionUsesActualPackageOwnershipAndAutoMounts(t *testing.T
 		}
 	}
 	for role, tools := range map[string][]string{
-		"orchestrator":       {"flow_start", "flow_preview", "reference_read", "get_layers_info"},
-		"knowledge_engineer": {"marching_route_get_extraction_contract", "marching_route_compile_dataset"},
-		"data_engineer":      {"data_load_list", "admin_boundary_extract", "data_prepare_statistical", "gee_run_script"},
-		"spatial_analyst":    {"buffer", "merge_vector_layers"},
-		"cartographer":       {"style_set_apply", "route_draw", "route_points_build", "layout_compose", "layout_add_callouts", "import_layout_template", "bar_chart"},
+		"orchestrator":    {"plan_propose", "plan_revise", "data_find", "reference_read", "get_layers_info"},
+		"data_engineer":   {"data_load_list", "data_prepare_statistical"},
+		"spatial_analyst": {"buffer", "merge_vector_layers"},
+		"cartographer":    {"layer_load_style", "layer_load_styles", "route_draw", "route_points_build", "layout_compose", "layout_add_callouts", "import_layout_template", "bar_chart"},
 	} {
 		allowed := runtime.GetAgentAllowedTools(role)
 		for _, name := range tools {
@@ -109,20 +100,27 @@ func TestDefaultV2ProjectionUsesActualPackageOwnershipAndAutoMounts(t *testing.T
 			}
 		}
 	}
+	for role := range cfg.Runtime.Agents {
+		for _, retired := range []string{"style_set_apply", "style_set_export"} {
+			if containsNormalized(runtime.GetAgentAllowedTools(role), retired) {
+				t.Errorf("%s can still invoke retired tool %s", role, retired)
+			}
+		}
+	}
 	main := runtime.GetAgentAllowedTools("orchestrator")
-	for _, forbidden := range []string{"data_load_vector", "style_set_apply", "layout_compose", "marching_route_compile_dataset"} {
+	for _, forbidden := range []string{"data_load_vector", "layer_load_styles", "layout_compose", "marching_route_compile_dataset", "flow_start", "flow_preview"} {
 		if containsNormalized(main, forbidden) {
 			t.Errorf("main acquired specialist execution tool %s", forbidden)
 		}
 	}
 	for role := range cfg.Runtime.Agents {
-		if role != "orchestrator" && containsNormalized(runtime.GetAgentAllowedTools(role), "flow_start") {
-			t.Errorf("nested flow start available to %s", role)
+		if role != "orchestrator" && containsNormalized(runtime.GetAgentAllowedTools(role), "plan_propose") {
+			t.Errorf("nested plan proposal available to %s", role)
 		}
 	}
 }
 
-func TestV2MigrationCanSavePlanOnlyRepairWithoutLosingOriginalPlan(t *testing.T) {
+func TestMigrationArchivesLegacyPlannerAndKeepsRuntimeRepair(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "custom-plan", "agent.yaml")
 	if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
@@ -136,7 +134,7 @@ func TestV2MigrationCanSavePlanOnlyRepairWithoutLosingOriginalPlan(t *testing.T)
 	if err := yaml.Unmarshal(legacy, &source); err != nil {
 		t.Fatal(err)
 	}
-	// T51 explicitly repairs the incomplete work copy; the reader must not silently add roles.
+	// An explicit runtime repair remains usable; obsolete planner settings stay only in the backup.
 	source.Runtime = builtInDefaultAgentConfig().Runtime
 	candidate := normalizeAgentConfigFile(&source)
 	manager := NewAgentConfigManager(dir)
@@ -144,8 +142,12 @@ func TestV2MigrationCanSavePlanOnlyRepairWithoutLosingOriginalPlan(t *testing.T)
 		t.Fatal(err)
 	}
 	data, err := NewAgentConfigManager(dir).GetConfigData("custom-plan")
-	if err != nil || data.Plan.MaxIterations != 17 || data.Plan.Agents["planner"].LLM.Provider != "custom-plan-model" || !reflect.DeepEqual(data.Plan.Agents["planner"].Prompts, source.Plan.Agents["planner"].Prompts) || len(data.Runtime.Agents) != 7 {
-		t.Fatal("Plan-only repair lost saved Plan or failed runtime initialization", err)
+	if err != nil || data.Plan != nil || data.Flows != nil || len(data.Runtime.Agents) != len(source.Runtime.Agents) {
+		t.Fatal("runtime repair failed or obsolete planner was revived", err)
+	}
+	saved, err := os.ReadFile(path)
+	if err != nil || bytes.Contains(saved, []byte("custom-plan-model")) || bytes.Contains(saved, []byte("saved Plan rules")) {
+		t.Fatal("obsolete planner was saved into the active config", err)
 	}
 	backup, err := os.ReadFile(path + ".v1.bak")
 	if err != nil || !bytes.Equal(backup, legacy) {
@@ -157,7 +159,7 @@ func TestDefaultV2BootstrapAndCustomMigrationRemainDistinct(t *testing.T) {
 	dir := t.TempDir()
 	manager := NewAgentConfigManager(dir)
 	defaultData, err := manager.GetConfigData("default")
-	if err != nil || defaultData.Version != AgentConfigVersionV20 || len(defaultData.Runtime.Agents["orchestrator"].ToolPackages) != 0 {
+	if err != nil || defaultData.Version != AgentConfigVersionV20 || !reflect.DeepEqual(defaultData.Runtime.Agents["orchestrator"].ToolPackages, []string{"data-service"}) {
 		t.Fatal("bootstrap did not use the new v2 default", err)
 	}
 	path := filepath.Join(dir, "custom", "agent.yaml")

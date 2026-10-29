@@ -25,15 +25,15 @@ func TestPublicImportDetectionMappingAndSourcePreservation(t *testing.T) {
 	folder := filepath.Join(root, "source/set")
 	resourceWrite(t, filepath.Join(folder, "河流.qml"), "<qgis/>")
 	resourceWrite(t, filepath.Join(folder, "省域.qml"), "<qgis/>")
-	result, err := library.ImportNamed(folder, "", "")
-	if err != nil || len(result.Entries) != 2 || !resourceHasProblem(result, "RESOURCE_STYLE_MAPPING_GENERATED", "info") {
+	result, err := library.ImportMany(folder)
+	if err != nil || len(result.Items) != 2 {
 		t.Fatal(result, err)
 	}
 	if _, err = os.Stat(filepath.Join(folder, "对照表.csv")); !os.IsNotExist(err) {
 		t.Fatal("source was modified", err)
 	}
-	if result.Entries[0].Name != "河流" || result.Entries[0].Fields["label_mode"] != "keep" {
-		t.Fatal(result.Entries)
+	if result.Items[0].Name != "河流" || result.Items[0].Type != "style" {
+		t.Fatal(result.Items)
 	}
 	wrong := resourceWrite(t, filepath.Join(root, "source/wrong.qml"), "<qgis/>")
 	if _, err = library.ImportNamed(wrong, "layout", ""); err == nil {
@@ -48,73 +48,57 @@ func TestPublicImportDetectionMappingAndSourcePreservation(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestRetiredLibraryScopeAndToolAssets(t *testing.T) {
+func TestRetiredLibraryTypesAreMigrationOnly(t *testing.T) {
 	_, library := resourceProject(t)
-	toolRoot := filepath.Join(filepath.Dir(filepath.Dir(library.BuiltinDir)), "tools/system/example/assets/resources")
-	path := resourceWrite(t, filepath.Join(toolRoot, "docs/tool.md"), "tool instructions")
-	writeManifest(t, path, Manifest{ID: "doc.tool", Type: "doc", Name: "工具说明"})
-	library = NewLibrary(library.BuiltinDir, library.UserDir, library.Bindings)
 	retired := resourceWrite(t, filepath.Join(library.UserDir, "docs/old.md"), "old")
 	writeManifest(t, retired, Manifest{ID: "doc.old", Type: "doc", Name: "旧说明"})
-	listed, err := library.List("all")
-	if err != nil || len(listed) != 0 {
-		t.Fatal(listed, err)
+	rows, err := library.List("all")
+	if err != nil || len(rows) != 0 {
+		t.Fatal(rows, err)
 	}
-	old, err := library.List("retired")
-	if err != nil || len(old) != 1 || old[0].ID != "doc.old" {
-		t.Fatal(old, err)
+	r := library.Resolve(context.Background(), Ref{Type: "doc", Name: "旧说明"}, Scope{})
+	if r.Handle() != nil {
+		t.Fatal("retired document exposed as public resource")
 	}
-	resolved := library.Resolve(context.Background(), Ref{Type: "doc", Name: "旧说明", Location: "公共资源库"}, Scope{})
-	if !resourceHasProblem(resolved, "FLOW_RESOURCE_LIBRARY_TYPE_RETIRED", "warning") || resolved.Handle() == nil {
-		t.Fatal(resolved)
+	migrations, err := library.MigrateV6()
+	if err != nil || len(migrations) != 1 {
+		t.Fatal(migrations, err)
 	}
-	tool := library.Resolve(context.Background(), Ref{ID: "doc.tool"}, Scope{})
-	if tool.Owner != "tool" || tool.Handle() == nil {
-		t.Fatal(tool)
+	if _, err = os.Stat(filepath.Join(filepath.Dir(library.UserDir), ".backups/resources-v5/docs/old.md")); err != nil {
+		t.Fatal(err)
 	}
-	byName := library.Resolve(context.Background(), Ref{Type: "doc", Name: "工具说明"}, Scope{})
-	if !HasErrors(byName.Problems) {
-		t.Fatal("tool asset found by name")
-	}
-	override := resourceWrite(t, filepath.Join(library.UserDir, "docs/override.md"), "override")
-	writeManifest(t, override, Manifest{ID: "doc.override", Type: "doc", Name: "覆盖", Overrides: "doc.tool"})
-	invalid, err := library.GetByID("doc.override")
-	if err != nil || !resourceHasProblem(invalid, "RESOURCE_OVERRIDE_CONFLICT", "error") {
-		t.Fatal(invalid, err)
-	}
-	tool = library.Resolve(context.Background(), Ref{ID: "doc.tool"}, Scope{})
-	if tool.Owner != "tool" || tool.Handle() == nil {
-		t.Fatal(tool)
+	again, err := library.MigrateV6()
+	if err != nil || len(again) != 0 {
+		t.Fatal(again, err)
 	}
 }
 
-func TestStyleSetAliasReplacementKeepsIdentityAndFiles(t *testing.T) {
+func TestMetadataEditKeepsIdentityAndContent(t *testing.T) {
 	root, library := resourceProject(t)
-	folder := filepath.Join(root, "source/set")
-	resourceWrite(t, filepath.Join(folder, "roads.qml"), "<qgis/>")
-	original, err := library.ImportNamed(folder, "", "")
+	source := resourceWrite(t, filepath.Join(root, "source/roads.qml"), "<qgis><layerGeometryType>1</layerGeometryType></qgis>")
+	original, err := library.ImportNamed(source, "style", "")
 	if err != nil {
 		t.Fatal(err)
 	}
-	changed, err := library.ReplaceAliases(original.ID, map[string]string{"roads": "道路、主干路"})
+	name, description, field := "新道路", "道路线符号", "NAME"
+	tags := []string{"道路", "主干路"}
+	changed, err := library.UpdateMetadata(original.ID, MetadataUpdate{Name: &name, Description: &description, Tags: &tags, LabelField: &field})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if changed.ID != original.ID || changed.Version != "1.0.1" || changed.Digest == original.Digest {
+	if changed.ID != original.ID || changed.Name != name || changed.Digest == original.Digest || changed.Root != original.Root || changed.LabelField != field || len(changed.Tags) != 2 {
 		t.Fatal(changed)
 	}
-	if len(changed.Entries) != 1 || len(changed.Entries[0].Fields["aliases"].([]string)) != 2 {
-		t.Fatal(changed.Entries)
+	raw, _ := os.ReadFile(changed.Entry)
+	if string(raw) != "<qgis><layerGeometryType>1</layerGeometryType></qgis>" {
+		t.Fatal("metadata changed payload")
 	}
-	if _, err = library.ReplaceAliases(original.ID, map[string]string{"missing": "invalid"}); err == nil {
-		t.Fatal("unknown layer accepted")
+	bad := "../invalid"
+	if _, err = library.UpdateMetadata(original.ID, MetadataUpdate{Name: &bad}); err == nil {
+		t.Fatal("invalid name accepted")
 	}
 	current, _ := library.GetByID(original.ID)
 	if current.Digest != changed.Digest {
 		t.Fatal("failed edit modified resource")
-	}
-	staged, err := os.ReadDir(filepath.Join(library.UserDir, ".staging"))
-	if err != nil || len(staged) != 0 {
-		t.Fatal(staged, err)
 	}
 }

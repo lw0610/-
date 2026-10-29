@@ -15,34 +15,22 @@ func TestResourceTypeWordsAreIndependentOfLocation(t *testing.T) {
 		t.Fatalf("%+v", doc.Resources)
 	}
 }
-func TestShapefileSidecarChangesLinkFingerprint(t *testing.T) {
-	env := fixtureEnvironment()
-	raw := testFlow
-	compiler, store, _ := compilerFixture(t, raw, &env)
-	stored, err := store.Get("test-flow")
+func TestVisualResourceContentChangesLinkFingerprint(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "river.qml")
+	if err := os.WriteFile(path, []byte("first"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	resources := []*resource.ResolvedResource{{Type: "style", Entry: path}}
+	first, err := resourceLinkFingerprint(context.Background(), "test", nil, resources)
 	if err != nil {
 		t.Fatal(err)
 	}
-	path := filepath.Join(t.TempDir(), "data.shp")
-	for _, file := range append([]string{path}, resource.ShapefileSidecarPaths(path)...) {
-		if err = os.WriteFile(file, []byte("first"), 0600); err != nil {
-			t.Fatal(err)
-		}
-	}
-	source := &compilationSource{stored: stored, env: env, resources: []*resource.ResolvedResource{{Type: "data_list", Entries: []resource.ResourceEntry{{Path: path}}}}}
-	first, err := compiler.linkFingerprint(context.Background(), source)
-	if err != nil {
+	if err = os.WriteFile(path, []byte("changed style"), 0600); err != nil {
 		t.Fatal(err)
 	}
-	if err = os.WriteFile(filepath.Join(filepath.Dir(path), "data.dbf"), []byte("changed"), 0600); err != nil {
-		t.Fatal(err)
-	}
-	second, err := compiler.linkFingerprint(context.Background(), source)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if first == second {
-		t.Fatal("dbf修改未改变指纹")
+	second, err := resourceLinkFingerprint(context.Background(), "test", nil, resources)
+	if err != nil || first == second {
+		t.Fatal("style update did not invalidate fingerprint", err)
 	}
 }
 func TestFlowAndLibraryShareInjectedBindingPath(t *testing.T) {
@@ -58,7 +46,7 @@ func TestFlowAndLibraryShareInjectedBindingPath(t *testing.T) {
 	if err := os.MkdirAll(dir, 0700); err != nil {
 		t.Fatal(err)
 	}
-	if err := store.SetBinding("test-flow", "path:data/base.csv", dir); err != nil {
+	if err := store.Bindings.Set("flow:test-flow/path:data/base.csv", dir); err != nil {
 		t.Fatal(err)
 	}
 	got, found, err := library.Bindings.Get("flow:test-flow/path:data/base.csv")

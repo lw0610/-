@@ -9,76 +9,16 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/datasource"
 	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/integrations"
-	"github.com/autocarto/carto_agent/internal/llm"
 	"github.com/autocarto/carto_agent/internal/settings"
 	"github.com/autocarto/carto_agent/internal/skill"
 	"github.com/autocarto/carto_agent/internal/tool"
-	"github.com/cloudwego/eino/components/model"
-	"github.com/cloudwego/eino/schema"
 )
-
-func (a *API) SetFlowCompiler(compiler *flow.Compiler) {
-	a.flowCompilerMu.Lock()
-	defer a.flowCompilerMu.Unlock()
-	a.flowCompilation = compiler
-}
-func (a *API) hasFlowCompiler() bool {
-	a.flowCompilerMu.Lock()
-	defer a.flowCompilerMu.Unlock()
-	return a.flowCompilation != nil
-}
-
-// FlowCompiler 同时供 HTTP 预览和运行控制器装配使用，二者共享同一套编译规则。
-func (a *API) FlowCompiler() (*flow.Compiler, error) {
-	a.flowCompilerMu.Lock()
-	defer a.flowCompilerMu.Unlock()
-	if a.flowCompilation != nil {
-		return a.flowCompilation, nil
-	}
-	if a.assetCatalogService == nil {
-		return nil, fmt.Errorf("方案资产服务尚未配置，无法生成流程执行计划")
-	}
-	store, err := a.flowStore()
-	if err != nil {
-		return nil, err
-	}
-	resources, err := a.resourceStore()
-	if err != nil {
-		return nil, err
-	}
-	home, err := config.ResolveAutoCartoHome()
-	if err != nil {
-		return nil, err
-	}
-	compileSettings := config.FlowCompileConfig{}.WithDefaults()
-	if a.configService != nil {
-		if cfg, err := a.configService.GetFullConfig(); err == nil {
-			compileSettings = cfg.FlowCompile.WithDefaults()
-		}
-	}
-	a.flowCompilation = flow.NewCompiler(flow.CompilerOptions{Store: store, Resources: resources, LoadEnvironment: a.loadFlowEnvironment, CacheDir: filepath.Join(home, "data", "flow_cache"), RetryAfter: time.Duration(compileSettings.RetryAfterSeconds) * time.Second, ListSchemes: func(ctx context.Context) ([]string, error) {
-		if err := ctx.Err(); err != nil {
-			return nil, err
-		}
-		configs, err := a.assetCatalogService.ListAgentConfigs("")
-		if err != nil {
-			return nil, err
-		}
-		names := []string{}
-		for _, item := range configs {
-			names = append(names, item.ConfigName)
-		}
-		return names, nil
-	}})
-	return a.flowCompilation, nil
-}
 
 func revisionOf(value any) string {
 	encoded, _ := json.Marshal(value)
@@ -114,15 +54,6 @@ func (a *API) loadFlowEnvironmentUncached(ctx context.Context, scheme string) (f
 		return flow.Environment{}, err
 	}
 	env := flow.Environment{Scheme: scheme, SchemeRevision: revisionOf(settings.ExpandAgentProfileView(profile)), Roles: []flow.RoleSpec{}, Packages: []flow.PackageSpec{}, Capabilities: []flow.CapabilitySpec{}}
-	if profile.FlowPolicy != nil {
-		env.RoleFill = profile.FlowPolicy.RoleFill
-		env.RoleMapping = profile.FlowPolicy.RoleMapping
-		env.AutoAcquire = profile.FlowPolicy.AutoAcquire
-	}
-	if profile.Flows != nil {
-		enabled := append([]string{}, profile.Flows.Enabled...)
-		env.EnabledFlows = &enabled
-	}
 	packages, err := a.assetCatalogService.ListSkillPackages()
 	if err != nil {
 		return env, err
@@ -154,6 +85,9 @@ func (a *API) loadFlowEnvironmentUncached(ctx context.Context, scheme string) (f
 		id := summary.PackageID
 		if id == "" {
 			id = summary.Name
+		}
+		if id == "flow-control" && summary.Enabled {
+			env.PlanningInstructions = detail.MarkdownBody
 		}
 		entry := flow.PackageSpec{ID: id, DisplayName: summary.DisplayName, Tools: uniqueFlowStrings(detail.ToolRefs), Enabled: summary.Enabled, Kind: summary.Kind, Hidden: summary.Hidden}
 		for _, definition := range detail.Tools {
@@ -204,7 +138,7 @@ func (a *API) loadFlowEnvironmentUncached(ctx context.Context, scheme string) (f
 		if kind == "" {
 			kind = "agent"
 		}
-		env.Roles = append(env.Roles, flow.RoleSpec{ID: item.Name, DisplayName: agent.DisplayName, Description: agent.Description, Kind: kind, Executor: agent.Executor, FlowOnly: agent.FlowOnly, Enabled: agent.Enabled, IsMain: agent.IsMain, ToolPackages: actualIDs, Tools: tools})
+		env.Roles = append(env.Roles, flow.RoleSpec{ID: item.Name, Provider: agent.LLM.Provider, DisplayName: agent.DisplayName, Description: agent.Description, Kind: kind, Executor: agent.Executor, FlowOnly: agent.FlowOnly, Enabled: agent.Enabled, IsMain: agent.IsMain, ToolPackages: actualIDs, Tools: tools})
 		if agent.IsMain && agent.Enabled {
 			providerName = agent.LLM.Provider
 		}
@@ -227,19 +161,7 @@ func (a *API) loadFlowEnvironmentUncached(ctx context.Context, scheme string) (f
 					env.VisionProviders = append(env.VisionProviders, configured.Name)
 				}
 			}
-			if settings.FlowCompile.Provider != "" {
-				providerName = settings.FlowCompile.Provider
-			}
-			if providerName != "" {
-				provider = settings.GetProviderByName(providerName)
-			}
-			if provider != nil {
-				env.ModelName = provider.Model
-				chat, err := llm.NewChatModel(&llm.Config{Provider: provider.Provider, Model: provider.Model, APIKey: provider.APIKey, BaseURL: provider.BaseURL, MaxTokens: provider.MaxTokens, Temperature: 0, ThinkingEnabled: provider.ThinkingEnabled, ThinkingBudget: provider.ThinkingBudget})
-				if err == nil {
-					env.Model = flowChatModel{chat: chat}
-				}
-			}
+
 		}
 	}
 	assets, assetsErr := config.ResolveAssetsRoot()
@@ -295,22 +217,6 @@ func uniqueFlowStrings(values []string) []string {
 	return result
 }
 
-type flowChatModel struct{ chat model.ToolCallingChatModel }
-
-func (m flowChatModel) Complete(ctx context.Context, request flow.ModelRequest) (string, error) {
-	message, err := m.chat.Generate(ctx, []*schema.Message{schema.SystemMessage(request.System), schema.UserMessage(request.Prompt)})
-	if err != nil {
-		return "", err
-	}
-	if message == nil {
-		return "", fmt.Errorf("模型没有返回内容")
-	}
-	if len(message.ToolCalls) > 0 {
-		return "", fmt.Errorf("流程解析模型不能调用工具")
-	}
-	return message.Content, nil
-}
-
 // Keep the diagnostic vocabulary tied to the same authority definitions used by tools.
 func flowParameterNames(parameters []tool.ToolParameter) []string {
 	names := []string{}
@@ -334,4 +240,9 @@ func flowSkillParameterNames(parameters []skill.SkillParameter) []string {
 	names = uniqueFlowStrings(names)
 	sort.Strings(names)
 	return names
+}
+
+// PlanEnvironment builds only local role, capability and data catalogs.
+func (a *API) PlanEnvironment(ctx context.Context, scheme string) (flow.Environment, error) {
+	return a.loadFlowEnvironment(ctx, scheme)
 }

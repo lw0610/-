@@ -1,10 +1,46 @@
 package websocket
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/cloudwego/eino/schema"
 )
+
+func TestDecodeSessionMessagesPreservesToolMediaAcrossRestore(t *testing.T) {
+	image, pdf := "aW1hZ2U=", "JVBERi0xLjcK"
+	original := []*schema.Message{
+		schema.AssistantMessage("", []schema.ToolCall{
+			{ID: "read-image", Type: "function", Function: schema.FunctionCall{Name: "file_read", Arguments: `{}`}},
+			{ID: "read-pdf", Type: "function", Function: schema.FunctionCall{Name: "file_read", Arguments: `{}`}},
+		}),
+		{Role: schema.Tool, ToolCallID: "read-image", ToolName: "file_read", UserInputMultiContent: []schema.MessageInputPart{
+			{Type: schema.ChatMessagePartTypeText, Text: "original source image"},
+			{Type: schema.ChatMessagePartTypeImageURL, Image: &schema.MessageInputImage{MessagePartCommon: schema.MessagePartCommon{MIMEType: "image/png", Base64Data: &image}}},
+		}},
+		{Role: schema.Tool, ToolCallID: "read-pdf", ToolName: "file_read", UserInputMultiContent: []schema.MessageInputPart{
+			{Type: schema.ChatMessagePartTypeFileURL, File: &schema.MessageInputFile{MessagePartCommon: schema.MessagePartCommon{MIMEType: "application/pdf", Base64Data: &pdf}}},
+		}},
+	}
+	raw, err := json.Marshal(original)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var stored []any
+	if err := json.Unmarshal(raw, &stored); err != nil {
+		t.Fatal(err)
+	}
+	restored := decodeSessionMessages(stored, -1)
+	if len(restored) != 3 || len(restored[1].UserInputMultiContent) != 2 || len(restored[2].UserInputMultiContent) != 1 {
+		t.Fatalf("tool media lost during restoration: %#v", restored)
+	}
+	if *restored[1].UserInputMultiContent[1].Image.Base64Data != image || *restored[2].UserInputMultiContent[0].File.Base64Data != pdf {
+		t.Fatal("stored media bytes changed")
+	}
+	if restored[1].ToolCallID != "read-image" || restored[2].ToolCallID != "read-pdf" {
+		t.Fatal("parallel tool response identities changed")
+	}
+}
 
 func TestDecodeSessionMessagesLimitAndRole(t *testing.T) {
 	raw := []any{

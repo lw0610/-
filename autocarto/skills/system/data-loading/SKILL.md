@@ -28,7 +28,7 @@ tools:
 
 先读工程和图层状态，核实已有图层及真实来源；同源、同子图层的数据已存在时优先复用，data_load_vector/data_load_raster 的 reuse_existing 默认 true。需要独立图层对象时明确传 false，不能按相似名称随意复用。路径按项目根解析，资源清单按基准目录解析，调用后以返回的图层 ID 和真实路径继续。
 
-一组数据用 data_load_list，data_list 传数据清单资源的名称、编号或路径；资源服务负责解析 CSV/XLSX，base_dir 仅覆盖本次调用的基准目录，不修改已保存绑定。数据文件夹先用 resource_get 查看条目，再分别加载其中的矢量或栅格。清单核实名称、路径、类型、必需项、编码和子图层，检查每项 loaded/reused/missing/failed 状态；可选缺失与必需失败区分报告，不把部分成功当完整交付。单矢量/栅格分别用 data_load_vector/data_load_raster；CSV 坐标数据核实坐标列、分隔符与已知 CRS，GPKG 明确子图层。
+一组已经确定来源的数据使用 `data_load_list`，传 `items` 内联列表，每项包含 `name`、实际 `path`，可选 `kind`（vector/raster）、`required`、`layer_id`（复用已有工程图层）；例如 `{"items":[{"name":"河流","path":"会话数据/河流.gpkg|layername=river","kind":"vector","required":true}],"reuse_existing":true}`。这些路径必须来自用户材料、已核验工程或数据服务结果，不能猜测；用户给文件夹时先用 `data_find` 的 `provided` 对应真实文件，不使用公共数据清单或固定 CSV 约定。检查每项 loaded/reused/missing/failed 状态，可选缺失与必需失败分别报告，不把部分成功当完整交付。单个矢量/栅格分别用 `data_load_vector`/`data_load_raster`；CSV 坐标数据核实坐标列、分隔符与已知 CRS，GPKG 明确子图层。
 
 加载后用 get_layers_info 和详细信息核实数量、几何/波段、字段、CRS、范围及 NoData。没有活动图层不等于没有数据；不猜测不存在的图层。几何检查、栅格统计由相应工具完成，阈值应有任务依据。
 

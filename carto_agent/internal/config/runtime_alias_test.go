@@ -154,7 +154,7 @@ func TestAgentConfigManagerPersistsRuntimeAsPrimaryField(t *testing.T) {
 	}
 }
 
-func TestAgentConfigManagerLoadsLegacyPlanBehaviorMaxIterations(t *testing.T) {
+func TestAgentConfigManagerIgnoresLegacyPlannerBehavior(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	configText := `version: "1.0"
@@ -230,10 +230,10 @@ plan:
 	if err != nil {
 		t.Fatalf("GetConfigData failed: %v", err)
 	}
-	if data.Plan == nil {
-		t.Fatal("expected plan config to be populated")
+	if data.Plan != nil {
+		t.Fatal("legacy independent planner must not be revived")
 	}
-	if data.Plan.MaxIterations != 42 {
-		t.Fatalf("expected legacy behavior.max_iterations to map to plan.max_iterations, got %d", data.Plan.MaxIterations)
+	if data.Runtime == nil {
+		t.Fatal("runtime configuration was lost")
 	}
 }

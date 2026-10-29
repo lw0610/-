@@ -18,6 +18,10 @@ type Extent struct {
 	Path string    `json:"path,omitempty"`
 }
 type Progress struct {
+	Percent        *float64 `json:"percent,omitempty"`
+	BytesPerSecond float64  `json:"bytes_per_second,omitempty"`
+	Message        string   `json:"message,omitempty"`
+
 	Stage string `json:"stage"`
 	Bytes int64  `json:"bytes"`
 	Total int64  `json:"total"`

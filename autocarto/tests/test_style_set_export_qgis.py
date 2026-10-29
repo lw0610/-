@@ -39,21 +39,9 @@ def _layer(project, name, label=None, expression=False):
 
 
 def _export(params):
-    import yaml
-    from autocarto.core.tool_engine.definitions import ToolDefinitionLoader
-    from autocarto.core.tool_engine.executor import ProcessingToolExecutor
-    path = Path(__file__).resolve().parents[1] / "tools/system/cartography/style_set_export.yaml"
-    definition = yaml.safe_load(path.read_text())
-    assert definition["policy"]["visibility"] == "public"
-    assert "tool.invoke" in definition["policy"]["authorization_scopes"]
-    module, function = definition["execution"]["handler"].rsplit(".", 1)
-    loader = ToolDefinitionLoader([{
-        "name": "style_set_export", "domain": "cartography", "runtime": "qgis",
-        "parameters": definition["spec"]["parameters"],
-        "handler_file": str(path.parent / Path(*module.split(".")).with_suffix(".py")),
-        "handler_function": function,
-    }])
-    return ProcessingToolExecutor(loader.load_all()).execute("style_set_export", params)
+    # Frozen exporter is a v5 oracle for migration fixtures, no production tool.
+    from autocarto.tests.support.legacy_style_export import export_style_set_handler
+    return export_style_set_handler(params)
 
 
 def test_default_exports_visible_vectors_and_writes_portable_mapping(project, tmp_path):

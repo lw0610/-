@@ -13,6 +13,7 @@ import (
 	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/autocarto/carto_agent/internal/knowledge"
 	"github.com/autocarto/carto_agent/internal/session"
+	"github.com/autocarto/carto_agent/internal/toolsession"
 )
 
 func (s *DeepServer) runAgentPhase(
@@ -37,7 +38,9 @@ func (s *DeepServer) runAgentPhase(
 		checkpointID = strings.TrimSpace(options.runID)
 	}
 	taskCtx := withToolSessionContext(ctx, sessionID, projectPath, boundInstanceID)
-	taskCtx = s.withFlowService(taskCtx, sessionID)
+	taskCtx = s.withMaterialProgress(taskCtx, conn, sessionID, options.modePhase)
+	taskCtx = toolsession.WithFlowStep(taskCtx, options.flowRunID, options.flowStepID)
+	taskCtx = s.withDataService(s.withPlanService(taskCtx, sessionID), sessionID)
 	taskCtx = s.withGEEProgress(taskCtx, conn, sessionID, options.modePhase)
 	taskCtx = s.withOSMProgress(taskCtx, conn, sessionID, options.modePhase)
 	taskCtx = deepagent.WithKnowledgeReview(taskCtx, s.KnowledgeReviewStore())

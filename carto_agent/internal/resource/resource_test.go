@@ -201,20 +201,18 @@ func TestLibraryExplicitOverrideImportAndReadonly(t *testing.T) {
 		t.Fatalf("内置资源不能删除：%v", err)
 	}
 	source := resourceWrite(t, filepath.Join(root, "import/说明.qml"), "<qgis><note>用户内容</note></qgis>")
-	if _, err = library.Import(source, "style"); err != nil {
-		t.Fatal(err)
-	}
-	if _, err = library.Get("style", "说明"); !errors.Is(err, ErrConflict) {
-		t.Fatalf("未显式覆盖必须报歧义：%v", err)
-	}
-	resourceWrite(t, filepath.Join(library.UserDir, "styles/说明.resource.yaml"), "apiVersion: resource/v1\nid: style.user-notes\ntype: style\nname: 说明\nentry: 说明.qml\noverrides: style.notes\n")
-	user, err := library.Get("style", "说明")
-	if err != nil || user.Origin != "library_user" {
-		t.Fatalf("%+v %v", user, err)
-	}
 	if _, err = library.Import(source, "style"); !errors.Is(err, ErrConflict) {
-		t.Fatalf("重复导入应报告冲突：%v", err)
+		t.Fatalf("builtin names must also be unique: %v", err)
 	}
+	user, err := library.Copy("style.notes", true, "我的说明")
+	if err != nil || user.Origin != "library_user" {
+		t.Fatal(user, err)
+	}
+	resolved := library.Resolve(context.Background(), Ref{ID: "style.notes"}, Scope{})
+	if resolved.ID != user.ID {
+		t.Fatal(resolved)
+	}
+
 	all, err := library.List("all")
 	if err != nil || len(all) != 2 {
 		t.Fatalf("%v %v", all, err)
@@ -225,7 +223,7 @@ func TestLibraryExplicitOverrideImportAndReadonly(t *testing.T) {
 			t.Fatalf("scope %s: %v %v", scope, items, err)
 		}
 	}
-	if err = library.Delete("style", "说明"); err != nil {
+	if err = library.DeleteID(user.ID); err != nil {
 		t.Fatal(err)
 	}
 	restored, err := library.Get("style", "说明")
@@ -365,28 +363,17 @@ func TestBindingStoresShareLockAndRejectUnsafePaths(t *testing.T) {
 	}
 }
 
-func TestLibraryBindingsFallbackAndFlowOverride(t *testing.T) {
-	root, library := resourceProject(t)
-	resourceWrite(t, filepath.Join(library.UserDir, "data/底图.csv"), "name,path\n道路,road.geojson\n")
-	resourceWrite(t, filepath.Join(library.UserDir, "data/底图.resource.yaml"), "apiVersion: resource/v1\nid: data_list.base\ntype: data_list\nname: 底图\nentry: 底图.csv\n")
-	resourceWrite(t, filepath.Join(root, "library-data/road.geojson"), "{}")
-	resourceWrite(t, filepath.Join(root, "flow-data/road.geojson"), "{}")
-	if err := library.SetBinding("library:data_list.base", "library-data"); err != nil {
-		t.Fatal(err)
+func TestSharedDataListsAreNotRuntimeResources(t *testing.T) {
+	_, library := resourceProject(t)
+	source := resourceWrite(t, filepath.Join(library.UserDir, "data/底图.csv"), "name,path\n道路,road.geojson\n")
+	writeManifest(t, source, Manifest{ID: "data_list.base", Type: "data_list", Name: "底图"})
+	r := library.Resolve(context.Background(), Ref{Type: "data_list", Name: "底图"}, Scope{})
+	if r.Handle() != nil || !resourceHasProblem(r, "FLOW_RESOURCE_NOT_FOUND", "error") {
+		t.Fatal(r)
 	}
-	request := Request{Key: "basemap", Label: "底图", Type: "data_list", Location: "公共资源库", FlowID: "test-flow"}
-	result := resolveRequest(library, request)
-	resourceNoErrors(t, result)
-	if result.BindingKey != "flow:test-flow/library:data_list.base" || result.BaseDir != filepath.Join(root, "library-data") {
-		t.Fatal(result)
-	}
-	if err := library.SetBinding("flow:test-flow/library:data_list.base", "flow-data"); err != nil {
-		t.Fatal(err)
-	}
-	result = resolveRequest(library, request)
-	resourceNoErrors(t, result)
-	if result.BindingKey != "flow:test-flow/library:data_list.base" || result.BaseDir != filepath.Join(root, "flow-data") {
-		t.Fatal(result)
+	migrations, err := library.MigrateV6()
+	if err != nil || len(migrations) != 1 || migrations[0].Type != "data_list" {
+		t.Fatal(migrations, err)
 	}
 }
 
@@ -502,21 +489,10 @@ func TestStableDataBindingIdentityIgnoresDisplayLabelAndCallerKey(t *testing.T) 
 	if result.Key != "data_list.base" || result.BindingKey != "flow:test-flow/data_list.base" || result.BaseDir != filepath.Join(root, "bound") {
 		t.Fatal(result)
 	}
-	// Legacy shared lists also bind by their derived ID rather than their name.
+	// Shared lists no longer participate in runtime resolution; legacy flow
+	// snapshots above remain readable only for migration/replay.
 	resourceWrite(t, filepath.Join(library.UserDir, "data/旧清单.csv"), "name,path\n道路,road.geojson\n")
-	legacy, err := library.Get("data_list", "旧清单")
-	if err != nil {
+	if _, err := library.Get("data_list", "旧清单"); !errors.Is(err, ErrNotFound) {
 		t.Fatal(err)
-	}
-	if !strings.HasPrefix(legacy.ID, "legacy.data_list.") {
-		t.Fatal(legacy)
-	}
-	if err := library.SetBinding("library:"+legacy.ID, "bound"); err != nil {
-		t.Fatal(err)
-	}
-	result = library.Resolve(context.Background(), Ref{Type: "data_list", Name: "旧清单", Location: "公共资源库"}, Scope{FlowID: "test-flow", FlowDir: flowDir})
-	resourceNoErrors(t, result)
-	if result.Key != "library:"+legacy.ID || result.BindingKey != "flow:test-flow/library:"+legacy.ID || result.BaseDir != filepath.Join(root, "bound") {
-		t.Fatal(result)
 	}
 }

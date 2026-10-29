@@ -1,0 +1,33 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: file_write
+  display_name: 写入文本文件
+  keywords: [写文件, CSV, 脚本, 来源说明]
+  domain: file-operations
+  runtime: internal
+spec:
+  description: "把给定UTF-8文本原样写入当前会话output，可创建父目录；单次最多16 MiB。适用于CSV、脚本、文本说明。默认覆盖同一路径，返回真实路径、字节数和SHA256。不会自动转换成Excel或推断表格；不允许写到会话output之外。"
+  parameters:
+    - name: path
+      type: string
+      required: true
+      description: "输出文件路径，相对路径基于当前会话output"
+    - name: content
+      type: string
+      required: true
+      description: "完整UTF-8文本，保留真实换行、空格和CSV引号"
+    - name: overwrite
+      type: boolean
+      required: false
+      default: true
+      description: "是否覆盖既有文件；false时已存在就返回错误"
+policy:
+  visibility: public
+  authorization_scopes: [tool.invoke]
+execution:
+  backend_tool: file_write
+  param_mapping:
+    path: '{{ path }}'
+    content: '{{ content }}'
+    overwrite: '{{ overwrite }}'

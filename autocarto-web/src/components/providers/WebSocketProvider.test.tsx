@@ -10,7 +10,7 @@ import { useInstanceStore } from '@/stores/instanceStore'
 import { useRuntimeSnapshotStore } from '@/stores/runtimeSnapshotStore'
 import { useSessionStore } from '@/stores/sessionStore'
 import type { WorkflowBlock, WSMessage } from '@/types/message'
-import { useFlowRunStore } from '@/features/flow-run/store'
+import { useFlowRunStore } from '@/features/plan/store'
 
 function createSessionRecord(
   sessionId: string,
@@ -138,7 +138,7 @@ vi.mock('@/lib/tauri', () => ({
 }))
 
 function resetStores() {
-  useFlowRunStore.setState({ runs: {}, blocked: {}, snapshotSeq: {}, eventSeq: {} })
+  useFlowRunStore.setState({ plans: {}, runs: {}, blocked: {}, snapshotSeq: {}, eventSeq: {} })
   useConnectionStore.setState({
     connected: false,
     backendReady: true,
@@ -393,6 +393,47 @@ describe('WebSocketProvider session attach recovery', () => {
       expect(state.sessionPendingInterrupts['sid-other']).toHaveLength(1)
     },
   )
+
+  it('updates the same knowledge card and process through waiting, failure and recovery without another approval', async () => {
+    const sid = 'sid-reconnect'
+    await act(async () => { render(<WebSocketProvider><div>review status</div></WebSocketProvider>) })
+    const send = (status: string, type = 'knowledge_review_update') => websocketHarness.emitMessage({ type, session_id: sid, content: '', data: {
+      checkpoint_id: 'cp-review', interrupt_contexts: [{ id: 'interrupt-1', is_root_cause: true, info: { type: 'knowledge_review', session_id: sid, review_id: 'review-1', revision: 2, status, description: 'route_style is required', errors: status === 'compile_failed' ? [{ message: 'route_style is required' }] : [] } }],
+    } })
+    act(() => { send('awaiting_review', 'interrupt_request'); send('awaiting_review', 'interrupt_request') })
+    const original = useChatStore.getState().messages.find(message => message.type === 'interrupt')!
+    expect(useChatStore.getState().messages.filter(message => message.type === 'interrupt')).toHaveLength(1)
+    expect(useChatStore.getState().workflowBlocks.at(-1)?.status).toBe('waiting_user')
+    expect(useChatStore.getState().pendingInterrupts).toHaveLength(1)
+    for (const [status, expected] of [['compiling', 'running'], ['compile_failed', 'error'], ['compiling', 'running'], ['compiled', 'completed']]) {
+      act(() => { send(status) })
+      const state = useChatStore.getState()
+      const cards = state.messages.filter(message => message.type === 'interrupt')
+      expect(cards).toHaveLength(1)
+      expect(cards[0].id).toBe(original.id)
+      expect(cards[0].timestamp).toBe(original.timestamp)
+      expect(state.pendingInterrupts).toHaveLength(0)
+      expect(state.workflowBlocks.at(-1)?.status).toBe(expected)
+      if (status === 'compile_failed') expect(cards[0].content).toContain('route_style is required')
+    }
+  })
+
+  it('keeps concurrent same-name tool results paired with their call IDs', async () => {
+    await act(async () => { render(<WebSocketProvider><div>tool identity</div></WebSocketProvider>) })
+    await act(async () => {
+      websocketHarness.emitConnection(true)
+      const emit = (phase: string, call_id: string, data: Record<string, unknown>) => websocketHarness.emitMessage({type: 'agent_workflow', session_id: 'sid-reconnect', agent: 'orchestrator', phase, content: '资源查询', data: {tool: 'resource_get', call_id, ...data}})
+      emit('tool_call', 'a', {tool_args: {name: '统计专题图'}})
+      emit('tool_call', 'b', {tool_args: {name: '统计专题图指南'}})
+      emit('tool_result', 'a', {status: 'failed', result: '统计专题图未找到'})
+      emit('tool_result', 'b', {status: 'failed', result: '统计专题图指南未找到'})
+      emit('tool_result', 'a', {status: 'failed', result: '统计专题图未找到'})
+    })
+    const cards = useChatStore.getState().sessionWorkflowBlocks['sid-reconnect'].flatMap(block => block.entries).map(entry => entry.toolCard).filter(Boolean)
+    expect(cards).toHaveLength(2)
+    expect(cards[0]).toMatchObject({callId: 'a', args: {name: '统计专题图'}, result: '统计专题图未找到'})
+    expect(cards[1]).toMatchObject({callId: 'b', args: {name: '统计专题图指南'}, result: '统计专题图指南未找到'})
+  })
 
   it('shows explicit request status after tool activity and replaces its heartbeats', async () => {
     await act(async () => { render(<WebSocketProvider><div>progress</div></WebSocketProvider>) })
@@ -901,30 +942,19 @@ describe('WebSocketProvider session attach recovery', () => {
     await act(async () => {})
   })
 
-  it('renders the agreed flow_preview tool result as a persisted preview message', async () => {
-    render(<WebSocketProvider><AttachStateProbe /></WebSocketProvider>)
-    await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
-    const preview = { flow_id: 'demo', name: '流程', plan: { flow_id: 'demo', name: '流程', inputs: [], steps: [], resources: [] }, diagnostics: [], input_check: { valid: true, missing: [] } }
-    act(() => websocketHarness.emitMessage({ type: 'agent_workflow', content: '', session_id: 'sid-reconnect', phase: 'tool_result', data: { tool: 'flow_preview', mode_phase: 'planning', result: JSON.stringify({ data: preview }) } }))
-    expect(useChatStore.getState().messages.at(-1)).toMatchObject({ type: 'status', data: { flow_preview: preview } })
-    expect(useChatStore.getState().workflowBlocks).toEqual([])
-  })
 
-  it('keeps Build flow queries in process details while a background Plan preview stays in its own session', async () => {
+  it('restores and routes cartographic plans without turning them into ordinary messages', async () => {
     render(<WebSocketProvider><AttachStateProbe /></WebSocketProvider>)
     await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
-    useChatStore.setState({ executionMode: 'plan' })
-    const preview = { flow_id: 'demo', name: '示例流程', plan: { flow_id: 'demo', name: '示例流程', inputs: [], steps: [], resources: [] } }
-    await act(async () => {
-      websocketHarness.emitMessage({ type: 'agent_workflow', content: '内部查询', session_id: 'sid-reconnect', phase: 'tool_result', data: { tool: 'flow_preview', mode_phase: 'building', result: { ...preview, execution_mode: 'build' } } })
-      websocketHarness.emitMessage({ type: 'agent_workflow', content: '历史查询', session_id: 'sid-reconnect', phase: 'tool_result', data: { tool: 'flow_preview', result: preview } })
-      websocketHarness.emitMessage({ type: 'agent_workflow', content: '', session_id: 'other-preview-session', phase: 'tool_result', data: { tool: 'flow_preview', result: { ...preview, execution_mode: 'plan' } } })
-    })
-    const state = useChatStore.getState()
-    expect(state.messages.some(message => message.data?.flow_preview)).toBe(false)
-    expect(state.workflowBlocks.flatMap(block => block.entries).some(entry => entry.data?.tool === 'flow_preview')).toBe(true)
-    expect(state.sessionMessages['other-preview-session'].at(-1)).toMatchObject({ type: 'status', data: { execution_mode: 'plan', flow_preview: { execution_mode: 'plan' } } })
-    expect(state.sessionId).toBe('sid-reconnect')
+    const plan = { api_version:'carto-plan/v1',plan_id:'p',version:1,goal:'test',facts:[],assumptions:[],data:[],steps:[],deliverables:[],checks:[] }
+    act(() => websocketHarness.emitMessage({ type:'plan_event',session_id:'sid-reconnect',content:'',data:{plan,status:'awaiting_confirmation',needs_confirmation:true,execution_mode:'build'} }))
+    expect(useFlowRunStore.getState().plans['sid-reconnect'][0].plan_id).toBe('p')
+    act(() => websocketHarness.emitMessage({type:'run_event',session_id:'other',content:'',data:{source_type:'plan_event',payload:{session_id:'other',plan:{...plan,version:2},status:'completed',execution_mode:'build'}}}))
+    expect(useFlowRunStore.getState().plans.other[0].status).toBe('completed')
+    expect(useChatStore.getState().sessionId).toBe('sid-reconnect')
+    act(() => websocketHarness.emitMessage({type:'run_event',session_id:'sid-reconnect',content:'',data:{source_type:'session_state',payload:{session_id:'sid-reconnect',carto_plans:[{plan,status:'running',execution_mode:'build'}]}}}))
+    expect(useFlowRunStore.getState().plans['sid-reconnect'][0].status).toBe('running')
+    expect(useChatStore.getState().messages.some(item=>item.content==='test')).toBe(false)
   })
 
   it('shows fatal startup shell when unsupported protocol arrives during initial connect', async () => {

@@ -39,25 +39,13 @@ func NewFactory(cfg *FactoryConfig) (*Factory, error) {
 		baseTools[idx] = wrapToolWithErrorHandler(item, controlPlane)
 	}
 
-	return &Factory{
-		config: FactoryConfig{
-			DefaultChatModel:     cfg.DefaultChatModel,
-			DefaultProviderCfg:   cloneProviderConfig(cfg.DefaultProviderCfg),
-			ResolveChatModel:     cfg.ResolveChatModel,
-			ResolvePlanChatModel: cfg.ResolvePlanChatModel,
-			ResolveProviderCfg:   cfg.ResolveProviderCfg,
-			BaseTools:            baseTools,
-			MaxIterations:        cfg.MaxIterations,
-			BuiltinSkillsDir:     cfg.BuiltinSkillsDir,
-			UserSkillsDir:        cfg.UserSkillsDir,
-			PluginSkillsDir:      cfg.PluginSkillsDir,
-			ConfigBaseDir:        cfg.ConfigBaseDir,
-			RegistryGovernance:   cfg.RegistryGovernance,
-			CapabilityStore:      cfg.CapabilityStore,
-			CapabilityMode:       cfg.CapabilityMode,
-			ControlPlane:         controlPlane,
-		},
-	}, nil
+	// Preserve all injected runtime dependencies, including dynamic guide
+	// knowledge. Only the mutable provider settings and tool slice need copies.
+	configCopy := *cfg
+	configCopy.DefaultProviderCfg = cloneProviderConfig(cfg.DefaultProviderCfg)
+	configCopy.BaseTools = baseTools
+	configCopy.ControlPlane = controlPlane
+	return &Factory{config: configCopy}, nil
 }
 
 // BuildActive 从 AgentConfigManager 当前活动配置构建 Runtime。
@@ -93,11 +81,6 @@ func (f *Factory) Build(ctx context.Context, activeConfigName string, activeConf
 		ModeIssues:       map[string]ModeIssue{},
 	}
 
-	if !activeConfig.Meta.PlanEnabled {
-		runtime.PlanAgent = buildAgent
-		return runtime, nil
-	}
-
 	planAgent, err := f.buildPlanComponents(ctx, activeConfigName, activeConfig)
 	if err != nil {
 		runtime.ModeIssues["plan"] = ModeIssue{
@@ -129,13 +112,6 @@ func (f *Factory) resolveChatModel(provider string) (model.ToolCallingChatModel,
 	}
 
 	return f.config.ResolveChatModel(trimmed)
-}
-
-func (f *Factory) resolvePlanChatModel(provider string) (model.ToolCallingChatModel, error) {
-	if f.config.ResolvePlanChatModel != nil {
-		return f.config.ResolvePlanChatModel(strings.TrimSpace(provider))
-	}
-	return f.resolveChatModel(provider)
 }
 
 func (f *Factory) resolveProviderConfig(provider string) *config.LLMProviderConfig {

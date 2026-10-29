@@ -129,7 +129,7 @@ func TestResultPathsRejectFailedEnvelopesButKeepSuccessfulPartial(t *testing.T) 
 	}
 }
 
-func TestRecoverSkipsFlowPreviewResourceInputs(t *testing.T) {
+func TestRecoverSkipsDataFindCandidateInputs(t *testing.T) {
 	project := t.TempDir()
 	store, err := NewWithRoots("preview-inputs", t.TempDir(), project)
 	if err != nil {
@@ -137,21 +137,39 @@ func TestRecoverSkipsFlowPreviewResourceInputs(t *testing.T) {
 	}
 	inside := put(t, filepath.Join(project, "roads.geojson"), "existing input")
 	outside := put(t, filepath.Join(t.TempDir(), "省界.qml"), "existing style")
-	// Reduced from the actual preview: plan.resources[].entries[].path are
-	// references in a proposed workflow, including usable project inputs.
-	raw, _ := json.Marshal(map[string]any{
-		"flow_id": "basemap", "name": "底图方案", "input_check": map[string]any{},
-		"plan": map[string]any{"resources": []any{map[string]any{"entries": []any{
-			map[string]any{"path": inside, "extra": map[string]any{"path": inside}},
-			map[string]any{"path": outside},
-		}}}},
-	})
-	session := map[string]any{"workflow_blocks": []any{map[string]any{"entries": []any{toolEntry("flow_preview", string(raw), nil)}}}}
+	// A data_find response carries existing input candidates, not new artifacts.
+	raw, _ := json.Marshal(map[string]any{"find_id": "df-fixture", "rows": []any{map[string]any{"row": "roads", "candidates": []any{map[string]any{"path": inside}, map[string]any{"path": outside}}}}})
+	session := map[string]any{"workflow_blocks": []any{map[string]any{"entries": []any{toolEntry("data_find", string(raw), nil)}}}}
 	if failures := store.RecoverToolArtifacts(session); len(failures) != 0 {
 		t.Fatalf("preview inputs caused registration warnings: %v", failures)
 	}
 	items, err := store.List(true)
 	if err != nil || len(items) != 0 {
 		t.Fatalf("preview input registered as an artifact: %+v %v", items, err)
+	}
+}
+
+func TestRecoverSkipsFileReadAndDirectoryInputs(t *testing.T) {
+	project := t.TempDir()
+	store, err := NewWithRoots("file-read-inputs", t.TempDir(), project)
+	if err != nil {
+		t.Fatal(err)
+	}
+	input := put(t, filepath.Join(project, "source.csv"), "region,value\nA,10\n")
+	outside := put(t, filepath.Join(t.TempDir(), "bound.pdf"), "source")
+	fileResult, _ := json.Marshal(map[string]any{"success": true, "path": input})
+	outsideResult, _ := json.Marshal(map[string]any{"success": true, "path": outside})
+	directoryResult, _ := json.Marshal(map[string]any{"success": true, "path": project, "entries": []any{map[string]any{"path": input}}})
+	entries := []any{
+		toolEntry("file_read", string(fileResult), nil),
+		toolEntry("file_read", string(outsideResult), []any{map[string]any{"type": "file_url", "file": map[string]any{"extra": map[string]any{"path": outside}}}}),
+		toolEntry("file_list", string(directoryResult), nil),
+	}
+	if failures := store.RecoverToolArtifacts(map[string]any{"workflow_blocks": []any{map[string]any{"entries": entries}}}); len(failures) != 0 {
+		t.Fatalf("read-only file results caused artifact warnings: %v", failures)
+	}
+	items, err := store.List(true)
+	if err != nil || len(items) != 0 {
+		t.Fatalf("read-only file results were recovered as outputs: %+v %v", items, err)
 	}
 }

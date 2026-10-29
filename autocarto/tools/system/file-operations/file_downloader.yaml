@@ -6,6 +6,8 @@ metadata:
   display_name: "下载远程文件"
   domain: file-operations
   runtime: qgis
+policy:
+  visibility: hidden
 spec:
   description: "从给定网址下载文件，返回实际保存路径。未指定目标目录时使用当前运行环境的默认下载目录。"
   parameters:

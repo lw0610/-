@@ -18,8 +18,13 @@ spec:
     resource_type: style
     required: true
     description: 单个 QML 样式资源的名称、编号或路径
+  - name: label_field
+    type: string
+    required: false
+    description: 实际标注字段；未指定且样式字段缺失时尝试 NAME、name、name:zh、名称；无可用字段时关闭标注并返回警告；填“无”关闭标注
 execution:
   handler: handlers.style.load_style_handler
   param_mapping:
     layer: '{{ layer }}'
     style: '{{ style }}'
+    label_field: '{{ label_field }}'

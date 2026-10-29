@@ -8,6 +8,26 @@ import (
 	"github.com/autocarto/carto_agent/internal/middlewareclient"
 )
 
+// SetRuntimeBuildError 保留启动或重建失败的具体原因；不影响仍然可用的旧 Runtime。
+// 成功安装 Runtime 时由 SetRuntime 清除。
+func (s *DeepServer) SetRuntimeBuildError(err error) {
+	if s == nil {
+		return
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.lastRuntimeBuildError = ""
+	if err != nil {
+		s.lastRuntimeBuildError = strings.TrimSpace(err.Error())
+	}
+}
+
+func (s *DeepServer) runtimeBuildError() string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.lastRuntimeBuildError
+}
+
 func (s *DeepServer) setPendingRuntimeRebuildReason(reason string) {
 	if s == nil {
 		return
@@ -172,11 +192,11 @@ func (s *DeepServer) runtimeModeReadinessSnapshot(planEnabled bool) map[string]m
 	result := map[string]middlewareclient.ModeReadiness{
 		"build": {
 			Enabled: true,
-			Ready:   true,
+			Ready:   s != nil && s.GetAgent(executionModeBuild) != nil,
 		},
 		"plan": {
 			Enabled: planEnabled,
-			Ready:   planEnabled,
+			Ready:   planEnabled && s != nil && s.GetAgent(executionModePlan) != nil,
 		},
 	}
 	if issue, ok := issues["build"]; ok {

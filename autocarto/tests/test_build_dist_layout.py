@@ -55,11 +55,13 @@ class BuildDistLayoutTestCase(unittest.TestCase):
             with zipfile.ZipFile(archive) as bundle:
                 self.assertEqual(set(bundle.namelist()), {"autocarto/" + name for name in retained})
 
-    def test_check_cleanup_preserves_runtime_logs_and_sessions(self):
+    def test_check_does_not_clean_and_explicit_cleanup_can_preserve_runtime(self):
         import shlex
         shell = (REPO_ROOT / "build.sh").read_text()
         cleanup = "clean_local_artifacts() {" + shell.split("clean_local_artifacts() {", 1)[1].split("\n}", 1)[0] + "\n}"
-        self.assertIn("clean_local_artifacts 1 1\n        run_check", shell)
+        check_branch = shell.rsplit("    check)", 1)[1].split(";;", 1)[0]
+        self.assertNotIn("clean_local_artifacts", check_branch)
+        self.assertIn("run_check", check_branch)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             plugin = root / "autocarto"

@@ -9,7 +9,7 @@ tags:
 - plan
 tools:
 - query_build_capabilities
-- flow_preview
+- plan_propose
 display_name: 能力查询
 domain: 系统
 system: false

@@ -10,6 +10,10 @@ import (
 	"github.com/cloudwego/eino/schema"
 )
 
+// MaxInlineMediaBytes bounds each file sent to a model as binary media. Media
+// metadata may be persisted in tool JSON; the binary belongs in a separate part.
+const MaxInlineMediaBytes = 50 * 1024 * 1024
+
 // Text 构造纯文本 ToolResult。
 func Text(text string) *schema.ToolResult {
 	return &schema.ToolResult{

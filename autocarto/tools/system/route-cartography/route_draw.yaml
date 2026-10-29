@@ -30,9 +30,8 @@ spec:
     type: string
     description: 可选任务编号断言，必须与数据集元数据一致
   - name: route_style
-    type: resource
-    resource_type: route_style
-    default_resource: route_style.mono
+    type: string
+    default: 单色
     description: 路线样式资源的名称、编号或路径；数据集中非空样式编号仍优先
   - name: renderer_plugin_dir
     type: string

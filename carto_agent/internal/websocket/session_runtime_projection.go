@@ -12,6 +12,7 @@ import (
 
 type workflowToolCard struct {
 	ID                  string         `json:"id"`
+	CallID              string         `json:"callId,omitempty"`
 	Tool                string         `json:"tool"`
 	Status              string         `json:"status"`
 	Args                map[string]any `json:"args,omitempty"`
@@ -173,7 +174,7 @@ func todoItemsFromAny(raw any) []map[string]any {
 
 func deriveActiveWorkflowBlockID(blocks []workflowBlock) string {
 	for idx := len(blocks) - 1; idx >= 0; idx-- {
-		if strings.EqualFold(strings.TrimSpace(blocks[idx].Status), "running") {
+		if status := strings.TrimSpace(blocks[idx].Status); status == "running" || status == "waiting_user" {
 			return strings.TrimSpace(blocks[idx].ID)
 		}
 	}
@@ -322,6 +323,15 @@ func (s *DeepServer) updateSessionRuntimeProjectionState(state SessionRuntimeSta
 		return
 	}
 	projection.RuntimeState = state
+	if state.Status == sessionRuntimeStatusRunning {
+		for i := range projection.WorkflowBlocks {
+			block := &projection.WorkflowBlocks[i]
+			if block.ID == projection.ActiveWorkflowBlockID && block.Status == "waiting_user" {
+				block.Status, block.Summary = "running", "已确认知识结果，继续制图。"
+				block.UpdatedAt, block.FinishedAt = time.Now().UnixMilli(), nil
+			}
+		}
+	}
 	if strings.TrimSpace(projection.RuntimeState.Status) == sessionRuntimeStatusFailed && strings.TrimSpace(projection.RuntimeState.FailureReason) != "" {
 		projection.RuntimeSummary = strings.TrimSpace(projection.RuntimeState.FailureReason)
 	}
@@ -342,7 +352,7 @@ func (p *sessionRuntimeProjection) completeActiveBlock(status string, timestamp 
 		if strings.TrimSpace(p.WorkflowBlocks[idx].ID) != blockID {
 			continue
 		}
-		if strings.TrimSpace(p.WorkflowBlocks[idx].Status) != "running" {
+		if status := strings.TrimSpace(p.WorkflowBlocks[idx].Status); status != "running" && status != "waiting_user" {
 			break
 		}
 		p.WorkflowBlocks[idx].Status = strings.TrimSpace(status)
@@ -367,6 +377,10 @@ func (s *DeepServer) applySessionWorkflowMessage(msg Message) bool {
 		// continue
 	case MsgTypePhaseTransition, MsgTypeError, MsgTypeCancelled, MsgTypeTaskListUpdate:
 		// continue
+	case MsgTypeInterruptRequest, "knowledge_review_update":
+		if knowledgeReviewInterruptInfo(msg.Data) == nil {
+			return false
+		}
 	default:
 		return false
 	}
@@ -420,8 +434,67 @@ func (s *DeepServer) applySessionWorkflowMessage(msg Message) bool {
 	case MsgTypeTaskListUpdate:
 		projection.Tasks = todoItemsFromAny(firstNonNil(msg.Data["todos"], msg.Data["tasks"], msg.Data["items"]))
 		projection.reconcileTaskListUpdate(timestamp)
+	case MsgTypeInterruptRequest, "knowledge_review_update":
+		projection.applyKnowledgeReviewState(knowledgeReviewInterruptInfo(msg.Data), timestamp, msg.Agent)
 	}
 	return true
+}
+
+func (p *sessionRuntimeProjection) applyKnowledgeReviewState(info map[string]any, timestamp int64, agent string) {
+	rid := stringValue(info["review_id"])
+	index := -1
+	for i := range p.WorkflowBlocks {
+		if p.WorkflowBlocks[i].ID == p.ActiveWorkflowBlockID {
+			index = i
+		}
+	}
+	// Replayed state updates replace the same entry, including after a failed
+	// attempt was closed. They never add a second "waiting" card or process row.
+	if index < 0 && len(p.WorkflowBlocks) > 0 {
+		last := len(p.WorkflowBlocks) - 1
+		for _, entry := range p.WorkflowBlocks[last].Entries {
+			if entry.Phase == "knowledge_review" && entry.Data["review_id"] == rid {
+				index = last
+				break
+			}
+		}
+	}
+	if index < 0 {
+		if agent == "" {
+			agent = "orchestrator"
+		}
+		p.WorkflowBlocks = append(p.WorkflowBlocks, workflowBlock{ID: buildWorkflowBlockID(timestamp), Agent: agent, AgentDisplayName: getAgentFriendlyName(agent), StartedAt: timestamp, Entries: []workflowEntry{}})
+		index = len(p.WorkflowBlocks) - 1
+	}
+	block := &p.WorkflowBlocks[index]
+	status := "waiting_user"
+	switch info["status"] {
+	case "compiling":
+		status = "running"
+	case "compile_failed":
+		status = "error"
+	case "compiled":
+		status = "completed"
+	}
+	summary := knowledgeReviewInterruptSummary(info)
+	block.Status, block.Summary, block.UpdatedAt = status, summary, timestamp
+	block.FinishedAt = nil
+	if status == "completed" || status == "error" {
+		block.FinishedAt = &timestamp
+	}
+	entry := workflowEntry{ID: "knowledge-review-" + rid, Type: "status", Phase: "knowledge_review", Content: summary, Timestamp: timestamp, Data: info}
+	replaced := false
+	for i := range block.Entries {
+		if block.Entries[i].ID == entry.ID {
+			block.Entries[i] = entry
+			replaced = true
+			break
+		}
+	}
+	if !replaced {
+		block.Entries = append(block.Entries, entry)
+	}
+	p.RuntimeSummary, p.ActiveWorkflowBlockID = summary, block.ID
 }
 
 func (p *sessionRuntimeProjection) appendWorkflowEvent(msg Message, timestamp int64) {
@@ -552,6 +625,7 @@ func buildWorkflowEntry(msg Message, timestamp int64) *workflowEntry {
 		}
 		toolCard := &workflowToolCard{
 			ID:                  "tool-" + time.UnixMilli(timestamp).UTC().Format("20060102150405.000"),
+			CallID:              stringValue(data["call_id"]),
 			Tool:                toolName,
 			Status:              toolStatus,
 			Args:                asMap(data["tool_args"]),
@@ -562,6 +636,9 @@ func buildWorkflowEntry(msg Message, timestamp int64) *workflowEntry {
 			Retryable:           boolPointer(data["retryable"]),
 			ProviderDiagnostics: asMap(data["provider_diagnostics"]),
 			StartedAt:           timestamp,
+		}
+		if toolCard.CallID != "" {
+			toolCard.ID += "-" + toolCard.CallID
 		}
 		if phase == "tool_result" {
 			finishedAt := timestamp
@@ -579,7 +656,7 @@ func buildWorkflowEntry(msg Message, timestamp int64) *workflowEntry {
 			}
 		}
 		return &workflowEntry{
-			ID:        "entry-" + time.UnixMilli(timestamp).UTC().Format("20060102150405.000"),
+			ID:        "entry-" + toolCard.ID,
 			Type:      "tool",
 			Content:   entryContent,
 			Phase:     phase,
@@ -640,6 +717,14 @@ func appendOrMergeProjectionWorkflowEntry(block workflowBlock, entry workflowEnt
 		return block
 	}
 	if strings.TrimSpace(entry.Phase) == "tool_result" {
+		legacyMatches := 0
+		if entry.ToolCard.CallID == "" {
+			for _, item := range block.Entries {
+				if item.ToolCard != nil && item.ToolCard.Tool == entry.ToolCard.Tool && (item.ToolCard.Status == "running" || shouldPreserveProjectionTaskListCompletion(item.ToolCard, entry.ToolCard)) {
+					legacyMatches++
+				}
+			}
+		}
 		for idx := len(block.Entries) - 1; idx >= 0; idx-- {
 			item := block.Entries[idx]
 			if item.ToolCard == nil {
@@ -649,7 +734,11 @@ func appendOrMergeProjectionWorkflowEntry(block workflowBlock, entry workflowEnt
 				continue
 			}
 			preserveTaskListCompletion := shouldPreserveProjectionTaskListCompletion(item.ToolCard, entry.ToolCard)
-			if strings.TrimSpace(item.ToolCard.Status) != "running" && !preserveTaskListCompletion {
+			if entry.ToolCard.CallID != "" {
+				if item.ToolCard.CallID != entry.ToolCard.CallID {
+					continue
+				}
+			} else if legacyMatches != 1 || (strings.TrimSpace(item.ToolCard.Status) != "running" && !preserveTaskListCompletion) {
 				continue
 			}
 			merged := item

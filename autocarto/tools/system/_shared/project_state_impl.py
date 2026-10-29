@@ -16,6 +16,7 @@ from qgis.utils import iface
 
 from autocarto.core.tool_engine.project_metadata import resolve_project_identity
 from autocarto.core.tool_engine.runtime import qgis_json_default
+from autocarto.tools.system._shared.project_layers import resolve_project_layer
 
 logger = logging.getLogger(__name__)
 
@@ -216,14 +217,12 @@ def get_layers_info(params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
 
 def get_active_layer_info(params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     try:
-        if not iface:
-            return {"success": False, "output": "无法访问QGIS界面", "info": {}}
-
-        layer_name = str((params or {}).get("layer_name", "")).strip()
+        layer_name = (params or {}).get("layer_id") or (params or {}).get("layer_name")
         if layer_name:
-            layers = QgsProject.instance().mapLayersByName(layer_name)
-            active_layer = layers[0] if layers else None
+            active_layer = resolve_project_layer(layer_name)
         else:
+            if not iface:
+                return {"success": False, "output": "无法访问QGIS界面", "info": {}}
             active_layer = iface.activeLayer()
         if not active_layer:
             return {"success": False, "output": "当前没有选中的图层", "info": {}}
@@ -251,19 +250,17 @@ def get_selected_features_info(
         if params is None:
             params = {}
 
-        layer_name = params.get("layer_name")
+        layer_name = params.get("layer_id") or params.get("layer_name")
         max_features = params.get("max_features", 100)
 
         if layer_name:
-            project = QgsProject.instance()
-            layers = project.mapLayersByName(layer_name)
-            if not layers:
+            layer = resolve_project_layer(layer_name)
+            if layer is None:
                 return {
                     "success": False,
                     "output": f"未找到图层: {layer_name}",
                     "info": {},
                 }
-            layer = layers[0]
         else:
             if not iface:
                 return {"success": False, "output": "无法访问QGIS界面", "info": {}}
@@ -288,6 +285,7 @@ def get_selected_features_info(
                 "success": True,
                 "output": _summarize_selected_features_output(layer, preview_info, 0),
                 "info": {
+                    "layer_id": layer.id(),
                     "layer_name": layer.name(),
                     "selected_count": 0,
                     "fields": field_names,
@@ -306,6 +304,7 @@ def get_selected_features_info(
                 layer, features_info, len(selected_features)
             ),
             "info": {
+                "layer_id": layer.id(),
                 "layer_name": layer.name(),
                 "selected_count": len(selected_features),
                 "returned_count": len(features_info),

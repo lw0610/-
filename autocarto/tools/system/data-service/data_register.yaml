@@ -1,0 +1,53 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: data_register
+  display_name: 登记兜底取得的数据
+  domain: data-service
+  runtime: internal
+spec:
+  description: 把真实门户、搜索或自定义OSM取得的当前会话文件与需求核验、规范化、入仓并登记来源；未经登记的兜底文件不得作为计划数据。
+  parameters:
+    - name: find_id
+      type: string
+      required: true
+      description: data_find返回并允许兜底的查询编号。
+    - name: row
+      type: string
+      required: true
+      description: 查询结果的数据行名称。
+    - name: path
+      type: string
+      required: true
+      description: 当前会话目录内真实下载文件的绝对路径。
+    - name: kind
+      type: string
+      required: true
+      description: portal、web_search或custom_osm。
+    - name: url
+      type: string
+      required: true
+      description: 实际公开来源网址，记录前自动脱敏。
+    - name: license
+      type: string
+      required: true
+      description: 来源许可说明，不明时须如实写许可待核实。
+    - name: attribution
+      type: string
+      required: false
+      description: 来源要求的署名。
+    - name: notes
+      type: array
+      required: false
+      description: 数据年份、口径、近似、取舍与注意事项。
+execution:
+  backend_tool: data_register
+  param_mapping:
+    find_id: '{{ find_id }}'
+    row: '{{ row }}'
+    path: '{{ path }}'
+    kind: '{{ kind }}'
+    url: '{{ url }}'
+    license: '{{ license }}'
+    attribution: '{{ attribution }}'
+    notes: '{{ notes }}'

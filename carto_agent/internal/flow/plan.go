@@ -8,26 +8,12 @@ import (
 )
 
 const PlanAPIVersion = "flow-plan/v1"
-const CompilerVersion = "3"
 
-// 计划状态：ready 全部增强完成；enriching 后台任务进行中；partial 部分未完善；basic 没有编译模型。
-const (
-	PlanStatusReady     = "ready"
-	PlanStatusEnriching = "enriching"
-	PlanStatusPartial   = "partial"
-	PlanStatusBasic     = "basic"
-)
+// Execution readiness is populated by planexec. Other historic state strings are decoded only.
+const PlanStatusReady = "ready"
+const StepEnrichmentReady = "ready"
 
-// 步骤增强状态：ready 已采用模型结果；pending 尚未完成；failed 最近一次失败；none 无需或无法增强。
-const (
-	StepEnrichmentReady   = "ready"
-	StepEnrichmentPending = "pending"
-	StepEnrichmentFailed  = "failed"
-	StepEnrichmentNone    = "none"
-)
-
-// EnrichmentStatus 汇总执行计划中模型增强的完成情况，供界面显示进度。
-// Done/Total 只计步骤；Flow 是流程级增强（隐式输入类型、输入约束、触发词）的状态。
+// EnrichmentStatus is retained only for decoding historical run snapshots.
 type EnrichmentStatus struct {
 	Flow      string        `json:"flow"`
 	Done      int           `json:"done"`
@@ -44,8 +30,8 @@ type StepFailure struct {
 	Reason string `json:"reason"`
 }
 
-// FlowPlan 是方案相关的只读编译快照；运行前须通过 EnsureRunnable 检查当前指纹。
-// CompiledAt 是计划内容最后变化的时间：FLOW.md 保存时间与所用增强记录时间中较晚者。
+// FlowPlan is the controller execution snapshot built by planexec. Legacy metadata
+// remains readable in old run.json files; no FLOW.md compiler constructs this type.
 type FlowPlan struct {
 	Requirements       []RequirementDoc  `json:"requirements,omitempty"`
 	Acquisition        *AcquisitionPlan  `json:"acquisition_plan,omitempty"`
@@ -81,7 +67,7 @@ type FlowPlan struct {
 	Deliverables       string            `json:"deliverables"`
 	Steps              []StepPlan        `json:"steps"`
 	Diagnostics        []Diagnostic      `json:"diagnostics"`
-	// Roles 保留编译时的有序角色及实际能力，供 auto 步骤确定性选角。
+	// Roles records the ordered roles and actual grants captured for this run.
 	Roles []RoleSpec `json:"roles"`
 }
 
@@ -160,6 +146,11 @@ func (r ResourcePlan) ResolvedResource() *resource.ResolvedResource {
 }
 
 type StepPlan struct {
+	DataIDs                []string      `json:"data_ids,omitempty"`
+	DataUses               []string      `json:"data_uses,omitempty"`
+	GuideSections          []string      `json:"guide_sections,omitempty"`
+	LayerNames             []string      `json:"layer_names,omitempty"`
+	Optional               bool          `json:"optional,omitempty"`
 	AcquisitionRequirement string        `json:"acquisition_requirement,omitempty"`
 	RoleSlot               string        `json:"role_slot,omitempty"`
 	RoleSource             string        `json:"role_source,omitempty"`
@@ -177,6 +168,7 @@ type StepPlan struct {
 	Instructions           string        `json:"instructions"`
 	// Completion 保留原文，用于步骤消息及回执修复；不以推断产出替代验收原文。
 	Completion          string              `json:"completion"`
+	Parameters          map[string]string   `json:"parameters,omitempty"`
 	Refs                PlanRefs            `json:"refs"`
 	SuggestedTools      []string            `json:"suggested_tools"`
 	ExpectedOutputs     []OutputDeclaration `json:"expected_outputs"`
@@ -194,6 +186,7 @@ type PlanRefs struct {
 
 // RoleSpec.ToolPackages 和 Tools 是合并共享包、系统包及声明式自动挂载后的实际授权。
 type RoleSpec struct {
+	Provider     string   `json:"provider,omitempty"`
 	ID           string   `json:"id"`
 	DisplayName  string   `json:"display_name"`
 	Description  string   `json:"description,omitempty"`

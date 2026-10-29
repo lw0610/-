@@ -38,7 +38,7 @@ func TestResourceManagementAPI(t *testing.T) {
 	flows := flow.NewStore(filepath.Join(root, "builtin-flows"), filepath.Join(root, "user-flows"), bindingStore)
 	a := &API{}
 	a.SetResourceLibrary(library)
-	a.SetFlowStore(flows)
+	a.SetGuideStore(flow.NewGuideStore(flows, filepath.Join(root, "guides.yaml")))
 	router := mux.NewRouter()
 	a.SetupRoutes(router)
 	call := func(method, path string, body any, want int) map[string]any {
@@ -57,7 +57,7 @@ func TestResourceManagementAPI(t *testing.T) {
 		}
 		return result
 	}
-	copied := call("POST", "/api/resources/style.notes/copy", map[string]any{"override": true}, 200)["data"].(map[string]any)
+	copied := call("POST", "/api/resources/style.notes/copy", map[string]any{"override": true, "name": "我的说明"}, 200)["data"].(map[string]any)
 	id := copied["id"].(string)
 	if copied["overrides"] != "style.notes" || copied["owner"] != "library_user" {
 		t.Fatal(copied)
@@ -74,10 +74,10 @@ func TestResourceManagementAPI(t *testing.T) {
 			t.Fatal(detail)
 		}
 	}
-	md := "---\n名称: 引用流程\n编号: usage-flow\n---\n## 使用的资源\n- 样式「说明」：公共资源库\n## 步骤\n### 阅读\n- 做法：查看说明\n"
-	write(filepath.Join(flows.UserDir, "usage-flow/FLOW.md"), md)
+	md := "---\n名称: 引用指南\n编号: usage-flow\n---\n## 适用任务\n资源引用检查\n## 数据\n无\n## 制作要点\n阅读说明\n## 使用的资源\n- 样式「说明」：公共资源库\n## 产出与检查\n- 「说明」（文本）\n"
+	call("POST", "/api/guides", map[string]any{"guide_md": md}, 200)
 	refs := call("GET", "/api/resources/"+id+"/references", nil, 200)["data"].([]any)
-	if len(refs) != 1 || refs[0].(map[string]any)["via"] != "name" {
+	if len(refs) != 1 || refs[0].(map[string]any)["via"] != "lock" {
 		t.Fatal(refs)
 	}
 	blocked := call("DELETE", "/api/resources/"+id, nil, 409)
@@ -85,7 +85,7 @@ func TestResourceManagementAPI(t *testing.T) {
 		t.Fatal(blocked)
 	}
 	// Legacy deletion cannot bypass reference protection.
-	call("DELETE", "/api/resources/style/说明", nil, 409)
+	call("DELETE", "/api/resources/style/我的说明", nil, 409)
 	write(filepath.Join(flows.UserDir, "usage-flow/flow.lock"), "apiVersion: flow-lock/v1\nresources:\n  - {type: style, name: 说明, id: style.notes, version: 1.0.0, digest: sha256:0000000000000000000000000000000000000000000000000000000000000000, source: library_builtin}\n")
 	refs = call("GET", "/api/resources/"+id+"/references", nil, 200)["data"].([]any)
 	if refs[0].(map[string]any)["via"] != "lock" {

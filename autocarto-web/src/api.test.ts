@@ -16,11 +16,11 @@ import {
 
 describe("ApiClient structured error parsing", () => {
   test("preserves optional metadata when an endpoint requests the envelope", async () => {
-    const envelope = { success: true, data: [], acquisition_plan: { items: [{ key: 'roads' }] } };
+    const envelope = { success: true, data: [], metadata: { page: 1 } };
     vi.stubGlobal('fetch', vi.fn().mockImplementation(async () => new Response(JSON.stringify(envelope), { headers: { 'Content-Type': 'application/json' } })));
     const client = new ApiClient('http://localhost:3000');
-    expect(await client.postEnvelope('/api/flows/demo/inputs/check', { values: {} })).toEqual(envelope);
-    expect(await client.post('/api/flows/demo/inputs/check', { values: {} })).toEqual([]);
+    expect(await client.postEnvelope('/api/guides', { values: {} })).toEqual(envelope);
+    expect(await client.post('/api/guides', { values: {} })).toEqual([]);
   });
   afterEach(() => {
     vi.restoreAllMocks();
@@ -37,6 +37,16 @@ describe("ApiClient structured error parsing", () => {
       },
     );
   }
+
+  test("preserves plan resource changes returned in error details", async () => {
+    const details = { resource_change: { guide_id: "route", can_continue_snapshot: true } };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      success: false, code: "PLAN_RESOURCE_CHANGED", error: "指南资源已变化", details,
+    }), { status: 409, headers: { "Content-Type": "application/json" } })));
+    const error = await expectApiError(new ApiClient("http://localhost:3000").post("/api/sessions/s/plans/p/start", { version: 1 }));
+    expect(error.code).toBe("PLAN_RESOURCE_CHANGED");
+    expect(error.data).toEqual(details);
+  });
 
   test("preserves structured envelope for non-ok responses", async () => {
     vi.stubGlobal(

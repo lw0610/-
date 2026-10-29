@@ -90,6 +90,8 @@ func normalizeRunEventType(msg Message) string {
 		return "todo_update"
 	case MsgTypeInterruptRequest:
 		return "interrupt"
+	case "knowledge_review_update":
+		return "knowledge_review_update"
 	case MsgTypeModeState:
 		return "mode_state"
 	case MsgTypePhaseTransition:

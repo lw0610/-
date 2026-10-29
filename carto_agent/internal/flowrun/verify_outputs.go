@@ -98,46 +98,82 @@ func verifyOutput(ctx context.Context, output flow.OutputDeclaration, value any,
 		}
 		return checkToolSuccess(result)
 	case "layers":
-		if tools == nil {
-			return fmt.Errorf("只读工具通道未配置")
-		}
-		result, err := tools.Invoke(ctx, "get_layers_info", map[string]any{})
-		if err != nil {
-			return err
-		}
-		if err = checkToolSuccess(result); err != nil {
-			return err
-		}
-		available := map[string]bool{}
-		collectLayerIDs(result, available)
-		raw, _ := json.Marshal(value)
-		var layers []any
-		if err = json.Unmarshal(raw, &layers); err != nil {
-			return fmt.Errorf("图层产出必须是数组")
-		}
+		layers := layerOutputValues(value)
 		if len(layers) == 0 {
 			return fmt.Errorf("图层产出为空")
 		}
+		var available map[string]bool
 		for _, layer := range layers {
-			name := ""
-			id := ""
+			ref, path := "", ""
 			switch v := layer.(type) {
 			case string:
-				name = v
+				ref, path = v, v
 			case map[string]any:
-				name, _ = v["name"].(string)
-				id, _ = v["layer_id"].(string)
-				if id == "" {
-					id, _ = v["id"].(string)
+				ref, _ = v["layer_id"].(string)
+				if ref == "" {
+					ref, _ = v["id"].(string)
+				}
+				if ref == "" {
+					ref, _ = v["name"].(string)
+				}
+				path, _ = v["path"].(string)
+				if path == "" {
+					path, _ = v["source"].(string)
 				}
 			}
-			if (id == "" || !available[id]) && (name == "" || !available[name]) {
+			// Exported layers are usable even when no longer loaded in QGIS.
+			// Keep provider suffixes (e.g. |layername=...) in the receipt itself.
+			if path != "" {
+				file := strings.SplitN(path, "|", 2)[0]
+				if info, err := os.Stat(resolvePath(root, file)); err == nil && info.Mode().IsRegular() && info.Size() > 0 {
+					continue
+				}
+			}
+			if ref == "" {
+				return fmt.Errorf("图层未找到：%v", layer)
+			}
+			if available == nil {
+				if tools == nil {
+					return fmt.Errorf("只读工具通道未配置")
+				}
+				result, err := tools.Invoke(ctx, "get_layers_info", map[string]any{})
+				if err != nil {
+					return err
+				}
+				if err = checkToolSuccess(result); err != nil {
+					return err
+				}
+				available = map[string]bool{}
+				collectLayerIDs(result, available)
+			}
+			if !available[ref] {
 				return fmt.Errorf("图层未找到：%v", layer)
 			}
 		}
 		return nil
 	default:
 		return fmt.Errorf("不支持的产出类型 %s", output.Type)
+	}
+}
+
+// A single layer and a list are equivalent at the handoff boundary.
+func layerOutputValues(value any) []any {
+	raw, _ := json.Marshal(value)
+	var decoded any
+	if json.Unmarshal(raw, &decoded) != nil || decoded == nil {
+		return nil
+	}
+	if layers, ok := decoded.([]any); ok {
+		return layers
+	}
+	return []any{decoded}
+}
+
+func normalizeReceiptOutputs(step flow.StepPlan, receipt *Receipt) {
+	for _, output := range step.ExpectedOutputs {
+		if value, ok := receipt.Outputs[output.Label]; ok && output.Type == "layers" {
+			receipt.Outputs[output.Label] = layerOutputValues(value)
+		}
 	}
 }
 func checkToolSuccess(result any) error {

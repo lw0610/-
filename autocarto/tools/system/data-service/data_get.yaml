@@ -1,0 +1,28 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: data_get
+  display_name: 获取已选数据
+  domain: data-service
+  runtime: internal
+spec:
+  description: 仅数据获取智能体或计划执行器可调用。使用当前会话data_find查询与真实候选绑定需求；确定性来源直接获取并核验，只有兜底途径时返回exploration_required和preparation并绑定同次查询，随后按可用途径获取且data_register。已有执行器冻结Selection时无需再次调用。
+  parameters:
+    - name: find_id
+      type: string
+      required: true
+      description: 本次data_find的查询编号。未绑定查询有效期30分钟；已冻结的计划或中断恢复沿用原编号。
+    - name: choice
+      type: object
+      required: true
+      description: 按行选择候选编号；星号键recommended表示其他行采用推荐。
+    - name: target
+      type: object
+      required: false
+      description: 可提供folder_name，只能为单个文件夹名。
+execution:
+  backend_tool: data_get
+  param_mapping:
+    find_id: '{{ find_id }}'
+    choice: '{{ choice }}'
+    target: '{{ target }}'

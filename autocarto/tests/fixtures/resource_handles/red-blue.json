@@ -127,12 +127,12 @@
       "width_scale": null
     }
   ],
-  "entry": "${REPO}/autocarto/flows/system/marching-route/resources/styles/路线样式-红蓝对比.csv",
+  "entry": "${REPO}/autocarto/tools/system/route-cartography/assets/resources/styles/路线样式-红蓝对比.csv",
   "format": "",
   "id": "route_style.red-blue",
   "name": "路线样式-红蓝对比",
   "owner": "flow",
-  "root": "${REPO}/autocarto/flows/system/marching-route/resources/styles/路线样式-红蓝对比.csv",
+  "root": "${REPO}/autocarto/tools/system/route-cartography/assets/resources/styles/路线样式-红蓝对比.csv",
   "total_entries": 6,
   "truncated": false,
   "type": "route_style",

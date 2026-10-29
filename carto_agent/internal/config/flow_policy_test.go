@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestV4FlowPolicyRoundTrip(t *testing.T) {
+func TestLegacyFlowPolicyIsIgnored(t *testing.T) {
 	raw := `version: "2.0"
 flow_policy:
   role_fill: strict
@@ -28,11 +28,11 @@ runtime:
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got.Flows != nil || got.FlowPolicy == nil || got.FlowPolicy.RoleMapping["sample"]["worker"] != "missing-is-allowed" {
-		t.Fatalf("%+v", got)
+	if got.Flows != nil || got.FlowPolicy != nil {
+		t.Fatalf("legacy policy survived: %+v", got)
 	}
-	data.FlowPolicy.RoleFill = "invalid"
-	if err := manager.SaveConfig("", "test", &data); err == nil {
-		t.Fatal("invalid enum accepted")
+	data.FlowPolicy["role_fill"] = "invalid"
+	if err := manager.SaveConfig("", "test", &data); err != nil {
+		t.Fatal("obsolete policy must not block saving runtime configuration", err)
 	}
 }

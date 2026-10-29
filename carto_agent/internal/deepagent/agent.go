@@ -3,12 +3,14 @@ package deepagent
 import (
 	"context"
 	"fmt"
+	"github.com/autocarto/carto_agent/internal/runtimecontrol"
 	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/autocarto/carto_agent/internal/governance"
 	"github.com/cloudwego/eino/adk"
+	"github.com/cloudwego/eino/adk/middlewares/skill"
 	"github.com/cloudwego/eino/adk/prebuilt/deep"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/tool"
@@ -19,6 +21,8 @@ import (
 
 // Config DeepAgent 配置
 type Config struct {
+	Acquisition  func() config.AcquisitionConfig
+	GuideBackend skill.Backend
 	Name         string
 	Description  string
 	ChatModel    model.ToolCallingChatModel
@@ -132,6 +136,11 @@ func New(ctx context.Context, cfg *Config) (adk.ResumableAgent, error) {
 		if err != nil {
 			return nil, err
 		}
+		experts, err := createSystemExperts(ctx, cfg)
+		if err != nil {
+			return nil, err
+		}
+		subAgentList = append(subAgentList, experts...)
 	}
 
 	// 配置工具
@@ -143,6 +152,23 @@ func New(ctx context.Context, cfg *Config) (adk.ResumableAgent, error) {
 		// as createSubAgents does. Otherwise unassigned execution tools bypass
 		// delegation and the specialist workflow's skill allowlist entirely.
 		toolsConfig.Tools = subagents.CreateRuntimeSkillToolFilter("orchestrator", cfg.SkillRuntimeConfig).Filter(ctx, cfg.Tools)
+	}
+	toolsConfig.Tools = filterAcquisitionTools(ctx, cfg, toolsConfig.Tools, true)
+	toolsConfig.Tools = subagents.WithAttachmentReadTool(ctx, toolsConfig.Tools, cfg.Tools)
+	for _, candidate := range cfg.Tools {
+		info, err := candidate.Info(ctx)
+		if err == nil && info != nil && info.Name == "data_find" {
+			found := false
+			for _, existing := range toolsConfig.Tools {
+				ei, _ := existing.Info(ctx)
+				if ei != nil && ei.Name == info.Name {
+					found = true
+				}
+			}
+			if !found {
+				toolsConfig.Tools = append(toolsConfig.Tools, candidate)
+			}
+		}
 	}
 	toolsConfig.UnknownToolsHandler = subagents.NewUnknownToolsHandler(ctx, toolsConfig.Tools)
 	// 启用子智能体内部事件发送，使得 task 工具调用子智能体时能获取中间过程
@@ -158,22 +184,22 @@ func New(ctx context.Context, cfg *Config) (adk.ResumableAgent, error) {
 		}
 	}
 
-	// 加载 orchestrator 的 skill middleware
+	// Load tool manuals and guide knowledge in the same orchestrator middleware.
 	var orchestratorMiddlewares []adk.AgentMiddleware
+	var middlewareSkillDirs []string
 	if cfg.SkillRuntimeConfig != nil {
-		middlewareSkillDirs, err := resolveMiddlewareSkillDirs("orchestrator", cfg.SkillRuntimeConfig, cfg.RegistryGovernance)
+		var err error
+		middlewareSkillDirs, err = resolveMiddlewareSkillDirs("orchestrator", cfg.SkillRuntimeConfig, cfg.RegistryGovernance)
 		if err != nil {
 			return nil, fmt.Errorf("resolve orchestrator middleware packages: %w", err)
 		}
-		if len(middlewareSkillDirs) > 0 {
-			skillMw, err := subagents.LoadSkillMiddleware(ctx, "orchestrator", middlewareSkillDirs, skillDirs, cfg.SkillRuntimeConfig)
-			if err != nil {
-				return nil, fmt.Errorf("load orchestrator skill middleware: %w", err)
-			}
-			if skillMw != nil {
-				orchestratorMiddlewares = append(orchestratorMiddlewares, *skillMw)
-			}
-		}
+	}
+	skillMw, err := subagents.LoadSkillMiddleware(ctx, "orchestrator", middlewareSkillDirs, skillDirs, cfg.SkillRuntimeConfig, cfg.GuideBackend)
+	if err != nil {
+		return nil, fmt.Errorf("load orchestrator skill middleware: %w", err)
+	}
+	if skillMw != nil {
+		orchestratorMiddlewares = append(orchestratorMiddlewares, *skillMw)
 	}
 
 	orchestratorHandlers, err := buildRuntimeHandlers(ctx, cfg.Name, cfg.ChatModel, cloneProviderConfig(cfg.DefaultProviderCfg), runtimeHandlerOptions{
@@ -189,7 +215,7 @@ func New(ctx context.Context, cfg *Config) (adk.ResumableAgent, error) {
 	return deep.New(ctx, &deep.Config{
 		Name:                   cfg.Name,
 		Description:            description,
-		ChatModel:              cfg.ChatModel,
+		ChatModel:              runtimecontrol.WithPlanSubmissionBoundary(cfg.ChatModel),
 		Instruction:            instruction,
 		SubAgents:              subAgentList,
 		ToolsConfig:            toolsConfig,

@@ -3,6 +3,8 @@ import { DEFAULT_DESKTOP_RUNTIME_PORT, mockDesktopRuntime } from './helpers/desk
 
 const backendBaseURL = `http://127.0.0.1:${DEFAULT_DESKTOP_RUNTIME_PORT}`
 
+test.use({ extraHTTPHeaders: { 'X-AutoCarto-Contract-Version': 'v1' } })
+
 async function bodyText(page: Page) {
   return page.locator('body').innerText()
 }

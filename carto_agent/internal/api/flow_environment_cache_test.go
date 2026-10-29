@@ -7,12 +7,9 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
-	"sync"
 	"testing"
 	"time"
 
-	"github.com/autocarto/carto_agent/internal/flow"
-	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/autocarto/carto_agent/internal/settings"
 	"github.com/gorilla/mux"
 )
@@ -77,92 +74,6 @@ func TestFlowEnvironmentCacheMetadataAndIsolation(t *testing.T) {
 	}
 	if a.flowEnvironments.loads != before+1 {
 		t.Fatal("explicit invalidation ignored")
-	}
-}
-func TestAvailablePlansLoadsEnvironmentOnceAndHashesNoContent(t *testing.T) {
-	a, _, project, home := realFlowAPI(t)
-	a.flowEnvironments.now = func() time.Time { return time.Unix(100, 0) }
-	library, err := a.resourceStore()
-	if err != nil {
-		t.Fatal(err)
-	}
-	a.SetFlowStore(flow.NewStore("", filepath.Join(home, "flows"), library.Bindings))
-	store, err := a.flowStore()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err = store.Import(filepath.Join(project, "docs/refactor/examples/traffic-route"), flow.ImportOptions{}); err != nil {
-		t.Fatal(err)
-	}
-	var fixture struct {
-		Flow  json.RawMessage     `json:"flow"`
-		Tools map[string][]string `json:"tools"`
-	}
-	raw, err := os.ReadFile(filepath.Join(project, "carto_agent/internal/flow/testdata/compile-model-traffic-route.json"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err = json.Unmarshal(raw, &fixture); err != nil {
-		t.Fatal(err)
-	}
-	modelCalls := 0
-	compiler := flow.NewCompiler(flow.CompilerOptions{Store: store, Resources: library, CacheDir: filepath.Join(home, "cache"), LoadEnvironment: func(ctx context.Context, scheme string) (flow.Environment, error) {
-		env, err := a.loadFlowEnvironment(ctx, scheme)
-		env.ModelName = "cache-count-model"
-		env.Model = apiFlowModelFunc(func(_ context.Context, request flow.ModelRequest) (string, error) {
-			modelCalls++
-			if request.Kind == "flow" {
-				return string(fixture.Flow), nil
-			}
-			raw, _ := json.Marshal(map[string]any{"suggested_tools": fixture.Tools[request.Step], "missing_capabilities": []string{}, "expected_outputs": []any{}, "condition": nil})
-			return string(raw), nil
-		})
-		return env, err
-	}})
-	if _, err = compiler.Compile(context.Background(), "traffic-route", "compile-scheme", false); err != nil {
-		t.Fatal(err)
-	}
-	hashes, calls := resource.ContentHashCount(), modelCalls
-	for i := 0; i < 2; i++ {
-		plans, err := compiler.AvailablePlans(context.Background(), "compile-scheme")
-		if err != nil || len(plans) != 1 {
-			t.Fatalf("available plans: %d %v", len(plans), err)
-		}
-	}
-	if a.flowEnvironments.loads != 1 || modelCalls != calls || resource.ContentHashCount() != hashes {
-		t.Fatalf("cache miss: environments=%d model=%d/%d content_hash=%d/%d", a.flowEnvironments.loads, modelCalls, calls, resource.ContentHashCount(), hashes)
-	}
-}
-func TestFlowCompilerSharedAcrossConcurrentCallers(t *testing.T) {
-	a, _, _, _ := realFlowAPI(t)
-	var wg sync.WaitGroup
-	results := make(chan *flow.Compiler, 8)
-	failures := make(chan error, 8)
-	for i := 0; i < 8; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			compiler, err := a.FlowCompiler()
-			if err != nil {
-				failures <- err
-			} else {
-				results <- compiler
-			}
-		}()
-	}
-	wg.Wait()
-	close(results)
-	close(failures)
-	for err := range failures {
-		t.Error(err)
-	}
-	var expected *flow.Compiler
-	for compiler := range results {
-		if expected == nil {
-			expected = compiler
-		} else if expected != compiler {
-			t.Fatal("FlowCompiler created distinct instances")
-		}
 	}
 }
 func TestSuccessfulAssetMutationsInvalidateFlowEnvironment(t *testing.T) {

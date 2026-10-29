@@ -1,7 +1,8 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type {
   InterruptRequestData,
+  Message,
   TodoItem,
   WorkflowBlock,
 } from '@/types/message'
@@ -13,12 +14,16 @@ import FilesTab from './FilesTab'
 import FilePreview from './FilePreview'
 import TasksTab from './TasksTab'
 import ProcessTab from './ProcessTab'
+import { useFlowRunStore } from '@/features/plan/store'
+import { executionTasks, executionWorkflowBlocks, workspaceRuns } from '@/features/plan/workspace'
+const emptyMessages: Message[] = []
 interface Props {
   sessionId: string
   projectPath: string
   tasks: TodoItem[]
   pendingInterrupts: InterruptRequestData[]
   workflowBlocks: WorkflowBlock[]
+  messages?: Message[]
   focusedWorkflowBlockId: string | null
   onFocusWorkflowBlock: (id: string | null) => void
 }
@@ -68,9 +73,15 @@ export default function SessionWorkspace(props: Props) {
     tasks,
     pendingInterrupts,
     workflowBlocks,
+    messages = emptyMessages,
     focusedWorkflowBlockId,
     onFocusWorkflowBlock,
   } = props
+  const flowRuns = useFlowRunStore(state => state.runs[sessionId])
+  const plans = useFlowRunStore(state => state.plans[sessionId])
+  const runs = useMemo(() => workspaceRuns(flowRuns || [], plans || []), [flowRuns, plans])
+  const visibleTasks = useMemo(() => executionTasks(runs, plans || [], tasks), [runs, plans, tasks])
+  const visibleBlocks = useMemo(() => executionWorkflowBlocks(runs, messages, workflowBlocks), [runs, messages, workflowBlocks])
   const workspace = useUIStore((state) => state.workspace),
     collapsed = useUIStore((state) => state.sessionPanelCollapsed)
   // Both saved tab names and existing "view details" links open the combined
@@ -204,11 +215,11 @@ export default function SessionWorkspace(props: Props) {
     window.addEventListener('pointerup', stop)
   }
   const taskCount =
-    tasks.filter(
+    visibleTasks.filter(
       (task) =>
-        !['completed', 'done', 'cancelled'].includes(String(task.status)),
+        !['completed', 'done', 'cancelled', 'skipped'].includes(String(task.status)),
     ).length + pendingInterrupts.length
-  const activeProcess = workflowBlocks.some(
+  const activeProcess = visibleBlocks.some(
     (block) => block.status === 'running',
   )
   return (
@@ -293,11 +304,11 @@ export default function SessionWorkspace(props: Props) {
           <div className="min-h-0 flex-1" hidden={activeTab !== 'tasks'}>
             <div className="flex h-full min-h-0 flex-col" data-testid="workspace-task-process-panel">
               <div className="max-h-[40%] min-h-0 shrink-0 overflow-y-auto border-b border-zinc-200 scrollbar-thin dark:border-zinc-800" data-testid="workspace-task-scroll">
-                <TasksTab tasks={tasks} pendingInterrupts={pendingInterrupts} sessionId={sessionId} embedded />
+                <TasksTab tasks={visibleTasks} pendingInterrupts={pendingInterrupts} run={runs.at(-1)} embedded />
               </div>
               <div className="min-h-0 flex-1">
                 <ProcessTab
-                  workflowBlocks={workflowBlocks}
+                  workflowBlocks={visibleBlocks}
                   focusedWorkflowBlockId={focusedWorkflowBlockId}
                   onFocusWorkflowBlock={onFocusWorkflowBlock}
                 />

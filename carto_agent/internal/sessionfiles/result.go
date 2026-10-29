@@ -97,7 +97,7 @@ func ArtifactPaths(value any, fields ...string) []string {
 
 // ReadsInputPaths keeps lookup/load results from appearing as newly produced files.
 func ReadsInputPaths(name string) bool {
-	return strings.HasPrefix(name, "data_load_") || strings.HasPrefix(name, "read_") || strings.HasPrefix(name, "get_") || name == "geodata_inspect" || name == "output_get_info" || name == "resource_get" || name == "flow_preview"
+	return strings.HasPrefix(name, "data_load_") || strings.HasPrefix(name, "read_") || strings.HasPrefix(name, "get_") || name == "file_read" || name == "file_list" || name == "geodata_inspect" || name == "output_get_info" || name == "resource_get" || name == "data_find"
 }
 
 // ResultPaths also handles bridge results whose display text has a trailing

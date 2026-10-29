@@ -188,7 +188,9 @@ func toBackendOutputLayersFromCompute(src []compute.OutputLayer) []OutputLayer {
 	}
 	out := make([]OutputLayer, 0, len(src))
 	for _, layer := range src {
-		out = append(out, OutputLayer{Path: strings.TrimSpace(layer.Path), AutoLoad: layer.AutoLoad})
+		layer.Path = strings.TrimSpace(layer.Path)
+		layer.Fields = append([]string(nil), layer.Fields...)
+		out = append(out, layer)
 	}
 	return out
 }

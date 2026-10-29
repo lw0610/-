@@ -46,6 +46,7 @@ export function toTimestamp(raw: unknown) {
 
 export function toChatMessages(session: SessionRecord): Message[] {
   const input = Array.isArray(session.messages) ? session.messages : []
+  const sessionStartedAt = toTimestamp(session.created_at)
   return input.map((item, idx) => {
     const rawData = item.data
     const data = rawData && typeof rawData === 'object' && !Array.isArray(rawData)
@@ -56,7 +57,7 @@ export function toChatMessages(session: SessionRecord): Message[] {
       id: `session-${session.session_id}-${idx}-${typeof item.timestamp === 'string' ? item.timestamp : 'no-ts'}`,
       type: roleToMessageType(String(item.role || 'status'), item.msg_type),
       content: String(item.content || ''),
-      timestamp: toTimestamp(item.timestamp),
+      timestamp: item.timestamp ? toTimestamp(item.timestamp) : sessionStartedAt + idx,
     }
 
     if (typeof item.agent === 'string' && item.agent) {
@@ -233,6 +234,7 @@ export function toMessagesFromCompressedContext(raw: unknown): Message[] {
 
 export function normalizeWorkflowBlockStatus(raw: unknown): WorkflowBlock['status'] {
   const value = String(raw || '').trim().toLowerCase()
+  if (value === 'waiting_user') return 'waiting_user'
   if (value === 'running' || value === 'active' || value === 'in_progress' || value === 'processing') {
     return 'running'
   }
@@ -260,6 +262,13 @@ export function normalizeWorkflowToolStatus(raw: unknown, success?: unknown): Wo
     return success ? 'completed' : 'failed'
   }
   return 'running'
+}
+
+export function workflowToolStatusForDisplay(card?: WorkflowToolCard): WorkflowToolCard['status'] | 'finished' {
+  const status = normalizeWorkflowToolStatus(card?.status, card?.success)
+  // Legacy tool_result records use running when the return value contains no
+  // success flag. A recorded finish proves it ended, not that it succeeded.
+  return status === 'running' && card?.finishedAt ? 'finished' : status
 }
 
 export function shouldPreserveTaskListUpdateCompletion(

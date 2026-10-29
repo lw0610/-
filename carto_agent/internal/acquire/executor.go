@@ -89,7 +89,7 @@ func (e *Engine) RunItem(ctx context.Context, item flow.AcquisitionItem, progres
 	if item.Extent == nil || item.Extent.Pending || len(item.Extent.BBox) != 4 {
 		return result, fmt.Errorf("数据获取范围尚未确定")
 	}
-	if e.Store == nil || e.Catalog == nil || e.Invoke == nil {
+	if e.Store == nil || e.Catalog == nil {
 		return result, fmt.Errorf("数据获取执行器尚未配置")
 	}
 	cfg := e.Config.WithDefaults()
@@ -232,6 +232,9 @@ func (e *Engine) materialize(ctx context.Context, item flow.AcquisitionItem, cho
 		}
 		rawFiles := append([]string{}, files...)
 		if fetched.Format == "zip" || fetched.Format == "tar.gz" {
+			if e.Invoke == nil {
+				return Manifest{}, fmt.Errorf("压缩数据需要已配置的解压工具")
+			}
 			emitProgress(progress, "extract", 0, 0)
 			value, err := e.Invoke(ctx, "archive_extract", map[string]any{"input": files[0], "output": filepath.Join(rawDir, "unpacked"), "max_files": 10000, "max_bytes": int64(e.Config.WithDefaults().MaxDownloadMB) * 4 * 1024 * 1024})
 			if err != nil {
@@ -291,22 +294,36 @@ func (e *Engine) materialize(ctx context.Context, item flow.AcquisitionItem, cho
 		}
 		normalizeArgs := map[string]any{"input": map[string]any{"path": input, "layer": provide.Layer}, "category": item.Category, "expected_geometry": geometry, "filter": filter, "clip": clip, "fields": fieldMap, "output": normalOutput, "simplify_tolerance_m": category.SimplifyMM * float64(item.Scale) / 1000}
 		emitProgress(progress, "normalize", 0, 0)
-		value, err := e.Invoke(ctx, "data_normalize", normalizeArgs)
+		var stats map[string]any
+		if category.Geometry == "table" {
+			if choice.Derivation != nil {
+				return Manifest{}, fmt.Errorf("统计表不能执行空间派生")
+			}
+			// Tables have no spatial geometry or CRS. Keep their validation and
+			// publication in Go instead of sending them to QGIS vector tools.
+			stats, err = normalizeProvidedTable(ctx, input, output, fieldMap)
+		} else {
+			if e.Invoke == nil {
+				return Manifest{}, fmt.Errorf("空间数据规范化工具未配置")
+			}
+			var value any
+			value, err = e.Invoke(ctx, "data_normalize", normalizeArgs)
+			if err == nil {
+				var payload map[string]any
+				payload, err = UnwrapToolResult(value)
+				stats = toolData(payload)
+			}
+		}
 		if err != nil {
 			return Manifest{}, err
 		}
-		payload, err := UnwrapToolResult(value)
-		if err != nil {
-			return Manifest{}, err
-		}
-		stats := toolData(payload)
 		if choice.Derivation != nil {
 			emitProgress(progress, "derive", 0, 0)
-			value, err = e.Invoke(ctx, "data_derive", map[string]any{"input": map[string]any{"path": normalOutput}, "method": choice.Derivation.Method, "output": output, "boundary_kind": params["level"] + "界", "include_outer": false})
+			value, err := e.Invoke(ctx, "data_derive", map[string]any{"input": map[string]any{"path": normalOutput}, "method": choice.Derivation.Method, "output": output, "boundary_kind": params["level"] + "界", "include_outer": false})
 			if err != nil {
 				return Manifest{}, err
 			}
-			payload, err = UnwrapToolResult(value)
+			payload, err := UnwrapToolResult(value)
 			if err != nil {
 				return Manifest{}, err
 			}
@@ -501,7 +518,7 @@ func outputFilename(item flow.AcquisitionItem) string {
 }
 func isGeodata(path string) bool {
 	switch strings.ToLower(filepath.Ext(path)) {
-	case ".shp", ".gpkg", ".geojson", ".fgb", ".tif", ".tiff", ".osm", ".pbf", ".csv":
+	case ".shp", ".gpkg", ".geojson", ".fgb", ".tif", ".tiff", ".osm", ".pbf", ".csv", ".tsv", ".xlsx":
 		return true
 	}
 	return false

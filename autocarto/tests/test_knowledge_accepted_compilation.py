@@ -66,6 +66,9 @@ class AcceptedCompilationTest(unittest.TestCase):
         result = self.request(graph)
         self.assertTrue(result["success"], result)
         self.assertEqual(result["data"]["table_counts"]["route_paths.csv"], 2)
+        self.assertEqual(result["data"]["handoff"]["plan_data"], {
+            "from": "session", "path": result["data"]["dataset_dir"], "kind": "dataset",
+        })
         self.assertGreater(result["data"]["validation"]["warning_count"], 0)
         self.assertEqual(graph, before)
         saved = json.loads(Path(result["data"]["task_graph_file"]).read_text())

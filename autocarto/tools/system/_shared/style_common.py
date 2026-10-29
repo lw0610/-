@@ -11,6 +11,7 @@ from qgis.PyQt.QtGui import (
 )
 from qgis.core import QgsProject
 from autocarto.tools.system._shared.layout_runtime import run_in_main_thread
+from autocarto.tools.system._shared.project_layers import resolve_project_layer
 
 
 def _wrap_main_thread(handler):
@@ -44,14 +45,17 @@ def _wrap_main_thread(handler):
 def _get_layer(layer_name: Optional[str]):
     if not layer_name:
         return None, {"success": False, "output": "", "info": "错误：缺少图层参数"}
-    layers = QgsProject.instance().mapLayersByName(str(layer_name))
-    if not layers:
+    try:
+        selected = resolve_project_layer(layer_name)
+    except ValueError as exc:
+        return None, {"success": False, "output": "", "info": str(exc)}
+    if selected is None:
         return None, {
             "success": False,
             "output": "",
             "info": f"错误：未找到图层 '{layer_name}'",
         }
-    return layers[0], None
+    return selected, None
 
 
 
@@ -141,3 +145,16 @@ def _style_info(layer) -> Dict[str, Any]:
     }
     details.update(_graduated_renderer_info(renderer))
     return details
+
+
+def find_style_layer(project, selector):
+    selector = str(selector or "").strip()
+    if not selector:
+        raise ValueError("请指定图层名称或 ID")
+    layer = project.mapLayer(selector)
+    if layer is not None:
+        return layer
+    matches = project.mapLayersByName(selector)
+    if len(matches) != 1:
+        raise ValueError("图层不存在或名称重复，请使用图层 ID：" + selector)
+    return matches[0]

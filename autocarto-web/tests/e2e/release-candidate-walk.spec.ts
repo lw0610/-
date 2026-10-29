@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 import type { RuntimeSnapshot } from '../../src/lib/api'
 import type { QGISInstance } from '../../src/types/instance'
+import { DEFAULT_DESKTOP_RUNTIME_PORT, mockDesktopRuntime } from './helpers/desktopRuntime'
 
 async function disableRealtimeWebSocket(page: Page) {
   await page.addInitScript(() => {
@@ -41,37 +42,6 @@ async function disableRealtimeWebSocket(page: Page) {
       writable: true,
       value: MockWebSocket,
     })
-  })
-}
-
-async function mockDesktopRuntime(page: Page) {
-  await page.addInitScript(() => {
-    const runtime = window as Window & {
-      __TAURI_INTERNALS__?: {
-        invoke?: (cmd: string, args?: unknown) => Promise<unknown>
-      }
-      __TAURI__?: Record<string, unknown>
-    }
-
-    const invoke = async (cmd: string) => {
-      if (cmd === 'get_backend_runtime') {
-        return {
-          port: 3000,
-          backend_url: 'http://127.0.0.1:3000',
-          ws_url: 'ws://127.0.0.1:3000/ws',
-          startup_error: '',
-        }
-      }
-      throw new Error(`unexpected tauri invoke: ${cmd}`)
-    }
-
-    runtime.__TAURI_INTERNALS__ = {
-      ...(runtime.__TAURI_INTERNALS__ || {}),
-      invoke,
-    }
-    runtime.__TAURI__ = {
-      ...(runtime.__TAURI__ || {}),
-    }
   })
 }
 
@@ -143,7 +113,7 @@ test.describe('Release Candidate Walk F3', () => {
           data: {
             agent: {
               host: '127.0.0.1',
-              port: 3000,
+              port: DEFAULT_DESKTOP_RUNTIME_PORT,
               protocol: 'http',
               pid: 4101,
               status: 'running',
@@ -169,6 +139,10 @@ test.describe('Release Candidate Walk F3', () => {
           data: { configs: [] },
         },
       })
+    })
+
+    await page.route('**/api/skill-packages*', async (route) => {
+      await route.fulfill({ json: { success: true, data: { packages: [] } } })
     })
 
     await page.route('**/api/skills', async (route) => {
@@ -259,13 +233,15 @@ test.describe('Release Candidate Walk F3', () => {
 
     await page.goto('/chat.html', { waitUntil: 'networkidle' })
     await expect(page.locator('body')).toContainText('运行时同步中')
-    await expect(page.locator('body')).toContainText('当前不会将 QGIS 误判为未连接')
+    await expect(page.getByTestId('project-capability-banner')).toContainText('正在等待 QGIS 运行态恢复同步')
+    await expect(page.getByRole('textbox', { name: '消息输入' })).toBeDisabled()
+    await expect(page.getByRole('button', { name: '发送', exact: true })).toBeDisabled()
 
     runtimeSnapshot = {
       services: {
         agent: {
           status: 'running',
-          port: 3000,
+          port: DEFAULT_DESKTOP_RUNTIME_PORT,
           last_error: 'Some service error',
           diagnostics: {
             startup_error: 'Simulated startup failure',
@@ -290,7 +266,7 @@ test.describe('Release Candidate Walk F3', () => {
     await expect(page.locator('body')).toContainText('CORR-9999')
 
     await page.goto('/tool-center.html', { waitUntil: 'networkidle' })
-    await page.getByRole('button', { name: '工具目录' }).click()
+    await page.getByRole('button', { name: '能力手册', exact: true }).click()
     await expect(page.locator('body')).toContainText('Test Tool')
     await expect(page.locator('body')).toContainText('Degraded provider.')
     await expect(page.locator('body')).toContainText('EVIDENCE-8888')
@@ -302,7 +278,7 @@ test.describe('Release Candidate Walk F3', () => {
 
     await page.goto('/settings/system.html', { waitUntil: 'networkidle' })
     await page.getByLabel('QGIS 可执行路径').fill('/opt/qgis/bin/qgis')
-    await page.getByRole('button', { name: '保存' }).click()
+    await page.getByRole('button', { name: '保存', exact: true }).click()
     await expect(page.locator('body')).toContainText('EVIDENCE-1234')
     await expect(page.locator('body')).toContainText('CORR-5678')
   })

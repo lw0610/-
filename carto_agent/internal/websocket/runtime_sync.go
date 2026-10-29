@@ -475,9 +475,7 @@ func (s *DeepServer) augmentRuntimeSnapshot(snapshot middlewareclient.RuntimeSna
 	if strings.TrimSpace(cloned.DiscoveryRevision) == "" {
 		cloned.DiscoveryRevision = strings.TrimSpace(control.ResolveDiscoveryRevision(cloned))
 	}
-	if strings.TrimSpace(cloned.ServicePhase) == "" {
-		cloned.ServicePhase = strings.TrimSpace(s.runtimeServicePhase(cloned))
-	}
+	cloned.ServicePhase = strings.TrimSpace(s.runtimeServicePhase(cloned))
 	if schemaRevision := strings.TrimSpace(s.GetToolSchemaRevision()); schemaRevision != "" && strings.TrimSpace(cloned.ToolSchemaRevision) == "" {
 		cloned.ToolSchemaRevision = schemaRevision
 	}
@@ -504,12 +502,9 @@ func (s *DeepServer) augmentRuntimeSnapshot(snapshot middlewareclient.RuntimeSna
 		cloned.RuntimeActiveAgentConfig = strings.TrimSpace(cloned.ActiveConfig)
 	}
 	cloned.PlanEnabled = planEnabled
-	if len(cloned.ModeIssues) == 0 {
-		cloned.ModeIssues = s.runtimeModeIssuesSnapshot()
-	}
-	if len(cloned.ModeReadiness) == 0 {
-		cloned.ModeReadiness = s.runtimeModeReadinessSnapshot(planEnabled)
-	}
+	// Agent readiness belongs to the current local runtime, not a cached snapshot.
+	cloned.ModeIssues = s.runtimeModeIssuesSnapshot()
+	cloned.ModeReadiness = s.runtimeModeReadinessSnapshot(planEnabled)
 	if readiness, ok := cloned.ModeReadiness["plan"]; ok {
 		cloned.PlanReady = readiness.Ready
 	}

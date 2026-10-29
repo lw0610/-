@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"io"
 	"io/fs"
 	"os"
@@ -28,7 +29,7 @@ const MaxPackageBytes int64 = 2 << 30
 
 var typeDirectories = func() map[string]string {
 	result := map[string]string{}
-	for name, typ := range Formats().Types {
+	for name, typ := range legacyFormatSet.Types {
 		result[name] = typ.Group
 	}
 	return result
@@ -54,6 +55,12 @@ type Library struct {
 	cacheMu        sync.Mutex
 	indexSignature string
 	indexItems     []LibraryItem
+}
+
+// NewAssetLibrary reads only shipped public resources; it never discovers or
+// migrates the user's runtime directory. Guide environment projection uses it.
+func NewAssetLibrary(assets string) *Library {
+	return NewLibrary(filepath.Join(assets, "resources", "system"), "", nil)
 }
 
 func NewLibrary(builtinDir, userDir string, bindingStore *bindings.Store) *Library {
@@ -86,7 +93,11 @@ func NewDefaultLibrary() (*Library, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewLibrary(filepath.Join(assets, "resources", "system"), filepath.Join(home, "resources"), bindings.New(file)), nil
+	library := NewLibrary(filepath.Join(assets, "resources", "system"), filepath.Join(home, "resources"), bindings.New(file))
+	if _, err := library.MigrateV6(); err != nil {
+		return nil, err
+	}
+	return library, nil
 }
 
 func validName(name string) bool {
@@ -95,6 +106,13 @@ func validName(name string) bool {
 
 func classify(group, path string, dir bool) (kind, name string) {
 	base := filepath.Base(path)
+	if dir {
+		raw, err := os.ReadFile(filepath.Join(path, "resource.yaml"))
+		var m Manifest
+		if err == nil && yaml.Unmarshal(raw, &m) == nil && IsPublicType(m.Type) && m.Entry != "" {
+			return m.Type, m.Name
+		}
+	}
 	for _, typ := range TypeInfos() {
 		if typ.Group != group || typ.Folder != dir {
 			continue
@@ -157,7 +175,12 @@ func (l *Library) list(scope string) ([]LibraryItem, error) {
 	result := []LibraryItem{}
 	for _, item := range l.indexItems {
 		if scope == "all" || item.Owner == "library_"+scope {
-			result = append(result, cloneItem(item))
+			copy := cloneItem(item)
+			copy.PreviewStatus = "pending"
+			if IsPublicType(item.Type) && previewCurrent(l.previewRoot(&ResolvedResource{Root: item.Root, Owner: item.Owner, ID: item.ID, Digest: item.Digest}), item.Digest) {
+				copy.PreviewStatus = "ready"
+			}
+			result = append(result, copy)
 		}
 	}
 	return result, nil

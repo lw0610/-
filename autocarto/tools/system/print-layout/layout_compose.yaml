@@ -10,7 +10,7 @@ spec:
   description: 按内置或自定义版式一次创建完整打印版面，保持图层顺序和主图框尺寸，按实际元素大小对齐并返回遮挡和页面边界警告。
   parameters:
   - {name: layout, type: string, required: true, description: 版面名称；默认替换已有同名版面}
-  - {name: spec, type: resource, resource_type: "layout:layout_yaml", required: true, description: 声明式版式资源的名称、编号或路径}
+  - {name: spec, type: resource, resource_type: layout, required: true, description: 版面资源的名称、编号或路径，自动识别声明式版面或 QPT}
   - {name: paper, type: string, description: A0 至 A4 或宽x高（毫米）；默认取版式}
   - {name: orientation, type: string, enum: [landscape, portrait], description: 纸张方向；默认取版式}
   - {name: title, type: string, required: true, description: 标题正文；按版式字号和字重添加}
@@ -22,7 +22,7 @@ spec:
   - {name: padding, type: number, default: 0.03, description: 范围外扩比例，0 至 1；不改变主图框尺寸}
   - {name: legend_layers, type: array, items: {type: string}, description: 图例白名单图层；省略时使用主图图层}
   - {name: legend_title, type: string, default: 图例, description: 原生图例标题}
-  - {name: legend_symbols, type: resource, resource_type: symbols, description: 额外图例使用的符号资源名称、编号或目录}
+  - {name: legend_symbols, type: string, description: 额外图例使用的符号预设名称（军标、图例或用户预设）}
   - {name: legend_extra_items, type: array, items: {type: object}, description: 额外图例条目数组，每项为 label、symbol_type 或 image_path、可选 size_mm；symbol_type 从 legend_symbols 选择}
   - {name: elements, type: object, description: 元素语义名到开关值的对象，例如关闭 grid、border；不能关闭主图}
   - {name: overview_max_width_ratio, type: number, description: 覆盖综述相对主图的最大宽度比例，大于 0 且不超过 1}

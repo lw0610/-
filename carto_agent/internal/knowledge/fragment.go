@@ -491,6 +491,11 @@ func decodeModelIssues(rows []modelIssue, g Graph, sources []EvidenceSource) ([]
 			continue
 		}
 		issue := Issue{ID: row.ID, Kind: row.Kind, Reason: row.Reason, Field: canonicalModelIssueField(row.Kind, row.Field), SubjectRefs: row.SubjectRefs, Message: row.Message, EvidenceQuotes: quotes}
+		if len(issue.SubjectRefs) == 0 {
+			// Missing source content concerns the input as a whole; there may be
+			// no extracted object to bind. Preserve that explanation, not a fake ID.
+			issue.Kind, issue.Field = "source", "content"
+		}
 		if err := validateIssueSubjects(g, nil, issue); err != nil {
 			problems = append(problems, fmt.Errorf("问题 %s：%w", row.ID, err))
 			continue
@@ -592,7 +597,7 @@ func (p *Pipeline) extract(ctx context.Context, r *Result, c Chunk, contract Con
 			return fmt.Errorf("片段 %s 的模型结果格式或原文引用有误，已重试一次：%w", c.ID, err)
 		}
 		input = fragmentSourceInput(c)
-		input["validation_feedback"] = "上一次回答未通过校验，需同时修正以下问题：\n" + err.Error() + "\n请按 unresolved 协议填写合法 kind/field/reason，并将每个疑问绑定到 graph 中实际存在的非空 subject_refs；source_refs 仅引用 source_evidence.ref。不得删除真实疑问或更改其含义来绕过校验。重新返回完整结果，保留有原文依据的事实。"
+		input["validation_feedback"] = "上一次回答未通过校验，需同时修正以下问题：\n" + err.Error() + "\n请按 unresolved 协议填写合法 kind/field/reason；对象疑问绑定 graph 中实际存在的 subject_refs，涉及原文整体的问题用 source/content 并保留空 subject_refs；source_refs 仅引用 source_evidence.ref。不得删除真实疑问或更改其含义来绕过校验。重新返回完整结果，保留有原文依据的事实。"
 	}
 	g, err := NamespaceGraph(out.Graph, c.ID+"__")
 	if err != nil {

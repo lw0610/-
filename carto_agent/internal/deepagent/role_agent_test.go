@@ -95,3 +95,20 @@ func TestBuildRoleAgentRejectsMissingDisabledAndUnsupportedKinds(t *testing.T) {
 		t.Fatal("nil config accepted")
 	}
 }
+
+func TestBuildSystemDataRoleRequiresExecutableDataService(t *testing.T) {
+	for _, readOnly := range []bool{false, true} {
+		t.Run(map[bool]string{false: "missing_data_service", true: "read_only"}[readOnly], func(t *testing.T) {
+			cfg := roleFactoryFixture()
+			cfg.SkipSubAgents = readOnly
+			if readOnly {
+				for _, name := range []string{"data_find", "data_get"} {
+					cfg.Tools = append(cfg.Tools, utils.NewEnhancedTool(&schema.ToolInfo{Name: name}, func(context.Context, map[string]any) (*schema.ToolResult, error) { return nil, nil }))
+				}
+			}
+			if _, err := BuildRoleAgent(context.Background(), cfg, DataAcquisitionExpertName); err == nil || !strings.Contains(err.Error(), "不可用") {
+				t.Fatalf("unavailable system expert accepted: %v", err)
+			}
+		})
+	}
+}

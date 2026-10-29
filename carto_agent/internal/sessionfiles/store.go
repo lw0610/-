@@ -156,7 +156,10 @@ func (s *Store) ValidatePath(path string) (string, fs.FileInfo, error) {
 		}
 	}
 	if !allowed {
-		return "", nil, ErrOutsideRoot
+		allowed = s.providedPathAllowed(filepath.Clean(path), target)
+		if !allowed {
+			return "", nil, ErrOutsideRoot
+		}
 	}
 	info, err := os.Stat(target)
 	if err != nil {
@@ -389,4 +392,14 @@ func (s *Store) Get(id string) (Item, error) {
 		return item, nil
 	}
 	return Item{}, ErrNotIndexed
+}
+
+// GetPath resolves an exact indexed file without registering it or granting
+// access to its parent directory. Canonical identities reject replaced symlinks.
+func (s *Store) GetPath(path string) (Item, error) {
+	canonical, _, err := s.ValidatePath(path)
+	if err != nil {
+		return Item{}, err
+	}
+	return s.Get(pathID(canonical))
 }

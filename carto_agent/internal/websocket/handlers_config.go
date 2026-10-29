@@ -536,6 +536,17 @@ func (s *DeepServer) handleLLMConfigMessage(conn *websocket.Conn, msg Message) b
 		}
 
 		if sessionID != "" {
+			state := s.sessionRuntimeProjectionSnapshot(sessionID, nil).RuntimeState
+			state.SessionID = sessionID
+			state.ExecutionMode = mode
+			s.updateSessionRuntimeProjectionState(state)
+			s.updateSessionRuntimeState(sessionID, func(v *SessionRuntimeState) { v.ExecutionMode = mode })
+			if run, ok := s.flowContext(sessionID); ok {
+				run.Mode = parsedMode
+				s.setFlowContext(run)
+			}
+		}
+		if sessionID != "" {
 			projectPath, _ := msg.Data["project_path"].(string)
 			if _, err := s.SaveSessionAtomically(sessionID, projectPath, func(sessionData map[string]any) error {
 				sessionData["execution_mode"] = mode
@@ -616,7 +627,7 @@ func (s *DeepServer) sendSessionState(conn *websocket.Conn, executionMode string
 	}
 
 	if rebuildConfig := s.agentRebuildConfigSnapshot(); rebuildConfig != nil && rebuildConfig.BaseConfig != nil {
-		state["plan_mode_enabled"] = rebuildConfig.BaseConfig.PlanMode.IsEnabled()
+		state["plan_mode_enabled"] = true
 	}
 
 	s.sendMessage(conn, Message{Type: MsgTypeSessionState, Data: state})

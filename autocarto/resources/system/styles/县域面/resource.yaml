@@ -1,0 +1,18 @@
+{
+  "apiVersion": "resource/v1",
+  "id": "style.basemap-fbe4b96472",
+  "type": "style",
+  "name": "县域面",
+  "version": "1.0.0",
+  "entry": "县域面.qml",
+  "geometry": "polygon",
+  "label_field": "无",
+  "description": "由原预设导出的符号和标注",
+  "tags": [
+    "县级行政区",
+    "县域"
+  ],
+  "source": {
+    "author": "AutoCarto"
+  }
+}

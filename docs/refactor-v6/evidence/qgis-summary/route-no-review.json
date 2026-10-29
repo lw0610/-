@@ -1,0 +1,20 @@
+{
+  "scenario": "route-no-review",
+  "status": "completed",
+  "inputs_unchanged": true,
+  "steps": 6,
+  "output_files": [
+    "preview.png",
+    "project.qgz",
+    "exports/固定路线数据回归样例.pdf"
+  ],
+  "golden": {
+    "success": true,
+    "differences": [],
+    "preview": {
+      "algorithm": "dhash64",
+      "distance": 1,
+      "diagnostic_only": true
+    }
+  }
+}

@@ -16,8 +16,8 @@
       "label_mode": "field",
       "layer": "地级城市驻地",
       "name": "地级城市驻地",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/地级城市驻地.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/地级城市驻地.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/地级城市驻地.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/地级城市驻地.qml"
     },
     {
       "aliases": [
@@ -32,8 +32,8 @@
       "label_mode": "field",
       "layer": "县级城市驻地",
       "name": "县级城市驻地",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/县级城市驻地.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/县级城市驻地.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/县级城市驻地.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/县级城市驻地.qml"
     },
     {
       "aliases": [
@@ -48,8 +48,8 @@
       "label_mode": "off",
       "layer": "铁路",
       "name": "铁路",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/铁路.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/铁路.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/铁路.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/铁路.qml"
     },
     {
       "aliases": [
@@ -64,8 +64,8 @@
       "label_mode": "off",
       "layer": "高速公路",
       "name": "高速公路",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/高速公路.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/高速公路.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/高速公路.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/高速公路.qml"
     },
     {
       "aliases": [
@@ -79,8 +79,8 @@
       "label_mode": "off",
       "layer": "国道",
       "name": "国道",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/国道.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/国道.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/国道.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/国道.qml"
     },
     {
       "aliases": [
@@ -96,8 +96,8 @@
       "label_mode": "off",
       "layer": "省界",
       "name": "省界",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/省界.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/省界.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/省界.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/省界.qml"
     },
     {
       "aliases": [
@@ -113,8 +113,8 @@
       "label_mode": "field",
       "layer": "河流线",
       "name": "河流线",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/河流线.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/河流线.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/河流线.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/河流线.qml"
     },
     {
       "aliases": [
@@ -129,8 +129,8 @@
       "label_mode": "off",
       "layer": "河流面",
       "name": "河流面",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/河流面.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/河流面.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/河流面.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/河流面.qml"
     },
     {
       "aliases": [
@@ -145,8 +145,8 @@
       "label_mode": "off",
       "layer": "县域面",
       "name": "县域面",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/县域面.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/县域面.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/县域面.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/县域面.qml"
     },
     {
       "aliases": [
@@ -161,8 +161,8 @@
       "label_mode": "off",
       "layer": "市域面",
       "name": "市域面",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/市域面.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/市域面.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/市域面.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/市域面.qml"
     },
     {
       "aliases": [
@@ -179,16 +179,16 @@
       "label_mode": "field",
       "layer": "省域",
       "name": "省域",
-      "path": "${REPO}/autocarto/resources/system/styles/国标底图样式/省域面.qml",
-      "style_path": "${REPO}/autocarto/resources/system/styles/国标底图样式/省域面.qml"
+      "path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/省域面.qml",
+      "style_path": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/省域面.qml"
     }
   ],
-  "entry": "${REPO}/autocarto/resources/system/styles/国标底图样式/对照表.csv",
+  "entry": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式/对照表.csv",
   "format": "",
   "id": "style_set.gb-basemap",
   "name": "国标底图样式",
-  "owner": "library_builtin",
-  "root": "${REPO}/autocarto/resources/system/styles/国标底图样式",
+  "owner": "flow",
+  "root": "${REPO}/autocarto/tests/fixtures/resource_samples/resources/styles/国标底图样式",
   "total_entries": 11,
   "truncated": false,
   "type": "style_set",

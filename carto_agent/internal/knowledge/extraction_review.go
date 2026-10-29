@@ -58,6 +58,37 @@ func extractionProcessingComplete(c *ExtractionCompletion) bool {
 
 type ExtractionNeedsReviewError struct{ Message string }
 
+const NoExtractedContentMessage = "未提取到可制图的内容，请检查原文是否正确读取，或补充材料后重新抽取。"
+
+// Do not require routes or any particular entity type: partial extracted facts
+// remain editable and usable. Only a wholly empty graph is not a drawing result.
+func HasExtractedContent(g Graph) bool {
+	for _, collection := range graphCollections {
+		if collection.key == "evidence" || collection.key == "point_presentations" {
+			continue
+		}
+		for _, raw := range array(g[collection.key]) {
+			if item, ok := raw.(map[string]any); ok && (collection.key != "spatial_entities" || item["entity_kind"] != "cartographic_control") {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func emptyExtractionError(review *Review) ReviewError {
+	message := NoExtractedContentMessage
+	if review != nil {
+		for _, issue := range review.PendingIssues {
+			if issue.Kind == "source" && strings.TrimSpace(issue.Message) != "" {
+				message += " 原因：" + issue.Message
+				break
+			}
+		}
+	}
+	return ReviewError{Code: "empty_extraction", Path: "graph", Message: message}
+}
+
 func (e *ExtractionNeedsReviewError) Error() string { return e.Message }
 func hasBlockingExtractionIssues(issues []Issue) bool {
 	for _, i := range issues {
@@ -247,6 +278,9 @@ func PrepareReviewCompilation(review *Review) (Graph, []ReviewError) {
 	}
 	if review == nil {
 		return fail(fmt.Errorf("知识核对记录不存在"))
+	}
+	if !HasExtractedContent(review.Graph) {
+		return nil, []ReviewError{emptyExtractionError(review)}
 	}
 	g, err := cloneGraph(review.Graph)
 	if err != nil {

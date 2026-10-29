@@ -2,7 +2,9 @@
 import type { InterruptRequestData, TodoItem } from '@/types/message'
 import TaskListPanel from '@/components/chat/TaskListPanel'
 import Chip from '@/components/common/Chip'
-import { useFlowRunStore } from '@/features/flow-run/store'
+import AcquisitionProgress from '@/features/plan/AcquisitionProgress'
+import type { FlowRunState } from '@/features/plan/types'
+import { terminalFlow } from '@/features/plan/model'
 function parseInterruptPreview(interrupt: InterruptRequestData) {
   const checkpointId = String(interrupt.checkpoint_id || '').trim()
   const contexts = Array.isArray(interrupt.interrupt_contexts)
@@ -74,45 +76,25 @@ function SectionHeader({
 export default function TasksTab({
   tasks,
   pendingInterrupts,
-  sessionId,
+  run,
   embedded = false,
 }: {
   tasks: TodoItem[]
   pendingInterrupts: InterruptRequestData[]
-  sessionId: string
+  run?: FlowRunState
   embedded?: boolean
 }) {
   const safeTasks = Array.isArray(tasks) ? tasks.filter(Boolean) : []
   const safeInterrupts = Array.isArray(pendingInterrupts)
     ? pendingInterrupts.filter(Boolean)
     : []
-  const runs = useFlowRunStore((state) => state.runs[sessionId])
-  const current = runs
-    ?.slice()
-    .reverse()
-    .find((run) => !['completed', 'failed', 'cancelled'].includes(run.status))
   return (
     <div
       data-testid="workspace-task-region"
       className={embedded ? 'p-3' : 'h-full overflow-y-auto p-3 scrollbar-thin'}
     >
-      {current && (
-        <button
-          className="mb-3 w-full rounded border border-blue-200 bg-blue-50 p-3 text-left text-xs text-blue-900"
-          onClick={() =>
-            document
-              .getElementById(`flow-run-${current.flow_run_id}`)
-              ?.scrollIntoView({ block: 'center', behavior: 'smooth' })
-          }
-        >
-          <strong>当前流程：{current.name || current.flow_id}</strong>
-          <p>{current.steps[current.cursor || 0]?.title || '准备中'}</p>
-          {current.acquisition && (
-            <p>数据获取：{current.acquisition.items.filter((item) => ['completed', 'reused', 'user_provided', 'cached', 'skipped'].includes(item.status)).length} / {current.acquisition.plan?.items.length || current.acquisition.items.length} 项已处理</p>
-          )}
-        </button>
-      )}
       <TaskListPanel tasks={safeTasks} />
+      {run?.acquisition && <AcquisitionProgress state={run.acquisition} finished={terminalFlow(run.status)} />}
 
       {safeInterrupts.length > 0 && (
         <div className="mt-2.5">

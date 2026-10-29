@@ -478,5 +478,8 @@ func ValidateReviewPending(r *Review, graph Graph) []ReviewError {
 	if r == nil {
 		return []ReviewError{{Code: "pending_review_missing", Message: "缺少待核对记录"}}
 	}
+	if !HasExtractedContent(graph) {
+		return []ReviewError{emptyExtractionError(r)}
+	}
 	return nil
 }

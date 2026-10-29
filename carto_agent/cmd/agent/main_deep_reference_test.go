@@ -15,6 +15,13 @@ import (
 
 func TestBuildRuntimeToolsReferenceRootsStayWithConstructedRuntime(t *testing.T) {
 	base := t.TempDir()
+	root, err := filepath.Abs("../../..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("AUTOCARTO_PROJECT_ROOT", root)
+	t.Setenv("AUTOCARTO_ASSETS_ROOT", filepath.Join(root, "autocarto"))
+	t.Setenv("AUTOCARTO_HOME", t.TempDir())
 	for _, name := range []string{"first", "second"} {
 		root := config.ResolveExclusiveSkillsDir(base, name)
 		writeRuntimeFile(t, filepath.Join(root, "same-package", "SKILL.md"), "---\nname: same-package\ndescription: 方法\nkind: category\n---\n方法\n")

@@ -8,6 +8,7 @@ export default function DataSourceEditor({draft, categories, editing, onSave, on
  const [root, setRoot] = useState(draft.source.root || '')
  const [name, setName] = useState(draft.source.name)
  const [license, setLicense] = useState(draft.source.license || '')
+ const [handbook,setHandbook]=useState(draft.source.handbook||{})
  const [rows, setRows] = useState(draft.entries.map(row => ({...row, selected: row.exists})))
  const [confirmed, setConfirmed] = useState(false)
  const [busy,setBusy] = useState(false)
@@ -18,11 +19,12 @@ export default function DataSourceEditor({draft, categories, editing, onSave, on
   if (!name.trim() || !selected.length || selected.some(row => !row.category)) {setError('请填写名称、选择数据，并为每条数据确认类别。'); return}
   if (!confirmed) {setError('请确认类别和字段对应后保存。');return}
   setBusy(true);setError('')
-  try {await onSave({...draft.source, name: name.trim(), root: root.trim(), license: license.trim(), provides: selected.map(row => ({category: row.category, path: row.path, ...(row.layer?.trim() ? {layer:row.layer.trim()} : {}), fields: row.fields, params: row.params}))})} catch (e) {setError(e instanceof Error ? e.message : '保存失败')} finally {setBusy(false)}
+  try {await onSave({...draft.source, name: name.trim(), root: root.trim(), license: license.trim(), handbook, provides: selected.map(row => ({category: row.category, path: row.path, ...(row.layer?.trim() ? {layer:row.layer.trim()} : {}), fields: row.fields, params: row.params}))})} catch (e) {setError(e instanceof Error ? e.message : '保存失败')} finally {setBusy(false)}
  }
  return <div className="space-y-3 rounded border border-blue-300 p-3" aria-label="本机数据源草稿">
   <h4 className="text-sm font-medium">{editing ? '编辑本机数据源' : '确认扫描结果'}</h4>
   <div className="grid gap-3 sm:grid-cols-2"><Field label="数据源名称"><TextInput value={name} onChange={e=>setName(e.target.value)} disabled={busy}/></Field><Field label="许可说明（可选）"><TextInput value={license} onChange={e=>setLicense(e.target.value)} disabled={busy}/></Field></div>
+  <details className="text-xs"><summary className="cursor-pointer">来源使用说明（可选）</summary><div className="mt-2 grid gap-2 sm:grid-cols-2">{([['good_for','适用任务'],['not_for','不适用任务'],['coverage','覆盖范围'],['scale','适用比例尺'],['fields','字段说明'],['cautions','注意事项']] as const).map(([key,label])=><Field key={key} label={label}><TextInput value={handbook[key]||''} onChange={e=>setHandbook({...handbook,[key]:e.target.value})}/></Field>)}</div></details>
   <Field label="数据根目录"><TextInput value={root} disabled={busy} onChange={e=>{setRoot(e.target.value);setConfirmed(false)}}/></Field>
   <p className="text-xs text-zinc-500">扫描结果仅作为建议。请确认每条数据的类别，以及标准字段在实际文件中的名称；留空表示采用默认字段规则。</p>
   {draft.messages.map((message,i)=><p className="text-xs" key={i}>{message}</p>)}

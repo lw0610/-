@@ -11,6 +11,7 @@ type Tool struct {
 type Config struct {
 	Provider        string  `yaml:"provider"`         // provider id（openai/anthropic/google/ollama）
 	Model           string  `yaml:"model"`            // 模型名称
+	Vision          bool    `yaml:"vision"`           // 已配置的图片输入能力
 	APIKey          string  `yaml:"api_key"`          // API密钥
 	BaseURL         string  `yaml:"base_url"`         // 自定义API地址（可选）
 	MaxTokens       int     `yaml:"max_tokens"`       // 最大token数

@@ -164,5 +164,16 @@
   "refresh_days": 30,
   "notes": [
     "2026-10-25 官方目录约 1.5 GB；最新全国 Shapefile 包不可用，使用 PBF；实际体量以响应为准"
-  ]
+  ],
+  "handbook": {
+    "good_for": "中国较大范围的道路、铁路、水系、地名",
+    "not_for": "中国疆域表达；小范围快速查询",
+    "coverage": "中国区域提取包",
+    "scale": "适合较大区域批量准备后裁剪",
+    "fields": "名称优先 name:zh，再取 name；分类按 OSM 标签",
+    "cautions": "下载量大；须署名 © OpenStreetMap contributors，并遵守 ODbL",
+    "examples": [
+      "中国铁路基础数据"
+    ]
+  }
 }

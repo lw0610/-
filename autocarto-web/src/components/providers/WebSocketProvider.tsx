@@ -48,11 +48,10 @@ import {
   WSMessage,
 } from "@/types/message";
 import { generateId } from "@/lib/utils";
-import { parseReviewReference } from "@/features/knowledge-review/model";
-import { useFlowRunStore } from "@/features/flow-run/store";
-import { terminalFlow } from "@/features/flow-run/model";
-import { flowPreviewForMessage } from "@/features/flow-run/FlowPreviewCard";
-import type { FlowEvent } from "@/features/flow-run/types";
+import { parseReviewReference, reviewProgressSummary, updateReviewProcess } from "@/features/knowledge-review/model";
+import { useFlowRunStore } from "@/features/plan/store";
+import { terminalFlow } from "@/features/plan/model";
+import type { FlowEvent } from "@/features/plan/types";
 import {
   collectSessionAttachTargets,
   markSessionAttachStateLive,
@@ -230,6 +229,7 @@ const sessionScopedMessageTypes = new Set([
   "cancelled",
   "task_list_update",
   "interrupt_request",
+  "knowledge_review_update",
   "context.response",
   "decision",
   "status",
@@ -240,6 +240,7 @@ const sessionScopedMessageTypes = new Set([
   "agent",
   "task_running_changed",
   "flow_event",
+  "plan_event",
 ]);
 
 function parseAutoPhase(raw: unknown): AutoPhase {
@@ -377,7 +378,7 @@ function completeRunningBlock(
     return blocks;
   }
   const target = blocks[index];
-  if (target.status !== "running") {
+  if (target.status !== "running" && target.status !== "waiting_user") {
     return blocks;
   }
   const next = [...blocks];
@@ -417,14 +418,16 @@ function appendOrMergeWorkflowEntry(
   if (entry.phase === "tool_result") {
     const tool = entry.toolCard.tool;
     const entryStatus = entry.toolCard.status;
+    const callId = entry.toolCard.callId;
+    const legacyCandidates = block.entries.filter(item => item.toolCard?.tool === tool &&
+      (item.toolCard.status === "running" || shouldPreserveTaskListUpdateCompletion(item.toolCard, entry.toolCard)));
     const index = [...block.entries]
       .reverse()
       .findIndex(
         (item) =>
           item.toolCard &&
           item.toolCard.tool === tool &&
-          (item.toolCard.status === "running" ||
-            shouldPreserveTaskListUpdateCompletion(item.toolCard, entry.toolCard)),
+          (callId ? item.toolCard.callId === callId : legacyCandidates.length === 1 && legacyCandidates[0] === item),
       );
 
     if (index >= 0) {
@@ -883,6 +886,16 @@ export default function WebSocketProvider({
           }
         }
         const source = String(eventData.source_type || "");
+        if (source === "knowledge_review_update" && eventData.replayed) {
+          msg = { ...msg, type: source, content: String(payload.content || ""), agent: String(payload.agent || ""), data: payload };
+        }
+        if (source === "plan_event") {
+          useFlowRunStore.getState().applyPlan({ ...asRecord(payload.data), ...payload }, normalizeSessionId(payload.session_id || msg.session_id));
+          return;
+        }
+        if (source === "session_state" && Array.isArray(payload.carto_plans)) {
+          useFlowRunStore.getState().restorePlans(normalizeSessionId(payload.session_id || msg.session_id), payload.carto_plans);
+        }
         if (source === "session_state" && Object.prototype.hasOwnProperty.call(payload, "flow_run")) {
           const sid = normalizeSessionId(payload.session_id || msg.session_id);
           if (sid) useFlowRunStore.getState().restore(sid, payload.flow_run, Number(payload.flow_run_event_seq || asRecord(payload.flow_run).event_seq || 0));
@@ -981,6 +994,15 @@ export default function WebSocketProvider({
         const running = status === "running" || status === "interrupted";
         setSessionRunning(runtimeSessionId, running);
         setSessionThinking(runtimeSessionId, status === "running");
+        if (status === "running") {
+          const state = useChatStore.getState();
+          const blocks = state.sessionWorkflowBlocks[runtimeSessionId] || [];
+          const waiting = blocks.findLast(block => block.status === "waiting_user");
+          if (waiting) {
+            setSessionWorkflowBlocks(runtimeSessionId, blocks.map(block => block.id === waiting.id ? { ...block, status: "running", summary: "已确认知识结果，继续制图。", finishedAt: undefined } : block));
+            setSessionActiveWorkflowBlockId(runtimeSessionId, waiting.id);
+          }
+        }
         if (status === "completed") {
           completeSessionWorkflowBlock(runtimeSessionId, "completed");
         } else if (status === "cancelled") {
@@ -1058,6 +1080,11 @@ export default function WebSocketProvider({
       }
       const activeMessage = isActiveSessionMessage(sessionId, activeSessionId);
 
+      if (msg.type === "plan_event") {
+        useFlowRunStore.getState().applyPlan({ ...asRecord(msg), ...asRecord(msg.data), session_id: sessionId }, sessionId);
+        return;
+      }
+
       if (msg.type === "flow_event") {
         const event = asRecord(msg.data);
         const sid = normalizeSessionId(event.session_id || msg.session_id);
@@ -1070,16 +1097,9 @@ export default function WebSocketProvider({
       }
 
       const processData = asRecord(msg.data);
-      if ((msg.phase === "tool_result" || msg.type === "tool") && processData.tool === "flow_preview") {
-        const preview = flowPreviewForMessage({ type: "tool", phase: msg.phase, content: msg.content || "", data: processData });
-        if (preview) {
-          appendSessionAwareMessage(sessionId, activeMessage, { type: "status", content: `流程预览：${preview.name || preview.plan.name}`, data: { ...processData, execution_mode: "plan", flow_preview: preview } });
-          return;
-        }
-      }
       if (processData.flow_run_id && ["agent_workflow", "thinking", "response", "status", "error", "tool", "agent"].includes(msg.type)) {
         const type = msg.phase === "tool_call" || msg.phase === "tool_result" || msg.type === "tool" ? "tool" : msg.type === "thinking" || msg.phase === "thinking" ? "thinking" : msg.type === "response" ? "assistant" : msg.type === "error" ? "error" : "status";
-        appendSessionAwareMessage(sessionId, activeMessage, { type, content: msg.content || "", phase: msg.phase, agent: msg.agent, agentDisplayName: msg.agent_display_name, data: processData });
+        appendSessionAwareMessage(sessionId, activeMessage, { type, content: msg.content || "", phase: msg.phase, agent: msg.agent, agentDisplayName: msg.agent_display_name, data: { ...processData, ...(msg.run_id ? { run_id: msg.run_id } : {}) } });
         return;
       }
 
@@ -1232,20 +1252,29 @@ export default function WebSocketProvider({
         return;
       }
 
-      if (msg.type === "interrupt_request") {
+      if (msg.type === "interrupt_request" || msg.type === "knowledge_review_update") {
         if (!sessionId) {
           return;
         }
-        setSessionRunning(sessionId, true);
-        setSessionThinking(sessionId, false);
+        if (msg.type === "interrupt_request") {
+          setSessionRunning(sessionId, true);
+          setSessionThinking(sessionId, false);
+        }
         const data = asRecord(msg.data) as InterruptRequestData;
-        addSessionInterrupt(sessionId, data);
-        if (parseReviewReference(data, sessionId)) {
+        if (msg.type === "interrupt_request") addSessionInterrupt(sessionId, data);
+        const review = parseReviewReference(data, sessionId);
+        if (review) {
+          if (msg.type === "knowledge_review_update") useChatStore.getState().resolveSessionInterrupt(sessionId, review.checkpoint_id);
           appendSessionAwareMessage(sessionId, activeMessage, {
             type: "interrupt",
-            content: msg.content || "知识抽取结果已生成，可查看、修改或开始制图。",
+            content: reviewProgressSummary(review),
             data: asRecord(msg.data),
           });
+          const state = useChatStore.getState();
+          const process = updateReviewProcess(state.sessionWorkflowBlocks[sessionId] || [], review, state.sessionActiveWorkflowBlockId[sessionId] || null, Date.now(), msg.agent || "orchestrator");
+          setSessionWorkflowBlocks(sessionId, process.blocks);
+          setSessionActiveWorkflowBlockId(sessionId, process.activeId);
+          setSessionFocusedWorkflowBlockId(sessionId, process.activeId);
         }
         return;
       }
@@ -1377,6 +1406,7 @@ export default function WebSocketProvider({
           setAvailableAgentConfigs(names);
         }
         if (snapshotSessionId) {
+          useFlowRunStore.getState().restorePlans(snapshotSessionId, data.carto_plans);
           if (Object.prototype.hasOwnProperty.call(data, "flow_run")) useFlowRunStore.getState().restore(snapshotSessionId, data.flow_run, Number(data.flow_run_event_seq || asRecord(data.flow_run).event_seq || 0));
           const restoredTasks = toTodoItems(data.tasks ?? data.todos ?? data.items);
           if (restoredTasks.length > 0) {

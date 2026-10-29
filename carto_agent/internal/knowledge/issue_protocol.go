@@ -59,7 +59,7 @@ func canonicalModelIssueField(kind, field string) string {
 
 func issueProtocolInstructions() string {
 	var out strings.Builder
-	out.WriteString("\nunresolved 协议：每项必须含非空 id、message、subject_refs 和 source_refs；subject_refs 只引用本次 graph 中已存在且符合以下类别的对象ID，source_refs 只复制 source_evidence.ref。\n")
+	out.WriteString("\nunresolved 协议：每项必须含非空 id、message 和 source_refs；对象疑问的 subject_refs 只引用本次 graph 中已存在且符合以下类别的对象ID，source_refs 只复制 source_evidence.ref。原文缺少可抽取内容等整体问题使用 kind=source、field=content、subject_refs=[]，保留具体原因，不虚构对象来绑定问题。\n")
 	for _, protocol := range issueProtocols {
 		out.WriteString("kind=")
 		out.WriteString(protocol.kind)

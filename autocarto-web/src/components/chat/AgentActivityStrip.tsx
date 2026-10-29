@@ -13,12 +13,14 @@ interface Props {
 
 const statusLabel: Record<WorkflowBlock['status'], string> = {
   running: '进行中',
+  waiting_user: '等待确认',
   completed: '已完成',
   error: '异常',
 }
 
 const statusClassName: Record<WorkflowBlock['status'], string> = {
   running: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800',
+  waiting_user: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800',
   completed: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800',
   error: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800',
 }

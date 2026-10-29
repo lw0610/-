@@ -25,15 +25,15 @@ def main():
             result = handler(args)
         elif name == 'verify_basemap':
             from autocarto.tools.system._shared.data_loading_impl import load_list_handler
-            from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
+            from autocarto.tools.system.cartography.handlers.style import load_styles_handler
             from qgis.core import QgsProject
-            loaded = load_list_handler({'data_list': args['data_list'], 'strict': True})
+            loaded = load_list_handler({'items': args['items'], 'strict': True, 'reuse_existing': True})
             if not loaded['success']:
                 result = loaded
             else:
                 layers = list(QgsProject.instance().mapLayers().values())
-                styled = apply_style_set_handler({'style_set': args['style_set'], 'layers': [layer.id() for layer in layers], 'strict': True})
-                reused = load_list_handler({'data_list': args['data_list'], 'strict': True})
+                styled = load_styles_handler({'items': args['styles']})
+                reused = load_list_handler({'items': args['items'], 'strict': True, 'reuse_existing': True})
                 result = {'success': styled['success'] and reused['success'], 'load': loaded, 'style': styled, 'reuse': reused,
                           'layers': {layer.name(): {'source': layer.source(), 'fields': layer.fields().names(), 'count': layer.featureCount(), 'crs': layer.crs().authid()} for layer in layers}}
         else:

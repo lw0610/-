@@ -3,18 +3,14 @@ package websocket
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"path/filepath"
-	"reflect"
-	"strings"
 
 	"github.com/autocarto/carto_agent/internal/agentruntime"
 	"github.com/autocarto/carto_agent/internal/config"
-	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/dataservice"
 	"github.com/autocarto/carto_agent/internal/flowrun"
+	"github.com/autocarto/carto_agent/internal/plan"
 	"github.com/autocarto/carto_agent/internal/resource"
-	"github.com/autocarto/carto_agent/internal/runtimecontrol"
 	"github.com/autocarto/carto_agent/internal/session"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/schema"
@@ -33,52 +29,11 @@ type flowSessionContext struct {
 	FlowRunID      string
 }
 type flowRuntimeBinding struct{ server *DeepServer }
-type sessionFlowService struct {
-	server  *DeepServer
-	session flowSessionContext
-}
-type flowTaskRequest struct {
-	ID                  string         `json:"id"`
-	Inputs              map[string]any `json:"inputs"`
-	ResumeRunID         string         `json:"resume_run_id,omitempty"`
-	ResourceChoice      string         `json:"resume_resource_choice,omitempty"`
-	ResourceFingerprint string         `json:"resource_fingerprint,omitempty"`
-}
 
-// SetFlowCompiler attaches the same compiler used by the flow editor HTTP API.
-func (s *DeepServer) SetFlowCompiler(compiler flowrun.Compiler) error {
-	if compiler == nil {
-		return fmt.Errorf("流程编译器不能为空")
-	}
-	registry := flowrun.NewExecutorRegistry()
-	if err := registry.Register(flowrun.NewRouteKnowledgeExecutor()); err != nil {
-		return err
-	}
-	binding := flowRuntimeBinding{server: s}
-	controller, err := flowrun.NewController(flowrun.Options{Lifecycle: s.flowLifecycle, AcquisitionFactory: binding.acquisitionEngine, Compiler: compiler, Runner: binding, Tools: binding, Model: binding, Events: binding, Store: flowrun.FileRunStore{}, Executors: registry})
-	if err != nil {
-		return err
-	}
-	if err := s.markStoredFlowsInterrupted(context.Background()); err != nil {
-		return err
-	}
+func (s *DeepServer) flowDependencies() (any, *flowrun.Controller) {
 	s.flowMu.Lock()
 	defer s.flowMu.Unlock()
-	s.flowCompiler = compiler
-	s.flowController = controller
-	if s.flowContexts == nil {
-		s.flowContexts = map[string]flowSessionContext{}
-	}
-	if s.pendingFlows == nil {
-		s.pendingFlows = map[string]flowrun.StartRequest{}
-	}
-	return nil
-}
-
-func (s *DeepServer) flowDependencies() (flowrun.Compiler, *flowrun.Controller) {
-	s.flowMu.Lock()
-	defer s.flowMu.Unlock()
-	return s.flowCompiler, s.flowController
+	return nil, s.flowController
 }
 func (s *DeepServer) flowContext(id string) (flowSessionContext, bool) {
 	s.flowMu.Lock()
@@ -118,6 +73,13 @@ func (s *DeepServer) flowBuilder() (agentruntime.FlowBuilder, *config.AgentConfi
 
 func (binding flowRuntimeBinding) Run(ctx context.Context, request flowrun.StepRequest) (flowrun.StepResult, error) {
 	ctx = resource.WithScope(ctx, resource.Scope{FlowID: request.FlowID, FlowDir: request.FlowDir, Lock: request.Lock, Linked: request.Resources})
+	if request.Acquisition != nil {
+		var selection dataservice.Selection
+		if err := json.Unmarshal(request.Acquisition.Selection, &selection); err != nil {
+			return flowrun.StepResult{}, fmt.Errorf("读取数据获取交接失败: %w", err)
+		}
+		ctx = dataservice.WithAcquisitionSelection(ctx, selection)
+	}
 	s := binding.server
 	run, ok := s.flowContext(request.SessionID)
 	if !ok {
@@ -147,6 +109,31 @@ func (binding flowRuntimeBinding) Run(ctx context.Context, request flowrun.StepR
 	result := s.runAgentPhase(ctx, run.Conn, request.SessionID, run.ProjectPath, run.InstanceID, run.Session, agent, request.Messages, consumeEventsOptions{runID: request.RunID, emitFinalResponse: false, persistAssistant: true, modePhase: modeStatePhaseBuilding, executionMode: executionModeBuild, flowRunID: request.FlowRunID, flowStepID: request.Step.ID, originalSource: &original})
 	return flowrun.StepResult{LastContent: result.LastContent, Interrupted: result.Interrupted, SuccessfulTools: result.SuccessfulTools, Err: result.Err}, result.Err
 }
+
+// An ADK resume starts with a fresh context. Restore the exact query from the
+// controller's checked snapshot, rather than copying it into another checkpoint.
+func withRunAcquisitionSnapshot(ctx context.Context, state *flowrun.RunState) (context.Context, error) {
+	if state == nil || state.Cursor < 0 || state.Cursor >= len(state.Steps) {
+		return ctx, nil
+	}
+	step := state.Steps[state.Cursor]
+	if len(step.Attempts) == 0 {
+		return ctx, nil
+	}
+	attempt := step.Attempts[len(step.Attempts)-1]
+	if attempt.Mode != "acquire" {
+		return ctx, nil
+	}
+	if state.CartoPlan == nil || attempt.DataID == "" {
+		return ctx, fmt.Errorf("数据获取恢复缺少已确认的数据引用")
+	}
+	data, ok := state.CartoPlan.DataByID(attempt.DataID)
+	var selection dataservice.Selection
+	if !ok || json.Unmarshal(state.Selections[attempt.DataID], &selection) != nil || selection.FindID != data.FindID || !selection.RequiresDiscovery() {
+		return ctx, fmt.Errorf("数据获取恢复缺少匹配的已确认来源")
+	}
+	return dataservice.WithAcquisitionSelection(ctx, selection), nil
+}
 func (binding flowRuntimeBinding) Invoke(ctx context.Context, name string, args map[string]any) (any, error) {
 	builder, _, err := binding.server.flowBuilder()
 	if err != nil {
@@ -167,6 +154,24 @@ func (binding flowRuntimeBinding) Emit(ctx context.Context, event flowrun.Event)
 	raw, _ := json.Marshal(event)
 	data := map[string]any{}
 	_ = json.Unmarshal(raw, &data)
+	// Byte progress is transient: avoid rewriting the full plan (and emitting a
+	// second card event) on every download sample. The flow event carries it.
+	if event.PlanID != "" && event.Event != "flow.acquisition_progress" {
+		if store, e := planStore(run); e == nil {
+			snapshot, e := store.UpdateStatus(event.PlanID, event.PlanVersion, func(v *plan.Snapshot) error {
+				v.RunID = event.FlowRunID
+				if status, ok := event.Payload["status"].(string); ok {
+					v.Status = status
+				} else if event.Event == "flow.started" {
+					v.Status = "running"
+				}
+				return nil
+			})
+			if e == nil {
+				s.publishPlan(snapshot)
+			}
+		}
+	}
 	seq, _ := s.sendSessionMessageSequenced(run.Conn, Message{Type: MsgTypeFlowEvent, SessionID: event.SessionID, Data: data})
 	if event.Event == "flow.finished" {
 		status, _ := event.Payload["status"].(string)
@@ -194,227 +199,6 @@ func (binding flowRuntimeBinding) Emit(ctx context.Context, event flowrun.Event)
 	return int64(seq)
 }
 
-func (s *DeepServer) withFlowService(ctx context.Context, sessionID string) context.Context {
-	if run, ok := s.flowContext(sessionID); ok {
-		return runtimecontrol.WithFlowService(ctx, sessionFlowService{server: s, session: run})
-	}
-	return ctx
-}
-
-func (service sessionFlowService) PreviewFlow(ctx context.Context, id string, inputs map[string]any) (map[string]any, error) {
-	compiler, controller := service.server.flowDependencies()
-	if compiler == nil || controller == nil {
-		return nil, fmt.Errorf("流程服务未就绪")
-	}
-	plan, err := compiler.EnsureRunnable(ctx, id, service.session.Scheme)
-	var invalid *flow.ValidationError
-	if err != nil && !errors.As(err, &invalid) {
-		return nil, err
-	}
-	if plan == nil && invalid != nil {
-		plan = invalid.Plan
-	}
-	if plan == nil {
-		return nil, fmt.Errorf("流程计划不可用")
-	}
-	if err := validateOrchestratorAcquisition(plan, inputs); err != nil {
-		return nil, err
-	}
-	root, rootErr := config.ResolveProjectRoot()
-	if rootErr != nil {
-		return nil, rootErr
-	}
-	resolved, inputErr := flowrun.ResolveInputs(plan, inputs, service.session.OriginalSource, root)
-	missing := []string{}
-	problems := []flowrun.InputProblem{}
-	if inputErr != nil {
-		var bad *flowrun.InputError
-		if errors.As(inputErr, &bad) {
-			for _, reason := range bad.Reasons {
-				missing = append(missing, reason.Message)
-				problems = append(problems, flowrun.InputProblem{Label: reason.Input, Level: "error", Code: reason.Code, Message: reason.Message, Acquirable: reason.Acquirable, Step: reason.Step, Item: reason.Item, Candidates: reason.Candidates})
-			}
-		} else {
-			missing = append(missing, inputErr.Error())
-		}
-	}
-	if inputErr == nil {
-		linked, issues, checkErr := checkedAcquisitionPreview(ctx, compiler, plan, resolved, root)
-		if checkErr != nil {
-			return nil, checkErr
-		}
-		plan = linked
-		problems = append(problems, issues...)
-		for _, problem := range issues {
-			if problem.Level == "error" {
-				missing = append(missing, problem.Message)
-			}
-		}
-	}
-	return map[string]any{"flow_id": plan.FlowID, "name": plan.Name, "execution_mode": string(service.session.Mode), "plan": plan, "requirements": plan.Requirements, "acquisition_plan": plan.Acquisition, "diagnostics": plan.Diagnostics, "input_check": map[string]any{"missing": missing, "problems": problems, "valid": len(missing) == 0 && !plan.HasErrors()}}, nil
-}
-
-func (service sessionFlowService) StartFlow(ctx context.Context, id string, inputs map[string]any) (map[string]any, error) {
-	if service.session.Mode != executionModeBuild {
-		return nil, fmt.Errorf("规划模式只可预览流程")
-	}
-	if service.session.FlowRunID != "" {
-		return nil, fmt.Errorf("流程步骤中不能启动另一个流程")
-	}
-	preview, err := service.PreviewFlow(ctx, id, inputs)
-	if err != nil {
-		return nil, err
-	}
-	plan := preview["plan"].(*flow.FlowPlan)
-	if plan.HasErrors() {
-		return nil, &flow.ValidationError{Plan: plan, Diagnostics: plan.Diagnostics}
-	}
-	if check := preview["input_check"].(map[string]any); check["valid"] != true {
-		return nil, fmt.Errorf("流程输入未齐全：%v", check["missing"])
-	}
-	_, controller := service.server.flowDependencies()
-	runID, err := controller.NewRunID()
-	if err != nil {
-		return nil, err
-	}
-	sessionDir, err := config.ResolveSessionDir(service.session.ProjectPath, service.session.SessionID)
-	if err != nil {
-		return nil, err
-	}
-	root, err := config.ResolveProjectRoot()
-	if err != nil {
-		return nil, err
-	}
-	raw, err := json.Marshal(inputs)
-	if err != nil {
-		return nil, err
-	}
-	var copied map[string]any
-	if err = json.Unmarshal(raw, &copied); err != nil {
-		return nil, err
-	}
-	request := flowrun.StartRequest{FlowRunID: runID, SessionID: service.session.SessionID, SessionDir: sessionDir, ProjectRoot: root, ProjectPath: service.session.ProjectPath, FlowID: id, Scheme: service.session.Scheme, Inputs: copied, OriginalSource: service.session.OriginalSource, Origin: "orchestrator"}
-	s := service.server
-	s.flowMu.Lock()
-	defer s.flowMu.Unlock()
-	if existing, ok := s.pendingFlows[request.SessionID]; ok {
-		if existing.FlowID == id && reflect.DeepEqual(existing.Inputs, copied) {
-			return map[string]any{"accepted": true, "flow_run_id": existing.FlowRunID, "acquire": plannedAcquisitionSummary(plan)}, nil
-		}
-		return nil, fmt.Errorf("本轮已登记另一个待启动流程")
-	}
-	s.pendingFlows[request.SessionID] = request
-	return map[string]any{"accepted": true, "flow_run_id": runID, "acquire": plannedAcquisitionSummary(plan)}, nil
-}
-
-func (s *DeepServer) hasPendingFlow(sessionID string) bool {
-	s.flowMu.Lock()
-	defer s.flowMu.Unlock()
-	_, ok := s.pendingFlows[sessionID]
-	return ok
-}
-func (s *DeepServer) startPendingFlow(ctx context.Context, sessionID string) (*flowrun.RunState, error) {
-	s.flowMu.Lock()
-	request, ok := s.pendingFlows[sessionID]
-	delete(s.pendingFlows, sessionID)
-	run := s.flowContexts[sessionID]
-	if ok {
-		run.FlowRunID = request.FlowRunID
-		s.flowContexts[sessionID] = run
-	}
-	controller := s.flowController
-	s.flowMu.Unlock()
-	if !ok {
-		return nil, nil
-	}
-	return controller.Start(withToolSessionContext(ctx, run.SessionID, run.ProjectPath, run.InstanceID), request)
-}
-
-func parseFlowRequest(data map[string]any) (*flowTaskRequest, error) {
-	raw, exists := data["flow"]
-	if !exists || raw == nil {
-		return nil, nil
-	}
-	encoded, err := json.Marshal(raw)
-	if err != nil {
-		return nil, err
-	}
-	var request flowTaskRequest
-	if err = json.Unmarshal(encoded, &request); err != nil {
-		return nil, fmt.Errorf("流程参数格式无效: %w", err)
-	}
-	if strings.TrimSpace(request.ID) == "" && strings.TrimSpace(request.ResumeRunID) == "" {
-		return nil, fmt.Errorf("流程编号不能为空")
-	}
-	request.ID = strings.TrimSpace(request.ID)
-	return &request, nil
-}
-
-func (s *DeepServer) runDirectFlow(ctx context.Context, run flowSessionContext, request flowTaskRequest) (*flowrun.RunState, error) {
-	ctx = withToolSessionContext(ctx, run.SessionID, run.ProjectPath, run.InstanceID)
-	_, controller := s.flowDependencies()
-	if controller == nil {
-		return nil, fmt.Errorf("流程服务尚未初始化")
-	}
-	sessionDir, err := config.ResolveSessionDir(run.ProjectPath, run.SessionID)
-	if err != nil {
-		return nil, err
-	}
-	if request.ResumeRunID != "" {
-		state, loadErr := (flowrun.FileRunStore{}).Load(ctx, sessionDir, request.ResumeRunID)
-		if loadErr != nil {
-			return nil, loadErr
-		}
-		source, err := s.findOriginalFlowSource(ctx, run, sessionDir, request.ResumeRunID)
-		if err != nil {
-			return nil, err
-		}
-		run.OriginalSource = source
-		run.FlowRunID = request.ResumeRunID
-		run.Scheme = state.Scheme
-		s.setFlowContext(run)
-		resume := flowrun.ResumeRequest{SessionID: run.SessionID, SessionDir: sessionDir, FlowRunID: request.ResumeRunID, OriginalSource: source, ResourceChoice: request.ResourceChoice, ResourceFingerprint: request.ResourceFingerprint}
-		if request.ResourceChoice == "restart" {
-			previous, _ := s.getPendingInterrupt(run.SessionID)
-			restarted, err := controller.Restart(ctx, resume)
-			if resourceChangePending(err) {
-				return restarted, nil
-			}
-			if restarted != nil && restarted.ID != request.ResumeRunID {
-				s.discardOldFlowCheckpoint(ctx, run.SessionID, run.ProjectPath, request.ResumeRunID, previous)
-			}
-			return restarted, err
-		}
-		if state.Status == "waiting_user" {
-			pending, err := s.restoreFlowPending(ctx, run.SessionID, run.ProjectPath, request.ResumeRunID, resume)
-			if resourceChangePending(err) {
-				paused, _ := (flowrun.FileRunStore{}).Load(ctx, sessionDir, request.ResumeRunID)
-				return paused, nil
-			}
-			if err == nil {
-				s.sendSessionMessage(run.Conn, Message{Type: MsgTypeInterruptRequest, SessionID: run.SessionID, Content: "任务需要您的确认才能继续", Data: pendingInterruptPayload(pending)})
-			}
-			return state, err
-		}
-		resumed, err := controller.Resume(ctx, resume)
-		if resourceChangePending(err) {
-			return resumed, nil
-		}
-		return resumed, err
-	}
-	root, err := config.ResolveProjectRoot()
-	if err != nil {
-		return nil, err
-	}
-	id, err := controller.NewRunID()
-	if err != nil {
-		return nil, err
-	}
-	run.FlowRunID = id
-	s.setFlowContext(run)
-	return controller.Start(ctx, flowrun.StartRequest{FlowRunID: id, SessionID: run.SessionID, SessionDir: sessionDir, ProjectRoot: root, ProjectPath: run.ProjectPath, FlowID: request.ID, Scheme: run.Scheme, Inputs: request.Inputs, OriginalSource: run.OriginalSource, Origin: "direct"})
-}
-
 func (s *DeepServer) findOriginalFlowSource(ctx context.Context, run flowSessionContext, dir, id string) (string, error) {
 	state, err := (flowrun.FileRunStore{}).Load(ctx, dir, id)
 	if err != nil {
@@ -437,13 +221,8 @@ func (s *DeepServer) findOriginalFlowSource(ctx context.Context, run flowSession
 				continue
 			}
 			if ref, ok := state.Inputs[input.Key].(map[string]any); ok && ref["$ref"] == "current_user_message" {
-				resolved, resolveErr := flowrun.ResolveInputs(&flow.FlowPlan{Inputs: []flow.InputPlan{input}}, nil, messages[i].Content, filepath.Dir(dir))
-				if resolveErr != nil {
-					valid = false
-					break
-				}
 				before, _ := json.Marshal(ref)
-				after, _ := json.Marshal(resolved[input.Key])
+				after, _ := json.Marshal(flowrun.ConversationReference(messages[i].Content))
 				valid = string(before) == string(after)
 				if !valid {
 					break
@@ -478,32 +257,19 @@ func (s *DeepServer) finishFlowResume(ctx context.Context, pending *PendingInter
 	if controller == nil {
 		return
 	}
-	if _, err := controller.OnStepRunFinished(ctx, pending.CheckpointID, flowrun.StepResult{LastContent: result.LastContent, Interrupted: result.Interrupted, SuccessfulTools: result.SuccessfulTools, Err: result.Err}); err != nil {
-		s.sendSessionError(nil, pending.SessionID, fmt.Sprintf("继续流程失败: %v", err))
+	state, err := controller.OnStepRunFinished(ctx, pending.CheckpointID, flowrun.StepResult{LastContent: result.LastContent, Interrupted: result.Interrupted, SuccessfulTools: result.SuccessfulTools, Err: result.Err})
+	run, _ := s.flowContext(pending.SessionID)
+	s.publishCartographicRun(run, state)
+	if err != nil {
+		s.sendSessionError(nil, pending.SessionID, fmt.Sprintf("继续计划失败: %v", err))
+		return
 	}
-}
-func (s *DeepServer) injectAvailableFlows(ctx context.Context, input []*schema.Message, scheme string) []*schema.Message {
-	compiler, _ := s.flowDependencies()
-	catalog, ok := compiler.(interface {
-		AvailablePlans(context.Context, string) ([]*flow.FlowPlan, error)
-	})
-	if !ok {
-		return input
-	}
-	plans, err := catalog.AvailablePlans(ctx, scheme)
-	if err != nil || len(plans) == 0 {
-		return input
-	}
-	summaries := []map[string]any{}
-	for _, p := range plans {
-		app := []rune(p.Applicability)
-		if len(app) > 300 {
-			app = app[:300]
+	if state != nil && state.CartoPlan != nil && state.Status == "needs_replan" {
+		if err = s.replanCartographic(ctx, run, state); err == nil && s.hasPendingCartographicPlan(run.SessionID) {
+			_, err = s.startPendingCartographicPlan(ctx, run.SessionID)
 		}
-		summaries = append(summaries, map[string]any{"id": p.FlowID, "name": p.Name, "triggers": p.Triggers, "applicability": string(app), "inputs": flowInputSummaries(p.Inputs), "acquisition_policy": acquisitionPolicyRules(p.AutoAcquire)})
+		if err != nil {
+			s.sendSessionError(nil, pending.SessionID, err.Error())
+		}
 	}
-	raw, _ := json.Marshal(summaries)
-	message := schema.SystemMessage("当前方案可运行流程：" + string(raw) + "\n匹配用户任务时可使用 flow_preview 查看步骤与输入、flow_start 登记执行。conversation_text 输入引用当前用户消息。按各流程 acquisition_policy 处理缺失数据；其他必填输入缺失才询问。流程说明由前置步骤取得的可选数据缺失时留空，由该步骤使用专业角色的在线工具获取；未声明系统获取的数据输入也不传自动获取标记。规划模式只预览。[flow_acquire:common] acquire_available=false 时不得传 $acquire/$fill；不得编造路径；source/sources 来源编号只由表单设置，编排工具不得指定；用户已提供数据时优先使用用户数据。")
-	result := append([]*schema.Message{}, input...)
-	return append(result, message)
 }

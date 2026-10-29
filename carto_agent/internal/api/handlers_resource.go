@@ -5,8 +5,10 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"os"
 	"strconv"
 
+	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/gorilla/mux"
 )
@@ -37,7 +39,11 @@ func (a *API) setupResourceRoutes(router *mux.Router) {
 	router.HandleFunc("/resources/import", a.handleImportResource).Methods("POST", "OPTIONS")
 	router.HandleFunc("/resources/bindings", a.handleResourceBinding).Methods("PUT", "OPTIONS")
 	router.HandleFunc("/resources/by-id/{id}", a.handleResourceByID).Methods("GET", "OPTIONS")
+	router.HandleFunc("/resources/by-id/{id}", a.handleResourceMetadata).Methods("PATCH", "OPTIONS")
+	router.HandleFunc("/resources/by-id/{id}/export", a.handleResourceExport).Methods("POST", "OPTIONS")
+	router.HandleFunc("/resources/by-id/{id}/preview", a.handleRegenerateResourcePreview).Methods("POST", "OPTIONS")
 	router.HandleFunc("/resources/by-id/{id}/preview", a.handleResourcePreview).Methods("GET", "OPTIONS")
+	router.HandleFunc("/resources/by-id/{id}/preview-layer", a.handleResourceLayerPreview).Methods("POST", "OPTIONS")
 	router.HandleFunc("/resources/{id}/copy", a.handleCopyResource).Methods("POST", "OPTIONS")
 	router.HandleFunc("/resources/{id}/content", a.handleReplaceResource).Methods("PUT", "OPTIONS")
 	router.HandleFunc("/resources/{id}/references", a.handleResourceReferences).Methods("GET", "OPTIONS")
@@ -115,6 +121,7 @@ func (a *API) handleResources(w http.ResponseWriter, r *http.Request) {
 		Success(w, rows)
 		return
 	}
+	a.queueResourcePreviews(library)
 	Success(w, items)
 }
 
@@ -180,11 +187,27 @@ func (a *API) handleImportResource(w http.ResponseWriter, r *http.Request) {
 		resourceError(w, err)
 		return
 	}
+	if source, pathErr := config.ResolveProjectPath(request.Source); pathErr == nil {
+		request.Source = source
+	}
+	if info, statErr := os.Stat(request.Source); statErr == nil && info.IsDir() {
+		if _, detectErr := resource.DetectPublicType(request.Source); detectErr != nil {
+			result, err := library.ImportMany(request.Source)
+			if err != nil {
+				resourceError(w, err)
+				return
+			}
+			a.queueResourcePreviews(library)
+			Success(w, result)
+			return
+		}
+	}
 	item, err := library.ImportNamed(request.Source, request.Type, request.Name)
 	if err != nil {
 		resourceError(w, err)
 		return
 	}
+	a.queueResourcePreviews(library)
 	Success(w, item)
 }
 
@@ -272,6 +295,7 @@ func (a *API) handleReplaceResource(w http.ResponseWriter, r *http.Request) {
 		resourceError(w, err)
 		return
 	}
+	a.queueResourcePreviews(library)
 	Success(w, result)
 }
 func (a *API) handleResourceReferences(w http.ResponseWriter, r *http.Request) {

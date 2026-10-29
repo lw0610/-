@@ -11,7 +11,7 @@ spec:
   parameters:
     - name: layer_name
       type: string
-      description: 图层名称，如果不指定则使用活动图层
+      description: 图层 ID 或唯一名称；优先使用上一步返回的 layer_id，不指定时使用活动图层
     - name: max_features
       type: integer
       description: "最多返回的要素数量（数量，正整数）"

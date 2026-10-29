@@ -23,8 +23,16 @@ type InvokeRequest struct {
 }
 
 type OutputLayer struct {
-	Path     string `json:"path"`
-	AutoLoad bool   `json:"auto_load"`
+	Path          string   `json:"path,omitempty"`
+	AutoLoad      bool     `json:"auto_load"`
+	LayerID       string   `json:"layer_id,omitempty"`
+	Name          string   `json:"name,omitempty"`
+	Source        string   `json:"source,omitempty"`
+	ReferenceType string   `json:"reference_type,omitempty"`
+	Provider      string   `json:"provider,omitempty"`
+	GeometryType  string   `json:"geometry_type,omitempty"`
+	FeatureCount  int64    `json:"feature_count,omitempty"`
+	Fields        []string `json:"fields,omitempty"`
 }
 
 type InvokeResponse struct {

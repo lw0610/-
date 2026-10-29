@@ -8,6 +8,7 @@ tags:
 - layout
 - print
 tools:
+- resource_preview
 - layout_add_callouts
 - layout_info
 - layout_create

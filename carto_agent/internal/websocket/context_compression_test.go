@@ -154,19 +154,19 @@ func TestCompressContextMessagesPreservesStructuredToolResult(t *testing.T) {
 		if role != "tool" {
 			continue
 		}
-		// 修复后 tool message 的 UserInputMultiContent 会被清洗：
-		// 文本 part 合并到 content 字段，user_input_multi_content 被清空
-		content, _ := item["content"].(string)
-		if strings.Contains(content, `"success":true`) {
-			// UserInputMultiContent 应已被清洗
-			if _, hasUIMC := item["user_input_multi_content"]; !hasUIMC {
-				foundStructured = true
-				break
-			}
+		// Recent tool results remain structured in durable history. Provider
+		// conversion must happen at the model boundary, not while restoring or
+		// compressing messages, otherwise attachments disappear on continuation.
+		parts, ok := item["user_input_multi_content"].([]any)
+		if ok && len(parts) == 2 {
+			text, _ := parts[0].(map[string]any)
+			file, _ := parts[1].(map[string]any)
+			meta, _ := file["file"].(map[string]any)
+			foundStructured = text["text"] == `{"success":true,"image":"preview.png"}` && meta["url"] == "file:///tmp/preview.png" && item["tool_call_id"] == "call-1"
 		}
 	}
 	if !foundStructured {
-		t.Fatalf("expected tool result content to be degraded from UserInputMultiContent: %#v", result.CompressedContext)
+		t.Fatalf("expected original structured tool result to survive compression: %#v", result.CompressedContext)
 	}
 }
 

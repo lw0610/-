@@ -10,7 +10,7 @@ import { useChatStore } from '@/stores/chatStore'
 import { useConnectionStore } from '@/stores/connectionStore'
 import { useInstanceStore } from '@/stores/instanceStore'
 import { useSessionStore } from '@/stores/sessionStore'
-import type { FlowSubmission, FlowRunState, ResourceResumeChoice } from '@/features/flow-run/types'
+import type { ChatInputMetadata } from '@/types/message'
 
 interface UseChatMessagingParams {
   ensureSession: () => Promise<string | null>
@@ -69,7 +69,7 @@ export function useChatMessaging({ ensureSession }: UseChatMessagingParams) {
     return fallbackCheckpointId
   }, [pendingInterrupts])
 
-  const handleSend = useCallback(async (content: string, flow?: FlowSubmission) => {
+  const handleSend = useCallback(async (content: string, metadata?: ChatInputMetadata) => {
     if (!connected) {
       addMessage({
         type: 'error',
@@ -101,21 +101,22 @@ export function useChatMessaging({ ensureSession }: UseChatMessagingParams) {
     }
 
     setSessionId(sessionId)
-    addMessage({ type: 'user', content })
+    addMessage({ type: 'user', content, ...(metadata ? { data: { ...metadata } } : {}) })
     setRunning(true)
     setThinking(true)
 
-    const taskRequestId = flow ? `task-${generateId()}` : ''
+    const taskRequestId = `task-${generateId()}`
     const sendPayload = {
       execution_mode: executionMode,
       run_intent: executionModeToRunIntent(executionMode),
       thinking_enabled: thinkingEnabled,
       project_path: projectPath,
       instance_id: activeInstanceId,
-      ...(flow ? { flow, request_id: taskRequestId, idempotency_key: taskRequestId } : {}),
+      ...metadata,
+      request_id: taskRequestId, idempotency_key: taskRequestId,
     }
 
-    const send = () => flow ? wsClient.sendTask(content, sessionId, sendPayload) : wsClient.sendChat(content, sessionId, sendPayload)
+    const send = () => wsClient.sendChat(content, sessionId, sendPayload)
     let sent = send()
     if (!sent && await waitForRealtimeConnection()) {
       sent = send()
@@ -156,11 +157,6 @@ export function useChatMessaging({ ensureSession }: UseChatMessagingParams) {
       })
     }
   }, [activeSessionId, addMessage, chatSessionId, setThinking])
-
-  const handleResumeFlow = useCallback((run: FlowRunState, choice?: ResourceResumeChoice) => handleSend(`${choice === 'restart' ? '重新开始' : '继续'}流程「${run.plan?.name || run.name || run.flow_id}」`, {
-    id: run.flow_id, resume_run_id: run.flow_run_id,
-    ...(choice ? { resume_resource_choice: choice, resource_fingerprint: run.resource_change?.fingerprint } : {}),
-  }), [handleSend])
 
   const handleInterruptApprove = useCallback((checkpointId: string, payload?: unknown) => {
     const finalCheckpointId = resolveInterruptCheckpointId(checkpointId)
@@ -296,7 +292,6 @@ export function useChatMessaging({ ensureSession }: UseChatMessagingParams) {
     handleInterruptApprove,
     handleInterruptReject,
     handleSend,
-    handleResumeFlow,
     interruptSubmitting,
     isRunning,
     isThinking,

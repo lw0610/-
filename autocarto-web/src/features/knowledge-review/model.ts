@@ -1,4 +1,4 @@
-import type { InterruptRequestData } from '@/types/message'
+import type { InterruptRequestData, WorkflowBlock, WorkflowEntry } from '@/types/message'
 
 export type ReviewTab = 'routes' | 'events' | 'spatial_entities' | 'actors' | 'callouts'
 export type GraphItem = Record<string, unknown> & { name?: string; evidence_refs?: string[] }
@@ -30,7 +30,7 @@ export interface ExtractionCompletion {
 }
 export interface ReviewReference {
   session_id: string; review_id: string; checkpoint_id: string
-  revision?: number; status?: string; summary?: unknown
+  revision?: number; status?: string; summary?: unknown; description?: string; can_start?: boolean; updated_at?: string; errors?: ReviewIssue[]
 }
 export interface ReviewDocument extends ReviewReference {
   revision: number; status: string; graph: KnowledgeGraph; source_text: string
@@ -38,7 +38,7 @@ export interface ReviewDocument extends ReviewReference {
   extraction_status?: string
   extraction_completion?: ExtractionCompletion
 }
-export type ReviewSummary = Pick<ReviewDocument, 'revision' | 'status'> & { pending_count?: number; counts?: Partial<Record<ReviewTab, number>> }
+export type ReviewSummary = Pick<ReviewDocument, 'revision' | 'status' | 'updated_at' | 'errors'> & { pending_count?: number; counts?: Partial<Record<ReviewTab, number>>; empty_reason?: string }
 export const tabs: Array<{ key: ReviewTab; label: string }> = [
   { key: 'routes', label: '路线' }, { key: 'events', label: '事件' },
   { key: 'spatial_entities', label: '地点' }, { key: 'actors', label: '部队' },
@@ -73,6 +73,9 @@ export function visibleItems(graph: KnowledgeGraph, tab: ReviewTab): GraphItem[]
 }
 export function reviewCounts(graph: KnowledgeGraph): Partial<Record<ReviewTab, number>> {
   return Object.fromEntries(tabs.map(({ key }) => [key, visibleItems(graph, key).length]))
+}
+export function hasExtractedContent(graph: KnowledgeGraph): boolean {
+  return tabs.some(({ key }) => visibleItems(graph, key).length > 0)
 }
 export function routeReferences(graph: KnowledgeGraph): GraphItem[] {
   return items(graph, 'routes').flatMap((route) => (Array.isArray(route.paths) ? route.paths as RoutePath[] : [])
@@ -135,7 +138,7 @@ export function issueLabel(issue: ReviewIssue, graph?: KnowledgeGraph | null): s
 export function reviewKey(ref: ReviewReference) { return `${ref.session_id}/${ref.review_id}` }
 export function editable(status: string) { return status === 'awaiting_review' || status === 'compile_failed' }
 export function statusLabel(status?: string) {
-  return ({ awaiting_review: '可编辑', compiling: '正在制图', compiled: '已提交', compile_failed: '生成失败，可修改重试' } as Record<string, string>)[status || ''] || '读取状态中'
+  return ({ awaiting_review: '可编辑', compiling: '正在生成制图数据', compiled: '制图数据已生成', compile_failed: '制图数据生成失败' } as Record<string, string>)[status || ''] || '读取状态中'
 }
 export function parseReviewReference(interrupt?: InterruptRequestData | null, sessionId = ''): ReviewReference | null {
   for (const context of interrupt?.interrupt_contexts || []) {
@@ -148,9 +151,36 @@ export function parseReviewReference(interrupt?: InterruptRequestData | null, se
       checkpoint_id: String(interrupt?.checkpoint_id || ''),
       revision: typeof payload.revision === 'number' ? payload.revision : undefined,
       status: typeof payload.status === 'string' ? payload.status : undefined, summary: payload.summary,
+      description: typeof payload.description === 'string' ? payload.description : undefined,
+      can_start: typeof payload.can_start === 'boolean' ? payload.can_start : undefined,
+      updated_at: typeof payload.updated_at === 'string' ? payload.updated_at : undefined,
+      errors: Array.isArray(payload.errors) ? payload.errors as ReviewIssue[] : undefined,
     }
   }
   return null
+}
+
+export function reviewProgressSummary(ref: ReviewReference): string {
+  if (ref.status === 'compile_failed') return `制图数据生成失败：${ref.errors?.[0]?.message || ref.description || '请查看失败详情。'}`
+  if (ref.status === 'compiling') return '正在将已确认的知识结果转换为制图数据。'
+  if (ref.status === 'compiled') return '制图数据已生成，继续执行后续制图。'
+  return '知识抽取结果已保存，等待确认后继续制图。'
+}
+
+export function updateReviewProcess(blocks: WorkflowBlock[], ref: ReviewReference, activeId: string | null, timestamp: number, agent = 'orchestrator') {
+  let index = blocks.findIndex(block => block.id === activeId)
+  if (index < 0 && blocks.at(-1)?.entries.some(entry => entry.phase === 'knowledge_review' && entry.data?.review_id === ref.review_id)) index = blocks.length - 1
+  const existing = blocks[index]
+  const status: WorkflowBlock['status'] = ref.status === 'compile_failed' ? 'error' : ref.status === 'compiling' ? 'running' : ref.status === 'compiled' ? 'completed' : 'waiting_user'
+  const content = reviewProgressSummary(ref)
+  const entry: WorkflowEntry = { id: `knowledge-review-${ref.review_id}`, type: 'status', phase: 'knowledge_review', content, timestamp, data: { ...ref } }
+  const entries = existing?.entries || []
+  const updated: WorkflowBlock = {
+    ...(existing || { id: `review-process-${ref.review_id}-${timestamp}`, agent, agentDisplayName: agent === 'orchestrator' ? '主智能体' : agent, startedAt: timestamp }),
+    status, summary: content, updatedAt: timestamp, finishedAt: status === 'error' || status === 'completed' ? timestamp : undefined,
+    entries: entries.some(item => item.id === entry.id) ? entries.map(item => item.id === entry.id ? entry : item) : [...entries, entry],
+  }
+  return { blocks: index < 0 ? [...blocks, updated] : blocks.map((block, i) => i === index ? updated : block), activeId: updated.id }
 }
 export function updateItem(graph: KnowledgeGraph, tab: ReviewTab, id: string, patch: Record<string, unknown>): KnowledgeGraph {
   return { ...graph, [tab]: items(graph, tab).map((item) => itemId(item, tab) === id ? { ...item, ...patch, [idFields[tab]]: id } : item) }

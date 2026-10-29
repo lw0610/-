@@ -3,13 +3,12 @@ import {beforeEach,describe,it,expect,vi} from 'vitest'
 import {render,screen,fireEvent,waitFor} from '@testing-library/react'
 import ToolPackageSelector from '@/components/settings/ToolPackageSelector'
 import AgentEditDrawer from '@/components/settings/AgentEditDrawer'
-import AgentFlowSelection from '@/components/settings/AgentFlowSelection'
 import ToolCatalogView from '@/components/tool-center/ToolCatalogView'
 import ToolPackageBindings from '@/components/settings/ToolPackageBindings'
 import {useSettingsStore} from '@/stores/settingsStore'
 import type {SkillPackageSummary} from '@/lib/api'
 const mocks=vi.hoisted(()=>({detail:vi.fn(),catalog:vi.fn(),flows:vi.fn()}))
-vi.mock('@/features/flows/api',()=>({flowApi:{list:mocks.flows}}))
+vi.mock('@/features/guides/api',()=>({guideApi:{list:mocks.flows}}))
 vi.mock('@/lib/api',async(importOriginal)=>({...await importOriginal<typeof import('@/lib/api')>(),default:{getSkillPackage:mocks.detail,getToolCatalog:mocks.catalog}}))
 const pkg=(name:string,extra:Partial<SkillPackageSummary>={}):SkillPackageSummary=>({package_id:name,name,display_name:'几何处理',kind:'category',domain:'矢量',description:'通用方法',enabled:true,tags:[],requires_tools:[],tool_count:2,has_tools:true,has_config:false,...extra})
 describe('v2 role editor',()=>{
@@ -42,15 +41,6 @@ describe('v2 role editor',()=>{
     render(<AgentEditDrawer open mode="runtime" agentName="knowledge_engineer" agent={{kind:'agent',display_name:'普通角色',description:'',enabled:true,tool_packages:[],prompts:{}}} toolPackages={[pkg('geometry')]} modelOptions={[]} onClose={()=>{}} onSave={()=>{}}/>)
     expect(screen.getByRole('checkbox',{name:/几何处理/})).toBeInTheDocument()
     expect(screen.queryByLabelText('执行器类型')).not.toBeInTheDocument()
-  })
-  it('keeps explicit missing flow IDs while toggling known flows',async()=>{
-    const change=vi.fn()
-    render(<AgentFlowSelection scheme="custom" value={{enabled:['missing'],custom:'keep'}} onChange={change}/>)
-    expect(await screen.findByText('流程甲')).toBeInTheDocument()
-    expect(screen.queryByText('有警告')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('checkbox'))
-    expect(change).toHaveBeenCalledWith({enabled:['missing','flow-a'],custom:'keep'})
-    expect(mocks.flows).toHaveBeenCalledWith('custom')
   })
   it('handbook groups by real package and searches Chinese keywords',()=>{
     render(<ToolCatalogView loading={false} packages={[pkg('charts',{display_name:'统计图表'})]} items={[{name:'bar_chart',display_name:'绘制分类柱状图',description:'比较数值',keywords:['分类比较'],package_id:'charts',available:true},{name:'buffer',display_name:'生成缓冲区',package_id:'geometry'}]}/>)

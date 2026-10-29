@@ -6,7 +6,6 @@ import (
 
 	"github.com/cloudwego/eino/schema"
 
-	"github.com/autocarto/carto_agent/internal/llm"
 	"github.com/autocarto/carto_agent/internal/logger"
 	"github.com/autocarto/carto_agent/internal/session"
 )
@@ -109,9 +108,9 @@ func decodeStructuredSessionMessage(payload map[string]any) *schema.Message {
 		return nil
 	}
 
-	// 清洗 tool 消息的 UserInputMultiContent，避免 OpenAI 兼容后端 role 校验报错。
-	llm.SanitizeToolMultiContent([]*schema.Message{&msg})
-
+	// Keep media in durable history. Provider conversion happens on a copy of
+	// the full message sequence at the model boundary, where parallel tool
+	// replies can be preserved before appending user-role media context.
 	return &msg
 }
 

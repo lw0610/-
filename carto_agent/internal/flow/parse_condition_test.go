@@ -1,6 +1,7 @@
 package flow
 
 import (
+	"github.com/autocarto/carto_agent/internal/flow/legacy"
 	"reflect"
 	"testing"
 )
@@ -20,8 +21,8 @@ func TestParseAllMissingCondition(t *testing.T) {
 			for _, input := range tc.inputs {
 				want.Args = append(want.Args, ConditionRule{Op: "not_provided", Input: input})
 			}
-			if got := ParseCondition(tc.text); !reflect.DeepEqual(got, want) {
-				t.Fatalf("ParseCondition(%q) = %+v, want %+v", tc.text, got, want)
+			if got := legacy.ParseCondition(tc.text); !reflect.DeepEqual(got, want) {
+				t.Fatalf("legacy.ParseCondition(%q) = %+v, want %+v", tc.text, got, want)
 			}
 		})
 	}
@@ -32,7 +33,7 @@ func TestParseAllMissingCondition(t *testing.T) {
 		"未提供「统计表」且未提供「已有专题图层」时执行，否则跳过",
 		"未提供「统计表」且未提供「 」时执行",
 	} {
-		if got := ParseCondition(raw); got != nil {
+		if got := legacy.ParseCondition(raw); got != nil {
 			t.Errorf("ambiguous or unsupported condition %q was silently parsed as %+v", raw, got)
 		}
 	}

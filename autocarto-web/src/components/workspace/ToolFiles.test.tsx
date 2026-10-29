@@ -64,3 +64,11 @@ it('其他工具调用不显示文件入口', () => {
   )
   expect(screen.queryByText(/在文件区查看/)).not.toBeInTheDocument()
 })
+it('旧记录已收到结果但成败未知时显示已结束，不继续显示调用中或宣称成功', () => {
+  render(<ToolCallCard toolCard={{ id: 'unknown-result', tool: 'retain_fields', status: 'running', statusSource: 'unknown', startedAt: 100, finishedAt: 245, result: '"清理后的图层"' }} />)
+  expect(screen.getByText('已结束')).toBeInTheDocument()
+  expect(screen.getByText('已结束，结果未判定')).toBeInTheDocument()
+  expect(screen.queryByText('调用中')).not.toBeInTheDocument()
+  expect(screen.queryByText('执行中')).not.toBeInTheDocument()
+  expect(screen.queryByText('成功')).not.toBeInTheDocument()
+})

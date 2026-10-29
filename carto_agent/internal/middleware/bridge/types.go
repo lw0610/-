@@ -1,5 +1,7 @@
 package bridge
 
+import "github.com/autocarto/carto_agent/internal/compute"
+
 type ToolDefinition struct {
 	Name              string         `json:"name"`
 	Description       string         `json:"description"`
@@ -11,10 +13,7 @@ type ToolDefinition struct {
 	InstanceIDs       []string       `json:"instance_ids,omitempty"`
 }
 
-type OutputLayer struct {
-	Path     string `json:"path"`
-	AutoLoad bool   `json:"auto_load"`
-}
+type OutputLayer = compute.OutputLayer
 
 type InvokeResult struct {
 	Success             bool           `json:"success"`

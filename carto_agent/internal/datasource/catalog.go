@@ -154,6 +154,9 @@ func (c *Catalog) ParseSource(raw []byte, builtin bool) (Source, []Diagnostic) {
 		return s, ds
 	}
 	s.Builtin = builtin
+	if strings.TrimSpace(s.Handbook.GoodFor) == "" {
+		add("DS_HANDBOOK_MISSING", "warning", "数据源缺少适用范围手册")
+	}
 	if s.APIVersion != "data_source/v1" || !sourceID.MatchString(s.ID) || s.Name == "" || !contains([]string{"local_folder", "offline_asset", "http_file", "overpass", "ogc_wfs", "arcgis_rest", "tianditu", "gee", "portal", "web_search"}, s.Kind) {
 		add("DS_SCHEMA_INVALID", "error", "数据源版本、编号、名称或种类无效")
 	}

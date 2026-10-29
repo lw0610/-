@@ -95,14 +95,16 @@ type SkillSpec struct {
 }
 
 type SkillParameter struct {
-	Name            string `yaml:"name" json:"name"`
-	Type            string `yaml:"type" json:"type"`
-	ResourceType    string `yaml:"resource_type,omitempty" json:"resource_type,omitempty"`
-	DefaultResource string `yaml:"default_resource,omitempty" json:"default_resource,omitempty"`
-	Required        bool   `yaml:"required,omitempty" json:"required,omitempty"`
-	Description     string `yaml:"description,omitempty" json:"description,omitempty"`
-	Default         any    `yaml:"default,omitempty" json:"default,omitempty"`
-	Values          []any  `yaml:"values,omitempty" json:"values,omitempty"`
+	// Schema carries the complete JSON Schema for nested objects and arrays.
+	Schema          map[string]any `yaml:"schema,omitempty" json:"schema,omitempty"`
+	Name            string         `yaml:"name" json:"name"`
+	Type            string         `yaml:"type" json:"type"`
+	ResourceType    string         `yaml:"resource_type,omitempty" json:"resource_type,omitempty"`
+	DefaultResource string         `yaml:"default_resource,omitempty" json:"default_resource,omitempty"`
+	Required        bool           `yaml:"required,omitempty" json:"required,omitempty"`
+	Description     string         `yaml:"description,omitempty" json:"description,omitempty"`
+	Default         any            `yaml:"default,omitempty" json:"default,omitempty"`
+	Values          []any          `yaml:"values,omitempty" json:"values,omitempty"`
 }
 
 type SkillExample struct {
@@ -311,6 +313,7 @@ func (d SkillDefinition) Clone() SkillDefinition {
 		cloned.Spec.Parameters = make([]SkillParameter, len(d.Spec.Parameters))
 		for idx, param := range d.Spec.Parameters {
 			cloned.Spec.Parameters[idx] = param
+			cloned.Spec.Parameters[idx].Schema = cloneMapAny(param.Schema)
 			if len(param.Values) > 0 {
 				values := cloneAny(param.Values)
 				if typed, ok := values.([]any); ok {
@@ -477,7 +480,8 @@ func (d SkillDefinition) Validate() error {
 }
 
 func cloneMapAny(src map[string]any) map[string]any {
-	if len(src) == 0 {
+	// Empty objects are valid JSON Schemas; preserve {} instead of emitting null.
+	if src == nil {
 		return nil
 	}
 	out := make(map[string]any, len(src))

@@ -7,7 +7,7 @@ import { confirmDiscardChanges, useUnsavedChangesGuard } from '@/hooks/useUnsave
 import { useChatStore } from '@/stores/chatStore'
 import { useSessionStore } from '@/stores/sessionStore'
 import { reviewApi } from './api'
-import { editable, isPendingReviewDiagnostic, record, reviewCounts, reviewKey, routeReferences, validateGraph, visibleReviewIssues, type KnowledgeGraph, type ReviewDocument, type ReviewIssue, type ReviewReference, type ReviewSummary } from './model'
+import { editable, hasExtractedContent, isPendingReviewDiagnostic, record, reviewCounts, reviewKey, routeReferences, validateGraph, visibleReviewIssues, type KnowledgeGraph, type ReviewDocument, type ReviewIssue, type ReviewReference, type ReviewSummary } from './model'
 
 export function useKnowledgeReview() {
   const sessionId = useSessionStore((state) => state.activeSessionId) || ''
@@ -55,7 +55,7 @@ export function useKnowledgeReview() {
     setDocument(next)
     updateDraft(structuredClone(next.graph))
     setIssues(visibleReviewIssues(next.errors))
-    setSummaries((prev) => ({ ...prev, [reviewKey(ref)]: { revision: next.revision, status: next.status, counts: reviewCounts(next.graph) } }))
+    setSummaries((prev) => ({ ...prev, [reviewKey(ref)]: { revision: next.revision, status: next.status, updated_at: next.updated_at, errors: next.errors, counts: reviewCounts(next.graph), empty_reason: next.errors?.find((issue) => issue.code === 'empty_extraction')?.message } }))
   }, [])
   const report = useCallback((failure: unknown) => {
     const data = failure instanceof ApiError ? record(failure.data) : {}
@@ -156,6 +156,7 @@ export function useKnowledgeReview() {
   }, [apply, document, draft, loading, report, sessionId, target])
   const confirm = useCallback(async () => {
     if (!target || !document || loading || dirty || mutationInFlight.current || !editable(document.status)) return
+    if (!hasExtractedContent(document.graph)) { setError(document.errors?.find((issue) => issue.code === 'empty_extraction')?.message || '未提取到可制图的内容，请先检查原文或补充材料。'); return }
     const key = `${reviewKey(target)}/${document.revision}`
     if (confirmRequest.current?.key !== key) confirmRequest.current = { key, id: crypto.randomUUID() }
     mutationInFlight.current = true; setConfirming(true); setError(''); setNotice('')

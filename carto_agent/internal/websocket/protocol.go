@@ -29,7 +29,6 @@ const (
 	MsgTypeTaskAck             = "task_ack"
 	MsgTypeFlowEvent           = "flow_event"
 	MsgTypeSessionFilesChanged = "session_files_changed"
-	MsgTypeFlowCompile         = "flow_compile"
 	MsgTypeRunEvent            = "run_event"        // 统一运行事件
 	MsgTypeTaskListUpdate      = "task_list_update" // 任务列表更新
 	MsgTypeAgentWorkflow       = "agent_workflow"   // 智能体工作流事件

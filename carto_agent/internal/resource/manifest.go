@@ -20,6 +20,13 @@ type ResourceSource struct {
 	Upstream string `json:"upstream,omitempty" yaml:"upstream,omitempty"`
 }
 type Manifest struct {
+	Geometry    string   `json:"geometry,omitempty" yaml:"geometry,omitempty"`
+	LabelField  string   `json:"label_field,omitempty" yaml:"label_field,omitempty"`
+	Paper       string   `json:"paper,omitempty" yaml:"paper,omitempty"`
+	Orientation string   `json:"orientation,omitempty" yaml:"orientation,omitempty"`
+	Elements    []string `json:"elements,omitempty" yaml:"elements,omitempty"`
+	Tags        []string `json:"tags,omitempty" yaml:"tags,omitempty"`
+
 	APIVersion  string         `json:"apiVersion" yaml:"apiVersion"`
 	ID          string         `json:"id,omitempty" yaml:"id,omitempty"`
 	Type        string         `json:"type" yaml:"type"`
@@ -100,7 +107,8 @@ func resourceBaseName(path, typ string) string {
 			return base[:len(base)-len(ext)]
 		}
 	}
-	for _, other := range TypeInfos() {
+	// Legacy suffixes are read only for migrating old packages and snapshots.
+	for _, other := range legacyFormatSet.Types {
 		for _, ext := range other.EntryExtensions {
 			if strings.HasSuffix(strings.ToLower(base), ext) {
 				return base[:len(base)-len(ext)]
@@ -154,7 +162,7 @@ func inspectItem(path, kind, owner, root string) LibraryItem {
 		}
 		if err == nil {
 			typ, _ := TypeInfo(m.Type)
-			if typ.Folder != info.IsDir() {
+			if typ.Folder != info.IsDir() && !(info.IsDir() && IsPublicType(m.Type) && m.Entry != "") {
 				err = fmt.Errorf("资源清单类型与文件形态不符")
 			}
 			if !info.IsDir() && filepath.Clean(filepath.Join(filepath.Dir(item.ManifestPath), filepath.FromSlash(m.Entry))) != filepath.Clean(path) {
@@ -175,6 +183,8 @@ func inspectItem(path, kind, owner, root string) LibraryItem {
 			item.Overrides = m.Overrides
 			item.Description = m.Description
 			item.Source = m.Source
+			item.Geometry, item.LabelField, item.Paper, item.Orientation = m.Geometry, m.LabelField, m.Paper, m.Orientation
+			item.Elements, item.Tags = m.Elements, m.Tags
 			if info.IsDir() && m.Entry != "" {
 				item.Entry = filepath.Join(path, filepath.FromSlash(m.Entry))
 				if err := rejectResourcePath(item.Entry); err != nil {
@@ -183,7 +193,7 @@ func inspectItem(path, kind, owner, root string) LibraryItem {
 			}
 		}
 	}
-	if info.IsDir() && item.Entry == path && item.Type != "data_folder" {
+	if info.IsDir() && item.Entry == path && !IsPublicType(item.Type) && item.Type != "data_folder" {
 		if entry, err := MappingFile(path); err == nil {
 			item.Entry = entry
 		}
@@ -194,6 +204,7 @@ func inspectItem(path, kind, owner, root string) LibraryItem {
 			item.Problems = append(item.Problems, Diagnostic{Level: "error", Code: "FLOW_RESOURCE_INVALID", Message: err.Error()})
 		}
 	}
+	enrichMetadata(&item)
 	return item
 }
 func HasErrors(problems []Diagnostic) bool {

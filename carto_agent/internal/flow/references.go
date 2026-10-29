@@ -58,14 +58,14 @@ func (s *Store) ResourceReferences(library *resource.Library, id string) ([]Reso
 			if e = rejectSymlinks(dir); e != nil {
 				return nil, e
 			}
-			raw, e := readBounded(filepath.Join(dir, "FLOW.md"), MaxFileBytes)
+			raw, e := readBounded(packageMainPath(dir), MaxFileBytes)
 			if os.IsNotExist(e) {
 				continue
 			}
 			if e != nil {
 				return nil, e
 			}
-			doc := Parse(string(raw))
+			doc := resourceDocument(string(raw), library)
 			lock := &resource.Lock{}
 			lockPath := filepath.Join(dir, "flow.lock")
 			if e = rejectSymlinks(lockPath); e != nil && !os.IsNotExist(e) {

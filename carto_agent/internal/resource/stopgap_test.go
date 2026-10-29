@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestStyleTypeAdjusted(t *testing.T) {
+func TestLegacyPathTypeAdjustmentForMigration(t *testing.T) {
 	_, library := resourceProject(t)
 	resourceWrite(t, filepath.Join(library.BuiltinDir, "styles/单样式.qml"), "<qgis/>")
 	resourceWrite(t, filepath.Join(library.BuiltinDir, "styles/组合/mapping.csv"), "layer,style_file\n道路,a.qml\n")
@@ -18,7 +18,11 @@ func TestStyleTypeAdjusted(t *testing.T) {
 		label, requested, actual string
 		adjusted                 bool
 	}{{"单样式", "style", "style", false}, {"单样式", "style_set", "style", true}, {"组合", "style", "style_set", true}, {"组合", "style_set", "style_set", false}} {
-		got := resolveRequest(library, Request{Type: item.requested, Label: item.label, Location: "公共资源库"})
+		location := filepath.Join(library.BuiltinDir, "styles", item.label)
+		if item.label == "单样式" {
+			location += ".qml"
+		}
+		got := resolveRequest(library, Request{Type: item.requested, Label: item.label, Location: location})
 		resourceNoErrors(t, got)
 		if got.Type != item.actual || resourceHasProblem(got, "FLOW_RESOURCE_TYPE_ADJUSTED", "warning") != item.adjusted {
 			t.Fatalf("%+v", got)

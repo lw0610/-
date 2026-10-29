@@ -86,21 +86,12 @@ func TestStoreImportRoundTripAndResources(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if imported.FlowMD != item.FlowMD || len(imported.Resources) != 1 {
+	if imported.FlowMD != item.FlowMD || len(imported.Resources) != 0 {
 		t.Fatal("round trip changed the package")
 	}
 	putFlowFile(t, filepath.Join(source, "resources", "docs", "guide.md"), "更新正文")
 	if _, err = s.Import(source, ImportOptions{Overwrite: true}); err != nil {
 		t.Fatal(err)
-	}
-	if _, err = s.ImportResource(item.Meta.ID, filepath.Join(source, "resources", "docs", "guide.md"), "resources/extra"); err != nil {
-		t.Fatal(err)
-	}
-	if _, err = s.DeleteResource(item.Meta.ID, "resources/extra/guide.md"); err != nil {
-		t.Fatal(err)
-	}
-	if _, err = s.DeleteResource(item.Meta.ID, "../FLOW.md"); err == nil {
-		t.Fatal("accepted traversal")
 	}
 	md := filepath.Join(t.TempDir(), "FLOW.md")
 	putFlowFile(t, md, strings.ReplaceAll(storedFlowFixture, "example-flow", "markdown-flow"))
@@ -174,23 +165,5 @@ func TestStoreRejectsOversizeAndInvalidIDs(t *testing.T) {
 	large.Close()
 	if _, err = s.Import(source, ImportOptions{}); err == nil {
 		t.Fatal("accepted oversize file")
-	}
-}
-
-func TestStoreBindingPreservesOtherFlows(t *testing.T) {
-	s := newTestStore(t)
-	dir := t.TempDir()
-	if err := s.SetBinding("first-flow", "path:data/base.csv", dir); err != nil {
-		t.Fatal(err)
-	}
-	if err := s.SetBinding("other-flow", "data_list.input", dir); err != nil {
-		t.Fatal(err)
-	}
-	raw, err := os.ReadFile(filepath.Join(filepath.Dir(s.UserDir), "config", "resource_bindings.yaml"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !strings.Contains(string(raw), "flow:first-flow/path:data/base.csv") || !strings.Contains(string(raw), "flow:other-flow/data_list.input") {
-		t.Fatal("binding lost")
 	}
 }

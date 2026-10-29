@@ -27,10 +27,22 @@ func (e *Engine) expandResourceArgs(ctx context.Context, definition SkillDefinit
 	scope, _ := resource.ScopeFromContext(ctx)
 	for _, parameter := range definition.Spec.Parameters {
 		if parameter.Type != "resource" {
+			if len(parameter.Schema) > 0 {
+				value, err := e.expandNestedResourceArgs(ctx, definition, parameter.Schema, args[parameter.Name])
+				if err != nil {
+					return err
+				}
+				if value != nil {
+					args[parameter.Name] = value
+				}
+			}
 			continue
 		}
 		invalid := func(message string) error {
 			return &ExecutionValidationError{SkillName: definition.Metadata.Name, Message: message}
+		}
+		if !resource.IsPublicType(strings.SplitN(parameter.ResourceType, ":", 2)[0]) {
+			return invalid("运行时资源只支持样式和版面；数据使用 items，工具预设使用名称")
 		}
 		if resolver == nil {
 			return invalid("资源服务未就绪")
@@ -74,9 +86,7 @@ func (e *Engine) expandResourceArgs(ctx context.Context, definition SkillDefinit
 				return invalid("资源参数只接受名称、编号或路径")
 			}
 		}
-		if strings.SplitN(parameter.ResourceType, ":", 2)[0] == "data_list" {
-			ref.BaseDir, _ = args["base_dir"].(string)
-		}
+
 		resolved := resolver.Resolve(ctx, ref, scope)
 		if resolved == nil {
 			return invalid("资源服务没有返回解析结果")
@@ -189,4 +199,50 @@ func resourceTraceParamsForCall(def SkillDefinition, params, original map[string
 		}
 	}
 	return result
+}
+
+// Nested resources use a JSON Schema extension while exposing a string to the
+// model. All resolution still passes through the same scoped Go authority.
+func (e *Engine) expandNestedResourceArgs(ctx context.Context, def SkillDefinition, schema map[string]any, value any) (any, error) {
+	if value == nil {
+		return nil, nil
+	}
+	if typ, ok := schema["x-resource-type"].(string); ok && typ != "" {
+		nested := def
+		nested.Spec.Parameters = []SkillParameter{{Name: "value", Type: "resource", ResourceType: typ, Required: true}}
+		args := map[string]any{"value": value}
+		if err := e.expandResourceArgs(ctx, nested, args); err != nil {
+			return nil, err
+		}
+		return args["value"], nil
+	}
+	switch v := value.(type) {
+	case []any:
+		itemSchema, _ := schema["items"].(map[string]any)
+		if itemSchema == nil {
+			return value, nil
+		}
+		out := make([]any, len(v))
+		for i, item := range v {
+			next, err := e.expandNestedResourceArgs(ctx, def, itemSchema, item)
+			if err != nil {
+				return nil, fmt.Errorf("items[%d]: %w", i, err)
+			}
+			out[i] = next
+		}
+		return out, nil
+	case map[string]any:
+		properties, _ := schema["properties"].(map[string]any)
+		out := make(map[string]any, len(v))
+		for key, item := range v {
+			child, _ := properties[key].(map[string]any)
+			next, err := e.expandNestedResourceArgs(ctx, def, child, item)
+			if err != nil {
+				return nil, fmt.Errorf("%s: %w", key, err)
+			}
+			out[key] = next
+		}
+		return out, nil
+	}
+	return value, nil
 }

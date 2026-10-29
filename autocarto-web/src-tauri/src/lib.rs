@@ -13,6 +13,7 @@ use tauri_plugin_dialog::{DialogExt, FilePath};
 use tauri_plugin_shell::process::CommandChild;
 use tauri_plugin_shell::ShellExt;
 mod local_output;
+mod development_paths;
 
 struct ManagedSidecar {
     child: CommandChild,
@@ -58,6 +59,27 @@ fn build_error(message: impl Into<String>) -> Box<dyn Error> {
 }
 
 fn configure_default_runtime_environment() {
+    let project_root = std::env::var(PROJECT_ROOT_ENV_VAR).ok();
+    let runtime_home = std::env::var(RUNTIME_HOME_ENV_VAR).ok();
+    let assets_root = std::env::var(ASSETS_ROOT_ENV_VAR).ok();
+    if let Some(corrections) = development_paths::inherited_checkout_path_corrections(
+        cfg!(debug_assertions),
+        Path::new(env!("CARGO_MANIFEST_DIR")),
+        project_root.as_deref(),
+        runtime_home.as_deref(),
+        assets_root.as_deref(),
+    ) {
+        std::env::set_var(PROJECT_ROOT_ENV_VAR, &corrections.project_root);
+        for correction in corrections.paths {
+            eprintln!(
+                "开发启动检测到其他源码副本的默认 {}，改用当前项目: {} -> {}",
+                correction.variable,
+                correction.previous.display(),
+                correction.replacement.display(),
+            );
+            std::env::set_var(correction.variable, correction.replacement);
+        }
+    }
     // Share the same anchor with the Go sidecar and QGIS child processes.
     if let Ok(root) = resolve_project_root() {
         std::env::set_var(PROJECT_ROOT_ENV_VAR, root);

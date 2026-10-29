@@ -18,7 +18,7 @@ class ScaleBarLayoutContractTestCase(unittest.TestCase):
         self.assertIn("layout_align_items", yaml.safe_load(raw.split("---", 2)[1])["tools"])
 
     def test_builtin_scalebar_uses_reference_anchor_and_width_budget(self):
-        spec = yaml.safe_load((self.workspace/"autocarto/resources/system/layouts/四角对齐版式.layout.yaml").read_text())
+        spec = yaml.safe_load((self.workspace/"autocarto/resources/system/layouts/四角对齐版式/四角对齐版式.layout.yaml").read_text())
         scalebar = spec["elements"]["scalebar"]
         self.assertEqual(scalebar["anchor"], {"to": "main_map", "at": "bottom_right", "placement": "inside"})
         self.assertEqual(scalebar["max_width_mm"], 80)

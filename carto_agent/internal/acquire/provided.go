@@ -96,6 +96,14 @@ func (e *Engine) ValidateProvided(ctx context.Context, item flow.AcquisitionItem
 
 // Tables remain Go-owned; the QGIS/Python channel never parses a CSV/XLSX manifest.
 func inspectProvidedTable(path string, fields map[string]string) (map[string]any, error) {
+	records, err := readProvidedTable(path)
+	if err != nil {
+		return nil, err
+	}
+	return inspectTableRecords(records, fields)
+}
+
+func readProvidedTable(path string) ([][]string, error) {
 	info, err := os.Stat(path)
 	if err != nil {
 		return nil, err
@@ -170,8 +178,17 @@ func inspectProvidedTable(path string, fields map[string]string) (map[string]any
 		}
 	}
 	records = clean
+	return records, nil
+}
+
+func inspectTableRecords(records [][]string, fields map[string]string) (map[string]any, error) {
 	if len(records) < 2 {
 		return nil, fmt.Errorf("表格没有数据行")
+	}
+	for row, values := range records[1:] {
+		if len(values) > len(records[0]) {
+			return nil, fmt.Errorf("表格第 %d 行的值多于表头列数", row+2)
+		}
 	}
 	columns := map[string]int{}
 	for i, h := range records[0] {

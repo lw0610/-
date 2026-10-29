@@ -3,54 +3,50 @@ package flowrun
 import (
 	"context"
 	"encoding/json"
+	"github.com/autocarto/carto_agent/internal/flow"
 	"os"
+	"strings"
 	"testing"
 )
 
-func TestResumeReadsLegacyPlanFieldsAndSavesCanonicalSnapshot(t *testing.T) {
-	old, start := interruptedResourceRun(t)
-	raw, err := os.ReadFile(old.RunJSONPath)
-	if err != nil {
+func TestLegacyPlanFieldsRemainReadableWithoutExecuting(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	p := testPlan(1)
+	p.CompileKey = "structure"
+	p.Resources = []flow.ResourcePlan{{Key: "base", Entry: "/original/base.csv"}}
+	old := &RunState{APIVersion: APIVersion, ID: "legacy-run", SessionID: "session", SessionDir: dir, Status: "interrupted", Plan: p, Steps: []StepState{{ID: "s1", Status: "pending"}}}
+	store := FileRunStore{}
+	if err := store.Save(ctx, old); err != nil {
 		t.Fatal(err)
 	}
+	path, _ := RunPath(dir, old.ID)
+	raw, _ := os.ReadFile(path)
 	var saved map[string]any
-	if err := json.Unmarshal(raw, &saved); err != nil {
-		t.Fatal(err)
-	}
-	plan := saved["plan"].(map[string]any)
-	plan["cache_key"] = plan["compile_key"]
-	delete(plan, "compile_key")
-	item := plan["resources"].([]any)[0].(map[string]any)
+	_ = json.Unmarshal(raw, &saved)
+	snapshot := saved["plan"].(map[string]any)
+	snapshot["cache_key"] = snapshot["compile_key"]
+	delete(snapshot, "compile_key")
+	item := snapshot["resources"].([]any)[0].(map[string]any)
 	item["resolved_path"] = item["entry"]
 	delete(item, "entry")
 	raw, _ = json.Marshal(saved)
-	if err := os.WriteFile(old.RunJSONPath, raw, 0600); err != nil {
+	if err := os.WriteFile(path, raw, 0600); err != nil {
 		t.Fatal(err)
 	}
-	current := resourcePlan("original", "/original/base.csv")
-	c, _, _ := newTestController(t, current, func(_ context.Context, req StepRequest) (StepResult, error) {
-		if len(req.Resources) != 1 || req.Resources[0].Entry != "/original/base.csv" {
-			t.Fatalf("saved legacy resource lost: %+v", req.Resources)
-		}
-		return completed(req.Step), nil
-	}, nil)
-	resumed, err := c.Resume(context.Background(), ResumeRequest{SessionID: start.SessionID, SessionDir: start.SessionDir, FlowRunID: old.ID})
-	if err != nil || resumed.Status != "completed" || resumed.Plan.CompileKey != "structure" {
-		t.Fatalf("legacy run did not resume: %+v %v", resumed, err)
+	loaded, err := store.Load(ctx, dir, old.ID)
+	if err != nil || loaded.Plan.CompileKey != "structure" || loaded.Plan.Resources[0].Entry != "/original/base.csv" {
+		t.Fatal(loaded, err)
 	}
-	raw, err = os.ReadFile(old.RunJSONPath)
-	if err != nil {
+	c, _ := NewController(Options{Store: store, Runner: runnerFunc(func(context.Context, StepRequest) (StepResult, error) {
+		t.Fatal("historical run executed")
+		return StepResult{}, nil
+	})})
+	if _, err = c.Resume(ctx, ResumeRequest{SessionID: old.SessionID, SessionDir: dir, FlowRunID: old.ID}); err == nil || !strings.Contains(err.Error(), "只读") {
 		t.Fatal(err)
 	}
-	if err := json.Unmarshal(raw, &saved); err != nil {
-		t.Fatal(err)
-	}
-	plan = saved["plan"].(map[string]any)
-	item = plan["resources"].([]any)[0].(map[string]any)
-	if _, exists := plan["cache_key"]; exists {
-		t.Fatal("legacy cache_key written back")
-	}
-	if _, exists := item["resolved_path"]; exists || item["entry"] != "/original/base.csv" {
-		t.Fatal("legacy resource path written back", item)
+	after, _ := os.ReadFile(path)
+	if string(after) != string(raw) {
+		t.Fatal("read rewrote historical record")
 	}
 }

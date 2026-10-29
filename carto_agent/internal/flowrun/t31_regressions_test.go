@@ -26,10 +26,7 @@ func TestLayerVerificationNeverAcceptsFieldOrStyleNames(t *testing.T) {
 }
 func TestKnowledgeExecutorManualGuidanceChangesEffectiveRules(t *testing.T) {
 	input := flow.InputPlan{Key: "source", Label: "原文", Type: "conversation_text", Required: true}
-	inputs, err := ResolveInputs(&flow.FlowPlan{Inputs: []flow.InputPlan{input}}, nil, "原始材料", t.TempDir())
-	if err != nil {
-		t.Fatal(err)
-	}
+	inputs := map[string]any{"source": ConversationReference("原始材料")}
 	step := flow.StepPlan{Instructions: "保留路线", Refs: flow.PlanRefs{Inputs: []string{"source"}}}
 	run := &RunState{Plan: &flow.FlowPlan{Inputs: []flow.InputPlan{input}}, Inputs: inputs, Steps: []StepState{{UserGuidance: "重新抽取并增加地点"}}}
 	messages, err := NewRouteKnowledgeExecutor().BuildInput(step, run)

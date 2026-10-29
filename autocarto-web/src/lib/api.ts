@@ -43,6 +43,7 @@ function withTimeoutSignal(signal?: AbortSignal | null, timeoutMs = REQUEST_TIME
 interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
+  details?: unknown;
   code?: string;
   error?: string | ApiErrorEnvelope;
 }
@@ -1079,7 +1080,8 @@ export type AgentRoleKind = "agent" | "executor";
 
 export interface MigrationWarning { code: string; path: string; package?: string; message: string; }
 export interface AgentFlowsConfig { enabled: string[]; [key: string]: unknown; }
-export interface FlowPolicyConfig {role_fill?:'auto'|'flow_role'|'strict';auto_acquire?:'ask'|'allow'|'deny';role_mapping?:Record<string,Record<string,string>>;[key:string]:unknown}
+// Historical input only; v5 normalization discards this field.
+export type FlowPolicyConfig = Record<string, unknown>;
 
 export interface PlanAgentDefData {
   [key: string]: unknown;
@@ -1288,66 +1290,22 @@ export function normalizeAgentProfilePayload(
       .filter((item): item is readonly [string, AgentDefData] => Boolean(item))
       .map(([name, agent]) => [name, normalizeRuntimeAgentDef(agent)] as const),
   );
-  const hasPlan =
-    typeof payload?.has_plan === "boolean"
-      ? payload.has_plan
-      : Boolean(payload?.plan);
-  const planPayload = payload?.plan;
-  let normalizedPlan: PlanConfig | undefined;
-  if (hasPlan) {
-    if (!planPayload || typeof planPayload !== "object") {
-      throw new Error("missing plan config in agent profile payload");
-    }
-    if (!Array.isArray(planPayload.agents)) {
-      throw new Error("missing plan agents in agent profile payload");
-    }
-    const planAgents = Object.fromEntries(
-      planPayload.agents
-        .map((item) => {
-          const name = String(item?.name || "").trim();
-          if (!name || !item?.agent) {
-            return null;
-          }
-          return [name, item.agent] as const;
-        })
-        .filter((item): item is readonly [string, PlanAgentDefData] =>
-          Boolean(item),
-        )
-        .map(([name, agent]) => [name, normalizePlanAgentDef(agent)] as const),
-    );
-    normalizedPlan = {
-      ...planPayload,
-      enabled:
-        typeof planPayload.enabled === "boolean"
-          ? planPayload.enabled
-          : Boolean(payload?.meta?.plan_enabled),
-      max_iterations:
-        typeof planPayload.max_iterations === "number" &&
-        planPayload.max_iterations > 0
-          ? planPayload.max_iterations
-          : 100,
-      shared: normalizeAgentGlobalConfig(planPayload.shared),
-      agents: planAgents,
-    };
-  }
   return {
     ...payload,
     version: String(payload?.version || "1.0"),
-    flows: payload?.flows ? { ...payload.flows, enabled: [...(payload.flows.enabled || [])] } : undefined,
+    flows: undefined,
+    flow_policy: undefined,
     migration_warnings: Array.isArray(payload?.migration_warnings) ? payload.migration_warnings.map((warning) => ({ ...warning })) : [],
     meta: {
       ...payload?.meta,
       default_execution_mode: payload?.meta?.default_execution_mode ?? "build",
       description: String(payload?.meta?.description || ""),
-      plan_enabled:
-        typeof payload?.meta?.plan_enabled === "boolean"
-          ? payload.meta.plan_enabled
-          : Boolean(normalizedPlan?.enabled),
+      plan_enabled: false,
     },
     runtime_shared: runtimeShared,
     runtime_agents: runtimeAgents,
-    has_plan: hasPlan,
-    plan: normalizedPlan,
+    has_plan: false,
+    plan: undefined,
     diagnostics: normalizeAgentDiagnostics(payload?.diagnostics),
   };
 }
@@ -1368,16 +1326,13 @@ export function serializeAgentProfilePayload(data: AgentConfigData) {
   return {
     ...data,
     version: legacy ? "1.0" : "2.0",
-    has_plan: Boolean(data.has_plan),
-    meta: { ...data.meta, plan_enabled: Boolean(data.has_plan && data.plan?.enabled) },
+    has_plan: false,
+    meta: { ...data.meta, plan_enabled: undefined },
     runtime_shared: packages(data.runtime_shared),
     runtime_agents: Object.entries(data.runtime_agents || {}).map(([name,agent]) => ({ name, agent: packages(agent) })),
-    plan: data.has_plan && data.plan ? {
-      ...data.plan,
-      enabled: Boolean(data.plan.enabled), max_iterations: data.plan.max_iterations,
-      shared: packages(data.plan.shared),
-      agents: Object.entries(data.plan.agents || {}).map(([name,agent]) => ({ name, agent: packages(agent) })),
-    } : undefined,
+    plan: undefined,
+    flows: undefined,
+    flow_policy: undefined,
   };
 }
 
@@ -1400,7 +1355,8 @@ export interface SessionMessageRecord {
 }
 
 export interface SessionRecord {
-  flow_run?: import('@/features/flow-run/types').FlowRunState | null;
+  carto_plans?: import('@/features/plan/types').PlanSnapshot[];
+  flow_run?: import('@/features/plan/types').FlowRunState | null;
   flow_run_event_seq?: number;
   session_id: string;
   name: string;
@@ -1780,7 +1736,7 @@ export class ApiClient {
           typeof parsed.code === "string"
             ? parsed.code.trim() || undefined
             : envelope?.code;
-        data = parsed.data;
+        data = parsed.data ?? parsed.details;
       } catch (error) {
         void error;
       }
@@ -1794,7 +1750,7 @@ export class ApiClient {
         resolveApiErrorMessage(json.error, "Unknown API error"),
         res.status,
         typeof json.code === "string" ? json.code.trim() || undefined : envelope?.code,
-        json.data,
+        json.data ?? json.details,
         envelope,
       );
     }

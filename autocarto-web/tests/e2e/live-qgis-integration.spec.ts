@@ -5,6 +5,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import os from 'node:os'
 
+test.skip(process.env.AUTOCARTO_LIVE_E2E !== '1', 'Requires an explicitly enabled, isolated QGIS runtime')
+
 const WEB_ROOT = '/mnt/210/HewittWong/AI_Dev/AutoCartoAI/autocarto-web'
 const QGIS_PROJECT = '/mnt/210/HewittWong/AI_Dev/autocarto-test-qgis/t.qgz'
 const QGIS_PROJECT_2 = '/mnt/210/HewittWong/AI_Dev/autocarto-test-qgis_2/t.qgz'

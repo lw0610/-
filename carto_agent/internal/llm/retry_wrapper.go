@@ -64,7 +64,7 @@ func (w *retryingModelWrapper) WithTools(tools []*schema.ToolInfo) (model.ToolCa
 }
 
 func shouldRetryLLMError(err error) bool {
-	if err == nil {
+	if err == nil || IsNonRecoverableServiceError(err) {
 		return false
 	}
 	text := strings.ToLower(strings.TrimSpace(err.Error()))

@@ -34,9 +34,8 @@ spec:
     default: 专题点
     description: 生成或复用的点图层名称，默认专题点
   - name: symbols
-    type: resource
-    resource_type: symbols
-    description: 可选符号资源名称、编号或目录；省略时读取运行数据集 symbol_mapping.csv
+    type: string
+    description: 可选符号预设名称（军标、图例或用户预设）；省略时读取运行数据集 symbol_mapping.csv
   - name: default_symbol_types
     type: array
     items:

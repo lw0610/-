@@ -11,8 +11,8 @@ spec:
   parameters:
   - name: template
     type: resource
-    resource_type: layout:qpt
-    description: QGIS .qpt 布局资源的名称、编号或路径，模板内部相对资源以模板文件为基准
+    resource_type: layout
+    description: 版面资源的名称、编号或路径（自动识别 QPT 或声明式版面），模板内部相对资源以模板文件为基准
     required: true
   - name: name
     type: string

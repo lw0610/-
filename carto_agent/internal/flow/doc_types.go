@@ -1,14 +1,18 @@
 package flow
 
-import shareddiagnostic "github.com/autocarto/carto_agent/internal/shared/diagnostic"
+import (
+	"github.com/autocarto/carto_agent/internal/flow/legacy"
+	shareddiagnostic "github.com/autocarto/carto_agent/internal/shared/diagnostic"
+)
 
 // FlowMetadata 是 FLOW.md 头部声明；编号的目录回退和生成由存储层负责。
 type FlowMetadata struct {
-	ID          string `json:"id,omitempty"`
-	Name        string `json:"name"`
-	Description string `json:"description,omitempty"`
-	Version     string `json:"version"`
-	Author      string `json:"author,omitempty"`
+	ID          string   `json:"id,omitempty"`
+	Name        string   `json:"name"`
+	Description string   `json:"description,omitempty"`
+	Version     string   `json:"version"`
+	Author      string   `json:"author,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
 }
 
 // Diagnostic 是解析、编译和运行校验共用的用户可见诊断。
@@ -75,16 +79,7 @@ type ConditionDoc struct {
 }
 
 // ConditionRule.Input 暂存输入显示名，编译时才转换为输入 key。
-type ConditionRule struct {
-	Op     string          `json:"op"`
-	Input  string          `json:"input,omitempty"`
-	Value  any             `json:"value,omitempty"`
-	Step   string          `json:"step,omitempty"`
-	Status string          `json:"status,omitempty"`
-	Label  string          `json:"label,omitempty"`
-	Args   []ConditionRule `json:"args,omitempty"`
-	Arg    *ConditionRule  `json:"arg,omitempty"`
-}
+type ConditionRule = legacy.ConditionRule
 
 type OutputDeclaration struct {
 	Label       string `json:"label"`
@@ -112,29 +107,6 @@ type DocSection struct {
 	Line    int    `json:"line,omitempty"`
 }
 
-// RoleSlotDoc describes a requested role without binding it to a scheme.
-type RoleSlotDoc struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description,omitempty"`
-	Packages    []string `json:"packages"`
-	Executor    string   `json:"executor,omitempty"`
-	NeedsVision bool     `json:"needs_vision,omitempty"`
-	SchemeOnly  bool     `json:"scheme_only,omitempty"`
-	Line        int      `json:"line,omitempty"`
-}
-
-// RequirementDoc preserves author-supplied names and references for later binding.
-type RequirementDoc struct {
-	Name               string            `json:"name"`
-	List               string            `json:"list,omitempty"`
-	Category           string            `json:"category,omitempty"`
-	Level              string            `json:"level,omitempty"`
-	Extent             string            `json:"extent"`
-	Scale              string            `json:"scale"`
-	Params             map[string]string `json:"params"`
-	Fields             map[string]string `json:"fields"`
-	RecommendedSources []string          `json:"recommended_sources"`
-	ExcludedSources    []string          `json:"excluded_sources"`
-	Acquisition        string            `json:"acquisition"`
-	Line               int               `json:"line,omitempty"`
-}
+// Legacy declarations remain readable for conversion, never execution.
+type RoleSlotDoc = legacy.RoleSlotDoc
+type RequirementDoc = legacy.RequirementDoc

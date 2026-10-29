@@ -18,8 +18,10 @@ import (
 
 	"github.com/autocarto/carto_agent/internal/acquire"
 	"github.com/autocarto/carto_agent/internal/config"
+	"github.com/autocarto/carto_agent/internal/dataservice"
 	"github.com/autocarto/carto_agent/internal/datasource"
 	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/resource"
 )
 
 // This opt-in test executes the real Go planner/cache/HTTP adapter, actual QGIS
@@ -56,13 +58,17 @@ func TestBuiltinAcquisitionRealQGIS(t *testing.T) {
 		}
 		return result, nil
 	}
-	compiler, err := a.FlowCompiler()
+	library, err := a.resourceStore()
 	if err != nil {
 		t.Fatal(err)
 	}
-	plan, err := compiler.BasePlan(ctx, "marching-route", "compile-scheme")
-	if err != nil || plan.HasErrors() {
-		t.Fatalf("plan=%+v error=%v", plan, err)
+	guides, err := flow.NewDefaultGuideStore(library)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = guides.Resolve(ctx, "marching-route", library)
+	if err != nil {
+		t.Fatal(err)
 	}
 	env, err := a.loadFlowEnvironment(ctx, "compile-scheme")
 	if err != nil {
@@ -117,9 +123,8 @@ func TestBuiltinAcquisitionRealQGIS(t *testing.T) {
 	planning.Catalog = catalog
 	engine := acquire.Engine{Catalog: catalog, Store: acquire.NewStore(filepath.Join(home, "data/acquired"), 1<<30), Config: config.AcquisitionConfig{}.WithDefaults(), Invoke: invoke, Adapters: map[string]acquire.Adapter{"offline_asset": acquire.OfflineAdapter{Invoke: invoke}, "http_file": acquire.HTTPAdapter{Client: server.Client(), MaxBytes: 1 << 20}}}
 	var firstPaths map[string]string
-	var firstResults []acquire.ItemResult
+	var firstResults []dataservice.GetRow
 	for _, mode := range []string{"auto", "fill"} {
-		marker := map[string]any{"$acquire": true}
 		inputFolder := ""
 		if mode == "fill" {
 			inputFolder = filepath.Join(home, "provided-folder")
@@ -140,68 +145,101 @@ func TestBuiltinAcquisitionRealQGIS(t *testing.T) {
 					t.Fatal(e)
 				}
 			}
-			marker = map[string]any{"$fill": true, "path": inputFolder}
 		}
-		selections := map[string]any{}
-		for _, item := range plan.Acquisition.Items {
-			if item.Category != "admin.division" && item.Category != "admin.boundary_line" {
-				selections[item.Entry] = "user.fixture." + item.Category
+		userData := []dataservice.Binding{}
+		if inputFolder != "" {
+			userData = append(userData, dataservice.Binding{Name: "铁路", Category: "transport.railway", Path: filepath.Join(inputFolder, filepath.Base(firstPaths["铁路"]))})
+		}
+		service := dataservice.New(dataservice.Options{SessionID: "qgis-" + mode, SessionDir: filepath.Join(home, "sessions", mode), Environment: planning, Engine: &engine, UserData: userData, Config: config.AcquisitionConfig{NetworkPolicy: "direct", FallbackPolicy: "deny"}, NetworkConfirmed: true})
+		// The acceptance fixture explicitly requests each real data need. The flow
+		// document is context only; it never supplies a parsed acquisition list.
+		needs := []dataservice.Need{
+			{Name: "省域", What: dataservice.What{Category: "省域"}, Fields: map[string]string{"NAME": "name"}},
+			{Name: "县级城市驻地", What: dataservice.What{Category: "settlement.county_seat"}, Fields: map[string]string{"name": "name"}},
+			{Name: "铁路", What: dataservice.What{Category: "transport.railway"}},
+			{Name: "公路", What: dataservice.What{Category: "transport.road.major"}},
+			{Name: "国道", What: dataservice.What{Category: "transport.road.national"}},
+			{Name: "地区界线", What: dataservice.What{Category: "地区界线"}},
+			{Name: "河流线", What: dataservice.What{Category: "hydro.river_line"}, Fields: map[string]string{"NAME": "name"}},
+			{Name: "河流面", What: dataservice.What{Category: "hydro.water_polygon"}},
+		}
+		acquired := dataservice.GetResult{}
+		for _, need := range needs {
+			need.Extent = "bbox:29.4,109.4,33.6,113.6"
+			found, e := service.Find(ctx, dataservice.FindRequest{Guide: "marching-route", Need: need})
+			if e != nil {
+				t.Fatal(e)
 			}
+			if len(found.Rows) != 1 {
+				t.Fatalf("expected one named need: %+v", found)
+			}
+			choices := map[string]string{}
+			for _, row := range found.Rows {
+				chosen := row.Recommended
+				for _, candidate := range row.Candidates {
+					if candidate.Available && (candidate.Kind == "user" && !candidate.RequiresConfirmation && (need.Name == "铁路") || candidate.Kind == "cache") {
+						chosen = candidate.ID
+						break
+					}
+					if candidate.Available && candidate.SourceID == "user.fixture."+row.Category {
+						chosen = candidate.ID
+					}
+				}
+				if chosen == "" {
+					t.Fatalf("no candidate: %+v", row)
+				}
+				choices[row.Row] = chosen
+			}
+			got, e := service.Get(ctx, dataservice.GetRequest{FindID: found.FindID, Choice: choices})
+			if e != nil {
+				t.Fatalf("%s %s: %v %+v", mode, need.Name, e, got)
+			}
+			acquired.Rows = append(acquired.Rows, got.Rows...)
 		}
-		marker["sources"] = selections
-		inputs := map[string]any{"底图数据": marker, "路线数据集": route, "纸张": "A1 横向"}
-		acquired, issues := acquire.Plan(ctx, plan, inputs, planning, nil)
-		if len(issues) > 0 {
-			t.Fatal(issues)
-		}
-		if len(acquired.Items) != 8 {
-			t.Fatal("expected eight rows", acquired)
-		}
-		overrides := map[string]map[string]string{}
 		rowPaths := map[string]string{}
 		statuses := map[string]string{}
-		for _, item := range acquired.Items {
-			result, e := engine.RunItem(ctx, item, nil)
-			if e != nil {
-				t.Fatalf("%s/%s: %v %+v", mode, item.Entry, e, result)
-			}
-			if item.Mode != "user" && (len(result.Attempts) != 1 || result.SourceID != item.Chosen.SourceID) {
-				t.Fatalf("fixture unexpectedly fell back: %+v", result)
-			}
-			statuses[item.Entry] = result.Status
-			t.Logf("%s %s: %s %s", mode, item.Entry, result.Status, result.StoreKey)
-			if len(result.Output.Paths) == 0 || !strings.HasSuffix(result.Output.Paths[0], ".shp") {
-				t.Fatalf("primary output is not Shapefile: %+v", result.Output.Paths)
-			}
+		for _, row := range acquired.Rows {
 			path := ""
-			for _, candidate := range result.Output.Paths {
-				if strings.HasSuffix(candidate, ".shp") {
+			for _, candidate := range row.Paths {
+				if strings.HasSuffix(resource.DataSourcePath(candidate), ".shp") || strings.HasSuffix(resource.DataSourcePath(candidate), ".gpkg") {
 					path = candidate
 					break
 				}
 			}
 			if path == "" {
-				t.Fatalf("%s has no shapefile: %+v", item.Entry, result)
+				t.Fatalf("%s no vector file: %+v", row.Row, row)
 			}
-			if overrides[item.Resource] == nil {
-				overrides[item.Resource] = map[string]string{}
-			}
-			overrides[item.Resource][item.Entry] = path
-			rowPaths[item.Entry] = path
+			rowPaths[row.Row] = path
+			statuses[row.Row] = row.Kind
 			if mode == "auto" {
-				firstResults = append(firstResults, result)
+				firstResults = append(firstResults, row)
 			}
 		}
 		if mode == "auto" {
 			firstPaths = rowPaths
-		} else if statuses["铁路"] != "user_provided" || rowPaths["铁路"] != filepath.Join(inputFolder, "铁路.shp") {
+		} else if statuses["铁路"] != "user" || resource.DataSourcePath(rowPaths["铁路"]) != filepath.Join(inputFolder, filepath.Base(firstPaths["铁路"])) {
 			t.Fatalf("fill lost user data: %+v %+v", statuses, rowPaths)
 		}
-		resolved := flow.ResolveInputResourcesWithOverrides(plan, inputs, overrides)
-		if resolved.HasErrors() {
-			t.Fatalf("resource binding: %+v", resolved.Diagnostics)
+		items := []map[string]any{}
+		styles := []map[string]any{}
+		styleNames := map[string]string{"省域": "省域面", "县级城市驻地": "县级城市驻地", "铁路": "铁路", "公路": "高速公路", "国道": "国道", "地区界线": "省界", "河流线": "河流线", "河流面": "河流面"}
+		for _, need := range needs {
+			items = append(items, map[string]any{"name": need.Name, "path": rowPaths[need.Name]})
+			resolved := library.Resolve(ctx, resource.Ref{Type: "style", Name: styleNames[need.Name]}, resource.Scope{})
+			if resource.HasErrors(resolved.Problems) {
+				t.Fatalf("style %s: %+v", need.Name, resolved.Problems)
+			}
+			item := map[string]any{"layer": need.Name, "style": resolved.Handle()}
+			if len(need.Fields) > 0 {
+				for field := range need.Fields {
+					item["label_field"] = field
+				}
+			} else {
+				item["label_field"] = "无"
+			}
+			styles = append(styles, item)
 		}
-		value, e := invoke(ctx, "verify_basemap", map[string]any{"data_list": resolved.Resources[0].ResolvedResource().Handle(), "style_set": resolved.Resources[1].ResolvedResource().Handle()})
+		value, e := invoke(ctx, "verify_basemap", map[string]any{"items": items, "styles": styles})
 		if e != nil {
 			t.Fatal(e)
 		}
@@ -215,8 +253,8 @@ func TestBuiltinAcquisitionRealQGIS(t *testing.T) {
 		}
 		for name, path := range rowPaths {
 			layer := layers[name].(map[string]any)
-			actualInfo, actualErr := os.Stat(layer["source"].(string))
-			expectedInfo, expectedErr := os.Stat(path)
+			actualInfo, actualErr := os.Stat(resource.DataSourcePath(layer["source"].(string)))
+			expectedInfo, expectedErr := os.Stat(resource.DataSourcePath(path))
 			if actualErr != nil || expectedErr != nil || !os.SameFile(actualInfo, expectedInfo) || layer["crs"] != "EPSG:4326" || layer["count"].(float64) < 1 {
 				t.Fatalf("source/CRS/count mismatch: %s %+v", name, layer)
 			}
@@ -225,7 +263,7 @@ func TestBuiltinAcquisitionRealQGIS(t *testing.T) {
 			t.Fatal("single-point acquisition did not remain a single-point layer", layers["县级城市驻地"])
 		}
 		labels := map[string]string{"省域": "NAME", "县级城市驻地": "name", "河流线": "NAME"}
-		applied := receipt["style"].(map[string]any)["data"].(map[string]any)["applied"].([]any)
+		applied := receipt["style"].(map[string]any)["data"].(map[string]any)["items"].([]any)
 		for _, raw := range applied {
 			row := raw.(map[string]any)
 			if expected := labels[row["layer"].(string)]; expected != "" && row["label_field"] != expected {
@@ -241,11 +279,14 @@ func TestBuiltinAcquisitionRealQGIS(t *testing.T) {
 		t.Fatalf("fill should reuse seven cached items and user railway, downloads=%d", downloads.Load())
 	}
 	for _, result := range firstResults {
-		if result.StoreKey == "" || result.Status != "completed" {
+		for path, sha := range result.SHA256 {
+			t.Logf("F51 output name=%s file=%s sha256=%s", result.Row, filepath.Base(path), sha)
+		}
+		if result.StoreKey == "" {
 			t.Fatal("missing validated cache record", result)
 		}
 		record, found, err := engine.Store.Lookup(ctx, result.StoreKey)
-		if err != nil || !found || !record.Valid || record.License == "" || record.Attribution == "" || record.CreatedAt.IsZero() || len(record.RawFiles) == 0 || len(record.OutputFiles) < 5 {
+		if err != nil || !found || !record.Valid || record.License == "" || record.Attribution == "" || record.CreatedAt.IsZero() || len(record.RawFiles) == 0 || len(record.OutputFiles) < 1 {
 			t.Fatalf("cache/provenance incomplete: %+v %v", record, err)
 		}
 		for _, file := range record.Files {

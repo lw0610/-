@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { normalizeWorkflowBlockStatus, normalizeWorkflowToolStatus } from '@/lib/chat-message-utils'
+import { normalizeWorkflowBlockStatus, workflowToolStatusForDisplay } from '@/lib/chat-message-utils'
 import { WorkflowBlock, WorkflowEntry } from '@/types/message'
 import { cn, formatTimestamp } from '@/lib/utils'
 import ToolCallCard from './ToolCallCard'
@@ -19,12 +19,14 @@ interface Props {
 
 const statusLabel: Record<WorkflowBlock['status'], string> = {
   running: '进行中',
+  waiting_user: '等待确认',
   completed: '已完成',
   error: '异常',
 }
 
 const statusClassName: Record<WorkflowBlock['status'], string> = {
   running: 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
+  waiting_user: 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300',
   completed: 'border-zinc-200 bg-white text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300',
   error: 'border-red-300 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300',
 }
@@ -81,12 +83,16 @@ function normalizeEntryType(raw: unknown): WorkflowEntry['type'] {
 }
 
 function isEntryRunning(entry: WorkflowEntry): boolean {
-  if (normalizeWorkflowToolStatus(entry.toolCard?.status) === 'running' && entry.toolCard) {
-    return true
+  if (entry.toolCard) {
+    return workflowToolStatusForDisplay(entry.toolCard) === 'running'
+  }
+  if (entry.phase === 'tool_result') {
+    return false
   }
 
   const payload = asRecord(entry.data)
   const status = String(payload.status || payload.state || payload.progress || '').toLowerCase()
+  if (entry.phase === 'knowledge_review') return status === 'compiling'
   return status === 'running' || status === 'active' || status === 'in_progress' || status === 'processing'
 }
 
@@ -194,13 +200,14 @@ export default function AgentBlockView({ block, collapsed, onFocus, onToggleColl
             const entryId = String(entry.id || `workflow-entry-${index}`)
             const entryType = normalizeEntryType(entry.type)
             const toolCard = entry.toolCard
-            const toolStatus = normalizeWorkflowToolStatus(toolCard?.status)
+            const toolStatus = workflowToolStatusForDisplay(toolCard)
             const toolName = String(toolCard?.tool || '未知工具')
             const content = String(entry.content || '').trim()
             if (!toolCard && !content) {
               return null
             }
             const running = isEntryRunning(entry)
+            const reviewStatus = entry.phase === 'knowledge_review' ? String(entry.data?.status || '') : ''
             const expanded = running || expandedEntryIds.has(entryId)
             const thinkingPresentation = entryType === 'thinking' ? resolveThinkingPresentation(entry) : null
             const entryTypeText = toolCard
@@ -212,8 +219,10 @@ export default function AgentBlockView({ block, collapsed, onFocus, onToggleColl
                 ? '进行中'
                 : toolStatus === 'failed'
                   ? '失败'
-                  : '已完成'
-              : running
+                  : toolStatus === 'finished' ? '已结束' : '已完成'
+              : reviewStatus === 'awaiting_review' ? '等待确认'
+                : reviewStatus === 'compile_failed' ? '失败'
+                : running
                 ? '进行中'
                 : '已完成'
             const entryStateClassName = toolCard
@@ -221,8 +230,11 @@ export default function AgentBlockView({ block, collapsed, onFocus, onToggleColl
                 ? 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
                 : toolStatus === 'failed'
                   ? 'border-red-300 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300'
+                  : toolStatus === 'finished' ? 'border-zinc-200 bg-white text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300'
                   : 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300'
-              : running
+              : reviewStatus === 'awaiting_review' ? statusClassName.waiting_user
+                : reviewStatus === 'compile_failed' ? statusClassName.error
+                : running
                 ? 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
                 : 'border-zinc-200 bg-white text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300'
 

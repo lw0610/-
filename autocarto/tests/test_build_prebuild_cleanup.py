@@ -14,12 +14,19 @@ SOURCE_BUILD_SH = REPO_ROOT / "build.sh"
 
 
 class BuildPrebuildCleanupTestCase(unittest.TestCase):
-    def test_check_cleans_local_artifacts_before_gate_execution(self):
+    def test_check_preserves_running_development_artifacts(self):
         completed, repo_root = self._run_command("check")
 
         self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
-        self._assert_local_artifacts_removed(repo_root, expect_sidecar=True, preserve_runtime=True)
-        self.assertFalse((repo_root / "dist").exists())
+        for relative_path in (
+            "autocarto-web/.next/cache/stale.txt",
+            "autocarto-web/out/stale.txt",
+            "autocarto-web/src-tauri/target/stale.txt",
+            "autocarto-web/src-tauri/binaries/stale-sidecar",
+            "dist/stale-dist.txt", "autocarto/bin/stale.bin",
+            "autocarto/logs/stale.log", "autocarto/.session/stale.session",
+        ):
+            self.assertEqual((repo_root / relative_path).read_text(), "stale\n")
 
     def test_check_preserves_release_artifacts_needed_by_dist_layout_gate(self):
         completed, repo_root = self._run_command("check", seed_release_artifacts=True)
@@ -71,7 +78,7 @@ class BuildPrebuildCleanupTestCase(unittest.TestCase):
                 / "tool.yaml"
             ).exists()
         )
-        self.assertFalse((repo_root / "dist" / "stale-dist.txt").exists())
+        self.assertEqual((repo_root / "dist" / "stale-dist.txt").read_text(), "stale\n")
 
     def test_go_preserves_other_artifacts_during_sidecar_build(self):
         completed, repo_root = self._run_command("go")

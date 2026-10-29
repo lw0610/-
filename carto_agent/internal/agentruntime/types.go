@@ -8,6 +8,7 @@ import (
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/control"
 	"github.com/cloudwego/eino/adk"
+	"github.com/cloudwego/eino/adk/middlewares/skill"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/tool"
 )
@@ -75,21 +76,22 @@ func (r *Runtime) ModeIssue(mode string) (ModeIssue, bool) {
 
 // FactoryConfig 统一运行时工厂输入。
 type FactoryConfig struct {
-	DefaultChatModel     model.ToolCallingChatModel
-	DefaultProviderCfg   *config.LLMProviderConfig
-	ResolveChatModel     func(provider string) (model.ToolCallingChatModel, error)
-	ResolvePlanChatModel func(provider string) (model.ToolCallingChatModel, error)
-	ResolveProviderCfg   func(provider string) *config.LLMProviderConfig
-	BaseTools            []tool.BaseTool
-	MaxIterations        int
-	BuiltinSkillsDir     string
-	UserSkillsDir        string
-	PluginSkillsDir      string
-	ConfigBaseDir        string
-	RegistryGovernance   *control.RegistryGovernance
-	CapabilityStore      *capability.SnapshotStore
-	CapabilityMode       string
-	ControlPlane         *capability.ControlPlane
+	AcquisitionConfig  func() config.AcquisitionConfig
+	GuideBackend       skill.Backend
+	DefaultChatModel   model.ToolCallingChatModel
+	DefaultProviderCfg *config.LLMProviderConfig
+	ResolveChatModel   func(provider string) (model.ToolCallingChatModel, error)
+	ResolveProviderCfg func(provider string) *config.LLMProviderConfig
+	BaseTools          []tool.BaseTool
+	MaxIterations      int
+	BuiltinSkillsDir   string
+	UserSkillsDir      string
+	PluginSkillsDir    string
+	ConfigBaseDir      string
+	RegistryGovernance *control.RegistryGovernance
+	CapabilityStore    *capability.SnapshotStore
+	CapabilityMode     string
+	ControlPlane       *capability.ControlPlane
 }
 
 // Builder 工厂接口，便于后续注入测试桩。

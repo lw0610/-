@@ -1,0 +1,12 @@
+{
+  "scenario": "province-density",
+  "status": "completed",
+  "inputs_unchanged": true,
+  "steps": 6,
+  "output_files": [
+    "preview.png",
+    "project.qgz",
+    "exports/人口密度.png",
+    "exports/人口密度.pdf"
+  ]
+}

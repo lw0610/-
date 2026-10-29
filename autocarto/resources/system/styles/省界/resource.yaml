@@ -1,0 +1,19 @@
+{
+  "apiVersion": "resource/v1",
+  "id": "style.basemap-d3f458378b",
+  "type": "style",
+  "name": "省界",
+  "version": "1.0.0",
+  "entry": "省界.qml",
+  "geometry": "line",
+  "label_field": "无",
+  "description": "由原预设导出的符号和标注",
+  "tags": [
+    "地区界线",
+    "线状省界",
+    "行政边界线"
+  ],
+  "source": {
+    "author": "AutoCarto"
+  }
+}

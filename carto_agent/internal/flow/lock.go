@@ -13,6 +13,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const documentFormatV6 = "flow/v6"
+
 func ReadLock(dir string) (*resource.Lock, error) {
 	lock := &resource.Lock{APIVersion: resource.LockAPIVersion, Resources: []resource.LockEntry{}}
 	raw, err := readBounded(filepath.Join(dir, "flow.lock"), MaxFileBytes)
@@ -73,8 +75,14 @@ func publicDeclaration(d ResourceDoc) bool {
 }
 func retainedLock(lock *resource.Lock, doc *FlowDoc) *resource.Lock {
 	out := &resource.Lock{APIVersion: resource.LockAPIVersion, Resources: []resource.LockEntry{}}
+	if lock != nil {
+		out.DocumentFormat = lock.DocumentFormat
+	}
 	seen := map[string]bool{}
 	for _, d := range doc.Resources {
+		if d.Type != "style" && d.Type != "layout" {
+			continue
+		}
 		if publicDeclaration(d) && !seen[d.Type+"\x00"+d.Label] {
 			seen[d.Type+"\x00"+d.Label] = true
 			if e := lock.Find(d.Type, d.Label); e != nil {
@@ -103,28 +111,33 @@ func (s *Store) resolveResources(ctx context.Context, id string, library *resour
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	doc := Parse(item.FlowMD)
 	lock, err := ReadLock(item.Dir)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
+	doc := resourceDocumentWithLock(item.FlowMD, library, lock)
 	lock = retainedLock(lock, doc)
-	resolved := []*resource.ResolvedResource{}
-	for _, d := range doc.Resources {
-		key := "unresolved:" + d.Type + ":" + d.Label
-		r := &resource.ResolvedResource{Key: key, Label: d.Label, Type: d.Type, Location: d.Location, Entries: []resource.ResourceEntry{}, Problems: []Diagnostic{{Level: "error", Code: "FLOW_RESOURCE_NOT_FOUND", Message: "资源库尚未配置", Fix: map[string]any{"action": "import_resource", "resource_key": key}}}}
-		if library != nil {
-			r = library.Resolve(ctx, resource.Ref{Key: key, Name: d.Label, Type: d.Type, Location: d.Location, BaseDirFromInput: d.FolderInput}, resource.Scope{FlowID: id, FlowDir: item.Dir, Lock: lock})
-		}
-		resolved = append(resolved, r)
-		if publicDeclaration(d) && lock.Find(d.Type, d.Label) == nil && r.ID != "" && r.Digest != "" && strings.HasPrefix(r.Owner, "library_") {
-			lock.Resources = append(lock.Resources, resource.LockResource(d.Type, d.Label, r))
-		}
-	}
+	resolved, lock := resolveVisualResources(ctx, id, item.Dir, doc, lock, library)
 	if item.Source == "user" && persistLock {
 		if err = writeLock(item.Dir, lock); err != nil {
 			return nil, nil, nil, nil, err
 		}
 	}
 	return item, doc, lock, resolved, nil
+}
+
+func resolveVisualResources(ctx context.Context, id, dir string, doc *FlowDoc, lock *resource.Lock, library *resource.Library) ([]*resource.ResolvedResource, *resource.Lock) {
+	resolved := []*resource.ResolvedResource{}
+	for _, d := range doc.Resources {
+		key := "unresolved:" + d.Type + ":" + d.Label
+		r := &resource.ResolvedResource{Key: key, Label: d.Label, Type: d.Type, Location: d.Location, Entries: []resource.ResourceEntry{}, Problems: []Diagnostic{{Level: "error", Code: "FLOW_RESOURCE_NOT_FOUND", Message: "资源库尚未配置", Fix: map[string]any{"action": "import_resource", "resource_key": key}}}}
+		if library != nil {
+			r = library.Resolve(ctx, resource.Ref{Key: key, Name: d.Label, Type: d.Type, Location: d.Location, BaseDirFromInput: d.FolderInput}, resource.Scope{FlowID: id, FlowDir: dir, Lock: lock})
+		}
+		resolved = append(resolved, r)
+		if publicDeclaration(d) && lock.Find(d.Type, d.Label) == nil && r.ID != "" && r.Digest != "" && strings.HasPrefix(r.Owner, "library_") {
+			lock.Resources = append(lock.Resources, resource.LockResource(d.Type, d.Label, r))
+		}
+	}
+	return resolved, lock
 }

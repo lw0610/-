@@ -145,14 +145,8 @@ func (g *guardedInvokableTool) InvokableRun(ctx context.Context, argumentsInJSON
 
 	info := buildGuardInterruptInfo(g.toolName, g.spec, argumentsInJSON)
 
-	wasInterrupted, _, _ := einotool.GetInterruptState[any](ctx)
-	if !wasInterrupted {
-		return "", einotool.Interrupt(ctx, info)
-	}
-
-	isResumeTarget, _, _ := einotool.GetResumeContext[any](ctx)
-	if !isResumeTarget {
-		return "", einotool.Interrupt(ctx, info)
+	if err := requireConfirmation(ctx, info); err != nil {
+		return "", err
 	}
 
 	return g.inner.InvokableRun(ctx, argumentsInJSON, opts...)
@@ -182,17 +176,22 @@ func (g *guardedEnhancedTool) InvokableRun(ctx context.Context, toolArgument *sc
 		info = buildGuardInterruptInfo(g.toolName, g.spec, toolArgument.Text)
 	}
 
-	wasInterrupted, _, _ := einotool.GetInterruptState[any](ctx)
-	if !wasInterrupted {
-		return nil, einotool.Interrupt(ctx, info)
-	}
-
-	isResumeTarget, _, _ := einotool.GetResumeContext[any](ctx)
-	if !isResumeTarget {
-		return nil, einotool.Interrupt(ctx, info)
+	if err := requireConfirmation(ctx, info); err != nil {
+		return nil, err
 	}
 
 	return g.inner.InvokableRun(ctx, toolArgument, opts...)
+}
+
+func requireConfirmation(ctx context.Context, info InterruptPayload) error {
+	response, err := requestResponse(ctx, info)
+	if err != nil {
+		return err
+	}
+	if !response.IsConfirmed() {
+		return fmt.Errorf("HITL_NOT_CONFIRMED: 用户未明确确认本次操作")
+	}
+	return nil
 }
 
 func shouldInterruptHighRiskTool(toolName string, argumentsInJSON string) bool {
@@ -266,6 +265,7 @@ func buildGuardInterruptInfo(toolName string, spec highRiskSpec, argumentsInJSON
 
 	return InterruptPayload{
 		Type:        "plan_confirmation",
+		SelectMode:  selectModeConfirm,
 		Title:       "高风险操作确认",
 		Description: spec.Description,
 		Plan:        plan,

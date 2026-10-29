@@ -3,6 +3,7 @@ package runtimecontrol
 import (
 	"context"
 	"fmt"
+	"github.com/autocarto/carto_agent/internal/dataservice"
 	"os"
 	"path/filepath"
 	"strings"
@@ -21,8 +22,11 @@ const (
 )
 
 func Handles(toolName string) bool {
+	if dataservice.Handles(toolName) {
+		return true
+	}
 	switch strings.TrimSpace(toolName) {
-	case ToolHITLRequest, ToolOutputGetInfo, ToolReferenceRead, ToolResourceGet, ToolFlowStart, ToolFlowPreview:
+	case ToolHITLRequest, ToolOutputGetInfo, ToolReferenceRead, ToolResourceGet, ToolPlanPropose, ToolPlanRevise:
 		return true
 	default:
 		return false
@@ -30,6 +34,9 @@ func Handles(toolName string) bool {
 }
 
 func Invoke(ctx context.Context, toolName string, args map[string]any) (any, error) {
+	if dataservice.Handles(toolName) {
+		return dataservice.Invoke(ctx, toolName, args)
+	}
 	switch strings.TrimSpace(toolName) {
 	case ToolHITLRequest:
 		return hitl.Invoke(ctx, args)
@@ -39,8 +46,8 @@ func Invoke(ctx context.Context, toolName string, args map[string]any) (any, err
 		return getResource(ctx, args)
 	case ToolReferenceRead:
 		return readReference(ctx, stringArg(args, "path"))
-	case ToolFlowStart, ToolFlowPreview:
-		return invokeFlowTool(ctx, toolName, args)
+	case ToolPlanPropose, ToolPlanRevise:
+		return invokePlanTool(ctx, toolName, args)
 	default:
 		return nil, fmt.Errorf("unsupported runtime-control tool: %s", strings.TrimSpace(toolName))
 	}

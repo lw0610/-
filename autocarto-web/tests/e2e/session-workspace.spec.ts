@@ -1,6 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
 import { mockDesktopRuntime } from './helpers/desktopRuntime'
-import path from 'node:path'
 
 type Harness = Window & {
   __workspaceSocket: { onmessage?: (event: { data: string }) => void }
@@ -177,7 +176,7 @@ async function fixture(page: Page) {
       data = { active: '', providers: [] }
     else if (pathname === '/api/agent-configs')
       data = { configs: [{ config_name: 'default', is_active: true }] }
-    else if (pathname === '/api/flows') data = []
+    else if (pathname === '/api/guides') data = []
     else if (pathname === '/api/tools/catalog') data = { items: [] }
     else if (pathname === '/api/skill-packages') data = { packages: [] }
     await route.fulfill({
@@ -206,7 +205,7 @@ for (const width of [1200, 900])
     expect(chat?.width || 0).toBeGreaterThanOrEqual(420)
     await expect(page.getByText('roads.shp', { exact: true })).toHaveCount(1)
     await page.screenshot({
-      path: path.resolve(`../docs/refactor-v4/evidence/F72-${width}.png`),
+      path: test.info().outputPath(`workspace-${width}.png`),
       fullPage: true,
     })
     await page.getByText('统计数据.csv', { exact: true }).click()

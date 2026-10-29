@@ -1,9 +1,32 @@
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { spawnSync } from 'node:child_process'
+import { mkdtemp, mkdir, readFile, rm, stat, symlink, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { buildAgent, buildEnvironment, publishBinary, resolveTarget, targetConfig } from './build-agent.mjs'
+
+test('symlink CLI entry executes but importing the same module does not', async t => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'agent-entry-test-'))
+  t.after(() => rm(dir, { recursive: true, force: true }))
+  const link = path.join(dir, 'scripts')
+  await symlink(fileURLToPath(new URL('.', import.meta.url)), link, process.platform === 'win32' ? 'junction' : 'dir')
+  const entry = path.join(link, 'build-agent.mjs')
+  const cli = spawnSync(process.execPath, [entry, '--unknown-entry-regression'], { encoding: 'utf8', timeout: 10_000 })
+  assert.equal(cli.error, undefined)
+  assert.equal(cli.status, 1, cli.stderr)
+  assert.match(cli.stderr, /Unknown argument: --unknown-entry-regression/)
+  assert.equal(cli.stdout, '')
+
+  const importer = path.join(dir, 'importer.mjs')
+  await writeFile(importer, `import ${JSON.stringify(pathToFileURL(entry).href)}; console.log('imported without building')\n`)
+  const imported = spawnSync(process.execPath, [importer, '--unknown-entry-regression'], { encoding: 'utf8', timeout: 10_000 })
+  assert.equal(imported.error, undefined)
+  assert.equal(imported.status, 0, imported.stderr)
+  assert.equal(imported.stdout.trim(), 'imported without building')
+  assert.equal(imported.stderr, '')
+})
 
 test('maps both desktop architectures and Windows executable suffix', () => {
   for (const [arch, goarch] of [['aarch64', 'arm64'], ['x86_64', 'amd64']]) {

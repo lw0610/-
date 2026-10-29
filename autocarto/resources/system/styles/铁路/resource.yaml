@@ -1,0 +1,18 @@
+{
+  "apiVersion": "resource/v1",
+  "id": "style.basemap-97492a0e5d",
+  "type": "style",
+  "name": "铁路",
+  "version": "1.0.0",
+  "entry": "铁路.qml",
+  "geometry": "line",
+  "label_field": "无",
+  "description": "由原预设导出的符号和标注",
+  "tags": [
+    "铁路线",
+    "轨道交通干线"
+  ],
+  "source": {
+    "author": "AutoCarto"
+  }
+}

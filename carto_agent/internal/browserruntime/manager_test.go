@@ -116,6 +116,10 @@ func TestMCPHelper(t *testing.T) {
 				text = page
 			case "browser_snapshot":
 				text = page
+			case "browser_screenshot":
+				response["result"] = map[string]any{"content": []any{map[string]any{"type": "image", "mimeType": "image/png", "data": []byte("\x89PNG\r\n\x1a\nMCP-image")}}}
+				_ = encoder.Encode(response)
+				continue
 			case "browser_args":
 				text = strings.Join(os.Args, "\n")
 			case "browser_large":

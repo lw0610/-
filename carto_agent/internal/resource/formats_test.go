@@ -1,9 +1,7 @@
 package resource
 
 import (
-	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"testing"
 )
@@ -12,8 +10,8 @@ func TestResourceFormatDefinitions(t *testing.T) {
 	if err := validateFormats(Formats()); err != nil {
 		t.Fatal(err)
 	}
-	if len(TypeInfos()) != 8 {
-		t.Fatal("必须包含八类资源")
+	if len(TypeInfos()) != 2 {
+		t.Fatal("公共资源只包含样式和版面")
 	}
 	for _, typ := range TypeInfos() {
 		for _, word := range typ.Words {
@@ -93,29 +91,15 @@ func TestXLSXFormulaCacheAndErrorValues(t *testing.T) {
 		}
 	}
 }
-func TestGuideResourceExamples(t *testing.T) {
-	docs := filepath.Join("..", "..", "..", "docs")
-	paths, err := filepath.Glob(filepath.Join(docs, "*.md"))
+func TestLegacyMigrationTableFixtures(t *testing.T) {
+	root, err := filepath.Abs(filepath.Join("..", "..", "..", "autocarto/tests/fixtures/resource_samples/resources"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	pattern := regexp.MustCompile("(?s)<!-- resource-example: ([a-z_]+) -->\\s*```csv\\s*\\n(.*?)\\n```")
-	count := 0
-	for _, path := range paths {
-		raw, err := os.ReadFile(path)
-		if err != nil {
-			t.Fatal(err)
+	for _, item := range []struct{ kind, path string }{{"data_list", "data/数据清单.csv"}, {"style_set", "styles/标注样式/对照表.csv"}, {"symbols", "symbols/通用符号/对照表.csv"}, {"route_style", "styles/契约路线.xlsx"}} {
+		if _, err := readTable(filepath.Join(root, item.path), item.kind); err != nil {
+			t.Fatalf("%s: %v", item.path, err)
 		}
-		for _, match := range pattern.FindAllStringSubmatch(string(raw), -1) {
-			count++
-			file := resourceWrite(t, filepath.Join(t.TempDir(), "example.csv"), match[2])
-			if _, err := readTable(file, match[1]); err != nil {
-				t.Errorf("%s (%s): %v", path, match[1], err)
-			}
-		}
-	}
-	if count < 4 {
-		t.Fatalf("资源表文档示例缺失：%d", count)
 	}
 }
 func TestLayoutStructuralFormat(t *testing.T) {

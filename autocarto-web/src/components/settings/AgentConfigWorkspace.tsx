@@ -16,9 +16,6 @@ import ListDetailLayout from "@/components/settings/ListDetailLayout";
 import ListPanelHeader from "@/components/settings/ListPanelHeader";
 
 import DropdownMenu from "@/components/settings/DropdownMenu";
-import TabBar from "@/components/settings/TabBar";
-import AgentFlowSelection from "./AgentFlowSelection";
-import FlowPolicySettings from "./FlowPolicySettings";
 import FullScreenSettingsDrawer from "@/components/settings/FullScreenSettingsDrawer";
 import { useSettingsActionStatus } from "@/hooks/useSettingsActionStatus";
 import {
@@ -33,31 +30,17 @@ import api, {
   extractMutationFromError,
   getApiErrorMessage,
   LLMConfigPayload,
-  PlanAgentDefData,
 } from "@/lib/api";
 import { formatDateTime } from "@/lib/settings-utils";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { useRuntimeSnapshotStore } from "@/stores/runtimeSnapshotStore";
 import MetaConfigSection from "@/app/settings/agents/_components/MetaConfigSection";
-import PlanConfigPanel from "@/app/settings/agents/_components/PlanConfigPanel";
 import RuntimeConfigPanel from "@/app/settings/agents/_components/RuntimeConfigPanel";
 import GlobalConfigEditDrawer from "@/app/settings/agents/_components/GlobalConfigEditDrawer";
 import {
   normalizeConfigData,
-  normalizePlanAgentForSave,
   normalizeRuntimeAgentForSave,
 } from "@/app/settings/agents/_components/normalizers";
-
-function buildEmptyPlanConfig(): NonNullable<AgentConfigData["plan"]> {
-  return {
-    enabled: true,
-    max_iterations: 100,
-    shared: {
-      tool_packages: [],
-    },
-    agents: {},
-  };
-}
 
 function PromptDialog({
   title,
@@ -164,7 +147,6 @@ export default function AgentConfigWorkspace() {
   const [configData, setConfigData] = useState<AgentConfigData | null>(null);
   const [originalConfigData, setOriginalConfigData] =
     useState<AgentConfigData | null>(null);
-  const [activeTab, setActiveTab] = useState("runtime");
   const [loadingList, setLoadingList] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -175,7 +157,6 @@ export default function AgentConfigWorkspace() {
 
   const [createAgentOpen, setCreateAgentOpen] = useState(false);
   const [editingRuntimeAgentName, setEditingRuntimeAgentName] = useState("");
-  const [editingPlanAgentName, setEditingPlanAgentName] = useState("");
   const [deleteConfigDialogOpen, setDeleteConfigDialogOpen] = useState(false);
   const [deleteRuntimeAgentDialogOpen, setDeleteRuntimeAgentDialogOpen] =
     useState(false);
@@ -185,9 +166,8 @@ export default function AgentConfigWorkspace() {
   const [createConfigDialogOpen, setCreateConfigDialogOpen] = useState(false);
   const [cloneConfigDialogOpen, setCloneConfigDialogOpen] = useState(false);
   const [runtimeDrawerDirty, setRuntimeDrawerDirty] = useState(false);
-  const [planDrawerDirty, setPlanDrawerDirty] = useState(false);
   const [configDrawerOpen, setConfigDrawerOpen] = useState(false);
-  const [editingGlobalMode, setEditingGlobalMode] = useState<"runtime" | "plan" | "">("");
+  const [editingGlobalMode, setEditingGlobalMode] = useState<"runtime" | "">("");
   const { actionStatus, showActionStatus } = useSettingsActionStatus();
 
   const selectedConfigRef = useRef("");
@@ -213,7 +193,7 @@ export default function AgentConfigWorkspace() {
     normalizedDraftConfig && normalizedDraftConfig !== normalizedOriginalConfig,
   );
   const hasUnsavedChanges =
-    isConfigDirty || createAgentDirty || runtimeDrawerDirty || planDrawerDirty;
+    isConfigDirty || createAgentDirty || runtimeDrawerDirty;
 
   useUnsavedChangesGuard(hasUnsavedChanges);
 
@@ -345,58 +325,21 @@ export default function AgentConfigWorkspace() {
       return {
         runtimeAgents: 0,
         runtimeMainAgents: 0,
-        planAgents: 0,
-        planMainAgents: 0,
       };
     }
 	const runtimeAgents = Object.values(configData.runtime_agents || {});
-	const planAgents = Object.values(configData.has_plan ? configData.plan?.agents || {} : {});
     return {
       runtimeAgents: runtimeAgents.length,
       runtimeMainAgents: runtimeAgents.filter((agent) => Boolean(agent.is_main))
         .length,
-      planAgents: planAgents.length,
-      planMainAgents: planAgents.filter((agent) => Boolean(agent.is_main))
-        .length,
     };
   }, [configData]);
-  const agentTabs = useMemo(() => {
-    return [
-      {
-        key: "runtime",
-        label: "Runtime",
-        badge: String(selectedConfigMetrics.runtimeAgents),
-        hint:
-          selectedConfigMetrics.runtimeMainAgents > 0
-            ? `主控 ${selectedConfigMetrics.runtimeMainAgents}`
-            : "运行智能体",
-      },
-      {
-        key: "plan",
-        label: "Plan",
-		badge: configData?.has_plan && configData?.plan?.enabled
-		  ? String(selectedConfigMetrics.planAgents)
-		  : "关闭",
-		hint: configData?.has_plan && configData?.plan?.enabled
-		  ? `主规划 ${selectedConfigMetrics.planMainAgents}`
-		  : "当前方案未启用",
-      },
-    ];
-  }, [configData?.has_plan, configData?.plan?.enabled, selectedConfigMetrics]);
-
   const editingRuntimeAgent = useMemo(() => {
     if (!configData || !editingRuntimeAgentName) {
       return null;
     }
 	return configData.runtime_agents[editingRuntimeAgentName] || null;
   }, [configData, editingRuntimeAgentName]);
-
-  const editingPlanAgent = useMemo(() => {
-    if (!configData || !configData.has_plan || !configData.plan || !editingPlanAgentName) {
-      return null;
-    }
-    return configData.plan.agents[editingPlanAgentName] || null;
-  }, [configData, editingPlanAgentName]);
 
   const updateDraftConfig = useCallback(
     (updater: (current: AgentConfigData) => AgentConfigData) => {
@@ -448,48 +391,13 @@ export default function AgentConfigWorkspace() {
     selectedConfigName,
   ]);
 
-  const updateMeta = (nextMeta: AgentConfigMeta) => {
-    updateDraftConfig((current) => ({
-      ...current,
-      meta: nextMeta,
-		has_plan: Boolean(nextMeta.plan_enabled) || current.has_plan,
-		plan: Boolean(nextMeta.plan_enabled)
-		  ? {
-			  ...(current.plan || buildEmptyPlanConfig()),
-			  enabled: true,
-		    }
-		  : current.has_plan
-		    ? {
-				...(current.plan || buildEmptyPlanConfig()),
-				enabled: false,
-		      }
-		    : undefined,
-    }));
-  };
+  const updateMeta = (meta: AgentConfigMeta) => updateDraftConfig(current=>({...current,meta}));
 
   const updateRuntimeGlobal = useCallback(
     (nextGlobal: AgentConfigData["runtime_shared"]) => {
       updateDraftConfig((current) => ({
         ...current,
         runtime_shared: nextGlobal,
-      }));
-    },
-    [updateDraftConfig],
-  );
-
-  const updatePlanConfig = useCallback(
-    (nextPlan: AgentConfigData["plan"]) => {
-		if (!nextPlan) {
-			return;
-		}
-      updateDraftConfig((current) => ({
-        ...current,
-			has_plan: true,
-        meta: {
-          ...current.meta,
-          plan_enabled: Boolean(nextPlan.enabled),
-        },
-        plan: nextPlan,
       }));
     },
     [updateDraftConfig],
@@ -827,13 +735,13 @@ export default function AgentConfigWorkspace() {
               <EmptyStatePanel
                 eyebrow="详情工作区"
                 title="尚未选择方案"
-                description="从左侧方案目录选择一个配置方案，以编辑 Runtime / Plan 协作策略。"
+                description="从左侧方案目录选择一个配置方案，以编辑 智能体职责与工具能力。"
               />
             ) : !configData ? (
               <EmptyStatePanel
                 eyebrow="详情工作区"
                 title="配置数据加载中"
-                description="正在同步当前方案的全局设置、Runtime 角色与 Plan 角色配置。"
+                description="正在同步当前方案的全局设置、运行角色配置。"
               />
             ) : null
           }
@@ -853,13 +761,10 @@ export default function AgentConfigWorkspace() {
                       <div className="text-[11px] font-semibold text-zinc-900 dark:text-zinc-100">
                         {selectedConfigName}
                       </div>
-                      <InfoTooltip content="直接维护全局元数据，以及 Runtime / Plan 智能体的协作编排。" />
+                      <InfoTooltip content="维护方案说明、运行智能体及职责分工。" />
                     </div>
                     <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                      Runtime {selectedConfigMetrics.runtimeAgents} · Plan{" "}
-						{configData.has_plan && configData.plan?.enabled
-						  ? selectedConfigMetrics.planAgents
-						  : "关闭"}
+                      运行智能体 {selectedConfigMetrics.runtimeAgents}
                     </div>
                   </div>
                 </div>
@@ -872,31 +777,9 @@ export default function AgentConfigWorkspace() {
                   />
 
                   {(configData.migration_warnings || []).length > 0 && <AlertPanel tone="warning" title="配置迁移提示" message={<ul>{configData.migration_warnings?.map((warning,index) => <li key={`${warning.code}-${index}`}>{warning.message} · {warning.path}{warning.package ? ` · ${warning.package}` : ""}</li>)}</ul>} />}
-                  <AgentFlowSelection scheme={selectedConfigName} value={configData.flows} onChange={(flows) => updateDraftConfig((current) => ({...current,flows}))} />
-                  <FlowPolicySettings value={configData.flow_policy} onChange={(flow_policy) => updateDraftConfig((current) => ({...current,flow_policy}))} />
 
-                  <div className="rounded border border-zinc-200/60 bg-zinc-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-950/60 dark:shadow-zinc-950/30">
-                    <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
-                      <div className="flex items-center gap-1.5">
-                        <div className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-700 dark:text-zinc-200">
-                          角色工作区
-                        </div>
-                        <InfoTooltip content="在 Runtime 与 Plan 两类智能体间切换，查看并维护职责分工。" />
-                      </div>
-                      <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                        当前聚焦：
-                        {activeTab === "runtime" ? "运行智能体" : "规划智能体"}
-                      </div>
-                    </div>
-
-                    <TabBar
-                      tabs={agentTabs}
-                      activeKey={activeTab}
-                      onChange={setActiveTab}
-                    />
-                  </div>
-
-                  {activeTab === "runtime" && (
+                  <p className="text-xs text-zinc-500">Plan 与 Build 共用编排智能体。Plan 只读并提出计划，Build 执行计划。</p>
+                  {(
                     <RuntimeConfigPanel
                       configData={configData}
                       saving={saving}
@@ -921,15 +804,7 @@ export default function AgentConfigWorkspace() {
                     />
                   )}
 
-                  {activeTab === "plan" && (
-                    <PlanConfigPanel
-                      configData={configData}
-                      saving={saving}
-                      onChangePlan={updatePlanConfig}
-                      onEditGlobal={() => setEditingGlobalMode("plan")}
-                      onEditAgent={setEditingPlanAgentName}
-                    />
-                  )}
+
                 </div>
             </div>
           ) : null}
@@ -966,36 +841,6 @@ export default function AgentConfigWorkspace() {
           }}
         />
 
-        <AgentEditDrawer
-          open={Boolean(editingPlanAgentName)}
-          mode="plan"
-          agentName={editingPlanAgentName}
-          agent={editingPlanAgent}
-          toolPackages={toolPackages}
-          modelOptions={modelOptions}
-          onClose={() => setEditingPlanAgentName("")}
-          onDirtyChange={setPlanDrawerDirty}
-	          onSave={async (agent) => {
-	            if (!configData || !editingPlanAgentName) {
-	              return;
-	            }
-            const nextAgent = normalizePlanAgentForSave(
-              agent as PlanAgentDefData,
-            );
-	            updateDraftConfig((current) => ({
-	              ...current,
-				  has_plan: true,
-	              plan: {
-	                ...(current.plan || buildEmptyPlanConfig()),
-	                agents: {
-	                  ...(current.plan?.agents || {}),
-	                  [editingPlanAgentName]: nextAgent,
-	                },
-	              },
-	            }));
-	          }}
-        />
-
         {configData && (
           <GlobalConfigEditDrawer
             open={editingGlobalMode === "runtime"}
@@ -1005,23 +850,6 @@ export default function AgentConfigWorkspace() {
             onClose={() => setEditingGlobalMode("")}
             onSave={(nextGlobal) => {
               updateRuntimeGlobal(nextGlobal);
-              setEditingGlobalMode("");
-            }}
-          />
-        )}
-
-        {configData?.has_plan && configData.plan && (
-          <GlobalConfigEditDrawer
-            open={editingGlobalMode === "plan"}
-            mode="plan"
-            global={configData.plan.shared}
-            toolPackages={toolPackages}
-            onClose={() => setEditingGlobalMode("")}
-            onSave={(nextGlobal) => {
-              updatePlanConfig({
-                ...configData.plan!,
-                shared: nextGlobal,
-              });
               setEditingGlobalMode("");
             }}
           />

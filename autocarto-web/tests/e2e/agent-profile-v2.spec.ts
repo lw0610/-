@@ -3,7 +3,7 @@ import {mockDesktopRuntime} from './helpers/desktopRuntime'
 
 // Browser contract playback: all HTTP responses below are fixtures; no Go
 // service, QGIS instance, settings credentials or persistent runtime is used.
-test('v2 scheme edits preserve role fields and expose only tools and flows',async({page})=>{
+test('v5 scheme edits preserve role fields and remove independent planner and flow configuration',async({page})=>{
   await mockDesktopRuntime(page,{port:50131})
   await page.addInitScript(()=>{class Socket{static OPEN=1;readyState=1;onopen:((event:Event)=>void)|null=null;constructor(){setTimeout(()=>this.onopen?.(new Event('open')),0)}send(){}close(){}addEventListener(){}removeEventListener(){}};Object.defineProperty(window,'WebSocket',{value:Socket,configurable:true})})
   const packages=[
@@ -39,8 +39,9 @@ test('v2 scheme edits preserve role fields and expose only tools and flows',asyn
   await page.goto('/settings/models-agents')
   await page.getByRole('button',{name:'智能体方案',exact:true}).click()
   await page.getByRole('button',{name:'编辑',exact:true}).first().click()
-  await expect(page.getByText('启用的流程',{exact:true})).toBeVisible()
-  await expect(page.getByText('通用数据流程',{exact:true})).toBeVisible()
+  await expect(page.getByText('启用的流程',{exact:true})).toHaveCount(0)
+  await expect(page.getByText('流程策略',{exact:true})).toHaveCount(0)
+  await expect(page.getByRole('checkbox',{name:'启用 Plan',exact:true})).toHaveCount(0)
   await expect(page.getByText('有警告',{exact:true})).toHaveCount(0)
   await expect(page.getByRole('group',{name:'角色 数据角色'})).toBeVisible()
   await page.getByRole('group',{name:'角色 数据角色'}).getByRole('button',{name:'编辑',exact:true}).click()
@@ -62,14 +63,10 @@ test('v2 scheme edits preserve role fields and expose only tools and flows',asyn
   await page.getByRole('button',{name:'保存当前方案',exact:true}).click()
   await expect.poll(()=>saved?.runtime_agents.find(entry=>entry.name==='data')?.agent.display_name).toBe('数据角色已编辑')
   expect(saved?.version).toBe('2.0')
-  expect(saved?.flows.enabled).toEqual(['demo'])
+  expect(saved?.flows).toBeUndefined()
   expect(saved?.runtime_agents.find(entry=>entry.name==='custom-executor')?.agent).toMatchObject({kind:'executor',executor:'route_knowledge',flow_only:true,legacy_unresolved_packages:['unknown-keep'],prompts:{custom_rule:'keep'}})
-  expect(saved?.plan.agents[0].agent.mode).toBe('readonly')
+  expect(saved?.plan).toBeUndefined()
   expect(saved?.runtime_agents.every(entry=>!('skill_packages' in entry.agent))).toBe(true)
-  await page.getByRole('link',{name:'通用数据流程',exact:true}).click()
-  await expect(page).toHaveURL(/\/flows\?flow=demo&scheme=default&tab=steps$/)
-  await expect(page.getByRole('textbox',{name:'流程内容',exact:true})).toHaveValue(/检查数据/)
-  await expect(page.getByRole('combobox',{name:'当前方案',exact:true})).toHaveValue('default')
   await page.goto('/settings/tools')
   await page.getByRole('button',{name:'能力手册',exact:true}).click()
   await page.getByPlaceholder('搜索工具...').fill('分类比较')

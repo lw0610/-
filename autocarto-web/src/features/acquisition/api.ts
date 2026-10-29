@@ -1,6 +1,11 @@
 import api from '@/lib/api'
-import type {AcquisitionConfig, DataSource, DataStore, LocalDraft, SourceCatalog} from './types'
+import type {AcquisitionConfig, DataMemoryEntry, DataSource, DataStore, LocalDraft, SourceCatalog} from './types'
 export const acquisitionApi = {
+ planConfig:()=>api.get<{confirm:'when_needed'|'always'|'never'}>('/api/plans/config'),
+ savePlanConfig:(confirm:'when_needed'|'always'|'never')=>api.put('/api/plans/config',{confirm}),
+ memory:()=>api.get<{entries:DataMemoryEntry[]}>('/api/data-memory'),
+ forget:(entry:DataMemoryEntry)=>api.delete('/api/data-memory?'+new URLSearchParams({guide:entry.guide||'',name:entry.name,category:entry.category||'',extent:entry.extent||''}).toString()),
+ models:()=>api.getLLMProviders(),
  sources: () => api.get<SourceCatalog>('/api/data-sources'),
  scan: (path: string) => api.post<LocalDraft>('/api/data-sources/scan', {path}),
  saveSource: (source: DataSource, editing: boolean) => editing ? api.put(`/api/data-sources/${encodeURIComponent(source.id)}`, source) : api.post('/api/data-sources', source),

@@ -1,9 +1,14 @@
 package browserruntime
 
 import (
+	"bytes"
 	"context"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -60,7 +65,7 @@ func TestPlaywrightSmoke(t *testing.T) {
 	for _, tool := range catalog.(map[string]any)["tools"].([]map[string]any) {
 		known[tool["name"].(string)] = tool
 	}
-	for _, name := range []string{"browser_navigate", "browser_snapshot", "browser_click", "browser_evaluate"} {
+	for _, name := range []string{"browser_navigate", "browser_snapshot", "browser_click", "browser_evaluate", "browser_take_screenshot"} {
 		if known[name] == nil {
 			t.Fatalf("missing live tool %s", name)
 		}
@@ -74,6 +79,76 @@ func TestPlaywrightSmoke(t *testing.T) {
 		return value.(map[string]any)
 	}
 	call("browser_navigate", map[string]any{"url": server.URL})
+	// Read the live schema before invoking the installed MCP operation. The
+	// screenshot must survive MCP decoding and our media envelope as real pixels.
+	screenshotSchema := known["browser_take_screenshot"]["inputSchema"].(map[string]any)
+	screenshotProperties := screenshotSchema["properties"].(map[string]any)
+	screenshotArgs := map[string]any{}
+	if property, ok := screenshotProperties["type"].(map[string]any); ok {
+		allowedPNG := false
+		enum, _ := property["enum"].([]any)
+		for _, value := range enum {
+			allowedPNG = allowedPNG || value == "png"
+		}
+		if !allowedPNG {
+			t.Fatalf("live screenshot tool does not offer PNG: %v", screenshotSchema)
+		}
+		screenshotArgs["type"] = "png"
+	}
+	required, _ := screenshotSchema["required"].([]any)
+	for _, rawName := range required {
+		name := rawName.(string)
+		if _, exists := screenshotArgs[name]; exists {
+			continue
+		}
+		property, _ := screenshotProperties[name].(map[string]any)
+		if value, exists := property["default"]; exists {
+			screenshotArgs[name] = value
+		} else {
+			t.Fatalf("unhandled required screenshot parameter %q: %v", name, screenshotSchema)
+		}
+	}
+	liveSchema, _ := json.Marshal(screenshotSchema)
+	t.Logf("Live browser_take_screenshot schema: %s", liveSchema)
+	screenshot := call("browser_take_screenshot", screenshotArgs)
+	media, ok := screenshot["_agent_media"].([]any)
+	if !ok || len(media) == 0 {
+		t.Fatalf("real screenshot returned no media attachment: %v", screenshot)
+	}
+	for _, raw := range media {
+		item := raw.(map[string]any)
+		path, ok := item["path"].(string)
+		if !ok || !filepath.IsAbs(path) || pathInOutput(path, output) != nil || item["type"] != "image" {
+			t.Fatalf("screenshot did not produce an isolated image path: %v", item)
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		pixels, format, err := image.Decode(bytes.NewReader(data))
+		if err != nil || (format != "png" && format != "jpeg") {
+			t.Fatalf("screenshot is not decodable PNG/JPEG: format=%q error=%v", format, err)
+		}
+		bounds := pixels.Bounds()
+		if bounds.Dx() < 100 || bounds.Dy() < 100 {
+			t.Fatalf("screenshot is not the fixture viewport: %v", bounds)
+		}
+		firstR, firstG, firstB, firstA := pixels.At(bounds.Min.X, bounds.Min.Y).RGBA()
+		hasContent := false
+		for y := bounds.Min.Y; y < bounds.Max.Y && !hasContent; y++ {
+			for x := bounds.Min.X; x < bounds.Max.X; x++ {
+				r, g, b, a := pixels.At(x, y).RGBA()
+				if r != firstR || g != firstG || b != firstB || a != firstA {
+					hasContent = true
+					break
+				}
+			}
+		}
+		if !hasContent {
+			t.Fatal("screenshot decoded to a blank single-color image")
+		}
+		t.Logf("Verified real %s screenshot: %dx%d, %d bytes", format, bounds.Dx(), bounds.Dy(), len(data))
+	}
 	snapshot := call("browser_snapshot", map[string]any{})
 	var text strings.Builder
 	for _, block := range snapshot["content"].([]map[string]any) {
@@ -157,7 +232,7 @@ func TestPlaywrightSmoke(t *testing.T) {
 	if len(m.sessions) != 0 || command.ProcessState == nil || !command.ProcessState.Exited() {
 		t.Fatal("MCP process did not exit on close")
 	}
-	t.Logf("Verified Playwright MCP %s: navigation, snapshot, file download, page-table Blob CSV (quoted cells, zero and missing values) and process close", PlaywrightVersion)
+	t.Logf("Verified Playwright MCP %s: navigation, screenshot pixels, snapshot, file download, page-table Blob CSV (quoted cells, zero and missing values) and process close", PlaywrightVersion)
 }
 
 func chromeAvailable() bool {

@@ -2,6 +2,7 @@ package webdata
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/netip"
@@ -10,6 +11,55 @@ import (
 	"strings"
 	"testing"
 )
+
+func TestReadPageReturnsImageAndPDFAsMediaWithSourceEvidence(t *testing.T) {
+	for _, tc := range []struct{ name, body, header, mime, kind string }{
+		{"png", "\x89PNG\r\n\x1a\nreal-image", "image/png", "image/png", "image"},
+		{"pdf", "%PDF-1.7\nreal-pdf\n%%EOF", "application/pdf", "application/pdf", "file"},
+		{"untyped-image", "\x89PNG\r\n\x1a\nreal-image", "application/octet-stream", "image/png", "image"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			raw, err := invoke(context.Background(), "web_read_page", map[string]any{"url": "https://example.org/table"}, Options{Enabled: true, OutputDir: t.TempDir(), MaxDownloadMB: 1}, fixtureClient(tc.body, tc.header, 200))
+			if err != nil {
+				t.Fatal(err)
+			}
+			r := raw.(map[string]any)
+			media := r["_agent_media"].([]any)
+			if len(media) != 1 {
+				t.Fatalf("missing media: %#v", r)
+			}
+			item := media[0].(map[string]any)
+			data, err := os.ReadFile(item["path"].(string))
+			if err != nil || string(data) != tc.body || item["type"] != tc.kind || item["mime_type"] != tc.mime {
+				t.Fatalf("wrong media: %#v %v", item, err)
+			}
+			manifest, err := os.ReadFile(r["manifest_path"].(string))
+			if err != nil {
+				t.Fatal(err)
+			}
+			var evidence map[string]any
+			if json.Unmarshal(manifest, &evidence) != nil || evidence["source_url"] != "https://example.org/table" || evidence["sha256"] == "" {
+				t.Fatalf("lost provenance: %s", manifest)
+			}
+			if strings.Contains(string(manifest), "_agent_media") {
+				t.Fatal("internal envelope entered source manifest")
+			}
+		})
+	}
+}
+
+func TestReadPageMediaRejectsOversizedOrDisguisedBody(t *testing.T) {
+	opts := Options{Enabled: true, OutputDir: t.TempDir(), MaxDownloadMB: 1}
+	for _, body := range []string{"<html>not an image</html>", "\x89PNG\r\n\x1a\n" + strings.Repeat("x", 1<<20)} {
+		if _, err := invoke(context.Background(), "web_read_page", map[string]any{"url": "https://example.org/a.png"}, opts, fixtureClient(body, "image/png", 200)); err == nil {
+			t.Fatal("invalid media accepted")
+		}
+	}
+	entries, err := os.ReadDir(opts.OutputDir)
+	if err != nil || len(entries) != 0 {
+		t.Fatalf("failed media left files: %v %v", entries, err)
+	}
+}
 
 type transportFunc func(*http.Request) (*http.Response, error)
 

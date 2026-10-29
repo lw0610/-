@@ -132,3 +132,6 @@ secrets.enc
 /autocarto-web/src-tauri/水系.*
 /autocarto-web/src-tauri/河流.*
 /autocarto-web/src-tauri/河流面.*
+
+# Migration backup kept locally
+/docs/refactor-v6/evidence/builtin-resource-v5-backup.tar.gz

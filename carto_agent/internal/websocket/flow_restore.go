@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/autocarto/carto_agent/internal/agentruntime"
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/autocarto/carto_agent/internal/flowrun"
@@ -110,6 +111,9 @@ func (s *DeepServer) restoreFlowPending(ctx context.Context, sessionID, projectP
 	if err != nil {
 		return nil, err
 	}
+	if err = checkPendingFlowAttempt(state, desc.CheckpointID); err != nil {
+		return nil, err
+	}
 	run := flowSessionContext{Session: sess, SessionID: sessionID, ProjectPath: projectPath, InstanceID: desc.InstanceID, Scheme: state.Scheme, Mode: executionModeBuild, FlowRunID: id}
 	source, err := s.findOriginalFlowSource(ctx, run, dir, id)
 	if err != nil {
@@ -125,6 +129,14 @@ func (s *DeepServer) restoreFlowPending(ctx context.Context, sessionID, projectP
 	if err != nil {
 		return nil, err
 	}
+	if request.RunID != desc.CheckpointID {
+		return nil, fmt.Errorf("人工确认断点在恢复期间已改变，请重新打开当前计划")
+	}
+	ctx = withRunResourceSnapshot(ctx, state)
+	ctx, err = withRunAcquisitionSnapshot(ctx, state)
+	if err != nil {
+		return nil, err
+	}
 	var agent adk.Agent
 	if request.Confirmation != nil {
 		agent = flowrun.NewConfirmAgent(*request.Confirmation)
@@ -133,12 +145,15 @@ func (s *DeepServer) restoreFlowPending(ctx context.Context, sessionID, projectP
 		if err != nil {
 			return nil, err
 		}
-		agent, err = builder.BuildRole(ctx, run.Scheme, cfg, request.Role.ID)
+		if request.Overlay != nil {
+			agent, err = builder.BuildRoleWithOverlay(ctx, run.Scheme, cfg, agentruntime.RoleOverlay{FlowRole: request.Overlay.FlowRole, RoleID: request.Overlay.RoleID, ExtraPackages: request.Overlay.ExtraPackages})
+		} else {
+			agent, err = builder.BuildRole(ctx, run.Scheme, cfg, request.Role.ID)
+		}
 		if err != nil {
 			return nil, err
 		}
 	}
-	ctx = withRunResourceSnapshot(ctx, state)
 	resumeCtx := knowledge.WithOriginalSource(deepagent.WithKnowledgeReview(withToolSessionContext(ctx, sessionID, projectPath, desc.InstanceID), s.KnowledgeReviewStore()), source)
 	options := consumeEventsOptions{flowRunID: id, flowStepID: request.Step.ID, originalSource: &source, persistAssistant: true, modePhase: modeStatePhaseBuilding, executionMode: executionModeBuild, runID: request.RunID}
 	pending := &PendingInterrupt{CheckpointID: desc.CheckpointID, Runner: adk.NewRunner(resumeCtx, adk.RunnerConfig{Agent: agent, CheckPointStore: s.checkpointStore}), Contexts: desc.Contexts, SessionID: sessionID, ProjectPath: projectPath, BoundInstanceID: desc.InstanceID, Session: sess, ModePhase: modeStatePhaseBuilding, FlowOptions: options, InterruptData: desc.Data}

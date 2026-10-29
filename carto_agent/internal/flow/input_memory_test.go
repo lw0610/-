@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"sync"
 	"testing"
 )
@@ -53,34 +52,6 @@ func TestInputMemoryReadIsPureAndMutationsAreIsolated(t *testing.T) {
 	info, _ := os.Stat(memory.path)
 	if info.Mode().Perm()&0077 != 0 {
 		t.Fatal("local choices are readable by other users")
-	}
-}
-
-func TestInputMemoryRememberFiltersTypesAndRemovesEmptyOrOptedOutValues(t *testing.T) {
-	root := t.TempDir()
-	t.Setenv("AUTOCARTO_PROJECT_ROOT", root)
-	memory := NewInputMemory(filepath.Join(root, "memory.yaml"))
-	for _, label := range []string{"已清空", "不记住"} {
-		if err := memory.Set("first-flow", label, filepath.Join(root, "old")); err != nil {
-			t.Fatal(err)
-		}
-	}
-	inputs := []InputPlan{
-		{Key: "文件", Label: "文件", Type: "file", Remember: true},
-		{Key: "文件夹", Label: "文件夹", Type: "folder", Remember: true},
-		{Key: "原文", Label: "原文", Type: "conversation_text", Remember: true},
-		{Key: "已清空", Label: "已清空", Type: "folder", Remember: true},
-		{Key: "不记住", Label: "不记住", Type: "file", Remember: false},
-	}
-	if err := memory.Remember("first-flow", inputs, map[string]any{
-		"文件": "data/file.csv", "文件夹": "data", "原文": "保密正文", "已清空": "", "不记住": "/tmp/not-stored",
-	}); err != nil {
-		t.Fatal(err)
-	}
-	got, err := memory.Get("first-flow")
-	want := map[string]string{"文件": filepath.Join(root, "data/file.csv"), "文件夹": filepath.Join(root, "data")}
-	if err != nil || !reflect.DeepEqual(got, want) {
-		t.Fatal(got, err)
 	}
 }
 

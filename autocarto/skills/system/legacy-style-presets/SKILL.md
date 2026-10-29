@@ -15,4 +15,4 @@ tools:
 - layer_set_marker_symbol
 ---
 
-旧入口在兼容期使用工具私有的冻结资产。新流程使用 `style_set_apply` 或 `layer_load_style`，默认资源由工具参数声明。
+旧入口在兼容期使用工具私有的冻结资产。新流程使用 `layer_load_styles` 或 `layer_load_style`，默认资源由工具参数声明。

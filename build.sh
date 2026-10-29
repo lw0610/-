@@ -33,9 +33,10 @@ declare -a CHECK_HEADLESS_E2E_SPECS=(
     "tests/e2e/backend-reconnect.spec.ts"
     "tests/e2e/diagnostics-page.spec.ts"
     "tests/e2e/services-page.spec.ts"
-    "tests/e2e/flow-center.spec.ts"
-    "tests/e2e/flow-run.spec.ts"
+    "tests/e2e/guide-center.spec.ts"
+    "tests/e2e/plan-run.spec.ts"
     "tests/e2e/session-workspace.spec.ts"
+    "tests/e2e/agent-profile-v2.spec.ts"
 )
 
 APP_VERSION=""
@@ -1087,6 +1088,7 @@ run_frontend_unit_gate() {
 run_python_gate() {
     (
         cd "$ROOT_DIR"
+        "$PYTHON_BIN" -m unittest discover -s "$WEB_DIR/scripts" -p test_check_workspace.py || exit $?
         "$PYTHON_BIN" "$ROOT_DIR/scripts/refactor/run_python_tests.py"
     )
 }
@@ -1111,14 +1113,17 @@ run_live_e2e_gate() {
 }
 
 run_next_build_gate() {
-    (
-        cd "$WEB_DIR"
-        "$NEXT_BIN" build
-    )
+    "$PYTHON_BIN" "$WEB_DIR/scripts/check_workspace.py" build "$CHECK_WEB_DIR"
 }
 
 run_cargo_check_gate() {
-    cargo check --release --manifest-path "$TAURI_DIR/Cargo.toml"
+    # build.rs also publishes its Go sidecar; use the copied manifest so this
+    # cannot replace the binary used by a running desktop development session.
+    (
+        cd "$CHECK_WEB_DIR/src-tauri"
+        CARGO_TARGET_DIR="$CHECK_WEB_DIR/src-tauri/target" \
+            TAURI_CONFIG='{}' cargo check --release --manifest-path "$CHECK_WEB_DIR/src-tauri/Cargo.toml"
+    )
 }
 
 run_check_step() {
@@ -1197,9 +1202,8 @@ run_check_pipeline() {
     run_check_step "前端 Lint 检查" "前端 Lint 通过" run_frontend_lint_gate || return $?
     run_check_step "前端单元测试" "前端单元测试通过" run_frontend_unit_gate || return $?
     run_check_step "Python 测试" "Python 测试通过" run_python_gate || return $?
-    run_check_step "Headless Playwright E2E" "Headless Playwright E2E 通过" run_headless_e2e_gate || return $?
     run_check_step "Next.js 构建检查" "前端构建通过" run_next_build_gate || return $?
-    build_go || return $?
+    run_check_step "Headless Playwright E2E" "Headless Playwright E2E 通过" run_headless_e2e_gate || return $?
     run_check_step "Rust 编译检查" "Tauri 编译通过" run_cargo_check_gate || return $?
     if is_packaged_smoke_enabled; then
         run_check_step "Packaged Runtime Smoke" "Packaged Runtime Smoke 通过" run_packaged_runtime_smoke_gate check || return $?
@@ -1217,7 +1221,10 @@ run_check() (
     local check_runtime
     check_runtime="$(mktemp -d "${TMPDIR:-/tmp}/autocarto-check.XXXXXX")"
     trap '"$PYTHON_BIN" -c "import shutil,sys; shutil.rmtree(sys.argv[1])" "$check_runtime"' EXIT
-    export AUTOCARTO_HOME="$check_runtime"
+    local CHECK_WEB_DIR="$check_runtime/project/autocarto-web"
+    "$PYTHON_BIN" "$WEB_DIR/scripts/check_workspace.py" prepare "$ROOT_DIR" "$check_runtime/project"
+    export AUTOCARTO_REFACTOR_UI_EXPORT_DIR="$CHECK_WEB_DIR/out"
+    export AUTOCARTO_HOME="$check_runtime/runtime"
     export AUTOCARTO_PROJECT_ROOT="$ROOT_DIR"
     export AUTOCARTO_ASSETS_ROOT="$PLUGIN_DIR"
     export AUTOCARTO_DISABLE_KEYRING=1
@@ -1491,7 +1498,6 @@ case "$CMD" in
         ;;
     check)
         preflight check
-        clean_local_artifacts 1 1
         run_check
         ;;
     deps)

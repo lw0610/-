@@ -1,0 +1,56 @@
+[
+  {
+    "module": "test_data_loading_qgis.py",
+    "exit_code": 0,
+    "summary": "11 passed in 2.53s",
+    "log": "/tmp/v6-test_data_loading_qgis.py.log"
+  },
+  {
+    "module": "test_style_set_qgis.py",
+    "exit_code": 0,
+    "summary": "34 passed in 2.37s",
+    "log": "/tmp/v6-test_style_set_qgis.py.log"
+  },
+  {
+    "module": "test_style_set_export_qgis.py",
+    "exit_code": 0,
+    "summary": "6 passed in 0.67s",
+    "log": "/tmp/v6-test_style_set_export_qgis.py.log"
+  },
+  {
+    "module": "test_resource_contract_qgis.py",
+    "exit_code": 0,
+    "summary": "7 passed, 20 warnings in 12.31s",
+    "log": "/tmp/v6-test_resource_contract_qgis.py.log"
+  },
+  {
+    "module": "test_route_tools_qgis.py",
+    "exit_code": 0,
+    "summary": "12 passed, 40 warnings in 11.14s",
+    "log": "/tmp/v6-test_route_tools_qgis.py.log"
+  },
+  {
+    "module": "test_layout_compose_qgis.py",
+    "exit_code": 0,
+    "summary": "5 passed in 5.54s",
+    "log": "/tmp/v6-test_layout_compose_qgis.py.log"
+  },
+  {
+    "module": "test_import_layout_template_qgis.py",
+    "exit_code": 0,
+    "summary": "5 passed in 9.04s",
+    "log": "/tmp/v6-test_import_layout_template_qgis.py.log"
+  },
+  {
+    "module": "test_layout_save_template_qgis.py",
+    "exit_code": 0,
+    "summary": "6 passed in 0.66s",
+    "log": "/tmp/v6-test_layout_save_template_qgis.py.log"
+  },
+  {
+    "module": "test_statistical_layout_qgis.py",
+    "exit_code": 0,
+    "summary": "6 passed, 7 subtests passed in 0.64s",
+    "log": "/tmp/v6-test_statistical_layout_qgis.py.log"
+  }
+]

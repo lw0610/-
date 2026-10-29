@@ -1,8 +1,6 @@
-"""内置流程内容通过真实 Go 解析、编译及 HTTP 契约验收。"""
+"""内置指南内容通过真实 Go 解析、资源及 HTTP 契约验收。"""
 from __future__ import annotations
 
-import csv
-import io
 import json
 import os
 from pathlib import Path
@@ -16,7 +14,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 FLOWS = ROOT / "autocarto" / "flows" / "system"
-EXPECTED_STEPS = {"marching-route": 11, "statistical-choropleth": 5, "traffic-route": 4, "data-to-map": 6}
+EXPECTED_GUIDES = {"marching-route", "statistical-choropleth", "traffic-route", "data-to-map"}
 
 
 @pytest.fixture(scope="module")
@@ -33,35 +31,34 @@ def backend_results(tmp_path_factory):
         "AUTOCARTO_DISABLE_KEYRING": "1",
     })
     result = subprocess.run(
-        [executable, "test", "./internal/api", "-run", "^TestBuiltinFlowsParseAndCompile$", "-count=1", "-v"],
+        [executable, "test", "./internal/api", "-run", "^TestBuiltinGuidesParseAndResolve$", "-count=1", "-v"],
         cwd=ROOT / "carto_agent", env=env, text=True, capture_output=True, timeout=180,
     )
     assert result.returncode == 0, result.stdout + result.stderr
-    markers = [line.split("BUILTIN_FLOW_RESULT=", 1)[1] for line in result.stdout.splitlines() if "BUILTIN_FLOW_RESULT=" in line]
+    markers = [line.split("BUILTIN_GUIDE_RESULT=", 1)[1] for line in result.stdout.splitlines() if "BUILTIN_GUIDE_RESULT=" in line]
     assert len(markers) == 1, result.stdout
     return json.loads(markers[0])
 
 
-def test_builtin_flows_use_real_parser_compiler_and_both_scheme_contracts(backend_results):
-    expected = {(scheme, flow_id) for scheme in ("builtin-v1", "builtin-v2", "builtin-current", "builtin-zttzt") for flow_id in EXPECTED_STEPS}
-    assert {(result["scheme"], result["flow_id"]) for result in backend_results} == expected
+def test_builtin_guides_use_real_parser_resources_and_http(backend_results):
+    assert {result["id"] for result in backend_results} == EXPECTED_GUIDES
     for result in backend_results:
-        assert result["steps"] == EXPECTED_STEPS[result["flow_id"]]
-        assert not [diagnostic for diagnostic in result["diagnostics"] if diagnostic["level"] == "error"]
-        assert not [diagnostic for diagnostic in result["diagnostics"] if diagnostic["code"] in {
-            "FLOW_COMPILE_LLM_FAILED", "FLOW_CONDITION_UNPARSED", "FLOW_REF_UNRESOLVED", "FLOW_CAPABILITY_MISSING_IN_ROLE",
-        }]
+        assert result["references"] > 0
+        assert result["body_bytes"] > 1000
+        assert not [d for d in result["diagnostics"] if d["level"] in {"error", "warning"}]
 
 
 def test_exactly_four_builtin_flows_have_portable_business_instructions():
-    assert {path.parent.name for path in FLOWS.glob("*/FLOW.md")} == set(EXPECTED_STEPS)
-    for flow_id in EXPECTED_STEPS:
+    assert {path.parent.name for path in FLOWS.glob("*/FLOW.md")} == set(EXPECTED_GUIDES)
+    for flow_id in EXPECTED_GUIDES:
         raw = (FLOWS / flow_id / "FLOW.md").read_text(encoding="utf-8")
         front = yaml.safe_load(raw.split("---", 2)[1])
-        assert front["编号"] == flow_id
+        assert front.get("编号", flow_id) == flow_id
         assert front["名称"]
-        assert front["版本"] == "3.0.0"
-        assert "## 参与角色" in raw
+        assert front["版本"] == "5.0.0"
+        assert front["说明"]
+        assert "## 参与角色" not in raw
+        assert not re.search(r"(?m)^- 负责：", raw)
         assert not re.search(r"/Users/|[A-Za-z]:[\\/]|\.\.\\|autocarto_data", raw), flow_id
 
 
@@ -80,30 +77,19 @@ def test_flow_bodies_do_not_embed_tool_english_names():
         assert not leaked, (path.parent.name, leaked)
 
 
-def test_route_basemap_has_eight_required_relative_original_sources():
-    path = FLOWS / "marching-route" / "resources" / "data" / "中国底图.csv"
-    rows = list(csv.DictReader(io.StringIO(path.read_text(encoding="utf-8-sig"))))
-    expected = {"省域", "县级城市驻地", "铁路", "公路", "国道", "地区界线", "河流线", "河流面"}
-    assert len(rows) == 8
-    assert {row["名称"] for row in rows} == expected
-    for row in rows:
-        assert row["路径"] == row["名称"] + ".shp"
-        assert row["类型"] == "矢量"
-        assert row["必需"] == "是"
-        assert row["类别"]
-        assert row["字段"] == {"省域": "NAME", "县级城市驻地": "name", "河流线": "NAME"}.get(row["名称"], "")
-        assert not Path(row["路径"]).is_absolute()
-        assert ".." not in Path(row["路径"]).parts
+def test_flow_packages_contain_only_document_and_visual_dependency_lock():
+    for flow_id in EXPECTED_GUIDES:
+        directory = FLOWS / flow_id
+        assert not (directory / "resources").exists()
+        assert not (directory / "GUIDE.md").exists()
+        lock = yaml.safe_load((directory / "flow.lock").read_text())
+        assert lock["resources"]
+        assert all(row["type"] in {"style", "layout"} for row in lock["resources"])
 
 
-def test_declared_choice_defaults_belong_to_options():
-    declarations = 0
-    for path in FLOWS.glob("*/FLOW.md"):
-        for match in re.finditer(r"^- .+?（([^）]+)）", path.read_text(encoding="utf-8"), re.MULTILINE):
-            attributes = re.split(r"[；;，,]", match[1])
-            defaults = [item.removeprefix("默认").strip() for item in attributes if item.startswith("默认")]
-            options = [item.split("：", 1)[1].strip().split("、") for item in attributes if item.startswith("可选值：")]
-            if defaults and options:
-                declarations += 1
-                assert defaults[0] in options[0], (path.parent.name, defaults, options)
-    assert declarations >= 5
+def test_route_basemap_needs_are_explained_in_free_document():
+    raw = (FLOWS / "marching-route" / "FLOW.md").read_text()
+    for name in {"省域", "县级城市驻地", "铁路", "公路", "国道", "地区界线", "河流线", "河流面"}:
+        assert name in raw
+    assert "resources/data/" not in raw
+    assert "清单「" not in raw

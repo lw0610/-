@@ -3,7 +3,6 @@ package api
 import (
 	"bytes"
 	"context"
-	"encoding/csv"
 	"encoding/json"
 	"net/http/httptest"
 	"os"
@@ -41,135 +40,82 @@ func resourceV2Call(t *testing.T, router *mux.Router, method, path string, body 
 	}
 	return result.Data
 }
-func resourceV2Compiler(a *API, store *flow.Store, library *resource.Library, env flow.Environment, cache string) {
-	env.Model = nil
-	env.ModelName = "离线验收"
+func resourceV2GuideStore(a *API, store *flow.Store, library *resource.Library, env flow.Environment, cache string) {
 	a.SetFlowStore(store)
 	a.SetResourceLibrary(library)
-	a.SetFlowCompiler(flow.NewCompiler(flow.CompilerOptions{Store: store, Resources: library, CacheDir: cache, LoadEnvironment: func(context.Context, string) (flow.Environment, error) { return env, nil }}))
+	guides := flow.NewGuideStore(store, filepath.Join(cache, "guides.yaml"))
+	a.SetGuideStore(guides)
+
 }
 func resourceV2Plan(t *testing.T, raw json.RawMessage) *flow.FlowPlan {
 	t.Helper()
-	var result struct {
-		Plan *flow.FlowPlan `json:"plan"`
-	}
-	if err := json.Unmarshal(raw, &result); err != nil {
+	var g flow.StoredGuide
+	if err := json.Unmarshal(raw, &g); err != nil {
 		t.Fatal(err)
 	}
-	if result.Plan == nil {
-		t.Fatal("missing compiled plan")
+	if g.Guide == nil {
+		t.Fatal("missing parsed guide")
 	}
-	return result.Plan
+	plan := &flow.FlowPlan{FlowID: g.Meta.ID, Diagnostics: g.Diagnostics}
+	for _, r := range g.ResolvedResources {
+		plan.Resources = append(plan.Resources, flow.ResourcePlanFromResolved(r))
+	}
+	return plan
 }
-func TestResourceV2MarchingPortablePackageAndStableBinding(t *testing.T) {
-	source, manager, project, sourceHome := realFlowAPI(t)
-	environment, err := resourceV2DefaultEnvironment(source, manager, project)
-	if err != nil {
-		t.Fatal(err)
-	}
-	sourceRouter := mux.NewRouter()
-	source.SetupRoutes(sourceRouter)
-	archive := filepath.Join(sourceHome, "marching-portable.zip")
-	resourceV2Call(t, sourceRouter, "POST", "/api/flows/marching-route/export", map[string]any{"target_path": archive, "include_library_deps": true}, 200)
-	// Empty runtime has neither builtin nor user public resources. Tool/role
-	// declarations come from the real catalog snapshot; no model or QGIS runs.
+func TestResourceV6FlowPackageIsolatedVisualDependencies(t *testing.T) {
+	source, _, _, sourceHome := realFlowAPI(t)
+	router := mux.NewRouter()
+	source.SetupRoutes(router)
+	archive := filepath.Join(sourceHome, "marching.zip")
+	resourceV2Call(t, router, "POST", "/api/guides/marching-route/export", map[string]any{"target_path": archive, "include_library_deps": true}, 200)
 	destination := t.TempDir()
 	t.Setenv("AUTOCARTO_HOME", destination)
-	bindingStore := bindings.New(filepath.Join(destination, "config/resource_bindings.yaml"))
-	emptyLibrary := resource.NewLibrary(filepath.Join(destination, "empty-builtin-resources"), filepath.Join(destination, "resources"), bindingStore)
-	store := flow.NewStore("", filepath.Join(destination, "flows"), bindingStore)
+	library := resource.NewLibrary("", filepath.Join(destination, "resources"), bindings.New(filepath.Join(destination, "bindings.yaml")))
+	store := flow.NewStore("", filepath.Join(destination, "flows"), library.Bindings)
 	target := &API{}
-	resourceV2Compiler(target, store, emptyLibrary, environment, filepath.Join(destination, "cache"))
-	router := mux.NewRouter()
-	target.SetupRoutes(router)
-	resourceV2Call(t, router, "POST", "/api/flows/import?scheme=resource-v2", map[string]string{"source_path": archive}, 200)
-	plan := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/flows/marching-route?scheme=resource-v2", nil, 200))
-	var dataKey, inputLabel string
-	bundled := 0
-	local := 0
-	for _, r := range plan.Resources {
-		if r.Type == "data_list" {
-			dataKey = r.Key
-			inputLabel = r.BaseDirFromInput
-			continue
-		}
-		if resource.HasErrors(r.Problems) {
-			t.Fatalf("portable dependency errors: %+v", r)
-		}
-		if r.Owner == "bundled" {
-			bundled++
-		}
-		if r.Owner == "flow" {
-			local++
+	resourceV2GuideStore(target, store, library, flow.Environment{}, filepath.Join(destination, "cache"))
+	targetRouter := mux.NewRouter()
+	target.SetupRoutes(targetRouter)
+	resourceV2Call(t, targetRouter, "POST", "/api/guides/import", map[string]string{"source_path": archive}, 200)
+	var before flow.StoredGuide
+	if err := json.Unmarshal(resourceV2Call(t, targetRouter, "GET", "/api/guides/marching-route", nil, 200), &before); err != nil {
+		t.Fatal(err)
+	}
+	if len(before.ResolvedResources) != 9 {
+		t.Fatalf("expected eight styles and one layout: %+v", before.ResolvedResources)
+	}
+	for _, r := range before.ResolvedResources {
+		if resource.HasErrors(r.Problems) || r.Owner != "bundled" || (r.Type != "style" && r.Type != "layout") {
+			t.Fatal(r)
 		}
 	}
-	if bundled != 2 || local != 3 || dataKey != "path:data/中国底图.csv" {
-		t.Fatalf("unexpected owners %d/%d key=%q", bundled, local, dataKey)
-	}
-	listed, err := emptyLibrary.List("all")
+	listed, err := library.List("all")
 	if err != nil || len(listed) != 0 {
-		t.Fatalf("import installed public resources: %+v %v", listed, err)
+		t.Fatalf("import installed shared resources: %+v %v", listed, err)
 	}
-	// Existence-only shapefile fixture tests resource linking, not GIS decoding.
-	// The fixture paths come from the committed CSV rather than a second list.
-	raw, err := os.ReadFile(filepath.Join(project, "autocarto/flows/system/marching-route/resources/data/中国底图.csv"))
+	stored, err := store.Get("marching-route")
 	if err != nil {
 		t.Fatal(err)
 	}
-	rows, err := csv.NewReader(strings.NewReader(strings.TrimPrefix(string(raw), "\ufeff"))).ReadAll()
-	if err != nil {
+	if _, err = os.Stat(filepath.Join(stored.Dir, "resources")); !os.IsNotExist(err) {
+		t.Fatal("flow still carries data resources")
+	}
+	// Arbitrary user prose does not create a fixed data binding or executable step.
+	raw := stored.FlowMD + "\n## 本次使用说明\n任意自然语言和表格可以说明如何准备数据，不形成资源清单。\n"
+	resourceV2Call(t, targetRouter, "PUT", "/api/guides/marching-route", map[string]string{"guide_md": raw}, 200)
+	var after flow.StoredGuide
+	if err = json.Unmarshal(resourceV2Call(t, targetRouter, "GET", "/api/guides/marching-route", nil, 200), &after); err != nil {
 		t.Fatal(err)
 	}
-	dataDir := filepath.Join(destination, "chosen-basemap")
-	if err = os.MkdirAll(dataDir, 0700); err != nil {
-		t.Fatal(err)
+	if !strings.Contains(after.Guide.Body, "任意自然语言") || len(after.ResolvedResources) != len(before.ResolvedResources) {
+		t.Fatal(after)
 	}
-	for _, row := range rows[1:] {
-		base := strings.TrimSuffix(row[1], filepath.Ext(row[1]))
-		for _, suffix := range []string{".shp", ".shx", ".dbf", ".prj"} {
-			if err = os.WriteFile(filepath.Join(dataDir, base+suffix), []byte("existence-only acceptance fixture"), 0600); err != nil {
-				t.Fatal(err)
-			}
+	for i, r := range after.ResolvedResources {
+		if r.ID != before.ResolvedResources[i].ID {
+			t.Fatal("edit changed bundled identity")
 		}
 	}
-	detailRaw := resourceV2Call(t, router, "PUT", "/api/flows/marching-route/bindings?scheme=resource-v2", map[string]string{"resource_key": dataKey, "base_dir": dataDir}, 200)
-	bound := resourceV2Plan(t, detailRaw)
-	if bound.HasErrors() {
-		t.Fatalf("bound package errors: %+v", bound.Diagnostics)
-	}
-	imported, err := store.Get("marching-route")
-	if err != nil {
-		t.Fatal(err)
-	}
-	renamed := strings.ReplaceAll(imported.FlowMD, "「中国底图」", "「迁移后底图」")
-	resourceV2Call(t, router, "PUT", "/api/flows/marching-route?scheme=resource-v2", map[string]string{"flow_md": renamed}, 200)
-	after := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/flows/marching-route?scheme=resource-v2", nil, 200))
-	if after.HasErrors() {
-		t.Fatalf("rename lost input association: %+v", after.Diagnostics)
-	}
-	memoryRaw := resourceV2Call(t, router, "GET", "/api/flows/marching-route/inputs/memory", nil, 200)
-	remembered := map[string]string{}
-	if err = json.Unmarshal(memoryRaw, &remembered); err != nil || remembered[inputLabel] != dataDir {
-		t.Fatal(remembered, err)
-	}
-	runtimePlan := flow.ResolveInputResources(after, map[string]any{inputLabel: remembered[inputLabel]})
-	found := false
-	for _, r := range runtimePlan.Resources {
-		if r.Type == "data_list" {
-			found = true
-			if r.Label != "迁移后底图" || r.Key != dataKey || r.BaseDirFromInput != inputLabel || r.BaseDir != dataDir || len(r.Entries) != 8 {
-				t.Fatalf("input association changed: %+v", r)
-			}
-			for _, entry := range r.Entries {
-				if !entry.Exists || filepath.Dir(entry.Path) != dataDir {
-					t.Fatal(entry)
-				}
-			}
-		}
-	}
-	if !found {
-		t.Fatal("data list disappeared")
-	}
+
 }
 
 func TestResourceV2FourCornerOverrideProtectedDeleteAndRestore(t *testing.T) {
@@ -186,7 +132,7 @@ func TestResourceV2FourCornerOverrideProtectedDeleteAndRestore(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	resourceV2Compiler(a, store, library, env, filepath.Join(home, "cache"))
+	resourceV2GuideStore(a, store, library, env, filepath.Join(home, "cache"))
 	router := mux.NewRouter()
 	a.SetupRoutes(router)
 	flowItem, err := store.Get("traffic-route")
@@ -205,7 +151,7 @@ func TestResourceV2FourCornerOverrideProtectedDeleteAndRestore(t *testing.T) {
 	if override.ID == "layout.four-corner" || override.Overrides != "layout.four-corner" || override.Owner != "library_user" {
 		t.Fatal(override)
 	}
-	plan := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/flows/traffic-route?scheme=resource-v2", nil, 200))
+	plan := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/guides/traffic-route?scheme=resource-v2", nil, 200))
 	if plan.HasErrors() {
 		t.Fatal(plan.Diagnostics)
 	}
@@ -244,7 +190,7 @@ func TestResourceV2FourCornerOverrideProtectedDeleteAndRestore(t *testing.T) {
 	}
 	resourceV2Call(t, router, "GET", "/api/resources/by-id/"+override.ID, nil, 200)
 	resourceV2Call(t, router, "DELETE", "/api/resources/"+override.ID+"?force=true", nil, 200)
-	restored := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/flows/traffic-route?scheme=resource-v2", nil, 200))
+	restored := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/guides/traffic-route?scheme=resource-v2", nil, 200))
 	if restored.HasErrors() {
 		t.Fatal(restored.Diagnostics)
 	}

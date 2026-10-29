@@ -7,6 +7,7 @@ type ExecutorSpec struct {
 	Type               string                        `json:"type"`
 	DisplayName        string                        `json:"display_name"`
 	RequiredInputTypes []string                      `json:"required_input_types"`
+	RequiredParameters []string                      `json:"required_parameters"`
 	RequiredResources  []ExecutorResourceRequirement `json:"required_resources"`
 }
 
@@ -17,7 +18,7 @@ type ExecutorResourceRequirement struct {
 }
 
 func ExecutorSpecs() []ExecutorSpec {
-	return []ExecutorSpec{{Type: "route_knowledge", DisplayName: "路线知识抽取", RequiredInputTypes: []string{"conversation_text"}, RequiredResources: []ExecutorResourceRequirement{
+	return []ExecutorSpec{{Type: "route_knowledge", DisplayName: "路线知识抽取", RequiredInputTypes: []string{"conversation_text"}, RequiredParameters: []string{"route_style", "symbols"}, RequiredResources: []ExecutorResourceRequirement{
 		{Type: "route_style", Label: "路线样式"},
 		{Type: "symbols", Label: "专题符号", RequiredNames: []string{"start_flag", "waypoint"}},
 	}}}

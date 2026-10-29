@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- 会话本地图片直接请求受限预览接口，不能交给图片优化代理。 */
 import { useEffect, useState } from 'react'
 import api from '@/lib/api'
-import { resourceApi } from '@/features/flows/api'
+import { resourceApi } from '@/features/guides/api'
 import {
   backendURL,
   contentPath,

@@ -197,6 +197,17 @@ func (p *Pipeline) Run(ctx context.Context, source string, contract Contract, pr
 	if err != nil {
 		return r, err
 	}
+	if !HasExtractedContent(r.Graph) {
+		if len(r.Issues) == 0 {
+			r.Issues = append(r.Issues, Issue{ID: "source:no_content", Kind: "source", Field: "content", Reason: "not_stated", Message: NoExtractedContentMessage})
+		}
+		r.SemanticGraph, err = cloneGraph(r.Graph)
+		if err != nil {
+			return r, err
+		}
+		r.Status = "needs_review"
+		return r, &ExtractionNeedsReviewError{Message: NoExtractedContentMessage}
+	}
 	if HasPartialExtraction(r) {
 		// A local format failure must not hide the other fragments. The draft
 		// keeps unknown references for the editable results page.

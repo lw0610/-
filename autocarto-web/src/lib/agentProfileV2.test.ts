@@ -1,21 +1,21 @@
 import { describe,it,expect } from 'vitest'
 import { normalizeAgentProfilePayload,serializeAgentProfilePayload,normalizeToolCatalogResponse } from './api'
-import { normalizeConfigData,normalizePlanAgentForSave } from '@/app/settings/agents/_components/normalizers'
+import { normalizeConfigData } from '@/app/settings/agents/_components/normalizers'
 
 describe('v2 profile editor contract',()=>{
   it('round-trips fields when only a display name changes',()=>{
     const raw={version:'2.0',meta:{default_execution_mode:'build' as const,description:'方案',plan_enabled:true,future_meta:'keep'},flows:{enabled:['flow-a'],future_binding:'keep'},migration_warnings:[{code:'unknown',path:'runtime.agents.custom',package:'unknown-package',message:'保留'}],runtime_shared:{tool_packages:['vector-fields'],legacy_unresolved_packages:['shared-unknown'],future_shared:17},runtime_agents:[{name:'custom-role',agent:{display_name:'旧名',description:'职责',kind:'executor' as const,executor:'route_knowledge',flow_only:true,enabled:true,tool_packages:[],legacy_unresolved_packages:['unknown-package'],llm:{provider:'special',future_model:'keep'},prompts:{static_instructions:'备用',user_prompt_template:'{{ raw }}',future_prompt:'keep'},future_role:'keep'}}],has_plan:true,plan:{enabled:true,max_iterations:17,shared:{tool_packages:['crs-projection']},agents:[{name:'planner',agent:{display_name:'规划',kind:'agent' as const,mode:'readonly',tool_packages:['file-operations'],prompts:{static_instructions:'plan',future_prompt:'keep'}}}],future_plan:'keep'},future_top:'keep'}
     const data=normalizeConfigData(normalizeAgentProfilePayload(raw))
     data.runtime_agents['custom-role'].display_name='新名'
-    data.plan!.agents.planner=normalizePlanAgentForSave(data.plan!.agents.planner)
     const saved=serializeAgentProfilePayload(data)
     expect(saved.version).toBe('2.0')
-    expect(saved.flows).toEqual(raw.flows)
+    expect(saved.flows).toBeUndefined()
     expect(saved.migration_warnings).toEqual(raw.migration_warnings)
     expect(saved.runtime_shared).toMatchObject(raw.runtime_shared)
     expect(saved.runtime_agents[0].agent).toMatchObject({...raw.runtime_agents[0].agent,display_name:'新名'})
-    expect(saved.plan?.agents[0].agent).toMatchObject(raw.plan.agents[0].agent)
-    expect(saved).toMatchObject({future_top:'keep',plan:{future_plan:'keep'}})
+    expect(saved.plan).toBeUndefined()
+    expect(saved.has_plan).toBe(false)
+    expect(saved).toMatchObject({future_top:'keep'})
     expect(saved.runtime_agents[0].agent).not.toHaveProperty('skill_packages')
     expect(saved.runtime_shared).not.toHaveProperty('skill_packages')
   })

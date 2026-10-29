@@ -41,6 +41,7 @@ def main():
     parser.add_argument("recipes", nargs="+", type=Path)
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--python", default=sys.executable)
+    parser.add_argument("--examples", type=Path, default=Path(__file__).with_name("guides"))
     args = parser.parse_args()
     args.out = args.out.resolve()
     args.out.mkdir(parents=True, exist_ok=False)
@@ -58,7 +59,7 @@ def main():
                      "out": output, "package": path.parent, "basemap": os.environ.get("AUTOCARTO_GOLDEN_BASEMAP_DIR", ""),
                      "renderer": os.environ.get("AUTOCARTO_ROUTE_RENDERER_DIR", "")}
         scenario = expand(scenario, variables)
-        scenario.update(root=str(ROOT), out=str(output), python=args.python, examples=str(ROOT/"docs/refactor/acceptance-flows"))
+        scenario.update(root=str(ROOT), out=str(output), python=args.python, examples=str(args.examples.resolve()))
         scenario["variables"].update({key: str(value) for key, value in variables.items()})
         config = output/"scenario.json"
         config.write_text(json.dumps(scenario, ensure_ascii=False, indent=2)+"\n")

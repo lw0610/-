@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -14,6 +15,7 @@ import (
 	"sync"
 	"unicode/utf8"
 
+	"github.com/autocarto/carto_agent/internal/toolresult"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
@@ -177,10 +179,34 @@ func readableResult(result *mcp.CallToolResult, outputDir string) (any, error) {
 		return nil, errors.New("浏览器返回空结果")
 	}
 	blocks := make([]map[string]any, 0)
+	media := make([]any, 0)
+	mediaBytes := 0
+	mediaPaths := []string{}
+	complete := false
+	defer func() {
+		if !complete {
+			for _, path := range mediaPaths {
+				_ = os.Remove(path)
+			}
+		}
+	}()
+	attach := func(data []byte, declared, label string) (map[string]any, error) {
+		mediaBytes += len(data)
+		if mediaBytes > toolresult.MaxInlineMediaBytes {
+			return nil, fmt.Errorf("浏览器媒体合计超过 %d MiB", toolresult.MaxInlineMediaBytes>>20)
+		}
+		item, err := saveMedia(data, declared, label, outputDir)
+		if err != nil {
+			return nil, err
+		}
+		media = append(media, item)
+		mediaPaths = append(mediaPaths, item["path"].(string))
+		return map[string]any{"type": item["type"], "mime_type": item["mime_type"], "bytes": len(data), "path": item["path"]}, nil
+	}
 	remaining := maxTextBytes
 	truncated := false
 	for i, content := range result.Content {
-		if i >= 32 || remaining == 0 {
+		if i >= 32 {
 			truncated = true
 			break
 		}
@@ -191,8 +217,28 @@ func readableResult(result *mcp.CallToolResult, outputDir string) (any, error) {
 			truncated = truncated || cut
 			blocks = append(blocks, map[string]any{"type": "text", "text": text})
 		case *mcp.ImageContent:
-			// Keep large base64 blobs out of the model's text context.
-			blocks = append(blocks, map[string]any{"type": "image", "mime_type": c.MIMEType, "bytes": len(c.Data), "note": "图片数据未内联；可通过截图工具的 filename 保存到输出目录"})
+			block, err := attach(c.Data, c.MIMEType, "浏览器图片")
+			if err != nil {
+				return nil, err
+			}
+			blocks = append(blocks, block)
+		case *mcp.EmbeddedResource:
+			if c.Resource == nil {
+				continue
+			}
+			if c.Resource.Blob != nil {
+				block, err := attach(c.Resource.Blob, c.Resource.MIMEType, c.Resource.URI)
+				if err != nil {
+					return nil, err
+				}
+				block["uri"] = c.Resource.URI
+				blocks = append(blocks, block)
+			} else {
+				text, cut := clip(c.Resource.Text, remaining)
+				remaining -= len(text)
+				truncated = truncated || cut
+				blocks = append(blocks, map[string]any{"type": "text", "text": text, "uri": c.Resource.URI})
+			}
 		case *mcp.AudioContent:
 			blocks = append(blocks, map[string]any{"type": "audio", "mime_type": c.MIMEType, "bytes": len(c.Data)})
 		default:
@@ -207,6 +253,9 @@ func readableResult(result *mcp.CallToolResult, outputDir string) (any, error) {
 		}
 	}
 	out := map[string]any{"is_error": result.IsError, "content": blocks, "truncated": truncated, "output_dir": outputDir}
+	if len(media) > 0 {
+		out["_agent_media"] = media
+	}
 	if result.StructuredContent != nil {
 		data, err := json.Marshal(result.StructuredContent)
 		if err == nil && len(data) <= 16*1024 {
@@ -219,7 +268,50 @@ func readableResult(result *mcp.CallToolResult, outputDir string) (any, error) {
 	files, limited := outputFiles(outputDir)
 	out["output_files"] = files
 	out["output_files_truncated"] = limited
+	complete = true
 	return out, nil
+}
+
+// MCP binary content is stored under the trusted session directory and passed
+// through the existing media envelope, never serialized as base64 tool text.
+func saveMedia(data []byte, declared, label, outputDir string) (map[string]any, error) {
+	if len(data) == 0 || len(data) > toolresult.MaxInlineMediaBytes {
+		return nil, fmt.Errorf("浏览器媒体为空或超过大小上限")
+	}
+	mimeType := http.DetectContentType(data)
+	ext, kind := "", "image"
+	switch mimeType {
+	case "image/png":
+		ext = ".png"
+	case "image/jpeg":
+		ext = ".jpg"
+	case "image/webp":
+		ext = ".webp"
+	case "image/gif":
+		ext = ".gif"
+	case "application/pdf":
+		ext, kind = ".pdf", "file"
+	default:
+		return nil, fmt.Errorf("浏览器返回不支持的媒体类型 %q", mimeType)
+	}
+	if declared = strings.TrimSpace(declared); declared != "" && declared != mimeType {
+		return nil, fmt.Errorf("浏览器媒体声明 %q 与实际内容 %q 不符", declared, mimeType)
+	}
+	if !filepath.IsAbs(outputDir) {
+		return nil, fmt.Errorf("浏览器媒体需要当前会话的绝对输出目录")
+	}
+	f, err := os.CreateTemp(outputDir, "attachment-*"+ext)
+	if err != nil {
+		return nil, fmt.Errorf("保存浏览器媒体: %w", err)
+	}
+	path := f.Name()
+	_, writeErr := f.Write(data)
+	closeErr := f.Close()
+	if writeErr != nil || closeErr != nil {
+		_ = os.Remove(path)
+		return nil, errors.Join(writeErr, closeErr)
+	}
+	return map[string]any{"type": kind, "path": path, "mime_type": mimeType, "label": label, "filename": filepath.Base(path)}, nil
 }
 
 func outputFiles(root string) ([]map[string]any, bool) {

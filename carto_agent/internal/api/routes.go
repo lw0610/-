@@ -21,7 +21,9 @@ func (a *API) SetupRoutes(router *mux.Router) {
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 	}).Methods("GET", "OPTIONS")
 	sub.HandleFunc("/capabilities", a.handleGetCapabilities).Methods("GET", "OPTIONS")
-	a.setupFlowRoutes(sub)
+	a.setupGuideRoutes(sub)
+	a.setupPlanRoutes(sub)
+	a.setupDataServiceRoutes(sub)
 	a.setupResourceRoutes(sub)
 	sub.HandleFunc("/runtime/snapshot", a.handleRuntimeSnapshot).Methods("GET", "OPTIONS")
 	sub.HandleFunc("/runtime/services", a.handleRuntimeServices).Methods("GET", "OPTIONS")
@@ -103,7 +105,6 @@ func (a *API) SetupRoutes(router *mux.Router) {
 	sub.HandleFunc("/sessions/{id}/dir", a.handleInitSessionDir).Methods("POST", "OPTIONS")
 
 	// 实例管理（Python 端注册 + 前端查询）
-	sub.HandleFunc("/flows/{id}/resources/adopt", a.handleAdoptFlowResource).Methods("POST", "OPTIONS")
 	sub.HandleFunc("/instances", a.handleListInstances).Methods("GET", "OPTIONS")
 	sub.HandleFunc("/instances/register", a.handleInstanceRegister).Methods("POST", "OPTIONS")
 	sub.HandleFunc("/instances/{id}", a.handleGetInstance).Methods("GET", "OPTIONS")

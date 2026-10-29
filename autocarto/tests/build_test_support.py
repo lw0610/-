@@ -1,5 +1,6 @@
 """Deterministic executable sidecar for build-pipeline tests (no real deployment)."""
 import sys
+import shutil
 from pathlib import Path
 
 SIDECAR = '''#!{python}
@@ -19,6 +20,12 @@ HTTPServer(('127.0.0.1',args.port),Handler).serve_forever()
 '''
 
 def install_fake_build_platform_and_go(fake_bin: Path) -> None:
+    # Exercise the real source-isolation helper in build.sh fixture repositories.
+    scripts = fake_bin.parent / "autocarto-web/scripts"
+    scripts.mkdir(parents=True, exist_ok=True)
+    source_scripts = Path(__file__).resolve().parents[2] / "autocarto-web/scripts"
+    for filename in ("check_workspace.py", "test_check_workspace.py"):
+        shutil.copy2(source_scripts / filename, scripts)
     # These fixtures exercise Linux release layout independently of host OS.
     platform = fake_bin / "uname"
     platform.write_text('#!/bin/sh\nif [ "$1" = "-m" ]; then echo x86_64; else echo Linux; fi\n')

@@ -40,18 +40,26 @@ func NewChatModel(config *Config) (model.ToolCallingChatModel, error) {
 		return nil, fmt.Errorf("base_url is required for provider: %s", providerInfo.DisplayName)
 	}
 
+	var chat model.ToolCallingChatModel
+	var err error
 	switch providerInfo.BackendType {
 	case "claude":
-		return createClaudeChatModel(config)
+		chat, err = createClaudeChatModel(config)
 	case "openai":
-		return createOpenAIChatModel(config)
+		chat, err = createOpenAIChatModel(config)
 	case "gemini":
-		return createGeminiChatModel(config)
+		chat, err = createGeminiChatModel(config)
 	case "ollama":
-		return createOllamaChatModel(config)
+		chat, err = createOllamaChatModel(config)
 	default:
 		return nil, fmt.Errorf("unsupported backend type: %s", providerInfo.BackendType)
 	}
+	if err != nil {
+		return nil, err
+	}
+	// Apply the selected model's actual media contract to every role, including
+	// Plan file reads and ordinary tools, before provider-specific conversion.
+	return NewMediaCapabilityModel(chat, MediaCapabilitiesForProvider(config.Provider, config.Model, config.Vision)), nil
 }
 
 // createClaudeChatModel 创建 Claude ChatModel
@@ -94,9 +102,16 @@ func createOpenAIChatModel(config *Config) (model.ToolCallingChatModel, error) {
 		openaiConfig.HTTPClient = httpClient
 	}
 
-	// 设置参数（如果配置了的话）
+	// OpenAI and DeepSeek share the chat protocol, but not these controls.
+	// Omitting DeepSeek's thinking switch enables its server-side default;
+	// max_completion_tokens is not its documented output limit parameter.
+	deepSeek := normalizedBaseURLHost(config.BaseURL) == "api.deepseek.com"
 	if config.MaxTokens > 0 {
-		openaiConfig.MaxCompletionTokens = &config.MaxTokens
+		if deepSeek {
+			openaiConfig.MaxTokens = &config.MaxTokens
+		} else {
+			openaiConfig.MaxCompletionTokens = &config.MaxTokens
+		}
 	}
 
 	if config.Temperature > 0 {
@@ -111,6 +126,13 @@ func createOpenAIChatModel(config *Config) (model.ToolCallingChatModel, error) {
 
 	if config.ThinkingEnabled {
 		openaiConfig.ReasoningEffort = mapThinkingBudgetToReasoningEffort(config.ThinkingBudget)
+	}
+	if deepSeek {
+		thinking := "disabled"
+		if config.ThinkingEnabled {
+			thinking = "enabled"
+		}
+		openaiConfig.ExtraFields = map[string]any{"thinking": map[string]any{"type": thinking}}
 	}
 
 	// 创建底层模型

@@ -23,21 +23,10 @@ func TestFlowStepToolDetailUsesLengthAndActualParameterNames(t *testing.T) {
 		{"not in catalog", "set_opacity 为 0.8", false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			doc := Parse("## 步骤\n### 第1步 排版\n- 做法：" + tc.text + "\n- 完成标准：完成\n")
-			plan := &FlowPlan{Steps: []StepPlan{{ID: doc.Steps[0].ID, Instructions: doc.Steps[0].Instructions}}}
-			completeDiagnostics(doc, plan, Environment{Capabilities: catalog})
-			count := 0
-			for _, diagnostic := range plan.Diagnostics {
-				if diagnostic.Code == "FLOW_STEP_TOOL_DETAIL" {
-					count++
-					if diagnostic.Level != "info" || diagnostic.Step != plan.Steps[0].ID || diagnostic.Message != "这一步写得像工具说明，建议精简" {
-						t.Fatalf("unexpected detail diagnostic: %+v", diagnostic)
-					}
-				}
+			if got := stepHasToolDetail(tc.text, catalog); got != tc.detail {
+				t.Fatalf("detail=%v want=%v", got, tc.detail)
 			}
-			if (count == 1) != tc.detail || count > 1 {
-				t.Fatalf("detail=%v count=%d", tc.detail, count)
-			}
+
 		})
 	}
 }

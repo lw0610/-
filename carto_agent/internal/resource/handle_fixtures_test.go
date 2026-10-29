@@ -21,13 +21,13 @@ func TestResourceHandleFixtures(t *testing.T) {
 	library := NewLibrary(filepath.Join(repo, "autocarto/resources/system"), t.TempDir(), bindings.New(filepath.Join(t.TempDir(), "bindings.yaml")))
 	type sample struct{ name, typ, id, location, flowDir string }
 	samples := []sample{
-		{name: "gb-basemap", typ: "style_set", id: "style_set.gb-basemap"},
-		{name: "mono", typ: "route_style", id: "route_style.mono"},
+		{name: "gb-basemap", typ: "style_set", location: "resources/styles/国标底图样式"},
+		{name: "mono", typ: "route_style", location: "styles/路线样式-单色.csv", flowDir: "autocarto/tools/system/route-cartography/assets/resources"},
 		{name: "four-corner", typ: "layout", id: "layout.four-corner"},
 		{name: "statistical", typ: "layout", id: "layout.statistical"},
-		{name: "red-blue", typ: "route_style", location: "resources/styles/路线样式-红蓝对比.csv", flowDir: "autocarto/flows/system/marching-route"},
-		{name: "military", typ: "symbols", location: "resources/symbols/军标", flowDir: "autocarto/flows/system/marching-route"},
-		{name: "route-arrow", typ: "symbols", location: "resources/symbols/图例", flowDir: "autocarto/flows/system/marching-route"},
+		{name: "red-blue", typ: "route_style", location: "styles/路线样式-红蓝对比.csv", flowDir: "autocarto/tools/system/route-cartography/assets/resources"},
+		{name: "military", typ: "symbols", location: "symbols/军标", flowDir: "autocarto/tools/system/route-cartography/assets/resources"},
+		{name: "route-arrow", typ: "symbols", location: "symbols/图例", flowDir: "autocarto/tools/system/route-cartography/assets/resources"},
 		{name: "survey-route", typ: "route_style", location: "resources/styles/考察单色路线.csv", flowDir: "docs/refactor/acceptance-flows/survey-route"},
 		{name: "data-list", typ: "data_list", location: "resources/data/数据清单.csv"},
 		{name: "data-optional", typ: "data_list", location: "resources/data/可选数据.csv"},

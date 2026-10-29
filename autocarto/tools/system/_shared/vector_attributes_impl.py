@@ -1,4 +1,5 @@
 import json
+import re
 from autocarto.utils.redaction import redact_sensitive_text
 from typing import Any, Dict, Optional
 
@@ -18,6 +19,7 @@ from qgis.core import (
 )
 
 from autocarto.tools.system._shared.canvas_refresh import refresh_canvas
+from autocarto.tools.system._shared.project_layers import resolve_project_layer
 
 FIELD_TYPE_MAP = {
     0: QVariant.Int,
@@ -31,13 +33,7 @@ FIELD_TYPE_MAP = {
 
 
 def _find_vector_layer(layer_ref: Any) -> QgsVectorLayer | None:
-    ref = str(layer_ref or "").strip()
-    if not ref:
-        return None
-    layers = QgsProject.instance().mapLayersByName(ref)
-    if not layers:
-        return None
-    layer = layers[0]
+    layer = resolve_project_layer(layer_ref)
     if not isinstance(layer, QgsVectorLayer):
         return None
     return layer
@@ -46,6 +42,8 @@ def _find_vector_layer(layer_ref: Any) -> QgsVectorLayer | None:
 def _resolve_target_layer(source: QgsVectorLayer, output_ref: Any) -> QgsVectorLayer:
     output_text = str(output_ref or "").strip()
     if not output_text or output_text == "memory:":
+        if source.isEditable():
+            raise RuntimeError("图层已有未提交的编辑，请先完成编辑或指定新的输出图层")
         return source
 
     layer_name = output_text
@@ -62,7 +60,8 @@ def _resolve_target_layer(source: QgsVectorLayer, output_ref: Any) -> QgsVectorL
         raise RuntimeError("创建内存图层失败")
 
     provider = target.dataProvider()
-    provider.addAttributes(list(source.fields()))
+    if not provider.addAttributes(list(source.fields())):
+        raise RuntimeError("复制输出字段失败")
     target.updateFields()
 
     features = []
@@ -71,12 +70,39 @@ def _resolve_target_layer(source: QgsVectorLayer, output_ref: Any) -> QgsVectorL
         cloned.setGeometry(feature.geometry())
         cloned.setAttributes(feature.attributes())
         features.append(cloned)
-    if features:
-        provider.addFeatures(features)
-
-    QgsProject.instance().addMapLayer(target)
-    refresh_canvas()
+    if features and not provider.addFeatures(features)[0]:
+        raise RuntimeError("复制输出要素失败")
     return target
+
+
+def _publish_target(target: QgsVectorLayer, params: Dict[str, Any]) -> None:
+    """Publish only completed results, replacing this step's own named output."""
+    project = QgsProject.instance()
+    if project.mapLayer(target.id()) is not None:
+        refresh_canvas()
+        return
+    context = params.get("_autocarto_output_owner") or {}
+    session_id = str(context.get("session_id") or "")
+    owner = ""
+    if session_id:
+        owner = json.dumps([session_id, str(context.get("flow_run_id") or ""),
+                            str(context.get("step_id") or "")], ensure_ascii=False)
+    previous = []
+    if owner:
+        previous = [layer.id() for layer in project.mapLayersByName(target.name())
+                    if layer.customProperty("autocarto/output_owner", "") == owner]
+        target.setCustomProperty("autocarto/output_owner", owner)
+    if project.addMapLayer(target) is None:
+        raise RuntimeError("无法将输出图层加入当前工程")
+    # A matching display name alone never authorizes removing a user layer.
+    if previous:
+        project.removeMapLayers(previous)
+    refresh_canvas()
+
+
+def _rollback_target(target: Optional[QgsVectorLayer]) -> None:
+    if target is not None and target.isEditable():
+        target.rollBack()
 
 
 def _ensure_field(layer: QgsVectorLayer, params: Dict[str, Any]) -> int:
@@ -96,9 +122,7 @@ def _ensure_field(layer: QgsVectorLayer, params: Dict[str, Any]) -> int:
     if not layer.isEditable() and not layer.startEditing():
         raise RuntimeError("图层不可编辑，无法添加字段")
 
-    if not layer.dataProvider().addAttributes(
-        [QgsField(field_name, qvariant_type, len=field_length, prec=field_precision)]
-    ):
+    if not layer.addAttribute(QgsField(field_name, qvariant_type, len=field_length, prec=field_precision)):
         raise RuntimeError("添加字段失败")
     layer.updateFields()
 
@@ -110,6 +134,7 @@ def _ensure_field(layer: QgsVectorLayer, params: Dict[str, Any]) -> int:
 
 def _build_output_layer_ref(layer: QgsVectorLayer) -> Dict[str, Any]:
     return {
+        "layer_id": layer.id(),
         "name": layer.name(),
         "source": redact_sensitive_text(layer.source()).strip(),
         "feature_count": int(layer.featureCount()),
@@ -185,6 +210,7 @@ def _build_typed_memory_layer(
 
 
 def field_calculator_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    target = None
     try:
         input_ref = params.get("INPUT")
         formula = str(params.get("FORMULA") or "").strip()
@@ -201,9 +227,6 @@ def field_calculator_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": f"错误：未找到图层 '{input_ref}'",
             }
 
-        target = _resolve_target_layer(source, params.get("OUTPUT"))
-        field_index = _ensure_field(target, params)
-
         expression = QgsExpression(formula)
         if expression.hasParserError():
             return {
@@ -211,6 +234,9 @@ def field_calculator_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "output": "",
                 "info": f"表达式错误: {expression.parserErrorString()}",
             }
+
+        target = _resolve_target_layer(source, params.get("OUTPUT"))
+        field_index = _ensure_field(target, params)
 
         if not target.isEditable() and not target.startEditing():
             raise RuntimeError("图层不可编辑，无法计算字段")
@@ -230,14 +256,15 @@ def field_calculator_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             errors = "; ".join(target.commitErrors())
             raise RuntimeError(errors or "提交字段计算结果失败")
 
-        refresh_canvas()
+        _publish_target(target, params)
         return {
             "success": True,
-            "output": target.name(),
+            "output": _build_output_layer_ref(target),
             "info": f"字段计算完成: {target.name()}；字段: {_field_preview(target)}",
             "output_layers": [_build_output_layer_ref(target)],
         }
     except Exception as exc:
+        _rollback_target(target)
         return {"success": False, "output": "", "info": f"字段计算失败: {str(exc)}"}
 
 
@@ -291,14 +318,13 @@ def text_to_float_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             cloned.setAttributes(attrs)
             features.append(cloned)
 
-        if features and not target.dataProvider().addFeatures(features):
+        if features and not target.dataProvider().addFeatures(features)[0]:
             raise RuntimeError("写入转换结果失败")
 
-        QgsProject.instance().addMapLayer(target)
-        refresh_canvas()
+        _publish_target(target, params)
         return {
             "success": True,
-            "output": target.name(),
+            "output": _build_output_layer_ref(target),
             "info": f"文本字段转浮点完成: {target.name()}；字段 '{field_name}' 已转换；字段: {_field_preview(target)}",
             "output_layers": [_build_output_layer_ref(target)],
         }
@@ -307,6 +333,7 @@ def text_to_float_handler(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def join_attributes_by_field_value_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    target = None
     try:
         source = _find_vector_layer(params.get("INPUT"))
         join_layer = _find_vector_layer(params.get("INPUT_2"))
@@ -346,7 +373,6 @@ def join_attributes_by_field_value_handler(params: Dict[str, Any]) -> Dict[str, 
         elif not target_name.startswith("memory:"):
             target_name = f"memory:{target_name}"
         target = _resolve_target_layer(source, target_name)
-        provider = target.dataProvider()
         if not target.isEditable() and not target.startEditing():
             raise RuntimeError("图层不可编辑，无法执行字段连接")
 
@@ -369,8 +395,9 @@ def join_attributes_by_field_value_handler(params: Dict[str, Any]) -> Dict[str, 
             cloned.setName(final_name)
             added_fields.append(cloned)
             field_name_map[original_name] = final_name
-        if added_fields and not provider.addAttributes(added_fields):
-            raise RuntimeError("新增连接字段失败")
+        for field in added_fields:
+            if not target.addAttribute(field):
+                raise RuntimeError("新增连接字段失败")
         target.updateFields()
 
         matched_count = 0
@@ -392,18 +419,20 @@ def join_attributes_by_field_value_handler(params: Dict[str, Any]) -> Dict[str, 
             errors = "; ".join(target.commitErrors())
             raise RuntimeError(errors or "提交字段连接结果失败")
 
-        refresh_canvas()
+        _publish_target(target, params)
         return {
             "success": True,
-            "output": target.name(),
+            "output": _build_output_layer_ref(target),
             "info": f"按字段连接完成: {target.name()}；匹配 {matched_count} 个要素；字段: {_field_preview(target)}",
             "output_layers": [_build_output_layer_ref(target)],
         }
     except Exception as exc:
+        _rollback_target(target)
         return {"success": False, "output": "", "info": f"按字段连接失败: {str(exc)}"}
 
 
 def rename_table_field_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    target = None
     try:
         source = _find_vector_layer(params.get("INPUT"))
         if source is None:
@@ -413,47 +442,49 @@ def rename_table_field_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": f"错误：未找到图层 '{params.get('INPUT')}'",
             }
 
-        target = _resolve_target_layer(source, params.get("OUTPUT"))
         field_name = str(params.get("FIELD") or "").strip()
         new_name = str(params.get("NEW_NAME") or "").strip()
         if not field_name or not new_name:
             return {"success": False, "output": "", "info": "错误：缺少字段重命名参数"}
 
-        field_index = target.fields().indexFromName(field_name)
+        field_index = source.fields().indexFromName(field_name)
         if field_index < 0:
             return {
                 "success": False,
                 "output": "",
                 "info": f"错误：字段 '{field_name}' 不存在",
             }
-        if target.fields().indexFromName(new_name) >= 0 and new_name != field_name:
+        if source.fields().indexFromName(new_name) >= 0 and new_name != field_name:
             return {
                 "success": False,
                 "output": "",
                 "info": f"错误：字段 '{new_name}' 已存在",
             }
 
+        target = _resolve_target_layer(source, params.get("OUTPUT"))
         if not target.isEditable() and not target.startEditing():
             raise RuntimeError("图层不可编辑，无法重命名字段")
-        if not target.dataProvider().renameAttributes({field_index: new_name}):
+        if not target.renameAttribute(field_index, new_name):
             raise RuntimeError("重命名字段失败")
         target.updateFields()
         if target.isEditable() and not target.commitChanges():
             errors = "; ".join(target.commitErrors())
             raise RuntimeError(errors or "提交字段重命名失败")
 
-        refresh_canvas()
+        _publish_target(target, params)
         return {
             "success": True,
-            "output": target.name(),
+            "output": _build_output_layer_ref(target),
             "info": f"字段 '{field_name}' 已重命名为 '{new_name}'；字段: {_field_preview(target)}",
             "output_layers": [_build_output_layer_ref(target)],
         }
     except Exception as exc:
+        _rollback_target(target)
         return {"success": False, "output": "", "info": f"重命名字段失败: {str(exc)}"}
 
 
 def retain_fields_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    target = None
     try:
         source = _find_vector_layer(params.get("INPUT"))
         if source is None:
@@ -466,7 +497,7 @@ def retain_fields_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         raw_fields = params.get("FIELDS")
         if isinstance(raw_fields, str):
             keep_fields = [
-                item.strip() for item in raw_fields.split(",") if item.strip()
+                item.strip() for item in re.split(r"[,;]", raw_fields) if item.strip()
             ]
         else:
             keep_fields = [
@@ -479,8 +510,7 @@ def retain_fields_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": "错误：缺少要保留的字段列表",
             }
 
-        target = _resolve_target_layer(source, params.get("OUTPUT"))
-        existing_fields = [field.name() for field in target.fields()]
+        existing_fields = [field.name() for field in source.fields()]
         missing = [field for field in keep_fields if field not in existing_fields]
         if missing:
             return {
@@ -489,6 +519,7 @@ def retain_fields_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": f"错误：字段不存在 {', '.join(missing)}",
             }
 
+        target = _resolve_target_layer(source, params.get("OUTPUT"))
         delete_indexes = [
             idx
             for idx, field in enumerate(target.fields())
@@ -497,21 +528,22 @@ def retain_fields_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         if delete_indexes:
             if not target.isEditable() and not target.startEditing():
                 raise RuntimeError("图层不可编辑，无法删除字段")
-            if not target.dataProvider().deleteAttributes(delete_indexes):
+            if not target.deleteAttributes(delete_indexes):
                 raise RuntimeError("删除字段失败")
             target.updateFields()
             if target.isEditable() and not target.commitChanges():
                 errors = "; ".join(target.commitErrors())
                 raise RuntimeError(errors or "提交字段保留结果失败")
 
-        refresh_canvas()
+        _publish_target(target, params)
         return {
             "success": True,
-            "output": target.name(),
+            "output": _build_output_layer_ref(target),
             "info": f"保留字段完成: {target.name()}；字段: {_field_preview(target)}",
             "output_layers": [_build_output_layer_ref(target)],
         }
     except Exception as exc:
+        _rollback_target(target)
         return {"success": False, "output": "", "info": f"保留字段失败: {str(exc)}"}
 
 
@@ -576,8 +608,6 @@ def refactor_fields_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         output_layer = result.get("OUTPUT")
         if isinstance(output_layer, QgsVectorLayer):
             target = output_layer
-            if QgsProject.instance().mapLayer(target.id()) is None:
-                QgsProject.instance().addMapLayer(target)
         else:
             target_name = (
                 output_ref.split(":", 1)[1].strip()
@@ -588,10 +618,10 @@ def refactor_fields_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             if target is None:
                 raise RuntimeError("重构字段结果图层不可用")
 
-        refresh_canvas()
+        _publish_target(target, params)
         return {
             "success": True,
-            "output": target.name(),
+            "output": _build_output_layer_ref(target),
             "info": f"重构字段完成: {target.name()}；字段: {_field_preview(target)}",
             "output_layers": [_build_output_layer_ref(target)],
         }

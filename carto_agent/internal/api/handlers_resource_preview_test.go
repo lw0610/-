@@ -1,7 +1,10 @@
 package api
 
 import (
+	"context"
 	"github.com/autocarto/carto_agent/internal/resource/bindings"
+	"image"
+	"image/png"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
@@ -14,62 +17,68 @@ import (
 
 func TestResourcePreviewIsConfinedToResolvedLibraryAssets(t *testing.T) {
 	root := t.TempDir()
-	write := func(path, content string) {
-		t.Helper()
-		if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
-			t.Fatal(err)
-		}
-		if err := os.WriteFile(path, []byte(content), 0600); err != nil {
-			t.Fatal(err)
-		}
+	library := resource.NewLibrary("", filepath.Join(root, "user"), bindings.New(filepath.Join(root, "bindings.yaml")))
+	source := filepath.Join(root, "sample.qml")
+	if err := os.WriteFile(source, []byte("<qgis/>"), 0600); err != nil {
+		t.Fatal(err)
 	}
-	write(filepath.Join(root, "builtin/docs/说明.md"), "说明正文")
-	write(filepath.Join(root, "builtin/docs/blocked.html"), "<script>bad</script>")
-	write(filepath.Join(root, "builtin/docs/说明书.pdf"), "%PDF-1.4\n")
-	write(filepath.Join(root, "builtin/symbols/markers/对照表.csv"), "symbol_type,svg_path\nmarker,marker.svg\n")
-	write(filepath.Join(root, "builtin/symbols/markers/marker.svg"), `<svg xmlns="http://www.w3.org/2000/svg"/>`)
-	write(filepath.Join(root, "outside.svg"), `<svg/>`)
+	item, err := library.Import(source, "style")
+	if err != nil {
+		t.Fatal(err)
+	}
 	a := &API{}
-	a.SetResourceLibrary(resource.NewLibrary(filepath.Join(root, "builtin"), filepath.Join(root, "user"), bindings.New(filepath.Join(root, "bindings.yaml"))))
+	a.SetResourceLibrary(library)
 	router := mux.NewRouter()
 	a.SetupRoutes(router)
-	call := func(path string, want int, header bool) *httptest.ResponseRecorder {
+	call := func(path string, want int) *httptest.ResponseRecorder {
 		t.Helper()
-		request := httptest.NewRequest("GET", path, nil)
-		if header {
-			request.Header.Set("X-AutoCarto-Contract-Version", "v1")
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, httptest.NewRequest("GET", path, nil))
+		if w.Code != want {
+			t.Fatalf("%s: %d %s", path, w.Code, w.Body.String())
 		}
-		response := httptest.NewRecorder()
-		router.ServeHTTP(response, request)
-		if response.Code != want {
-			t.Fatalf("%s: %d %s", path, response.Code, response.Body.String())
+		return w
+	}
+	path := "/api/resources/by-id/" + item.ID + "/preview"
+	pending := call(path, 200)
+	if pending.Header().Get("X-Preview-Status") != "pending" || !strings.Contains(pending.Body.String(), "连接 QGIS") {
+		t.Fatal(pending)
+	}
+	_, err = library.GeneratePreview(context.Background(), item.ID, func(_ context.Context, _ *resource.ResolvedResource, path string) error {
+		f, e := os.Create(path)
+		if e != nil {
+			return e
 		}
-		return response
-	}
-	response := call("/api/resources/doc/说明/preview", 200, true)
-	if response.Body.String() != "说明正文" || !strings.Contains(response.Header().Get("Content-Type"), "text/plain") || !strings.Contains(response.Header().Get("Content-Security-Policy"), "sandbox") {
-		t.Fatal(response)
-	}
-	response = call("/api/resources/symbols/markers/preview?entry=0", 200, true)
-	if response.Header().Get("Content-Type") != "image/svg+xml" {
-		t.Fatal(response.Header())
-	}
-	call("/api/resources/symbols/markers/preview?entry=../outside.svg", 400, true)
-	call("/api/resources/symbols/markers/preview?entry=-1", 400, true)
-	call("/api/resources/symbols/markers/preview?entry=9", 400, true)
-	call("/api/resources/doc/missing/preview", 404, true)
-	response = call("/api/resources/doc/说明书/preview", 200, true)
-	if response.Header().Get("Content-Type") != "application/pdf" {
-		t.Fatal(response.Header())
-	}
-	call("/api/resources/doc/说明/preview", 200, false)
-	call("/api/resources/doc/说明/preview?contract_version=unsupported", 400, false)
-	// A mapping cannot use a symlink to expose another file.
-	if err := os.Remove(filepath.Join(root, "builtin/symbols/markers/marker.svg")); err != nil {
+		defer f.Close()
+		return png.Encode(f, image.NewRGBA(image.Rect(0, 0, 8, 8)))
+	}, false)
+	if err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Symlink(filepath.Join(root, "outside.svg"), filepath.Join(root, "builtin/symbols/markers/marker.svg")); err != nil {
+	ready := call(path, 200)
+	if ready.Header().Get("Content-Type") != "image/png" || ready.Header().Get("X-Preview-Status") != "ready" {
+		t.Fatal(ready)
+	}
+	call("/api/resources/doc/missing/preview", 404)
+	call(path+"?contract_version=unsupported", 400)
+	// User-controlled query paths are never used to choose a file.
+	confined := call(path+"?entry=../../outside.png", 200)
+	if confined.Body.String() != ready.Body.String() {
+		t.Fatal("query selected another file")
+	}
+	file, _, _ := library.PreviewPath(item.ID)
+	outside := filepath.Join(root, "outside.png")
+	if err = os.WriteFile(outside, ready.Body.Bytes(), 0600); err != nil {
 		t.Fatal(err)
 	}
-	call("/api/resources/symbols/markers/preview?entry=0", 400, true)
+	if err = os.Remove(file); err != nil {
+		t.Fatal(err)
+	}
+	if err = os.Symlink(outside, file); err != nil {
+		t.Fatal(err)
+	}
+	invalid := call(path, 200)
+	if invalid.Header().Get("X-Preview-Status") != "pending" {
+		t.Fatal("served symlink preview")
+	}
 }

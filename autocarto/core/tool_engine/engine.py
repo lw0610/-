@@ -80,6 +80,9 @@ def collect_output_layers(result: Any) -> List[Dict[str, Any]]:
             for item in raw_layers:
                 if not isinstance(item, dict):
                     continue
+                if item.get("layer_id"):
+                    layers.append({**item, "auto_load": False})
+                    continue
                 path = item.get("path")
                 if isinstance(path, str) and path:
                     layers.append(

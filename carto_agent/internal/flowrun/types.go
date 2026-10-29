@@ -2,6 +2,8 @@ package flowrun
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/autocarto/carto_agent/internal/plan"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"time"
 
@@ -12,9 +14,6 @@ import (
 
 const APIVersion = "flow-run/v1"
 
-type Compiler interface {
-	EnsureRunnable(context.Context, string, string) (*flow.FlowPlan, error)
-}
 type StepRunner interface {
 	Run(context.Context, StepRequest) (StepResult, error)
 }
@@ -33,9 +32,10 @@ type RunStore interface {
 }
 
 type Options struct {
+	DataGet            func(context.Context, *RunState, plan.Data) (DataResult, error)
+	ValidatePlanResume func(context.Context, *RunState) error
+	FinalChecks        func(context.Context, *RunState) Verification
 	Lifecycle          context.Context
-	AcquisitionFactory func(context.Context, *RunState) (*acquire.Engine, error)
-	Compiler           Compiler
 	Runner             StepRunner
 	Tools              ToolInvoker
 	Model              ModelCaller
@@ -46,8 +46,11 @@ type Options struct {
 }
 
 type StartRequest struct {
+	CartoPlan      *plan.Plan
+	Guide          *flow.GuideDoc
+	Selections     map[string]json.RawMessage
 	ProjectPath    string
-	FlowRunID      string // Optional trusted reservation for flow_start; validated before use.
+	FlowRunID      string // Optional trusted reservation for plan execution; validated before use.
 	SessionID      string
 	SessionDir     string
 	ProjectRoot    string
@@ -68,6 +71,7 @@ type ResumeRequest struct {
 }
 
 type StepRequest struct {
+	Acquisition    *DataPreparation
 	Overlay        *RoleOverlaySpec
 	FlowID         string
 	FlowDir        string
@@ -81,7 +85,7 @@ type StepRequest struct {
 	Role           flow.RoleSpec
 	Messages       []*schema.Message
 	OriginalSource string
-	// Mode is step, confirm, or failure_choice. T31 builds ConfirmAgent for the latter two.
+	// Mode is step or confirm. Confirm steps use the existing HITL agent.
 	Mode         string
 	Confirmation *ConfirmationRequest
 }
@@ -123,6 +127,7 @@ type ReceiptRepair struct {
 	Error  string `json:"error,omitempty"`
 }
 type Attempt struct {
+	DataID          string         `json:"data_id,omitempty"`
 	UserInitiated   bool           `json:"user_initiated,omitempty"`
 	RunID           string         `json:"run_id"`
 	Mode            string         `json:"mode"`
@@ -161,6 +166,12 @@ type AcquisitionState struct {
 	Items []acquire.ItemResult `json:"items"`
 }
 type RunState struct {
+	CartoPlan           *plan.Plan                   `json:"carto_plan,omitempty"`
+	PlanHistory         []*plan.Plan                 `json:"plan_history,omitempty"`
+	Guide               *flow.GuideDoc               `json:"guide,omitempty"`
+	Selections          map[string]json.RawMessage   `json:"data_selections,omitempty"`
+	Revisions           int                          `json:"revisions"`
+	FinalVerification   *Verification                `json:"final_verification,omitempty"`
 	LayerOverrides      map[string]map[string]string `json:"layer_overrides,omitempty"`
 	ProjectPath         string                       `json:"project_path,omitempty"`
 	Acquisition         *AcquisitionState            `json:"acquisition,omitempty"`
@@ -191,10 +202,12 @@ type RunState struct {
 	Plan                *flow.FlowPlan               `json:"plan"`
 }
 type Event struct {
-	Event     string         `json:"event"`
-	SessionID string         `json:"session_id"`
-	FlowRunID string         `json:"flow_run_id,omitempty"`
-	Payload   map[string]any `json:"payload"`
+	PlanID      string         `json:"plan_id,omitempty"`
+	PlanVersion int            `json:"plan_version,omitempty"`
+	Event       string         `json:"event"`
+	SessionID   string         `json:"session_id"`
+	FlowRunID   string         `json:"flow_run_id,omitempty"`
+	Payload     map[string]any `json:"payload"`
 }
 
 func IsTerminal(status string) bool {
@@ -203,4 +216,24 @@ func IsTerminal(status string) bool {
 		return true
 	}
 	return false
+}
+
+// DataResult comes from the unified service after normalization and verification.
+type DataResult struct {
+	Preparation    *DataPreparation
+	Value          any
+	EntryOverrides map[string]string
+	LayerOverrides map[string]string
+	Notes          []string
+	Outputs        map[string]any
+}
+
+// DataPreparation is a trusted acquisition handoff, not model-authored output.
+// The controller runs it through the same step runner and interrupt lifecycle
+// as ordinary steps, then asks DataGet to verify the registered result.
+type DataPreparation struct {
+	DataID    string
+	Selection json.RawMessage
+	Role      flow.RoleSpec
+	Messages  []*schema.Message
 }

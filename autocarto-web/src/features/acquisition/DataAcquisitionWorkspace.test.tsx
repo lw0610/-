@@ -1,13 +1,14 @@
 import {beforeEach, expect, it, vi} from 'vitest'
 import {fireEvent, render, screen, waitFor, within} from '@testing-library/react'
 import DataAcquisitionWorkspace from '@/components/settings/DataAcquisitionWorkspace'
-const mocks=vi.hoisted(()=>({sources:vi.fn(),store:vi.fn(),config:vi.fn(),scan:vi.fn(),saveSource:vi.fn(),deleteSource:vi.fn(),deleteStored:vi.fn(),cleanExpired:vi.fn(),saveConfig:vi.fn()}))
+const mocks=vi.hoisted(()=>({planConfig:vi.fn(),savePlanConfig:vi.fn(),memory:vi.fn(),forget:vi.fn(),models:vi.fn(),sources:vi.fn(),store:vi.fn(),config:vi.fn(),scan:vi.fn(),saveSource:vi.fn(),deleteSource:vi.fn(),deleteStored:vi.fn(),cleanExpired:vi.fn(),saveConfig:vi.fn()}))
 vi.mock('@/features/acquisition/api',()=>({acquisitionApi:mocks}))
 vi.mock('@/lib/config-form-helpers',()=>({isDesktopRuntime:()=>false,pickDirectoryPath:vi.fn(),pickFilePath:vi.fn()}))
 const local={api_version:'data_source/v1',id:'user.fixture',name:'本机铁路',kind:'local_folder',root:'/fixture',provides:[{category:'transport.railway',path:'rail.geojson',fields:{name:['NAME']}}],builtin:false,available:true}
 const categories=[{id:'transport.railway',name:'铁路线',fields:{name:{meaning:'名称'}}}]
 beforeEach(()=>{
  vi.resetAllMocks()
+ mocks.planConfig.mockResolvedValue({confirm:'when_needed'});mocks.savePlanConfig.mockResolvedValue({});mocks.memory.mockResolvedValue({entries:[]});mocks.models.mockResolvedValue({providers:[]})
  mocks.sources.mockResolvedValue({sources:[{...local,id:'source.example',name:'内置来源',builtin:true,available:false,reasons:['需要启用 OpenStreetMap']},local],categories,diagnostics:[]})
  mocks.store.mockResolvedValue({items:[{key:'cache-fixture',spec:{category:'transport.railway',source_id:'user.fixture',bbox:[100,20,101,21]},bytes:1024,valid:true,expired:true,created_at:'2026-10-01T00:00:00Z',expires_at:'2026-10-02T00:00:00Z',referencing_runs:['run-example']}],used_bytes:1024,max_bytes:1024**3,directory:'/runtime/data/acquired'})
  mocks.config.mockResolvedValue({max_download_mb:2048,store_max_gb:20,concurrency:2,per_host:1,auto_fallback:true,web_search_enabled:false,overpass_endpoint:''})
@@ -20,7 +21,7 @@ it('shows precise source readiness and keeps builtin entries read only', async()
  expect(screen.getByText('需要启用 OpenStreetMap')).toBeInTheDocument()
  expect(screen.getAllByRole('button',{name:'编辑'})).toHaveLength(1)
  expect(screen.getByRole('checkbox',{name:'允许联网搜索数据'})).not.toBeChecked()
- expect(screen.getByText(/开启后每次搜索仍需单独确认/)).toBeInTheDocument()
+ expect(screen.getByText(/是否继续遵循上方策略/)).toBeInTheDocument()
 })
 it('scan does not save until category and fields are reviewed and confirmed',async()=>{
  render(<DataAcquisitionWorkspace/>)
@@ -65,3 +66,13 @@ it('preserves the selected GeoPackage layer through editing and saving', async()
  fireEvent.click(screen.getByRole('button',{name:'保存数据源'}))
  await waitFor(()=>expect(mocks.saveSource).toHaveBeenCalledWith(expect.objectContaining({provides:[expect.objectContaining({path:'base.gpkg',layer:'railway'})]}),true))
 })
+
+it('saves plan and acquisition policies together without exposing old flow policy',async()=>{
+ render(<DataAcquisitionWorkspace/>);await screen.findByRole('combobox',{name:'计划确认'});
+ expect(screen.queryByText('流程策略')).not.toBeInTheDocument();
+ fireEvent.change(screen.getByRole('combobox',{name:'联网获取数据'}),{target:{value:'deny'}});
+ fireEvent.change(screen.getByRole('combobox',{name:'计划确认'}),{target:{value:'always'}});
+ fireEvent.click(screen.getByRole('button',{name:'保存获取设置'}));
+ await waitFor(()=>expect(mocks.saveConfig).toHaveBeenCalledWith(expect.objectContaining({network_policy:'deny'})));
+ expect(mocks.savePlanConfig).toHaveBeenCalledWith('always');
+});

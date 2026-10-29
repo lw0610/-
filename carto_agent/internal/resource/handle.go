@@ -22,7 +22,11 @@ func (l *Library) resolveItem(item LibraryItem, ref Ref, scope Scope) *ResolvedR
 			key = "path:" + filepath.ToSlash(relative)
 		}
 	}
-	r := l.resolvePath(Request{Key: key, ResourceID: item.ID, Label: label, Type: item.Type, Location: ref.Location, FlowID: scope.FlowID, FlowDir: scope.FlowDir, Entry: item.Entry, BaseDir: ref.BaseDir, BaseDirFromInput: ref.BaseDirFromInput, BaseDirOverride: ref.BaseDirOverride, EntryOverrides: ref.EntryOverrides, EntryOrigins: ref.EntryOrigins, EntryLayerIDs: ref.EntryLayerIDs}, item.Path, item.Owner)
+	path := item.Path
+	if IsPublicType(item.Type) && item.Entry != "" {
+		path = item.Entry
+	}
+	r := l.resolvePath(Request{Key: key, ResourceID: item.ID, Label: label, Type: item.Type, Location: ref.Location, FlowID: scope.FlowID, FlowDir: scope.FlowDir, Entry: item.Entry, BaseDir: ref.BaseDir, BaseDirFromInput: ref.BaseDirFromInput, BaseDirOverride: ref.BaseDirOverride, EntryOverrides: ref.EntryOverrides, EntryOrigins: ref.EntryOrigins, EntryLayerIDs: ref.EntryLayerIDs}, path, item.Owner)
 	r.Key = key
 	r.ID = item.ID
 	r.Label = label
@@ -37,6 +41,8 @@ func (l *Library) resolveItem(item LibraryItem, ref Ref, scope Scope) *ResolvedR
 	r.OverriddenBy = item.OverriddenBy
 	r.Description = item.Description
 	r.Source = item.Source
+	r.Geometry, r.LabelField, r.Paper, r.Orientation = item.Geometry, item.LabelField, item.Paper, item.Orientation
+	r.Elements, r.Tags, r.PreviewURL, r.PreviewStatus = item.Elements, item.Tags, item.PreviewURL, item.PreviewStatus
 	r.Legacy = item.Legacy
 	r.Problems = append(item.Problems, r.Problems...)
 	r.ResolvedPath = r.Entry
@@ -57,7 +63,9 @@ func (l *Library) resolveItem(item LibraryItem, ref Ref, scope Scope) *ResolvedR
 	switch r.Type {
 	case "style":
 		r.Format = "qml"
-		r.Geometry = qmlGeometry(r.Entry)
+		if r.Geometry == "" {
+			r.Geometry = qmlGeometry(r.Entry)
+		}
 	case "layout":
 		spec, _ := TypeInfo("layout")
 		for format, detail := range spec.Formats {
@@ -117,6 +125,12 @@ func (l *Library) resolveItem(item LibraryItem, ref Ref, scope Scope) *ResolvedR
 			}
 		}
 	}
+	if IsPublicType(r.Type) {
+		r.PreviewStatus = "pending"
+		if previewCurrent(l.previewRoot(r), r.Digest) {
+			r.PreviewStatus = "ready"
+		}
+	}
 	return r
 }
 func qmlGeometry(path string) string {
@@ -169,6 +183,7 @@ func (r *ResolvedResource) Handle() map[string]any {
 	result := map[string]any{"api_version": "resource-handle/v1", "id": r.ID, "type": r.Type, "name": r.Name, "version": r.Version, "owner": r.Owner, "root": r.Root, "entry": r.Entry, "format": r.Format, "base_dir": r.BaseDir, "digest": r.Digest, "entries": entries, "total_entries": len(entries), "truncated": false, "warnings": warnings}
 	if r.Geometry != "" {
 		result["geometry"] = r.Geometry
+		result["label_field"] = r.LabelField
 	}
 	return result
 }

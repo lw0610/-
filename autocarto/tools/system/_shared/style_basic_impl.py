@@ -37,15 +37,9 @@ def set_layer_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         if not layer_name:
             return {"success": False, "output": "", "info": "错误：缺少图层参数"}
 
-        layers = QgsProject.instance().mapLayersByName(layer_name)
-        if not layers:
-            return {
-                "success": False,
-                "output": "",
-                "info": f"错误：未找到图层 '{layer_name}'",
-            }
-
-        layer = layers[0]
+        layer, error = _get_layer(layer_name)
+        if error:
+            return error
 
         if style_type == "simple":
             symbol = QgsSymbol.defaultSymbol(layer.geometryType())
@@ -274,7 +268,7 @@ def get_style_info_handler(params: Dict[str, Any]) -> Dict[str, Any]:
 
 def save_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     try:
-        from autocarto.tools.system._shared.style_set_export_impl import find_style_layer
+        from autocarto.tools.system._shared.style_common import find_style_layer
         layer = find_style_layer(QgsProject.instance(), params.get("layer"))
         path = params.get("path") or params.get("style_path")
         if not path:
@@ -286,7 +280,7 @@ def save_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "output": "",
                 "info": f"保存图层样式失败: {message}",
             }
-        return {"success": True, "output": str(path), "info": "图层样式已保存"}
+        return {"success": True, "output": str(path), "info": "图层样式已保存", "data": {"layer_id": layer.id(), "layer_name": layer.name()}}
     except Exception as e:
         return {"success": False, "output": "", "info": f"保存图层样式失败: {str(e)}"}
 
@@ -299,6 +293,15 @@ def load_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             return error
         handle = require_handle(params.get("style"), "style", formats=("qml",))
         path = handle_entry_path(handle)
+        explicit = params.get("label_field")
+        if explicit is not None and (not isinstance(explicit, str) or not explicit.strip()):
+            raise ValueError("label_field 必须是实际字段名，关闭标注请填“无”")
+        fields = layer.fields().names() if hasattr(layer, "fields") else []
+        if explicit and explicit != "无" and explicit not in fields:
+            raise ValueError("标注字段不存在：" + explicit)
+        geometry = handle.get("geometry")
+        if hasattr(layer, "geometryType") and geometry in ("point", "line", "polygon") and layer.geometryType() != {"point": 0, "line": 1, "polygon": 2}[geometry]:
+            raise ValueError("样式几何类型与图层不一致")
         message, ok = layer.loadNamedStyle(str(path))
         if not ok:
             return {
@@ -306,16 +309,60 @@ def load_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "output": "",
                 "info": f"加载图层样式失败: {message}",
             }
-        from autocarto.tools.system._shared.style_set_impl import restore_qml_font_families
+        from autocarto.tools.system._shared.style_labeling import restore_qml_font_families, _override_label_field, resolve_name_field
         restore_qml_font_families(layer)
+        warnings = list(handle.get("warnings", []))
+        actual = ""
+        requested = explicit if explicit is not None else handle.get("label_field")
+        labeling = layer.labeling() if hasattr(layer, "labeling") else None
+        if explicit is None and labeling is not None and hasattr(labeling, "settings") and labeling.settings().isExpression:
+            actual = labeling.settings().fieldName
+            requested = None
+        if requested == "无":
+            if hasattr(layer, "setLabelsEnabled"): layer.setLabelsEnabled(False)
+            if hasattr(layer, "setLabeling"): layer.setLabeling(None)
+        elif requested and not fields:
+            if hasattr(layer, "setLabelsEnabled"): layer.setLabelsEnabled(False)
+            warnings.append("图层没有可用名称字段，已关闭标注")
+        elif fields and (requested or labeling is not None):
+            if not requested and labeling is not None and hasattr(labeling, "settings"):
+                settings = labeling.settings()
+                if settings.isExpression:
+                    actual = settings.fieldName
+                else:
+                    requested = settings.fieldName
+            if requested:
+                actual = resolve_name_field(fields, requested)
+                if actual:
+                    _override_label_field(layer, actual)
+                    if actual != requested: warnings.append("标注字段不存在，已使用 " + actual)
+                else:
+                    layer.setLabelsEnabled(False)
+                    warnings.append("图层没有可用名称字段，已关闭标注")
         layer.triggerRepaint()
         return {"success": True, "output": str(path), "info": "图层样式已加载",
-                "resource": handle_summary(handle), "warnings": handle.get("warnings", [])}
+                "resource": handle_summary(handle), "label_field": actual, "warnings": warnings,
+                "data": {"layer_id": layer.id(), "layer_name": layer.name(), "label_field": actual}}
     except ResourceHandleError as exc:
         return {"success": False, "output": "", "info": str(exc), "error_type": exc.code, "data": exc.details}
     except Exception as e:
         return {"success": False, "output": "", "info": f"加载图层样式失败: {str(e)}"}
 
+
+
+
+def load_styles_handler(params):
+    items = params.get("items")
+    if not isinstance(items, list) or not items or len(items) > 1000:
+        return {"success": False, "info": "items 必须是 1–1000 项图层与样式列表", "error_type": "invalid_arguments"}
+    results = []
+    for item in items:
+        if not isinstance(item, dict):
+            results.append({"success": False, "info": "样式项必须是对象"})
+            continue
+        result = load_style_handler(item)
+        results.append(dict(result, layer=item.get("layer")))
+    return {"success": all(r.get("success") for r in results), "output": "", "info": "批量样式处理完成", "data": {"items": results}}
 
 set_layer_style_handler = _wrap_main_thread(set_layer_style_handler)
 set_layer_opacity_handler = _wrap_main_thread(set_layer_opacity_handler)

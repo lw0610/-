@@ -64,6 +64,9 @@ func resourceDigest(item LibraryItem) (string, error) {
 			if err := rejectResourcePath(path); err != nil {
 				return err
 			}
+			if entry.Name() == "preview.png" || entry.Name() == "preview.digest" {
+				return nil
+			}
 			if !entry.IsDir() && (item.Type != "data_folder" || DataKindForFile(path, true) != "") {
 				paths = append(paths, path)
 			}

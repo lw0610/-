@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import ChatCapabilityBanner from './ChatCapabilityBanner'
 import ChatInput from './ChatInput'
 import ContextToolbar from './ContextToolbar'
@@ -19,10 +19,9 @@ import { useInstanceStore } from '@/stores/instanceStore'
 import { useKnowledgeReview } from '@/features/knowledge-review/useKnowledgeReview'
 import { parseReviewReference } from '@/features/knowledge-review/model'
 import KnowledgeReviewDialog from '@/features/knowledge-review/KnowledgeReviewDialog'
-import { useFlowComposer } from '@/features/flow-run/useFlowComposer'
-import FlowComposer from '@/features/flow-run/FlowComposer'
-import { useFlowRunStore } from '@/features/flow-run/store'
+import { useFlowRunStore } from '@/features/plan/store'
 import { useChatStore } from '@/stores/chatStore'
+import { planApi } from '@/features/plan/api'
 
 export default function ChatPanel() {
   const review = useKnowledgeReview()
@@ -41,11 +40,19 @@ export default function ChatPanel() {
   const messaging = useChatMessaging({
     ensureSession: session.ensureSession,
   })
-  const composer = useFlowComposer(messaging.handleSend)
   const flowSessionId = useChatStore(state => state.sessionId) || ''
   const workspaceProjectPath = useSessionStore(state => state.sessions.find(record => record.session_id === flowSessionId)?.project_path || '')
   const flowRuns = useFlowRunStore(state => state.runs)
   const blockedFlows = useFlowRunStore(state => state.blocked)
+  const plans = useFlowRunStore(state => state.plans)
+  useEffect(() => {
+    if (!flowSessionId || !messaging.connected) return
+    let current = true
+    void planApi.list(flowSessionId).then(result => {
+      if (current) useFlowRunStore.getState().restorePlans(flowSessionId, result.plans)
+    }).catch(() => undefined)
+    return () => { current = false }
+  }, [flowSessionId, messaging.connected])
   const instances = useInstanceStore((s) => s.instances)
   const activeInstanceId = useInstanceStore((s) => s.activeInstanceId)
   const runningCount = useInstanceStore((s) => s.runningCount)
@@ -82,8 +89,8 @@ export default function ChatPanel() {
           <MessageList
             messages={messaging.messages}
             flowRuns={flowRuns[flowSessionId]}
+            plans={plans[flowSessionId]}
             flowBlocked={blockedFlows[flowSessionId]}
-            onResumeFlow={messaging.handleResumeFlow}
             workflowBlocks={messaging.workflowBlocks}
             focusedWorkflowBlockId={session.focusedWorkflowBlockId}
             onOpenWorkflowBlock={session.handleOpenWorkflowBlock}
@@ -119,9 +126,10 @@ export default function ChatPanel() {
         )}
 
         <ChatInput
-          onSend={composer.send}
-          sendBlocked={composer.blocked}
-          flowControls={<FlowComposer composer={composer} disabled={chatDisabled || messaging.isRunning} mode={context.executionMode}/>}
+          onSend={messaging.handleSend}
+          sessionId={flowSessionId}
+          instanceId={activeInstanceId || undefined}
+          awaitingAnswer={Boolean(messaging.activeInterrupt)}
           onCancel={messaging.handleCancel}
           disabled={chatDisabled}
           running={messaging.isRunning}
@@ -162,6 +170,7 @@ export default function ChatPanel() {
           tasks={messaging.tasks}
           pendingInterrupts={messaging.pendingInterrupts}
           workflowBlocks={messaging.workflowBlocks}
+          messages={messaging.messages}
           focusedWorkflowBlockId={session.focusedWorkflowBlockId}
           onFocusWorkflowBlock={session.setFocusedWorkflowBlockId}
         />

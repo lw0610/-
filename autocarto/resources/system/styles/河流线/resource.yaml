@@ -1,0 +1,19 @@
+{
+  "apiVersion": "resource/v1",
+  "id": "style.basemap-5046d6b037",
+  "type": "style",
+  "name": "河流线",
+  "version": "1.0.0",
+  "entry": "河流线.qml",
+  "geometry": "line",
+  "label_field": "NAME",
+  "description": "由原预设导出的符号和标注",
+  "tags": [
+    "线状河流",
+    "水系线",
+    "河流"
+  ],
+  "source": {
+    "author": "AutoCarto"
+  }
+}

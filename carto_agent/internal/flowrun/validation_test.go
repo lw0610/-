@@ -43,87 +43,7 @@ func TestReceiptFormsRepairAndToolSummaryLimit(t *testing.T) {
 	}
 }
 
-func TestInputResolutionTypesConstraintsAndSource(t *testing.T) {
-	root := t.TempDir()
-	if err := os.WriteFile(filepath.Join(root, "data.csv"), []byte("x"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	p := &flow.FlowPlan{Inputs: []flow.InputPlan{{Key: "source", Label: "原文", Type: "conversation_text", Required: true}, {Key: "paper", Label: "选项", Type: "choice", Default: "A1 横向", Options: []string{"A1", "A2"}}, {Key: "yes", Type: "boolean", Default: "否"}, {Key: "count", Type: "number", Default: "2.5"}, {Key: "file", Type: "file"}, {Key: "folder", Type: "folder"}, {Key: "message", Type: "text"}}, InputConstraints: []flow.InputConstraint{{Op: "at_least_one", Inputs: []string{"file", "folder"}}}}
-	inputs, err := ResolveInputs(p, map[string]any{"file": "data.csv", "folder": ".", "message": map[string]any{"$ref": "current_user_message"}}, "完整原文\n", root)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if inputs["paper"] != "A1 横向" || inputs["yes"] != false || inputs["count"] != 2.5 || inputs["file"] != filepath.Join(root, "data.csv") || inputs["message"] != "完整原文\n" {
-		t.Fatal(inputs)
-	}
-	source := inputs["source"].(map[string]any)
-	if source["$ref"] != "current_user_message" || source["sha256"] == "" || source["length"] == 0 {
-		t.Fatal(source)
-	}
-	for _, tc := range []struct {
-		kind  string
-		value any
-		ok    bool
-	}{
-		{"boolean", true, true}, {"boolean", "是", true}, {"boolean", "1", true}, {"boolean", "0", true}, {"boolean", "wrong", false},
-		{"number", 3, true}, {"number", "NaN", false}, {"number", "Infinity", false}, {"number", "oops", false},
-		{"choice", "A2", true}, {"choice", "invalid", false}, {"text", 44, false}, {"file", "missing", false}, {"file", ".", false}, {"folder", "data.csv", false}, {"layer", "layer-id", true}, {"unsupported", "value", false},
-	} {
-		t.Run(tc.kind+"/"+strings.ReplaceAll(strings.TrimSpace(strings.Repeat("x", 1)+toString(tc.value)), "/", "_"), func(t *testing.T) {
-			_, err := convertInput(flow.InputPlan{Type: tc.kind, Options: []string{"A2"}}, tc.value, root)
-			if (err == nil) != tc.ok {
-				t.Fatalf("%v: %v", tc, err)
-			}
-		})
-	}
-	for _, raw := range []map[string]any{{"unknown": "x"}, {"message": map[string]any{"$ref": "bad"}}, {"paper": "bad"}} {
-		if _, err := ResolveInputs(p, raw, "", root); err == nil {
-			t.Fatal("bad inputs accepted", raw)
-		}
-	}
-	for _, op := range []string{"exactly_one", "at_most_one", "invalid"} {
-		test := &flow.FlowPlan{Inputs: []flow.InputPlan{{Key: "a", Type: "text"}, {Key: "b", Type: "text"}}, InputConstraints: []flow.InputConstraint{{Op: op, Inputs: []string{"a", "b"}}}}
-		if _, err := ResolveInputs(test, map[string]any{"a": "one", "b": "two"}, "", root); err == nil {
-			t.Fatal("violated constraint accepted", op)
-		}
-	}
-	for _, value := range []any{nil, "", "  ", []any{}, map[string]any{}, map[string]any{"$ref": "current_user_message", "length": 0}} {
-		if provided(value) {
-			t.Fatal("empty value treated as provided", value)
-		}
-	}
-	if !provided(false) || truthy(false) || truthy("0") || !truthy("yes") {
-		t.Fatal("boolean presence semantics")
-	}
-}
 func toString(value any) string { raw, _ := json.Marshal(value); return string(raw) }
-
-func TestAllConditionOperatorsAndModelFailures(t *testing.T) {
-	run := &RunState{Inputs: map[string]any{"a": "value", "yes": true, "no": false}, Steps: []StepState{{ID: "s1", Status: "completed", Outputs: map[string]any{"文件": "path"}, Attempts: []Attempt{{Receipt: &Receipt{Summary: "完成"}}}}}}
-	for _, rule := range []*flow.ConditionRule{nil, {Op: "provided", Input: "a"}, {Op: "not_provided", Input: "missing"}, {Op: "truthy", Input: "yes"}, {Op: "falsy", Input: "no"}, {Op: "equals", Input: "a", Value: "value"}, {Op: "step_status", Step: "s1", Status: "completed"}, {Op: "output_exists", Step: "s1", Label: "文件"}, {Op: "not", Arg: &flow.ConditionRule{Op: "provided", Input: "missing"}}, {Op: "and", Args: []flow.ConditionRule{{Op: "truthy", Input: "yes"}, {Op: "provided", Input: "a"}}}, {Op: "or", Args: []flow.ConditionRule{{Op: "truthy", Input: "no"}, {Op: "provided", Input: "a"}}}} {
-		value, err := EvaluateRule(rule, run)
-		if err != nil || !value {
-			t.Fatal(rule, value, err)
-		}
-	}
-	if value, err := EvaluateRule(&flow.ConditionRule{Op: "step_status", Step: "none", Status: "completed"}, run); value || err != nil {
-		t.Fatal(value, err)
-	}
-	for _, rule := range []*flow.ConditionRule{{Op: "bad"}, {Op: "not"}, {Op: "and"}, {Op: "or", Args: []flow.ConditionRule{{Op: "bad"}}}} {
-		if _, err := EvaluateRule(rule, run); err == nil {
-			t.Fatal("invalid rule accepted")
-		}
-	}
-	step := flow.StepPlan{Condition: &flow.ConditionDoc{Text: "判断"}}
-	for _, model := range []ModelCaller{nil, modelFunc(func(context.Context, string) (string, error) { return "", errors.New("offline") }), modelFunc(func(context.Context, string) (string, error) { return `{"run":"yes"}`, nil })} {
-		if _, err := evaluateCondition(context.Background(), step, run, model); err == nil {
-			t.Fatal("invalid condition accepted")
-		}
-	}
-	if result, err := evaluateCondition(context.Background(), flow.StepPlan{Condition: &flow.ConditionDoc{Rule: &flow.ConditionRule{Op: "truthy", Input: "yes"}}}, run, nil); err != nil || !result.Result {
-		t.Fatal(result, err)
-	}
-}
 
 func TestStepMessageResourcesAndUpstreamTruncation(t *testing.T) {
 	p := testPlan(2)
@@ -261,7 +181,7 @@ func TestOutputValidationFilesDatasetsLayersAndReadOnlyTools(t *testing.T) {
 		want         bool
 	}{
 		{"file", "txt", "result.txt", true}, {"file", "png", "result.txt", false}, {"file", "", "empty.txt", false}, {"file", "", "missing", false}, {"file", "", ".", false}, {"file", "", 123, false},
-		{"layout", "", "map", true}, {"layout", "", "missing", false}, {"layout", "", 1, false}, {"layers", "", []any{"roads", map[string]any{"layer_id": "id-1"}}, true}, {"layers", "", []any{map[string]any{"id": "id-1"}}, true}, {"layers", "", []any{"missing"}, false}, {"layers", "", "roads", false}, {"layers", "", []any{}, false},
+		{"layout", "", "map", true}, {"layout", "", "missing", false}, {"layout", "", 1, false}, {"layers", "", []any{"roads", map[string]any{"layer_id": "id-1"}}, true}, {"layers", "", map[string]any{"id": "id-1"}, true}, {"layers", "", []any{"missing"}, false}, {"layers", "", "roads", true}, {"layers", "", []any{}, false},
 		{"dataset", "", ".", true}, {"dataset", "", "result.txt", false}, {"dataset", "", 10, false}, {"dataset", "route_dataset", ".", false}, {"dataset", "statistical_dataset", ".", false}, {"text", "", "value", true}, {"text", "", "", false}, {"confirmation", "", false, true}, {"any", "", nil, true}, {"unknown", "", "value", false},
 	} {
 		err := verifyOutput(context.Background(), flow.OutputDeclaration{Type: tc.kind, Format: tc.format}, tc.value, root, tools)

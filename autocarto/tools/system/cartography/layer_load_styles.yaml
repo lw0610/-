@@ -1,0 +1,29 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_load_styles
+  display_name: 批量套用图层样式
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 按明确的图层与样式对应逐项套用，返回各项成功情况与实际标注字段，不修改数据文件。
+  parameters:
+    - name: items
+      type: array
+      required: true
+      description: 每项包含 layer、style、可选 label_field；style 使用资源库样式名称。
+      schema:
+        type: array
+        minItems: 1
+        maxItems: 1000
+        items:
+          type: object
+          required: [layer, style]
+          properties:
+            layer: {type: string, description: 图层名称或 ID}
+            style: {type: string, x-resource-type: style, description: 样式资源名称或编号}
+            label_field: {type: string, description: 实际标注字段，填“无”关闭标注}
+execution:
+  handler: handlers.style.load_styles_handler
+  param_mapping:
+    items: '{{ items }}'

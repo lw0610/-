@@ -1,0 +1,42 @@
+{
+  "temporary_runtime": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/enio2-startup-check-1lc4q5bn/runtime",
+  "model_endpoints_redirected": 5,
+  "provider_requests": 0,
+  "owned_pid": 65752,
+  "health_status": 200,
+  "startup_seconds": 3.85,
+  "data_sources_http_status": 200,
+  "data_sources_success": true,
+  "source_count": 9,
+  "category_count": 23,
+  "catalog_diagnostics": [],
+  "runtime_snapshot_http_status": 200,
+  "runtime_snapshot": {
+    "runtime_revision": "default:30f6ec21aa43c3e3",
+    "runtime_active_agent_config": "default",
+    "plan_enabled": true,
+    "plan_ready": true,
+    "mode_readiness": {
+      "build": {
+        "enabled": true,
+        "ready": true
+      },
+      "plan": {
+        "enabled": true,
+        "ready": true
+      }
+    },
+    "mode_issues": null,
+    "stale": false
+  },
+  "owned_process_terminated": true,
+  "runtime_created": true,
+  "runtime_tool_count": 334,
+  "startup_evidence": [
+    "[2026-10-28 16:52:02.569] [INFO] [agent] ChatModel 初始化成功",
+    "[2026-10-28 16:52:02.570] [INFO] [agent] Builtin Skills 目录: /Users/zw/研究生/QGIS-agent/enio2/autocarto/skills/system",
+    "[2026-10-28 16:52:04.223] [INFO] [agent] AgentRuntime 创建成功: config=default revision=default:30f6ec21aa43c3e3"
+  ],
+  "outside_log_paths_detected": false,
+  "temporary_config_removed": true
+}

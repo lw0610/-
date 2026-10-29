@@ -46,12 +46,11 @@ def test_xyz_layer_load_reuse_handle_and_project_source_redaction(tmp_path):
     assert secret not in json.dumps(envelope)
     assert secret not in json.dumps(_get_layer_detailed_info(layer))
     row = dict(name="在线底图", path=str(definition), kind="raster", exists=True, required=True, layer_id=layer.id())
-    handle = dict(api_version="resource-handle/v1", id="data_list.test", name="测试", version="1", type="data_list", entry=str(tmp_path / "list.csv"), entries=[row])
-    reused = load_list_handler({"data_list": handle})
+    reused = load_list_handler({"items": [row]})
     assert reused["success"] and reused["data"]["reused_count"] == 1, reused
     assert reused["data"]["entries"][0]["layer_id"] == layer.id()
     assert secret not in json.dumps(reused)
     QgsProject.instance().removeMapLayer(layer.id())
-    missing = load_list_handler({"data_list": handle})
+    missing = load_list_handler({"items": [row]})
     assert not missing["success"] and missing["error_type"] == "data_list_required_missing"
     assert not QgsProject.instance().mapLayers()

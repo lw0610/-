@@ -280,6 +280,11 @@ def compile_marching_route_dataset_handler(
             "dataset_source": dataset_source,
             "artifact_id": artifact_id,
             "dataset_dir": payload["dataset_dir"],
+            "plan_data": {
+                "from": "session",
+                "path": payload["dataset_dir"],
+                "kind": "dataset",
+            },
             "task_id": task_id,
             "task_graph_file": payload["task_graph_file"],
             "source_file": payload["source_file"],

@@ -27,33 +27,6 @@ folder_scan:
   skip_dirs: [__MACOSX]
 
 types:
-  data_list:
-    public: false
-    label: 数据清单
-    words: [数据清单, 底图数据]
-    group: data
-    folder: false
-    entry_extensions: [.csv, .xlsx]
-    table:
-      columns:
-        - {key: name, aliases: [名称], required: true}
-        - {key: path, aliases: [路径], required: true}
-        - {key: type, aliases: [类型], values: {矢量: vector, vector: vector, 栅格: raster, raster: raster}}
-        - {key: required, aliases: [必需], kind: boolean, default: true}
-        - {key: category, aliases: [类别]}
-        - {key: fields, aliases: [字段]}
-        - {key: acquire, aliases: [自动获取], kind: boolean, default: true}
-        - {key: source_hint, aliases: [推荐来源], kind: list}
-        - {key: description, aliases: [说明]}
-      unique: [name]
-
-  data_folder:
-    public: false
-    label: 数据文件夹
-    words: [数据文件夹]
-    group: data
-    folder: true
-
   style:
     public: true
     label: 样式
@@ -62,47 +35,6 @@ types:
     folder: false
     entry_extensions: [.qml]
     xml_root: qgis
-
-  style_set:
-    public: true
-    label: 样式集
-    words: [样式集]
-    group: styles
-    folder: true
-    table:
-      columns:
-        - {key: layer, aliases: [图层], required: true}
-        - {key: aliases, aliases: [别名], kind: list}
-        - {key: style_file, aliases: [样式文件], required: true, kind: relative_file, extensions: [.qml]}
-        - {key: label_field, aliases: [标注字段]}          # 空：保留 QML；"无"：关闭；其他：覆盖字段
-        - {key: description, aliases: [说明]}
-      unique: [layer]
-
-  route_style:
-    public: false
-    label: 路线样式
-    words: [路线样式]
-    group: styles
-    folder: false
-    entry_extensions: [.csv, .xlsx]
-    table:
-      columns:
-        - {key: topology, aliases: [拓扑], required: true, values: {标准: standard, standard: standard, 分支: branch, branch: branch, 多起点汇入: multi_start, multi_start: multi_start}}
-        - {key: side, aliases: [阵营], required: true, values: {我方: friendly, friendly: friendly, 对方: enemy, enemy: enemy, 中立: neutral, neutral: neutral}}
-        - {key: route_type, aliases: [路线类型], required: true}
-        - {key: draw_type, aliases: [绘制方式], required: true, values: {bezier_arrow: bezier_arrow, branch_bezier: branch_bezier, multi_start_bezier: multi_start_bezier}}
-        - {key: style_id, aliases: [样式编号], required: true}
-        - {key: width_scale, aliases: [线宽系数], kind: number, minimum_exclusive: 0}
-        - {key: legend_label, aliases: [图例名称]}
-        - {key: preset_ref, aliases: [预设引用]}
-        - {key: default_sides, aliases: [默认阵营], kind: list, item_values: {我方: friendly, friendly: friendly, 对方: enemy, enemy: enemy, 中立: neutral, neutral: neutral}}
-        - {key: reference_style_id, aliases: [参照样式编号]}
-        - {key: label_paths, aliases: [标注路径], kind: boolean, default: false}
-        - {key: auto_width_group, aliases: [自动线宽组], kind: boolean, default: false}
-      unique: [[topology, side]]
-      rules:
-        - expanded_default_sides_unique   # 每行按 default_sides（缺省为本行 side）展开 (topology, side)，展开后全表唯一
-        - preset_ref_unique                # 非空 preset_ref 全表唯一；为空时以 topology_side 作为键
 
   layout:
     public: true
@@ -120,31 +52,3 @@ types:
         suffix: .qpt
         xml_root: Layout
         required_item_id: main_map
-
-  symbols:
-    public: false
-    label: 符号集
-    words: [符号, 符号集]
-    group: symbols
-    folder: true
-    table:
-      columns:
-        - {key: symbol_type, aliases: [符号类型], required: true}
-        - {key: svg_path, aliases: [文件, SVG路径, svg路径, 符号文件], required: true, kind: relative_file, extensions: [.svg, .png]}
-        - {key: size, aliases: [大小], kind: number, minimum_exclusive: 0, default: 4}
-        - {key: priority, aliases: [优先级], kind: number, default: 0}
-        - {key: anchor_x, aliases: [锚点X, 锚点x], kind: number, default: 0}
-        - {key: anchor_y, aliases: [锚点Y, 锚点y], kind: number, default: 0}
-        - {key: description, aliases: [说明]}
-        - {key: event_types, aliases: [事件类型], kind: list}
-      unique: [symbol_type]
-      rules:
-        - event_types_unique              # 同一事件类型只能出现在一行（现 Python 静默覆盖，改为报错）
-
-  doc:
-    public: false
-    label: 参考文档
-    words: [参考, 文档]
-    group: docs
-    folder: false
-    entry_extensions: [.md, .txt, .pdf]

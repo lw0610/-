@@ -3,6 +3,8 @@ import { DEFAULT_DESKTOP_RUNTIME_PORT, mockDesktopRuntime } from './helpers/desk
 
 const backendBaseURL = `http://127.0.0.1:${DEFAULT_DESKTOP_RUNTIME_PORT}`
 
+test.use({ extraHTTPHeaders: { 'X-AutoCarto-Contract-Version': 'v1' } })
+
 async function bodyText(page: Page) {
   return page.locator('body').innerText()
 }
@@ -185,7 +187,8 @@ test('instances page filters stopped instances from runtime snapshot projection'
   await page.goto('/instances.html', { waitUntil: 'networkidle' })
   await expect(page.locator('body')).toContainText('共 1 个实例')
   await expect(page.locator('body')).toContainText('运行中 1')
-  await expect(page.locator('body')).toContainText('当前 running-visible · 运行中')
+  await expect(page.getByRole('main').getByRole('button', { name: /running-visible 运行中.*instance-running/ })).toBeVisible()
+  await expect(page.getByRole('main').getByText('/tmp/running-visible.qgz', { exact: true })).toBeVisible()
   await expect(page.locator('body')).not.toContainText('stopped-hidden')
   await expect(page.locator('body')).not.toContainText('已停止')
 })
@@ -361,7 +364,7 @@ test('chat restores historical session without duplicate user input and with tas
 
   await expect(page.getByText('制作湖北省 GDP 条形统计专题图')).toHaveCount(1)
   await expect(page.locator('p.whitespace-pre-wrap', { hasText: '好的，开始分析。' })).toBeVisible()
-  await expect(page.getByText('详情与任务')).toBeVisible()
+  await expect(page.getByRole('tab', { name: '任务与过程' })).toBeVisible()
   await expect(page.getByText('恢复任务列表')).toBeVisible()
   await expect(page.getByText('验证 write_todos 完成态')).toBeVisible()
   await page.getByRole('button', { name: /Planner\s+已完成规划/ }).click()

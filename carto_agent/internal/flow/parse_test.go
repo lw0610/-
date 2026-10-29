@@ -2,6 +2,7 @@ package flow
 
 import (
 	"encoding/json"
+	"github.com/autocarto/carto_agent/internal/flow/legacy"
 	"os"
 	"reflect"
 	"strings"
@@ -320,7 +321,7 @@ func TestParseConditions(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.raw, func(t *testing.T) {
-			if got := ParseCondition(test.raw); !reflect.DeepEqual(got, test.want) {
+			if got := legacy.ParseCondition(test.raw); !reflect.DeepEqual(got, test.want) {
 				t.Fatalf("得到 %+v，需要 %+v", got, test.want)
 			}
 		})

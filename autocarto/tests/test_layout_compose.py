@@ -71,7 +71,7 @@ def test_layout_compose_custom_paper_and_sparse_grid():
 
 
 def test_layout_compose_reads_project_relative_spec_without_cwd(tmp_path, monkeypatch):
-    original = Path(__file__).resolve().parents[1]/"resources/system/layouts/四角对齐版式.layout.yaml"
+    original = Path(__file__).resolve().parents[1]/"resources/system/layouts/四角对齐版式/四角对齐版式.layout.yaml"
     folder = tmp_path/"版式"
     folder.mkdir()
     (folder/"复制.layout.yaml").write_text(original.read_text())

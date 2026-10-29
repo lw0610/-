@@ -53,15 +53,16 @@ func TestAcquisitionExtentUsesOnlyUnexpandedPolygonMask(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv("AUTOCARTO_HOME", t.TempDir())
 			path := writeExtentFixture(t, tt.raw)
-			p, e := plannerFixture(t)
+			extent, err := ResolveExtent(context.Background(), path, nil, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
 			if tt.expanded {
-				p.Acquisition.Items[0].ExtentExpression = "「范围」外扩 20%"
+				extent.ExpandPercent = 20
 			}
-			plan, issues := Plan(context.Background(), p, map[string]any{"数据": map[string]any{"$acquire": true}, "范围": path}, e, nil)
-			if len(issues) > 0 {
-				t.Fatal(issues)
+			if err := PrepareExtent(extent); err != nil {
+				t.Fatal(err)
 			}
-			extent := plan.Items[0].Extent
 			if extent == nil || (extent.Path != "") != tt.mask {
 				t.Fatalf("%+v", extent)
 			}
@@ -80,14 +81,15 @@ func TestAcquisitionExtentUsesOnlyUnexpandedPolygonMask(t *testing.T) {
 func TestRuntimeExtentExpansionDropsOriginalPolygonMask(t *testing.T) {
 	t.Setenv("AUTOCARTO_HOME", t.TempDir())
 	path := writeExtentFixture(t, polygonExtentFixture)
-	p, e := plannerFixture(t)
-	item := p.Acquisition.Items[0]
-	item.Extent = &flow.ExtentPlan{Source: "路线数据集", Pending: true, DependencyStep: "s2", ExpandPercent: 20}
-	result, err := ResolveRuntimeExtent(context.Background(), item, path, nil, e, nil)
-	if err != nil || result.Extent.Path != "" || result.Extent.Pending || result.Extent.Source != "路线数据集" {
-		t.Fatalf("%+v %v", result.Extent, err)
+	extent, err := ResolveExtent(context.Background(), path, nil, nil)
+	if err != nil {
+		t.Fatal(err)
 	}
-	assertExtentBBox(t, result.Extent.BBox, []float64{109.8, 29.8, 111.2, 31.2})
+	extent.ExpandPercent = 20
+	if err = PrepareExtent(extent); err != nil || extent.Path != "" {
+		t.Fatal(extent, err)
+	}
+	assertExtentBBox(t, extent.BBox, []float64{109.8, 29.8, 111.2, 31.2})
 }
 
 func TestAcquisitionExtentRejectsZeroAreaWithoutInventingBuffer(t *testing.T) {
@@ -100,19 +102,14 @@ func TestAcquisitionExtentRejectsZeroAreaWithoutInventingBuffer(t *testing.T) {
 			t.Run(raw+suffix, func(t *testing.T) {
 				t.Setenv("AUTOCARTO_HOME", t.TempDir())
 				path := writeExtentFixture(t, raw)
-				p, e := plannerFixture(t)
-				p.Acquisition.Items[0].ExtentExpression = "「范围」" + suffix
-				plan, issues := Plan(context.Background(), p, map[string]any{"数据": map[string]any{"$acquire": true}, "范围": path}, e, nil)
-				found := false
-				for _, issue := range issues {
-					found = found || issue.Code == "FLOW_REQ_EXTENT_INVALID" && strings.Contains(issue.Message, "没有面积")
+				extent, err := ResolveExtent(context.Background(), path, nil, nil)
+				if err == nil {
+					if suffix != "" {
+						extent.ExpandPercent = 20
+					}
+					err = PrepareExtent(extent)
 				}
-				if !found || plan.Items[0].Extent != nil {
-					t.Fatalf("%+v %+v", plan, issues)
-				}
-				item := p.Acquisition.Items[0]
-				item.Extent = &flow.ExtentPlan{Pending: true, ExpandPercent: 20}
-				if _, err := ResolveRuntimeExtent(context.Background(), item, path, nil, e, nil); err == nil || !strings.Contains(err.Error(), "没有面积") {
+				if err == nil || !strings.Contains(err.Error(), "没有面积") {
 					t.Fatal(err)
 				}
 			})
@@ -153,13 +150,15 @@ func TestRouteExtentUsesBBoxAndPercentExpansion(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "places.csv"), []byte("lon,lat\n110,30\n,\n111,31\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
-	p, e := plannerFixture(t)
-	p.Acquisition.Items[0].Extent = &flow.ExtentPlan{Pending: true, Source: "路线数据集", ExpandPercent: 20}
-	item, err := ResolveRuntimeExtent(context.Background(), p.Acquisition.Items[0], dir, nil, e, nil)
-	if err != nil || item.Extent.Path != "" {
-		t.Fatalf("%+v %v", item, err)
+	extent, err := ResolveExtent(context.Background(), dir, nil, nil)
+	if err != nil {
+		t.Fatal(err)
 	}
-	assertExtentBBox(t, item.Extent.BBox, []float64{109.8, 29.8, 111.2, 31.2})
+	extent.ExpandPercent = 20
+	if err = PrepareExtent(extent); err != nil || extent.Path != "" {
+		t.Fatal(extent, err)
+	}
+	assertExtentBBox(t, extent.BBox, []float64{109.8, 29.8, 111.2, 31.2})
 }
 
 func TestInvalidFileCoordinatesDoNotFallBackToResolver(t *testing.T) {
@@ -193,24 +192,19 @@ func TestExternalExtentValidationAndUnverifiedMask(t *testing.T) {
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv("AUTOCARTO_HOME", t.TempDir())
-			p, e := plannerFixture(t)
 			original := &flow.ExtentPlan{BBox: tt.box, Path: "unverified-layer"}
 			resolver := func(context.Context, string) (*flow.ExtentPlan, error) { return original, nil }
-			plan, issues := Plan(context.Background(), p, map[string]any{"数据": map[string]any{"$acquire": true}, "范围": "test-layer"}, e, resolver)
-			found := false
-			for _, issue := range issues {
-				found = found || issue.Code == "FLOW_REQ_EXTENT_INVALID"
+			extent, err := ResolveExtent(context.Background(), "test-layer", nil, resolver)
+			if (err != nil) != tt.invalid {
+				t.Fatal(extent, err)
 			}
-			if found != tt.invalid {
-				t.Fatalf("%+v %+v", plan, issues)
-			}
-			if !tt.invalid && plan.Items[0].Extent.Path != "" {
+			if !tt.invalid && extent.Path != "" {
 				t.Fatal("unverified mask retained")
 			}
 			if original.Path != "unverified-layer" {
 				t.Fatal("resolver-owned extent mutated")
 			}
-			if _, err := json.Marshal(plan); err != nil {
+			if _, err := json.Marshal(extent); !tt.invalid && err != nil {
 				t.Fatal("invalid float leaked into response", err)
 			}
 		})
@@ -225,10 +219,7 @@ func TestRouteExtentWithNoAreaRequiresExplicitRegion(t *testing.T) {
 			if err := os.WriteFile(filepath.Join(dir, "places.csv"), []byte("lon,lat\n"+rows), 0600); err != nil {
 				t.Fatal(err)
 			}
-			p, e := plannerFixture(t)
-			item := p.Acquisition.Items[0]
-			item.Extent = &flow.ExtentPlan{Pending: true, ExpandPercent: 20}
-			if _, err := ResolveRuntimeExtent(context.Background(), item, dir, nil, e, nil); err == nil || !strings.Contains(err.Error(), "有面积的区域或边界") {
+			if _, err := ResolveExtent(context.Background(), dir, nil, nil); err == nil || !strings.Contains(err.Error(), "有面积的区域或边界") {
 				t.Fatal(err)
 			}
 		})

@@ -27,9 +27,14 @@
 【上一次尝试未通过】
 {{.LastFailure}}
 {{if .UserGuidance}}用户补充说明：{{.UserGuidance}}
-{{end}}{{end}}
+{{end}}{{end}}{{if .PreviousOutputs}}
+【本步上次已报告的产出】
+{{.PreviousOutputs}}
+先检查并复用仍可用的产出，只补做未完成或确实失败的操作，不要从头重复创建图层。
+{{end}}
 【完成后输出回执】
 你的最后一条回复只能是一个 JSON 对象，不要加任何说明文字或代码块标记：
 {"status":"completed","summary":"一句话说明本步做了什么","outputs":{"产出名称":"值"},"issues":[]}
 - outputs 的键必须使用【完成标准】中的产出名称，值使用工具返回的真实路径、图层名、版面名或 ID，不要编造。
+- layers 产出可以是图层引用对象、图层 ID、实际图层文件路径，或它们的数组；优先原样传递工具返回的图层引用（含 layer_id），不要仅靠显示名称区分图层。
 - 无法完成时 status 写 "blocked"（缺数据、缺能力、需要用户决定）或 "failed"（工具执行失败），并在 issues 写明原因。

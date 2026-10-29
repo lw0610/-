@@ -165,6 +165,7 @@ func toolParametersToContract(params []ToolParameter) []toolcontract.Parameter {
 			values = param.Enum
 		}
 		out[idx] = toolcontract.Parameter{
+			Schema:      cloneMapAny(param.Schema),
 			Name:        param.Name,
 			Type:        param.Type,
 			Required:    param.Required,

@@ -1,0 +1,17 @@
+{
+  "apiVersion": "resource/v1",
+  "id": "style.basemap-60b6b42fed",
+  "type": "style",
+  "name": "国道",
+  "version": "1.0.0",
+  "entry": "国道.qml",
+  "geometry": "line",
+  "label_field": "无",
+  "description": "由原预设导出的符号和标注",
+  "tags": [
+    "普通国道"
+  ],
+  "source": {
+    "author": "AutoCarto"
+  }
+}

@@ -210,19 +210,22 @@ func TestBuiltinResourcesHaveManifests(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := map[string]bool{"layout.four-corner": false, "layout.statistical": false, "style_set.gb-basemap": false}
+	expected := map[string]bool{"四角对齐版式": false, "统计专题版式": false, "省域面": false, "县级城市驻地": false, "铁路": false, "高速公路": false, "国道": false, "省界": false, "河流线": false, "河流面": false, "县域面": false, "市域面": false, "地级城市驻地": false}
 	if len(items) != len(expected) {
-		t.Fatalf("expected exactly three public resources, got %+v", items)
+		t.Fatalf("expected 11 styles and 2 layouts, got %d", len(items))
 	}
 	for _, item := range items {
-		if _, ok := expected[item.ID]; !ok || item.Legacy || HasErrors(item.Problems) || !strings.HasPrefix(item.Digest, "sha256:") {
+		if _, ok := expected[item.Name]; !ok || item.Legacy || HasErrors(item.Problems) || !strings.HasPrefix(item.Digest, "sha256:") || item.PreviewStatus != "ready" {
 			t.Fatalf("invalid builtin resource: %+v", item)
 		}
-		expected[item.ID] = true
+		if item.Type == "style" && (item.Geometry == "" || item.LabelField == "") {
+			t.Fatalf("style metadata missing: %+v", item)
+		}
+		expected[item.Name] = true
 	}
-	for id, seen := range expected {
+	for name, seen := range expected {
 		if !seen {
-			t.Errorf("missing builtin: %s", id)
+			t.Errorf("missing builtin: %s", name)
 		}
 	}
 }

@@ -213,7 +213,7 @@ runtime:
 	}
 
 	defaultRaw := readTextFile(t, filepath.Join(targetDir, "default", "agent.yaml"))
-	if !strings.Contains(defaultRaw, `version: "2.0"`) || !strings.Contains(defaultRaw, "route_knowledge") {
+	if !strings.Contains(defaultRaw, `version: "2.0"`) || !strings.Contains(defaultRaw, "plan_propose") || strings.Contains(defaultRaw, "    knowledge_engineer:") {
 		t.Fatalf("expected default config replaced by new embedded default, got: %s", defaultRaw)
 	}
 }

@@ -63,12 +63,12 @@ func TestAgentConfigV2MigrationHTTPAndCompatibleSave(t *testing.T) {
 	if a := got.Runtime.Agents["renamed"]; a.Kind != "executor" || !a.FlowOnly {
 		t.Fatalf("%+v", got)
 	}
-	if got.Flows == nil || len(got.Flows.Enabled) != 0 {
-		t.Fatal("explicit no flows lost")
+	if got.Flows != nil {
+		t.Fatal("retired flows configuration was retained")
 	}
 	rr = request("GET", "/api/agent-configs/old/data", "")
 	view := decodeAPIResponse(t, rr).Data.(map[string]any)
-	if view["version"] != "2.0" || view["flows"] == nil {
+	if view["version"] != "2.0" || view["flows"] != nil {
 		t.Fatalf("%s", rr.Body.String())
 	}
 }

@@ -293,17 +293,13 @@ class ImportLayoutTemplateHandlerTestCase(unittest.TestCase):
                 relative = self.impl.import_layout_template_handler({"template": resolve_handle(Path(self.temp_dir.name)/"template.qpt", "layout"), "name": "相对路径"})
         finally:
             os.chdir(previous)
-        wrong_extension = self.impl.import_layout_template_handler(
-            {
-                "template": load_handle("four-corner"),
-                "name": "错误格式",
-            }
-        )
-
+        with patch("autocarto.tools.system._shared.layout_compose_impl.compose_layout_handler", return_value={"success":True}) as compose:
+            yaml_result = self.impl.import_layout_template_handler({"template": load_handle("four-corner"), "name":"声明式自动识别"})
         self.assertTrue(relative["success"], relative)
         self.assertEqual(relative["data"]["template"], str((Path(self.temp_dir.name)/"template.qpt").resolve()))
-        self.assertFalse(wrong_extension["success"])
-        self.assertIn("qpt", wrong_extension["info"])
+        self.assertTrue(yaml_result["success"], yaml_result)
+        self.assertEqual(compose.call_args.args[0]["layout"], "声明式自动识别")
+        self.assertEqual(compose.call_args.args[0]["spec"]["format"], "layout_yaml")
 
     def test_text_replacements_are_literal_and_report_remaining_placeholders(self):
         result = self.impl.import_layout_template_handler({"template": resolve_handle(self._write_template(), "layout"), "name": "文字测试",
@@ -350,7 +346,7 @@ class ImportLayoutTemplateDefinitionTestCase(unittest.TestCase):
             self.assertIn(name, parameters)
             self.assertEqual(definition["execution"]["param_mapping"][name], "{{ "+name+" }}")
         self.assertEqual(parameters["template"]["type"], "resource")
-        self.assertEqual(parameters["template"]["resource_type"], "layout:qpt")
+        self.assertEqual(parameters["template"]["resource_type"], "layout")
         self.assertFalse((plugin_root/"tools/system/cartography/import_layout_template.yaml").exists())
         raw = (plugin_root/"skills/system/print-layout/SKILL.md").read_text()
         self.assertIn("import_layout_template", yaml.safe_load(raw.split("---", 2)[1])["tools"])

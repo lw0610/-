@@ -263,21 +263,28 @@ def _place_layer_in_group(layer, name):
 def load_list_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     entries = []
     try:
-        handle = require_handle(params.get("data_list"), "data_list")
-        list_path = handle_entry_path(handle)
-        if params.get("base_dir") is not None and not isinstance(params["base_dir"], str):
-            raise DataLoadingError("invalid_arguments", "base_dir 须为目录路径字符串")
-        # base_dir 已由 Go 在解析句柄前应用，工具不再拼接或搜索资源路径。
+        items = params.get("items")
+        if not isinstance(items, list) or not items or len(items) > 10000:
+            raise DataLoadingError("invalid_arguments", "items 必须是非空数据列表，每项为 name、path")
+        rows = []
+        seen = set()
+        for item in items:
+            if not isinstance(item, dict) or not isinstance(item.get("name"), str) or not item["name"].strip() or not isinstance(item.get("path"), str) or not item["path"].strip():
+                raise DataLoadingError("invalid_arguments", "每项数据必须提供名称与文件路径")
+            if item["name"] in seen: raise DataLoadingError("invalid_arguments", "数据名称重复：" + item["name"])
+            seen.add(item["name"])
+            filename, options = split_data_source(item["path"])
+            path = resolve_project_path(filename)
+            kind = item.get("kind") or ("raster" if path.suffix.lower() in (".tif", ".tiff", ".img", ".vrt", ".asc", ".nc", ".jp2") else "vector")
+            if kind not in ("vector", "raster"): raise DataLoadingError("invalid_arguments", "kind 只能是 vector 或 raster")
+            rows.append({"name": item["name"], "path": str(path) + ("|" + "|".join(options) if options else ""), "kind": kind, "required": boolean_parameter(item.get("required"), True), "exists": path.is_file(), "layer_id": item.get("layer_id")})
         names = params.get("names")
         if names is not None and (not isinstance(names, list) or any(not isinstance(name, str) or not name.strip() for name in names)):
             raise DataLoadingError("invalid_arguments", "names 须为非空名称组成的数组")
         selected_names = {name.strip() for name in (names or [])}
-        rows = handle_entries(handle)
-        if any(row["kind"] not in {"vector", "raster"} or not isinstance(row.get("required"), bool) for row in rows):
-            raise ResourceHandleError("resource_handle_invalid", "数据清单句柄缺少规范化的数据类型或必需标记")
         unknown = sorted(selected_names - {row["name"] for row in rows})
         if unknown:
-            raise DataLoadingError("data_list_names_not_found", "数据清单没有指定名称", {"unmatched_names": unknown})
+            raise DataLoadingError("data_list_names_not_found", "数据列表没有指定名称", {"unmatched_names": unknown})
         strict = boolean_parameter(params.get("strict"), True)
         reuse = boolean_parameter(params.get("reuse_existing"), True)
         group = params.get("group")
@@ -314,7 +321,7 @@ def load_list_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             for entry, _, _, _ in plans:
                 entry["message"] = "严格检查未通过，未加载任何图层"
             return {"success": False, "output": "", "info": "必需数据缺失，未加载任何图层",
-                    "error_type": "data_list_required_missing", "resource": handle_summary(handle), "warnings": handle.get("warnings", []), "data": {"entries": entries, "crs_summary": {}, "loaded_count": 0, "reused_count": 0}}
+                    "error_type": "data_list_required_missing", "warnings": [], "data": {"entries": entries, "crs_summary": {}, "loaded_count": 0, "reused_count": 0}}
         summary = {}
         for entry, source, kind, existing in plans:
             result = ({"success": True, "data": _layer_data(existing, True), "info": "复用系统已准备的图层"}
@@ -330,8 +337,8 @@ def load_list_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             else:
                 entry.update(status="failed", message=result.get("info", "加载失败"))
         success = not any(entry["status"] == "failed" or (entry["status"] == "missing" and entry["required"]) for entry in entries)
-        return {"success": success, "output": str(list_path), "info": "数据清单加载完成" if success else "数据清单加载完成，存在失败或必需数据缺失",
-                "resource": handle_summary(handle), "warnings": handle.get("warnings", []),
+        return {"success": success, "output": "", "info": "数据列表加载完成" if success else "数据列表加载完成，存在失败或必需数据缺失",
+                "warnings": [],
                 "data": {"entries": entries, "crs_summary": summary,
                          "loaded_count": sum(entry["status"] == "loaded" for entry in entries),
                          "reused_count": sum(entry["status"] == "reused" for entry in entries)}}
@@ -339,5 +346,5 @@ def load_list_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         return {"success": False, "output": "", "info": str(exc), "message": str(exc),
                 "error_type": exc.code, "data": dict(exc.details, entries=entries, crs_summary={})}
     except Exception as exc:
-        return {"success": False, "output": "", "info": f"读取数据清单失败: {exc}",
+        return {"success": False, "output": "", "info": f"读取数据列表失败: {exc}",
                 "error_type": "data_list_failed", "data": {"entries": entries, "crs_summary": {}}}

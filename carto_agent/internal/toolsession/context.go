@@ -11,7 +11,23 @@ const (
 	sessionIDKey   contextKey = "autocarto_session_id"
 	projectPathKey contextKey = "autocarto_project_path"
 	instanceIDKey  contextKey = "autocarto_instance_id"
+	flowStepKey    contextKey = "autocarto_flow_step"
 )
+
+type flowStep struct{ runID, stepID string }
+
+func WithFlowStep(ctx context.Context, runID, stepID string) context.Context {
+	return context.WithValue(ctx, flowStepKey, flowStep{strings.TrimSpace(runID), strings.TrimSpace(stepID)})
+}
+
+func OutputOwnerFromContext(ctx context.Context) map[string]string {
+	sessionID := SessionIDFromContext(ctx)
+	if sessionID == "" {
+		return nil
+	}
+	step, _ := ctx.Value(flowStepKey).(flowStep)
+	return map[string]string{"session_id": sessionID, "flow_run_id": step.runID, "step_id": step.stepID}
+}
 
 func WithContext(ctx context.Context, sessionID, projectPath, instanceID string) context.Context {
 	ctx = context.WithValue(ctx, sessionIDKey, strings.TrimSpace(sessionID))

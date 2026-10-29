@@ -509,6 +509,7 @@ func convertToolParameters(params []toolpkg.ToolParameter) []SkillParameter {
 	converted := make([]SkillParameter, len(params))
 	for idx, param := range params {
 		converted[idx] = SkillParameter{
+			Schema:          cloneMapAny(param.Schema),
 			Name:            param.Name,
 			Type:            param.Type,
 			ResourceType:    param.ResourceType,

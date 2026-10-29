@@ -2,6 +2,14 @@ export type ExecutionMode = 'plan' | 'build'
 export type RunIntent = 'plan_only' | 'execute'
 export type AutoPhase = 'idle' | 'planning' | 'evaluating' | 'building' | 'completed'
 
+export interface ChatAttachment { path: string; kind: 'file' | 'folder' }
+export interface ChatLayerReference { id: string; name: string }
+export interface ChatInputMetadata {
+  attachments?: ChatAttachment[]
+  layers?: ChatLayerReference[]
+  guide_id?: string
+}
+
 export interface Message {
   id: string
   type:
@@ -25,7 +33,7 @@ export interface Message {
   workflowBlockId?: string
 }
 
-export type WorkflowBlockStatus = 'running' | 'completed' | 'error'
+export type WorkflowBlockStatus = 'running' | 'waiting_user' | 'completed' | 'error'
 
 export interface WorkflowToolCard {
   id: string

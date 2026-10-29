@@ -34,7 +34,8 @@ func (i ComputeToolInvoker) InvokeTool(ctx context.Context, toolName string, arg
 	}
 	outputLayers := make([]compute.OutputLayer, 0, len(result.OutputLayers))
 	for _, layer := range result.OutputLayers {
-		outputLayers = append(outputLayers, compute.OutputLayer{Path: layer.Path, AutoLoad: layer.AutoLoad})
+		layer.Fields = append([]string(nil), layer.Fields...)
+		outputLayers = append(outputLayers, layer)
 	}
 	return &compute.InvokeResponse{
 		Success:             result.Success,

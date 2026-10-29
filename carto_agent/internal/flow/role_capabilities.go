@@ -1,7 +1,7 @@
 package flow
 
 // effectiveStepRole projects an already resolved overlay for diagnostics and
-// enrichment only. It never widens another step or the stored scheme.
+// execution only. It never widens another step or the stored scheme.
 func effectiveStepRole(plan *FlowPlan, step StepPlan, env Environment) *RoleSpec {
 	role := planRole(plan, step.Role)
 	if role == nil {

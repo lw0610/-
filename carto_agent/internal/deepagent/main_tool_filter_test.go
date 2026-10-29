@@ -101,7 +101,7 @@ func (m *namedMainCatalogProbe) Generate(_ context.Context, input []*schema.Mess
 			return nil, fmt.Errorf("named main lost assigned tool %s", required)
 		}
 	}
-	if available["task"] != nil {
+	if available["task"] != nil && strings.Contains(available["task"].Desc, "agent_creator") {
 		return nil, fmt.Errorf("named main was also registered as its own task subagent")
 	}
 	if available["gee_run_script"] != nil {

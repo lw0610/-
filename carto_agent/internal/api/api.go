@@ -44,9 +44,9 @@ type SkillService interface {
 
 // API REST API 处理器。
 type API struct {
+	planService             PlanService
+	guidePackages           *flow.GuideStore
 	flowPackages            *flow.Store
-	flowCompilation         *flow.Compiler
-	flowCompilerMu          sync.Mutex
 	flowEnvironments        flowEnvironmentCache
 	resourceLibrary         *resource.Library
 	resourceLibraryMu       sync.Mutex
@@ -208,6 +208,12 @@ func (a *API) configureDefaultControlServices(acm *config.AgentConfigManager, ss
 
 func (a *API) SetLocalBridgeProvider(provider *bridgeprovider.Provider) {
 	a.localBridgeProvider = provider
+	a.resourceLibraryMu.Lock()
+	library := a.resourceLibrary
+	a.resourceLibraryMu.Unlock()
+	if library != nil {
+		a.queueResourcePreviews(library)
+	}
 }
 
 // SetRealtimeHub 设置实时广播服务。

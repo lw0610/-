@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -97,6 +98,19 @@ func (a *SkillAdapter) runToolResult(ctx context.Context, args map[string]any) (
 		return nil, err
 	}
 	for _, layer := range result.OutputLayers {
+		if strings.TrimSpace(layer.LayerID) != "" {
+			// Project layers already exist in QGIS. Preserve their identity as
+			// text metadata; a memory layer is not a downloadable file.
+			if current, ok := result.Output.(map[string]any); ok && current["layer_id"] == layer.LayerID {
+				continue
+			}
+			encoded, marshalErr := json.Marshal(map[string]any{"output_layers": []OutputLayer{layer}})
+			if marshalErr != nil {
+				return nil, marshalErr
+			}
+			output = toolresult.AppendText(output, string(encoded))
+			continue
+		}
 		if strings.TrimSpace(layer.Path) == "" {
 			continue
 		}
@@ -110,12 +124,12 @@ func (a *SkillAdapter) runToolResult(ctx context.Context, args map[string]any) (
 
 const (
 	agentMediaKey      = "_agent_media"
-	maxAgentImageBytes = 50 * 1024 * 1024
+	maxAgentMediaBytes = toolresult.MaxInlineMediaBytes
 )
 
 // toolResultWithMedia converts the generic _agent_media envelope returned by a
-// trusted Python/CLI tool into actual image parts. A local path in JSON is only
-// text to the model; this bridge is what makes the image visible to it.
+// trusted tool into actual image/PDF parts. A local path in JSON is only text to
+// the model; this bridge carries binary media separately from that metadata.
 func toolResultWithMedia(output any) (*schema.ToolResult, error) {
 	payload, media, err := splitAgentMedia(output)
 	if err != nil {
@@ -127,42 +141,71 @@ func toolResultWithMedia(output any) (*schema.ToolResult, error) {
 	}
 	for index, item := range media {
 		mediaType := strings.ToLower(strings.TrimSpace(stringValue(item["type"])))
-		if mediaType != "image" {
-			return nil, fmt.Errorf("%s[%d] only supports image media", agentMediaKey, index)
+		if mediaType != "image" && mediaType != "file" {
+			return nil, fmt.Errorf("%s[%d] only supports image or PDF file media", agentMediaKey, index)
 		}
 		path := strings.TrimSpace(stringValue(item["path"]))
 		if path == "" || !filepath.IsAbs(path) {
-			return nil, fmt.Errorf("%s[%d] image path must be absolute", agentMediaKey, index)
+			return nil, fmt.Errorf("%s[%d] media path must be absolute", agentMediaKey, index)
 		}
 		info, statErr := os.Stat(path)
 		if statErr != nil {
-			return nil, fmt.Errorf("read tool image %q: %w", path, statErr)
+			return nil, fmt.Errorf("read tool media %q: %w", path, statErr)
 		}
 		if !info.Mode().IsRegular() {
-			return nil, fmt.Errorf("tool image is not a regular file: %s", path)
+			return nil, fmt.Errorf("tool media is not a regular file: %s", path)
 		}
-		if info.Size() > maxAgentImageBytes {
-			return nil, fmt.Errorf("tool image exceeds %d bytes: %s", maxAgentImageBytes, path)
+		if info.Size() > maxAgentMediaBytes {
+			return nil, fmt.Errorf("tool media exceeds %d bytes: %s", maxAgentMediaBytes, path)
 		}
-		data, readErr := os.ReadFile(path)
+		file, readErr := os.Open(path)
 		if readErr != nil {
-			return nil, fmt.Errorf("read tool image %q: %w", path, readErr)
+			return nil, fmt.Errorf("read tool media %q: %w", path, readErr)
+		}
+		data, readErr := io.ReadAll(io.LimitReader(file, maxAgentMediaBytes+1))
+		closeErr := file.Close()
+		if readErr != nil {
+			return nil, fmt.Errorf("read tool media %q: %w", path, readErr)
+		}
+		if closeErr != nil {
+			return nil, closeErr
+		}
+		if len(data) > maxAgentMediaBytes {
+			return nil, fmt.Errorf("tool media exceeds %d bytes: %s", maxAgentMediaBytes, path)
 		}
 		mimeType := strings.ToLower(strings.TrimSpace(http.DetectContentType(data)))
 		if separator := strings.IndexByte(mimeType, ';'); separator >= 0 {
 			mimeType = mimeType[:separator]
 		}
 		switch mimeType {
-		case "image/png", "image/jpeg", "image/webp":
+		case "image/png", "image/jpeg", "image/webp", "image/gif":
+			if mediaType != "image" {
+				return nil, fmt.Errorf("tool media type file requires a PDF: %s", path)
+			}
+		case "application/pdf":
+			if mediaType != "file" {
+				return nil, fmt.Errorf("tool image contains a PDF: %s", path)
+			}
 		default:
-			return nil, fmt.Errorf("unsupported tool image type %q: %s", mimeType, path)
+			return nil, fmt.Errorf("unsupported tool media type %q: %s", mimeType, path)
+		}
+		if declared := strings.TrimSpace(stringValue(item["mime_type"])); declared != "" && declared != mimeType {
+			return nil, fmt.Errorf("tool media MIME type %q does not match %q: %s", declared, mimeType, path)
 		}
 		label := strings.TrimSpace(stringValue(item["label"]))
 		if label == "" {
-			label = "Image: " + filepath.Base(path)
+			label = "Media: " + filepath.Base(path)
 		}
 		result = toolresult.AppendText(result, label)
-		result = toolresult.AppendImageData(result, data, mimeType)
+		if mediaType == "image" {
+			result = toolresult.AppendImageData(result, data, mimeType)
+		} else {
+			filename := filepath.Base(strings.TrimSpace(stringValue(item["filename"])))
+			if filename == "" || filename == "." {
+				filename = filepath.Base(path)
+			}
+			result = toolresult.AppendFileData(result, data, mimeType, map[string]any{"filename": filename, "path": path})
+		}
 	}
 	return result, nil
 }
@@ -219,8 +262,12 @@ func BuildSkillSchemaMap(def SkillDefinition) map[string]any {
 		if strings.TrimSpace(param.Name) == "" {
 			continue
 		}
-		property := map[string]any{
-			"type": skillParameterJSONSchemaType(param.Type, param.Values),
+		property := cloneMapAny(param.Schema)
+		if property == nil {
+			property = map[string]any{}
+		}
+		if _, defined := property["type"]; !defined {
+			property["type"] = skillParameterJSONSchemaType(param.Type, param.Values)
 		}
 		if description := strings.TrimSpace(param.Description); description != "" {
 			property["description"] = description

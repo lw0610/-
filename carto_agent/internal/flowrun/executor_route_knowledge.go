@@ -52,37 +52,49 @@ func (RouteKnowledgeExecutor) BuildInput(step flow.StepPlan, run *RunState) ([]*
 			step.Instructions += "\n用户补充说明：" + guidance
 		}
 	}
-	payload := map[string]any{"source_ref": "current_user_message", "force_refresh": forceRefresh}
+	payload := map[string]any{"source_ref": "current_task_input", "force_refresh": forceRefresh}
 	if strings.TrimSpace(step.Instructions) != "" {
 		payload["rules"] = step.Instructions
 	}
-	seenTypes := map[string]bool{}
-	for _, key := range step.Refs.Resources {
-		var selected *flow.ResourcePlan
-		for index := range run.Plan.Resources {
-			if run.Plan.Resources[index].Key == key {
-				selected = &run.Plan.Resources[index]
-				break
+	for _, key := range []string{"route_style", "symbols"} {
+		if value := strings.TrimSpace(step.Parameters[key]); value != "" {
+			payload[key] = value
+		}
+	}
+	// Previously saved plans used linked resource handles. New plans carry
+	// explicit preset parameters, which take precedence over those snapshots.
+	if payload["route_style"] == nil || payload["symbols"] == nil {
+		seenTypes := map[string]bool{}
+		for _, key := range step.Refs.Resources {
+			var selected *flow.ResourcePlan
+			for index := range run.Plan.Resources {
+				if run.Plan.Resources[index].Key == key {
+					selected = &run.Plan.Resources[index]
+					break
+				}
 			}
-		}
-		if selected == nil {
-			return nil, fmt.Errorf("知识步骤引用未知资源: %s", key)
-		}
-		if selected.Type != "symbols" && selected.Type != "route_style" {
-			continue
-		}
-		if seenTypes[selected.Type] {
-			return nil, fmt.Errorf("知识步骤引用多个 %s 资源，无法确定本次使用项", selected.Type)
-		}
-		seenTypes[selected.Type] = true
-		handle := selected.ResolvedResource().Handle()
-		if handle == nil || selected.ID == "" {
-			return nil, fmt.Errorf("知识资源尚未链接为可执行句柄: %s", key)
-		}
-		if selected.Type == "route_style" {
-			payload["route_style"] = handle
-		} else {
-			payload["symbols"] = handle
+			if selected == nil {
+				return nil, fmt.Errorf("知识步骤引用未知资源: %s", key)
+			}
+			if selected.Type != "symbols" && selected.Type != "route_style" {
+				continue
+			}
+			if strings.TrimSpace(step.Parameters[selected.Type]) != "" {
+				continue
+			}
+			if seenTypes[selected.Type] {
+				return nil, fmt.Errorf("知识步骤引用多个 %s 资源，无法确定本次使用项", selected.Type)
+			}
+			seenTypes[selected.Type] = true
+			handle := selected.ResolvedResource().Handle()
+			if handle == nil || selected.ID == "" {
+				return nil, fmt.Errorf("知识资源尚未链接为可执行句柄: %s", key)
+			}
+			if selected.Type == "route_style" {
+				payload["route_style"] = handle
+			} else {
+				payload["symbols"] = handle
+			}
 		}
 	}
 	encoded, err := json.Marshal(payload)

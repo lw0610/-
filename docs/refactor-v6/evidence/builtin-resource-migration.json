@@ -1,0 +1,83 @@
+[
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/地级城市驻地.qml",
+    "to": "autocarto/resources/system/styles/地级城市驻地",
+    "name": "地级城市驻地"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/县级城市驻地.qml",
+    "to": "autocarto/resources/system/styles/县级城市驻地",
+    "name": "县级城市驻地"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/铁路.qml",
+    "to": "autocarto/resources/system/styles/铁路",
+    "name": "铁路"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/高速公路.qml",
+    "to": "autocarto/resources/system/styles/高速公路",
+    "name": "高速公路"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/国道.qml",
+    "to": "autocarto/resources/system/styles/国道",
+    "name": "国道"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/省界.qml",
+    "to": "autocarto/resources/system/styles/省界",
+    "name": "省界"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/河流线.qml",
+    "to": "autocarto/resources/system/styles/河流线",
+    "name": "河流线"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/河流面.qml",
+    "to": "autocarto/resources/system/styles/河流面",
+    "name": "河流面"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/县域面.qml",
+    "to": "autocarto/resources/system/styles/县域面",
+    "name": "县域面"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/市域面.qml",
+    "to": "autocarto/resources/system/styles/市域面",
+    "name": "市域面"
+  },
+  {
+    "from": "autocarto/resources/system/styles/国标底图样式/省域面.qml",
+    "to": "autocarto/resources/system/styles/省域面",
+    "name": "省域面"
+  },
+  {
+    "from": "autocarto/resources/system/layouts/四角对齐版式.layout.yaml",
+    "to": "autocarto/resources/system/layouts/四角对齐版式",
+    "name": "四角对齐版式"
+  },
+  {
+    "from": "autocarto/resources/system/layouts/统计专题版式.layout.yaml",
+    "to": "autocarto/resources/system/layouts/统计专题版式",
+    "name": "统计专题版式"
+  },
+  {
+    "from": "autocarto/flows/system/marching-route/resources/symbols/军标",
+    "to": "autocarto/tools/system/route-cartography/assets/resources/symbols/军标"
+  },
+  {
+    "from": "autocarto/flows/system/marching-route/resources/symbols/图例",
+    "to": "autocarto/tools/system/route-cartography/assets/resources/symbols/图例"
+  },
+  {
+    "from": "autocarto/flows/system/marching-route/resources/styles/路线样式-红蓝对比.resource.yaml",
+    "to": "autocarto/tools/system/route-cartography/assets/resources/styles/路线样式-红蓝对比.resource.yaml"
+  },
+  {
+    "from": "autocarto/flows/system/marching-route/resources/styles/路线样式-红蓝对比.csv",
+    "to": "autocarto/tools/system/route-cartography/assets/resources/styles/路线样式-红蓝对比.csv"
+  }
+]

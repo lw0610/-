@@ -20,7 +20,7 @@ func TestManagedImportCopyReplaceDeleteUpgrade(t *testing.T) {
 	if !ValidID(imported.ID) || !strings.HasPrefix(imported.ID, "style.u-") || imported.Legacy || imported.Version != "1.0.0" || imported.Name != "新说明" {
 		t.Fatal(imported)
 	}
-	if _, err = os.Stat(filepath.Join(library.UserDir, "styles/新说明.resource.yaml")); err != nil {
+	if _, err = os.Stat(filepath.Join(library.UserDir, "styles/新说明/resource.yaml")); err != nil {
 		t.Fatal(err)
 	}
 	_, err = library.ImportNamed(source, "style", "新说明")
@@ -40,7 +40,7 @@ func TestManagedImportCopyReplaceDeleteUpgrade(t *testing.T) {
 	if replaced.ID != imported.ID || replaced.Version != "1.0.1" || replaced.Digest == imported.Digest {
 		t.Fatal(replaced)
 	}
-	backups, err := filepath.Glob(filepath.Join(library.UserDir, ".backup", imported.ID, "*", "新说明.qml"))
+	backups, err := filepath.Glob(filepath.Join(library.UserDir, ".backup", imported.ID, "*", "新说明", "说明.qml"))
 	if err != nil || len(backups) != 1 {
 		t.Fatal(backups, err)
 	}
@@ -157,14 +157,14 @@ func TestManagedConcurrentImportAndAtomicReads(t *testing.T) {
 func TestManagedFolderEntryAndFormatReplacement(t *testing.T) {
 	root, library := resourceProject(t)
 	folder := filepath.Join(root, "source/set")
-	resourceWrite(t, filepath.Join(folder, "maps/custom.csv"), "layer,style_file\n道路,maps/line.qml\n")
+
 	resourceWrite(t, filepath.Join(folder, "maps/line.qml"), "<qgis/>")
-	writeManifest(t, folder, Manifest{ID: "style_set.source", Type: "style_set", Name: "样式", Entry: "maps/custom.csv"})
-	imported, err := library.Import(folder, "style_set")
+	writeManifest(t, folder, Manifest{ID: "style.source", Type: "style", Name: "样式", Entry: "maps/line.qml"})
+	imported, err := library.Import(folder, "style")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.HasSuffix(imported.Entry, "maps/custom.csv") || imported.Handle() == nil {
+	if !strings.HasSuffix(imported.Entry, "maps/line.qml") || imported.Handle() == nil {
 		t.Fatal(imported)
 	}
 	qpt := resourceWrite(t, filepath.Join(root, "source/layout.qpt"), "<Layout><LayoutItem id=\"main_map\"/></Layout>")
@@ -181,7 +181,7 @@ func TestManagedFolderEntryAndFormatReplacement(t *testing.T) {
 	if err != nil || changed.Format != "layout_yaml" || changed.Version != "1.0.1" {
 		t.Fatal(changed, err)
 	}
-	if _, err = os.Stat(layout.Root); !os.IsNotExist(err) {
+	if _, err = os.Stat(layout.Entry); !os.IsNotExist(err) {
 		t.Fatal("old format primary left behind", err)
 	}
 }

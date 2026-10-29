@@ -2,11 +2,11 @@
 // binary after a failed build, and never disable CGO: SQLite requires it.
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { createReadStream } from 'node:fs'
+import { createReadStream, realpathSync } from 'node:fs'
 import { chmod, copyFile, mkdir, mkdtemp, readFile, rename, rm, stat } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { fileURLToPath, pathToFileURL } from 'node:url'
+import { fileURLToPath } from 'node:url'
 
 const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -108,7 +108,19 @@ export async function buildAgent({ argv = process.argv.slice(2), env = process.e
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
+function isMainModule() {
+  if (!process.argv[1]) return false
+  try {
+    // Node resolves the module URL through symlinks while argv can retain the
+    // caller's path, including macOS /var versus /private/var temporary paths.
+    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1])
+  } catch {
+    // Importers such as node --eval may have no filesystem entry script.
+    return false
+  }
+}
+
+if (isMainModule()) {
   buildAgent().catch(error => {
     console.error(`[agent:build] ${error.message}\nThe desktop build is stopped; an old sidecar must not be used. Check the Go toolchain from carto_agent/go.mod and the target C compiler.`)
     process.exitCode = 1

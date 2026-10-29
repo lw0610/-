@@ -8,6 +8,7 @@ const backendPort = Number(process.env.AUTOCARTO_TEST_RUNTIME_PORT || '50141')
 
 export default defineConfig({
   testDir: '.',
+  outputDir: process.env.AUTOCARTO_PLAYWRIGHT_OUTPUT_DIR || 'test-results',
   testMatch: ['tests/e2e/**/*.spec.ts', 'e2e/**/*.spec.ts'],
   timeout: 30_000,
   retries: 0,
@@ -29,12 +30,14 @@ export default defineConfig({
         : 'python3 ./scripts/playwright_check_server.py backend',
       port: liveE2E ? 50002 : backendPort,
       reuseExistingServer,
+      gracefulShutdown: { signal: 'SIGTERM', timeout: 15_000 },
       timeout: 120_000,
     },
     {
       command: 'python3 ./scripts/playwright_check_server.py frontend',
       port: frontendPort,
       reuseExistingServer: false,
+      gracefulShutdown: { signal: 'SIGTERM', timeout: 15_000 },
       timeout: useDevServer ? 300_000 : 120_000,
     },
   ],

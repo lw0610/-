@@ -6,7 +6,6 @@ import { useChatStore } from '@/stores/chatStore'
 import { useConnectionStore } from '@/stores/connectionStore'
 import { useInstanceStore } from '@/stores/instanceStore'
 import { useSessionStore } from '@/stores/sessionStore'
-import type { FlowRunState } from '@/features/flow-run/types'
 import type { QGISInstance } from '@/types/instance'
 
 const {
@@ -267,13 +266,14 @@ describe('useChatMessaging HITL 交互流', () => {
     expect(errorMessage?.type).toBe('error')
     expect(errorMessage?.content).toContain('当前实时连接正在恢复')
   })
-  it('指定流程严格使用 task.data.flow 并保留现有运行上下文', async () => {
-    sendTaskMock.mockReturnValue(true)
+  it('发送附件、图层和指南元数据，并保留当前工程上下文', async () => {
+    sendChatMock.mockReturnValue(true)
     const { result } = renderHook(() => useChatMessaging({ ensureSession: async () => 'sid-hitl' }))
-    const flow = { id: 'demo', inputs: { source: { $ref: 'current_user_message' }, review: false } }
-    await act(async () => { expect(await result.current.handleSend('用户原文', flow)).toBe(true) })
-    expect(sendChatMock).not.toHaveBeenCalled()
-    expect(sendTaskMock).toHaveBeenCalledWith('用户原文', 'sid-hitl', expect.objectContaining({ flow, execution_mode: 'build', run_intent: 'execute', project_path: '/tmp/hitl-test.qgz', instance_id: 'inst-hitl' }))
+    const metadata = { guide_id: 'demo', attachments: [{ path: '/tmp/data', kind: 'folder' as const }], layers: [{ id: 'layer1', name: '铁路' }] }
+    await act(async () => { expect(await result.current.handleSend('用户原文', metadata)).toBe(true) })
+    expect(sendTaskMock).not.toHaveBeenCalled()
+    expect(sendChatMock).toHaveBeenCalledWith('用户原文', 'sid-hitl', expect.objectContaining({ ...metadata, execution_mode: 'build', run_intent: 'execute', project_path: '/tmp/hitl-test.qgz', instance_id: 'inst-hitl' }))
+    expect(useChatStore.getState().messages.at(-1)?.data).toMatchObject(metadata)
   })
   it('取消运行会使用当前会话发送 websocket cancel 请求', () => {
     sendCancelMock.mockReturnValue(true)
@@ -288,26 +288,17 @@ describe('useChatMessaging HITL 交互流', () => {
     expect(useChatStore.getState().isThinking).toBe(false)
   })
 
-  it('流程连接恢复重发保留同一次任务身份', async () => {
-    sendTaskMock.mockReturnValueOnce(false).mockReturnValueOnce(true)
+  it('连接恢复重发保留同一次任务身份', async () => {
+    sendChatMock.mockReturnValueOnce(false).mockReturnValueOnce(true)
     const { result } = renderHook(() => useChatMessaging({ ensureSession: async () => 'sid-hitl' }))
-    await act(async () => { expect(await result.current.handleSend('用户原文', { id: 'demo', inputs: {} })).toBe(true) })
-    expect(sendTaskMock).toHaveBeenCalledTimes(2)
-    const first = sendTaskMock.mock.calls[0][2]
-    const retry = sendTaskMock.mock.calls[1][2]
+    await act(async () => { expect(await result.current.handleSend('用户原文', { guide_id: 'demo' })).toBe(true) })
+    expect(sendChatMock).toHaveBeenCalledTimes(2)
+    const first = sendChatMock.mock.calls[0][2]
+    const retry = sendChatMock.mock.calls[1][2]
     expect(first.request_id).toEqual(expect.stringMatching(/^task-.+/))
     expect(first.idempotency_key).toBe(first.request_id)
     expect(retry.request_id).toBe(first.request_id)
     expect(retry.idempotency_key).toBe(first.idempotency_key)
-  })
-  it.each(['continue_snapshot', 'restart'] as const)('资源变化选择 %s 发送所见指纹和原运行编号', async choice => {
-    sendTaskMock.mockReturnValue(true)
-    const { result } = renderHook(() => useChatMessaging({ ensureSession: async () => 'sid-hitl' }))
-    const run = { flow_id: 'demo', flow_run_id: 'old-run', resource_change: { fingerprint: 'observed-new', message: '资源已变化' } } as FlowRunState
-    await act(async () => { expect(await result.current.handleResumeFlow(run, choice)).toBe(true) })
-    expect(sendTaskMock).toHaveBeenCalledWith(expect.any(String), 'sid-hitl', expect.objectContaining({ flow: {
-      id: 'demo', resume_run_id: 'old-run', resume_resource_choice: choice, resource_fingerprint: 'observed-new',
-    } }))
   })
   it('资源检查阻止恢复后，同一流程断点再次推送仍可确认', () => {
     const pending = { checkpoint_id: 'cp-flow', flow_run_id: 'flow-run', interrupt_contexts: [] }

@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/autocarto/carto_agent/internal/config"
+	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
 	"github.com/autocarto/carto_agent/internal/runtimecontrol"
 	"github.com/autocarto/carto_agent/internal/skill"
@@ -40,22 +41,22 @@ func TestChinaStatisticsMethodReachableThroughAssignedBrowserPackage(t *testing.
 	if err := yaml.Unmarshal(raw, &profile); err != nil {
 		t.Fatal(err)
 	}
-	runtimeConfig := config.ConvertToRuntimeSkillConfig(&profile, skillsRoot, "", t.TempDir(), "default")
-	readable := runtimeConfig.GetAgentMiddlewareSkills("data_engineer")
+	runtimeConfig := deepagent.DataAcquisitionSkillConfig(config.ConvertToRuntimeSkillConfig(&profile, skillsRoot, "", t.TempDir(), "default"))
+	readable := runtimeConfig.GetAgentMiddlewareSkills(deepagent.DataAcquisitionExpertName)
 	if !slices.Contains(readable, "browser-data-acquisition") {
-		t.Fatal("default data role cannot discover its browser package methods")
+		t.Fatal("system acquisition expert cannot discover its browser package methods")
 	}
 	if slices.Contains(readable, "china-statistics-data") {
 		t.Fatal("statistics reference must not require an additional role assignment")
 	}
-	for _, name := range []string{"reference_read", "web_search", "browser_list_tools", "browser_call_tool"} {
-		if !slices.Contains(runtimeConfig.GetAgentAllowedTools("data_engineer"), name) {
-			t.Fatalf("default data role cannot complete statistics acquisition: missing %s", name)
+	for _, name := range []string{"reference_read", "web_search", "browser_list_tools", "browser_call_tool", "file_read", "file_write", "shell_execute"} {
+		if !slices.Contains(runtimeConfig.GetAgentAllowedTools(deepagent.DataAcquisitionExpertName), name) {
+			t.Fatalf("system acquisition expert cannot complete statistics acquisition: missing %s", name)
 		}
 	}
 
 	ctx := runtimecontrol.WithReferencePackageDirs(context.Background(), []string{skillsRoot})
-	mw, err := subagents.LoadSkillMiddleware(ctx, "data_engineer", []string{skillsRoot}, nil, runtimeConfig)
+	mw, err := subagents.LoadSkillMiddleware(ctx, deepagent.DataAcquisitionExpertName, []string{skillsRoot}, nil, runtimeConfig)
 	if err != nil || mw == nil {
 		t.Fatalf("actual skill middleware unavailable: %v", err)
 	}
@@ -126,5 +127,27 @@ func TestChinaStatisticsMethodReachableThroughAssignedBrowserPackage(t *testing.
 	}
 	if payload["path"] != filepath.Join(skillsRoot, filepath.FromSlash(reference)) {
 		t.Fatalf("reference resolved a different package: %v", payload["path"])
+	}
+	// The discoverable method must lead to real file tools, not only browser
+	// downloads. An image/PDF source needs a readable original and a written
+	// table before the existing registration boundary can accept the result.
+	for _, name := range []string{"file_read", "file_write", "shell_execute", "data_register"} {
+		if !strings.Contains(skillBody, name) || !strings.Contains(string(expected), name) {
+			t.Errorf("model-visible acquisition method omits artifact handoff tool %s", name)
+		}
+		definition, ok := skills.GetTool(name)
+		if !ok {
+			t.Errorf("method references tool %s without a shipped contract", name)
+			continue
+		}
+		info, err := skill.NewSkillAdapter(definition, engine).Info(ctx)
+		if err != nil || info == nil || info.Name != name || info.ParamsOneOf == nil {
+			t.Errorf("method references tool %s without a model-visible schema: info=%#v err=%v", name, info, err)
+		}
+	}
+	for _, obsoleteRestriction := range []string{"不得通过截图 OCR", "不假定存在 shell 或写表工具"} {
+		if strings.Contains(string(expected), obsoleteRestriction) {
+			t.Errorf("actual statistics reference still blocks source-backed file extraction: %q", obsoleteRestriction)
+		}
 	}
 }

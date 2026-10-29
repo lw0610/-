@@ -127,6 +127,7 @@ func migrateAgentConfigV1(source *AgentConfigFile, installed map[string]bool) (*
 		cloned.Flows = &FlowConfig{Enabled: normalizeStringSlice(flowIDs)}
 	}
 	cloned.Version = AgentConfigVersionV20
+	warnings = append(warnings, migrateKnownMainFlowPrompts(cloned)...)
 	appendUnresolved := func(path string, ids []string) {
 		for _, id := range ids {
 			warnings = append(warnings, MigrationWarning{Code: "LEGACY_PACKAGE_UNRESOLVED", Path: path, Package: id, Message: "无法识别旧工具包，请选择替代工具包。"})
@@ -199,7 +200,14 @@ func (acm *AgentConfigManager) PreviewMigration(name string) (*AgentConfigMigrat
 	if err := yaml.Unmarshal(raw, &header); err != nil {
 		return nil, err
 	}
-	return &AgentConfigMigrationResult{Config: data, Warnings: append([]MigrationWarning{}, data.MigrationWarnings...), Changed: header.Version != AgentConfigVersionV20, DryRun: true}, nil
+	changed := header.Version != AgentConfigVersionV20
+	for _, warning := range data.MigrationWarnings {
+		if warning.Code == "LEGACY_MAIN_FLOW_PROMPT_UPGRADED" {
+			changed = true
+			break
+		}
+	}
+	return &AgentConfigMigrationResult{Config: data, Warnings: append([]MigrationWarning{}, data.MigrationWarnings...), Changed: changed, DryRun: true}, nil
 }
 
 func backupV1ConfigOnce(path string) error {

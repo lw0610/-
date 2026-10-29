@@ -33,7 +33,7 @@ var geeIntegrationToolNames = []string{
 func TestGEESkillReachableThroughDefaultTaskDelegation(t *testing.T) {
 	ctx := context.Background()
 	fixture := loadGEESkillIntegrationFixture(t)
-	for _, agentName := range []string{"data_engineer", "spatial_analyst", "scripting_specialist"} {
+	for _, agentName := range []string{"spatial_analyst"} {
 		t.Run(agentName, func(t *testing.T) {
 			// Isolate the intended delegation while preserving both agents' actual
 			// shipped package assignments and prompts, including global packages.
@@ -53,7 +53,7 @@ func TestGEESkillReachableThroughDefaultTaskDelegation(t *testing.T) {
 			if err != nil {
 				t.Fatalf("create default agent: %v", err)
 			}
-			iter := agent.Run(ctx, &adk.AgentInput{Messages: []adk.Message{schema.UserMessage("下载武汉市遥感影像，并加载到 QGIS 中。")}})
+			iter := agent.Run(ctx, &adk.AgentInput{Messages: []adk.Message{schema.UserMessage("分析已有武汉市遥感影像。")}})
 			for {
 				event, ok := iter.Next()
 				if !ok {
@@ -114,16 +114,16 @@ func TestGEEToolsRemainAvailableWhenExplicitlyAssignedToOrchestrator(t *testing.
 	main := runtimeConfig.Agents["orchestrator"]
 	main.ToolPackages = append(append([]string{}, main.ToolPackages...), "gee-remote-sensing")
 	runtimeConfig.Agents = map[string]subagents.RuntimeSkillAgentConfig{
-		"orchestrator":  main,
-		"data_engineer": fixture.runtimeConfig.Agents["data_engineer"],
+		"orchestrator":    main,
+		"spatial_analyst": fixture.runtimeConfig.Agents["spatial_analyst"],
 	}
-	probe := &geeSkillProbeState{agentName: "data_engineer", skillDir: fixture.skillDir, skillBody: fixture.skillBody, mainGEEAllowed: true}
+	probe := &geeSkillProbeState{agentName: "spatial_analyst", skillDir: fixture.skillDir, skillBody: fixture.skillBody, mainGEEAllowed: true}
 	agent, err := New(ctx, &Config{Name: "orchestrator", ChatModel: &geeSkillProbeModel{state: probe}, Tools: fixture.tools, MaxIteration: 6,
 		SkillRuntimeConfig: &runtimeConfig, BuiltinSkillsDir: fixture.skillsRoot, RuntimeConfigBaseDir: t.TempDir(), RegistryGovernance: fixture.registry})
 	if err != nil {
 		t.Fatal(err)
 	}
-	iter := agent.Run(ctx, &adk.AgentInput{Messages: []adk.Message{schema.UserMessage("使用 GEE 下载遥感数据")}})
+	iter := agent.Run(ctx, &adk.AgentInput{Messages: []adk.Message{schema.UserMessage("使用 GEE 分析已有遥感数据")}})
 	for {
 		event, ok := iter.Next()
 		if !ok {

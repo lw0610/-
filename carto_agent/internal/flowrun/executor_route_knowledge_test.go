@@ -10,6 +10,8 @@ import (
 	"testing"
 
 	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/plan"
+	"github.com/autocarto/carto_agent/internal/planexec"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/autocarto/carto_agent/internal/resource/bindings"
 )
@@ -20,6 +22,40 @@ func knowledgeRunFixture() (*RunState, flow.StepPlan) {
 	return run, step
 }
 
+func TestRouteKnowledgePlanPassesExplicitPresetsToExecutor(t *testing.T) {
+	p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-route-presets", Version: 1, Goal: "根据史料生成路线数据",
+		Data: []plan.Data{{ID: "history", Name: "史料", From: "conversation"}},
+		Steps: []plan.Step{{ID: "extract", Title: "抽取路线", Capabilities: []string{"route_knowledge"}, Uses: []string{"history"},
+			Instructions: "从原文提取路线", Parameters: map[string]string{"route_style": "用户路线预设", "symbols": "用户符号预设"},
+			Outputs: []flow.OutputDeclaration{{Label: "路线数据集", Type: "dataset"}}}},
+	}
+	executable, inputs, err := planexec.Build(p, planexec.BuildOptions{OriginalSource: "甲地出发，乙地抵达。"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	run := &RunState{Plan: executable, Inputs: inputs}
+	step := executable.Steps[0]
+	for _, withOldResources := range []bool{false, true} {
+		if withOldResources {
+			// Explicit presets do not require the legacy linked resource to be
+			// available and must not be overwritten by an old snapshot.
+			step.Refs.Resources = []string{"old-style"}
+			executable.Resources = []flow.ResourcePlan{{Key: "old-style", Type: "route_style", Entry: "/retired/style.csv"}}
+		}
+		messages, err := NewRouteKnowledgeExecutor().BuildInput(step, run)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var request map[string]any
+		if err := json.Unmarshal([]byte(messages[0].Content), &request); err != nil {
+			t.Fatal(err)
+		}
+		if request["source_ref"] != "current_task_input" || request["route_style"] != "用户路线预设" || request["symbols"] != "用户符号预设" || request["rules"] != p.Steps[0].Instructions {
+			t.Fatalf("plan parameters did not reach the shared knowledge expert: %v", request)
+		}
+	}
+}
+
 func TestRouteKnowledgeBuildInputReferencesSourceAndOnlyReferencedResources(t *testing.T) {
 	run, step := knowledgeRunFixture()
 	dir := t.TempDir()
@@ -28,8 +64,8 @@ func TestRouteKnowledgeBuildInputReferencesSourceAndOnlyReferencedResources(t *t
 		t.Fatal(err)
 	}
 	library := resource.NewLibrary(builtin, "", bindings.New(filepath.Join(dir, "bindings.yaml")))
-	style := library.Resolve(context.Background(), resource.Ref{Type: "route_style", Location: "resources/styles/路线样式-红蓝对比.csv"}, resource.Scope{FlowID: "marching-route", FlowDir: filepath.Join(builtin, "..", "..", "flows", "system", "marching-route")})
-	symbols := library.Resolve(context.Background(), resource.Ref{Type: "symbols", Location: "resources/symbols/军标"}, resource.Scope{FlowID: "marching-route", FlowDir: filepath.Join(builtin, "..", "..", "flows", "system", "marching-route")})
+	style := library.Resolve(context.Background(), resource.Ref{Type: "route_style", Location: "assets/resources/styles/路线样式-红蓝对比.csv"}, resource.Scope{FlowID: "marching-route", FlowDir: filepath.Join(builtin, "..", "..", "tools", "system", "route-cartography")})
+	symbols := library.Resolve(context.Background(), resource.Ref{Type: "symbols", Location: "assets/resources/symbols/军标"}, resource.Scope{FlowID: "marching-route", FlowDir: filepath.Join(builtin, "..", "..", "tools", "system", "route-cartography")})
 	if style.Handle() == nil || symbols.Handle() == nil {
 		t.Fatal(style.Problems, symbols.Problems)
 	}
@@ -54,7 +90,7 @@ func TestRouteKnowledgeBuildInputReferencesSourceAndOnlyReferencedResources(t *t
 	if len(messages) != 1 || json.Unmarshal([]byte(messages[0].Content), &payload) != nil {
 		t.Fatal(messages)
 	}
-	if payload["source_ref"] != "current_user_message" || payload["rules"] != step.Instructions || payload["force_refresh"] != true || payload["symbols"].(map[string]any)["id"] != symbols.ID || payload["route_style"].(map[string]any)["id"] != style.ID {
+	if payload["source_ref"] != "current_task_input" || payload["rules"] != step.Instructions || payload["force_refresh"] != true || payload["symbols"].(map[string]any)["id"] != symbols.ID || payload["route_style"].(map[string]any)["id"] != style.ID {
 		t.Fatal(payload)
 	}
 	for _, key := range []string{"symbol_table", "symbol_assets_dir", "route_style_table"} {

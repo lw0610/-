@@ -2,7 +2,6 @@
 
 import { AgentConfigMeta } from "@/lib/api";
 import {
-  CheckboxField,
   Field,
   SelectInput,
   TextInput,
@@ -28,15 +27,13 @@ export default function MetaConfigSection({
           <div className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-700 dark:text-zinc-200">
             方案设置
           </div>
-          <InfoTooltip content="控制默认运行模式、方案说明与 Plan 开关。" />
+          <InfoTooltip content="设置默认运行模式与方案说明。" />
         </div>
         <div className="flex flex-wrap items-center gap-2 text-[11px]">
           <StatusBadge>
             运行模式：{meta.default_execution_mode.toUpperCase()}
           </StatusBadge>
-          <StatusBadge tone={meta.plan_enabled ? "success" : "warning"}>
-            Plan：{meta.plan_enabled ? "开启" : "关闭"}
-          </StatusBadge>
+
         </div>
       </div>
       <div className="grid gap-2.5 md:grid-cols-2 xl:grid-cols-3">
@@ -54,7 +51,7 @@ export default function MetaConfigSection({
             }
           >
             <option value="plan">优先规划</option>
-            <option value="build">直接进入 Runtime</option>
+            <option value="build">直接执行（Build）</option>
           </SelectInput>
         </Field>
 
@@ -66,15 +63,7 @@ export default function MetaConfigSection({
           />
         </Field>
 
-        <div className="flex items-end">
-          <CheckboxField
-            className="w-full"
-            label="启用 Plan"
-            checked={Boolean(meta.plan_enabled)}
-            disabled={saving}
-            onChange={(next) => onChange({ ...meta, plan_enabled: next })}
-          />
-        </div>
+
       </div>
     </div>
   );

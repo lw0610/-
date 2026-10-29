@@ -2,51 +2,29 @@ package flow
 
 import "testing"
 
-func TestV4RestrictedPackagesNeverEnterNewRoleGrants(t *testing.T) {
-	for _, blocked := range []PackageSpec{
-		{ID: "pyqgis-scripting", Enabled: true, Kind: "category"},
-		{ID: "creator-tools", Enabled: true, Kind: "category"},
-		{ID: "hidden-fixture", Enabled: true, Kind: "category", Hidden: true},
-	} {
-		for _, location := range []string{"slot", "step", "optional"} {
-			t.Run(blocked.ID+"/"+location, func(t *testing.T) {
-				env := Environment{MainProvider: "fixture", Packages: []PackageSpec{{ID: "data", Enabled: true, Kind: "category"}, blocked}, Roles: []RoleSpec{{ID: "worker", DisplayName: "工程师", Kind: "agent", Enabled: true, ToolPackages: []string{"data"}}}}
-				doc := &FlowDoc{RoleSlots: []RoleSlotDoc{{Name: "工程师", Packages: []string{"data"}}}}
-				step := StepDoc{ID: "s1", Role: "工程师"}
-				switch location {
-				case "slot":
-					doc.RoleSlots[0].Packages = []string{blocked.ID}
-				case "step":
-					step.Capabilities = []string{blocked.ID}
-				case "optional":
-					step.OptionalCapabilities = []string{blocked.ID}
-				}
-				plan := &FlowPlan{FlowID: "guard", Roles: env.Roles}
-				resolveRoleSlots(plan, doc, env)
-				compiled := StepPlan{ID: "s1"}
-				resolveStepRole(plan, &compiled, step, doc, env)
-				for _, grant := range compiled.GrantedPackages {
-					if grant == blocked.ID {
-						t.Fatal("restricted package entered step grants")
-					}
-				}
-				for _, role := range plan.FlowRoles {
-					for _, grant := range role.ToolPackages {
-						if grant == blocked.ID {
-							t.Fatal("restricted package entered synthetic role")
-						}
-					}
-				}
-				if location != "optional" && compiled.Unresolved != "FLOW_ROLE_PACKAGE_RESTRICTED" {
-					t.Fatalf("required restricted capability did not block: %+v", compiled)
-				}
-				if location == "optional" && compiled.Unresolved != "" {
-					t.Fatalf("optional capability blocked safe work: %+v", compiled)
-				}
-				if len(env.Roles[0].ToolPackages) != 1 {
-					t.Fatal("stored role mutated")
-				}
-			})
-		}
+func TestRestrictedPackagesNeverEnterPlanRoleGrants(t *testing.T) {
+	for _, blocked := range []PackageSpec{{ID: "pyqgis-scripting", Enabled: true, Kind: "category"}, {ID: "creator-tools", Enabled: true, Kind: "category"}, {ID: "hidden-fixture", Enabled: true, Kind: "category", Hidden: true}} {
+		t.Run(blocked.ID, func(t *testing.T) {
+			env := Environment{MainProvider: "fixture", Packages: []PackageSpec{{ID: "data", Enabled: true, Kind: "category"}, blocked}, Roles: []RoleSpec{{ID: "worker", Kind: "agent", Enabled: true, ToolPackages: []string{"data"}}}}
+			plan := &FlowPlan{Roles: env.Roles}
+			step := StepPlan{ID: "s1"}
+			if err := AssignPlanRole(plan, &step, []string{blocked.ID}, "worker", env); err == nil {
+				t.Fatal("restricted capability accepted")
+			}
+			if len(step.GrantedPackages) > 0 || len(plan.FlowRoles) > 0 || len(env.Roles[0].ToolPackages) != 1 {
+				t.Fatal("restricted grant mutated roles")
+			}
+		})
+	}
+}
+func TestPlanCapabilityNamesDetectAmbiguity(t *testing.T) {
+	env := Environment{Packages: []PackageSpec{{ID: "gee", DisplayName: "遥感影像（GEE）", Enabled: true, Kind: "category"}}}
+	ids, err := ResolvePlanCapabilities([]string{"遥感影像"}, env)
+	if err != nil || len(ids) != 1 || ids[0] != "gee" {
+		t.Fatal(ids, err)
+	}
+	env.Packages = append(env.Packages, PackageSpec{ID: "gee2", DisplayName: "遥感影像（其他）"})
+	if _, err = ResolvePlanCapabilities([]string{"遥感影像"}, env); err == nil {
+		t.Fatal("ambiguity accepted")
 	}
 }

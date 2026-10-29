@@ -73,15 +73,17 @@ type ToolArtifact struct {
 }
 
 type ToolParameter struct {
-	Name            string `yaml:"name" json:"name"`
-	Type            string `yaml:"type" json:"type"`
-	ResourceType    string `yaml:"resource_type,omitempty" json:"resource_type,omitempty"`
-	DefaultResource string `yaml:"default_resource,omitempty" json:"default_resource,omitempty"`
-	Required        bool   `yaml:"required,omitempty" json:"required,omitempty"`
-	Description     string `yaml:"description,omitempty" json:"description,omitempty"`
-	Default         any    `yaml:"default,omitempty" json:"default,omitempty"`
-	Values          []any  `yaml:"values,omitempty" json:"values,omitempty"`
-	Enum            []any  `yaml:"enum,omitempty" json:"enum,omitempty"`
+	// Schema carries the complete JSON Schema for nested objects and arrays.
+	Schema          map[string]any `yaml:"schema,omitempty" json:"schema,omitempty"`
+	Name            string         `yaml:"name" json:"name"`
+	Type            string         `yaml:"type" json:"type"`
+	ResourceType    string         `yaml:"resource_type,omitempty" json:"resource_type,omitempty"`
+	DefaultResource string         `yaml:"default_resource,omitempty" json:"default_resource,omitempty"`
+	Required        bool           `yaml:"required,omitempty" json:"required,omitempty"`
+	Description     string         `yaml:"description,omitempty" json:"description,omitempty"`
+	Default         any            `yaml:"default,omitempty" json:"default,omitempty"`
+	Values          []any          `yaml:"values,omitempty" json:"values,omitempty"`
+	Enum            []any          `yaml:"enum,omitempty" json:"enum,omitempty"`
 }
 
 type ToolExample struct {
@@ -318,6 +320,7 @@ func (d ToolDefinition) Clone() ToolDefinition {
 		cloned.Spec.Parameters = make([]ToolParameter, len(d.Spec.Parameters))
 		for idx, param := range d.Spec.Parameters {
 			cloned.Spec.Parameters[idx] = param
+			cloned.Spec.Parameters[idx].Schema = cloneMapAny(param.Schema)
 			if len(param.Values) > 0 {
 				cloned.Spec.Parameters[idx].Values = cloneAnySlice(param.Values)
 			}
@@ -495,7 +498,8 @@ func inferExecutionBinding(execution ToolExecution) string {
 }
 
 func cloneMapAny(src map[string]any) map[string]any {
-	if len(src) == 0 {
+	// Empty objects are valid JSON Schemas; preserve {} instead of emitting null.
+	if src == nil {
 		return nil
 	}
 	out := make(map[string]any, len(src))

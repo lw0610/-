@@ -5,6 +5,8 @@ import contextlib
 import hashlib
 import importlib.util
 import json
+import os
+import shutil
 from pathlib import Path
 import sys
 from types import SimpleNamespace
@@ -36,6 +38,11 @@ class Worker:
         assert crs.isValid(), initial
         self.project.setCrs(crs)
         canvas.setDestinationCrs(crs)
+        for preset in scenario.get("tool_presets", []):
+            assert preset["kind"] in ("styles", "symbols") and Path(preset["name"]).name == preset["name"]
+            destination = Path(os.environ["AUTOCARTO_HOME"]) / "presets/route-cartography" / preset["kind"] / (preset["name"] + ".csv")
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(preset["source"], destination)
         self.plan = None
         self.resource_parameters = {}
         self.linked_resources = []
@@ -55,24 +62,35 @@ class Worker:
         return value
 
     def resource_args(self, name, params):
-        # This adapter receives actual Go Library handles from StepRequest.
-        # It selects already linked resources; it never reads a resource table.
-        params = dict(params)
-        for parameter in self.resource_parameters.get(name, []):
-            key = parameter["name"]
-            selected = params.get(key) or parameter.get("default_resource")
-            if selected is None:
-                assert not parameter.get("required"), f"缺少资源参数：{name}.{key}"
-                continue
-            assert isinstance(selected, str), f"验收配方资源应为标签或编号：{name}.{key}"
-            expected = parameter["resource_type"].split(":")
+        # Consume actual Go Library handles, including nested array parameters.
+        def resolve(selected, expected):
+            if isinstance(selected, dict):
+                return selected
+            assert isinstance(selected, str), f"验收资源应为名称：{name}"
+            expected = expected.split(":")
             matches = [item["handle"] for item in self.linked_resources
                        if item["handle"] and item["handle"]["type"] == expected[0]
                        and selected in (item["key"], item["label"], item["handle"]["id"], item["handle"]["name"])]
-            assert len(matches) == 1, f"本步没有唯一已链接资源：{name}.{key}={selected}"
+            assert len(matches) == 1, f"本步没有唯一已链接资源：{name}={selected}"
             handle = matches[0]
-            assert len(expected) == 1 or handle["format"] == expected[1], f"资源格式错误：{selected}"
-            params[key] = handle
+            assert len(expected)==1 or handle["format"]==expected[1]
+            return handle
+        def nested(value, schema):
+            if schema.get("x-resource-type"):
+                return resolve(value, schema["x-resource-type"])
+            if isinstance(value,list):
+                return [nested(item,schema.get("items",{})) for item in value]
+            if isinstance(value,dict):
+                return {key:nested(item,schema.get("properties",{}).get(key,{})) for key,item in value.items()}
+            return value
+        params = dict(params)
+        for parameter in self.resource_parameters.get(name, []):
+            key=parameter["name"]
+            selected=params.get(key) or parameter.get("default_resource")
+            if selected is None:
+                assert not parameter.get("required"), f"缺少资源参数：{name}.{key}"
+                continue
+            params[key]=resolve(selected,parameter["resource_type"]) if parameter.get("type")=="resource" else nested(selected,parameter.get("schema",{}))
         return params
 
     def call(self, name, params, allowed=None, allow_failure=False):

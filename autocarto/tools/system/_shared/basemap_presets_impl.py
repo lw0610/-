@@ -9,7 +9,7 @@ from qgis.core import (
     QgsVectorLayerSimpleLabeling, QgsWkbTypes,
 )
 from autocarto.tools.system._shared.style_common import _get_layer, _wrap_main_thread
-from autocarto.tools.system._shared.style_set_impl import restore_qml_font_families
+from autocarto.tools.system._shared.style_labeling import restore_qml_font_families
 from autocarto.tools.system._shared.style_set_support import (
     legacy_preset, preset_catalog, style_file_path,
 )

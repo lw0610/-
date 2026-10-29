@@ -93,22 +93,22 @@ class BuildCheckGateTestCase(unittest.TestCase):
             log_lines,
         )
 
-    def test_check_rebuilds_sidecar_before_rust_gate(self):
-        completed, log_lines = self._run_build_check(require_sidecar_for_cargo=True)
+    def test_check_runs_next_and_rust_in_disposable_tree(self):
+        completed, log_lines = self._run_build_check(require_isolated_cargo=True)
 
         self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
-        self.assertIn("构建 Go sidecar", completed.stdout)
-        self.assertIn("sidecar 已生成", completed.stdout)
-        self.assertTrue(
-            any(
-                line.startswith("go build ") and "./cmd/agent" in line and "-o" in line
-                for line in log_lines
-            ),
-            log_lines,
-        )
+        cargo_line = next(line for line in log_lines if line.startswith("cargo check "))
+        self.assertIn("/project/autocarto-web/src-tauri/Cargo.toml", cargo_line)
+        self.assertFalse(any(line.startswith("go build ") and "-o" in line for line in log_lines), log_lines)
+        self.assertLess(log_lines.index("next build"), next(i for i, line in enumerate(log_lines) if line.startswith("playwright test ")))
+        # Actual cargo executes this synchronous sidecar builder in the copied
+        # manifest. A shell-side build in the original directory is unnecessary.
+        rust_builder = (REPO_ROOT / "autocarto-web/src-tauri/build.rs").read_text()
+        self.assertIn('manifest.join("../scripts/build-agent.mjs")', rust_builder)
+        self.assertIn('tauri_build::build()', rust_builder)
 
     def _run_build_check(
-        self, live: bool = False, require_sidecar_for_cargo: bool = False
+        self, live: bool = False, require_isolated_cargo: bool = False
     ):
         with tempfile.TemporaryDirectory() as tmp_dir:
             repo_root = Path(tmp_dir)
@@ -127,10 +127,10 @@ class BuildCheckGateTestCase(unittest.TestCase):
             env["AUTOCARTO_FAKE_REPO"] = str(repo_root)
             _ = env.pop("AUTOCARTO_PACKAGED_SMOKE", None)
             _ = env.pop("AUTOCARTO_PACKAGED_SMOKE_TIMEOUT_SEC", None)
-            if require_sidecar_for_cargo:
-                env["AUTOCARTO_REQUIRE_SIDECAR_FOR_CARGO"] = "1"
+            if require_isolated_cargo:
+                env["AUTOCARTO_REQUIRE_ISOLATED_CARGO"] = "1"
             else:
-                _ = env.pop("AUTOCARTO_REQUIRE_SIDECAR_FOR_CARGO", None)
+                _ = env.pop("AUTOCARTO_REQUIRE_ISOLATED_CARGO", None)
             if live:
                 env["AUTOCARTO_LIVE_E2E"] = "1"
             else:
@@ -221,12 +221,15 @@ printf '%s\\n' \"go $*\" >> \"$AUTOCARTO_FAKE_LOG\"
             textwrap.dedent(
                 """#!/bin/bash
                 printf '%s\n' "cargo $*" >> "$AUTOCARTO_FAKE_LOG"
-                if [ "${AUTOCARTO_REQUIRE_SIDECAR_FOR_CARGO:-0}" = "1" ] && [ "${1:-}" = "check" ]; then
-                  sidecar="$AUTOCARTO_FAKE_REPO/autocarto-web/src-tauri/binaries/carto-agent-x86_64-unknown-linux-gnu"
-                  if [ ! -f "$sidecar" ]; then
-                    printf 'missing sidecar: %s\n' "$sidecar" >&2
+                if [ "${AUTOCARTO_REQUIRE_ISOLATED_CARGO:-0}" = "1" ] && [ "${1:-}" = "check" ]; then
+                  mkdir -p "$CARGO_TARGET_DIR"
+                  if [ "$PWD" -ef "$AUTOCARTO_FAKE_REPO/autocarto-web/src-tauri" ] || [ ! "$CARGO_TARGET_DIR" -ef "$PWD/target" ]; then
+                    printf 'Rust build must use the isolated manifest and target\n' >&2
                     exit 11
                   fi
+                  mkdir -p binaries
+                  printf 'test sidecar\n' > binaries/carto-agent
+                  if [ -e "$AUTOCARTO_FAKE_REPO/autocarto-web/src-tauri/binaries/carto-agent" ]; then exit 12; fi
                 fi
                 """
             ),

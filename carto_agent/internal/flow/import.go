@@ -19,7 +19,7 @@ type ImportOptions struct {
 }
 
 func metadataYAML(meta FlowMetadata) string {
-	b, _ := yaml.Marshal(map[string]string{"编号": meta.ID, "名称": meta.Name, "说明": meta.Description, "版本": meta.Version, "作者": meta.Author})
+	b, _ := yaml.Marshal(map[string]string{"编号": meta.ID, "名称": meta.Name, "说明": meta.Description, "版本": meta.Version, "作者": meta.Author, "标签": strings.Join(meta.Tags, "、")})
 	return "---\n" + string(b) + "---\n"
 }
 
@@ -66,7 +66,7 @@ func (s *Store) Import(source string, options ImportOptions, libraries ...*resou
 			return nil, fmt.Errorf("只接受目录、ZIP 或 FLOW.md")
 		}
 	}
-	raw, err := readBounded(filepath.Join(root, "FLOW.md"), MaxFileBytes)
+	raw, err := readBounded(packageMainPath(root), MaxFileBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (s *Store) Import(source string, options ImportOptions, libraries ...*resou
 }
 
 func packageRoot(root string) (string, error) {
-	if _, err := os.Stat(filepath.Join(root, "FLOW.md")); err == nil {
+	if _, err := os.Stat(packageMainPath(root)); err == nil {
 		return root, nil
 	}
 	entries, err := os.ReadDir(root)
@@ -102,7 +102,7 @@ func packageRoot(root string) (string, error) {
 	}
 	if len(entries) == 1 && entries[0].IsDir() {
 		candidate := filepath.Join(root, entries[0].Name())
-		if _, err = os.Stat(filepath.Join(candidate, "FLOW.md")); err == nil {
+		if _, err = os.Stat(packageMainPath(candidate)); err == nil {
 			return candidate, nil
 		}
 	}
@@ -171,94 +171,6 @@ func extractZIP(source, target string) error {
 		}
 	}
 	return nil
-}
-
-func (s *Store) ImportResource(id, source, subdir string) (*StoredFlow, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	item, err := s.get(id)
-	if err != nil {
-		return nil, err
-	}
-	if item.Source == "builtin" {
-		return nil, ErrReadOnly
-	}
-	if subdir == "" {
-		subdir = "resources"
-	}
-	rel, err := safeRelative(subdir)
-	if err != nil {
-		return nil, err
-	}
-	if rel != "resources" && !strings.HasPrefix(filepath.ToSlash(rel), "resources/") {
-		return nil, fmt.Errorf("只能将资源导入 resources 目录")
-	}
-	if err = rejectSymlinks(source); err != nil {
-		return nil, err
-	}
-	info, err := os.Stat(source)
-	if err != nil {
-		return nil, err
-	}
-	stage, err := os.MkdirTemp("", "autocarto-flow-resource-")
-	if err != nil {
-		return nil, err
-	}
-	defer os.RemoveAll(stage)
-	if err = copyTree(item.Dir, stage, false); err != nil {
-		return nil, err
-	}
-	dest := filepath.Join(stage, rel, filepath.Base(source))
-	if info.IsDir() {
-		err = copyTree(source, dest, false)
-	} else {
-		var b []byte
-		b, err = readBounded(source, MaxFileBytes)
-		if err == nil {
-			err = os.MkdirAll(filepath.Dir(dest), 0700)
-		}
-		if err == nil {
-			err = os.WriteFile(dest, b, 0600)
-		}
-	}
-	if err != nil {
-		return nil, err
-	}
-	return s.write(item.FlowMD, id, stage, true)
-}
-
-func (s *Store) DeleteResource(id, path string) (*StoredFlow, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	item, err := s.get(id)
-	if err != nil {
-		return nil, err
-	}
-	if item.Source == "builtin" {
-		return nil, ErrReadOnly
-	}
-	rel, err := safeRelative(path)
-	if err != nil {
-		return nil, err
-	}
-	if !strings.HasPrefix(filepath.ToSlash(rel), "resources/") {
-		return nil, fmt.Errorf("只能删除 resources 内的资源")
-	}
-	if err = rejectSymlinks(filepath.Join(item.Dir, rel)); err != nil {
-		return nil, err
-	}
-	stage, err := os.MkdirTemp("", "autocarto-flow-resource-")
-	if err != nil {
-		return nil, err
-	}
-	defer os.RemoveAll(stage)
-	if err = copyTree(item.Dir, stage, false); err != nil {
-		return nil, err
-	}
-	if err = os.RemoveAll(filepath.Join(stage, rel)); err != nil {
-		return nil, err
-	}
-	return s.write(item.FlowMD, id, stage, true)
 }
 
 func importDependencies(dir string, library *resource.Library) error {

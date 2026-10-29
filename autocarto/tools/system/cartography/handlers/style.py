@@ -1,6 +1,6 @@
 from autocarto.tools.system._shared.labeling_impl import add_labels_handler
 from autocarto.tools.system._shared.style_basic_impl import (
-    get_style_info_handler, load_style_handler, save_style_handler,
+    get_style_info_handler, load_style_handler, load_styles_handler, save_style_handler,
     set_color_ramp_handler, set_layer_blend_mode_handler, set_layer_opacity_handler,
     set_layer_style_handler, set_symbol_size_scale_handler,
 )
@@ -19,5 +19,5 @@ __all__ = [
     "point_displacement_style_handler", "style_25d_handler", "set_marker_symbol_handler",
     "set_line_symbol_handler", "set_fill_symbol_handler", "set_layer_opacity_handler",
     "set_layer_blend_mode_handler", "set_color_ramp_handler", "set_symbol_size_scale_handler",
-    "get_style_info_handler", "save_style_handler", "load_style_handler",
+    "get_style_info_handler", "save_style_handler", "load_style_handler", "load_styles_handler",
 ]

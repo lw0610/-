@@ -7,16 +7,16 @@ metadata:
   domain: browser-data-acquisition
   runtime: internal
 spec:
-  description: "读取公开 HTTP(S) 网页正文、JSON或文本及链接，返回来源URL和获取时间。不能执行页面脚本；动态网页改用浏览器。"
+  description: "读取公开 HTTP(S) 网页正文、JSON或文本及链接；图片和PDF保留真实文件并作为媒体附件提供给当前模型，需模型支持对应输入。返回来源URL和获取时间。不能执行页面脚本；动态网页改用浏览器。不会自动将图片/PDF转换成统计表。"
   parameters:
     - name: url
       type: string
       required: true
-      description: "公开网页或文本数据URL"
+      description: "公开网页、文本、图片或PDF的HTTP(S) URL"
     - name: max_chars
       type: integer
       required: false
-      description: "最大返回字符数，1000–100000，默认20000"
+      description: "仅文本响应的最大返回字符数，1000–100000，默认20000；不适用于图片/PDF"
 policy:
   visibility: public
   authorization_scopes:

@@ -23,7 +23,7 @@ func (s *Store) RepairResource(ctx context.Context, id, action, key, resourceID 
 	if library == nil {
 		return nil, fmt.Errorf("资源库未配置")
 	}
-	doc := Parse(item.FlowMD)
+	doc := resourceDocument(item.FlowMD, library)
 	lock, err := ReadLock(item.Dir)
 	if err != nil {
 		return nil, err
@@ -100,91 +100,7 @@ func (s *Store) RepairResource(ctx context.Context, id, action, key, resourceID 
 		if err = writeLock(item.Dir, lock); err != nil {
 			return nil, err
 		}
-		if s.Bindings != nil && current.Type == "data_list" && current.Key != chosen.Key && chosen.Key != "" {
-			if err = s.Bindings.RenameKeys(map[string]string{"flow:" + id + "/" + current.Key: "flow:" + id + "/" + chosen.Key}); err != nil {
-				return nil, err
-			}
-		}
-	case "rewrite_type":
-		if current.Type == "" || current.Type == d.Type {
-			return nil, fmt.Errorf("资源无需改写类型")
-		}
-		info, ok := resource.TypeInfo(current.Type)
-		if !ok {
-			return nil, fmt.Errorf("未知资源类型")
-		}
-		lines := strings.Split(item.FlowMD, "\n")
-		for _, alias := range matches {
-			line := alias.Line - 1
-			if line < 0 || line >= len(lines) {
-				return nil, fmt.Errorf("无法定位资源声明")
-			}
-			start := strings.Index(lines[line], "「")
-			if start < 0 {
-				return nil, fmt.Errorf("无法定位资源类型词")
-			}
-			prefix := lines[line][:start]
-			indent := prefix[:len(prefix)-len(strings.TrimLeft(prefix, " \t"))]
-			lines[line] = indent + "- " + info.Words[0] + lines[line][start:]
-			if entry := lock.Find(alias.Type, alias.Label); entry != nil {
-				entry.Type = current.Type
-			}
-		}
 
-		stage, err := os.MkdirTemp("", "autocarto-flow-rewrite-")
-		if err != nil {
-			return nil, err
-		}
-		defer os.RemoveAll(stage)
-		if err = copyTree(item.Dir, stage, false); err != nil {
-			return nil, err
-		}
-		if err = writeLock(stage, lock); err != nil {
-			return nil, err
-		}
-		return s.write(strings.Join(lines, "\n"), id, stage, true)
-	case "upgrade_resource":
-		if current.Owner == "library_builtin" {
-			return nil, resource.ErrReadOnly
-		}
-		if current.Owner == "library_user" {
-			upgraded, err := library.Upgrade(current.ID)
-			if err != nil {
-				return nil, err
-			}
-			if err = s.migrateResourceIdentity(current.ID, upgraded); err != nil {
-				return nil, err
-			}
-			return s.get(id)
-		}
-		if current.Owner != "flow" || !current.Legacy {
-			return nil, fmt.Errorf("只能升级流程自带的旧式资源")
-		}
-		// Write into a staged package, then publish the entire flow.
-		stage, err := os.MkdirTemp("", "autocarto-flow-upgrade-")
-		if err != nil {
-			return nil, err
-		}
-		defer os.RemoveAll(stage)
-		if err = copyTree(item.Dir, stage, false); err != nil {
-			return nil, err
-		}
-		relative, err := filepath.Rel(item.Dir, current.Root)
-		if err != nil {
-			return nil, err
-		}
-		upgraded, err := resource.UpgradeLocal(filepath.Join(stage, relative), current.Type, stage)
-		if err != nil {
-			return nil, err
-		}
-		result, err := s.write(item.FlowMD, id, stage, true)
-		if err != nil {
-			return nil, err
-		}
-		if s.Bindings != nil && current.Type == "data_list" {
-			err = s.Bindings.RenameKeys(map[string]string{"flow:" + id + "/" + current.Key: "flow:" + id + "/" + upgraded.Key})
-		}
-		return result, err
 	default:
 		return nil, fmt.Errorf("未知资源修复动作：%s", action)
 	}
@@ -223,7 +139,7 @@ func (s *Store) migrateResourceIdentity(oldID string, updated *resource.Resolved
 				changed = true
 			}
 		}
-		raw, err := readBounded(filepath.Join(dir, "FLOW.md"), MaxFileBytes)
+		raw, err := readBounded(packageMainPath(dir), MaxFileBytes)
 		if err != nil {
 			return err
 		}

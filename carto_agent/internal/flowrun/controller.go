@@ -5,27 +5,25 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/llm"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/cloudwego/eino/schema"
 )
 
 type execution struct {
-	acquisition *acquisitionJobs
-	mu          sync.Mutex
-	snapshotMu  sync.RWMutex
-	published   *RunState
-	state       *RunState
-	source      string
-	cancel      context.CancelFunc
+	mu         sync.Mutex
+	snapshotMu sync.RWMutex
+	published  *RunState
+	state      *RunState
+	source     string
+	cancel     context.CancelFunc
 }
 type Controller struct {
 	options  Options
@@ -37,8 +35,8 @@ type Controller struct {
 }
 
 func NewController(options Options) (*Controller, error) {
-	if options.Compiler == nil || options.Runner == nil || options.Store == nil {
-		return nil, fmt.Errorf("流程控制器缺少编译器、步骤运行器或存储")
+	if options.Runner == nil || options.Store == nil {
+		return nil, fmt.Errorf("计划控制器缺少步骤运行器或存储")
 	}
 	if options.Lifecycle == nil {
 		options.Lifecycle = context.Background()
@@ -50,82 +48,6 @@ func NewController(options Options) (*Controller, error) {
 		options.Executors = NewExecutorRegistry()
 	}
 	return &Controller{options: options, runs: map[string]*execution{}, sessions: map[string]string{}, waiting: map[string]string{}, latest: map[string]string{}}, nil
-}
-
-func (c *Controller) Start(ctx context.Context, request StartRequest) (*RunState, error) {
-	if request.SessionID == "" || !filepath.IsAbs(request.SessionDir) {
-		return nil, fmt.Errorf("会话编号和绝对会话目录不能为空")
-	}
-	plan, err := c.options.Compiler.EnsureRunnable(ctx, request.FlowID, request.Scheme)
-	if err != nil || plan == nil || plan.HasErrors() {
-		payload := map[string]any{"flow_id": request.FlowID, "reasons": []StartupIssue{{Code: "FLOW_COMPILE_FAILED", Message: fmt.Sprint(err)}}}
-		var invalid *flow.ValidationError
-		if errors.As(err, &invalid) {
-			payload["reasons"] = invalid.Diagnostics
-		} else if plan != nil && plan.HasErrors() {
-			payload["reasons"] = plan.Diagnostics
-			err = &flow.ValidationError{Plan: plan, Diagnostics: plan.Diagnostics}
-		}
-		c.emit(ctx, request.SessionID, "", "flow.blocked", payload)
-		if err == nil {
-			err = fmt.Errorf("流程计划为空")
-		}
-		return nil, err
-	}
-	return c.startPlan(ctx, request, plan)
-}
-
-// startPlan uses the exact plan already validated by Start or Restart. In
-// particular, a restart must not resolve a third resource revision after the
-// user's fingerprint has been checked and the previous run cancelled.
-func (c *Controller) startPlan(ctx context.Context, request StartRequest, plan *flow.FlowPlan) (*RunState, error) {
-	if request.ProjectRoot == "" {
-		request.ProjectRoot = request.SessionDir
-	}
-	plan, inputs, err := c.preparePlan(ctx, request, plan)
-	if err != nil {
-		return nil, err
-	}
-	return c.startPreparedPlan(ctx, request, plan, inputs)
-}
-
-func (c *Controller) preparePlan(ctx context.Context, request StartRequest, plan *flow.FlowPlan) (*flow.FlowPlan, map[string]any, error) {
-	inputs, err := ResolveInputs(plan, request.Inputs, request.OriginalSource, request.ProjectRoot)
-	if err != nil {
-		var invalid *InputError
-		payload := map[string]any{"flow_id": request.FlowID}
-		if errors.As(err, &invalid) {
-			payload["reasons"] = invalid.Reasons
-		}
-		c.emit(ctx, request.SessionID, "", "flow.blocked", payload)
-		return nil, nil, err
-	}
-	linked, problems := validateInputPlan(plan, inputs, request.ProjectRoot)
-	if plan.Acquisition != nil {
-		var checkErr error
-		linked, problems, checkErr = c.acquisitionInputPlan(ctx, plan, inputs, request.ProjectRoot)
-		if checkErr != nil {
-			return nil, nil, checkErr
-		}
-	}
-	reasons := []StartupIssue{}
-	for _, p := range problems {
-		if p.Level == "error" {
-			reasons = append(reasons, StartupIssue{Code: p.Code, Input: p.Label, Step: p.Step, Message: p.Message, Acquirable: p.Acquirable, Item: p.Item, Candidates: p.Candidates})
-		}
-	}
-	if len(reasons) > 0 {
-		invalid := &InputError{Reasons: reasons}
-		c.emit(ctx, request.SessionID, "", "flow.blocked", map[string]any{"flow_id": request.FlowID, "reasons": reasons})
-		return nil, nil, invalid
-	}
-	plan = linked
-	if plan.HasErrors() {
-		invalid := &flow.ValidationError{Plan: plan, Diagnostics: plan.Diagnostics}
-		c.emit(ctx, request.SessionID, "", "flow.blocked", map[string]any{"flow_id": request.FlowID, "reasons": plan.Diagnostics})
-		return nil, nil, invalid
-	}
-	return plan, inputs, nil
 }
 
 // The plan and inputs are already checked. In particular, restarting after a
@@ -155,7 +77,11 @@ func (c *Controller) startPreparedPlan(ctx context.Context, request StartRequest
 	if origin != "direct" && origin != "orchestrator" {
 		return nil, fmt.Errorf("流程启动来源无效")
 	}
-	state := &RunState{APIVersion: APIVersion, ID: id, SessionID: request.SessionID, SessionDir: request.SessionDir, ProjectRoot: request.ProjectRoot, ProjectPath: request.ProjectPath, FlowID: plan.FlowID, FlowVersion: plan.FlowVersion, PlanCacheKey: compileKey(plan), Scheme: plan.Scheme, Origin: origin, Status: "running", StartedAt: c.options.Now(), Inputs: inputs, Steps: []StepState{}, Plan: plan, RunJSONPath: path, Result: RunResult{Deliverables: map[string]any{}, Issues: []string{}}}
+	state := &RunState{CartoPlan: request.CartoPlan, Guide: request.Guide, Selections: request.Selections, APIVersion: APIVersion, ID: id, SessionID: request.SessionID, SessionDir: request.SessionDir, ProjectRoot: request.ProjectRoot, ProjectPath: request.ProjectPath, FlowID: plan.FlowID, FlowVersion: plan.FlowVersion, PlanCacheKey: compileKey(plan), Scheme: plan.Scheme, Origin: origin, Status: "running", StartedAt: c.options.Now(), Inputs: inputs, Steps: []StepState{}, Plan: plan, RunJSONPath: path, Result: RunResult{Deliverables: map[string]any{}, Issues: []string{}}}
+	if state.CartoPlan != nil {
+		state.PlanHistory = append(state.PlanHistory, state.CartoPlan)
+		state.ResourceFingerprint, _ = flow.ResourceSnapshotFingerprint(plan)
+	}
 	for _, step := range plan.Steps {
 		state.Steps = append(state.Steps, StepState{ID: step.ID, Index: step.Index, Title: step.Title, Role: step.Role, Status: "pending", Attempts: []Attempt{}, Outputs: map[string]any{}})
 	}
@@ -186,13 +112,7 @@ func (c *Controller) startPreparedPlan(ctx context.Context, request StartRequest
 		cancel()
 		return nil, err
 	}
-	memory, memoryErr := flow.DefaultInputMemory()
-	if memoryErr == nil {
-		memoryErr = memory.Remember(plan.FlowID, plan.Inputs, inputs)
-	}
-	if memoryErr != nil {
-		c.emit(processCtx, state.SessionID, id, "flow.input_memory_failed", map[string]any{"code": "FLOW_INPUT_MEMORY_FAILED", "message": "无法记住本次输入，流程继续运行"})
-	}
+
 	steps := []map[string]any{}
 	for _, step := range plan.Steps {
 		steps = append(steps, map[string]any{"id": step.ID, "index": step.Index, "title": step.Title, "role_label": step.RoleLabel, "kind": step.Kind})
@@ -216,9 +136,6 @@ func (c *Controller) NewRunID() (string, error) {
 func (c *Controller) save(ctx context.Context, e *execution) error {
 	if err := c.options.Store.Save(context.WithoutCancel(ctx), e.state); err != nil {
 		e.state.Status = "interrupted"
-		if e.acquisition != nil {
-			e.acquisition.cancel()
-		}
 		if e.cancel != nil {
 			e.cancel()
 		}
@@ -236,7 +153,17 @@ func (c *Controller) save(ctx context.Context, e *execution) error {
 }
 func (c *Controller) emit(ctx context.Context, session, id, event string, payload map[string]any) {
 	if c.options.Events != nil {
-		seq := c.options.Events.Emit(context.WithoutCancel(ctx), Event{Event: event, SessionID: session, FlowRunID: id, Payload: payload})
+		ev := Event{Event: event, SessionID: session, FlowRunID: id, Payload: payload}
+		c.mu.Lock()
+		active := c.runs[id]
+		c.mu.Unlock()
+		if active != nil && active.state.CartoPlan != nil {
+			ev.PlanID = active.state.CartoPlan.ID
+			ev.PlanVersion = active.state.CartoPlan.Version
+			payload["plan_id"] = ev.PlanID
+			payload["plan_version"] = ev.PlanVersion
+		}
+		seq := c.options.Events.Emit(context.WithoutCancel(ctx), ev)
 		if seq > 0 && id != "" {
 			c.mu.Lock()
 			e := c.runs[id]
@@ -274,127 +201,118 @@ func (c *Controller) advance(ctx context.Context, e *execution) error {
 		if ctx.Err() != nil {
 			return c.finish(ctx, e, "cancelled", ctx.Err().Error())
 		}
-		c.startAcquisitionJobs(ctx, e)
 		step := run.Plan.Steps[run.Cursor]
 		if step.Kind == "acquire" {
-			if err := c.advanceAcquisition(ctx, e, step); err != nil {
+			if err := c.advancePlanData(ctx, e, step); err != nil {
 				return err
 			}
-			if IsTerminal(run.Status) || run.Status == "waiting_user" {
+			if run.Status == "waiting_user" || run.Status == "needs_replan" || IsTerminal(run.Status) {
 				return nil
 			}
 			continue
 		}
 		state := &run.Steps[run.Cursor]
-		if !state.Condition.Evaluated && !state.AwaitingChoice {
-			condition, err := evaluateCondition(ctx, step, run, c.options.Model)
-			if err != nil {
-				state.LastFailure = "条件判断失败：" + err.Error()
-				return c.finish(ctx, e, "failed", state.LastFailure)
-			}
-			state.Condition = condition
-			if !condition.Result {
-				state.Status = "skipped"
-				run.Cursor++
-				if err = c.save(ctx, e); err != nil {
-					return err
-				}
-				c.emit(ctx, run.SessionID, run.ID, "flow.step_skipped", map[string]any{"flow_run_id": run.ID, "step_id": step.ID, "reason": condition.Reason})
-				continue
-			}
-		}
-		if step.Unresolved != "" && !state.AwaitingChoice {
-			now := c.options.Now()
-			state.LastFailure = step.Unresolved + "：本步所需执行者或工具包不可用，请跳过本步或停止流程。"
-			state.Attempts = append(state.Attempts, Attempt{RunID: fmt.Sprintf("flow-%s-s%02d-a%d", run.ID, step.Index, len(state.Attempts)+1), Mode: "step", StartedAt: now, FinishedAt: &now, Receipt: &Receipt{Status: "failed", Summary: state.LastFailure, Issues: []string{step.Unresolved}}, Verification: Verification{Errors: []string{state.LastFailure}}})
+		state.Condition = ConditionResult{Evaluated: true, Result: true, By: "plan"}
+		if step.Unresolved != "" {
+			state.LastFailure = step.Unresolved + "：本步所需执行者或工具包不可用，请修订计划。"
 			state.Status = "failed"
-			state.AwaitingChoice = true
-			if err := c.save(ctx, e); err != nil {
-				return err
-			}
-			c.emit(ctx, run.SessionID, run.ID, "flow.step_failed", map[string]any{"step_id": step.ID, "reason": state.LastFailure, "code": step.Unresolved})
+			return c.needsReplan(ctx, e, state.LastFailure)
 		}
 		mode := "step"
-		if state.AwaitingChoice {
-			mode = "failure_choice"
-		} else if step.Kind == "confirm" {
+		if step.Kind == "confirm" {
 			mode = "confirm"
 		}
 		request, err := c.buildRequest(step, run, e.source, mode)
 		if err != nil {
 			return c.finish(ctx, e, "failed", err.Error())
 		}
-		now := c.options.Now()
-		manual := state.PendingManual
-		state.PendingManual = false
-		state.Attempts = append(state.Attempts, Attempt{RunID: request.RunID, Mode: mode, StartedAt: now, UserInitiated: manual, Verification: Verification{Errors: []string{}}})
-		state.Status = "running"
-		run.Status = "running"
-		if err = c.save(ctx, e); err != nil {
+		if err := c.beginStep(ctx, e, request); err != nil {
 			return err
 		}
-		c.emit(ctx, run.SessionID, run.ID, "flow.step_started", map[string]any{"flow_run_id": run.ID, "step_id": step.ID, "attempt": len(state.Attempts), "run_id": request.RunID, "role": request.Role.ID, "role_label": request.Role.DisplayName})
-		stepCtx := resource.WithScope(ctx, resource.Scope{FlowID: request.FlowID, FlowDir: request.FlowDir, Lock: request.Lock, Linked: request.Resources})
-		result, runErr := c.options.Runner.Run(stepCtx, request)
-		if ctx.Err() != nil {
-			return c.finish(ctx, e, "cancelled", ctx.Err().Error())
-		}
-		if result.Interrupted && runErr == nil {
-			c.mu.Lock()
-			c.waiting[request.RunID] = run.ID
-			c.mu.Unlock()
-			state.Status = "waiting_user"
-			run.Status = "waiting_user"
-			if err = c.save(ctx, e); err != nil {
-				return err
-			}
-			kind := "interrupt"
-			if mode != "step" {
-				kind = mode
-			}
-			c.emit(ctx, run.SessionID, run.ID, "flow.step_waiting_user", map[string]any{"flow_run_id": run.ID, "step_id": step.ID, "kind": kind})
-			return nil
-		}
-		if err = c.handleResult(ctx, e, result, runErr); err != nil {
+		if err := c.runStepRequest(ctx, e, request); err != nil {
 			return err
 		}
-		if IsTerminal(run.Status) {
+		if run.Status == "waiting_user" || IsTerminal(run.Status) || run.Status == "needs_replan" {
 			return nil
+		}
+	}
+	if c.options.FinalChecks != nil {
+		check := c.options.FinalChecks(ctx, run)
+		run.FinalVerification = &check
+		if !check.OK {
+			if len(run.Steps) > 0 {
+				run.Cursor = len(run.Steps) - 1
+				run.Steps[run.Cursor].Status = "failed"
+				run.Steps[run.Cursor].LastFailure = strings.Join(check.Errors, "；")
+			}
+			return c.needsReplan(ctx, e, strings.Join(check.Errors, "；"))
 		}
 	}
 	return c.finish(ctx, e, "completed", "")
 }
 
-func (c *Controller) buildRequest(step flow.StepPlan, run *RunState, source, mode string) (StepRequest, error) {
+// beginStep and runStepRequest are shared by ordinary work and acquisition
+// experts. Both use one checkpoint/waiting map and one completion callback.
+func (c *Controller) beginStep(ctx context.Context, e *execution, request StepRequest) error {
+	run := e.state
 	state := &run.Steps[run.Cursor]
-	request := StepRequest{FlowID: run.FlowID, FlowDir: run.Plan.FlowDir, Lock: run.Plan.Lock, SessionID: run.SessionID, SessionDir: run.SessionDir, FlowRunID: run.ID, RunID: fmt.Sprintf("flow-%s-s%02d-a%d", run.ID, step.Index, len(state.Attempts)+1), Step: step, OriginalSource: source, Mode: mode}
-	if step.Kind == "acquire" {
-		request.RunID = fmt.Sprintf("flow-%s-%s-a%d", run.ID, step.ID, len(state.Attempts)+1)
+	manual := state.PendingManual
+	state.PendingManual = false
+	state.Attempts = append(state.Attempts, Attempt{RunID: request.RunID, Mode: request.Mode, StartedAt: c.options.Now(), UserInitiated: manual, Verification: Verification{Errors: []string{}}})
+	state.Status = "running"
+	run.Status = "running"
+	if err := c.save(ctx, e); err != nil {
+		return err
 	}
+	c.emit(ctx, run.SessionID, run.ID, "flow.step_started", map[string]any{"flow_run_id": run.ID, "step_id": request.Step.ID, "title": request.Step.Title, "kind": request.Step.Kind, "attempt": len(state.Attempts), "run_id": request.RunID, "role": request.Role.ID, "role_label": request.Role.DisplayName})
+	return nil
+}
+
+func (c *Controller) runStepRequest(ctx context.Context, e *execution, request StepRequest) error {
+	run := e.state
+	state := &run.Steps[run.Cursor]
+	stepCtx := resource.WithScope(ctx, resource.Scope{FlowID: request.FlowID, FlowDir: request.FlowDir, Lock: request.Lock, Linked: request.Resources})
+	result, runErr := c.options.Runner.Run(stepCtx, request)
+	if ctx.Err() != nil {
+		return c.finish(ctx, e, "cancelled", ctx.Err().Error())
+	}
+	if result.Interrupted && runErr == nil {
+		c.mu.Lock()
+		c.waiting[request.RunID] = run.ID
+		c.mu.Unlock()
+		state.Status = "waiting_user"
+		run.Status = "waiting_user"
+		if err := c.save(ctx, e); err != nil {
+			return err
+		}
+		kind := "interrupt"
+		if request.Mode == "confirm" {
+			kind = request.Mode
+		}
+		c.emit(ctx, run.SessionID, run.ID, "flow.step_waiting_user", map[string]any{"flow_run_id": run.ID, "step_id": request.Step.ID, "kind": kind})
+		return nil
+	}
+	return c.handleResult(ctx, e, result, runErr)
+}
+
+func newStepRequest(step flow.StepPlan, run *RunState, source, mode string) StepRequest {
+	state := &run.Steps[run.Cursor]
+	version := 0
+	if run.CartoPlan != nil {
+		version = run.CartoPlan.Version
+	}
+	request := StepRequest{FlowID: run.FlowID, FlowDir: run.Plan.FlowDir, Lock: run.Plan.Lock, SessionID: run.SessionID, SessionDir: run.SessionDir, FlowRunID: run.ID, RunID: fmt.Sprintf("flow-%s-s%02d-v%d-a%d", run.ID, step.Index, version, len(state.Attempts)+1), Step: step, OriginalSource: source, Mode: mode}
 	for _, resolved := range run.Plan.Resources {
 		request.Resources = append(request.Resources, resolved.ResolvedResource())
 	}
-	if mode == "acquire_choice" {
-		confirmation := acquisitionConfirmation(run, step)
-		request.Confirmation = &confirmation
-		return request, nil
-	}
-	if mode != "step" {
-		description := step.Instructions
-		if mode == "failure_choice" {
-			description = state.LastFailure
-		}
-		confirmation := confirmationForStep(description, step.Title, mode == "failure_choice")
-		if mode == "failure_choice" && step.Unresolved != "" {
-			confirmation.Default = "stop"
-			options := confirmation.Options[:0]
-			for _, option := range confirmation.Options {
-				if option.Value != "retry" {
-					options = append(options, option)
-				}
-			}
-			confirmation.Options = options
-		}
+	return request
+}
+
+func (c *Controller) buildRequest(step flow.StepPlan, run *RunState, source, mode string) (StepRequest, error) {
+	state := &run.Steps[run.Cursor]
+	request := newStepRequest(step, run, source, mode)
+	if mode == "confirm" {
+		confirmation := confirmationForStep(step.Instructions, step.Title, false)
 		request.Confirmation = &confirmation
 		return request, nil
 	}
@@ -479,43 +397,17 @@ func (c *Controller) handleResult(ctx context.Context, e *execution, result Step
 	state := &run.Steps[run.Cursor]
 	step := run.Plan.Steps[run.Cursor]
 	attempt := &state.Attempts[len(state.Attempts)-1]
+	if attempt.Mode == "acquire" {
+		return c.finishDataPreparation(ctx, e, result, runErr)
+	}
 	now := c.options.Now()
 	attempt.FinishedAt = &now
-	if attempt.Mode == "acquire_choice" {
-		return c.handleAcquisitionChoice(ctx, e, result, runErr)
-	}
-	if attempt.Mode == "failure_choice" {
-		if runErr != nil {
-			return c.finish(ctx, e, "failed", runErr.Error())
-		}
-		choice, err := parseChoice(result.LastContent)
-		if err != nil {
-			return c.finish(ctx, e, "failed", err.Error())
-		}
-		attempt.UserChoice = &choice
-		state.AwaitingChoice = false
-		switch choice.Choice {
-		case "retry":
-			if state.UserRetries >= 5 {
-				return c.finish(ctx, e, "failed", "本步骤已达到5次人工重试上限")
-			}
-			state.UserRetries++
-			state.UserGuidance = choice.Guidance
-			state.PendingManual = true
-			state.Status = "pending"
-		case "skip":
-			state.Status = "skipped_after_failure"
-			run.Result.Issues = append(run.Result.Issues, step.Title+"："+state.LastFailure)
-			run.Cursor++
-		case "stop":
-			return c.finish(ctx, e, "failed", "用户终止流程")
-		default:
-			return c.finish(ctx, e, "failed", "用户选择无效")
-		}
-		return c.save(ctx, e)
-	}
 	var receipt Receipt
 	var err error
+	receiptFailed := false
+	if runErr == nil {
+		runErr = result.Err
+	}
 	if runErr != nil {
 		err = runErr
 	} else if attempt.Mode == "confirm" {
@@ -542,10 +434,12 @@ func (c *Controller) handleResult(ctx context.Context, e *execution, result Step
 	} else {
 		var repair *ReceiptRepair
 		receipt, repair, err = readReceipt(ctx, step, result, c.options.Model)
+		receiptFailed = err != nil
 		attempt.Repair = repair
 		attempt.ReceiptRepaired = repair != nil && err == nil
 	}
 	if err == nil {
+		normalizeReceiptOutputs(step, &receipt)
 		attempt.Receipt = &receipt
 		attempt.Verification = VerifyOutputs(ctx, step, receipt, run.ProjectRoot, c.options.Tools)
 		if receipt.Status == "completed" && attempt.Verification.OK {
@@ -578,35 +472,18 @@ func (c *Controller) handleResult(ctx context.Context, e *execution, result Step
 		attempt.Verification = Verification{OK: false, Errors: []string{err.Error()}}
 	}
 	state.Status = "failed"
-	if !attempt.UserInitiated {
-		state.AutomaticFailures++
-	}
-	next := step.OnFailure
-	if next == "" {
-		next = "retry_then_ask"
-	}
-	if next == "retry_then_ask" {
-		if state.AutomaticFailures < 2 && !attempt.UserInitiated {
-			next = "retry"
-		} else {
-			next = "ask"
-		}
-	}
-	c.emit(ctx, run.SessionID, run.ID, "flow.step_failed", map[string]any{"flow_run_id": run.ID, "step_id": step.ID, "attempt": len(state.Attempts), "errors": strings.Split(state.LastFailure, "；"), "next": next})
-	switch next {
-	case "retry":
-		state.Status = "pending"
-	case "ask":
-		state.AwaitingChoice = true
-	case "skip":
-		state.Status = "skipped_after_failure"
-		run.Cursor++
-		run.Result.Issues = append(run.Result.Issues, step.Title+"："+state.LastFailure)
-	case "stop":
+	if llm.IsNonRecoverableServiceError(err) {
 		return c.finish(ctx, e, "failed", state.LastFailure)
-	default:
-		return c.finish(ctx, e, "failed", "无效的失败策略 "+next)
 	}
+	if receiptFailed {
+		return c.finish(ctx, e, "failed", "本步结果未能整理为回执，已保留工具执行结果，未重新执行本步："+state.LastFailure)
+	}
+	state.AutomaticFailures++
+	if state.AutomaticFailures >= 2 {
+		return c.needsReplan(ctx, e, state.LastFailure)
+	}
+	state.Status = "pending"
+	c.emit(ctx, run.SessionID, run.ID, "flow.step_failed", map[string]any{"flow_run_id": run.ID, "step_id": step.ID, "attempt": len(state.Attempts), "errors": strings.Split(state.LastFailure, "；"), "next": "retry"})
 	return c.save(ctx, e)
 }
 
@@ -615,17 +492,28 @@ func (c *Controller) OnStepRunFinished(ctx context.Context, runID string, result
 	c.mu.Lock()
 	id := c.waiting[runID]
 	e := c.runs[id]
-	if !result.Interrupted {
-		delete(c.waiting, runID)
-	}
 	c.mu.Unlock()
 	if e == nil {
 		return nil, nil
 	}
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	if IsTerminal(e.state.Status) {
-		return cloneRun(e.state)
+	// A completion may have queued before a revision or cancellation acquired
+	// this lock. Validate again against the current attempt, not the old lookup.
+	c.mu.Lock()
+	valid := c.waiting[runID] == id && c.runs[id] == e && e.state.Status == "waiting_user" && e.state.Cursor >= 0 && e.state.Cursor < len(e.state.Steps)
+	if valid {
+		step := e.state.Steps[e.state.Cursor]
+		valid = step.Status == "waiting_user" && len(step.Attempts) > 0 && step.Attempts[len(step.Attempts)-1].RunID == runID
+	}
+	if !valid || !result.Interrupted {
+		if c.waiting[runID] == id {
+			delete(c.waiting, runID)
+		}
+	}
+	c.mu.Unlock()
+	if !valid {
+		return nil, nil
 	}
 	if result.Interrupted {
 		return cloneRun(e.state)
@@ -638,7 +526,7 @@ func (c *Controller) OnStepRunFinished(ctx context.Context, runID string, result
 	if err := c.handleResult(processCtx, e, result, result.Err); err != nil {
 		return nil, err
 	}
-	if !IsTerminal(e.state.Status) {
+	if !IsTerminal(e.state.Status) && e.state.Status != "needs_replan" {
 		if err := c.advance(processCtx, e); err != nil {
 			return nil, err
 		}
@@ -682,9 +570,6 @@ func (c *Controller) Cancel(ctx context.Context, sessionID string) (*RunState, e
 }
 
 func (c *Controller) Resume(ctx context.Context, request ResumeRequest) (*RunState, error) {
-	if request.ResourceChoice == "restart" {
-		return c.Restart(ctx, request)
-	}
 	state, err := c.CheckResume(ctx, request)
 	if err != nil {
 		return state, err
@@ -716,9 +601,6 @@ func (c *Controller) Resume(ctx context.Context, request ResumeRequest) (*RunSta
 
 func (c *Controller) finish(ctx context.Context, e *execution, status, issue string) error {
 	run := e.state
-	if e.acquisition != nil {
-		e.acquisition.cancel()
-	}
 	if IsTerminal(run.Status) {
 		return nil
 	}
@@ -772,6 +654,6 @@ func (c *Controller) finish(ctx context.Context, e *execution, status, issue str
 		e.cancel()
 	}
 	c.mu.Unlock()
-	c.emit(ctx, run.SessionID, run.ID, "flow.finished", map[string]any{"flow_run_id": run.ID, "status": run.Status, "deliverables": run.Result.Deliverables, "issues": run.Result.Issues, "summary": run.Result.Summary, "run_json_path": run.RunJSONPath})
+	c.emit(ctx, run.SessionID, run.ID, "flow.finished", map[string]any{"flow_run_id": run.ID, "status": run.Status, "steps": run.Steps, "deliverables": run.Result.Deliverables, "issues": run.Result.Issues, "summary": run.Result.Summary, "run_json_path": run.RunJSONPath})
 	return nil
 }

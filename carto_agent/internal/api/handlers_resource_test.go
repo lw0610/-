@@ -64,18 +64,18 @@ func TestResourceAPIUsesLibraryAndSharedRelativeBindings(t *testing.T) {
 	call("GET", "/api/resources?scope=builtin", nil, 200)
 	call("DELETE", "/api/resources/style/说明", nil, 403)
 	t.Chdir(t.TempDir())
-	call("POST", "/api/resources/import", map[string]any{"source_path": "source/说明.qml", "type": "style"}, 200)
-	call("GET", "/api/resources/style/说明", nil, 409)
-	write(filepath.Join(user, "styles/说明.resource.yaml"), "apiVersion: resource/v1\nid: style.user-notes\ntype: style\nname: 说明\nentry: 说明.qml\noverrides: style.notes\n")
+	call("POST", "/api/resources/import", map[string]any{"source_path": "source/说明.qml", "type": "style"}, 409)
+	copied := call("POST", "/api/resources/style.notes/copy", map[string]any{"override": true, "name": "我的说明"}, 200)["data"].(map[string]any)
 	loaded := call("GET", "/api/resources/style/说明", nil, 200)["data"].(map[string]any)
-	if loaded["owner"] != "library_user" || loaded["entry"] != filepath.Join(user, "styles/说明.qml") {
+	if loaded["owner"] != "library_user" || loaded["entry"] != filepath.Join(user, "styles/我的说明/说明.qml") {
 		t.Fatal(loaded)
 	}
+
 	if _, exists := loaded["resolved_path"]; exists {
 		t.Fatal("资源管理接口仍输出已退休的路径字段", loaded)
 	}
 	exact := call("GET", "/api/resources/by-id/style.notes", nil, 200)["data"].(map[string]any)
-	if exact["id"] != "style.notes" || exact["owner"] != "library_builtin" || exact["overridden_by"] != "style.user-notes" || exact["version"] != "1.0.0" || exact["digest"] == "" {
+	if exact["id"] != "style.notes" || exact["owner"] != "library_builtin" || exact["overridden_by"] != copied["id"] || exact["version"] != "1.0.0" || exact["digest"] == "" {
 		t.Fatal(exact)
 	}
 	call("POST", "/api/resources/import", map[string]any{"source_path": "source/说明.qml", "type": "style"}, 409)
@@ -84,18 +84,8 @@ func TestResourceAPIUsesLibraryAndSharedRelativeBindings(t *testing.T) {
 	if err := bindings.New(bindingFile).Set("library:data_list.base", "data"); err != nil {
 		t.Fatal(err)
 	}
-	bound := call("GET", "/api/resources/data_list/底图", nil, 200)["data"].(map[string]any)
-	if bound["base_dir"] != filepath.Join(root, "data") {
-		t.Fatal(bound)
-	}
-	for _, value := range bound["problems"].([]any) {
-		if value.(map[string]any)["level"] == "error" {
-			t.Fatal(bound)
-		}
-	}
-	md := "---\n名称: 测试流程\n编号: test-flow\n---\n## 步骤\n### 标题\n- 做法：检查\n"
-	call("POST", "/api/flows", map[string]any{"flow_md": md}, 200)
-	call("PUT", "/api/flows/test-flow/bindings", map[string]any{"resource_key": "path:data/base.csv", "base_dir": "data"}, 410)
+	call("GET", "/api/resources/data_list/底图", nil, 404)
+
 	raw, err := os.ReadFile(bindingFile)
 	if err != nil {
 		t.Fatal(err)
@@ -103,7 +93,7 @@ func TestResourceAPIUsesLibraryAndSharedRelativeBindings(t *testing.T) {
 	if strings.Contains(string(raw), "flow:test-flow/") || !strings.Contains(string(raw), "library:data_list.base: data") || strings.Contains(string(raw), root) {
 		t.Fatalf("两类 API 必须共享相对路径绑定配置：%s", raw)
 	}
-	call("DELETE", "/api/resources/style/说明", nil, 200)
+	call("DELETE", "/api/resources/style/我的说明", nil, 200)
 	if item := call("GET", "/api/resources/style/说明", nil, 200)["data"].(map[string]any); item["origin"] != "library_builtin" {
 		t.Fatal(item)
 	}
@@ -140,7 +130,7 @@ func TestResourceTypesAPI(t *testing.T) {
 	if err := json.Unmarshal(response.Body.Bytes(), &envelope); err != nil {
 		t.Fatal(err)
 	}
-	if len(envelope.Data) != 8 {
+	if len(envelope.Data) != 2 {
 		t.Fatal(envelope.Data)
 	}
 	for _, typ := range envelope.Data {

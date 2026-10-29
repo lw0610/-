@@ -190,7 +190,8 @@ def _symbol_rows(params, dataset_dir, dataset_table):
 def route_points_build_handler(params):
     try:
         if params.get("symbols") is not None:
-            require_handle(params["symbols"], "symbols")
+            params = dict(params)
+            params["symbols"] = require_handle(params["symbols"], "symbols")
         resolved = resolve_route_dataset(params)
         dataset_dir = resolved.dataset_dir
         points_layer_name = str(params.get("points_layer") or "专题点")

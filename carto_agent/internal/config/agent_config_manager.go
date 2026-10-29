@@ -52,7 +52,7 @@ type AgentConfigFile struct {
 	Runtime           *RuntimeConfig     `yaml:"runtime,omitempty" json:"runtime,omitempty"`
 	Plan              *PlanConfig        `yaml:"plan,omitempty" json:"plan,omitempty"`
 	Flows             *FlowConfig        `yaml:"flows,omitempty" json:"flows,omitempty"`
-	FlowPolicy        *FlowPolicyConfig  `yaml:"flow_policy,omitempty" json:"flow_policy,omitempty"`
+	FlowPolicy        map[string]any     `yaml:"flow_policy,omitempty" json:"flow_policy,omitempty"`
 	MigrationWarnings []MigrationWarning `yaml:"-" json:"migration_warnings,omitempty"`
 }
 
@@ -304,7 +304,7 @@ type SkillPolicyData struct {
 type AgentConfigData struct {
 	Version           string             `yaml:"version" json:"version"`
 	Flows             *FlowConfig        `yaml:"flows,omitempty" json:"flows,omitempty"`
-	FlowPolicy        *FlowPolicyConfig  `yaml:"flow_policy,omitempty" json:"flow_policy,omitempty"`
+	FlowPolicy        map[string]any     `yaml:"flow_policy,omitempty" json:"flow_policy,omitempty"`
 	MigrationWarnings []MigrationWarning `yaml:"-" json:"migration_warnings,omitempty"`
 	Meta              AgentConfigMeta    `yaml:"meta" json:"meta"`
 	Runtime           *RuntimeConfig     `yaml:"runtime,omitempty" json:"runtime,omitempty"`
@@ -825,10 +825,10 @@ func normalizeAgentConfigFile(cfg *AgentConfigFile) *AgentConfigFile {
 	cfg = migrated
 	normalized := &AgentConfigFile{
 		Version: AgentConfigVersionV20,
-		Flows:   cloneFlowConfig(cfg.Flows), FlowPolicy: CloneFlowPolicy(cfg.FlowPolicy), MigrationWarnings: uniqueMigrationWarnings(append(append([]MigrationWarning(nil), cfg.MigrationWarnings...), warnings...)),
+		Flows:   nil, FlowPolicy: nil, MigrationWarnings: uniqueMigrationWarnings(append(append([]MigrationWarning(nil), cfg.MigrationWarnings...), warnings...)),
 		Meta:    normalizeAgentConfigMeta(cfg.Meta),
 		Runtime: normalizeRuntimeConfig(cfg.Runtime),
-		Plan:    normalizePlanConfig(cfg.Plan),
+		Plan:    nil,
 	}
 	if normalized.Plan != nil {
 		if normalized.Plan.Enabled != nil {
@@ -871,11 +871,6 @@ func validatePlanConfig(planCfg *PlanConfig) error {
 }
 
 func validateAgentConfig(cfg *AgentConfigFile) error {
-	if cfg != nil {
-		if err := ValidateFlowPolicy(cfg.FlowPolicy); err != nil {
-			return err
-		}
-	}
 	if cfg == nil {
 		return fmt.Errorf("配置为空")
 	}
@@ -1070,7 +1065,7 @@ func (acm *AgentConfigManager) GetConfigData(configName string) (*AgentConfigDat
 		return nil, fmt.Errorf("克隆配置失败: %w", err)
 	}
 	out, err := cloneConfigData(&AgentConfigData{
-		Version: cloned.Version, Flows: cloneFlowConfig(cloned.Flows), FlowPolicy: CloneFlowPolicy(cloned.FlowPolicy), MigrationWarnings: append([]MigrationWarning(nil), cfg.MigrationWarnings...),
+		Version: cloned.Version, Flows: cloneFlowConfig(cloned.Flows), FlowPolicy: nil, MigrationWarnings: append([]MigrationWarning(nil), cfg.MigrationWarnings...),
 		Meta:    cloned.Meta,
 		Runtime: cloned.Runtime,
 		Plan:    cloned.Plan,
@@ -1158,7 +1153,7 @@ func (acm *AgentConfigManager) configToYAMLString(cfg *AgentConfigFile) string {
 		return ""
 	}
 
-	data := AgentConfigData{Version: cloned.Version, Meta: cloned.Meta, Runtime: cloned.Runtime, Plan: cloned.Plan, Flows: cloneFlowConfig(cloned.Flows), FlowPolicy: CloneFlowPolicy(cloned.FlowPolicy)}
+	data := AgentConfigData{Version: cloned.Version, Meta: cloned.Meta, Runtime: cloned.Runtime, Plan: cloned.Plan, Flows: cloneFlowConfig(cloned.Flows), FlowPolicy: nil}
 	jsonBytes, _ := yaml.Marshal(data)
 	return string(jsonBytes)
 }
@@ -1191,7 +1186,7 @@ func (acm *AgentConfigManager) SaveConfig(userID, configName string, data *Agent
 		return fmt.Errorf("runtime 配置不能为空")
 	}
 	requested, warnings := migrateAgentConfigV1(&AgentConfigFile{
-		Version: data.Version, Flows: cloneFlowConfig(data.Flows), FlowPolicy: CloneFlowPolicy(data.FlowPolicy),
+		Version: data.Version, Flows: cloneFlowConfig(data.Flows), FlowPolicy: nil,
 		Meta:    data.Meta,
 		Runtime: requestedRuntime,
 		Plan:    data.Plan,

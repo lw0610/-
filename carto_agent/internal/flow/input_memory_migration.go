@@ -115,3 +115,50 @@ func (s *Store) MigrateInputMemory(memory *InputMemory, library *resource.Librar
 	}
 	return s.Bindings.Consume(remove, func() error { return memory.mergeMigrated(remember) })
 }
+
+// PrepareBindingMigration resolves identities with bindings disabled, avoiding
+// recursion and never depending on the machine's data folders being available.
+func (s *Store) PrepareBindingMigration(library *resource.Library) error {
+	if s.Bindings == nil || library == nil {
+		return fmt.Errorf("资源绑定存储未配置")
+	}
+	identities := resource.NewLibrary(library.BuiltinDir, library.UserDir, nil)
+	candidates := map[string][]string{}
+	items, err := identities.List("all")
+	if err != nil {
+		return err
+	}
+	retired, err := identities.List("retired")
+	if err != nil {
+		return err
+	}
+	items = append(items, retired...)
+	for _, item := range items {
+		if item.Type == "data_list" {
+			old := "library:" + item.Name
+			candidates[old] = append(candidates[old], "library:"+item.ID)
+		}
+	}
+	flows, err := s.List()
+	if err != nil {
+		return err
+	}
+	for _, summary := range flows {
+		stored, err := s.Get(summary.ID)
+		if err != nil {
+			return err
+		}
+		for _, declaration := range Parse(stored.FlowMD).Resources {
+			if declaration.Type != "data_list" {
+				continue
+			}
+			resolved := identities.Resolve(context.Background(), resource.Ref{Type: declaration.Type, Name: declaration.Label, Location: declaration.Location}, resource.Scope{FlowID: summary.ID, FlowDir: stored.Dir})
+			if resolved.Key == "" {
+				continue
+			}
+			old := "flow:" + summary.ID + "/" + bindings.LegacyResourceKey(declaration.Type, declaration.Label)
+			candidates[old] = append(candidates[old], "flow:"+summary.ID+"/"+resolved.Key)
+		}
+	}
+	return s.Bindings.PrepareMigration(candidates)
+}

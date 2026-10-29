@@ -1,10 +1,12 @@
 package flow
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/autocarto/carto_agent/internal/resource/bindings"
 	"io"
 	"io/fs"
@@ -67,6 +69,7 @@ type Store struct {
 	BuiltinDir string
 	UserDir    string
 	Bindings   *bindings.Store
+	Library    *resource.Library
 	mu         *sync.Mutex
 }
 
@@ -74,6 +77,18 @@ func NewStore(builtinDir, userDir string, bindingStore *bindings.Store) *Store {
 	key, _ := filepath.Abs(userDir)
 	lock, _ := storeLocks.LoadOrStore(key, &sync.Mutex{})
 	return &Store{BuiltinDir: builtinDir, UserDir: userDir, Bindings: bindingStore, mu: lock.(*sync.Mutex)}
+}
+
+func (s *Store) ResourceLibrary() *resource.Library {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.Library
+}
+
+func (s *Store) SetLibrary(library *resource.Library) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.Library = library
 }
 
 func ValidateID(id string) error {
@@ -84,12 +99,7 @@ func ValidateID(id string) error {
 }
 
 func PackageID(raw, directory, override string) (string, error) {
-	meta, diagnostics := ParseMetadata(raw)
-	for _, d := range diagnostics {
-		if d.Level == "error" {
-			return "", fmt.Errorf("%s: %s", d.Code, d.Message)
-		}
-	}
+	meta := ParseGuide(raw).Meta
 	id := strings.TrimSpace(override)
 	if id == "" {
 		id = strings.TrimSpace(meta.ID)
@@ -161,7 +171,7 @@ func (s *Store) get(id string) (*StoredFlow, error) {
 			}
 			return nil, err
 		}
-		path := filepath.Join(dir, "FLOW.md")
+		path := packageMainPath(dir)
 		raw, err := readBounded(path, MaxFileBytes)
 		if os.IsNotExist(err) {
 			continue
@@ -244,15 +254,7 @@ func (s *Store) write(raw, id, source string, overwrite bool) (*StoredFlow, erro
 	if err := ValidateID(id); err != nil {
 		return nil, err
 	}
-	meta, ds := ParseMetadata(raw)
-	if strings.TrimSpace(meta.Name) == "" {
-		return nil, fmt.Errorf("FLOW_NO_NAME: 请填写流程名称")
-	}
-	for _, d := range ds {
-		if d.Level == "error" {
-			return nil, fmt.Errorf("%s: %s", d.Code, d.Message)
-		}
-	}
+	meta := ParseGuide(raw).Meta
 	if int64(len(raw)) > MaxFileBytes {
 		return nil, fmt.Errorf("流程说明超过文件大小上限")
 	}
@@ -291,14 +293,46 @@ func (s *Store) write(raw, id, source string, overwrite bool) (*StoredFlow, erro
 			return nil, err
 		}
 	}
-	if err = os.WriteFile(filepath.Join(stage, "FLOW.md"), []byte(rewriteMetadata(raw, id, meta.Name)), 0600); err != nil {
+	// Save always publishes FLOW.md. Preserve a v5 source before renaming it.
+	if previous, e := readBounded(filepath.Join(stage, "GUIDE.md"), MaxFileBytes); e == nil {
+		backup := filepath.Join(stage, "GUIDE.md.bak")
+		for n := 1; ; n++ {
+			old, e := os.ReadFile(backup)
+			if os.IsNotExist(e) {
+				if err = os.WriteFile(backup, previous, 0600); err != nil {
+					return nil, err
+				}
+				break
+			}
+			if e != nil {
+				return nil, e
+			}
+			if string(old) == string(previous) {
+				break
+			}
+			backup = filepath.Join(stage, fmt.Sprintf("GUIDE.md.bak.%d", n))
+		}
+
+		if err = os.Remove(filepath.Join(stage, "GUIDE.md")); err != nil {
+			return nil, err
+		}
+	} else if !os.IsNotExist(e) {
+		return nil, e
+	}
+	if err = os.WriteFile(filepath.Join(stage, documentFilename(raw)), []byte(rewriteMetadata(raw, id, meta.Name)), 0600); err != nil {
 		return nil, err
 	}
 	lock, err := ReadLock(stage)
 	if err != nil {
 		return nil, err
 	}
-	if err = writeLock(stage, retainedLock(lock, Parse(raw))); err != nil {
+	doc := resourceDocumentWithLock(raw, s.Library, lock)
+	lock = retainedLock(lock, doc)
+	lock.DocumentFormat = documentFormatV6
+	if s.Library != nil {
+		_, lock = resolveVisualResources(context.Background(), id, stage, doc, lock, s.Library)
+	}
+	if err = writeLock(stage, lock); err != nil {
 		return nil, err
 	}
 	if exists {

@@ -15,6 +15,8 @@ import (
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/knowledge"
 	"github.com/autocarto/carto_agent/internal/resource"
+	"github.com/autocarto/carto_agent/internal/taskmaterials"
+	"github.com/autocarto/carto_agent/internal/toolsession"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/tool"
@@ -25,6 +27,22 @@ const (
 	knowledgeContractTool = "marching_route_get_extraction_contract"
 	knowledgeCompileTool  = "marching_route_compile_dataset"
 )
+
+// Request errors are returned to the delegating agent so it can correct its
+// arguments. Model, transport and persistence failures still terminate the run.
+type knowledgeRequestError struct{ error }
+
+type knowledgeCompileFailure struct {
+	error
+	review *knowledge.Review
+}
+
+func (f *knowledgeCompileFailure) result() map[string]any {
+	return map[string]any{
+		"success": false, "error": f.Error(), "info": f.Error(), "knowledge_review": KnowledgeReviewInfo(f.review),
+		"next_action": "修正制图参数后，以 review_id、revision、route_style、symbols 再次委派本专家。复用已确认结果，不重新抽取、不重复要求用户确认；同一错误不要重复重试。",
+	}
+}
 
 // knowledgeSubAgent extracts with the configured business rules.
 // Tool calls and final graph submission are programmatic, so neither
@@ -98,6 +116,19 @@ func (a *knowledgeSubAgent) Run(ctx context.Context, input *adk.AgentInput, _ ..
 				gen.Send(a.reviewInterrupt(ctx, review.review))
 				return
 			}
+			var requestError *knowledgeRequestError
+			var compileFailure *knowledgeCompileFailure
+			if errors.As(err, &requestError) || errors.As(err, &compileFailure) {
+				failure := map[string]any{"success": false, "error": err.Error(), "info": err.Error()}
+				if compileFailure != nil {
+					info := KnowledgeReviewInfo(compileFailure.review)
+					gen.Send(knowledgeReviewUpdateEvent(a.name, info))
+					failure = compileFailure.result()
+				}
+				encoded, _ := json.Marshal(failure)
+				send(string(encoded))
+				return
+			}
 			gen.Send(&adk.AgentEvent{AgentName: a.name, Err: err})
 			return
 		}
@@ -105,6 +136,9 @@ func (a *knowledgeSubAgent) Run(ctx context.Context, input *adk.AgentInput, _ ..
 		if err != nil {
 			gen.Send(&adk.AgentEvent{AgentName: a.name, Err: err})
 			return
+		}
+		if info, ok := payload["knowledge_review"].(map[string]any); ok {
+			gen.Send(knowledgeReviewUpdateEvent(a.name, info))
 		}
 		send(string(encoded))
 	}()
@@ -131,19 +165,45 @@ func resolveKnowledgeInputWithContext(ctx context.Context, input *adk.AgentInput
 		}
 		var fields map[string]json.RawMessage
 		if json.Unmarshal([]byte(message.Content), &fields) == nil {
-			if ref, exists := fields["source_ref"]; exists {
+			if _, retry := fields["review_id"]; retry {
+				var request struct {
+					ReviewID   string `json:"review_id"`
+					Revision   int64  `json:"revision"`
+					RouteStyle string `json:"route_style"`
+					Symbols    string `json:"symbols"`
+				}
+				if err := json.Unmarshal([]byte(message.Content), &request); err != nil {
+					return "", nil, fmt.Errorf("续编译需要 review_id、revision 和制图预设名称: %w", err)
+				}
+				if strings.TrimSpace(request.ReviewID) == "" || request.Revision < 1 || strings.TrimSpace(request.RouteStyle) == "" || strings.TrimSpace(request.Symbols) == "" {
+					return "", nil, fmt.Errorf("续编译须提供 review_id、revision 及 route_style、symbols 预设名称")
+				}
+				return "", map[string]any{"review_id": request.ReviewID, "revision": request.Revision, "route_style": strings.TrimSpace(request.RouteStyle), "symbols": strings.TrimSpace(request.Symbols)}, nil
+			}
+			ref, hasRef := fields["source_ref"]
+			refs, hasRefs := fields["source_refs"]
+			if hasRef || hasRefs {
+				if hasRef && hasRefs {
+					return "", nil, fmt.Errorf("source_ref 和 source_refs 不能同时提供")
+				}
 				if _, conflicting := fields["source_text"]; conflicting {
-					return "", nil, fmt.Errorf("source_ref 和 source_text 不能同时提供")
+					return "", nil, fmt.Errorf("来源引用和 source_text 不能同时提供，请直接引用原文件以保留完整正文")
 				}
-				var name string
-				if json.Unmarshal(ref, &name) != nil || name != "current_user_message" {
-					return "", nil, fmt.Errorf("未知原文引用")
+				var names []string
+				if hasRef {
+					var name string
+					if json.Unmarshal(ref, &name) != nil || strings.TrimSpace(name) == "" {
+						return "", nil, fmt.Errorf("source_ref 必须是附件编号、文件路径或 current_user_message")
+					}
+					names = []string{name}
+				} else if json.Unmarshal(refs, &names) != nil || len(names) == 0 {
+					return "", nil, fmt.Errorf("source_refs 必须是非空来源引用数组")
 				}
-				original, exists := knowledge.OriginalSource(ctx)
-				if !exists || strings.TrimSpace(original) == "" {
-					return "", nil, fmt.Errorf("当前运行没有保存原文，不能用摘要代替")
+				source, err := resolveKnowledgeSourceRefs(ctx, names)
+				if err != nil {
+					return "", nil, err
 				}
-				fields["source_text"], _ = json.Marshal(original)
+				fields["source_text"], _ = json.Marshal(source)
 			}
 			if raw, exists := fields["source_text"]; exists {
 				var source string
@@ -200,18 +260,84 @@ func resolveKnowledgeInputWithContext(ctx context.Context, input *adk.AgentInput
 				return source, options, nil
 			}
 		}
+		if path := strings.TrimSpace(message.Content); filepath.IsAbs(path) && !strings.ContainsAny(path, "\r\n") {
+			source, err := taskmaterials.ResolveSource(ctx, []string{path})
+			return source, map[string]any{}, err
+		}
+		if source, present, err := taskmaterials.DefaultSource(ctx); err != nil || present {
+			return source, map[string]any{}, err
+		}
+		if original, present := knowledge.OriginalSource(ctx); present && original != message.Content {
+			return "", nil, fmt.Errorf("知识抽取尚未取得原文；不能把子任务描述当作史料。请用 source_ref/source_refs 引用已提供文件，或明确传入完整 source_text")
+		}
 		return message.Content, map[string]any{}, nil
 	}
 	return "", nil, fmt.Errorf("知识抽取需要最新的用户原文消息")
 }
 
+func resolveKnowledgeSourceRefs(ctx context.Context, refs []string) (string, error) {
+	for _, ref := range refs {
+		if strings.TrimSpace(ref) == "" {
+			return "", fmt.Errorf("原文引用不能为空")
+		}
+		if ref != "current_user_message" && ref != "current_task_input" {
+			continue
+		}
+		if len(refs) != 1 {
+			return "", fmt.Errorf("%s 不能与文件引用混用；多文件请使用各自的附件编号", ref)
+		}
+		// The explicit user-message reference always means the trusted message,
+		// even when an earlier turn attached another source. The flow adapter
+		// uses current_task_input when it intends attachment-first resolution.
+		if ref == "current_task_input" {
+			if source, present, err := taskmaterials.DefaultSource(ctx); err != nil || present {
+				return source, err
+			}
+		}
+		original, exists := knowledge.OriginalSource(ctx)
+		if !exists || strings.TrimSpace(original) == "" {
+			return "", fmt.Errorf("当前运行没有保存原文，不能用摘要代替")
+		}
+		return original, nil
+	}
+	return taskmaterials.ResolveSource(ctx, refs)
+}
+
 func (a *knowledgeSubAgent) extractAndCompile(ctx context.Context, input *adk.AgentInput, progress func(knowledge.Progress)) (map[string]any, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	source, compileArgs, err := resolveKnowledgeInputWithContext(ctx, input)
 	if err != nil {
-		return nil, err
+		return nil, &knowledgeRequestError{err}
 	}
 	if err := ctx.Err(); err != nil {
 		return nil, err
+	}
+	if reviewID, retry := compileArgs["review_id"].(string); retry {
+		store := knowledgeReviewStore(ctx)
+		if store == nil {
+			return nil, &knowledgeRequestError{fmt.Errorf("续编译需要当前会话的已确认知识结果")}
+		}
+		review, err := store.RetryCompilation(toolsession.SessionIDFromContext(ctx), reviewID, compileArgs["revision"].(int64), map[string]string{
+			"route_style": compileArgs["route_style"].(string), "symbols": compileArgs["symbols"].(string),
+		})
+		if err != nil {
+			if errors.Is(err, knowledge.ErrReviewConflict) || errors.Is(err, knowledge.ErrReviewNotFound) {
+				return nil, &knowledgeRequestError{err}
+			}
+			return nil, err
+		}
+		return a.compileConfirmedKnowledge(ctx, store, review)
+	}
+	missing := []string{}
+	for _, key := range []string{"route_style", "symbols"} {
+		if _, exists := compileArgs[key]; !exists {
+			missing = append(missing, key)
+		}
+	}
+	if len(missing) > 0 {
+		return nil, &knowledgeRequestError{fmt.Errorf("尚未开始抽取：缺少制图预设 %s。按本次指南或用户要求选择预设名称，与 source_ref/source_refs 一同传入；不要让用户填写内部参数", strings.Join(missing, "、"))}
 	}
 	forceRefresh, _ := compileArgs["force_refresh"].(bool)
 	delete(compileArgs, "force_refresh")
@@ -331,10 +457,23 @@ func (a *knowledgeSubAgent) extractAndCompile(ctx context.Context, input *adk.Ag
 	if result == nil {
 		return nil, fmt.Errorf("知识抽取没有返回结果")
 	}
+	if !knowledge.HasExtractedContent(result.Graph) {
+		// Also cover historical/cache results created before empty extractions
+		// were distinguished from usable drafts.
+		result.Status, result.Error = "needs_review", knowledge.NoExtractedContentMessage
+		if len(result.Issues) == 0 {
+			result.Issues = append(result.Issues, knowledge.Issue{ID: "source:no_content", Kind: "source", Field: "content", Reason: "not_stated", Message: knowledge.NoExtractedContentMessage})
+		}
+		if cfg.Checkpoint != nil {
+			if err := cfg.Checkpoint(result); err != nil {
+				return nil, err
+			}
+		}
+	}
 	// Existing approved coordinates remain unchanged. A fresh draft may fill
 	// missing background locations from an older approved graph as well.
 	coordinateErr := knowledge.ValidateResolvedCoordinates(result.Graph)
-	coordinatesAttempted := !knowledge.HasPartialExtraction(result) && (reusedFrom == nil || coordinateErr != nil)
+	coordinatesAttempted := knowledge.HasExtractedContent(result.Graph) && !knowledge.HasPartialExtraction(result) && (reusedFrom == nil || coordinateErr != nil)
 	if coordinatesAttempted {
 		coordinateErr = a.enrichCoordinates(ctx, result, source, progress)
 	}

@@ -12,6 +12,10 @@ func (s *DeepServer) InjectToolRuntimeArgs(ctx context.Context, args map[string]
 	if args == nil {
 		args = make(map[string]any)
 	}
+	delete(args, "_autocarto_output_owner")
+	if owner := toolsession.OutputOwnerFromContext(ctx); owner != nil {
+		args["_autocarto_output_owner"] = owner
+	}
 
 	if sessionID := toolsession.SessionIDFromContext(ctx); sessionID != "" {
 		if _, exists := args["session_id"]; !exists {

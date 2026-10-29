@@ -8,16 +8,38 @@ import (
 	"strings"
 )
 
-const ToolCreateDirectory = "create_directory"
+const (
+	ToolCreateDirectory = "create_directory"
+	ToolReadFile        = "file_read"
+	ToolWriteFile       = "file_write"
+	ToolRunCommand      = "shell_execute"
+)
 
 func Handles(toolName string) bool {
-	return strings.TrimSpace(toolName) == ToolCreateDirectory
+	switch strings.TrimSpace(toolName) {
+	case ToolCreateDirectory, ToolReadFile, ToolWriteFile, ToolRunCommand:
+		return true
+	}
+	return false
 }
 
-func Invoke(_ context.Context, toolName string, args map[string]any) (any, error) {
+func Invoke(ctx context.Context, toolName string, args map[string]any) (any, error) {
 	switch strings.TrimSpace(toolName) {
 	case ToolCreateDirectory:
 		return createDirectory(args)
+	case ToolReadFile, ToolWriteFile, ToolRunCommand:
+		workspace, err := sessionWorkspace(ctx)
+		if err != nil {
+			return nil, err
+		}
+		switch strings.TrimSpace(toolName) {
+		case ToolReadFile:
+			return workspace.read(ctx, args)
+		case ToolWriteFile:
+			return workspace.write(ctx, args)
+		default:
+			return workspace.run(ctx, args)
+		}
 	default:
 		return nil, fmt.Errorf("unsupported file operation tool: %s", strings.TrimSpace(toolName))
 	}

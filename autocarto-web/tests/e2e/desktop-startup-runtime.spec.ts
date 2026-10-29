@@ -12,7 +12,7 @@ test('instances page hides stale startup error once authoritative desktop runtim
 
   await page.goto('/instances.html', { waitUntil: 'networkidle' })
 
-  await expect(page.locator('body')).toContainText('QGIS 实例管理')
+  await expect(page.getByRole('heading', { name: 'GIS 实例管理', exact: true })).toBeVisible()
   await expect(page.locator('body')).toContainText(/新建 \/ 打开工程|暂无 QGIS 实例/)
   await expect(page.locator('body')).not.toContainText('后端启动失败')
   await expect(page.locator('body')).not.toContainText('解析 discovery descriptor 响应失败')

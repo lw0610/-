@@ -12,11 +12,11 @@ spec:
   - name: INPUT
     type: layer
     required: true
-    description: 输入图层
+    description: 输入图层 ID 或唯一名称；优先使用上一步返回的 layer_id
   - name: FIELDS
     type: fields
     required: true
-    description: 要保留的字段列表
+    description: 要保留的字段列表；接受数组、逗号或分号分隔的字段名
   - name: OUTPUT
     type: output_layer
     description: 输出图层

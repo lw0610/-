@@ -7,10 +7,12 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/autocarto/carto_agent/internal/knowledge"
+	"github.com/autocarto/carto_agent/internal/session"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/tool"
 	"github.com/cloudwego/eino/schema"
@@ -74,6 +76,99 @@ func knowledgeReviewRef(contexts []*adk.InterruptCtx) (reviewID, interruptID str
 	return "", ""
 }
 
+func knowledgeReviewInterruptInfo(data map[string]any) map[string]any {
+	raw, _ := json.Marshal(data["interrupt_contexts"])
+	var contexts []struct {
+		Info json.RawMessage `json:"info"`
+	}
+	if json.Unmarshal(raw, &contexts) != nil {
+		return nil
+	}
+	for _, item := range contexts {
+		var encoded string
+		if json.Unmarshal(item.Info, &encoded) == nil {
+			item.Info = json.RawMessage(encoded)
+		}
+		var info map[string]any
+		if json.Unmarshal(item.Info, &info) == nil && info["type"] == "knowledge_review" && stringValue(info["review_id"]) != "" {
+			return info
+		}
+	}
+	return nil
+}
+
+func knowledgeReviewInterruptSummary(info map[string]any) string {
+	switch info["status"] {
+	case string(knowledge.ReviewCompileFailed):
+		return "制图数据生成失败：" + stringValue(info["description"])
+	case string(knowledge.ReviewCompiling):
+		return "正在将已确认的知识结果转换为制图数据。"
+	case string(knowledge.ReviewCompiled):
+		return "制图数据已生成，继续执行后续制图。"
+	}
+	return "知识抽取结果已保存，等待确认后继续制图。"
+}
+
+func upsertKnowledgeReviewCard(sess *session.Session, data map[string]any) {
+	if sess == nil {
+		return
+	}
+	info := knowledgeReviewInterruptInfo(data)
+	rid := stringValue(info["review_id"])
+	if rid == "" {
+		return
+	}
+	messages := sess.GetMessages()
+	message := schema.AssistantMessage(knowledgeReviewInterruptSummary(info), nil)
+	message.Extra = map[string]any{"knowledge_review_card": data}
+	replaced := false
+	updated := make([]*schema.Message, 0, len(messages)+1)
+	for _, msg := range messages {
+		if msg != nil {
+			if card, ok := msg.Extra["knowledge_review_card"].(map[string]any); ok && stringValue(knowledgeReviewInterruptInfo(card)["review_id"]) == rid {
+				if !replaced {
+					updated = append(updated, message)
+					replaced = true
+				}
+				continue
+			}
+		}
+		updated = append(updated, msg)
+	}
+	if replaced {
+		sess.Restore(updated, sess.GetPlanContext(), sess.CreatedAt, time.Now())
+	} else {
+		sess.AddMessage(message)
+	}
+}
+
+func knowledgeReviewUpdateData(sess *session.Session, info map[string]any, checkpointID string) map[string]any {
+	data := map[string]any{"checkpoint_id": checkpointID}
+	if sess != nil {
+		for _, msg := range sess.GetMessages() {
+			if msg == nil {
+				continue
+			}
+			if card, ok := msg.Extra["knowledge_review_card"].(map[string]any); ok && knowledgeReviewInterruptInfo(card)["review_id"] == info["review_id"] {
+				raw, _ := json.Marshal(card)
+				if json.Unmarshal(raw, &data) == nil {
+					if contexts, ok := data["interrupt_contexts"].([]any); ok {
+						for _, value := range contexts {
+							if item, ok := value.(map[string]any); ok && item["is_root_cause"] == true {
+								item["info"] = info
+								return data
+							}
+						}
+					}
+				}
+				break
+			}
+		}
+	}
+	data["interrupt_contexts"] = []map[string]any{{"info": info, "is_root_cause": true}}
+	return data
+}
+
 func (s *DeepServer) persistKnowledgeReviewInterrupt(pending *PendingInterrupt, data map[string]any, mode executionMode) error {
 	rid, root := knowledgeReviewRef(pending.Contexts)
 	if rid == "" {
@@ -86,7 +181,7 @@ func (s *DeepServer) persistKnowledgeReviewInterrupt(pending *PendingInterrupt, 
 	if mode == "" {
 		mode = executionModeBuild
 	}
-	_, err := store.SetResume(pending.SessionID, rid, &knowledge.ReviewResumeDescriptor{
+	review, err := store.SetResume(pending.SessionID, rid, &knowledge.ReviewResumeDescriptor{
 		CheckpointID: pending.CheckpointID, InterruptID: root, ExecutionMode: string(mode),
 		ModePhase: pending.ModePhase, InstanceID: pending.BoundInstanceID, ProjectPath: pending.ProjectPath,
 		RuntimeRevision: s.currentRuntimeMetadata().RuntimeRevision,
@@ -94,16 +189,30 @@ func (s *DeepServer) persistKnowledgeReviewInterrupt(pending *PendingInterrupt, 
 	if err != nil {
 		return err
 	}
-	if pending.Session != nil {
-		for _, msg := range pending.Session.GetMessages() {
-			if card, ok := msg.Extra["knowledge_review_card"].(map[string]any); ok && card["checkpoint_id"] == pending.CheckpointID {
-				return nil
-			}
+	info := deepagent.KnowledgeReviewInfo(review)
+	for _, ic := range pending.Contexts {
+		if ic.ID == root {
+			ic.Info = info
 		}
-		message := schema.AssistantMessage("知识抽取结果已保存，可查看并修改。", nil)
-		message.Extra = map[string]any{"knowledge_review_card": data}
-		pending.Session.AddMessage(message)
 	}
+	// Refresh the same interrupt payload that will be sent and persisted. A
+	// second interrupt after compilation failure must replace the earlier card.
+	raw, _ := json.Marshal(data["interrupt_contexts"])
+	var contexts []map[string]any
+	if err := json.Unmarshal(raw, &contexts); err != nil {
+		return err
+	}
+	for _, ic := range contexts {
+		if ic["id"] == root {
+			ic["info"] = info
+		}
+	}
+	data["interrupt_contexts"] = contexts
+	pending.InterruptData = copyMessageData(data)
+	upsertKnowledgeReviewCard(pending.Session, data)
+	// Persist the review state in the process projection before the session
+	// snapshot is saved; broadcasting later uses the same payload.
+	s.applySessionWorkflowMessage(Message{Type: MsgTypeInterruptRequest, SessionID: pending.SessionID, Data: data})
 	return nil
 }
 
@@ -234,9 +343,10 @@ func (s *DeepServer) ConfirmKnowledgeReview(ctx context.Context, sid, rid string
 			return nil, fmt.Errorf("请先重新连接原制图实例: %w", err)
 		}
 	}
-	// Start Mapping accepts this exact saved revision. Semantic/content checks
-	// remain available as diagnostics, but never veto the user's confirmation.
-	// Compilation and its operational failures are handled by the resumed task.
+	// Start Mapping accepts this exact saved revision when it contains extracted
+	// facts. Claim rejects a wholly empty draft; missing individual categories or
+	// semantic diagnostics do not veto confirmation. Compilation and operational
+	// failures are handled by the resumed task.
 	if strings.TrimSpace(requestID) == "" {
 		requestID = fmt.Sprintf("%s:%d", rid, revision)
 	}
@@ -276,11 +386,23 @@ func (s *DeepServer) failKnowledgeReviewResume(pending *PendingInterrupt, failur
 		return false
 	}
 	if review.Status == knowledge.ReviewCompiling {
-		_, _ = store.Fail(review.SessionID, rid, review.Revision, []knowledge.ReviewError{{Message: "恢复制图失败，修改稿已保留：" + failure.Error()}})
+		review, err = store.Fail(review.SessionID, rid, review.Revision, []knowledge.ReviewError{{Message: "恢复制图失败，修改稿已保留：" + failure.Error()}})
+		if err != nil {
+			return false
+		}
+	}
+	contexts := make([]map[string]any, 0, len(pending.Contexts))
+	for _, ic := range pending.Contexts {
+		contexts = append(contexts, map[string]any{"id": ic.ID, "info": ic.Info, "is_root_cause": ic.IsRootCause})
+	}
+	data := withModePhaseData(map[string]any{"checkpoint_id": pending.CheckpointID, "interrupt_contexts": contexts}, pending.ModePhase)
+	if err := s.persistKnowledgeReviewInterrupt(pending, data, executionModeBuild); err != nil {
+		return false
 	}
 	s.setPendingInterrupt(nil, pending.SessionID, pending)
 	s.markSessionRuntimeInterrupted(pending.SessionID, pending.CheckpointID)
 	s.persistManagedSessionState(pending.SessionID, pending.ProjectPath, executionModeBuild)
+	s.sendSessionMessage(nil, Message{Type: MsgTypeInterruptRequest, SessionID: pending.SessionID, Content: knowledgeReviewInterruptSummary(deepagent.KnowledgeReviewInfo(review)), Data: data})
 	return true
 }
 

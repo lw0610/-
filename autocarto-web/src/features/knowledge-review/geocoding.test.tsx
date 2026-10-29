@@ -10,7 +10,7 @@ import { extractionPhaseSummary, type ExtractionCompletion, type KnowledgeGraph,
 
 vi.mock('./api', () => ({ reviewApi: { get: vi.fn(), save: vi.fn(), geocode: vi.fn(), confirm: vi.fn() } }))
 vi.mock('@/stores/sessionStore', () => ({ useSessionStore: (select: (value: { activeSessionId: string }) => unknown) => select({ activeSessionId: 'session-1' }) }))
-vi.mock('@/stores/chatStore', () => ({ useChatStore: { getState: () => ({ resolveSessionInterrupt: vi.fn() }) } }))
+vi.mock('@/stores/chatStore', () => ({ useChatStore: Object.assign((select: (state: { sessionRuntimeStates: Record<string, { status: string }> }) => unknown) => select({ sessionRuntimeStates: {} }), { getState: () => ({ resolveSessionInterrupt: vi.fn() }) }) }))
 
 const reference: ReviewReference = { session_id: 'session-1', review_id: 'review-1', checkpoint_id: 'checkpoint-1' }
 const candidate = { name: '庾家河镇', address: '陕西省商洛市丹凤县', lon: 110.45, lat: 33.8, source_id: 'poi-1' }
@@ -43,6 +43,37 @@ beforeEach(() => {
   vi.mocked(reviewApi.geocode).mockResolvedValue(enrichedDocument())
 })
 afterEach(cleanup)
+
+describe('empty knowledge results', () => {
+  it('shows a newer compilation failure instead of cached compiling state', () => {
+    render(<KnowledgeReviewCard reference={{ ...reference, revision: 3, status: 'compile_failed', updated_at: '2026-10-29T01:00:02Z', summary: { routes: 1 }, errors: [{ message: 'route_style is required' }] }} summary={{ revision: 3, status: 'compiling', updated_at: '2026-10-29T01:00:01Z' }} onOpen={vi.fn()} onConfirm={vi.fn()} />)
+    expect(screen.getByRole('alert')).toHaveTextContent('route_style is required')
+    expect(screen.queryByText('正在制图')).not.toBeInTheDocument()
+  })
+
+  it('shows the missing-source reason and prevents drawing an empty result', async () => {
+    const counts = { routes: 0, events: 0, spatial_entities: 0, actors: 0, callouts: 0 }
+    const reason = '未提取到可制图的内容。原因：原文未提供任何行军路线、地点或主体信息。'
+    const card = render(<KnowledgeReviewCard reference={{ ...reference, status: 'awaiting_review', summary: counts, can_start: false, description: reason }} onOpen={vi.fn()} onConfirm={vi.fn()} />)
+    expect(screen.getByText(reason)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '开始制图' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '查看并修改' })).toBeEnabled()
+    // A saved edit containing a real place becomes usable; routes need not be
+    // nonempty, and stale initial counts cannot keep the action disabled.
+    card.rerender(<KnowledgeReviewCard reference={{ ...reference, status: 'awaiting_review', summary: counts, can_start: false }} summary={{ revision: 4, status: 'awaiting_review', counts: { ...counts, spatial_entities: 1 } }} onOpen={vi.fn()} onConfirm={vi.fn()} />)
+    expect(screen.getByRole('button', { name: '开始制图' })).toBeEnabled()
+    card.unmount()
+
+    vi.mocked(reviewApi.get).mockResolvedValue({ ...makeDocument(), graph: { routes: [], events: [], spatial_entities: [], actors: [], callouts: [] }, errors: [{ code: 'empty_extraction', message: reason }] })
+    const { result } = renderHook(() => useKnowledgeReview())
+    await act(async () => { await result.current.show(reference, true) })
+    render(<KnowledgeReviewDialog controller={result.current} />)
+    expect(screen.getByText(new RegExp('原文未提供任何行军路线'))).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '开始制图' })).toBeDisabled()
+    await act(async () => { await result.current.confirm() })
+    expect(reviewApi.confirm).not.toHaveBeenCalled()
+  })
+})
 
 describe('knowledge review coordinate enrichment', () => {
   it('applies the saved coordinate graph and revision to the extraction result being displayed', async () => {

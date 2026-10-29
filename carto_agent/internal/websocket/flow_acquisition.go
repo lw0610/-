@@ -12,7 +12,7 @@ import (
 	"github.com/autocarto/carto_agent/internal/osmdata"
 )
 
-// Installed before SetFlowCompiler; background acquisition follows application
+// Installed before SetPlanRuntime; background acquisition follows application
 // shutdown, while Controller.Cancel cancels the individual flow immediately.
 func (s *DeepServer) SetFlowLifecycleContext(ctx context.Context) { s.flowLifecycle = ctx }
 func (binding flowRuntimeBinding) acquisitionEngine(ctx context.Context, run *flowrun.RunState) (*acquire.Engine, error) {

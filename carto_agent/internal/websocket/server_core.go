@@ -23,7 +23,6 @@ import (
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/control"
 	"github.com/autocarto/carto_agent/internal/discovery"
-	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/flowrun"
 	"github.com/autocarto/carto_agent/internal/knowledge"
 	"github.com/autocarto/carto_agent/internal/llm"
@@ -58,11 +57,10 @@ const (
 type DeepServer struct {
 	flowLifecycle             context.Context
 	eventSequenceMu           sync.Mutex
+	cartoRuntime              *cartographicRuntime
 	flowMu                    sync.Mutex
-	flowCompiler              flowrun.Compiler
 	flowController            *flowrun.Controller
 	flowContexts              map[string]flowSessionContext
-	pendingFlows              map[string]flowrun.StartRequest
 	flowMessageMeta           map[string]map[string]any
 	port                      int
 	httpServer                *http.Server
@@ -122,6 +120,7 @@ type DeepServer struct {
 	pendingRuntimeRebuildReason string
 	lastRuntimeRebuildReason    string
 	lastRuntimeRebuildAt        time.Time
+	lastRuntimeBuildError       string
 	lastAppliedToolSchemaRev    string
 	toolInvokeTimeout           time.Duration
 	localBridgeCleanupInterval  time.Duration
@@ -193,6 +192,7 @@ func (s *DeepServer) SetRuntime(runtime *agentruntime.Runtime) {
 	}
 	s.planAgent = runtime.PlanAgent
 	s.buildAgent = runtime.BuildAgent
+	s.lastRuntimeBuildError = ""
 }
 
 // SetRuntimeFactory 设置 runtime 重建工厂。
@@ -466,7 +466,12 @@ func (s *DeepServer) SetAgentRebuildConfig(cfg *AgentRebuildConfig) {
 }
 
 // rebuildAgent 从当前活动的智能体配置重建 agent 实例
-func (s *DeepServer) rebuildAgent() error {
+func (s *DeepServer) rebuildAgent() (buildErr error) {
+	defer func() {
+		if buildErr != nil {
+			s.SetRuntimeBuildError(buildErr)
+		}
+	}()
 	rebuildConfig := s.agentRebuildConfigSnapshot()
 	if rebuildConfig == nil {
 		return fmt.Errorf("agentRebuildConfig 未设置")
@@ -571,12 +576,11 @@ func (s *DeepServer) buildRuntimeFactory() (agentruntime.Builder, error) {
 	}
 	return agentruntime.NewFactory(&agentruntime.FactoryConfig{
 		DefaultChatModel:   rebuildConfig.ChatModel,
+		GuideBackend:       s.runtimeGuideBackend(),
+		AcquisitionConfig:  s.runtimeAcquisitionConfig,
 		DefaultProviderCfg: s.defaultRuntimeProviderConfig(),
 		ResolveChatModel: func(provider string) (model.ToolCallingChatModel, error) {
 			return s.resolveRuntimeChatModel(provider)
-		},
-		ResolvePlanChatModel: func(provider string) (model.ToolCallingChatModel, error) {
-			return s.resolvePlanChatModel(provider)
 		},
 		ResolveProviderCfg: func(provider string) *config.LLMProviderConfig {
 			return s.resolveRuntimeProviderConfig(provider)
@@ -748,16 +752,7 @@ func (s *DeepServer) rebuildChatModelAndAgent(provider *config.LLMProviderConfig
 	}
 
 	// 创建新的 ChatModel
-	llmConfig := &llm.Config{
-		Provider:        provider.Provider,
-		Model:           provider.Model,
-		APIKey:          provider.APIKey,
-		BaseURL:         provider.BaseURL,
-		MaxTokens:       provider.MaxTokens,
-		Temperature:     provider.Temperature,
-		ThinkingEnabled: provider.ThinkingEnabled,
-		ThinkingBudget:  provider.ThinkingBudget,
-	}
+	llmConfig := config.ProviderToLLMConfig(provider)
 
 	chatModel, err := llm.NewChatModel(llmConfig)
 	if err != nil {
@@ -1515,8 +1510,8 @@ func (s *DeepServer) cancelSessionTask(conn *websocket.Conn, sessionID string) {
 	}
 
 	defer func() {
+		s.takeCartographicPlan(sid)
 		s.flowMu.Lock()
-		delete(s.pendingFlows, sid)
 		controller := s.flowController
 		s.flowMu.Unlock()
 		if controller != nil {
@@ -1679,16 +1674,4 @@ func (s *DeepServer) popPendingInterrupt(conn *websocket.Conn, sessionID string)
 		}
 	}
 	return pending, true
-}
-
-// BroadcastFlowCompile delivers background progress independently of requests.
-func (s *DeepServer) BroadcastFlowCompile(status flow.CompileJobStatus) {
-	raw, _ := json.Marshal(status)
-	payload := map[string]any{}
-	_ = json.Unmarshal(raw, &payload)
-	for _, conn := range s.listClientConnections() {
-		if err := s.sendMessage(conn, Message{Type: MsgTypeFlowCompile, Data: payload}); err != nil {
-			logger.Warn("推送 flow_compile 失败: %v", err)
-		}
-	}
 }

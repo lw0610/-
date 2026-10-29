@@ -140,33 +140,36 @@ func mergeSkillDirs(primary []string, fallback []string) []string {
 // LoadSkillMiddleware loads skill middleware for one runtime agent.
 // primarySkillDirs are the governed package roots; fallbackSkillDirs are the full runtime skill roots.
 func LoadSkillMiddleware(
-	ctx context.Context,
-	agentName string,
-	primarySkillDirs []string,
-	fallbackSkillDirs []string,
-	runtimeConfig *RuntimeSkillConfig,
+	ctx context.Context, agentName string, primarySkillDirs []string, fallbackSkillDirs []string, runtimeConfig *RuntimeSkillConfig, additional ...skill.Backend,
 ) (*adk.AgentMiddleware, error) {
-	if runtimeConfig == nil {
+	var backends []skill.Backend
+	var skills []string
+	if runtimeConfig != nil {
+		skills = runtimeConfig.GetAgentMiddlewareSkills(agentName)
+	}
+	if len(skills) > 0 {
+		logger.Info("为智能体 %s 加载 %d 个 skills: %v", agentName, len(skills), skills)
+		local, err := newFilesystemSkillBackend(ctx, mergeSkillDirs(primarySkillDirs, fallbackSkillDirs))
+		if err != nil {
+			return nil, err
+		}
+		backends = append(backends, NewFilteredSkillBackend(local, skills))
+	}
+	for _, backend := range additional {
+		if backend != nil {
+			backends = append(backends, backend)
+		}
+	}
+	if len(backends) == 0 {
 		return nil, nil
 	}
-
-	skills := runtimeConfig.GetAgentMiddlewareSkills(agentName)
-	if len(skills) == 0 {
-		return nil, nil
+	var backend skill.Backend = NewMultiSkillBackend(backends...)
+	if len(backends) == 1 {
+		backend = backends[0]
 	}
-
-	logger.Info("为智能体 %s 加载 %d 个 skills: %v", agentName, len(skills), skills)
-
-	localBackend, err := newFilesystemSkillBackend(ctx, mergeSkillDirs(primarySkillDirs, fallbackSkillDirs))
-	if err != nil {
-		return nil, err
-	}
-
-	filteredBackend := NewFilteredSkillBackend(localBackend, skills)
-	mw, err := skill.New(ctx, &skill.Config{Backend: filteredBackend})
+	mw, err := skill.New(ctx, &skill.Config{Backend: backend})
 	if err != nil {
 		return nil, fmt.Errorf("创建 skill middleware 失败: %w", err)
 	}
-
 	return &mw, nil
 }

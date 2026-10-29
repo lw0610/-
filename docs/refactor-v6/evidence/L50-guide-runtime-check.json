@@ -1,0 +1,290 @@
+{
+  "session_id": "64d0e3be-e8f2-4a63-acec-f4752ca8f81c",
+  "mode": "plan",
+  "started_at": "2026-10-28T09:56:59.908Z",
+  "completed_at": "2026-10-28T09:57:40.175Z",
+  "fatal_errors": [],
+  "finished": true,
+  "steps": [
+    {
+      "tool": "skill",
+      "arguments": {
+        "skill": "guide-statistical-choropleth"
+      },
+      "status": "completed",
+      "success": true
+    },
+    {
+      "tool": "data_find",
+      "arguments": {
+        "guide": "statistical-choropleth",
+        "include_fallback": true,
+        "need": {
+          "extent": "河南省",
+          "geometry": "polygon",
+          "name": "河南省地级市行政区面",
+          "what": {
+            "description": "河南省地级市行政区划面，需要地级市名称与行政区划代码"
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "code": "DATA_NEED_UNRECOGNIZED",
+          "message": "行政区划面缺少参数 level",
+          "suggestions": [
+            "行政区划面",
+            "行政界线",
+            "海上境界线",
+            "海岸线",
+            "地级驻地",
+            "县级驻地",
+            "地名点",
+            "铁路",
+            "高速公路",
+            "主要公路",
+            "国道",
+            "交通站点",
+            "城市轨道",
+            "河流线",
+            "水域面",
+            "数字高程模型",
+            "地形晕渲",
+            "光学影像",
+            "地表覆盖",
+            "人口格网",
+            "夜间灯光",
+            "年度统计指标",
+            "在线底图"
+          ]
+        }
+      ],
+      "available_sources": []
+    },
+    {
+      "tool": "data_find",
+      "arguments": {
+        "guide": "statistical-choropleth",
+        "include_fallback": true,
+        "need": {
+          "extent": "河南省",
+          "geometry": "polygon",
+          "name": "河南省地级市行政区面",
+          "params": {
+            "level": "地级市"
+          },
+          "what": {
+            "description": "河南省地级市行政区划面，需要地级市名称与行政区划代码"
+          }
+        }
+      },
+      "diagnostics": [
+        {
+          "code": "DATA_NEED_UNRECOGNIZED",
+          "message": "行政区划面参数 level 不支持 地级市",
+          "suggestions": [
+            "行政区划面",
+            "行政界线",
+            "海上境界线",
+            "海岸线",
+            "地级驻地",
+            "县级驻地",
+            "地名点",
+            "铁路",
+            "高速公路",
+            "主要公路",
+            "国道",
+            "交通站点",
+            "城市轨道",
+            "河流线",
+            "水域面",
+            "数字高程模型",
+            "地形晕渲",
+            "光学影像",
+            "地表覆盖",
+            "人口格网",
+            "夜间灯光",
+            "年度统计指标",
+            "在线底图"
+          ]
+        }
+      ],
+      "available_sources": []
+    },
+    {
+      "tool": "skill",
+      "arguments": {
+        "skill": "data-service"
+      },
+      "status": "completed",
+      "success": true
+    },
+    {
+      "tool": "data_find",
+      "arguments": {
+        "guide": "statistical-choropleth",
+        "include_fallback": true,
+        "need": {
+          "extent": "河南省",
+          "geometry": "polygon",
+          "name": "河南省地级市行政区面",
+          "params": {
+            "level": "市"
+          },
+          "what": {
+            "description": "河南省地级市行政区划面，需要地级市名称与行政区划代码"
+          }
+        }
+      },
+      "diagnostics": [],
+      "available_sources": [
+        "source.builtin.cn-admin"
+      ]
+    }
+  ],
+  "verification_scope": "Actual production WebSocket + current model: flow read and local source lookup only; not a complete map task.",
+  "parameter_corrections": 2,
+  "project_unchanged": true,
+  "project_sha256": "f920656fc454559a68002ed134627df4ca43fa53f47a5d8151bac3804319edfa",
+  "final_verification": {
+    "session_id": "b672fffd-2c09-466d-930e-29c1a1e218d1",
+    "started_at": "2026-10-28T10:07:15.798Z",
+    "completed_at": "2026-10-28T10:07:44.988Z",
+    "fatal_errors": [],
+    "finished": true,
+    "steps": [
+      {
+        "tool": "skill",
+        "arguments": {
+          "skill": "guide-statistical-choropleth"
+        },
+        "status": "completed",
+        "success": true
+      },
+      {
+        "tool": "data_find",
+        "arguments": {
+          "guide": "statistical-choropleth",
+          "include_fallback": true,
+          "need": {
+            "extent": "河南省",
+            "geometry": "polygon",
+            "name": "河南省地级市行政区面",
+            "what": {
+              "description": "河南省地级市行政区边界面，需要地级市名称字段"
+            }
+          }
+        },
+        "resolved_category": null,
+        "diagnostics": [
+          {
+            "code": "DATA_NEED_UNRECOGNIZED",
+            "message": "未识别数据类别",
+            "suggestions": [
+              "行政区划面",
+              "行政界线",
+              "海上境界线",
+              "海岸线",
+              "地级驻地",
+              "县级驻地",
+              "地名点",
+              "铁路",
+              "高速公路",
+              "主要公路",
+              "国道",
+              "交通站点",
+              "城市轨道",
+              "河流线",
+              "水域面",
+              "数字高程模型",
+              "地形晕渲",
+              "光学影像",
+              "地表覆盖",
+              "人口格网",
+              "夜间灯光",
+              "年度统计指标",
+              "在线底图"
+            ]
+          }
+        ],
+        "available_sources": []
+      },
+      {
+        "tool": "data_find",
+        "arguments": {
+          "guide": "statistical-choropleth",
+          "include_fallback": true,
+          "need": {
+            "extent": "河南省",
+            "geometry": "polygon",
+            "name": "河南省地级市行政区面",
+            "what": {
+              "category": "行政区划面"
+            }
+          }
+        },
+        "resolved_category": "admin.division",
+        "diagnostics": [
+          {
+            "code": "DATA_NEED_PARAMS_INVALID",
+            "message": "行政区划面缺少参数 level，允许值：省、市、县",
+            "suggestions": [
+              "need.params.level：按实际需求填写（必填）；允许值：省、市、县"
+            ],
+            "parameters": [
+              {
+                "path": "need.params.level",
+                "required": true,
+                "allowed_values": [
+                  "省",
+                  "市",
+                  "县"
+                ]
+              }
+            ]
+          }
+        ],
+        "available_sources": []
+      },
+      {
+        "tool": "data_find",
+        "arguments": {
+          "guide": "statistical-choropleth",
+          "include_fallback": true,
+          "need": {
+            "extent": "河南省",
+            "geometry": "polygon",
+            "name": "河南省地级市行政区面",
+            "params": {
+              "level": "市"
+            },
+            "what": {
+              "category": "行政区划面"
+            }
+          }
+        },
+        "resolved_category": "admin.division",
+        "diagnostics": [],
+        "available_sources": [
+          "source.builtin.cn-admin"
+        ]
+      }
+    ],
+    "corrections": {
+      "category": 1,
+      "parameters": 1
+    },
+    "readiness": {
+      "build": {
+        "enabled": true,
+        "ready": true
+      },
+      "plan": {
+        "enabled": true,
+        "ready": true
+      }
+    },
+    "mode_issues": null,
+    "running_qgis_instances": 1
+  }
+}

@@ -102,12 +102,16 @@ func TestProviderInvokeToolRoundTripAndKeepCallerArgs(t *testing.T) {
 				"output_layers": []map[string]any{{
 					"path":      "/tmp/result.gpkg",
 					"auto_load": true,
+				}, {
+					"layer_id": "thematic-123", "name": "专题图", "reference_type": "project_layer",
+					"source": "Point?crs=EPSG:4326", "provider": "memory", "geometry_type": "Point",
+					"feature_count": 18, "fields": []string{"name", "population"}, "auto_load": false,
 				}},
 			},
 		})
 	}()
 
-	result, err := bridgeProvider.InvokeTool(invokeCtx, "data_load_vector", callerArgs)
+	result, err := NewComputeToolInvoker(bridgeProvider).InvokeTool(invokeCtx, "data_load_vector", callerArgs)
 	if err != nil {
 		t.Fatalf("InvokeTool failed: %v", err)
 	}
@@ -118,8 +122,14 @@ func TestProviderInvokeToolRoundTripAndKeepCallerArgs(t *testing.T) {
 	if !ok || output["result"] != "ok" {
 		t.Fatalf("unexpected invoke output: %#v", result.Output)
 	}
-	if len(result.OutputLayers) != 1 || result.OutputLayers[0].Path != "/tmp/result.gpkg" || !result.OutputLayers[0].AutoLoad {
+	if len(result.OutputLayers) != 2 || result.OutputLayers[0].Path != "/tmp/result.gpkg" || !result.OutputLayers[0].AutoLoad {
 		t.Fatalf("unexpected output layers: %#v", result.OutputLayers)
+	}
+	projectLayer := result.OutputLayers[1]
+	if projectLayer.LayerID != "thematic-123" || projectLayer.Name != "专题图" || projectLayer.ReferenceType != "project_layer" ||
+		projectLayer.Path != "" || projectLayer.AutoLoad || projectLayer.FeatureCount != 18 ||
+		len(projectLayer.Fields) != 2 || projectLayer.Fields[1] != "population" {
+		t.Fatalf("project layer identity was lost in bridge round trip: %#v", projectLayer)
 	}
 
 	if gotID, _ := callerArgs["instance_id"].(string); gotID != "inst-1" {

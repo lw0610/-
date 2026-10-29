@@ -19,6 +19,7 @@ import (
 	"github.com/autocarto/carto_agent/internal/knowledge"
 	"github.com/autocarto/carto_agent/internal/logger"
 	"github.com/autocarto/carto_agent/internal/prompts"
+	"github.com/autocarto/carto_agent/internal/runtimecontrol"
 	"github.com/autocarto/carto_agent/internal/runtimepersist"
 	"github.com/autocarto/carto_agent/internal/session"
 	"github.com/autocarto/carto_agent/internal/sessionfiles"
@@ -332,7 +333,7 @@ func (s *DeepServer) processTask(ctx context.Context, conn *websocket.Conn, msg 
 	// 获取或创建会话
 	sess := s.sessionManager.GetOrCreate(sessionID)
 	projectPath := parseProjectPathFromMessageData(msg.Data)
-	if s.hasActiveSessionRuntime(sessionID) && !s.isPausedFlowResume(sessionID, projectPath, msg.Data) {
+	if s.hasActiveSessionRuntime(sessionID) && !s.hasPlanAwaitingRevision(sessionID) {
 		s.sendSessionError(conn, sessionID, "当前会话已有运行中的任务，请等待完成或先取消。")
 		return
 	}
@@ -368,40 +369,24 @@ func (s *DeepServer) processTask(ctx context.Context, conn *websocket.Conn, msg 
 
 	// 添加用户消息到会话历史
 	userMsg := schema.UserMessage(msg.Content)
+	if err := s.bindTaskReferences(ctx, sessionID, projectPath, msg, userMsg); err != nil {
+		s.sendSessionError(conn, sessionID, err.Error())
+		return
+	}
 	sess.AddMessage(userMsg)
 	s.persistManagedSessionState(sessionID, projectPath, execMode)
 
 	flowContext := flowSessionContext{Conn: conn, Session: sess, SessionID: sessionID, ProjectPath: projectPath, InstanceID: boundInstanceID, OriginalSource: msg.Content, Scheme: s.GetRuntimeActiveConfigName(), Mode: execMode}
 	s.setFlowContext(flowContext)
-	flowRequest, flowErr := parseFlowRequest(msg.Data)
-	if flowErr != nil {
-		s.sendSessionError(conn, sessionID, flowErr.Error())
-		return
-	}
-	if flowRequest != nil {
-		if execMode == executionModePlan {
-			preview, err := (sessionFlowService{server: s, session: flowContext}).PreviewFlow(ctx, flowRequest.ID, flowRequest.Inputs)
-			if err != nil {
-				s.sendSessionError(conn, sessionID, err.Error())
-				return
-			}
-			s.sendSessionMessage(conn, Message{Type: MsgTypeAgentWorkflow, SessionID: sessionID, Phase: "tool_result", Data: withModePhaseData(map[string]any{"tool": "flow_preview", "status": "completed", "result": preview}, modeStatePhasePlanning)})
-			s.sendModeState(conn, sessionID, execMode, modeStatePhaseCompleted)
-			return
-		}
-		s.sendTaskRunningChanged(conn, sessionID, true)
-		state, err := s.runDirectFlow(ctx, flowContext, *flowRequest)
-		if err != nil {
-			s.sendSessionError(conn, sessionID, err.Error())
-			s.markSessionRuntimeFinished(sessionID, sessionRuntimeStatusFailed, err.Error())
-		}
-		keepRunningState = state != nil && !flowrun.IsTerminal(state.Status)
+	input, err := s.injectCartographicRules(ctx, injectRuntimeExecutionMode(sess.GetMessages(), execMode, thinkingEnabled), flowContext.Scheme, sessionID)
+	if err != nil {
+		s.sendSessionError(conn, sessionID, err.Error())
+		s.markSessionRuntimeFinished(sessionID, sessionRuntimeStatusFailed, err.Error())
 		return
 	}
 
 	switch execMode {
 	case executionModePlan:
-		input := s.injectAvailableFlows(ctx, injectRuntimeExecutionMode(sess.GetMessages(), executionModePlan, thinkingEnabled), flowContext.Scheme)
 		runtimeAgent := s.getModeAgentWithWarning(conn, sessionID, executionModePlan)
 		if runtimeAgent == nil {
 			s.sendModeState(conn, sessionID, execMode, modeStatePhaseCompleted)
@@ -428,7 +413,6 @@ func (s *DeepServer) processTask(ctx context.Context, conn *websocket.Conn, msg 
 		return
 
 	case executionModeBuild:
-		buildInput := s.injectAvailableFlows(ctx, injectRuntimeExecutionMode(sess.GetMessages(), executionModeBuild, thinkingEnabled), flowContext.Scheme)
 		buildAgent := s.getModeAgentWithWarning(conn, sessionID, executionModeBuild)
 		if buildAgent == nil {
 			s.sendModeState(conn, sessionID, execMode, modeStatePhaseCompleted)
@@ -436,7 +420,7 @@ func (s *DeepServer) processTask(ctx context.Context, conn *websocket.Conn, msg 
 		}
 		s.sendTaskRunningChanged(conn, sessionID, true)
 		s.sendModeState(conn, sessionID, execMode, modeStatePhaseBuilding)
-		result := s.runAgentPhase(ctx, conn, sessionID, projectPath, boundInstanceID, sess, buildAgent, buildInput, consumeEventsOptions{
+		result := s.runAgentPhase(ctx, conn, sessionID, projectPath, boundInstanceID, sess, buildAgent, input, consumeEventsOptions{
 			runID:             runID,
 			titleSeed:         msg.Content,
 			emitFinalResponse: true,
@@ -447,8 +431,8 @@ func (s *DeepServer) processTask(ctx context.Context, conn *websocket.Conn, msg 
 		if ctx.Err() != nil || errors.Is(result.Err, context.Canceled) {
 			return
 		}
-		if result.Err == nil && !result.Interrupted && s.hasPendingFlow(sessionID) {
-			state, err := s.startPendingFlow(ctx, sessionID)
+		if result.Err == nil && !result.Interrupted && s.hasPendingCartographicPlan(sessionID) {
+			state, err := s.startPendingCartographicPlan(ctx, sessionID)
 			if err != nil {
 				s.sendSessionError(conn, sessionID, err.Error())
 				s.markSessionRuntimeFinished(sessionID, sessionRuntimeStatusFailed, err.Error())
@@ -539,6 +523,13 @@ func (s *DeepServer) consumeEvents(
 		if event.Output != nil && event.Output.MessageOutput != nil {
 			mv := event.Output.MessageOutput
 			if mv.Message != nil {
+				if info, ok := mv.Message.Extra["knowledge_review_update"].(map[string]any); ok && stringValue(info["review_id"]) != "" {
+					data := withModePhaseData(knowledgeReviewUpdateData(sess, info, checkpointID), options.modePhase)
+					upsertKnowledgeReviewCard(sess, data)
+					s.sendSessionMessage(conn, Message{Type: "knowledge_review_update", SessionID: sessionID, Agent: event.AgentName, Content: knowledgeReviewInterruptSummary(info), Data: data})
+					s.persistManagedSessionState(sessionID, projectPath, options.executionMode)
+					continue // Application state is neither assistant prose nor model output JSON.
+				}
 				if !mv.IsStreaming && !isRuntimeProgressMessage(mv.Message) {
 					lastContent = summarizeSchemaMessageContent(mv.Message)
 				}
@@ -807,6 +798,17 @@ func (s *DeepServer) consumeEvents(
 	if options.flowRunID != "" {
 		lastContent = lastAssistant
 	}
+	for _, executed := range result.SuccessfulTools {
+		if executed.Name == runtimecontrol.ToolPlanPropose || executed.Name == runtimecontrol.ToolPlanRevise {
+			var receipt struct {
+				Accepted bool `json:"accepted"`
+			}
+			if json.Unmarshal([]byte(executed.Result), &receipt) == nil && receipt.Accepted {
+				// The plan card is the accepted result; do not save its tool receipt as prose.
+				lastContent = ""
+			}
+		}
+	}
 	logger.Info("事件循环结束，准备保存会话历史...")
 	if options.persistAssistant && lastContent != "" {
 		assistantMsg := schema.AssistantMessage(lastContent, nil)
@@ -816,7 +818,7 @@ func (s *DeepServer) consumeEvents(
 		sess.AddMessage(assistantMsg)
 	}
 
-	if options.emitFinalResponse && options.flowRunID == "" && !s.hasPendingFlow(sessionID) {
+	if options.emitFinalResponse && lastContent != "" && options.flowRunID == "" && !s.hasPendingCartographicPlan(sessionID) {
 		s.sendSessionMessage(conn, Message{
 			Type:      MsgTypeResponse,
 			SessionID: sessionID,
@@ -825,7 +827,7 @@ func (s *DeepServer) consumeEvents(
 		})
 	}
 
-	if options.flowRunID == "" && !s.hasPendingFlow(sessionID) {
+	if options.flowRunID == "" && !s.hasPendingCartographicPlan(sessionID) {
 		s.markSessionRuntimeFinished(sessionID, sessionRuntimeStatusCompleted, "")
 	}
 	s.persistManagedSessionState(sessionID, projectPath, options.executionMode)
@@ -1053,6 +1055,14 @@ func (s *DeepServer) resumeTask(ctx context.Context, conn *websocket.Conn, pendi
 		return
 	}
 	ctx = withRunResourceSnapshot(ctx, snapshot)
+	ctx, checkErr = withRunAcquisitionSnapshot(ctx, snapshot)
+	if checkErr != nil {
+		s.setPendingInterrupt(conn, pending.SessionID, pending)
+		s.markSessionRuntimeInterrupted(pending.SessionID, pending.CheckpointID)
+		s.sendTaskRunningChanged(conn, pending.SessionID, false)
+		s.sendSessionError(conn, pending.SessionID, checkErr.Error())
+		return
+	}
 	keepRunningState := false
 	s.sendTaskRunningChanged(conn, pending.SessionID, true)
 
@@ -1073,10 +1083,12 @@ func (s *DeepServer) resumeTask(ctx context.Context, conn *websocket.Conn, pendi
 
 	logger.Info("恢复任务执行: checkpoint=%s, targets=%d", pending.CheckpointID, len(targets))
 	resumeCtx := withToolSessionContext(ctx, pending.SessionID, pending.ProjectPath, pending.BoundInstanceID)
+	resumeCtx = s.withMaterialProgress(resumeCtx, conn, pending.SessionID, pending.ModePhase)
+	resumeCtx = toolsession.WithFlowStep(resumeCtx, pending.FlowOptions.flowRunID, pending.FlowOptions.flowStepID)
 	resumeCtx = s.withGEEProgress(resumeCtx, conn, pending.SessionID, pending.ModePhase)
 	resumeCtx = s.withOSMProgress(resumeCtx, conn, pending.SessionID, pending.ModePhase)
 	resumeCtx = deepagent.WithKnowledgeReview(resumeCtx, s.KnowledgeReviewStore())
-	resumeCtx = s.withFlowService(resumeCtx, pending.SessionID)
+	resumeCtx = s.withDataService(s.withPlanService(resumeCtx, pending.SessionID), pending.SessionID)
 	if pending.FlowOptions.originalSource != nil {
 		resumeCtx = knowledge.WithOriginalSource(resumeCtx, *pending.FlowOptions.originalSource)
 	}
@@ -1113,8 +1125,8 @@ func (s *DeepServer) resumeTask(ctx context.Context, conn *websocket.Conn, pendi
 	options.modePhase = strings.TrimSpace(pending.ModePhase)
 	resumeResult := s.consumeEvents(resumeCtx, conn, iter, pending.Runner, pending.CheckpointID, pending.SessionID, pending.ProjectPath, pending.Session, options)
 	s.finishFlowResume(resumeCtx, pending, resumeResult)
-	if pending.FlowOptions.flowRunID == "" && resumeResult.Err == nil && !resumeResult.Interrupted && s.hasPendingFlow(pending.SessionID) {
-		state, err := s.startPendingFlow(resumeCtx, pending.SessionID)
+	if pending.FlowOptions.flowRunID == "" && resumeResult.Err == nil && !resumeResult.Interrupted && s.hasPendingCartographicPlan(pending.SessionID) {
+		state, err := s.startPendingCartographicPlan(resumeCtx, pending.SessionID)
 		if err != nil {
 			s.sendSessionError(conn, pending.SessionID, err.Error())
 		}
@@ -1260,6 +1272,9 @@ func (s *DeepServer) failSessionBeforeAgentRun(conn *websocket.Conn, sessionID s
 }
 
 func (s *DeepServer) runtimeUnavailableMessage(modeLabel string) string {
+	if reason := s.runtimeBuildError(); reason != "" {
+		return fmt.Sprintf("%s 模式不可用：%s", modeLabel, reason)
+	}
 	rebuildConfig := s.agentRebuildConfigSnapshot()
 	if rebuildConfig == nil || rebuildConfig.ChatModel != nil {
 		return ""

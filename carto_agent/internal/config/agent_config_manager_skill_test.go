@@ -240,11 +240,8 @@ runtime:
 	}
 
 	planRefs := acm.FindSkillReferences("plan-skill")
-	if len(planRefs) != 1 {
-		t.Fatalf("expected 1 reference for plan-skill, got %d", len(planRefs))
-	}
-	if planRefs[0].Layer != "plan/agent" {
-		t.Fatalf("unexpected plan reference layer: %s", planRefs[0].Layer)
+	if len(planRefs) != 0 {
+		t.Fatalf("removed independent planner must not retain skill references: %+v", planRefs)
 	}
 
 	noneRefs := acm.FindSkillReferences("missing-skill")
@@ -354,9 +351,11 @@ plan:
 	assertLayer("global-workflow", "runtime/global", "legacy_unresolved_packages")
 	assertLayer("private-category", "runtime/agent", "legacy_unresolved_packages")
 	assertLayer("share-workflow", "runtime/agent", "legacy_unresolved_packages")
-	assertLayer("plan-global-category", "plan/global", "legacy_unresolved_packages")
-	assertLayer("plan-private-workflow", "plan/agent", "legacy_unresolved_packages")
-	assertLayer("plan-share-workflow", "plan/agent", "legacy_unresolved_packages")
+	for _, name := range []string{"plan-global-category", "plan-private-workflow", "plan-share-workflow"} {
+		if refs := acm.FindSkillReferences(name); len(refs) != 0 {
+			t.Fatalf("removed planner reference %s: %+v", name, refs)
+		}
+	}
 }
 
 func TestGetActiveToolCatalogIncludesCategorySkillTools(t *testing.T) {

@@ -102,7 +102,7 @@ func (s *DeepServer) GetRuntimeActiveConfigName() string {
 	return strings.TrimSpace(s.agentConfigManager.GetActiveConfigName())
 }
 
-// GetRuntimeModeIssues 返回当前运行时记录的模式可用性问题。
+// GetRuntimeModeIssues 返回当前模式的实际可用性问题，包括尚未创建出 agent 的情况。
 func (s *DeepServer) GetRuntimeModeIssues() map[string]api.SettingsModeIssue {
 	if s == nil {
 		return nil
@@ -110,18 +110,37 @@ func (s *DeepServer) GetRuntimeModeIssues() map[string]api.SettingsModeIssue {
 	s.mu.Lock()
 	runtime := s.runtime
 	s.mu.Unlock()
-	if runtime == nil || len(runtime.ModeIssues) == 0 {
-		return nil
+	result := make(map[string]api.SettingsModeIssue)
+	if runtime != nil {
+		for mode, issue := range runtime.ModeIssues {
+			if strings.TrimSpace(mode) == "" || (strings.TrimSpace(issue.Code) == "" && strings.TrimSpace(issue.Message) == "") {
+				continue
+			}
+			result[mode] = api.SettingsModeIssue{
+				Code:    strings.TrimSpace(issue.Code),
+				Message: strings.TrimSpace(issue.Message),
+			}
+		}
 	}
-	result := make(map[string]api.SettingsModeIssue, len(runtime.ModeIssues))
-	for mode, issue := range runtime.ModeIssues {
-		if strings.TrimSpace(mode) == "" {
+	for _, mode := range []executionMode{executionModeBuild, executionModePlan} {
+		if mode == executionModePlan && !s.planEnabledForSnapshot() {
 			continue
 		}
-		result[mode] = api.SettingsModeIssue{
-			Code:    strings.TrimSpace(issue.Code),
-			Message: strings.TrimSpace(issue.Message),
+		if _, exists := result[string(mode)]; exists {
+			continue
 		}
+		if agent, _ := s.getAgentWithFallback(mode); agent != nil {
+			continue
+		}
+		label := "Build"
+		if mode == executionModePlan {
+			label = "Plan"
+		}
+		message := s.runtimeUnavailableMessage(label)
+		if message == "" {
+			message = fmt.Sprintf("%s 模式不可用：智能体未初始化。", label)
+		}
+		result[string(mode)] = api.SettingsModeIssue{Code: ErrorCodeAgentUnavailable, Message: message}
 	}
 	if len(result) == 0 {
 		return nil

@@ -1,0 +1,96 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: data_find
+  display_name: 查找数据来源
+  domain: data-service
+  runtime: internal
+spec:
+  description: 只读本地查询数据来源，按用户提供、会话、工程、记忆、数据仓、本机、离线、官方、开放下载、在线查询排序；不联网不调用模型。只在没有可用来源且允许时提出兜底建议。
+  parameters:
+  - name: need
+    type: object
+    required: true
+    description: 数据需求对象。what必须是对象，category与description至少填写一项，也可同时填写；同时填写时按category确定类别，description保留补充说明，例如 {"category":"河流","description":"线状河流，需要河名"}。不能填写字符串或数字；数据清单模式已移除。
+    schema:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 本次数据名称
+        what:
+          type: object
+          properties:
+            description:
+              type: string
+              description: 需要的数据含义或对已选类别的补充说明，例如线状河流，需要河名；不是流程文档。可与category同时填写。
+            category:
+              type: string
+              description: 已知类别名称或类别编号。与description同时填写时以本字段确定类别；类别无效时会提示更正，不根据description静默替换。
+          additionalProperties: false
+          anyOf:
+          - required:
+            - description
+          - required:
+            - category
+        geometry:
+          type: string
+          enum:
+          - point
+          - line
+          - polygon
+          - raster
+          - table
+        extent:
+          type: string
+          description: 区域、bbox南西北东、已知文件或图层；尚未确定可省略
+        scale:
+          type: string
+          description: auto或比例尺
+        fields:
+          type: object
+          additionalProperties:
+            type: string
+        params:
+          type: object
+          description: 类别所需的附加参数，键和值由数据类别目录定义。缺失或不合法时，按返回的diagnostics.parameters中的path、required、allowed_values补齐；不要猜测默认值或更换已识别的类别。
+          additionalProperties:
+            type: string
+      additionalProperties: false
+      required:
+      - name
+      - what
+  - name: guide
+    type: string
+    required: false
+    description: 当前流程编号，用于来源记忆；不从流程解析数据清单。
+  - name: include_fallback
+    type: boolean
+    required: false
+    description: 建议设为true，在没有确定性来源时列出实际可用的探索途径；可沿用本次find_id写入计划，无须先下载或重复查询。
+  - name: provided
+    type: array
+    description: 用户明确给出的文件或文件夹路径；读取本机头部匹配，不联网，不写入原目录。
+    schema:
+      type: array
+      items:
+        type: string
+  examples:
+  - description: 查询河流并优先匹配用户文件夹
+    args:
+      need:
+        name: 河流线
+        what:
+          category: 河流
+          description: 线状河流，需要河名
+        geometry: line
+        extent: 用户指定的区域
+      provided:
+      - 用户消息中的实际文件夹路径
+execution:
+  backend_tool: data_find
+  param_mapping:
+    need: '{{ need }}'
+    guide: '{{ guide }}'
+    include_fallback: '{{ include_fallback }}'
+    provided: '{{ provided }}'

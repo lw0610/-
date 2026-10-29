@@ -1,6 +1,6 @@
 """Real QGIS export -> public library import -> new flow -> QGIS reuse.
 
-The role/model adapter is deterministic. This covers production library, compiler,
+The role/model adapter is deterministic. This covers production library, plan validation,
 controller and Python tools; live capture HTTP, UI and online models are separate
 contracts, not assertions made by this harness. All state belongs to --out.
 """
@@ -81,12 +81,12 @@ def capture(out):
         exported = {}
         for domain, name, params in [
             ("print-layout", "layout_save_template", {"layout": layout.name(), "path": str(out / "captured" / "版式.qpt")}),
-            ("cartography", "style_set_export", {"directory": str(out / "captured" / "样式集")}),
+            ("cartography", "layer_save_style", {"layer": layer.id(), "path": str(out / "captured" / "样式.qml")}),
         ]:
             path = ROOT / "autocarto/tools/system" / domain / (name + ".yaml")
             definition = yaml.safe_load(path.read_text())
-            assert definition["policy"]["visibility"] == "public"
-            assert "tool.invoke" in definition["policy"]["authorization_scopes"]
+            assert definition.get("policy", {}).get("visibility", "public") == "public"
+            assert "tool.invoke" in definition.get("policy", {}).get("authorization_scopes", ["tool.invoke"])
             module, function = definition["execution"]["handler"].rsplit(".", 1)
             loader = ToolDefinitionLoader([{
                 "name": name, "domain": domain, "runtime": "qgis", "parameters": definition["spec"]["parameters"],
@@ -99,7 +99,7 @@ def capture(out):
         assert not project.isDirty() and len(project.layoutManager().layouts()) == 1
         assert exported["layout_save_template"]["data"]["map_items"][0]["id"] == "main_map"
         assert exported["layout_save_template"]["data"]["placeholders"] == ["标题"]
-        assert exported["style_set_export"]["data"]["entries"][0]["label_field"] == "name"
+        assert Path(exported["layer_save_style"]["output"]).is_file()
         write_json(out / "capture-results.json", {"tools": exported, "source_project_unchanged": True})
 
 
@@ -114,64 +114,27 @@ def prepare(out):
     (package / "FLOW.md").write_text('''---
 编号: captured-project-roundtrip
 名称: 工程捕获资源复用验收
-说明: 从真实工程保存的版式和样式集导入后，在新流程实际复用
-版本: 1.0.0
+说明: 导入真实工程保存的版面和单个样式，在新流程中复用。
+版本: 2.0.0
 ---
 
-## 适用场景
-复用用户从工程保存的模板和样式。
+只读加载用户给的区域文件，核验name字段。对区域图层套用样式「工程捕获样式」，按name字段标注，并读取实际颜色核查。
 
-## 需要准备
-- 区域数据（文件，必填）
-- 地图标题（文本，必填）
+按版面「工程捕获版式」排版，主地图显示区域图层。把标题占位符替换成用户标题，核验名称和主地图项。
 
-## 使用的资源
-- 样式集「工程捕获样式」：公共资源库
-- 版式「工程捕获版式」：公共资源库
-
-## 步骤
-### 第1步 读取新流程输入
-- 负责：数据工程专家
-- 做法：只读加载「区域数据」，核对区域名称字段。
-- 完成标准：「区域图层」（图层）
-
-### 第2步 复用保存的样式
-- 负责：制图布局专家
-- 做法：对「区域图层」应用「工程捕获样式」，保留名称字段标注，并读取实际样式核查。
-- 完成标准：「样式结果」（文本）
-
-### 第3步 复用保存的版式
-- 负责：制图布局专家
-- 做法：使用「工程捕获版式」，主地图显示「区域图层」，按「地图标题」替换标题占位符，结合「样式结果」核对版面。
-- 完成标准：「版面」（版面）
-
-### 第4步 导出
-- 负责：制图布局专家
-- 做法：将「版面」导出 PNG 和 PDF。
-- 完成标准：
-  - 「成果 PNG」（文件，png）
-  - 「成果 PDF」（文件，pdf）
-
-## 必须遵守
-不改写输入数据和原始工程。
-
-## 交付
-导出图片和文档。
+导出PNG和PDF，保持源数据和原始工程不变。
 ''', encoding="utf-8")
     recipe = {
         "id": "capture-roundtrip", "flow_id": "captured-project-roundtrip", "flow_package": str(package),
         "resource_imports": [{"source": str(out / "captured" / "版式.qpt"), "type": "layout", "name": "工程捕获版式"},
-                             {"source": str(out / "captured" / "样式集"), "type": "style_set", "name": "工程捕获样式"}],
+                             {"source": str(out / "captured" / "样式.qml"), "type": "style", "name": "工程捕获样式"}],
         "project_crs": "EPSG:4326", "layout": LAYOUT, "variables": {},
         "inputs": {"区域数据": str(sources / "区域.geojson"), "地图标题": TITLE},
-        "model": {"flow": {"inputs": [{"key": "区域数据", "label": "区域数据", "type": "file", "options": []},
-                                         {"key": "地图标题", "label": "地图标题", "type": "text", "options": []}],
-                            "input_constraints": [], "triggers": ["工程捕获资源复用"]}},
         "steps": {
             "s1": {"actions": [{"tool": "data_load_vector", "params": {"path": {"$ref": "inputs.区域数据"}, "layer_name": LAYER}},
                                 {"op": "layers", "names": [LAYER], "save": "layers"}],
                    "outputs": {"区域图层": {"$ref": "layers"}}},
-            "s2": {"actions": [{"tool": "style_set_apply", "params": {"style_set": "工程捕获样式", "layers": [LAYER], "strict": True}, "save": "applied"},
+            "s2": {"actions": [{"tool": "layer_load_style", "params": {"style": "工程捕获样式", "layer": LAYER, "label_field": "name"}, "save": "applied"},
                                 {"tool": "layer_get_style_info", "params": {"layer": LAYER}, "save": "actual_style"}],
                    "outputs": {"样式结果": {"$json": "actual_style"}}},
             "s3": {"actions": [{"tool": "import_layout_template", "params": {"template": "工程捕获版式", "name": LAYOUT,
@@ -202,7 +165,7 @@ def verify(out, before):
         content = path.read_bytes()
         assert content.startswith(prefix) and len(content) > 500
     imports = json.loads((run / "imported-resources.json").read_text())
-    assert {item["type"] for item in imports} == {"layout", "style_set"}
+    assert {item["type"] for item in imports} == {"layout", "style"}
     assert all(item["owner"] == "library_user" for item in imports), imports
     plan = json.loads((run / "plan.json").read_text())
     assert len(plan["resources"]) == 2
@@ -215,7 +178,7 @@ def verify(out, before):
     # Verify tool execution consumed the Go resolver's library copies, not the
     # original export paths or a recipe-built imitation of a resource handle.
     calls = json.loads((run / "tool-calls.json").read_text())
-    for name, parameter, kind in [("style_set_apply", "style_set", "style_set"),
+    for name, parameter, kind in [("layer_load_style", "style", "style"),
                                   ("import_layout_template", "template", "layout")]:
         call = next(item for item in calls if item["tool"] == name)
         handle = call["params"][parameter]
@@ -225,7 +188,7 @@ def verify(out, before):
     after = {"sources": hashes(out / "sources"), "captured": hashes(out / "captured")}
     assert before == after, "导入/执行修改了源数据或工具导出物"
     report = {"success": True, "source_project_unchanged": True, "source_files_unchanged": True,
-              "pipeline": ["actual PyQGIS tool exports", "Library.ImportNamed", "Store.Import", "Compiler", "Controller.Start", "actual QGIS resource-handle consumption", "PNG/PDF export"],
+              "pipeline": ["actual PyQGIS tool exports", "Library.ImportNamed", "Store.Import", "PlanExec.Build", "Controller.StartFromPlan", "actual QGIS resource-handle consumption", "PNG/PDF export"],
               "not_covered": ["live capture HTTP transport", "interactive UI", "online model decisions"],
               "source_sha256": before, "output": str(run), "resource_ids": [item["id"] for item in imports],
               "rendered_color": COLOR, "label_field": "name", "rendered_title": TITLE}

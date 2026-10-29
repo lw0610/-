@@ -32,11 +32,14 @@ func TestBuildRuntimeHandlersWithoutProviderConfig(t *testing.T) {
 		t.Fatalf("buildRuntimeHandlers() error = %v", err)
 	}
 
-	if len(handlers) != 1 {
-		t.Fatalf("expected 1 handler, got %d", len(handlers))
+	if len(handlers) != 2 {
+		t.Fatalf("expected 2 handlers, got %d", len(handlers))
 	}
 	if got := handlerTypeName(handlers[0]); !strings.Contains(got, "patchtoolcalls") {
 		t.Fatalf("expected patchtoolcalls handler, got %s", got)
+	}
+	if got := handlerTypeName(handlers[1]); !strings.Contains(got, "taskMaterialsMiddleware") {
+		t.Fatalf("expected task materials handler, got %s", got)
 	}
 }
 
@@ -51,8 +54,8 @@ func TestBuildRuntimeHandlersWithSummarization(t *testing.T) {
 		t.Fatalf("buildRuntimeHandlers() error = %v", err)
 	}
 
-	if len(handlers) != 2 {
-		t.Fatalf("expected 2 handlers, got %d", len(handlers))
+	if len(handlers) != 3 {
+		t.Fatalf("expected 3 handlers, got %d", len(handlers))
 	}
 	if got := handlerTypeName(handlers[0]); !strings.Contains(got, "patchtoolcalls") {
 		t.Fatalf("expected patchtoolcalls handler, got %s", got)
@@ -73,8 +76,8 @@ func TestBuildRuntimeHandlersWithUnsupportedStrategy(t *testing.T) {
 		t.Fatalf("buildRuntimeHandlers() error = %v", err)
 	}
 
-	if len(handlers) != 1 {
-		t.Fatalf("expected 1 handler, got %d", len(handlers))
+	if len(handlers) != 2 {
+		t.Fatalf("expected 2 handlers, got %d", len(handlers))
 	}
 	if got := handlerTypeName(handlers[0]); !strings.Contains(got, "patchtoolcalls") {
 		t.Fatalf("expected patchtoolcalls handler, got %s", got)
@@ -101,8 +104,8 @@ func TestBuildRuntimeHandlersWithReductionStrategies(t *testing.T) {
 			if err != nil {
 				t.Fatalf("buildRuntimeHandlers() error = %v", err)
 			}
-			if len(handlers) != 2 {
-				t.Fatalf("expected 2 handlers, got %d", len(handlers))
+			if len(handlers) != 3 {
+				t.Fatalf("expected 3 handlers, got %d", len(handlers))
 			}
 			if got := handlerTypeName(handlers[0]); !strings.Contains(got, "patchtoolcalls") {
 				t.Fatalf("expected patchtoolcalls handler, got %s", got)
@@ -128,8 +131,8 @@ func TestBuildRuntimeHandlersWithReductionOffloadFilesystem(t *testing.T) {
 		t.Fatalf("buildRuntimeHandlers() error = %v", err)
 	}
 
-	if len(handlers) != 3 {
-		t.Fatalf("expected 3 handlers, got %d", len(handlers))
+	if len(handlers) != 4 {
+		t.Fatalf("expected 4 handlers, got %d", len(handlers))
 	}
 	if got := handlerTypeName(handlers[1]); !strings.Contains(got, "filesystem") {
 		t.Fatalf("expected filesystem handler, got %s", got)

@@ -104,7 +104,13 @@ func TestRejectInvalidUserCatalog(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(loaded.Sources) != 10 || len(loaded.Diagnostics) != 1 || loaded.Diagnostics[0].Code != "DS_ID_CONFLICT" {
+	errors := []Diagnostic{}
+	for _, diagnostic := range loaded.Diagnostics {
+		if diagnostic.Level == "error" {
+			errors = append(errors, diagnostic)
+		}
+	}
+	if len(loaded.Sources) != 10 || len(errors) != 1 || errors[0].Code != "DS_ID_CONFLICT" {
 		t.Fatalf("%+v", loaded.Diagnostics)
 	}
 }

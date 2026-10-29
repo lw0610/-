@@ -95,9 +95,12 @@ type DecisionResult struct {
 
 // RequestOutput hitl_request 恢复后的输出。
 type RequestOutput struct {
+	// Approved records a submitted response, not permission for an operation.
+	// Permission callers must use IsSelected or IsConfirmed on the exact answer.
 	Approved  bool                      `json:"approved"`
 	Type      string                    `json:"type,omitempty"`
 	UserData  any                       `json:"user_data,omitempty"`
+	Answer    *DecisionResult           `json:"answer,omitempty"`
 	Decisions map[string]DecisionResult `json:"decisions,omitempty"`
 }
 
@@ -138,8 +141,10 @@ func Invoke(ctx context.Context, args map[string]any) (RequestOutput, error) {
 }
 
 func runRequestTool(ctx context.Context, input RequestInput) (RequestOutput, error) {
-	info := normalizeRequestInfo(input)
+	return requestResponse(ctx, normalizeRequestInfo(input))
+}
 
+func requestResponse(ctx context.Context, info InterruptPayload) (RequestOutput, error) {
 	wasInterrupted, _, _ := einotool.GetInterruptState[any](ctx)
 	if !wasInterrupted {
 		return RequestOutput{}, einotool.Interrupt(ctx, info)
@@ -151,15 +156,7 @@ func runRequestTool(ctx context.Context, input RequestInput) (RequestOutput, err
 		return RequestOutput{}, einotool.Interrupt(ctx, info)
 	}
 
-	out := RequestOutput{
-		Approved: true,
-		Type:     normalizeInterruptType(input.Type),
-	}
-	if hasData {
-		out.UserData = data
-		out.Decisions = extractDecisionResults(data)
-	}
-	return out, nil
+	return normalizeResponse(info, hasData, data), nil
 }
 
 func normalizeRequestInfo(input RequestInput) InterruptPayload {
@@ -340,188 +337,6 @@ func normalizeStringSlice(raw []string) []string {
 		result = append(result, trimmed)
 	}
 	return result
-}
-
-func extractDecisionResults(raw any) map[string]DecisionResult {
-	if raw == nil {
-		return nil
-	}
-
-	if typed, ok := raw.(map[string]DecisionResult); ok {
-		if result := normalizeDecisionResultsMap(typed, true); len(result) > 0 {
-			return result
-		}
-	}
-
-	record, ok := raw.(map[string]any)
-	if !ok {
-		return nil
-	}
-
-	if nested, ok := record["decisions"]; ok {
-		if result := normalizeDecisionResultsMap(nested, true); len(result) > 0 {
-			return result
-		}
-	}
-
-	return normalizeDecisionResultsMap(record, false)
-}
-
-func normalizeDecisionResultsMap(raw any, allowPrimitive bool) map[string]DecisionResult {
-	if raw == nil {
-		return nil
-	}
-
-	if typed, ok := raw.(map[string]DecisionResult); ok {
-		if len(typed) == 0 {
-			return nil
-		}
-		result := make(map[string]DecisionResult, len(typed))
-		for id, value := range typed {
-			trimmedID := strings.TrimSpace(id)
-			if trimmedID == "" {
-				continue
-			}
-			result[trimmedID] = value
-		}
-		if len(result) == 0 {
-			return nil
-		}
-		return result
-	}
-
-	record, ok := raw.(map[string]any)
-	if !ok {
-		return nil
-	}
-
-	result := make(map[string]DecisionResult)
-	for rawID, value := range record {
-		id := strings.TrimSpace(rawID)
-		if id == "" {
-			continue
-		}
-		parsed, ok := parseDecisionResult(value, allowPrimitive)
-		if !ok {
-			continue
-		}
-		result[id] = parsed
-	}
-
-	if len(result) == 0 {
-		return nil
-	}
-	return result
-}
-
-func parseDecisionResult(raw any, allowPrimitive bool) (DecisionResult, bool) {
-	if raw == nil {
-		return DecisionResult{}, false
-	}
-
-	record, ok := raw.(map[string]any)
-	if ok {
-		result := DecisionResult{}
-		if selected := normalizeAnyStringSlice(record["selected"]); len(selected) > 0 {
-			result.Selected = selected
-		} else if selected := normalizeAnyStringSlice(record["options"]); len(selected) > 0 {
-			result.Selected = selected
-		} else if option := strings.TrimSpace(toString(record["option"])); option != "" {
-			result.Selected = []string{option}
-		}
-
-		if text := strings.TrimSpace(toString(firstNonNil(record["text"], record["input"]))); text != "" {
-			result.Text = text
-		}
-		if note := strings.TrimSpace(toString(record["note"])); note != "" {
-			result.Note = note
-		}
-
-		if confirmed, ok := record["confirmed"].(bool); ok {
-			result.Confirmed = &confirmed
-		}
-
-		if len(result.Selected) == 0 && result.Text == "" && result.Note == "" && result.Confirmed == nil {
-			return DecisionResult{}, false
-		}
-		return result, true
-	}
-
-	if !allowPrimitive {
-		return DecisionResult{}, false
-	}
-
-	switch value := raw.(type) {
-	case string:
-		trimmed := strings.TrimSpace(value)
-		if trimmed == "" {
-			return DecisionResult{}, false
-		}
-		return DecisionResult{Selected: []string{trimmed}}, true
-	case []string:
-		selected := normalizeAnyStringSlice(value)
-		if len(selected) == 0 {
-			return DecisionResult{}, false
-		}
-		return DecisionResult{Selected: selected}, true
-	case []any:
-		selected := normalizeAnyStringSlice(value)
-		if len(selected) == 0 {
-			return DecisionResult{}, false
-		}
-		return DecisionResult{Selected: selected}, true
-	case bool:
-		confirmed := value
-		return DecisionResult{Confirmed: &confirmed}, true
-	default:
-		return DecisionResult{}, false
-	}
-}
-
-func normalizeAnyStringSlice(raw any) []string {
-	if raw == nil {
-		return nil
-	}
-
-	values := make([]string, 0)
-	switch input := raw.(type) {
-	case string:
-		if trimmed := strings.TrimSpace(input); trimmed != "" {
-			values = append(values, trimmed)
-		}
-	case []string:
-		values = append(values, input...)
-	case []any:
-		for _, item := range input {
-			if text := strings.TrimSpace(toString(item)); text != "" {
-				values = append(values, text)
-			}
-		}
-	}
-
-	if len(values) == 0 {
-		return nil
-	}
-	return normalizeStringSlice(values)
-}
-
-func toString(value any) string {
-	if value == nil {
-		return ""
-	}
-	if text, ok := value.(string); ok {
-		return text
-	}
-	return fmt.Sprintf("%v", value)
-}
-
-func firstNonNil(values ...any) any {
-	for _, value := range values {
-		if value != nil {
-			return value
-		}
-	}
-	return nil
 }
 
 func normalizeInterruptType(raw string) string {

@@ -12,7 +12,7 @@ spec:
   - name: INPUT
     type: layer
     required: true
-    description: 输入图层
+    description: 输入图层 ID 或唯一名称；优先使用上一步返回的 layer_id
   - name: FIELD_NAME
     type: string
     required: true

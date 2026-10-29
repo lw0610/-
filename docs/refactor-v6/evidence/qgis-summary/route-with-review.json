@@ -1,0 +1,23 @@
+{
+  "scenario": "route-with-review",
+  "status": "completed",
+  "inputs_unchanged": true,
+  "steps": 9,
+  "output_files": [
+    "preview.png",
+    "project.qgz",
+    "exports/初版.png",
+    "exports/固定路线数据回归样例.pdf",
+    "exports/初版_quality_20261027T174348Z_7370a37a_original.png",
+    "exports/初版_quality_20261027T174348Z_7370a37a_final.png"
+  ],
+  "golden": {
+    "success": true,
+    "differences": [],
+    "preview": {
+      "algorithm": "dhash64",
+      "distance": 1,
+      "diagnostic_only": true
+    }
+  }
+}

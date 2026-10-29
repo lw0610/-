@@ -6,7 +6,7 @@ import EntityEditors from './EntityEditors'
 import RouteEditor from './RouteEditor'
 import CalloutEditor from './CalloutEditor'
 import { isDesktopRuntime } from '@/lib/config-form-helpers'
-import { buttonClass, createItem, editable, itemId, itemOptions, items, issueLabel, label, referencesTo, reviewGroups, statusLabel, tabs, tabsByGroup, unlocatedPlaces, unlocatedReferences, updateItem, visibleItems, type GraphItem, type ReviewGroup, type ReviewTab } from './model'
+import { buttonClass, createItem, editable, hasExtractedContent, itemId, itemOptions, items, issueLabel, label, referencesTo, reviewGroups, statusLabel, tabs, tabsByGroup, unlocatedPlaces, unlocatedReferences, updateItem, visibleItems, type GraphItem, type ReviewGroup, type ReviewTab } from './model'
 import type { KnowledgeReviewController } from './useKnowledgeReview'
 
 export default function KnowledgeReviewDialog({ controller: c }: { controller: KnowledgeReviewController }) {
@@ -284,7 +284,7 @@ export default function KnowledgeReviewDialog({ controller: c }: { controller: K
             >取消</button>
             {c.confirmOpen ? <button
               className={`${buttonClass} border-blue-400 text-blue-700`}
-              disabled={busy || !canEdit || c.dirty}
+              disabled={busy || !canEdit || c.dirty || !c.document || !hasExtractedContent(c.document.graph)}
               onClick={() => void c.confirm()}
             >
               {c.confirming ? '提交中…' : '开始制图'}

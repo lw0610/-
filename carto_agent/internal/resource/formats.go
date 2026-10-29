@@ -13,6 +13,11 @@ import (
 //go:embed formats/resource_formats.yaml
 var resourceFormatsYAML []byte
 
+// Legacy formats are retained solely for reading migration inputs and old run snapshots.
+//
+//go:embed formats/legacy_formats.yaml
+var legacyFormatsYAML []byte
+
 type ColumnFormat struct {
 	Key              string            `yaml:"key" json:"key"`
 	Aliases          []string          `yaml:"aliases" json:"aliases"`
@@ -68,6 +73,22 @@ type FormatSet struct {
 }
 
 var formatSet = loadFormats()
+var legacyFormatSet = loadLegacyFormats()
+
+func loadLegacyFormats() *FormatSet {
+	var set FormatSet
+	if err := yaml.Unmarshal(legacyFormatsYAML, &set); err != nil {
+		panic(err)
+	}
+	for name, typ := range set.Types {
+		typ.Type = name
+		for _, f := range typ.Formats {
+			typ.EntryExtensions = append(typ.EntryExtensions, f.Suffix)
+		}
+		set.Types[name] = typ
+	}
+	return &set
+}
 
 func loadFormats() *FormatSet {
 	var set FormatSet
@@ -91,7 +112,7 @@ func loadFormats() *FormatSet {
 	return &set
 }
 func validateFormats(set *FormatSet) error {
-	if set.APIVersion != "resource-formats/v1" || len(set.Types) != 8 {
+	if set.APIVersion != "resource-formats/v1" || len(set.Types) != 2 {
 		return fmt.Errorf("资源格式规范版本或类型数量无效")
 	}
 	words := map[string]bool{}
@@ -122,9 +143,15 @@ func validateFormats(set *FormatSet) error {
 	}
 	return nil
 }
-func IsPublicType(typ string) bool           { return formatSet.Types[typ].Public }
-func Formats() *FormatSet                    { return formatSet }
-func TypeInfo(typ string) (TypeFormat, bool) { value, ok := formatSet.Types[typ]; return value, ok }
+func IsPublicType(typ string) bool { return formatSet.Types[typ].Public }
+func Formats() *FormatSet          { return formatSet }
+func TypeInfo(typ string) (TypeFormat, bool) {
+	value, ok := formatSet.Types[typ]
+	if !ok {
+		value, ok = legacyFormatSet.Types[typ]
+	}
+	return value, ok
+}
 func TypeInfos() []TypeFormat {
 	items := []TypeFormat{}
 	for _, typ := range formatSet.Types {
@@ -143,7 +170,7 @@ func TypeForWord(word string) (string, bool) {
 	}
 	return "", false
 }
-func Columns(typ string) []ColumnFormat { return formatSet.Types[typ].Table.Columns }
+func Columns(typ string) []ColumnFormat { info, _ := TypeInfo(typ); return info.Table.Columns }
 func MappingFile(dir string) (string, error) {
 	for _, name := range formatSet.MappingFiles {
 		path := filepath.Join(dir, name)

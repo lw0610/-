@@ -11,6 +11,9 @@ class ResourceHandleError(ValueError):
 
 
 def require_handle(value, expected_type: str, *, formats: tuple[str, ...] = ()) -> dict:
+    if isinstance(value, str) and expected_type in ("route_style", "symbols"):
+        from autocarto.tools.system._shared.tool_presets import resolve_tool_preset
+        value = resolve_tool_preset(value, expected_type)
     if not isinstance(value, dict):
         raise ResourceHandleError("resource_handle_required", "缺少已解析的资源句柄，请通过资源服务选择资源")
     if value.get("api_version") != "resource-handle/v1":

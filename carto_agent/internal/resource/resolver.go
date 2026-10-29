@@ -100,6 +100,10 @@ func (l *Library) resolve(ctx context.Context, ref Ref, scope Scope) *ResolvedRe
 	}
 	location := ref.Location
 	public := location == "" || location == "公共资源库" || strings.HasPrefix(location, "公共资源库/")
+	if public && expected != "" && !IsPublicType(expected) {
+		empty.problem("error", "FLOW_RESOURCE_NOT_FOUND", 0, "资源库只提供样式和版面；旧资源仅供迁移读取。", "")
+		return empty
+	}
 	// Legacy bare layout names are interpreted as library names only when present.
 	if expected == "layout" && location != "公共资源库" && validName(location) && filepath.Ext(location) == "" {
 		ref.Name = location
@@ -121,7 +125,7 @@ func (l *Library) resolve(ctx context.Context, ref Ref, scope Scope) *ResolvedRe
 			return empty
 		}
 		root := filepath.Join(scope.FlowDir, filepath.FromSlash(locked.Bundled))
-		if !inside(root, filepath.Join(scope.FlowDir, "resources", "_deps")) {
+		if !inside(root, filepath.Join(scope.FlowDir, "resources", "_deps")) && !inside(root, filepath.Join(scope.FlowDir, "deps")) {
 			empty.problem("error", "FLOW_RESOURCE_INVALID", 0, "随包资源路径越界。", "")
 			return empty
 		}
@@ -209,7 +213,7 @@ func (l *Library) resolve(ctx context.Context, ref Ref, scope Scope) *ResolvedRe
 			if locked != nil {
 				code = "FLOW_RESOURCE_LOCK_MISSING"
 			}
-			empty.problem("error", code, 0, "模板与样式库中未找到可用资源“"+ref.Name+ref.ID+"”。数据、符号等资源请放进流程包的 resources/。", "choose_resource")
+			empty.problem("error", code, 0, "模板与样式库中未找到可用资源“"+ref.Name+ref.ID+"”。数据在任务运行时选择；路线与符号使用工具预设名称。", "choose_resource")
 			choices := []map[string]any{}
 			for _, item := range items {
 				if item.Type == expected && !HasErrors(item.Problems) && item.OverriddenBy == "" {

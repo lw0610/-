@@ -29,6 +29,8 @@ func (f *Factory) deepAgentConfig(activeConfigName string, activeConfig *config.
 	}
 
 	return &deepagent.Config{
+		Acquisition:          f.config.AcquisitionConfig,
+		GuideBackend:         f.config.GuideBackend,
 		Name:                 "orchestrator",
 		Description:          "AutoCarto AI 智能GIS助手",
 		ChatModel:            f.config.DefaultChatModel,

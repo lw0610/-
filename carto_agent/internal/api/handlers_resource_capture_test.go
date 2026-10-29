@@ -13,10 +13,10 @@ import (
 )
 
 func TestResourceCaptureKindsConflictReplacementAndCleanup(t *testing.T) {
-	for _, kind := range []string{"layout", "style", "style_set"} {
+	for _, kind := range []string{"layout", "style"} {
 		t.Run(kind, func(t *testing.T) {
 			tools := []map[string]any{}
-			for _, name := range []string{"layout_save_template", "layer_save_style", "style_set_export", "layout_list"} {
+			for _, name := range []string{"layout_save_template", "layer_save_style", "layout_list"} {
 				tools = append(tools, map[string]any{"name": name, "inputSchema": map[string]any{"type": "object"}})
 			}
 			registry, provider, conn, cleanup := setupInstanceActionBridge(t, "capture-instance", tools)
@@ -29,22 +29,25 @@ func TestResourceCaptureKindsConflictReplacementAndCleanup(t *testing.T) {
 			router := mux.NewRouter()
 			a.SetupRoutes(router)
 			respond := func(valid bool) {
-				msg := readInstanceActionWSMessage(t, conn)
-				params := msg.Data["params"].(map[string]any)
-				if valid {
-					if kind == "style_set" {
-						dir := params["directory"].(string)
-						_ = os.MkdirAll(dir, 0700)
-						_ = os.WriteFile(filepath.Join(dir, "roads.qml"), []byte("<qgis/>"), 0600)
-					} else {
+				for {
+					msg := readInstanceActionWSMessage(t, conn)
+					if msg.Data["tool_name"] == "resource_preview" {
+						sendInstanceActionWSMessage(t, conn, instanceActionWSMessage{Type: "tool_result", Data: map[string]any{"request_id": msg.Data["request_id"], "success": false, "error": "Preview not supplied by this capture test"}})
+						continue
+					}
+					params := msg.Data["params"].(map[string]any)
+					if valid {
 						content := "<qgis/>"
 						if kind == "layout" {
 							content = "<Layout><LayoutItem id=\"main_map\"/></Layout>"
 						}
-						_ = os.WriteFile(params["path"].(string), []byte(content), 0600)
+						if err := os.WriteFile(params["path"].(string), []byte(content), 0600); err != nil {
+							t.Error(err)
+						}
 					}
+					sendInstanceActionWSMessage(t, conn, instanceActionWSMessage{Type: "tool_result", Data: map[string]any{"request_id": msg.Data["request_id"], "success": true, "output": map[string]any{"success": true, "data": map[string]any{"layer_name": "道路"}}}})
+					return
 				}
-				sendInstanceActionWSMessage(t, conn, instanceActionWSMessage{Type: "tool_result", Data: map[string]any{"request_id": msg.Data["request_id"], "success": true, "output": map[string]any{"success": true}}})
 			}
 			call := func(replace string, want int, valid bool) map[string]any {
 				t.Helper()

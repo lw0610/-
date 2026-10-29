@@ -152,9 +152,11 @@ def run_legacy_route(output_dir, canvas, basemap, renderer, *, compose=False):
         if not compose:
             checked(dispatch[kind], layer=layer_name, **params)
     if compose:
-        from autocarto.tools.system._shared.style_set_impl import apply_style_set_handler
-        checked(apply_style_set_handler, style_set=load_handle("gb-basemap"),
-                layers=[spec[1] for spec in specifications], strict=True)
+        from autocarto.tools.system._shared.style_basic_impl import load_styles_handler
+        from autocarto.tests.support.resource_handles import resolve_handle
+        mapping = {"省域":"省域面", "公路":"高速公路", "地区界线":"省界"}
+        styles = repository_root() / "autocarto/resources/system/styles"
+        checked(load_styles_handler, items=[{"layer": spec[1], "style": resolve_handle(styles / mapping.get(spec[1],spec[1]), "style"), "label_field": spec[3].get("label_field","无")} for spec in specifications])
     project = QgsProject.instance()
     project.setCrs(project.mapLayersByName("省域")[0].crs())
     canvas.setDestinationCrs(project.crs())

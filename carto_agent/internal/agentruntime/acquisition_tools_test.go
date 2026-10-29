@@ -24,7 +24,7 @@ func TestAcquisitionToolChannelAllowsOnlyDeterministicOperations(t *testing.T) {
 			t.Fatalf("acquisition widened readonly flow channel: %s", name)
 		}
 	}
-	for _, name := range []string{"pyqgis_execute", "file_delete", "osm_get_features", "get_layers_info", "flow_start"} {
+	for _, name := range []string{"pyqgis_execute", "file_delete", "osm_get_features", "get_layers_info", "plan_propose"} {
 		target := &flowInvokable{name: name, result: `{"success":true}`}
 		factory, _ := NewFactory(&FactoryConfig{DefaultChatModel: newFlowProbe(), BaseTools: []tool.BaseTool{target}})
 		if _, err := factory.InvokeAcquisitionTool(ctx, name, nil); err == nil || target.calls != 0 {

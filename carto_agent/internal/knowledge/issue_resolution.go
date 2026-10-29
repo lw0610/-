@@ -16,6 +16,9 @@ type IssueResolution struct {
 
 func advisoryIssue(i Issue) bool { return i.Reason == "not_stated" || i.Kind == "time" }
 func validateIssueSubjects(g Graph, aliases map[string]string, i Issue) error {
+	if i.Kind == "source" && i.Field == "content" && len(i.SubjectRefs) == 0 && (i.Reason == "context" || i.Reason == "not_stated") {
+		return nil
+	}
 	protocol, knownKind := issueProtocolForKind(i.Kind)
 	if !knownKind {
 		return fmt.Errorf("未知问题类型 %s", i.Kind)

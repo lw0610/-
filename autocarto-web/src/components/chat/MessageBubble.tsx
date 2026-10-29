@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { InterruptRequestData, Message, WorkflowBlock } from '@/types/message'
 import CollapseIndicator from '@/components/common/CollapseIndicator'
 import { cn, formatTimestamp } from '@/lib/utils'
@@ -23,16 +23,19 @@ interface Props {
   knowledgeReviewSummaries?: Record<string, ReviewSummary>
   onOpenKnowledgeReview?: (reference: ReviewReference) => void
   onConfirmKnowledgeReview?: (reference: ReviewReference) => void
+  children?: ReactNode
 }
 
 const workflowStatusLabel: Record<WorkflowBlock['status'], string> = {
   running: '进行中',
+  waiting_user: '等待确认',
   completed: '已完成',
   error: '异常',
 }
 
 const workflowStatusClassName: Record<WorkflowBlock['status'], string> = {
   running: 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
+  waiting_user: 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300',
   completed:
     'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300',
   error: 'border-red-300 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300',
@@ -111,6 +114,7 @@ export default function MessageBubble({
   knowledgeReviewSummaries,
   onOpenKnowledgeReview,
   onConfirmKnowledgeReview,
+  children,
 }: Props) {
   const isUser = message.type === 'user'
   const isError = message.type === 'error'
@@ -305,6 +309,7 @@ export default function MessageBubble({
               content={message.content}
               className={isError ? 'text-xs text-red-700 leading-[1.6] dark:text-red-300' : 'text-xs text-zinc-700 leading-[1.6] dark:text-zinc-200'}
             />
+            {children}
             {isError && errorSuggestion && (
               <div className="mt-2 rounded border border-amber-300 bg-amber-50 px-2 py-1 text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
                 {errorSuggestion}

@@ -10,6 +10,7 @@ func ProviderToLLMConfig(provider *LLMProviderConfig) *llm.Config {
 	return &llm.Config{
 		Provider:        provider.Provider,
 		Model:           provider.Model,
+		Vision:          provider.Vision,
 		APIKey:          provider.APIKey,
 		BaseURL:         provider.BaseURL,
 		MaxTokens:       provider.MaxTokens,

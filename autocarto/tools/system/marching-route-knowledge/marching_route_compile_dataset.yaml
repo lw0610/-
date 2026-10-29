@@ -42,15 +42,13 @@ spec:
     type: object
     description: 服务端签名的人工核对凭据；由核对流程注入，模型不得自行构造
   - name: route_style
-    type: resource
-    resource_type: route_style
+    type: string
     required: true
-    description: 路线样式资源名称、编号或路径；按拓扑与阵营选择绘制方式和样式编号
+    description: 路线预设名称（单色、红蓝对比或用户预设）；按拓扑与阵营选择绘制方式和样式编号
   - name: symbols
-    type: resource
-    resource_type: symbols
+    type: string
     required: true
-    description: 符号资源名称、编号或目录；包含符号大小、说明和事件映射
+    description: 符号预设名称（军标、图例或用户预设）；包含符号大小、说明和事件映射
 execution:
   handler: handlers.knowledge.compile_marching_route_dataset_handler
   param_mapping:

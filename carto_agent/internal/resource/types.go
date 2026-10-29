@@ -9,6 +9,14 @@ import (
 type Diagnostic = diagnostic.Diagnostic
 
 type ResolvedResource struct {
+	LabelField    string   `json:"label_field,omitempty"`
+	Paper         string   `json:"paper,omitempty"`
+	Orientation   string   `json:"orientation,omitempty"`
+	Elements      []string `json:"elements,omitempty"`
+	Tags          []string `json:"tags,omitempty"`
+	PreviewURL    string   `json:"preview_url,omitempty"`
+	PreviewStatus string   `json:"preview_status,omitempty"`
+
 	Key              string          `json:"key"`
 	ID               string          `json:"id"`
 	Label            string          `json:"label"`
@@ -54,6 +62,15 @@ type Request struct {
 	EntryLayerIDs                                                                                              map[string]string
 }
 type LibraryItem struct {
+	LabelField    string   `json:"label_field,omitempty"`
+	Paper         string   `json:"paper,omitempty"`
+	Orientation   string   `json:"orientation,omitempty"`
+	Elements      []string `json:"elements,omitempty"`
+	Tags          []string `json:"tags,omitempty"`
+	PreviewURL    string   `json:"preview_url,omitempty"`
+	PreviewStatus string   `json:"preview_status,omitempty"`
+
+	Geometry     string         `json:"geometry,omitempty"`
 	ID           string         `json:"id"`
 	Name         string         `json:"name"`
 	Type         string         `json:"type"`

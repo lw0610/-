@@ -1,0 +1,18 @@
+{
+  "apiVersion": "resource/v1",
+  "id": "style.basemap-534c553126",
+  "type": "style",
+  "name": "高速公路",
+  "version": "1.0.0",
+  "entry": "高速公路.qml",
+  "geometry": "line",
+  "label_field": "无",
+  "description": "由原预设导出的符号和标注",
+  "tags": [
+    "公路",
+    "快速路"
+  ],
+  "source": {
+    "author": "AutoCarto"
+  }
+}

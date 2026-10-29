@@ -187,6 +187,44 @@ execution:
 	}
 }
 
+func TestSkillAdapterKeepsProjectLayerIdentityWithoutFileURL(t *testing.T) {
+	registry := loadRegistryForTest(t, map[string]string{"vector/prepare.yaml": `
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: prepare
+  domain: vector
+  runtime: qgis
+spec:
+  description: Prepare a project layer.
+execution:
+  backend_tool: prepare
+`})
+	def, _ := registry.Get("prepare")
+	var primary any = "专题图"
+	engine := NewEngine(registry, NewQGISBackend(func(context.Context, string, map[string]any) (*compute.InvokeResponse, error) {
+		return &compute.InvokeResponse{Success: true, Output: primary, OutputLayers: []compute.OutputLayer{{
+			LayerID: "thematic-123", Name: "专题图", ReferenceType: "project_layer", Provider: "memory",
+			FeatureCount: 18, Fields: []string{"name", "population"},
+		}}}, nil
+	}, nil, nil))
+	adapter := newSkillAdapter(def, engine)
+	result, err := adapter.runToolResult(context.Background(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Parts) != 2 || result.Parts[1].Type != schema.ToolPartTypeText ||
+		!strings.Contains(result.Parts[1].Text, `"layer_id":"thematic-123"`) ||
+		!strings.Contains(result.Parts[1].Text, `"population"`) {
+		t.Fatalf("model must receive the project layer reference as text: %#v", result)
+	}
+	primary = map[string]any{"layer_id": "thematic-123", "name": "专题图"}
+	result, err = adapter.runToolResult(context.Background(), nil)
+	if err != nil || len(result.Parts) != 1 || result.Parts[0].Type != schema.ToolPartTypeText {
+		t.Fatalf("do not duplicate structured identity or fabricate file URLs: %#v, %v", result, err)
+	}
+}
+
 func TestSkillAdapterConvertsCLIMediaEnvelopeToImageParts(t *testing.T) {
 	t.Parallel()
 
