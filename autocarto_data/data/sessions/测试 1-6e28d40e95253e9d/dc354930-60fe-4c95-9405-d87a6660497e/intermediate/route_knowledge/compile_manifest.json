@@ -1,0 +1,43 @@
+{
+  "counts": {
+    "callouts.csv": 18,
+    "places.csv": 99,
+    "points.csv": 88,
+    "route_paths.csv": 122,
+    "routes.csv": 24,
+    "symbol_mapping.csv": 5
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "review": {
+    "accepted_graph_file": "accepted_graph.json",
+    "provenance_file": "review_provenance.json",
+    "review_id": "9945930e-2db8-4f30-a89d-6ab3f0d30c44",
+    "revision": 2
+  },
+  "schema_version": "1.0",
+  "task_id": "c0001",
+  "title": "中国工农红军第二十五军长征及转战经过",
+  "warnings": [
+    "地点 界碑口 使用模型估算坐标（置信度 0.45），按估算位置参与制图",
+    "地点 铁锁关 使用模型估算坐标（置信度 0.45），按估算位置参与制图",
+    "地点 安宁 使用模型估算坐标（置信度 0.45），按估算位置参与制图",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字"
+  ]
+}

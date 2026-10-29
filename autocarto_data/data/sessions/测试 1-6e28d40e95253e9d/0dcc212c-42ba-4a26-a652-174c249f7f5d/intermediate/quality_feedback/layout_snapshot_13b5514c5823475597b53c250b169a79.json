@@ -1,0 +1,216 @@
+{
+  "captured_at": "2026-10-28T15:49:57.056695+00:00",
+  "layout_item_ids": {
+    "callouts": {},
+    "standard": {
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "legend": {
+        "anchor": {
+          "at": "top_left",
+          "offset_mm": {
+            "x": 223.0,
+            "y": 55.0
+          },
+          "placement": "inside",
+          "scale_offset_with_page": true,
+          "to": "page"
+        },
+        "auto_update_model": false,
+        "font_locked": true,
+        "item_id": "legend",
+        "legend_layers": [
+          {
+            "id": "____________82c437d6_6c21_4f70_b081_bf39046e8074",
+            "items": [
+              {
+                "label": "73 - 237",
+                "rule_key": "{0f8f5981-40dd-45f0-bbc2-2653da078c81}"
+              },
+              {
+                "label": "237 - 492",
+                "rule_key": "{5ec83511-780f-4865-ac62-d02ede18d71f}"
+              },
+              {
+                "label": "492 - 677",
+                "rule_key": "{7cf4e2bb-a3e2-463b-9f65-194a5176b54a}"
+              },
+              {
+                "label": "677 - 950",
+                "rule_key": "{991e9637-d507-4412-8c89-110b2e0c87ce}"
+              },
+              {
+                "label": "950 - 1301",
+                "rule_key": "{ad64e10a-c90c-4a49-b1b4-06ab892dd72b}"
+              }
+            ],
+            "name": "河南省各市人口专题图层"
+          }
+        ],
+        "linked_map": "main_map",
+        "rect_mm": {
+          "height": 46.203984375000005,
+          "width": 32.14,
+          "x": 223.0,
+          "y": 55.0
+        },
+        "resize_to_contents": true,
+        "title": "常住人口（万人）",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 4.0
+      },
+      "main_map": {
+        "anchor": {
+          "at": "top_left",
+          "offset_mm": {
+            "x": 12.0,
+            "y": 32.0
+          },
+          "placement": "inside",
+          "to": "page"
+        },
+        "crs": "EPSG:4326",
+        "crs_wkt": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]",
+        "extent": {
+          "xmax": 116.99797976612903,
+          "xmin": 110.00270723387096,
+          "ymax": 36.52387575,
+          "ymin": 31.234767250000004
+        },
+        "font_locked": true,
+        "item_id": "main_map",
+        "keep_layer_set": true,
+        "layer_ids": [
+          "____________82c437d6_6c21_4f70_b081_bf39046e8074"
+        ],
+        "layers": [
+          "河南省各市人口专题图层"
+        ],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 155.0,
+          "width": 205.0,
+          "x": 12.0,
+          "y": 32.0
+        },
+        "scale": 2360264.4739815244,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "anchor": {
+          "at": "top_left",
+          "offset_mm": {
+            "x": 194.0,
+            "y": 36.0
+          },
+          "placement": "inside",
+          "scale_offset_with_page": true,
+          "to": "page"
+        },
+        "font_locked": true,
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 22.0,
+          "width": 15.0,
+          "x": 194.0,
+          "y": 36.0
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 6.0
+      },
+      "overview": {
+        "anchor": {
+          "at": "top_left",
+          "offset_mm": {
+            "x": 12.0,
+            "y": 194.0
+          },
+          "placement": "inside",
+          "scale_offset_with_page": true,
+          "to": "page"
+        },
+        "font_locked": true,
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 4.040909090909091,
+          "width": 370.03181818181815,
+          "x": 12.0,
+          "y": 194.0
+        },
+        "text": "<div style=\"font-family:Noto Sans CJK SC;font-size:2.5mm;color:#202020;\"><div style=\"font-weight:bold;font-size:3.5mm;\">来源说明</div>年份：2023年（2023年底常住人口）\\n单位：万人\\n来源：河南省统计局《河南统计年鉴2024》表3-3、表3-5\\n分级方法：自然断点法（Jenks），5级\\n数据获取时间：2026-10-28</div>",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 3.0
+      },
+      "scalebar": {
+        "anchor": {
+          "at": "top_left",
+          "offset_mm": {
+            "x": 145.0,
+            "y": 173.0
+          },
+          "placement": "inside",
+          "scale_offset_with_page": true,
+          "to": "page"
+        },
+        "font_locked": true,
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 52.33586281894956,
+          "x": 145.0,
+          "y": 173.0
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 30.0,
+        "z_value": 5.0
+      },
+      "title": {
+        "anchor": {
+          "at": "top_left",
+          "offset_mm": {
+            "x": 12.0,
+            "y": 8.0
+          },
+          "placement": "inside",
+          "scale_offset_with_page": true,
+          "to": "page"
+        },
+        "font_locked": true,
+        "item_id": "title",
+        "rect_mm": {
+          "height": 8.370454545454546,
+          "width": 57.72727272727273,
+          "x": 12.0,
+          "y": 8.0
+        },
+        "text": "河南省2023年常住人口",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 2.0
+      }
+    },
+    "layout": "河南省各市人口统计专题图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 210.0,
+      "width": 297.0
+    }
+  },
+  "layout_name": "河南省各市人口统计专题图",
+  "project_path": "/home/shared-user/研究生/实例/测试 1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "0dcc212c-42ba-4a26-a652-174c249f7f5d",
+  "snapshot_id": "13b5514c5823475597b53c250b169a79"
+}

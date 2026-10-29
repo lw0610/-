@@ -1,0 +1,1304 @@
+{
+  "version": 1,
+  "session_id": "5f0daacb-e535-4615-987e-79b1fec769fa",
+  "active_config_name": "专题图制作",
+  "runtime_revision": "专题图制作:0f72b8dec73e43b6",
+  "messages": [
+    {
+      "role": "user",
+      "content": "制作一个河南省行军路线图"
+    },
+    {
+      "role": "user",
+      "content": "制作一个河南省行军路线图"
+    },
+    {
+      "role": "system",
+      "content": "正在分析您的请求..."
+    }
+  ],
+  "runtime_projection": {
+    "runtime_status": "running",
+    "run_id": "task-5f0daacb-e535-4615-987e-79b1fec769fa-1780050726484884600",
+    "execution_mode": "build",
+    "phase": "building",
+    "bound_instance_id": "qgis_DESKTOP-F4SIPF6_94e23c45b718_25496_1780050688",
+    "bound_project_path": "F:/qgis_project/henan-x.qgz",
+    "checkpoint_id": "task-5f0daacb-e535-4615-987e-79b1fec769fa-1780050726484884600",
+    "runtime_revision": "专题图制作:0f72b8dec73e43b6",
+    "active_agent_config": "专题图制作",
+    "updated_at": "2026-05-29T10:32:06Z",
+    "runtime_summary": "调用工具: close_instance",
+    "workflow_blocks": [
+      {
+        "agent": "orchestrator",
+        "agentDisplayName": "主智能体",
+        "entries": [
+          {
+            "content": "收到用户请求，开始分析任务需求...",
+            "id": "entry-20260529103206.439",
+            "phase": "thinking",
+            "timestamp": 1780050726439,
+            "type": "thinking"
+          },
+          {
+            "content": "识别到需要 主智能体 处理此任务",
+            "data": {
+              "mode_phase": "building"
+            },
+            "id": "entry-20260529103209.101",
+            "phase": "thinking",
+            "timestamp": 1780050729101,
+            "type": "thinking"
+          },
+          {
+            "content": "用户要求制作河南省行军路线图。这属于军事专题路线图/行军路线图的制作，我需要先加载相关的编排技能（marching-route-map-orchestration）来了解具体的编排流程。\n\n让我先加载技能，了解流程要求。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103209.139",
+            "phase": "thinking",
+            "timestamp": 1780050729139,
+            "type": "thinking"
+          },
+          {
+            "content": "我来为您制作河南省行军路线图！首先让我加载行军路线图编排技能，并检查当前项目状态。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103209.163",
+            "phase": "decision",
+            "timestamp": 1780050729163,
+            "type": "decision"
+          },
+          {
+            "content": "工具 skill 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "Launching skill: marching-route-map-orchestration\nBase directory for this skill: F:\\PythonProjects\\Eino\\autocarto\\skills\\system\\marching-route-map-orchestration\n\n# 行军线路图多智能体编排\r\n\r\n## 触发条件\r\n\r\n当用户请求包含以下意图时，必须启用本流程：\r\n\r\n- 制作、生成、绘制、输出某战斗的行军线路图\r\n- 制作战斗线路图、行军路线图、军事专题线路图\r\n- 对行军路线图进行整理后再制图导出\r\n\r\n示例：`制作一个河南省行军线路图`、`帮我做一张河南省行军线路布局图`。\r\n\r\n## 总体规则\r\n\r\n- 不要让单个子智能体吞掉全流程。\r\n- 主智能体只负责阶段调度、交接检查和最终汇总，只告诉对应的子智能体按照流程完成自己的任务，不进行额外的指导。\r\n- 具体工具由对应子智能体根据自己的可用工具和上下文选择。\r\n- 每个阶段结束后必须输出结构化交接结果，再决定是否进入下一阶段。\r\n- 如果任一阶段返回 `status=blocked` 或 `blocking_issues` 非空，回到 orchestrator，由 orchestrator 决定补充上下文、请求用户确认或终止任务。\r\n\r\n## 固定阶段\r\n\r\n### 1. data_engineer\r\n\r\n职责：\r\n\r\n- 首先进行行军路线图数据加载以及可视化处理，包括对图层进行点符号化。\r\n\r\n- 必须需加载的图层信息：\r\n1. 图层名：河南省县城驻地，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南省县城驻地.shp。\r\n2. 图层名：河南铁路，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南铁路.shp。\r\n3. 图层名：河南高速公路，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南高速公路。shp。\r\n4. 图层名：河南国道，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南国道.shp.\r\n5. 图层名：线状省界，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\线状省界.shp。\r\n6. 图层名：河流线，路径：F:\\qgis_project\\8558d-main\\data_style\\河流线.shp。\r\n7. 图层名：河流面，路径：F:\\qgis_project\\8558d-main\\data_style\\河流面.shp。\r\n\r\n- 如缺少关键数据，明确报告缺口，不得假装数据存在。\r\n\r\n完成条件：\r\n\r\n- 图层清单、范围、数据缺口说明。\r\n\r\n### 2. cartographer\r\n\r\n职责：\r\n\r\n- 进行行军线路图可视化与布局制作。\r\n\r\n完成条件：\r\n- 完整符号表映射的点符号化。\r\n- 完整的行军线路图布局。\r\n- 输出包含主图、标题、网格、路线、符号、图文标注框、图例、数据综述、比例尺、指北针的可交付专题图。\r\n- 产出地图布局名称、导出文件路径、主要图层和制图检查结果。\r\n\r\n### 3. orchestrator\r\n\r\n职责：\r\n\r\n- 检查所有阶段交接结果。\r\n- 输出目录为：F:\\qgis_project\\exports\\。\r\n- 汇总用户可见结果，包括已完成操作、输出路径、失败/降级原因和剩余风险。\r\n- 不再启动新的专业子智能体，除非最终检查发现明确缺失项。\r\n\r\n## 交接结果格式\r\n\r\n每个子智能体结束时必须返回以下 JSON 或等价结构化内容：\r\n\r\n```json\r\n{\r\n  \"status\": \"completed | skipped | blocked\",\r\n  \"agent\": \"data_engineer | spatial_analyst | cartographer\",\r\n  \"summary\": \"本阶段完成了什么\",\r\n  \"artifacts\": {\r\n    \"layers\": [],\r\n    \"files\": [],\r\n    \"layout\": \"\",\r\n    \"extent\": \"\",\r\n    \"crs\": \"\"\r\n  },\r\n  \"next_agent\": \"spatial_analyst | cartographer | orchestrator\",\r\n  \"blocking_issues\": []\r\n}\r\n```\r\n\r\n`next_agent` 决策规则：\r\n\r\n- `data_engineer` 成功后交给 `cartographer`。\r\n- `cartographer` 成功、跳过或阻塞后，交回 `orchestrator`。\r\n- 任何阶段阻塞时，交回 `orchestrator`。\r\n\r\n## 河南省行军线路图默认理解\r\n\r\n当用户只说“制作一个河南省行军线路图”且没有提供更多细节时，采用以下默认理解：\r\n\r\n- 地理范围：河南省行政范围。\r\n- 目标产物：行军线路专题图，优先 PDF 导出。\r\n- 数据优先级：当前工程已加载图层 > 工程目录数据文件 > 请求用户补充。\r\n- 需要先检查数据，不得直接进入布局导出。\r\n\r\n## 失败处理\r\n\r\n- 缺少数据时，停止在 `data_engineer` 阶段，向用户说明缺少哪些图层或文件。\r\n- 工具失败时，每个阶段最多基于错误信息修正重试一次。\r\n- 布局 workflow 失败时，遵守 `cartographer` 中关于 `print-layout-thematic` 的降级规则。",
+              "status": "completed",
+              "status_source": "skill_prefix",
+              "success": true,
+              "tool": "skill"
+            },
+            "id": "entry-20260529103209.185",
+            "phase": "tool_result",
+            "timestamp": 1780050729256,
+            "toolCard": {
+              "args": {
+                "skill": "marching-route-map-orchestration"
+              },
+              "finishedAt": 1780050729256,
+              "id": "tool-20260529103209.185",
+              "result": "Launching skill: marching-route-map-orchestration\nBase directory for this skill: F:\\PythonProjects\\Eino\\autocarto\\skills\\system\\marching-route-map-orchestration\n\n# 行军线路图多智能体编排\r\n\r\n## 触发条件\r\n\r\n当用户请求包含以下意图时，必须启用本流程：\r\n\r\n- 制作、生成、绘制、输出某战斗的行军线路图\r\n- 制作战斗线路图、行军路线图、军事专题线路图\r\n- 对行军路线图进行整理后再制图导出\r\n\r\n示例：`制作一个河南省行军线路图`、`帮我做一张河南省行军线路布局图`。\r\n\r\n## 总体规则\r\n\r\n- 不要让单个子智能体吞掉全流程。\r\n- 主智能体只负责阶段调度、交接检查和最终汇总，只告诉对应的子智能体按照流程完成自己的任务，不进行额外的指导。\r\n- 具体工具由对应子智能体根据自己的可用工具和上下文选择。\r\n- 每个阶段结束后必须输出结构化交接结果，再决定是否进入下一阶段。\r\n- 如果任一阶段返回 `status=blocked` 或 `blocking_issues` 非空，回到 orchestrator，由 orchestrator 决定补充上下文、请求用户确认或终止任务。\r\n\r\n## 固定阶段\r\n\r\n### 1. data_engineer\r\n\r\n职责：\r\n\r\n- 首先进行行军路线图数据加载以及可视化处理，包括对图层进行点符号化。\r\n\r\n- 必须需加载的图层信息：\r\n1. 图层名：河南省县城驻地，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南省县城驻地.shp。\r\n2. 图层名：河南铁路，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南铁路.shp。\r\n3. 图层名：河南高速公路，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南高速公路。shp。\r\n4. 图层名：河南国道，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南国道.shp.\r\n5. 图层名：线状省界，路径：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\线状省界.shp。\r\n6. 图层名：河流线，路径：F:\\qgis_project\\8558d-main\\data_style\\河流线.shp。\r\n7. 图层名：河流面，路径：F:\\qgis_project\\8558d-main\\data_style\\河流面.shp。\r\n\r\n- 如缺少关键数据，明确报告缺口，不得假装数据存在。\r\n\r\n完成条件：\r\n\r\n- 图层清单、范围、数据缺口说明。\r\n\r\n### 2. cartographer\r\n\r\n职责：\r\n\r\n- 进行行军线路图可视化与布局制作。\r\n\r\n完成条件：\r\n- 完整符号表映射的点符号化。\r\n- 完整的行军线路图布局。\r\n- 输出包含主图、标题、网格、路线、符号、图文标注框、图例、数据综述、比例尺、指北针的可交付专题图。\r\n- 产出地图布局名称、导出文件路径、主要图层和制图检查结果。\r\n\r\n### 3. orchestrator\r\n\r\n职责：\r\n\r\n- 检查所有阶段交接结果。\r\n- 输出目录为：F:\\qgis_project\\exports\\。\r\n- 汇总用户可见结果，包括已完成操作、输出路径、失败/降级原因和剩余风险。\r\n- 不再启动新的专业子智能体，除非最终检查发现明确缺失项。\r\n\r\n## 交接结果格式\r\n\r\n每个子智能体结束时必须返回以下 JSON 或等价结构化内容：\r\n\r\n```json\r\n{\r\n  \"status\": \"completed | skipped | blocked\",\r\n  \"agent\": \"data_engineer | spatial_analyst | cartographer\",\r\n  \"summary\": \"本阶段完成了什么\",\r\n  \"artifacts\": {\r\n    \"layers\": [],\r\n    \"files\": [],\r\n    \"layout\": \"\",\r\n    \"extent\": \"\",\r\n    \"crs\": \"\"\r\n  },\r\n  \"next_agent\": \"spatial_analyst | cartographer | orchestrator\",\r\n  \"blocking_issues\": []\r\n}\r\n```\r\n\r\n`next_agent` 决策规则：\r\n\r\n- `data_engineer` 成功后交给 `cartographer`。\r\n- `cartographer` 成功、跳过或阻塞后，交回 `orchestrator`。\r\n- 任何阶段阻塞时，交回 `orchestrator`。\r\n\r\n## 河南省行军线路图默认理解\r\n\r\n当用户只说“制作一个河南省行军线路图”且没有提供更多细节时，采用以下默认理解：\r\n\r\n- 地理范围：河南省行政范围。\r\n- 目标产物：行军线路专题图，优先 PDF 导出。\r\n- 数据优先级：当前工程已加载图层 > 工程目录数据文件 > 请求用户补充。\r\n- 需要先检查数据，不得直接进入布局导出。\r\n\r\n## 失败处理\r\n\r\n- 缺少数据时，停止在 `data_engineer` 阶段，向用户说明缺少哪些图层或文件。\r\n- 工具失败时，每个阶段最多基于错误信息修正重试一次。\r\n- 布局 workflow 失败时，遵守 `cartographer` 中关于 `print-layout-thematic` 的降级规则。",
+              "startedAt": 1780050729185,
+              "status": "completed",
+              "statusSource": "skill_prefix",
+              "success": true,
+              "tool": "skill"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "工具 get_project_info 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":{\"crs\":{\"auth_id\":\"\",\"description\":\"\",\"is_geographic\":false,\"units\":49},\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"项目信息获取成功: henan-x；图层 0 个（矢量 0，栅格 0）；工程目录数据文件: 无\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":{\"crs\":{\"auth_id\":\"\",\"description\":\"\",\"is_geographic\":false,\"units\":49},\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"项目信息获取成功: henan-x；图层 0 个（矢量 0，栅格 0）；工程目录数据文件: 无\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "get_project_info"
+            },
+            "id": "entry-20260529103209.207",
+            "phase": "tool_result",
+            "timestamp": 1780050729230,
+            "toolCard": {
+              "finishedAt": 1780050729230,
+              "id": "tool-20260529103209.207",
+              "result": "{\"error\":\"\",\"info\":{\"crs\":{\"auth_id\":\"\",\"description\":\"\",\"is_geographic\":false,\"units\":49},\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"项目信息获取成功: henan-x；图层 0 个（矢量 0，栅格 0）；工程目录数据文件: 无\",\"success\":true}",
+              "startedAt": 1780050729207,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "get_project_info"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "好，我现在了解了行军路线图编排流程。让我梳理一下：\n\n1. 这是一个河南省行军路线图制作任务\n2. 编排流程要求：data_engineer → cartographer → orchestrator\n3. 需要加载指定的数据文件\n4. 当前工程是空的（henan-x，图层数量为0）\n\n我需要先创建任务清单，然后按阶段执行。\n\n**阶段1: data_engineer - 数据加载与可视化**\n需要加载的图层：\n1. 河南省县城驻地：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南省县城驻地.shp\n2. 河南铁路：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南铁路.shp\n3. 河南高速公路：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南高速公路.shp\n4. 河南国道：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南国道.shp\n5. 线状省界：F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\线状省界.shp\n6. 河流线：F:\\qgis_project\\8558d-main\\data_style\\河流线.shp\n7. 河流面：F:\\qgis_project\\8558d-main\\data_style\\河流面.shp\n\n注意技能中有一个路径错误：`河南高速公路。shp` 应该是 `河南高速公路.shp`，让我注意这个。\n\n让我先创建任务清单，然后开始执行第一阶段。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103213.661",
+            "phase": "thinking",
+            "timestamp": 1780050733661,
+            "type": "thinking"
+          },
+          {
+            "content": "好的，我了解了完整流程。当前项目为空，需要按 **data_engineer → cartographer → orchestrator** 三阶段编排。让我创建任务清单并开始执行。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103213.723",
+            "phase": "decision",
+            "timestamp": 1780050733723,
+            "type": "decision"
+          },
+          {
+            "content": "调用工具: write_todos",
+            "data": {
+              "mode_phase": "building",
+              "result": "Updated todo list to [{\"content\":\"阶段1：data_engineer - 加载河南省基础地理数据\",\"activeForm\":\"执行阶段1：data_engineer加载数据\",\"status\":\"in_progress\"},{\"content\":\"阶段2：cartographer - 行军路线图符号化与布局制作\",\"activeForm\":\"执行阶段2：cartographer制图布局\",\"status\":\"pending\"},{\"content\":\"阶段3：orchestrator - 最终检查与导出汇总\",\"activeForm\":\"执行阶段3：orchestrator最终检查与导出\",\"status\":\"pending\"}]",
+              "status": "unknown",
+              "status_source": "unknown",
+              "tool": "write_todos"
+            },
+            "id": "entry-20260529103213.755",
+            "phase": "tool_result",
+            "timestamp": 1780050733785,
+            "toolCard": {
+              "args": {
+                "todos": [
+                  {
+                    "activeForm": "执行阶段1：data_engineer加载数据",
+                    "content": "阶段1：data_engineer - 加载河南省基础地理数据",
+                    "status": "in_progress"
+                  },
+                  {
+                    "activeForm": "执行阶段2：cartographer制图布局",
+                    "content": "阶段2：cartographer - 行军路线图符号化与布局制作",
+                    "status": "pending"
+                  },
+                  {
+                    "activeForm": "执行阶段3：orchestrator最终检查与导出",
+                    "content": "阶段3：orchestrator - 最终检查与导出汇总",
+                    "status": "pending"
+                  }
+                ]
+              },
+              "finishedAt": 1780050733785,
+              "id": "tool-20260529103213.755",
+              "result": "Updated todo list to [{\"content\":\"阶段1：data_engineer - 加载河南省基础地理数据\",\"activeForm\":\"执行阶段1：data_engineer加载数据\",\"status\":\"in_progress\"},{\"content\":\"阶段2：cartographer - 行军路线图符号化与布局制作\",\"activeForm\":\"执行阶段2：cartographer制图布局\",\"status\":\"pending\"},{\"content\":\"阶段3：orchestrator - 最终检查与导出汇总\",\"activeForm\":\"执行阶段3：orchestrator最终检查与导出\",\"status\":\"pending\"}]",
+              "startedAt": 1780050733755,
+              "status": "completed",
+              "statusSource": "task_list_update",
+              "success": true,
+              "tool": "write_todos"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "现在开始阶段1 - data_engineer。我需要启动data_engineer子智能体来加载数据。根据流程，我需要将任务委派给data_engineer智能体。\n\n让我启动data_engineer子智能体来加载所有必要的数据文件。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103218.670",
+            "phase": "thinking",
+            "timestamp": 1780050738670,
+            "type": "thinking"
+          },
+          {
+            "content": "## 阶段1：data_engineer — 数据加载\n\n现在启动 **data_engineer** 智能体来加载河南省基础地理数据。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103218.725",
+            "phase": "decision",
+            "timestamp": 1780050738725,
+            "type": "decision"
+          },
+          {
+            "content": "调用工具: task",
+            "data": {
+              "mode_phase": "building",
+              "status": "running",
+              "tool": "task",
+              "tool_args": {
+                "description": "## 任务：加载河南省行军路线图基础数据\n\n请按以下要求加载数据到当前QGIS项目（henan-x.qgz）：\n\n### 需要加载的图层\n\n1. **河南省县城驻地** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南省县城驻地.shp`，图层名：\"河南省县城驻地\"\n2. **河南铁路** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南铁路.shp`，图层名：\"河南铁路\"\n3. **河南高速公路** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南高速公路.shp`，图层名：\"河南高速公路\"\n4. **河南国道** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南国道.shp`，图层名：\"河南国道\"\n5. **线状省界** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\线状省界.shp`，图层名：\"线状省界\"\n6. **河流线** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河流线.shp`，图层名：\"河流线\"\n7. **河流面** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河流面.shp`，图层名：\"河流面\"\n\n### 要求\n- 使用 data_load_vector 工具加载每个图层\n- 如遇到文件路径不存在，请明确报告数据缺口\n- 加载完成后，使用 get_layers_info 确认所有图层已正确加载\n- 检查图层范围和CRS信息\n\n### 输出格式\n请返回以下结构化结果：\n```json\n{\n  \"status\": \"completed | blocked\",\n  \"agent\": \"data_engineer\",\n  \"summary\": \"本阶段完成了什么\",\n  \"artifacts\": {\n    \"layers\": [\"图层名列表\"],\n    \"files\": [\"文件路径列表\"],\n    \"extent\": \"数据范围\",\n    \"crs\": \"坐标系\"\n  },\n  \"next_agent\": \"cartographer | orchestrator\",\n  \"blocking_issues\": []\n}\n```",
+                "subagent_type": "data_engineer"
+              }
+            },
+            "id": "entry-20260529103218.749",
+            "phase": "tool_call",
+            "timestamp": 1780050738749,
+            "toolCard": {
+              "args": {
+                "description": "## 任务：加载河南省行军路线图基础数据\n\n请按以下要求加载数据到当前QGIS项目（henan-x.qgz）：\n\n### 需要加载的图层\n\n1. **河南省县城驻地** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南省县城驻地.shp`，图层名：\"河南省县城驻地\"\n2. **河南铁路** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南铁路.shp`，图层名：\"河南铁路\"\n3. **河南高速公路** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南高速公路.shp`，图层名：\"河南高速公路\"\n4. **河南国道** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南国道.shp`，图层名：\"河南国道\"\n5. **线状省界** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\线状省界.shp`，图层名：\"线状省界\"\n6. **河流线** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河流线.shp`，图层名：\"河流线\"\n7. **河流面** - 路径：`F:\\qgis_project\\8558d-main\\data_style\\河流面.shp`，图层名：\"河流面\"\n\n### 要求\n- 使用 data_load_vector 工具加载每个图层\n- 如遇到文件路径不存在，请明确报告数据缺口\n- 加载完成后，使用 get_layers_info 确认所有图层已正确加载\n- 检查图层范围和CRS信息\n\n### 输出格式\n请返回以下结构化结果：\n```json\n{\n  \"status\": \"completed | blocked\",\n  \"agent\": \"data_engineer\",\n  \"summary\": \"本阶段完成了什么\",\n  \"artifacts\": {\n    \"layers\": [\"图层名列表\"],\n    \"files\": [\"文件路径列表\"],\n    \"extent\": \"数据范围\",\n    \"crs\": \"坐标系\"\n  },\n  \"next_agent\": \"cartographer | orchestrator\",\n  \"blocking_issues\": []\n}\n```",
+                "subagent_type": "data_engineer"
+              },
+              "id": "tool-20260529103218.749",
+              "startedAt": 1780050738749,
+              "status": "running",
+              "tool": "task"
+            },
+            "type": "tool"
+          }
+        ],
+        "finishedAt": 1780050740181,
+        "id": "wf-20260529103206.439",
+        "startedAt": 1780050726439,
+        "status": "completed",
+        "summary": "调用工具: task",
+        "updatedAt": 1780050740181
+      },
+      {
+        "agent": "data_engineer",
+        "agentDisplayName": "data_engineer",
+        "entries": [
+          {
+            "content": "识别到需要 data_engineer 处理此任务",
+            "data": {
+              "mode_phase": "building"
+            },
+            "id": "entry-20260529103220.181",
+            "phase": "thinking",
+            "timestamp": 1780050740181,
+            "type": "thinking"
+          },
+          {
+            "content": "用户要我加载河南省行军路线图的基础数据到QGIS工程（henan-x.qgz）。我需要先检查工程文件是否存在，然后再加载数据。\n\n让我先打开工程，看看当前状态，然后逐个加载图层。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103220.216",
+            "phase": "thinking",
+            "timestamp": 1780050740216,
+            "type": "thinking"
+          },
+          {
+            "content": "好的！我先打开项目工程，然后逐个加载数据图层。\n\n**第一步：打开已有项目**",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103220.237",
+            "phase": "decision",
+            "timestamp": 1780050740237,
+            "type": "decision"
+          },
+          {
+            "content": "工具 open_project 执行失败",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"success\":false,\"error\":\"[EnhancedLocalFunc] failed to invoke tool, toolName=open_project, err=工程文件不存在: F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\henan-x.qgz\"}",
+              "result_parts": [
+                {
+                  "text": "{\"success\":false,\"error\":\"[EnhancedLocalFunc] failed to invoke tool, toolName=open_project, err=工程文件不存在: F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\henan-x.qgz\"}",
+                  "type": "text"
+                }
+              ],
+              "status": "failed",
+              "status_source": "payload_success",
+              "success": false,
+              "tool": "open_project"
+            },
+            "id": "entry-20260529103220.265",
+            "phase": "tool_result",
+            "timestamp": 1780050740289,
+            "toolCard": {
+              "args": {
+                "path": "F:\\qgis_project\\8558d-main\\data_style\\henan-x.qgz"
+              },
+              "finishedAt": 1780050740289,
+              "id": "tool-20260529103220.265",
+              "result": "{\"success\":false,\"error\":\"[EnhancedLocalFunc] failed to invoke tool, toolName=open_project, err=工程文件不存在: F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\henan-x.qgz\"}",
+              "startedAt": 1780050740265,
+              "status": "failed",
+              "statusSource": "payload_success",
+              "success": false,
+              "tool": "open_project"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "项目文件不存在，所以我需要先创建一个新的项目。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103221.310",
+            "phase": "thinking",
+            "timestamp": 1780050741310,
+            "type": "thinking"
+          },
+          {
+            "content": "项目文件尚未创建，我先创建新的工程。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103221.338",
+            "phase": "decision",
+            "timestamp": 1780050741338,
+            "type": "decision"
+          },
+          {
+            "content": "工具 create_project 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":{\"data_files\":[{\"name\":\"河流线.shp\",\"path\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流线.shp\",\"size_bytes\":74996,\"suffix\":\".shp\"},{\"name\":\"河流面.shp\",\"path\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流面.shp\",\"size_bytes\":612680,\"suffix\":\".shp\"}],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/8558d-main/data_style/henan-x.qgz\",\"home_path\":\"F:/qgis_project/8558d-main/data_style\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"成功创建工程: F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\henan-x.qgz\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":{\"data_files\":[{\"name\":\"河流线.shp\",\"path\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流线.shp\",\"size_bytes\":74996,\"suffix\":\".shp\"},{\"name\":\"河流面.shp\",\"path\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流面.shp\",\"size_bytes\":612680,\"suffix\":\".shp\"}],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/8558d-main/data_style/henan-x.qgz\",\"home_path\":\"F:/qgis_project/8558d-main/data_style\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"成功创建工程: F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\henan-x.qgz\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "create_project"
+            },
+            "id": "entry-20260529103221.363",
+            "phase": "tool_result",
+            "timestamp": 1780050741431,
+            "toolCard": {
+              "args": {
+                "path": "F:\\qgis_project\\8558d-main\\data_style\\henan-x.qgz"
+              },
+              "finishedAt": 1780050741431,
+              "id": "tool-20260529103221.363",
+              "result": "{\"error\":\"\",\"info\":{\"data_files\":[{\"name\":\"河流线.shp\",\"path\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流线.shp\",\"size_bytes\":74996,\"suffix\":\".shp\"},{\"name\":\"河流面.shp\",\"path\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流面.shp\",\"size_bytes\":612680,\"suffix\":\".shp\"}],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/8558d-main/data_style/henan-x.qgz\",\"home_path\":\"F:/qgis_project/8558d-main/data_style\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"成功创建工程: F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\henan-x.qgz\",\"success\":true}",
+              "startedAt": 1780050741363,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "create_project"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "工程已创建成功，目录信息显示该目录下已有\"河流线.shp\"和\"河流面.shp\"两个文件。现在开始按顺序加载所有图层。\n\n让我先加载所有图层。由于很多图层可以并行加载，我先把它们都加载进来。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103224.930",
+            "phase": "thinking",
+            "timestamp": 1780050744930,
+            "type": "thinking"
+          },
+          {
+            "content": "工程已创建成功。现在开始加载所有矢量图层。\n\n**第二步：批量加载所有图层**",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103224.962",
+            "phase": "decision",
+            "timestamp": 1780050744962,
+            "type": "decision"
+          },
+          {
+            "content": "工具 data_load_vector 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 26, 几何类型: Line, 坐标系: , 字段数: 123, resolved_from: absolute:exact\",\"output\":\"河南高速公路\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 26, 几何类型: Line, 坐标系: , 字段数: 123, resolved_from: absolute:exact\",\"output\":\"河南高速公路\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "id": "entry-20260529103224.990",
+            "phase": "tool_result",
+            "timestamp": 1780050746076,
+            "toolCard": {
+              "args": {
+                "layer_name": "河南省县城驻地",
+                "path": "F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南省县城驻地.shp"
+              },
+              "finishedAt": 1780050746076,
+              "id": "tool-20260529103224.990",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 26, 几何类型: Line, 坐标系: , 字段数: 123, resolved_from: absolute:exact\",\"output\":\"河南高速公路\",\"success\":true}",
+              "startedAt": 1780050744990,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "工具 data_load_vector 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 3, 几何类型: Line, 坐标系: , 字段数: 9, resolved_from: absolute:exact\",\"output\":\"河流线\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 3, 几何类型: Line, 坐标系: , 字段数: 9, resolved_from: absolute:exact\",\"output\":\"河流线\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "id": "entry-20260529103225.023",
+            "phase": "tool_result",
+            "timestamp": 1780050746042,
+            "toolCard": {
+              "args": {
+                "layer_name": "河南铁路",
+                "path": "F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南铁路.shp"
+              },
+              "finishedAt": 1780050746042,
+              "id": "tool-20260529103225.023",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 3, 几何类型: Line, 坐标系: , 字段数: 9, resolved_from: absolute:exact\",\"output\":\"河流线\",\"success\":true}",
+              "startedAt": 1780050745023,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "工具 data_load_vector 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 7, 几何类型: Line, 坐标系: , 字段数: 1, resolved_from: absolute:exact\",\"output\":\"线状省界\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 7, 几何类型: Line, 坐标系: , 字段数: 1, resolved_from: absolute:exact\",\"output\":\"线状省界\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "id": "entry-20260529103225.057",
+            "phase": "tool_result",
+            "timestamp": 1780050746014,
+            "toolCard": {
+              "args": {
+                "layer_name": "河南高速公路",
+                "path": "F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南高速公路.shp"
+              },
+              "finishedAt": 1780050746014,
+              "id": "tool-20260529103225.057",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 7, 几何类型: Line, 坐标系: , 字段数: 1, resolved_from: absolute:exact\",\"output\":\"线状省界\",\"success\":true}",
+              "startedAt": 1780050745057,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "工具 data_load_vector 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 145, 几何类型: Polygon, 坐标系: , 字段数: 11, resolved_from: absolute:exact\",\"output\":\"河流面\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 145, 几何类型: Polygon, 坐标系: , 字段数: 11, resolved_from: absolute:exact\",\"output\":\"河流面\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "id": "entry-20260529103225.093",
+            "phase": "tool_result",
+            "timestamp": 1780050745986,
+            "toolCard": {
+              "args": {
+                "layer_name": "河南国道",
+                "path": "F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\河南国道.shp"
+              },
+              "finishedAt": 1780050745986,
+              "id": "tool-20260529103225.093",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 145, 几何类型: Polygon, 坐标系: , 字段数: 11, resolved_from: absolute:exact\",\"output\":\"河流面\",\"success\":true}",
+              "startedAt": 1780050745093,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "工具 data_load_vector 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 24, 几何类型: Line, 坐标系: , 字段数: 123, resolved_from: absolute:exact\",\"output\":\"河南铁路\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 24, 几何类型: Line, 坐标系: , 字段数: 123, resolved_from: absolute:exact\",\"output\":\"河南铁路\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "id": "entry-20260529103225.127",
+            "phase": "tool_result",
+            "timestamp": 1780050745956,
+            "toolCard": {
+              "args": {
+                "layer_name": "线状省界",
+                "path": "F:\\qgis_project\\8558d-main\\data_style\\河南交通图\\线状省界.shp"
+              },
+              "finishedAt": 1780050745956,
+              "id": "tool-20260529103225.127",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 24, 几何类型: Line, 坐标系: , 字段数: 123, resolved_from: absolute:exact\",\"output\":\"河南铁路\",\"success\":true}",
+              "startedAt": 1780050745127,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "工具 data_load_vector 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 15, 几何类型: Line, 坐标系: , 字段数: 123, resolved_from: absolute:exact\",\"output\":\"河南国道\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 15, 几何类型: Line, 坐标系: , 字段数: 123, resolved_from: absolute:exact\",\"output\":\"河南国道\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "id": "entry-20260529103225.168",
+            "phase": "tool_result",
+            "timestamp": 1780050745916,
+            "toolCard": {
+              "args": {
+                "layer_name": "河流线",
+                "path": "F:\\qgis_project\\8558d-main\\data_style\\河流线.shp"
+              },
+              "finishedAt": 1780050745916,
+              "id": "tool-20260529103225.168",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 15, 几何类型: Line, 坐标系: , 字段数: 123, resolved_from: absolute:exact\",\"output\":\"河南国道\",\"success\":true}",
+              "startedAt": 1780050745168,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "工具 data_load_vector 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 107, 几何类型: Point, 坐标系: , 字段数: 3, resolved_from: absolute:exact\",\"output\":\"河南省县城驻地\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 107, 几何类型: Point, 坐标系: , 字段数: 3, resolved_from: absolute:exact\",\"output\":\"河南省县城驻地\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "id": "entry-20260529103225.198",
+            "phase": "tool_result",
+            "timestamp": 1780050745868,
+            "toolCard": {
+              "args": {
+                "layer_name": "河流面",
+                "path": "F:\\qgis_project\\8558d-main\\data_style\\河流面.shp"
+              },
+              "finishedAt": 1780050745868,
+              "id": "tool-20260529103225.198",
+              "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 107, 几何类型: Point, 坐标系: , 字段数: 3, resolved_from: absolute:exact\",\"output\":\"河南省县城驻地\",\"success\":true}",
+              "startedAt": 1780050745198,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "data_load_vector"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "所有7个图层都加载成功了！现在让我获取所有图层的详细信息，包括CRS和范围。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103227.052",
+            "phase": "thinking",
+            "timestamp": 1780050747052,
+            "type": "thinking"
+          },
+          {
+            "content": "所有7个图层加载成功！现在验证加载结果。\n\n**第三步：确认图层状态、CRS与范围**",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103227.091",
+            "phase": "decision",
+            "timestamp": 1780050747091,
+            "type": "decision"
+          },
+          {
+            "content": "工具 get_layers_info 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":{\"count\":7,\"layers\":[{\"crs\":{\"auth_id\":\"\",\"description\":\"GCS_CGCS_2000\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":116.01245828556183,\"xmin\":110.40931533264538,\"ymax\":35.97580371000004,\"ymin\":32.24304628500005},\"feature_count\":3,\"field_count\":9,\"fields\":[{\"length\":20,\"name\":\"fid\",\"precision\":0,\"type\":\"Real\"},{\"length\":20,\"name\":\"OBJECTID\",\"precision\":0,\"type\":\"Real\"},{\"length\":10,\"name\":\"GB\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":8,\"name\":\"HYDC\",\"precision\":0,\"type\":\"String\"},{\"length\":60,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":20,\"name\":\"PERIOD\",\"precision\":0,\"type\":\"String\"},{\"length\":23,\"name\":\"SHAPE_Leng\",\"precision\":15,\"type\":\"Real\"},{\"length\":254,\"name\":\"layer\",\"precision\":0,\"type\":\"String\"},{\"length\":254,\"name\":\"path\",\"precision\":0,\"type\":\"String\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"____706642ea_bf3d_4e73_9a5e_ffde25825515\",\"is_valid\":true,\"name\":\"河流线\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流线.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"GCS_CGCS_2000\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":116.40571129000011,\"xmin\":110.4024636893843,\"ymax\":36.25963183049271,\"ymin\":31.49345291869771},\"feature_count\":145,\"field_count\":11,\"fields\":[{\"length\":20,\"name\":\"fid\",\"precision\":0,\"type\":\"Real\"},{\"length\":20,\"name\":\"OBJECTID\",\"precision\":0,\"type\":\"Real\"},{\"length\":10,\"name\":\"GB\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":8,\"name\":\"HYDC\",\"precision\":0,\"type\":\"String\"},{\"length\":60,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":20,\"name\":\"PERIOD\",\"precision\":0,\"type\":\"String\"},{\"length\":3,\"name\":\"VOL\",\"precision\":0,\"type\":\"String\"},{\"length\":23,\"name\":\"SHAPE_Leng\",\"precision\":15,\"type\":\"Real\"},{\"length\":23,\"name\":\"SHAPE_Area\",\"precision\":15,\"type\":\"Real\"},{\"length\":254,\"name\":\"layer\",\"precision\":0,\"type\":\"String\"},{\"length\":254,\"name\":\"path\",\"precision\":0,\"type\":\"String\"}],\"geometry_type\":\"MultiPolygon\",\"id\":\"____97ce1add_26b4_46db_8e97_a21e146f039d\",\"is_valid\":true,\"name\":\"河流面\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流面.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1053507.0211759203,\"xmin\":480456.6800478325,\"ymax\":4448392.03913579,\"ymin\":3923864.4193282565},\"feature_count\":7,\"field_count\":1,\"fields\":[{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_____15bfa7f3_f52d_4fbc_8538_7e3854b3a5e2\",\"is_valid\":true,\"name\":\"线状省界\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\线状省界.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1046173.2951525012,\"xmin\":481379.6928981603,\"ymax\":4442277.150147451,\"ymin\":3944338.466281802},\"feature_count\":15,\"field_count\":123,\"fields\":[{\"length\":9,\"name\":\"FID_省级行\",\"precision\":0,\"type\":\"Integer\"},{\"length\":18,\"name\":\"Z120401\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121301\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120402\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120602\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121102\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121302\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120403\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120603\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120703\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120803\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121103\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121303\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120404\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120604\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120804\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121104\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121304\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120405\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120605\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120705\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120805\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121105\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121305\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120406\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120806\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121106\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121306\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120307\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120607\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121107\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120308\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120608\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121108\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120609\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120709\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121109\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120610\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120711\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Agro_Colle\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Annual_Gro\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Art_Instit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Com_Univer\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Eco_Fin_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Female_to_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Forestry_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1994（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1997（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1998（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1999（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_2000（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_in_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_Rat\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Han_to_Tot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighSchool\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighScho_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Illiterate\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_3\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_4\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1997\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1998\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1999\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_2000\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Pri_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Sec_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Teri\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Language_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Male_to_To\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Medicine_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Nationalit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Normal_Col\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Physical_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":14,\"name\":\"PINYIN_NAM\",\"precision\":0,\"type\":\"String\"},{\"length\":18,\"name\":\"Polity_Law\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_0_14（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_15_64\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_1990（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_65Plus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Female\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Han（1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Male（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Minori\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Mino_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Rural\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Urban\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_94\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_L\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pri_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Bu\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Fi\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ge\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_He\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_In\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_re\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Sc\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_se\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_So\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"PROVINCE_\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":11,\"name\":\"PROVINCE_I\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Rural_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sci_Eng_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sec_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Teri_Indus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Total_Coll\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Urban_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Vocation\",\"precision\":6,\"type\":\"Real\"},{\"length\":6,\"name\":\"DZM\",\"precision\":0,\"type\":\"String\"},{\"length\":50,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":9,\"name\":\"FID_国道\",\"precision\":0,\"type\":\"Integer\"},{\"length\":6,\"name\":\"Id_1\",\"precision\":0,\"type\":\"Integer\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_____193c622a_41a9_4483_9b59_87b2c1aa2325\",\"is_valid\":true,\"name\":\"河南国道\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南国道.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1030223.3378085204,\"xmin\":528316.6171637566,\"ymax\":4431449.194093958,\"ymin\":3945255.2899942575},\"feature_count\":107,\"field_count\":3,\"fields\":[{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":32,\"name\":\"name\",\"precision\":0,\"type\":\"String\"}],\"geometry_type\":\"Point\",\"id\":\"________1de9a8b6_8014_49f5_ad84_53bba6fae197\",\"is_valid\":true,\"name\":\"河南省县城驻地\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南省县城驻地.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1040436.4463751065,\"xmin\":481412.5080610267,\"ymax\":4443561.216278467,\"ymin\":3927828.2914688718},\"feature_count\":26,\"field_count\":123,\"fields\":[{\"length\":9,\"name\":\"FID_省级行\",\"precision\":0,\"type\":\"Integer\"},{\"length\":18,\"name\":\"Z120401\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121301\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120402\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120602\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121102\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121302\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120403\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120603\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120703\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120803\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121103\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121303\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120404\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120604\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120804\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121104\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121304\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120405\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120605\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120705\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120805\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121105\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121305\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120406\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120806\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121106\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121306\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120307\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120607\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121107\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120308\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120608\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121108\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120609\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120709\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121109\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120610\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120711\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Agro_Colle\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Annual_Gro\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Art_Instit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Com_Univer\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Eco_Fin_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Female_to_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Forestry_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1994（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1997（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1998（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1999（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_2000（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_in_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_Rat\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Han_to_Tot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighSchool\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighScho_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Illiterate\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_3\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_4\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1997\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1998\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1999\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_2000\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Pri_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Sec_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Teri\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Language_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Male_to_To\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Medicine_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Nationalit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Normal_Col\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Physical_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":14,\"name\":\"PINYIN_NAM\",\"precision\":0,\"type\":\"String\"},{\"length\":18,\"name\":\"Polity_Law\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_0_14（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_15_64\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_1990（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_65Plus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Female\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Han（1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Male（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Minori\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Mino_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Rural\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Urban\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_94\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_L\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pri_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Bu\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Fi\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ge\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_He\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_In\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_re\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Sc\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_se\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_So\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"PROVINCE_\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":11,\"name\":\"PROVINCE_I\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Rural_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sci_Eng_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sec_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Teri_Indus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Total_Coll\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Urban_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Vocation\",\"precision\":6,\"type\":\"Real\"},{\"length\":6,\"name\":\"DZM\",\"precision\":0,\"type\":\"String\"},{\"length\":50,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":9,\"name\":\"FID_高速公\",\"precision\":0,\"type\":\"Integer\"},{\"length\":6,\"name\":\"Id_1\",\"precision\":0,\"type\":\"Integer\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_______cb5ab758_2c04_41a0_add6_039fef172697\",\"is_valid\":true,\"name\":\"河南高速公路\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南高速公路.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1013898.3097018227,\"xmin\":480546.5082290899,\"ymax\":4437495.5060196165,\"ymin\":3926934.4212391255},\"feature_count\":24,\"field_count\":123,\"fields\":[{\"length\":9,\"name\":\"FID_省级行\",\"precision\":0,\"type\":\"Integer\"},{\"length\":18,\"name\":\"Z120401\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121301\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120402\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120602\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121102\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121302\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120403\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120603\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120703\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120803\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121103\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121303\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120404\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120604\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120804\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121104\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121304\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120405\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120605\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120705\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120805\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121105\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121305\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120406\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120806\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121106\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121306\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120307\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120607\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121107\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120308\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120608\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121108\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120609\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120709\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121109\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120610\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120711\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Agro_Colle\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Annual_Gro\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Art_Instit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Com_Univer\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Eco_Fin_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Female_to_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Forestry_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1994（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1997（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1998（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1999（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_2000（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_in_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_Rat\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Han_to_Tot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighSchool\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighScho_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Illiterate\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_3\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_4\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1997\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1998\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1999\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_2000\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Pri_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Sec_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Teri\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Language_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Male_to_To\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Medicine_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Nationalit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Normal_Col\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Physical_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":14,\"name\":\"PINYIN_NAM\",\"precision\":0,\"type\":\"String\"},{\"length\":18,\"name\":\"Polity_Law\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_0_14（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_15_64\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_1990（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_65Plus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Female\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Han（1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Male（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Minori\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Mino_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Rural\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Urban\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_94\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_L\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pri_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Bu\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Fi\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ge\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_He\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_In\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_re\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Sc\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_se\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_So\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"PROVINCE_\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":11,\"name\":\"PROVINCE_I\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Rural_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sci_Eng_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sec_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Teri_Indus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Total_Coll\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Urban_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Vocation\",\"precision\":6,\"type\":\"Real\"},{\"length\":6,\"name\":\"DZM\",\"precision\":0,\"type\":\"String\"},{\"length\":50,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":9,\"name\":\"FID_铁路\",\"precision\":0,\"type\":\"Integer\"},{\"length\":6,\"name\":\"Id_1\",\"precision\":0,\"type\":\"Integer\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_____d28c67fc_5056_40c5_a592_56563d11e74c\",\"is_valid\":true,\"name\":\"河南铁路\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南铁路.shp\",\"type\":\"vector\"}]},\"output\":\"成功获取 7 个图层信息：河流线(vector/MultiLineString, 要素 3, 字段: fid, OBJECTID, GB, HYDC, NAME 等 9 项, 源: 河流线.shp); 河流面(vector/MultiPolygon, 要素 145, 字段: fid, OBJECTID, GB, HYDC, NAME 等 11 项, 源: 河流面.shp); 线状省界(vector/MultiLineString, 要素 7, 字段: id, 源: 线状省界.shp); 河南国道(vector/MultiLineString, 要素 15, 字段: FID_省级行, Z120401, Z121301, Z120402, Z120602 等 123 项, 源: 河南国道.shp); 河南省县城驻地(vector/Point, 要素 107, 字段: AREA, PERIMETER, name, 源: 河南省县城驻地.shp); 河南高速公路(vector/MultiLineString, 要素 26, 字段: FID_省级行, Z120401, Z121301, Z120402, Z120602 等 123 项, 源: 河南高速公路.shp)\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":{\"count\":7,\"layers\":[{\"crs\":{\"auth_id\":\"\",\"description\":\"GCS_CGCS_2000\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":116.01245828556183,\"xmin\":110.40931533264538,\"ymax\":35.97580371000004,\"ymin\":32.24304628500005},\"feature_count\":3,\"field_count\":9,\"fields\":[{\"length\":20,\"name\":\"fid\",\"precision\":0,\"type\":\"Real\"},{\"length\":20,\"name\":\"OBJECTID\",\"precision\":0,\"type\":\"Real\"},{\"length\":10,\"name\":\"GB\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":8,\"name\":\"HYDC\",\"precision\":0,\"type\":\"String\"},{\"length\":60,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":20,\"name\":\"PERIOD\",\"precision\":0,\"type\":\"String\"},{\"length\":23,\"name\":\"SHAPE_Leng\",\"precision\":15,\"type\":\"Real\"},{\"length\":254,\"name\":\"layer\",\"precision\":0,\"type\":\"String\"},{\"length\":254,\"name\":\"path\",\"precision\":0,\"type\":\"String\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"____706642ea_bf3d_4e73_9a5e_ffde25825515\",\"is_valid\":true,\"name\":\"河流线\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流线.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"GCS_CGCS_2000\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":116.40571129000011,\"xmin\":110.4024636893843,\"ymax\":36.25963183049271,\"ymin\":31.49345291869771},\"feature_count\":145,\"field_count\":11,\"fields\":[{\"length\":20,\"name\":\"fid\",\"precision\":0,\"type\":\"Real\"},{\"length\":20,\"name\":\"OBJECTID\",\"precision\":0,\"type\":\"Real\"},{\"length\":10,\"name\":\"GB\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":8,\"name\":\"HYDC\",\"precision\":0,\"type\":\"String\"},{\"length\":60,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":20,\"name\":\"PERIOD\",\"precision\":0,\"type\":\"String\"},{\"length\":3,\"name\":\"VOL\",\"precision\":0,\"type\":\"String\"},{\"length\":23,\"name\":\"SHAPE_Leng\",\"precision\":15,\"type\":\"Real\"},{\"length\":23,\"name\":\"SHAPE_Area\",\"precision\":15,\"type\":\"Real\"},{\"length\":254,\"name\":\"layer\",\"precision\":0,\"type\":\"String\"},{\"length\":254,\"name\":\"path\",\"precision\":0,\"type\":\"String\"}],\"geometry_type\":\"MultiPolygon\",\"id\":\"____97ce1add_26b4_46db_8e97_a21e146f039d\",\"is_valid\":true,\"name\":\"河流面\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流面.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1053507.0211759203,\"xmin\":480456.6800478325,\"ymax\":4448392.03913579,\"ymin\":3923864.4193282565},\"feature_count\":7,\"field_count\":1,\"fields\":[{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_____15bfa7f3_f52d_4fbc_8538_7e3854b3a5e2\",\"is_valid\":true,\"name\":\"线状省界\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\线状省界.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1046173.2951525012,\"xmin\":481379.6928981603,\"ymax\":4442277.150147451,\"ymin\":3944338.466281802},\"feature_count\":15,\"field_count\":123,\"fields\":[{\"length\":9,\"name\":\"FID_省级行\",\"precision\":0,\"type\":\"Integer\"},{\"length\":18,\"name\":\"Z120401\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121301\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120402\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120602\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121102\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121302\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120403\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120603\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120703\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120803\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121103\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121303\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120404\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120604\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120804\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121104\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121304\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120405\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120605\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120705\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120805\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121105\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121305\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120406\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120806\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121106\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121306\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120307\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120607\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121107\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120308\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120608\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121108\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120609\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120709\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121109\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120610\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120711\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Agro_Colle\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Annual_Gro\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Art_Instit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Com_Univer\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Eco_Fin_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Female_to_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Forestry_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1994（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1997（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1998（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1999（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_2000（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_in_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_Rat\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Han_to_Tot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighSchool\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighScho_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Illiterate\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_3\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_4\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1997\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1998\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1999\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_2000\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Pri_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Sec_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Teri\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Language_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Male_to_To\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Medicine_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Nationalit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Normal_Col\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Physical_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":14,\"name\":\"PINYIN_NAM\",\"precision\":0,\"type\":\"String\"},{\"length\":18,\"name\":\"Polity_Law\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_0_14（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_15_64\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_1990（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_65Plus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Female\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Han（1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Male（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Minori\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Mino_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Rural\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Urban\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_94\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_L\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pri_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Bu\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Fi\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ge\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_He\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_In\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_re\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Sc\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_se\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_So\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"PROVINCE_\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":11,\"name\":\"PROVINCE_I\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Rural_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sci_Eng_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sec_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Teri_Indus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Total_Coll\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Urban_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Vocation\",\"precision\":6,\"type\":\"Real\"},{\"length\":6,\"name\":\"DZM\",\"precision\":0,\"type\":\"String\"},{\"length\":50,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":9,\"name\":\"FID_国道\",\"precision\":0,\"type\":\"Integer\"},{\"length\":6,\"name\":\"Id_1\",\"precision\":0,\"type\":\"Integer\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_____193c622a_41a9_4483_9b59_87b2c1aa2325\",\"is_valid\":true,\"name\":\"河南国道\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南国道.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1030223.3378085204,\"xmin\":528316.6171637566,\"ymax\":4431449.194093958,\"ymin\":3945255.2899942575},\"feature_count\":107,\"field_count\":3,\"fields\":[{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":32,\"name\":\"name\",\"precision\":0,\"type\":\"String\"}],\"geometry_type\":\"Point\",\"id\":\"________1de9a8b6_8014_49f5_ad84_53bba6fae197\",\"is_valid\":true,\"name\":\"河南省县城驻地\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南省县城驻地.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1040436.4463751065,\"xmin\":481412.5080610267,\"ymax\":4443561.216278467,\"ymin\":3927828.2914688718},\"feature_count\":26,\"field_count\":123,\"fields\":[{\"length\":9,\"name\":\"FID_省级行\",\"precision\":0,\"type\":\"Integer\"},{\"length\":18,\"name\":\"Z120401\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121301\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120402\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120602\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121102\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121302\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120403\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120603\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120703\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120803\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121103\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121303\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120404\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120604\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120804\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121104\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121304\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120405\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120605\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120705\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120805\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121105\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121305\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120406\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120806\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121106\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121306\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120307\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120607\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121107\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120308\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120608\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121108\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120609\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120709\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121109\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120610\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120711\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Agro_Colle\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Annual_Gro\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Art_Instit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Com_Univer\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Eco_Fin_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Female_to_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Forestry_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1994（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1997（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1998（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1999（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_2000（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_in_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_Rat\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Han_to_Tot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighSchool\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighScho_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Illiterate\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_3\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_4\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1997\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1998\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1999\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_2000\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Pri_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Sec_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Teri\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Language_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Male_to_To\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Medicine_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Nationalit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Normal_Col\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Physical_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":14,\"name\":\"PINYIN_NAM\",\"precision\":0,\"type\":\"String\"},{\"length\":18,\"name\":\"Polity_Law\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_0_14（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_15_64\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_1990（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_65Plus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Female\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Han（1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Male（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Minori\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Mino_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Rural\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Urban\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_94\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_L\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pri_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Bu\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Fi\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ge\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_He\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_In\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_re\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Sc\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_se\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_So\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"PROVINCE_\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":11,\"name\":\"PROVINCE_I\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Rural_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sci_Eng_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sec_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Teri_Indus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Total_Coll\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Urban_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Vocation\",\"precision\":6,\"type\":\"Real\"},{\"length\":6,\"name\":\"DZM\",\"precision\":0,\"type\":\"String\"},{\"length\":50,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":9,\"name\":\"FID_高速公\",\"precision\":0,\"type\":\"Integer\"},{\"length\":6,\"name\":\"Id_1\",\"precision\":0,\"type\":\"Integer\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_______cb5ab758_2c04_41a0_add6_039fef172697\",\"is_valid\":true,\"name\":\"河南高速公路\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南高速公路.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1013898.3097018227,\"xmin\":480546.5082290899,\"ymax\":4437495.5060196165,\"ymin\":3926934.4212391255},\"feature_count\":24,\"field_count\":123,\"fields\":[{\"length\":9,\"name\":\"FID_省级行\",\"precision\":0,\"type\":\"Integer\"},{\"length\":18,\"name\":\"Z120401\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121301\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120402\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120602\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121102\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121302\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120403\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120603\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120703\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120803\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121103\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121303\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120404\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120604\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120804\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121104\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121304\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120405\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120605\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120705\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120805\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121105\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121305\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120406\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120806\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121106\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121306\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120307\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120607\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121107\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120308\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120608\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121108\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120609\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120709\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121109\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120610\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120711\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Agro_Colle\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Annual_Gro\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Art_Instit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Com_Univer\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Eco_Fin_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Female_to_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Forestry_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1994（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1997（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1998（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1999（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_2000（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_in_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_Rat\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Han_to_Tot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighSchool\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighScho_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Illiterate\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_3\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_4\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1997\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1998\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1999\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_2000\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Pri_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Sec_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Teri\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Language_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Male_to_To\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Medicine_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Nationalit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Normal_Col\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Physical_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":14,\"name\":\"PINYIN_NAM\",\"precision\":0,\"type\":\"String\"},{\"length\":18,\"name\":\"Polity_Law\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_0_14（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_15_64\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_1990（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_65Plus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Female\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Han（1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Male（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Minori\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Mino_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Rural\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Urban\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_94\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_L\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pri_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Bu\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Fi\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ge\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_He\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_In\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_re\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Sc\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_se\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_So\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"PROVINCE_\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":11,\"name\":\"PROVINCE_I\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Rural_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sci_Eng_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sec_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Teri_Indus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Total_Coll\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Urban_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Vocation\",\"precision\":6,\"type\":\"Real\"},{\"length\":6,\"name\":\"DZM\",\"precision\":0,\"type\":\"String\"},{\"length\":50,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":9,\"name\":\"FID_铁路\",\"precision\":0,\"type\":\"Integer\"},{\"length\":6,\"name\":\"Id_1\",\"precision\":0,\"type\":\"Integer\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_____d28c67fc_5056_40c5_a592_56563d11e74c\",\"is_valid\":true,\"name\":\"河南铁路\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南铁路.shp\",\"type\":\"vector\"}]},\"output\":\"成功获取 7 个图层信息：河流线(vector/MultiLineString, 要素 3, 字段: fid, OBJECTID, GB, HYDC, NAME 等 9 项, 源: 河流线.shp); 河流面(vector/MultiPolygon, 要素 145, 字段: fid, OBJECTID, GB, HYDC, NAME 等 11 项, 源: 河流面.shp); 线状省界(vector/MultiLineString, 要素 7, 字段: id, 源: 线状省界.shp); 河南国道(vector/MultiLineString, 要素 15, 字段: FID_省级行, Z120401, Z121301, Z120402, Z120602 等 123 项, 源: 河南国道.shp); 河南省县城驻地(vector/Point, 要素 107, 字段: AREA, PERIMETER, name, 源: 河南省县城驻地.shp); 河南高速公路(vector/MultiLineString, 要素 26, 字段: FID_省级行, Z120401, Z121301, Z120402, Z120602 等 123 项, 源: 河南高速公路.shp)\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "get_layers_info"
+            },
+            "id": "entry-20260529103227.125",
+            "phase": "tool_result",
+            "timestamp": 1780050747162,
+            "toolCard": {
+              "finishedAt": 1780050747162,
+              "id": "tool-20260529103227.125",
+              "result": "{\"error\":\"\",\"info\":{\"count\":7,\"layers\":[{\"crs\":{\"auth_id\":\"\",\"description\":\"GCS_CGCS_2000\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":116.01245828556183,\"xmin\":110.40931533264538,\"ymax\":35.97580371000004,\"ymin\":32.24304628500005},\"feature_count\":3,\"field_count\":9,\"fields\":[{\"length\":20,\"name\":\"fid\",\"precision\":0,\"type\":\"Real\"},{\"length\":20,\"name\":\"OBJECTID\",\"precision\":0,\"type\":\"Real\"},{\"length\":10,\"name\":\"GB\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":8,\"name\":\"HYDC\",\"precision\":0,\"type\":\"String\"},{\"length\":60,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":20,\"name\":\"PERIOD\",\"precision\":0,\"type\":\"String\"},{\"length\":23,\"name\":\"SHAPE_Leng\",\"precision\":15,\"type\":\"Real\"},{\"length\":254,\"name\":\"layer\",\"precision\":0,\"type\":\"String\"},{\"length\":254,\"name\":\"path\",\"precision\":0,\"type\":\"String\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"____706642ea_bf3d_4e73_9a5e_ffde25825515\",\"is_valid\":true,\"name\":\"河流线\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流线.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"GCS_CGCS_2000\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":116.40571129000011,\"xmin\":110.4024636893843,\"ymax\":36.25963183049271,\"ymin\":31.49345291869771},\"feature_count\":145,\"field_count\":11,\"fields\":[{\"length\":20,\"name\":\"fid\",\"precision\":0,\"type\":\"Real\"},{\"length\":20,\"name\":\"OBJECTID\",\"precision\":0,\"type\":\"Real\"},{\"length\":10,\"name\":\"GB\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":8,\"name\":\"HYDC\",\"precision\":0,\"type\":\"String\"},{\"length\":60,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":20,\"name\":\"PERIOD\",\"precision\":0,\"type\":\"String\"},{\"length\":3,\"name\":\"VOL\",\"precision\":0,\"type\":\"String\"},{\"length\":23,\"name\":\"SHAPE_Leng\",\"precision\":15,\"type\":\"Real\"},{\"length\":23,\"name\":\"SHAPE_Area\",\"precision\":15,\"type\":\"Real\"},{\"length\":254,\"name\":\"layer\",\"precision\":0,\"type\":\"String\"},{\"length\":254,\"name\":\"path\",\"precision\":0,\"type\":\"String\"}],\"geometry_type\":\"MultiPolygon\",\"id\":\"____97ce1add_26b4_46db_8e97_a21e146f039d\",\"is_valid\":true,\"name\":\"河流面\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流面.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1053507.0211759203,\"xmin\":480456.6800478325,\"ymax\":4448392.03913579,\"ymin\":3923864.4193282565},\"feature_count\":7,\"field_count\":1,\"fields\":[{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_____15bfa7f3_f52d_4fbc_8538_7e3854b3a5e2\",\"is_valid\":true,\"name\":\"线状省界\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\线状省界.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1046173.2951525012,\"xmin\":481379.6928981603,\"ymax\":4442277.150147451,\"ymin\":3944338.466281802},\"feature_count\":15,\"field_count\":123,\"fields\":[{\"length\":9,\"name\":\"FID_省级行\",\"precision\":0,\"type\":\"Integer\"},{\"length\":18,\"name\":\"Z120401\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121301\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120402\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120602\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121102\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121302\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120403\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120603\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120703\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120803\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121103\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121303\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120404\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120604\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120804\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121104\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121304\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120405\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120605\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120705\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120805\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121105\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121305\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120406\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120806\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121106\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121306\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120307\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120607\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121107\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120308\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120608\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121108\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120609\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120709\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121109\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120610\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120711\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Agro_Colle\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Annual_Gro\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Art_Instit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Com_Univer\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Eco_Fin_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Female_to_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Forestry_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1994（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1997（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1998（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1999（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_2000（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_in_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_Rat\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Han_to_Tot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighSchool\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighScho_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Illiterate\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_3\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_4\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1997\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1998\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1999\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_2000\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Pri_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Sec_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Teri\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Language_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Male_to_To\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Medicine_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Nationalit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Normal_Col\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Physical_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":14,\"name\":\"PINYIN_NAM\",\"precision\":0,\"type\":\"String\"},{\"length\":18,\"name\":\"Polity_Law\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_0_14（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_15_64\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_1990（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_65Plus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Female\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Han（1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Male（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Minori\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Mino_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Rural\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Urban\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_94\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_L\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pri_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Bu\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Fi\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ge\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_He\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_In\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_re\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Sc\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_se\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_So\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"PROVINCE_\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":11,\"name\":\"PROVINCE_I\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Rural_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sci_Eng_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sec_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Teri_Indus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Total_Coll\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Urban_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Vocation\",\"precision\":6,\"type\":\"Real\"},{\"length\":6,\"name\":\"DZM\",\"precision\":0,\"type\":\"String\"},{\"length\":50,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":9,\"name\":\"FID_国道\",\"precision\":0,\"type\":\"Integer\"},{\"length\":6,\"name\":\"Id_1\",\"precision\":0,\"type\":\"Integer\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_____193c622a_41a9_4483_9b59_87b2c1aa2325\",\"is_valid\":true,\"name\":\"河南国道\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南国道.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1030223.3378085204,\"xmin\":528316.6171637566,\"ymax\":4431449.194093958,\"ymin\":3945255.2899942575},\"feature_count\":107,\"field_count\":3,\"fields\":[{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":32,\"name\":\"name\",\"precision\":0,\"type\":\"String\"}],\"geometry_type\":\"Point\",\"id\":\"________1de9a8b6_8014_49f5_ad84_53bba6fae197\",\"is_valid\":true,\"name\":\"河南省县城驻地\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南省县城驻地.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1040436.4463751065,\"xmin\":481412.5080610267,\"ymax\":4443561.216278467,\"ymin\":3927828.2914688718},\"feature_count\":26,\"field_count\":123,\"fields\":[{\"length\":9,\"name\":\"FID_省级行\",\"precision\":0,\"type\":\"Integer\"},{\"length\":18,\"name\":\"Z120401\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121301\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120402\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120602\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121102\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121302\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120403\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120603\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120703\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120803\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121103\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121303\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120404\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120604\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120804\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121104\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121304\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120405\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120605\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120705\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120805\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121105\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121305\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120406\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120806\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121106\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121306\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120307\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120607\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121107\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120308\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120608\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121108\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120609\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120709\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121109\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120610\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120711\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Agro_Colle\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Annual_Gro\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Art_Instit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Com_Univer\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Eco_Fin_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Female_to_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Forestry_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1994（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1997（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1998（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1999（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_2000（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_in_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_Rat\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Han_to_Tot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighSchool\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighScho_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Illiterate\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_3\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_4\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1997\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1998\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1999\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_2000\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Pri_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Sec_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Teri\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Language_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Male_to_To\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Medicine_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Nationalit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Normal_Col\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Physical_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":14,\"name\":\"PINYIN_NAM\",\"precision\":0,\"type\":\"String\"},{\"length\":18,\"name\":\"Polity_Law\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_0_14（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_15_64\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_1990（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_65Plus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Female\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Han（1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Male（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Minori\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Mino_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Rural\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Urban\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_94\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_L\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pri_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Bu\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Fi\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ge\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_He\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_In\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_re\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Sc\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_se\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_So\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"PROVINCE_\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":11,\"name\":\"PROVINCE_I\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Rural_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sci_Eng_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sec_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Teri_Indus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Total_Coll\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Urban_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Vocation\",\"precision\":6,\"type\":\"Real\"},{\"length\":6,\"name\":\"DZM\",\"precision\":0,\"type\":\"String\"},{\"length\":50,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":9,\"name\":\"FID_高速公\",\"precision\":0,\"type\":\"Integer\"},{\"length\":6,\"name\":\"Id_1\",\"precision\":0,\"type\":\"Integer\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_______cb5ab758_2c04_41a0_add6_039fef172697\",\"is_valid\":true,\"name\":\"河南高速公路\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南高速公路.shp\",\"type\":\"vector\"},{\"crs\":{\"auth_id\":\"\",\"description\":\"China_Lambert_Conformal_Conic\"},\"data_provider\":\"ogr\",\"extent\":{\"xmax\":1013898.3097018227,\"xmin\":480546.5082290899,\"ymax\":4437495.5060196165,\"ymin\":3926934.4212391255},\"feature_count\":24,\"field_count\":123,\"fields\":[{\"length\":9,\"name\":\"FID_省级行\",\"precision\":0,\"type\":\"Integer\"},{\"length\":18,\"name\":\"Z120401\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121301\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120402\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120602\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121102\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121302\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120403\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120603\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120703\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120803\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121103\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121303\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120404\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120604\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120804\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121104\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121304\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120405\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120605\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120705\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120805\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121105\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121305\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120406\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120806\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121106\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121306\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120307\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120607\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121107\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120308\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120608\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121108\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120609\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120709\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z121109\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120610\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Z120711\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Agro_Colle\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Annual_Gro\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"AREA\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Art_Instit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Com_Univer\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Eco_Fin_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Female_to_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Forestry_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1994（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1997（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1998（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_1999（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"GDP_2000（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_in_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Growth_Rat\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Han_to_Tot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighSchool\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"HighScho_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"id\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Illiterate\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_3\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Illitera_4\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1997\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1998\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_1999\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_2000\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Pri_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Sec_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Index_Teri\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Language_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Male_to_To\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Medicine_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Nationalit\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Normal_Col\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PERIMETER\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Physical_C\",\"precision\":6,\"type\":\"Real\"},{\"length\":14,\"name\":\"PINYIN_NAM\",\"precision\":0,\"type\":\"String\"},{\"length\":18,\"name\":\"Polity_Law\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_0_14（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_15_64\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_1990（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_65Plus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Female\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Han（1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Male（\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Minori\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Mino_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Rural\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pop_Urban\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_94\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_L\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"POPU_PER_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Pri_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_1_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"PRODUCT_2_\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Bu\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Fi\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ge\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_He\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_In\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Ot\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_re\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_Sc\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_se\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Product_So\",\"precision\":6,\"type\":\"Real\"},{\"length\":11,\"name\":\"PROVINCE_\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":11,\"name\":\"PROVINCE_I\",\"precision\":0,\"type\":\"Integer64\"},{\"length\":18,\"name\":\"Rural_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sci_Eng_Co\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Sec_Indust\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Teri_Indus\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Total_Coll\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Urban_to_T\",\"precision\":6,\"type\":\"Real\"},{\"length\":18,\"name\":\"Vocation\",\"precision\":6,\"type\":\"Real\"},{\"length\":6,\"name\":\"DZM\",\"precision\":0,\"type\":\"String\"},{\"length\":50,\"name\":\"NAME\",\"precision\":0,\"type\":\"String\"},{\"length\":9,\"name\":\"FID_铁路\",\"precision\":0,\"type\":\"Integer\"},{\"length\":6,\"name\":\"Id_1\",\"precision\":0,\"type\":\"Integer\"}],\"geometry_type\":\"MultiLineString\",\"id\":\"_____d28c67fc_5056_40c5_a592_56563d11e74c\",\"is_valid\":true,\"name\":\"河南铁路\",\"selected_feature_count\":0,\"source\":\"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南铁路.shp\",\"type\":\"vector\"}]},\"output\":\"成功获取 7 个图层信息：河流线(vector/MultiLineString, 要素 3, 字段: fid, OBJECTID, GB, HYDC, NAME 等 9 项, 源: 河流线.shp); 河流面(vector/MultiPolygon, 要素 145, 字段: fid, OBJECTID, GB, HYDC, NAME 等 11 项, 源: 河流面.shp); 线状省界(vector/MultiLineString, 要素 7, 字段: id, 源: 线状省界.shp); 河南国道(vector/MultiLineString, 要素 15, 字段: FID_省级行, Z120401, Z121301, Z120402, Z120602 等 123 项, 源: 河南国道.shp); 河南省县城驻地(vector/Point, 要素 107, 字段: AREA, PERIMETER, name, 源: 河南省县城驻地.shp); 河南高速公路(vector/MultiLineString, 要素 26, 字段: FID_省级行, Z120401, Z121301, Z120402, Z120602 等 123 项, 源: 河南高速公路.shp)\",\"success\":true}",
+              "startedAt": 1780050747125,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "get_layers_info"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "所有7个图层都已成功加载。给用户总结一下结果。\n\n需要注意的是，图层的CRS存在不一致的情况：\n1. 河流线 和 河流面：使用 **GCS_CGCS_2000**（地理坐标系，经纬度）\n2. 线状省界、河南国道、河南省县城驻地、河南高速公路、河南铁路：使用 **China_Lambert_Conformal_Conic**（投影坐标系）\n\n由于河流图层（地理坐标）和其他图层（投影坐标）的CRS不同，这里需要提醒用户注意CRS一致性问题。\n\n让我汇总最终结果。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103234.817",
+            "phase": "thinking",
+            "timestamp": 1780050754817,
+            "type": "thinking"
+          }
+        ],
+        "finishedAt": 1780050754876,
+        "id": "wf-20260529103220.181",
+        "startedAt": 1780050740181,
+        "status": "completed",
+        "summary": "所有7个图层都已成功加载。给用户总结一下结果。\n\n需要注意的是，图层的CRS存在不一致的情况：\n1. 河流线 和 河流面：使用 **GCS_CGCS_2000**（地理坐标系，经纬度）\n2. 线状省界、河南国道、河南省县城驻地、河南高速公路、河南铁路：使用 **China_Lambert_Conformal_Conic**（投影坐标系）\n\n由于河流图层（地理坐标）和其他图层（投影坐标）的CRS不同，这里需要提醒用户注意CRS一致性问题。\n\n让我汇总最终结果。",
+        "updatedAt": 1780050754876
+      },
+      {
+        "agent": "orchestrator",
+        "agentDisplayName": "主智能体",
+        "entries": [
+          {
+            "content": "识别到需要 主智能体 处理此任务",
+            "data": {
+              "mode_phase": "building"
+            },
+            "id": "entry-20260529103234.876",
+            "phase": "thinking",
+            "timestamp": 1780050754876,
+            "type": "thinking"
+          },
+          {
+            "content": "工具 task 执行完成（状态未判定）",
+            "data": {
+              "mode_phase": "building",
+              "result": "所有图层已全部成功加载！以下是完整的加载报告：\n\n---\n\n## ✅ 加载完成报告\n\n```json\n{\n  \"status\": \"completed\",\n  \"agent\": \"data_engineer\",\n  \"summary\": \"成功创建 QGIS 工程（henan-x.qgz）并加载全部 7 个矢量图层，涵盖河南省县城驻地（点）、铁路/高速公路/国道/省界/河流（线）、河流面（面）等多类底图要素\",\n  \"artifacts\": {\n    \"layers\": [\n      \"河南省县城驻地\",\n      \"河南铁路\",\n      \"河南高速公路\",\n      \"河南国道\",\n      \"线状省界\",\n      \"河流线\",\n      \"河流面\"\n    ],\n    \"files\": [\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南省县城驻地.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南铁路.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南高速公路.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南国道.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\线状省界.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流线.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流面.shp\"\n    ],\n    \"extent\": \"河南省县域范围，约 X: 480456~1053507, Y: 3923864~4448392（投影坐标）\",\n    \"crs\": \"混合CRS（详见备注）\"\n  },\n  \"next_agent\": \"cartographer\",\n  \"blocking_issues\": []\n}\n```\n\n### 📋 各图层详情\n\n| 图层 | 几何类型 | 要素数 | 关键字段 | CRS |\n|------|---------|:------:|---------|:---:|\n| **河南省县城驻地** | Point | **107** | name(地名) | China_Lambert_Conformal_Conic |\n| **河南铁路** | MultiLineString | **24** | NAME(名称), DZM(代码) | China_Lambert_Conformal_Conic |\n| **河南高速公路** | MultiLineString | **26** | NAME(名称), DZM(代码) | China_Lambert_Conformal_Conic |\n| **河南国道** | MultiLineString | **15** | NAME(名称), DZM(代码) | China_Lambert_Conformal_Conic |\n| **线状省界** | MultiLineString | **7** | id | China_Lambert_Conformal_Conic |\n| **河流线** | MultiLineString | **3** | NAME(河流名), HYDC, PERIOD | **GCS_CGCS_2000** ⚠️ |\n| **河流面** | MultiPolygon | **145** | NAME(河流名), HYDC, VOL(流量) | **GCS_CGCS_2000** ⚠️ |\n\n### ⚠️ 注意事项\n\n1. **CRS 不一致**：河流线/河流面（`GCS_CGCS_2000` 地理坐标系）与其他图层（`China_Lambert_Conformal_Conic` 投影坐标系）的坐标系不同，后续制图时建议统一进行动态投影转换或重投影。\n2. **字段冗余**：河南铁路、高速公路、国道三个图层各有 **123 个字段**，包含大量社会经济统计字段，后续可按需精简。\n3. **数据缺口**：无 —— 所有 7 个指定路径的文件均存在且加载成功。\n\n### ➡️ 建议下一步\n\n可交由 **cartographer** 智能体对标图层进行符号化设置（如铁路线样式、高速公路样式、县城驻地点符号、省界样式、河流填充等）。",
+              "status": "unknown",
+              "status_source": "unknown",
+              "tool": "task"
+            },
+            "id": "entry-20260529103234.911",
+            "phase": "tool_result",
+            "timestamp": 1780050754911,
+            "toolCard": {
+              "finishedAt": 1780050754911,
+              "id": "tool-20260529103234.911",
+              "result": "所有图层已全部成功加载！以下是完整的加载报告：\n\n---\n\n## ✅ 加载完成报告\n\n```json\n{\n  \"status\": \"completed\",\n  \"agent\": \"data_engineer\",\n  \"summary\": \"成功创建 QGIS 工程（henan-x.qgz）并加载全部 7 个矢量图层，涵盖河南省县城驻地（点）、铁路/高速公路/国道/省界/河流（线）、河流面（面）等多类底图要素\",\n  \"artifacts\": {\n    \"layers\": [\n      \"河南省县城驻地\",\n      \"河南铁路\",\n      \"河南高速公路\",\n      \"河南国道\",\n      \"线状省界\",\n      \"河流线\",\n      \"河流面\"\n    ],\n    \"files\": [\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南省县城驻地.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南铁路.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南高速公路.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\河南国道.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河南交通图\\\\线状省界.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流线.shp\",\n      \"F:\\\\qgis_project\\\\8558d-main\\\\data_style\\\\河流面.shp\"\n    ],\n    \"extent\": \"河南省县域范围，约 X: 480456~1053507, Y: 3923864~4448392（投影坐标）\",\n    \"crs\": \"混合CRS（详见备注）\"\n  },\n  \"next_agent\": \"cartographer\",\n  \"blocking_issues\": []\n}\n```\n\n### 📋 各图层详情\n\n| 图层 | 几何类型 | 要素数 | 关键字段 | CRS |\n|------|---------|:------:|---------|:---:|\n| **河南省县城驻地** | Point | **107** | name(地名) | China_Lambert_Conformal_Conic |\n| **河南铁路** | MultiLineString | **24** | NAME(名称), DZM(代码) | China_Lambert_Conformal_Conic |\n| **河南高速公路** | MultiLineString | **26** | NAME(名称), DZM(代码) | China_Lambert_Conformal_Conic |\n| **河南国道** | MultiLineString | **15** | NAME(名称), DZM(代码) | China_Lambert_Conformal_Conic |\n| **线状省界** | MultiLineString | **7** | id | China_Lambert_Conformal_Conic |\n| **河流线** | MultiLineString | **3** | NAME(河流名), HYDC, PERIOD | **GCS_CGCS_2000** ⚠️ |\n| **河流面** | MultiPolygon | **145** | NAME(河流名), HYDC, VOL(流量) | **GCS_CGCS_2000** ⚠️ |\n\n### ⚠️ 注意事项\n\n1. **CRS 不一致**：河流线/河流面（`GCS_CGCS_2000` 地理坐标系）与其他图层（`China_Lambert_Conformal_Conic` 投影坐标系）的坐标系不同，后续制图时建议统一进行动态投影转换或重投影。\n2. **字段冗余**：河南铁路、高速公路、国道三个图层各有 **123 个字段**，包含大量社会经济统计字段，后续可按需精简。\n3. **数据缺口**：无 —— 所有 7 个指定路径的文件均存在且加载成功。\n\n### ➡️ 建议下一步\n\n可交由 **cartographer** 智能体对标图层进行符号化设置（如铁路线样式、高速公路样式、县城驻地点符号、省界样式、河流填充等）。",
+              "startedAt": 1780050754911,
+              "status": "running",
+              "statusSource": "unknown",
+              "tool": "task"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "data_engineer 阶段已完成，所有7个图层加载成功，没有数据缺口。接下来应该进入阶段2 - cartographer 制图布局。\n\n让我先更新任务清单，然后启动cartographer智能体。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103236.950",
+            "phase": "thinking",
+            "timestamp": 1780050756950,
+            "type": "thinking"
+          },
+          {
+            "content": "✅ **阶段1完成！** 所有7个图层加载成功。现在进入阶段2。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103237.001",
+            "phase": "decision",
+            "timestamp": 1780050757001,
+            "type": "decision"
+          },
+          {
+            "content": "调用工具: write_todos",
+            "data": {
+              "mode_phase": "building",
+              "result": "Updated todo list to [{\"content\":\"阶段1：data_engineer - 加载河南省基础地理数据\",\"activeForm\":\"执行阶段1：data_engineer加载数据\",\"status\":\"completed\"},{\"content\":\"阶段2：cartographer - 行军路线图符号化与布局制作\",\"activeForm\":\"执行阶段2：cartographer制图布局\",\"status\":\"in_progress\"},{\"content\":\"阶段3：orchestrator - 最终检查与导出汇总\",\"activeForm\":\"执行阶段3：orchestrator最终检查与导出\",\"status\":\"pending\"}]",
+              "status": "unknown",
+              "status_source": "unknown",
+              "tool": "write_todos"
+            },
+            "id": "entry-20260529103237.053",
+            "phase": "tool_result",
+            "timestamp": 1780050757105,
+            "toolCard": {
+              "args": {
+                "todos": [
+                  {
+                    "activeForm": "执行阶段1：data_engineer加载数据",
+                    "content": "阶段1：data_engineer - 加载河南省基础地理数据",
+                    "status": "completed"
+                  },
+                  {
+                    "activeForm": "执行阶段2：cartographer制图布局",
+                    "content": "阶段2：cartographer - 行军路线图符号化与布局制作",
+                    "status": "in_progress"
+                  },
+                  {
+                    "activeForm": "执行阶段3：orchestrator最终检查与导出",
+                    "content": "阶段3：orchestrator - 最终检查与导出汇总",
+                    "status": "pending"
+                  }
+                ]
+              },
+              "finishedAt": 1780050757105,
+              "id": "tool-20260529103237.053",
+              "result": "Updated todo list to [{\"content\":\"阶段1：data_engineer - 加载河南省基础地理数据\",\"activeForm\":\"执行阶段1：data_engineer加载数据\",\"status\":\"completed\"},{\"content\":\"阶段2：cartographer - 行军路线图符号化与布局制作\",\"activeForm\":\"执行阶段2：cartographer制图布局\",\"status\":\"in_progress\"},{\"content\":\"阶段3：orchestrator - 最终检查与导出汇总\",\"activeForm\":\"执行阶段3：orchestrator最终检查与导出\",\"status\":\"pending\"}]",
+              "startedAt": 1780050757053,
+              "status": "completed",
+              "statusSource": "task_list_update",
+              "success": true,
+              "tool": "write_todos"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "现在启动cartographer智能体进行符号化和布局制作。根据技能描述：\n\ncartographer职责：\n- 进行行军线路图可视化与布局制作\n- 完整符号表映射的点符号化\n- 完整的行军线路图布局\n- 输出包含主图、标题、网格、路线、符号、图文标注框、图例、数据综述、比例尺、指北针的可交付专题图\n- 产出地图布局名称、导出文件路径、主要图层和制图检查结果\n\n我需要启动cartographer子智能体来完成这个任务。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103244.333",
+            "phase": "thinking",
+            "timestamp": 1780050764333,
+            "type": "thinking"
+          },
+          {
+            "content": "## 阶段2：cartographer — 制图符号化与布局\n\n现在启动 **cartographer** 智能体进行符号化设置和布局制作。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103244.398",
+            "phase": "decision",
+            "timestamp": 1780050764398,
+            "type": "decision"
+          },
+          {
+            "content": "调用工具: task",
+            "data": {
+              "mode_phase": "building",
+              "status": "running",
+              "tool": "task",
+              "tool_args": {
+                "description": "## 任务：河南省行军路线图 — 符号化与布局制作\n\n### 现有图层（已加载到工程 henan-x.qgz）\n1. **河南省县城驻地**（Point, 107个要素）- CRS: China_Lambert_Conformal_Conic\n2. **河南铁路**（MultiLineString, 24个要素）- 字段: NAME, DZM\n3. **河南高速公路**（MultiLineString, 26个要素）- 字段: NAME, DZM\n4. **河南国道**（MultiLineString, 15个要素）- 字段: NAME, DZM\n5. **线状省界**（MultiLineString, 7个要素）- 字段: id\n6. **河流线**（MultiLineString, 3个要素）- CRS: GCS_CGCS_2000, 字段: NAME\n7. **河流面**（MultiPolygon, 145个要素）- CRS: GCS_CGCS_2000, 字段: NAME\n\n### 任务要求\n\n#### A. 图层符号化（使用层级的符号设置工具）\n1. **河南省县城驻地** → 使用 `layer_set_marker_symbol`，类型为 \"city\"，标注字段为 \"name\"\n2. **河南铁路** → 使用 `layer_set_line_symbol`，线类型为 \"铁路\"\n3. **河南高速公路** → 使用 `layer_set_line_symbol`，线类型为 \"高速公路\"\n4. **河南国道** → 使用 `layer_set_line_symbol`，线类型为 \"国道\"\n5. **线状省界** → 使用 `layer_set_line_symbol`，线类型为 \"省界\"\n6. **河流线** → 使用 `layer_set_line_symbol`，线类型为 \"河流\"\n7. **河流面** → 使用 `layer_set_fill_symbol`，图层类型为 \"河流\"\n\n注意：如果 `layer_set_fill_symbol` 或 `layer_set_line_symbol` 没有直接匹配的河流类型，尝试使用合适的类型，或直接设置合理的颜色样式。\n\n#### B. 创建布局\n使用布局工具创建河南省行军路线图布局：\n\n1. **创建布局** `layout_create`：\n   - 名称：\"河南省行军路线图\"\n   - 页面：A3横向（420mm × 297mm）\n   - 单位：mm\n\n2. **添加地图框** `layout_add_map`：\n   - 名称：\"河南省行军路线图\"\n   - 地图框ID：\"main_map\"\n   - 坐标和尺寸使其覆盖布局主要区域\n\n3. **添加标题标签** `layout_add_label`：\n   - 文本：\"河南省行军路线图\"\n   - 设置合适的字体大小和样式\n\n4. **添加图例** `layout_add_legend`：\n   - 显示所有主要图层\n   - 放置在地图合适位置\n\n5. **添加比例尺** `layout_add_scalebar`：\n   - 样式：double_box 或 single_box\n   - 关联主地图框\n\n6. **添加指北针** `layout_add_north_arrow`：\n   - 样式选择合适样式\n\n7. **添加网格** `layout_add_grid`：\n   - 为地图框添加网格线\n   - 设置合适的间隔\n\n#### C. 导出\n1. 使用 `export_layout_pdf` 或 `layout_export_image` 导出\n2. 输出路径：`F:\\qgis_project\\exports\\河南省行军路线图.pdf`\n3. DPI：300\n\n### 输出格式\n请返回以下结构化结果：\n```json\n{\n  \"status\": \"completed | blocked | skipped\",\n  \"agent\": \"cartographer\",\n  \"summary\": \"本阶段完成了什么\",\n  \"artifacts\": {\n    \"layers\": [\"符号化后的图层列表\"],\n    \"files\": [\"导出文件路径\"],\n    \"layout\": \"布局名称\",\n    \"extent\": \"地图范围\",\n    \"crs\": \"坐标系\"\n  },\n  \"next_agent\": \"orchestrator\",\n  \"blocking_issues\": []\n}\n```",
+                "subagent_type": "cartographer"
+              }
+            },
+            "id": "entry-20260529103244.434",
+            "phase": "tool_call",
+            "timestamp": 1780050764434,
+            "toolCard": {
+              "args": {
+                "description": "## 任务：河南省行军路线图 — 符号化与布局制作\n\n### 现有图层（已加载到工程 henan-x.qgz）\n1. **河南省县城驻地**（Point, 107个要素）- CRS: China_Lambert_Conformal_Conic\n2. **河南铁路**（MultiLineString, 24个要素）- 字段: NAME, DZM\n3. **河南高速公路**（MultiLineString, 26个要素）- 字段: NAME, DZM\n4. **河南国道**（MultiLineString, 15个要素）- 字段: NAME, DZM\n5. **线状省界**（MultiLineString, 7个要素）- 字段: id\n6. **河流线**（MultiLineString, 3个要素）- CRS: GCS_CGCS_2000, 字段: NAME\n7. **河流面**（MultiPolygon, 145个要素）- CRS: GCS_CGCS_2000, 字段: NAME\n\n### 任务要求\n\n#### A. 图层符号化（使用层级的符号设置工具）\n1. **河南省县城驻地** → 使用 `layer_set_marker_symbol`，类型为 \"city\"，标注字段为 \"name\"\n2. **河南铁路** → 使用 `layer_set_line_symbol`，线类型为 \"铁路\"\n3. **河南高速公路** → 使用 `layer_set_line_symbol`，线类型为 \"高速公路\"\n4. **河南国道** → 使用 `layer_set_line_symbol`，线类型为 \"国道\"\n5. **线状省界** → 使用 `layer_set_line_symbol`，线类型为 \"省界\"\n6. **河流线** → 使用 `layer_set_line_symbol`，线类型为 \"河流\"\n7. **河流面** → 使用 `layer_set_fill_symbol`，图层类型为 \"河流\"\n\n注意：如果 `layer_set_fill_symbol` 或 `layer_set_line_symbol` 没有直接匹配的河流类型，尝试使用合适的类型，或直接设置合理的颜色样式。\n\n#### B. 创建布局\n使用布局工具创建河南省行军路线图布局：\n\n1. **创建布局** `layout_create`：\n   - 名称：\"河南省行军路线图\"\n   - 页面：A3横向（420mm × 297mm）\n   - 单位：mm\n\n2. **添加地图框** `layout_add_map`：\n   - 名称：\"河南省行军路线图\"\n   - 地图框ID：\"main_map\"\n   - 坐标和尺寸使其覆盖布局主要区域\n\n3. **添加标题标签** `layout_add_label`：\n   - 文本：\"河南省行军路线图\"\n   - 设置合适的字体大小和样式\n\n4. **添加图例** `layout_add_legend`：\n   - 显示所有主要图层\n   - 放置在地图合适位置\n\n5. **添加比例尺** `layout_add_scalebar`：\n   - 样式：double_box 或 single_box\n   - 关联主地图框\n\n6. **添加指北针** `layout_add_north_arrow`：\n   - 样式选择合适样式\n\n7. **添加网格** `layout_add_grid`：\n   - 为地图框添加网格线\n   - 设置合适的间隔\n\n#### C. 导出\n1. 使用 `export_layout_pdf` 或 `layout_export_image` 导出\n2. 输出路径：`F:\\qgis_project\\exports\\河南省行军路线图.pdf`\n3. DPI：300\n\n### 输出格式\n请返回以下结构化结果：\n```json\n{\n  \"status\": \"completed | blocked | skipped\",\n  \"agent\": \"cartographer\",\n  \"summary\": \"本阶段完成了什么\",\n  \"artifacts\": {\n    \"layers\": [\"符号化后的图层列表\"],\n    \"files\": [\"导出文件路径\"],\n    \"layout\": \"布局名称\",\n    \"extent\": \"地图范围\",\n    \"crs\": \"坐标系\"\n  },\n  \"next_agent\": \"orchestrator\",\n  \"blocking_issues\": []\n}\n```",
+                "subagent_type": "cartographer"
+              },
+              "id": "tool-20260529103244.434",
+              "startedAt": 1780050764434,
+              "status": "running",
+              "tool": "task"
+            },
+            "type": "tool"
+          }
+        ],
+        "finishedAt": 1780050765901,
+        "id": "wf-20260529103234.876",
+        "startedAt": 1780050754876,
+        "status": "completed",
+        "summary": "调用工具: task",
+        "updatedAt": 1780050765901
+      },
+      {
+        "agent": "cartographer",
+        "agentDisplayName": "cartographer",
+        "entries": [
+          {
+            "content": "识别到需要 cartographer 处理此任务",
+            "data": {
+              "mode_phase": "building"
+            },
+            "id": "entry-20260529103245.901",
+            "phase": "thinking",
+            "timestamp": 1780050765901,
+            "type": "thinking"
+          },
+          {
+            "content": "The user wants me to create a military marching route map for Henan province. Let me first open the project and check the current state, then proceed with the tasks.\n\nLet me start by opening the project and checking the layers.",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103245.961",
+            "phase": "thinking",
+            "timestamp": 1780050765961,
+            "type": "thinking"
+          },
+          {
+            "content": "好的！我来分步执行河南省行军路线图的符号化与布局制作。首先打开工程确认当前状态。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103246.000",
+            "phase": "decision",
+            "timestamp": 1780050766000,
+            "type": "decision"
+          },
+          {
+            "content": "工具 open_project 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":{\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"成功打开工程: F:\\\\qgis_project\\\\henan-x.qgz\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":{\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"成功打开工程: F:\\\\qgis_project\\\\henan-x.qgz\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "open_project"
+            },
+            "id": "entry-20260529103246.035",
+            "phase": "tool_result",
+            "timestamp": 1780050766112,
+            "toolCard": {
+              "args": {
+                "path": "F:\\qgis_project\\henan-x.qgz"
+              },
+              "finishedAt": 1780050766112,
+              "id": "tool-20260529103246.035",
+              "result": "{\"error\":\"\",\"info\":{\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"成功打开工程: F:\\\\qgis_project\\\\henan-x.qgz\",\"success\":true}",
+              "startedAt": 1780050766035,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "open_project"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "The project is opened. Let me check the layers info.",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103247.271",
+            "phase": "thinking",
+            "timestamp": 1780050767271,
+            "type": "thinking"
+          },
+          {
+            "content": "工程已打开，让我检查所有图层信息。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103247.334",
+            "phase": "decision",
+            "timestamp": 1780050767334,
+            "type": "decision"
+          },
+          {
+            "content": "工具 get_layers_info 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":{\"count\":0,\"layers\":[]},\"output\":\"成功获取 0 个图层信息\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":{\"count\":0,\"layers\":[]},\"output\":\"成功获取 0 个图层信息\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "get_layers_info"
+            },
+            "id": "entry-20260529103247.370",
+            "phase": "tool_result",
+            "timestamp": 1780050767407,
+            "toolCard": {
+              "args": {
+                "include_invisible": true
+              },
+              "finishedAt": 1780050767407,
+              "id": "tool-20260529103247.370",
+              "result": "{\"error\":\"\",\"info\":{\"count\":0,\"layers\":[]},\"output\":\"成功获取 0 个图层信息\",\"success\":true}",
+              "startedAt": 1780050767370,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "get_layers_info"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "The project is opened but no layers are found. Let me try get_project_info to see the project state, and also check if layers might be listed differently.",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103248.502",
+            "phase": "thinking",
+            "timestamp": 1780050768502,
+            "type": "thinking"
+          },
+          {
+            "content": "看起来图层信息可能需要更详细检查，让我再确认一下工程状态。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103248.567",
+            "phase": "decision",
+            "timestamp": 1780050768567,
+            "type": "decision"
+          },
+          {
+            "content": "工具 get_project_info 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":{\"crs\":{\"auth_id\":\"\",\"description\":\"\",\"is_geographic\":false,\"units\":49},\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"项目信息获取成功: henan-x；图层 0 个（矢量 0，栅格 0）；工程目录数据文件: 无\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":{\"crs\":{\"auth_id\":\"\",\"description\":\"\",\"is_geographic\":false,\"units\":49},\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"项目信息获取成功: henan-x；图层 0 个（矢量 0，栅格 0）；工程目录数据文件: 无\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "get_project_info"
+            },
+            "id": "entry-20260529103248.604",
+            "phase": "tool_result",
+            "timestamp": 1780050768642,
+            "toolCard": {
+              "finishedAt": 1780050768642,
+              "id": "tool-20260529103248.604",
+              "result": "{\"error\":\"\",\"info\":{\"crs\":{\"auth_id\":\"\",\"description\":\"\",\"is_geographic\":false,\"units\":49},\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"项目信息获取成功: henan-x；图层 0 个（矢量 0，栅格 0）；工程目录数据文件: 无\",\"success\":true}",
+              "startedAt": 1780050768604,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "get_project_info"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "The project shows 0 layers. This could mean the layers were stored with relative paths but the data files aren't found. Let me check layer information more thoroughly. Let me try get_active_layer_info to see if there are any layers at all.",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103249.941",
+            "phase": "thinking",
+            "timestamp": 1780050769941,
+            "type": "thinking"
+          },
+          {
+            "content": "让我检查一下是否有数据文件存在。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103250.002",
+            "phase": "decision",
+            "timestamp": 1780050770002,
+            "type": "decision"
+          },
+          {
+            "content": "工具 get_active_layer_info 执行失败",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"success\":false,\"error\":\"[EnhancedLocalFunc] failed to invoke tool, toolName=get_active_layer_info, err=当前没有选中的图层\"}",
+              "result_parts": [
+                {
+                  "text": "{\"success\":false,\"error\":\"[EnhancedLocalFunc] failed to invoke tool, toolName=get_active_layer_info, err=当前没有选中的图层\"}",
+                  "type": "text"
+                }
+              ],
+              "status": "failed",
+              "status_source": "payload_success",
+              "success": false,
+              "tool": "get_active_layer_info"
+            },
+            "id": "entry-20260529103250.038",
+            "phase": "tool_result",
+            "timestamp": 1780050770077,
+            "toolCard": {
+              "finishedAt": 1780050770077,
+              "id": "tool-20260529103250.038",
+              "result": "{\"success\":false,\"error\":\"[EnhancedLocalFunc] failed to invoke tool, toolName=get_active_layer_info, err=当前没有选中的图层\"}",
+              "startedAt": 1780050770038,
+              "status": "failed",
+              "statusSource": "payload_success",
+              "success": false,
+              "tool": "get_active_layer_info"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "The project has 0 layers. The user said the layers are already loaded. Since the project is freshly opened, perhaps the data sources are stored with relative paths and the QGIS instance can't find them. Let me check the output to see if there's any more info, and also look for the data directory.\n\nLet me check the file path - the project is at F:\\qgis_project\\henan-x.qgz. The user mentioned specific CRS for some layers. Let me look for the data directory.",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103251.741",
+            "phase": "thinking",
+            "timestamp": 1780050771741,
+            "type": "thinking"
+          },
+          {
+            "content": "让我检查一下输出和可能的文件位置。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103251.791",
+            "phase": "decision",
+            "timestamp": 1780050771791,
+            "type": "decision"
+          },
+          {
+            "content": "工具 output_get_info 执行失败",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"缺少 output_dir 或 session_dir\",\"info\":null,\"output\":\"\",\"success\":false}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"缺少 output_dir 或 session_dir\",\"info\":null,\"output\":\"\",\"success\":false}",
+                  "type": "text"
+                }
+              ],
+              "status": "failed",
+              "status_source": "payload_success",
+              "success": false,
+              "tool": "output_get_info"
+            },
+            "id": "entry-20260529103251.829",
+            "phase": "tool_result",
+            "timestamp": 1780050771871,
+            "toolCard": {
+              "finishedAt": 1780050771871,
+              "id": "tool-20260529103251.829",
+              "result": "{\"error\":\"缺少 output_dir 或 session_dir\",\"info\":null,\"output\":\"\",\"success\":false}",
+              "startedAt": 1780050771829,
+              "status": "failed",
+              "statusSource": "payload_success",
+              "success": false,
+              "tool": "output_get_info"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "The data directory is F:\\qgis_project. Let me check if the data files exist there. The layers mentioned are:\n1. 河南省县城驻地 - Point\n2. 河南铁路 - MultiLineString\n3. 河南高速公路 - MultiLineString\n4. 河南国道 - MultiLineString\n5. 线状省界 - MultiLineString\n6. 河流线 - MultiLineString\n7. 河流面 - MultiPolygon\n\nSince the project file seems to have the layers stored but they might not be loading due to data path issues, let me try a different approach. Let me first check what's in the project directory. But I don't have a file listing tool available.\n\nActually, the issue might be that the layers need to be loaded. The user said \"已加载到工程\"，but the project shows 0 layers. Let me try to check if there are shapefiles or other data files in the directory.\n\nActually, I don't have a file system tool to browse directories. Let me try to reload or reopen the project, or check if there are specific data source paths.\n\nWait - the project says \"成功打开工程\" but \"0 layers\". This might be a QGIS server/headless issue where the layers are stored but not fully recognized. Let me try to reopen.",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103255.011",
+            "phase": "thinking",
+            "timestamp": 1780050775011,
+            "type": "thinking"
+          },
+          {
+            "content": "工程显示0个图层，让我尝试重新打开以确保所有图层被正确加载。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103255.078",
+            "phase": "decision",
+            "timestamp": 1780050775078,
+            "type": "decision"
+          },
+          {
+            "content": "工具 open_project 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":{\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"成功打开工程: F:\\\\qgis_project\\\\henan-x.qgz\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":{\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"成功打开工程: F:\\\\qgis_project\\\\henan-x.qgz\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "open_project"
+            },
+            "id": "entry-20260529103255.115",
+            "phase": "tool_result",
+            "timestamp": 1780050775157,
+            "toolCard": {
+              "args": {
+                "path": "F:\\qgis_project\\henan-x.qgz"
+              },
+              "finishedAt": 1780050775157,
+              "id": "tool-20260529103255.115",
+              "result": "{\"error\":\"\",\"info\":{\"data_files\":[],\"display_name\":\"henan-x\",\"file_path\":\"F:/qgis_project/henan-x.qgz\",\"home_path\":\"F:/qgis_project\",\"is_dirty\":false,\"layer_count\":{\"raster\":0,\"total\":0,\"vector\":0},\"project_name\":\"henan-x\",\"title\":\"\",\"title_source\":\"file_name\"},\"output\":\"成功打开工程: F:\\\\qgis_project\\\\henan-x.qgz\",\"success\":true}",
+              "startedAt": 1780050775115,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "open_project"
+            },
+            "type": "tool"
+          },
+          {
+            "content": "Still 0 layers. The layers might need to be loaded from data files. Let me look at what's in the project directory. The user mentioned the layer names and their types, so the data files must be there. Let me check if the data directory has shapefiles.\n\nActually, I think the issue might be that the project file references data that doesn't exist at the expected paths. Let me check what data files exist in the project directory. But I don't have a tool that lists files...\n\nHmm, let me try a different approach. The user's instructions say the layers are \"已加载到工程\" but they're not showing up. Let me look at the data files manually.\n\nWait, I have access to tools but not a file listing tool. Let me check if the data is somewhere else. The user mentioned specific layer names - maybe they need to be loaded from files. But the instructions say \"现有图层（已加载到工程henan-x.qgz）\" which means they should already be there.\n\nLet me try creating a new clean project and then add data from files. But first, let me check what files are in the directory.",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "reasoning"
+            },
+            "id": "entry-20260529103257.992",
+            "phase": "thinking",
+            "timestamp": 1780050777992,
+            "type": "thinking"
+          },
+          {
+            "content": "让我看看数据目录中是否有可用的数据文件。",
+            "data": {
+              "mode_phase": "building",
+              "thinking_kind": "decision"
+            },
+            "id": "entry-20260529103258.043",
+            "phase": "decision",
+            "timestamp": 1780050778043,
+            "type": "decision"
+          },
+          {
+            "content": "工具 close_instance 执行成功",
+            "data": {
+              "mode_phase": "building",
+              "result": "{\"error\":\"\",\"info\":{\"delay_ms\":500,\"display_name\":\"henan-x\",\"is_dirty\":false,\"project_path\":\"F:/qgis_project/henan-x.qgz\"},\"output\":\"已发起关闭实例请求: henan-x\",\"success\":true}",
+              "result_parts": [
+                {
+                  "text": "{\"error\":\"\",\"info\":{\"delay_ms\":500,\"display_name\":\"henan-x\",\"is_dirty\":false,\"project_path\":\"F:/qgis_project/henan-x.qgz\"},\"output\":\"已发起关闭实例请求: henan-x\",\"success\":true}",
+                  "type": "text"
+                }
+              ],
+              "status": "completed",
+              "status_source": "payload_success",
+              "success": true,
+              "tool": "close_instance"
+            },
+            "id": "entry-20260529103258.080",
+            "phase": "tool_result",
+            "timestamp": 1780050778119,
+            "toolCard": {
+              "args": {
+                "delay_ms": 500
+              },
+              "finishedAt": 1780050778119,
+              "id": "tool-20260529103258.080",
+              "result": "{\"error\":\"\",\"info\":{\"delay_ms\":500,\"display_name\":\"henan-x\",\"is_dirty\":false,\"project_path\":\"F:/qgis_project/henan-x.qgz\"},\"output\":\"已发起关闭实例请求: henan-x\",\"success\":true}",
+              "startedAt": 1780050778080,
+              "status": "completed",
+              "statusSource": "payload_success",
+              "success": true,
+              "tool": "close_instance"
+            },
+            "type": "tool"
+          }
+        ],
+        "id": "wf-20260529103245.901",
+        "startedAt": 1780050765901,
+        "status": "running",
+        "summary": "调用工具: close_instance",
+        "updatedAt": 1780050778119
+      }
+    ],
+    "tasks": [
+      {
+        "activeForm": "执行阶段1：data_engineer加载数据",
+        "content": "阶段1：data_engineer - 加载河南省基础地理数据",
+        "status": "completed"
+      },
+      {
+        "activeForm": "执行阶段2：cartographer制图布局",
+        "content": "阶段2：cartographer - 行军路线图符号化与布局制作",
+        "status": "in_progress"
+      },
+      {
+        "activeForm": "执行阶段3：orchestrator最终检查与导出",
+        "content": "阶段3：orchestrator - 最终检查与导出汇总",
+        "status": "pending"
+      }
+    ]
+  },
+  "created_at": "2026-05-29T18:32:06+08:00",
+  "last_active_at": "2026-05-29T18:32:58+08:00"
+}

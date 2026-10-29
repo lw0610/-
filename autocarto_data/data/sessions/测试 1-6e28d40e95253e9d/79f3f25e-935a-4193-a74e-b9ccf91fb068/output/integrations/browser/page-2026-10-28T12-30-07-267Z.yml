@@ -1,0 +1,231 @@
+- generic [ref=f7e2]:
+  - link "AI问" [ref=f7e3] [cursor=pointer]:
+    - /url: https://www.stats.gov.cn/znwd/
+  - generic [ref=f7e6]:
+    - list [ref=f7e8]:
+      - listitem [ref=f7e9]:
+        - link "新媒体" [ref=f7e10] [cursor=pointer]:
+          - /url: /hd/xmt/
+      - listitem [ref=f7e11]:
+        - link "RSS" [ref=f7e12] [cursor=pointer]:
+          - /url: /wzgl/rss/
+      - listitem [ref=f7e13]:
+        - link "无障碍" [ref=f7e14] [cursor=pointer]:
+          - /url: javascript:;
+      - listitem [ref=f7e15]:
+        - link "信访" [ref=f7e16] [cursor=pointer]:
+          - /url: http://wsxf.stats.gov.cn/
+      - listitem [ref=f7e17]:
+        - link "EN" [ref=f7e18] [cursor=pointer]:
+          - /url: /english/
+    - generic [ref=f7e20]:
+      - textbox "请输入关键字" [ref=f7e21]
+      - button "搜索" [ref=f7e22]
+  - list [ref=f7e27]:
+    - listitem [ref=f7e28]:
+      - link "首页" [ref=f7e29] [cursor=pointer]:
+        - /url: /
+    - listitem [ref=f7e30]:
+      - link "机构" [ref=f7e31] [cursor=pointer]:
+        - /url: https://www.stats.gov.cn/jg/
+    - listitem [ref=f7e32]:
+      - link "新闻" [ref=f7e33] [cursor=pointer]:
+        - /url: javascript:;
+    - listitem [ref=f7e34]:
+      - link "数据" [ref=f7e35] [cursor=pointer]:
+        - /url: https://www.stats.gov.cn/sj/
+    - listitem [ref=f7e36]:
+      - link "公开" [ref=f7e37] [cursor=pointer]:
+        - /url: https://www.stats.gov.cn/gk/
+    - listitem [ref=f7e38]:
+      - link "服务" [ref=f7e39] [cursor=pointer]:
+        - /url: https://www.stats.gov.cn/fw/
+    - listitem [ref=f7e40]:
+      - link "互动" [ref=f7e41] [cursor=pointer]:
+        - /url: https://www.stats.gov.cn/hd/
+    - listitem [ref=f7e42]:
+      - link "知识" [ref=f7e43] [cursor=pointer]:
+        - /url: https://www.stats.gov.cn/zs/
+    - listitem [ref=f7e44]:
+      - link "专题" [ref=f7e45] [cursor=pointer]:
+        - /url: https://www.stats.gov.cn/zt_18555/
+  - generic [ref=f7e46]:
+    - generic [ref=f7e47]:
+      - generic [ref=f7e49]:
+        - text: 当前位置 >
+        - link "首页" [ref=f7e50] [cursor=pointer]:
+          - /url: ../../
+        - text: ">"
+        - link "数据" [ref=f7e51] [cursor=pointer]:
+          - /url: ../
+        - text: ">"
+        - link "普查数据" [ref=f7e52] [cursor=pointer]:
+          - /url: ./
+      - generic [ref=f7e55]: 普查数据
+      - table [ref=f7e56]:
+        - rowgroup [ref=f7e57]:
+          - row [ref=f7e58]:
+            - cell "人口普查" [ref=f7e59]
+            - cell [ref=f7e60]:
+              - link "第七次人口普查数据" [ref=f7e61] [cursor=pointer]:
+                - /url: /sj/pcsj/rkpc/7rp/indexch.htm
+            - cell [ref=f7e62]:
+              - link "第七次人口普查主要数据" [ref=f7e63] [cursor=pointer]:
+                - /url: /sj/pcsj/rkpc/d7c/202111/P020211126523667366751.pdf
+          - row [ref=f7e64]:
+            - cell [ref=f7e65]:
+              - link "第六次人口普查数据" [ref=f7e66] [cursor=pointer]:
+                - /url: /sj/pcsj/rkpc/6rp/indexch.htm
+            - cell [ref=f7e67]:
+              - link "第五次人口普查数据" [ref=f7e68] [cursor=pointer]:
+                - /url: /sj/pcsj/rkpc/5rp/index.htm
+          - row [ref=f7e69]:
+            - cell "经济普查" [ref=f7e70]
+            - cell [ref=f7e71]:
+              - link "第五次经济普查" [ref=f7e72] [cursor=pointer]:
+                - /url: https://www.stats.gov.cn/sj/pcsj/jjpc/5jp/indexch.htm
+            - cell [ref=f7e73]:
+              - link "第四次经济普查" [ref=f7e74] [cursor=pointer]:
+                - /url: /sj/pcsj/jjpc/4jp/indexch.htm
+          - row [ref=f7e75]:
+            - cell [ref=f7e76]:
+              - link "第三次经济普查" [ref=f7e77] [cursor=pointer]:
+                - /url: /sj/pcsj/jjpc/3jp/indexch.htm
+            - cell [ref=f7e78]:
+              - link "第二次经济普查" [ref=f7e79] [cursor=pointer]:
+                - /url: /sj/pcsj/jjpc/2jp/indexch.htm
+          - row [ref=f7e80]:
+            - cell [ref=f7e81]:
+              - link "第一次经济普查" [ref=f7e82] [cursor=pointer]:
+                - /url: /sj/pcsj/jjpc/1jp/indexch.htm
+            - cell [ref=f7e83]
+          - row [ref=f7e84]:
+            - cell "农业普查" [ref=f7e85]
+            - cell [ref=f7e86]:
+              - link "第三次农业普查" [ref=f7e87] [cursor=pointer]:
+                - /url: ./nypc/202302/U020230223531273769774.pdf
+            - cell [ref=f7e88]:
+              - link "第二次农业普查" [ref=f7e89] [cursor=pointer]:
+                - /url: ./nypc/202302/t20230223_1918380.html
+          - row [ref=f7e90]:
+            - cell [ref=f7e91]:
+              - link "第一次农业普查" [ref=f7e92] [cursor=pointer]:
+                - /url: /sj/pcsj/nypc/dycnypc/
+            - cell [ref=f7e93]
+          - row [ref=f7e94]:
+            - cell "R&D资源清查" [ref=f7e95]
+            - cell [ref=f7e96]:
+              - link "第二次R&D资源清查" [ref=f7e97] [cursor=pointer]:
+                - /url: /sj/pcsj/rdzyqc/decrdzyqc/
+            - cell [ref=f7e98]
+          - row [ref=f7e99]:
+            - cell "工业普查" [ref=f7e100]
+            - cell [ref=f7e101]:
+              - link "第三次工业普查" [ref=f7e102] [cursor=pointer]:
+                - /url: /sj/pcsj/gypc/dscgypc/
+            - cell [ref=f7e103]
+          - row [ref=f7e104]:
+            - cell "三产普查" [ref=f7e105]
+            - cell [ref=f7e106]:
+              - link "第一次三产普查" [ref=f7e107] [cursor=pointer]:
+                - /url: /sj/pcsj/scpc/dycscpc/
+            - cell [ref=f7e108]
+          - row [ref=f7e109]:
+            - cell "基本单位普查" [ref=f7e110]
+            - cell [ref=f7e111]:
+              - link "第二次基本单位普查" [ref=f7e112] [cursor=pointer]:
+                - /url: /sj/pcsj/jbdwpc/decjbdwpcsj/
+            - cell [ref=f7e113]:
+              - link "第一次基本单位普查" [ref=f7e114] [cursor=pointer]:
+                - /url: /sj/pcsj/jbdwpc/dycjbdwpc/
+      - generic [ref=f7e115]: 注： “人口普查” 、 “经济普查” 建议使用IE7以上版本普通模式（非“兼容性视图”），或360浏览器极速模式浏览。
+    - generic [ref=f7e117]:
+      - link "热点专题" [ref=f7e119] [cursor=pointer]:
+        - /url: ../../zt_18555/
+      - generic [ref=f7e121]:
+        - link "非凡 \"十四五\" 奋进新征程—— \"十四五\" 经济社会发展成就报告" [ref=f7e123] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/ztfx/sswjjshfzcjbg/index.html
+        - link "2026年全国两会服务" [ref=f7e125] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zthd/lhfw/2026lhzt/index.html
+        - link "第四次全国农业普查" [ref=f7e127] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zdtjgz/zgnypc/d4cnypc/index.html
+        - link "2025年全国1%人口抽样调查" [ref=f7e129] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zdtjgz/cydc/2025cydc/
+        - link "2025年全国两会服务" [ref=f7e131] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zthd/lhfw/2025/index.html
+        - link "新中国75年经济社会发展成就" [ref=f7e133] [cursor=pointer]:
+          - /url: /zt_18555/ztfx/xzg75njjshfzcj/
+        - link "统计法制建设" [ref=f7e135] [cursor=pointer]:
+          - /url: /zt_18555/tjfz/tjfzjs/fzjsdt/
+        - link "统计督察" [ref=f7e137] [cursor=pointer]:
+          - /url: /zt_18555/tjfz/tjdc/
+        - link "第十七届中国统计开放日" [ref=f7e139] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zthd/sjtjr/tjr17/index.html
+        - link "非凡 \"十四五\" 奋进新征程—— \"十四五\" 经济社会发展成就报告" [ref=f7e141] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/ztfx/sswjjshfzcjbg/index.html
+        - link "2026年全国两会服务" [ref=f7e143] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zthd/lhfw/2026lhzt/index.html
+        - link "第四次全国农业普查" [ref=f7e145] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zdtjgz/zgnypc/d4cnypc/index.html
+        - link "2025年全国1%人口抽样调查" [ref=f7e147] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zdtjgz/cydc/2025cydc/
+        - link "2025年全国两会服务" [ref=f7e149] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zthd/lhfw/2025/index.html
+        - link "新中国75年经济社会发展成就" [ref=f7e151] [cursor=pointer]:
+          - /url: /zt_18555/ztfx/xzg75njjshfzcj/
+        - link "统计法制建设" [ref=f7e153] [cursor=pointer]:
+          - /url: /zt_18555/tjfz/tjfzjs/fzjsdt/
+        - link "统计督察" [ref=f7e155] [cursor=pointer]:
+          - /url: /zt_18555/tjfz/tjdc/
+        - link "第十七届中国统计开放日" [ref=f7e157] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zthd/sjtjr/tjr17/index.html
+        - link "非凡 \"十四五\" 奋进新征程—— \"十四五\" 经济社会发展成就报告" [ref=f7e159] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/ztfx/sswjjshfzcjbg/index.html
+        - link "2026年全国两会服务" [ref=f7e161] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zthd/lhfw/2026lhzt/index.html
+        - link "第四次全国农业普查" [ref=f7e163] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zdtjgz/zgnypc/d4cnypc/index.html
+        - link "2025年全国1%人口抽样调查" [ref=f7e165] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zdtjgz/cydc/2025cydc/
+        - link "2025年全国两会服务" [ref=f7e167] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zt_18555/zthd/lhfw/2025/index.html
+        - link "新中国75年经济社会发展成就" [ref=f7e169] [cursor=pointer]:
+          - /url: /zt_18555/ztfx/xzg75njjshfzcj/
+        - link "统计法制建设" [ref=f7e171] [cursor=pointer]:
+          - /url: /zt_18555/tjfz/tjfzjs/fzjsdt/
+      - generic [ref=f7e172] [cursor=pointer]
+      - generic [ref=f7e173] [cursor=pointer]
+  - generic [ref=f7e174]:
+    - generic [ref=f7e177]:
+      - generic [ref=f7e178]: 相关链接
+      - list [ref=f7e180]:
+        - listitem [ref=f7e181] [cursor=pointer]:
+          - generic [ref=f7e182]: 政府机构网站
+        - listitem [ref=f7e183] [cursor=pointer]:
+          - generic [ref=f7e184]: 地方政府网站
+        - listitem [ref=f7e185] [cursor=pointer]:
+          - generic [ref=f7e186]: 地方统计网站
+        - listitem [ref=f7e187] [cursor=pointer]:
+          - generic [ref=f7e188]: 社会团体网站
+        - listitem [ref=f7e189] [cursor=pointer]:
+          - generic [ref=f7e190]: 国际组织网站
+    - generic [ref=f7e192]:
+      - link [ref=f7e195] [cursor=pointer]:
+        - /url: https://bszs.conac.cn/sitename?method=show&id=0D0B77DBD5666A3EE053012819ACD529
+      - generic [ref=f7e198]:
+        - paragraph [ref=f7e199]:
+          - text: "版权所有: 国家统计局"
+          - link "联系我们" [ref=f7e200] [cursor=pointer]:
+            - /url: /wzgl/202302/t20230217_1912858.html
+          - link "服务条款" [ref=f7e201] [cursor=pointer]:
+            - /url: /wzgl/202302/t20230217_1912857.html
+          - link "网站地图" [ref=f7e202] [cursor=pointer]:
+            - /url: /wzgl/wzdt/
+        - paragraph [ref=f7e203]: "地址: 北京市西城区月坛南街57号 (100826)"
+        - paragraph [ref=f7e204]:
+          - link "京ICP备05034670号-2" [ref=f7e206] [cursor=pointer]:
+            - /url: https://beian.miit.gov.cn
+          - link "京公网安备 11040102700142号" [ref=f7e207] [cursor=pointer]:
+            - /url: http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11040102700142
+        - paragraph [ref=f7e208]: 网站标识码bm36000002
+      - img [ref=f7e211] [cursor=pointer]

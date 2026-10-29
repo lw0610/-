@@ -1,0 +1,541 @@
+{
+  "plan": {
+    "api_version": "carto-plan/v1",
+    "plan_id": "cp-20261028-234608-2b55d22222bf",
+    "version": 1,
+    "goal": "制作河南省各市常住人口（2023年，单位：万人）统计专题图，采用五级有序渐变分级设色，使用统计专题版式，导出 PNG 成果。",
+    "guide": {
+      "id": "statistical-choropleth",
+      "version": "5.0.0",
+      "fingerprint": "sha256:52f2640beac372902acb8bcec300b5de6c169f65c47880017ef6ca485bd26814"
+    },
+    "facts": [
+      {
+        "name": "区域",
+        "value": "河南省各市",
+        "from": "conversation"
+      },
+      {
+        "name": "指标",
+        "value": "常住人口",
+        "from": "project"
+      },
+      {
+        "name": "年份",
+        "value": "2023",
+        "from": "project"
+      },
+      {
+        "name": "单位",
+        "value": "万人",
+        "from": "project"
+      },
+      {
+        "name": "行政区层级",
+        "value": "市",
+        "from": "conversation"
+      },
+      {
+        "name": "已有专题图层",
+        "value": "河南省常住人口专题图层_final（18要素，含常住人口(万人) double字段）",
+        "from": "project"
+      },
+      {
+        "name": "已有行政区面",
+        "value": "河南省市域行政区划面（18要素）",
+        "from": "project"
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "统计口径为常住人口，来源为工程内已核验统计表，来源网址未在工程中记录，说明栏如实标注",
+        "impact": "low"
+      },
+      {
+        "text": "分级方法采用自然断点（Jenks），五级有序渐变",
+        "impact": "low"
+      },
+      {
+        "text": "18个市均无缺测，无需灰底图层",
+        "impact": "low"
+      }
+    ],
+    "data": [
+      {
+        "layer_name": "河南省市域行政区划面",
+        "style": "市域面",
+        "geometry": "polygon",
+        "id": "admin_face",
+        "name": "河南省市域行政区划面",
+        "from": "project",
+        "layer": "___________15955004_3981_453e_9c09_884c1a64fa9d"
+      },
+      {
+        "layer_name": "河南省常住人口专题图层_final",
+        "geometry": "polygon",
+        "id": "thematic_final",
+        "name": "河南省常住人口专题图层",
+        "from": "project",
+        "layer": "____________final_ae6cf997_1233_4c91_adea_fe5d96dd425a"
+      }
+    ],
+    "steps": [
+      {
+        "id": "s1",
+        "title": "核验专题图层数值字段与分级",
+        "kind": "step",
+        "capabilities": [
+          "vector-fields",
+          "cartography-styling"
+        ],
+        "uses": [
+          "thematic_final"
+        ],
+        "instructions": "读取河南省常住人口专题图层_final的常住人口(万人)字段，确认18要素均为有效数值、无缺测，数值范围73~1301。按自然断点法分为五级，应用有序渐变配色（如浅黄到深红/蓝），设置分级渲染。",
+        "outputs": [
+          {
+            "label": "五级分级渲染专题图层",
+            "type": "layers",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "版面编排与导出",
+        "kind": "step",
+        "capabilities": [
+          "print-layout",
+          "cartography-styling"
+        ],
+        "uses": [
+          "admin_face",
+          "thematic_final"
+        ],
+        "depends_on": [
+          "s1"
+        ],
+        "instructions": "使用统计专题版式（A4横向），主图显示专题层（上）与市域面背景（下），范围按专题层确定。标题“河南省各市常住人口统计图（2023年）”，图例列五级区间并标注指标“常住人口（万人）”，加入比例尺、指北针、来源说明（来源未提供/工程内已核验统计表）。导出PNG。",
+        "outputs": [
+          {
+            "label": "统计专题图PNG",
+            "type": "file",
+            "format": "png",
+            "required": false
+          }
+        ]
+      }
+    ],
+    "deliverables": [
+      {
+        "label": "统计专题图PNG",
+        "type": "file",
+        "format": "png",
+        "required": false
+      }
+    ],
+    "checks": [
+      "专题图层数值字段为double且18要素无缺测",
+      "分级为五级有序渐变，图例区间正确",
+      "版面含主图、标题、图例、比例尺、指北针、来源说明",
+      "导出PNG文件存在且图面核验通过"
+    ]
+  },
+  "session_id": "a49afff1-1c5c-4fb7-a0c6-af1c44c9217a",
+  "plan_id": "cp-20261028-234608-2b55d22222bf",
+  "plan_version": 1,
+  "status": "ready",
+  "needs_confirmation": false,
+  "confirmation_reasons": [],
+  "execution_mode": "build",
+  "created_at": "2026-10-28T15:46:08.393605Z",
+  "updated_at": "2026-10-28T15:46:08.393605Z",
+  "original_source": "制作河南省各市人口统计专题图",
+  "guide_snapshot": {
+    "package": {
+      "meta": {
+        "id": "statistical-choropleth",
+        "name": "统计专题图",
+        "description": "将行政区和真实统计数据关联，制作人口、经济等指标的分级设色专题图，说明年份、统计口径、缺测和来源。已有指标图层可直接复用。",
+        "version": "5.0.0"
+      },
+      "source": "builtin",
+      "enabled": true,
+      "guide_md": "---\n名称: 统计专题图\n说明: 将行政区和真实统计数据关联，制作人口、经济等指标的分级设色专题图，说明年份、统计口径、缺测和来源。已有指标图层可直接复用。\n版本: 5.0.0\n---\n\n# 统计专题图\n\n## 什么时候用\n按省、市或县展示统计指标的空间分布。用户给出行政区面、统计表或已有专题图层时优先使用；没有的图层和统计数据再按区域、层级、年份和指标查找来源。年份、指标或范围仍不明确且会影响取数时，一次说明需要补齐的内容。\n\n## 需要的图层与处理\n- 行政区面：覆盖本次区域，按用户要求的省、市或县层级获取；已有含指标的专题面图层满足要求时直接复用。省级默认样式「省域面」，市级用「市域面」，县级用「县域面」；用于行政区定位与名称标注，后续统计表达采用真实指标的分级渲染。\n- 统计表：真实年份与单一指标的地区统计值，记录单位、来源网址、访问时间、发布口径、缺测和补源。已有图层含同口径数值时不重复获取或关联。\n- 专题图层：行政区与统计值按地区精确关联，或复用已经核验的指标面图层。标注真实名称字段；通常分为五级有序渐变。\n- 灰底图层：仅存在缺测、未匹配或排除地区时，复用同一已核验面源形成浅灰背景，置于专题层下面，图例不单列。\n\n## 做法\n1. 核对区域、行政区层级、统计年份、指标、单位、来源和明确排除的地区。只有仍缺数据时才取得官方原件和可关联表格，不虚构数值。已提供数据按其元数据核验，不重复询问已知内容。\n2. 检查面几何、数值和名称字段、有效范围与缺测。识别宽表、长表及真实列名，只选择指定年份的单一指标，口径列不能误当地区列或筛选开关。必要转换或关联只写独立派生数据，保留原始文件；显示坐标系不同用动态投影，不为显示而重投影。\n3. 关联前检查年份、地区键、元数据、重复键和非法数值。重复键、非法数值或无有效数据时停止。部分未匹配且有效值足以分级时，保留完整清单与空值继续；空值表示缺测，零仍是有效值。记录有效与缺测数、未匹配与排除清单、数值范围、实际字段及来源。\n4. 按分布和表达需要选择自然断点、分位数、等间距或标准差，通常五级，连续量使用有序渐变。读取实际渲染状态，核对数值字段、每级上下界、颜色与图例。单一不同值、非数值字段或分级失败时停止，不以统一填色冒充分级，不添加无依据的箭头、柱状图或比例符号。\n5. 排版后核对主图范围、图层、实际分级、图例级数区间、文字裁切和遮挡，再导出所需格式。明确参数或前置条件错误最多修正重试一次；文件存在不能替代图面核验。不自动加入路线图视觉质检，额外评审应先明确范围。\n\n## 版面\n使用版面「统计专题版式」，默认 A4 横向；用户可指定纸张和方向。主图只显示本次专题层、灰底层和明确需要的背景，专题层在上，范围按真实专题层确定。标题采用用户标题，否则用“地区 + 年份 + 指标”。图例只列专题层，标题写指标和单位，条目来自实际分级，不手绘色块或编造区间。说明栏写年份、单位、来源和分级方法；来源未知则如实写“来源未提供”。有灰底时写“灰色区域：无有效统计值”，分别说明缺测、未匹配和排除数量。字号与位置使用版面规定，检查真实元素矩形及警告。必须有主图、标题、图例、比例尺、指北针和来源说明。\n\n## 成果\n默认导出 PNG，用户也可要求 PDF 或 SVG。交付真实成果路径、行政区层级、指标与年份、单位与来源、分级方法及各级区间，说明缺测、未匹配、排除地区和数量。派生文件与质量报告如有生成则一并列出；使用已有图层时说明复用情况。\n\n## 注意事项\n- 不虚构指标、年份、单位、来源或数值。\n- 区分总量、占比、密度、增幅；缺少分母、两期数据或面积依据时保持原指标。\n- 内部错误时保留工程与已有成果，报告真实错误和未完成部分。\n",
+      "guide": {
+        "meta": {
+          "id": "statistical-choropleth",
+          "name": "统计专题图",
+          "description": "将行政区和真实统计数据关联，制作人口、经济等指标的分级设色专题图，说明年份、统计口径、缺测和来源。已有指标图层可直接复用。",
+          "version": "5.0.0"
+        },
+        "body": "\n# 统计专题图\n\n## 什么时候用\n按省、市或县展示统计指标的空间分布。用户给出行政区面、统计表或已有专题图层时优先使用；没有的图层和统计数据再按区域、层级、年份和指标查找来源。年份、指标或范围仍不明确且会影响取数时，一次说明需要补齐的内容。\n\n## 需要的图层与处理\n- 行政区面：覆盖本次区域，按用户要求的省、市或县层级获取；已有含指标的专题面图层满足要求时直接复用。省级默认样式「省域面」，市级用「市域面」，县级用「县域面」；用于行政区定位与名称标注，后续统计表达采用真实指标的分级渲染。\n- 统计表：真实年份与单一指标的地区统计值，记录单位、来源网址、访问时间、发布口径、缺测和补源。已有图层含同口径数值时不重复获取或关联。\n- 专题图层：行政区与统计值按地区精确关联，或复用已经核验的指标面图层。标注真实名称字段；通常分为五级有序渐变。\n- 灰底图层：仅存在缺测、未匹配或排除地区时，复用同一已核验面源形成浅灰背景，置于专题层下面，图例不单列。\n\n## 做法\n1. 核对区域、行政区层级、统计年份、指标、单位、来源和明确排除的地区。只有仍缺数据时才取得官方原件和可关联表格，不虚构数值。已提供数据按其元数据核验，不重复询问已知内容。\n2. 检查面几何、数值和名称字段、有效范围与缺测。识别宽表、长表及真实列名，只选择指定年份的单一指标，口径列不能误当地区列或筛选开关。必要转换或关联只写独立派生数据，保留原始文件；显示坐标系不同用动态投影，不为显示而重投影。\n3. 关联前检查年份、地区键、元数据、重复键和非法数值。重复键、非法数值或无有效数据时停止。部分未匹配且有效值足以分级时，保留完整清单与空值继续；空值表示缺测，零仍是有效值。记录有效与缺测数、未匹配与排除清单、数值范围、实际字段及来源。\n4. 按分布和表达需要选择自然断点、分位数、等间距或标准差，通常五级，连续量使用有序渐变。读取实际渲染状态，核对数值字段、每级上下界、颜色与图例。单一不同值、非数值字段或分级失败时停止，不以统一填色冒充分级，不添加无依据的箭头、柱状图或比例符号。\n5. 排版后核对主图范围、图层、实际分级、图例级数区间、文字裁切和遮挡，再导出所需格式。明确参数或前置条件错误最多修正重试一次；文件存在不能替代图面核验。不自动加入路线图视觉质检，额外评审应先明确范围。\n\n## 版面\n使用版面「统计专题版式」，默认 A4 横向；用户可指定纸张和方向。主图只显示本次专题层、灰底层和明确需要的背景，专题层在上，范围按真实专题层确定。标题采用用户标题，否则用“地区 + 年份 + 指标”。图例只列专题层，标题写指标和单位，条目来自实际分级，不手绘色块或编造区间。说明栏写年份、单位、来源和分级方法；来源未知则如实写“来源未提供”。有灰底时写“灰色区域：无有效统计值”，分别说明缺测、未匹配和排除数量。字号与位置使用版面规定，检查真实元素矩形及警告。必须有主图、标题、图例、比例尺、指北针和来源说明。\n\n## 成果\n默认导出 PNG，用户也可要求 PDF 或 SVG。交付真实成果路径、行政区层级、指标与年份、单位与来源、分级方法及各级区间，说明缺测、未匹配、排除地区和数量。派生文件与质量报告如有生成则一并列出；使用已有图层时说明复用情况。\n\n## 注意事项\n- 不虚构指标、年份、单位、来源或数值。\n- 区分总量、占比、密度、增幅；缺少分母、两期数据或面积依据时保持原指标。\n- 内部错误时保留工程与已有成果，报告真实错误和未完成部分。\n",
+        "resources": [
+          {
+            "label": "省域面",
+            "type": "style",
+            "location": "公共资源库",
+            "line": 13
+          },
+          {
+            "label": "市域面",
+            "type": "style",
+            "location": "公共资源库",
+            "line": 13
+          },
+          {
+            "label": "县域面",
+            "type": "style",
+            "location": "公共资源库",
+            "line": 13
+          },
+          {
+            "label": "统计专题版式",
+            "type": "layout",
+            "location": "公共资源库",
+            "line": 26
+          }
+        ],
+        "diagnostics": []
+      },
+      "resources": [],
+      "resolved_resources": [
+        {
+          "label_field": "NAME",
+          "tags": [
+            "省级行政区",
+            "省界面",
+            "省域外框",
+            "省域面"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-90a7082089/preview?digest=sha256%3A443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+          "preview_status": "ready",
+          "key": "library:style.basemap-90a7082089",
+          "id": "style.basemap-90a7082089",
+          "label": "省域面",
+          "name": "省域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面/省域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "label_field": "无",
+          "tags": [
+            "地级市行政区",
+            "市域"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-1a51d33883/preview?digest=sha256%3A030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+          "preview_status": "ready",
+          "key": "library:style.basemap-1a51d33883",
+          "id": "style.basemap-1a51d33883",
+          "label": "市域面",
+          "name": "市域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面/市域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "label_field": "无",
+          "tags": [
+            "县级行政区",
+            "县域"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-fbe4b96472/preview?digest=sha256%3A365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+          "preview_status": "ready",
+          "key": "library:style.basemap-fbe4b96472",
+          "id": "style.basemap-fbe4b96472",
+          "label": "县域面",
+          "name": "县域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面/县域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "paper": "A4",
+          "orientation": "landscape",
+          "elements": [
+            "grid",
+            "legend",
+            "main_map",
+            "north_arrow",
+            "overview",
+            "scalebar",
+            "title"
+          ],
+          "preview_url": "/api/resources/by-id/layout.statistical/preview?digest=sha256%3A8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+          "preview_status": "ready",
+          "key": "library:layout.statistical",
+          "id": "layout.statistical",
+          "label": "统计专题版式",
+          "name": "统计专题版式",
+          "type": "layout",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式/统计专题版式.layout.yaml",
+          "format": "layout_yaml",
+          "digest": "sha256:8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        }
+      ],
+      "diagnostics": [],
+      "updated_at": "2026-10-28T01:19:00.482826499+08:00"
+    },
+    "doc": {
+      "meta": {
+        "id": "statistical-choropleth",
+        "name": "统计专题图",
+        "description": "将行政区和真实统计数据关联，制作人口、经济等指标的分级设色专题图，说明年份、统计口径、缺测和来源。已有指标图层可直接复用。",
+        "version": "5.0.0"
+      },
+      "body": "\n# 统计专题图\n\n## 什么时候用\n按省、市或县展示统计指标的空间分布。用户给出行政区面、统计表或已有专题图层时优先使用；没有的图层和统计数据再按区域、层级、年份和指标查找来源。年份、指标或范围仍不明确且会影响取数时，一次说明需要补齐的内容。\n\n## 需要的图层与处理\n- 行政区面：覆盖本次区域，按用户要求的省、市或县层级获取；已有含指标的专题面图层满足要求时直接复用。省级默认样式「省域面」，市级用「市域面」，县级用「县域面」；用于行政区定位与名称标注，后续统计表达采用真实指标的分级渲染。\n- 统计表：真实年份与单一指标的地区统计值，记录单位、来源网址、访问时间、发布口径、缺测和补源。已有图层含同口径数值时不重复获取或关联。\n- 专题图层：行政区与统计值按地区精确关联，或复用已经核验的指标面图层。标注真实名称字段；通常分为五级有序渐变。\n- 灰底图层：仅存在缺测、未匹配或排除地区时，复用同一已核验面源形成浅灰背景，置于专题层下面，图例不单列。\n\n## 做法\n1. 核对区域、行政区层级、统计年份、指标、单位、来源和明确排除的地区。只有仍缺数据时才取得官方原件和可关联表格，不虚构数值。已提供数据按其元数据核验，不重复询问已知内容。\n2. 检查面几何、数值和名称字段、有效范围与缺测。识别宽表、长表及真实列名，只选择指定年份的单一指标，口径列不能误当地区列或筛选开关。必要转换或关联只写独立派生数据，保留原始文件；显示坐标系不同用动态投影，不为显示而重投影。\n3. 关联前检查年份、地区键、元数据、重复键和非法数值。重复键、非法数值或无有效数据时停止。部分未匹配且有效值足以分级时，保留完整清单与空值继续；空值表示缺测，零仍是有效值。记录有效与缺测数、未匹配与排除清单、数值范围、实际字段及来源。\n4. 按分布和表达需要选择自然断点、分位数、等间距或标准差，通常五级，连续量使用有序渐变。读取实际渲染状态，核对数值字段、每级上下界、颜色与图例。单一不同值、非数值字段或分级失败时停止，不以统一填色冒充分级，不添加无依据的箭头、柱状图或比例符号。\n5. 排版后核对主图范围、图层、实际分级、图例级数区间、文字裁切和遮挡，再导出所需格式。明确参数或前置条件错误最多修正重试一次；文件存在不能替代图面核验。不自动加入路线图视觉质检，额外评审应先明确范围。\n\n## 版面\n使用版面「统计专题版式」，默认 A4 横向；用户可指定纸张和方向。主图只显示本次专题层、灰底层和明确需要的背景，专题层在上，范围按真实专题层确定。标题采用用户标题，否则用“地区 + 年份 + 指标”。图例只列专题层，标题写指标和单位，条目来自实际分级，不手绘色块或编造区间。说明栏写年份、单位、来源和分级方法；来源未知则如实写“来源未提供”。有灰底时写“灰色区域：无有效统计值”，分别说明缺测、未匹配和排除数量。字号与位置使用版面规定，检查真实元素矩形及警告。必须有主图、标题、图例、比例尺、指北针和来源说明。\n\n## 成果\n默认导出 PNG，用户也可要求 PDF 或 SVG。交付真实成果路径、行政区层级、指标与年份、单位与来源、分级方法及各级区间，说明缺测、未匹配、排除地区和数量。派生文件与质量报告如有生成则一并列出；使用已有图层时说明复用情况。\n\n## 注意事项\n- 不虚构指标、年份、单位、来源或数值。\n- 区分总量、占比、密度、增幅；缺少分母、两期数据或面积依据时保持原指标。\n- 内部错误时保留工程与已有成果，报告真实错误和未完成部分。\n",
+      "resources": [
+        {
+          "label": "省域面",
+          "type": "style",
+          "location": "公共资源库",
+          "line": 13
+        },
+        {
+          "label": "市域面",
+          "type": "style",
+          "location": "公共资源库",
+          "line": 13
+        },
+        {
+          "label": "县域面",
+          "type": "style",
+          "location": "公共资源库",
+          "line": 13
+        },
+        {
+          "label": "统计专题版式",
+          "type": "layout",
+          "location": "公共资源库",
+          "line": 26
+        }
+      ],
+      "diagnostics": []
+    },
+    "scope": {
+      "FlowID": "statistical-choropleth",
+      "FlowDir": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/flows/system/statistical-choropleth",
+      "Lock": {
+        "document_format": "flow/v6",
+        "api_version": "flow-lock/v1",
+        "resources": [
+          {
+            "type": "style",
+            "name": "省域面",
+            "id": "style.basemap-90a7082089",
+            "version": "1.0.0",
+            "digest": "sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+            "source": "library_builtin"
+          },
+          {
+            "type": "style",
+            "name": "市域面",
+            "id": "style.basemap-1a51d33883",
+            "version": "1.0.0",
+            "digest": "sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+            "source": "library_builtin"
+          },
+          {
+            "type": "style",
+            "name": "县域面",
+            "id": "style.basemap-fbe4b96472",
+            "version": "1.0.0",
+            "digest": "sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+            "source": "library_builtin"
+          },
+          {
+            "type": "layout",
+            "name": "统计专题版式",
+            "id": "layout.statistical",
+            "version": "1.0.0",
+            "digest": "sha256:8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+            "source": "library_builtin"
+          }
+        ]
+      },
+      "Linked": [
+        {
+          "label_field": "NAME",
+          "tags": [
+            "省级行政区",
+            "省界面",
+            "省域外框",
+            "省域面"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-90a7082089/preview?digest=sha256%3A443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+          "preview_status": "ready",
+          "key": "library:style.basemap-90a7082089",
+          "id": "style.basemap-90a7082089",
+          "label": "省域面",
+          "name": "省域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面/省域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "label_field": "无",
+          "tags": [
+            "地级市行政区",
+            "市域"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-1a51d33883/preview?digest=sha256%3A030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+          "preview_status": "ready",
+          "key": "library:style.basemap-1a51d33883",
+          "id": "style.basemap-1a51d33883",
+          "label": "市域面",
+          "name": "市域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面/市域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "label_field": "无",
+          "tags": [
+            "县级行政区",
+            "县域"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-fbe4b96472/preview?digest=sha256%3A365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+          "preview_status": "ready",
+          "key": "library:style.basemap-fbe4b96472",
+          "id": "style.basemap-fbe4b96472",
+          "label": "县域面",
+          "name": "县域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面/县域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "paper": "A4",
+          "orientation": "landscape",
+          "elements": [
+            "grid",
+            "legend",
+            "main_map",
+            "north_arrow",
+            "overview",
+            "scalebar",
+            "title"
+          ],
+          "preview_url": "/api/resources/by-id/layout.statistical/preview?digest=sha256%3A8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+          "preview_status": "ready",
+          "key": "library:layout.statistical",
+          "id": "layout.statistical",
+          "label": "统计专题版式",
+          "name": "统计专题版式",
+          "type": "layout",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式/统计专题版式.layout.yaml",
+          "format": "layout_yaml",
+          "digest": "sha256:8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        }
+      ]
+    },
+    "lock_digest": "sha256:bcb78ac445759137ea2f7b32b13a1fcf7dde7f2e0a68df8ad58f47e32bbb6651"
+  }
+}

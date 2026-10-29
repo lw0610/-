@@ -1,0 +1,219 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_96dec99380dbdf70",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/flows/fr-20261028-202840-3a9d45773e9b/interrupt.json",
+      "name": "interrupt.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T12:28:50.730239999Z",
+      "modified_at": "2026-10-28T12:28:50.730239999Z",
+      "size": 111760,
+      "exists": true
+    },
+    {
+      "id": "f_4149da4e69e224bc",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/flows/fr-20261028-202840-3a9d45773e9b/run.json",
+      "name": "run.json",
+      "kind": "run",
+      "group": "flow",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T12:28:41.333307791Z",
+      "modified_at": "2026-10-28T12:30:18.150619332Z",
+      "size": 80939,
+      "exists": true
+    },
+    {
+      "id": "f_99bb999dd935f6b9",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/acquired/河南省地级市行政区划面/河南省行政区划面.gpkg",
+      "name": "河南省行政区划面.gpkg",
+      "kind": "vector",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "data_service",
+        "tool": "data_get",
+        "label": "河南省行政区划面",
+        "source_id": "source.builtin.cn-admin",
+        "license": "上游声明来自天地图，数据许可待核实"
+      },
+      "registered_at": "2026-10-28T12:28:41.273885Z",
+      "modified_at": "2026-10-28T12:28:41.270081374Z",
+      "size": 204800,
+      "exists": true
+    },
+    {
+      "id": "f_49c226d43907b789",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/data-sources.json",
+      "name": "data-sources.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T12:28:41.274324249Z",
+      "modified_at": "2026-10-28T12:28:41.274324249Z",
+      "size": 1290,
+      "exists": true
+    },
+    {
+      "id": "f_1936499fb0f12363",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/integrations/browser/console-2026-10-28T12-30-03-796Z.log",
+      "name": "console-2026-10-28T12-30-03-796Z.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "browser_call_tool",
+        "label": "browser_call_tool",
+        "call_id": "call_00_r61zsTHAZ47hMsKxuf305065",
+        "agent": "system_data_acquisition"
+      },
+      "registered_at": "2026-10-28T12:30:37.02576Z",
+      "modified_at": "2026-10-28T12:30:07.007236832Z",
+      "size": 1773,
+      "exists": true
+    },
+    {
+      "id": "f_338e761f6ffda75f",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/integrations/browser/page-2026-10-28T12-29-06-617Z.yml",
+      "name": "page-2026-10-28T12-29-06-617Z.yml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "browser_call_tool",
+        "label": "browser_call_tool",
+        "call_id": "call_00_V7rt64hO5pavG6BfaN8z5860",
+        "agent": "system_data_acquisition"
+      },
+      "registered_at": "2026-10-28T12:29:19.716095Z",
+      "modified_at": "2026-10-28T12:29:06.619311916Z",
+      "size": 26211,
+      "exists": true
+    },
+    {
+      "id": "f_93ff173973c6952a",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/integrations/browser/page-2026-10-28T12-29-12-335Z.yml",
+      "name": "page-2026-10-28T12-29-12-335Z.yml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "browser_call_tool",
+        "label": "browser_call_tool",
+        "call_id": "call_00_V7rt64hO5pavG6BfaN8z5860",
+        "agent": "system_data_acquisition"
+      },
+      "registered_at": "2026-10-28T12:29:19.71677Z",
+      "modified_at": "2026-10-28T12:29:12.336259332Z",
+      "size": 2194,
+      "exists": true
+    },
+    {
+      "id": "f_91b4d4fc5d97d999",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/integrations/browser/page-2026-10-28T12-29-57-482Z.yml",
+      "name": "page-2026-10-28T12-29-57-482Z.yml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "browser_call_tool",
+        "label": "browser_call_tool",
+        "call_id": "call_00_r61zsTHAZ47hMsKxuf305065",
+        "agent": "system_data_acquisition"
+      },
+      "registered_at": "2026-10-28T12:30:37.025431Z",
+      "modified_at": "2026-10-28T12:29:57.483134832Z",
+      "size": 27011,
+      "exists": true
+    },
+    {
+      "id": "f_2df56e2e19033c63",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/integrations/browser/page-2026-10-28T12-30-07-267Z.yml",
+      "name": "page-2026-10-28T12-30-07-267Z.yml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "browser_call_tool",
+        "label": "browser_call_tool",
+        "call_id": "call_00_r61zsTHAZ47hMsKxuf305065",
+        "agent": "system_data_acquisition"
+      },
+      "registered_at": "2026-10-28T12:30:37.026011Z",
+      "modified_at": "2026-10-28T12:30:07.267990874Z",
+      "size": 12093,
+      "exists": true
+    },
+    {
+      "id": "f_dd9771722e27d679",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/integrations/browser/page-2026-10-28T12-30-10-705Z.yml",
+      "name": "page-2026-10-28T12-30-10-705Z.yml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "browser_call_tool",
+        "label": "browser_call_tool",
+        "call_id": "call_00_r61zsTHAZ47hMsKxuf305065",
+        "agent": "system_data_acquisition"
+      },
+      "registered_at": "2026-10-28T12:30:37.0264Z",
+      "modified_at": "2026-10-28T12:30:10.706165832Z",
+      "size": 2228,
+      "exists": true
+    },
+    {
+      "id": "f_7b43e213dc60f0b5",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/数据来源说明.md",
+      "name": "数据来源说明.md",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "data_service",
+        "tool": "data_get",
+        "label": "数据来源说明"
+      },
+      "registered_at": "2026-10-28T12:28:41.278824Z",
+      "modified_at": "2026-10-28T12:28:41.278756999Z",
+      "size": 427,
+      "exists": true
+    },
+    {
+      "id": "f_4d90d6ac6dc4381c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/temp/previews/f_99bb999dd935f6b9-1793190651467517000.png",
+      "name": "f_99bb999dd935f6b9-1793190651467517000.png",
+      "kind": "image",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "preview",
+        "label": "数据缩略图"
+      },
+      "registered_at": "2026-10-28T12:30:51.518198Z",
+      "modified_at": "2026-10-28T12:30:51.514761249Z",
+      "size": 49904,
+      "exists": true
+    }
+  ]
+}

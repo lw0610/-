@@ -1,0 +1,532 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_fe8fb08928be5acb",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.b4704369d9f9f413c24589bc/3a3efb79fc965c81/out/河南省各市常住人口统计表.csv",
+      "name": "河南省各市常住人口统计表.csv",
+      "kind": "table",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "data_service",
+        "tool": "data_get",
+        "label": "河南省各市常住人口统计表",
+        "source_id": "fallback.b4704369d9f9f413c24589bc",
+        "license": "河南省统计局官方公开数据，来源《河南统计年鉴2024》；公开统计资料，引用需注明来源"
+      },
+      "registered_at": "2026-10-28T15:02:22.595628Z",
+      "modified_at": "2026-10-28T15:02:22.584373374Z",
+      "size": 652,
+      "exists": true
+    },
+    {
+      "id": "f_685f8766804ba5dd",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/exports/河南省常住人口专题图层.gpkg",
+      "name": "河南省常住人口专题图层.gpkg",
+      "kind": "vector",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "data_export_vector",
+        "label": "data_export_vector",
+        "call_id": "call_00_Gwv5pV88df2bfw6Wwf1C5085",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-28T15:03:54.027951Z",
+      "modified_at": "2026-10-28T15:05:14.550555707Z",
+      "size": 208896,
+      "exists": true
+    },
+    {
+      "id": "f_e640f1e36958aff3",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/flows/fr-20261028-225919-446601f2bc6f/interrupt.json",
+      "name": "interrupt.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:03:29.530283457Z",
+      "modified_at": "2026-10-28T15:03:29.530283457Z",
+      "size": 175859,
+      "exists": true
+    },
+    {
+      "id": "f_2b3c5c0dbfb52431",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/flows/fr-20261028-225919-446601f2bc6f/run.json",
+      "name": "run.json",
+      "kind": "run",
+      "group": "flow",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T14:59:19.675983207Z",
+      "modified_at": "2026-10-28T15:05:57.127547333Z",
+      "size": 79625,
+      "exists": true
+    },
+    {
+      "id": "f_4c81efa885a03332",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/acquired/河南省市域行政区划面/河南省市域行政区划面.gpkg",
+      "name": "河南省市域行政区划面.gpkg",
+      "kind": "vector",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "data_service",
+        "tool": "data_get",
+        "label": "河南省市域行政区划面",
+        "source_id": "source.builtin.cn-admin",
+        "license": "上游声明来自天地图，数据许可待核实"
+      },
+      "registered_at": "2026-10-28T14:59:19.616983Z",
+      "modified_at": "2026-10-28T14:59:19.612212999Z",
+      "size": 204800,
+      "exists": true
+    },
+    {
+      "id": "f_7e1364040c0fa4bf",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/col2023_bw.png",
+      "name": "col2023_bw.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:05.571159124Z",
+      "modified_at": "2026-10-28T15:01:05.571159124Z",
+      "size": 28243,
+      "exists": true
+    },
+    {
+      "id": "f_986ce6ed9250429f",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/col2023_full.png",
+      "name": "col2023_full.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:59.004862249Z",
+      "modified_at": "2026-10-28T15:01:59.004862249Z",
+      "size": 294465,
+      "exists": true
+    },
+    {
+      "id": "f_74e304860374d7e9",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/data-sources.json",
+      "name": "data-sources.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T14:59:19.617513207Z",
+      "modified_at": "2026-10-28T15:02:22.596869666Z",
+      "size": 4096,
+      "exists": true
+    },
+    {
+      "id": "f_d7604c3d748cf5fa",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/integrations/browser/console-2026-10-28T14-59-52-993Z.log",
+      "name": "console-2026-10-28T14-59-52-993Z.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "browser_call_tool",
+        "label": "browser_call_tool",
+        "call_id": "call_00_AkI0CyHjjbXH93jODwJC0292",
+        "agent": "system_data_acquisition"
+      },
+      "registered_at": "2026-10-28T14:59:59.203255Z",
+      "modified_at": "2026-10-28T14:59:53.403941124Z",
+      "size": 141,
+      "exists": true
+    },
+    {
+      "id": "f_83b4519629408aef",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/integrations/browser/page-2026-10-28T14-59-53-383Z.yml",
+      "name": "page-2026-10-28T14-59-53-383Z.yml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "browser_call_tool",
+        "label": "browser_call_tool",
+        "call_id": "call_00_AkI0CyHjjbXH93jODwJC0292",
+        "agent": "system_data_acquisition"
+      },
+      "registered_at": "2026-10-28T14:59:59.202956Z",
+      "modified_at": "2026-10-28T14:59:53.384669082Z",
+      "size": 86705,
+      "exists": true
+    },
+    {
+      "id": "f_6ca15f8986134c35",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/integrations/downloads/download-1670941448/source.json",
+      "name": "source.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T14:59:58.609048166Z",
+      "modified_at": "2026-10-28T14:59:58.609048166Z",
+      "size": 923,
+      "exists": true
+    },
+    {
+      "id": "f_394bd6ca2640c49c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/integrations/downloads/download-1670941448/河南统计年鉴2024_3-3各市常住人口数.jpg",
+      "name": "河南统计年鉴2024_3-3各市常住人口数.jpg",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "web_download_file",
+        "label": "下载公开文件",
+        "call_id": "call_00_SvIGJYXXq7NglBiXUK0S0542",
+        "agent": "system_data_acquisition"
+      },
+      "flow_run_id": "fr-20261028-225919-446601f2bc6f",
+      "step_id": "s_acquire_pop",
+      "registered_at": "2026-10-28T14:59:58.684197Z",
+      "modified_at": "2026-10-28T14:59:58.608819124Z",
+      "size": 186988,
+      "exists": true
+    },
+    {
+      "id": "f_3b3b5aef788e40f2",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/ocr.swift",
+      "name": "ocr.swift",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "file_write",
+        "label": "写入文本文件",
+        "call_id": "call_00_yPt5N5CW06Ewu1okE2cH4330",
+        "agent": "system_data_acquisition"
+      },
+      "flow_run_id": "fr-20261028-225919-446601f2bc6f",
+      "step_id": "s_acquire_pop",
+      "registered_at": "2026-10-28T15:00:20.212431Z",
+      "modified_at": "2026-10-28T15:00:19.959371582Z",
+      "size": 1028,
+      "exists": true
+    },
+    {
+      "id": "f_5aded6004c0a7fa3",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/right_bottom.png",
+      "name": "right_bottom.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:00:51.667672707Z",
+      "modified_at": "2026-10-28T15:00:51.667672707Z",
+      "size": 330186,
+      "exists": true
+    },
+    {
+      "id": "f_c29317d80dfccde4",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/right_col.png",
+      "name": "right_col.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:00:33.336984416Z",
+      "modified_at": "2026-10-28T15:00:33.336984416Z",
+      "size": 438375,
+      "exists": true
+    },
+    {
+      "id": "f_bb7732b7a7613b0a",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/right_col2.png",
+      "name": "right_col2.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:00:40.429439499Z",
+      "modified_at": "2026-10-28T15:00:40.429439499Z",
+      "size": 723850,
+      "exists": true
+    },
+    {
+      "id": "f_c6beae3880ca1516",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_三门峡.png",
+      "name": "row_三门峡.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.678625958Z",
+      "modified_at": "2026-10-28T15:01:34.678625958Z",
+      "size": 1863,
+      "exists": true
+    },
+    {
+      "id": "f_7804d507d4282c7d",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_信阳.png",
+      "name": "row_信阳.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.682411749Z",
+      "modified_at": "2026-10-28T15:01:34.682411749Z",
+      "size": 1027,
+      "exists": true
+    },
+    {
+      "id": "f_24ba37c8a89807a3",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_南阳.png",
+      "name": "row_南阳.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.679854833Z",
+      "modified_at": "2026-10-28T15:01:34.679854833Z",
+      "size": 1032,
+      "exists": true
+    },
+    {
+      "id": "f_2db0dcf285697c4c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_周口.png",
+      "name": "row_周口.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.683776249Z",
+      "modified_at": "2026-10-28T15:01:34.683776249Z",
+      "size": 2144,
+      "exists": true
+    },
+    {
+      "id": "f_67ab4d1df73f4c6e",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_商丘.png",
+      "name": "row_商丘.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.681281749Z",
+      "modified_at": "2026-10-28T15:01:34.681281749Z",
+      "size": 2201,
+      "exists": true
+    },
+    {
+      "id": "f_aa7ad310544118a2",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_新乡.png",
+      "name": "row_新乡.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.671314666Z",
+      "modified_at": "2026-10-28T15:01:34.671314666Z",
+      "size": 1640,
+      "exists": true
+    },
+    {
+      "id": "f_2dfbbe8892b51af7",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_济源.png",
+      "name": "row_济源.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.686354749Z",
+      "modified_at": "2026-10-28T15:01:34.686354749Z",
+      "size": 1032,
+      "exists": true
+    },
+    {
+      "id": "f_8a7a93abb6daa9f1",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_漯河.png",
+      "name": "row_漯河.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.677259874Z",
+      "modified_at": "2026-10-28T15:01:34.677259874Z",
+      "size": 1624,
+      "exists": true
+    },
+    {
+      "id": "f_c248ac4b2ca55acd",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_濮阳.png",
+      "name": "row_濮阳.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.674192499Z",
+      "modified_at": "2026-10-28T15:01:34.674192499Z",
+      "size": 1966,
+      "exists": true
+    },
+    {
+      "id": "f_654c272aa06e0ec0",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_焦作.png",
+      "name": "row_焦作.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.672717749Z",
+      "modified_at": "2026-10-28T15:01:34.672717749Z",
+      "size": 1927,
+      "exists": true
+    },
+    {
+      "id": "f_58ae5781ab18f7d6",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_许昌.png",
+      "name": "row_许昌.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.675872083Z",
+      "modified_at": "2026-10-28T15:01:34.675872083Z",
+      "size": 1810,
+      "exists": true
+    },
+    {
+      "id": "f_252dc0d2efabe87c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_驻马店.png",
+      "name": "row_驻马店.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.685290749Z",
+      "modified_at": "2026-10-28T15:01:34.685290749Z",
+      "size": 3253,
+      "exists": true
+    },
+    {
+      "id": "f_372f8a5bb96a5bb3",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/row_鹤壁.png",
+      "name": "row_鹤壁.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:01:34.669774749Z",
+      "modified_at": "2026-10-28T15:01:34.669774749Z",
+      "size": 1833,
+      "exists": true
+    },
+    {
+      "id": "f_adc7571c27b6329f",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/数据来源说明.md",
+      "name": "数据来源说明.md",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "data_service",
+        "tool": "data_get",
+        "label": "数据来源说明"
+      },
+      "registered_at": "2026-10-28T15:02:22.602004Z",
+      "modified_at": "2026-10-28T15:02:22.601839332Z",
+      "size": 1572,
+      "exists": true
+    },
+    {
+      "id": "f_3ad4f09cea5c0324",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/河南省各市常住人口统计表.csv",
+      "name": "河南省各市常住人口统计表.csv",
+      "kind": "table",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "file_write",
+        "label": "写入文本文件",
+        "call_id": "call_00_YUFn2yfIzi62il7rWKh33038",
+        "agent": "system_data_acquisition"
+      },
+      "flow_run_id": "fr-20261028-225919-446601f2bc6f",
+      "step_id": "s_acquire_pop",
+      "registered_at": "2026-10-28T15:02:13.702449Z",
+      "modified_at": "2026-10-28T15:02:13.455680499Z",
+      "size": 652,
+      "exists": true
+    }
+  ]
+}

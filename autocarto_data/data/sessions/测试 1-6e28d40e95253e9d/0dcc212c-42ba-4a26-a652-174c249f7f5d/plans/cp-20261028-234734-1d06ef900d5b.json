@@ -1,0 +1,3206 @@
+{
+  "data_selections": {
+    "hn_city_boundary": {
+      "find_id": "df-880221b0f6dd9e065041e5899633a152",
+      "request": {
+        "need": {
+          "geometry": "polygon",
+          "name": "河南省各市行政区面",
+          "what": {
+            "category": "行政区划面",
+            "description": "河南省各市行政区边界面，用于人口专题图分级设色"
+          },
+          "extent": "河南省",
+          "params": {
+            "level": "市"
+          }
+        },
+        "guide": "statistical-choropleth",
+        "include_fallback": true
+      },
+      "rows": [
+        {
+          "route": "direct",
+          "row": "河南省各市行政区面",
+          "candidate": {
+            "id": "c-94762253a5c45785",
+            "kind": "builtin_offline",
+            "name": "中国行政区边界（内置）",
+            "source_id": "source.builtin.cn-admin",
+            "available": true,
+            "reasons": [
+              "来源提供所需类别并满足目录筛选条件",
+              "覆盖所需范围"
+            ],
+            "notes": [
+              "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实",
+              "上游声明来自天地图，数据许可待核实"
+            ],
+            "handbook": "中国省市县行政区面及派生边界线；中国省、市、县；上游许可及完整疆域表达仍须核实；公开地图依法送审",
+            "tier": 7,
+            "network": false,
+            "choice": {
+              "source_id": "source.builtin.cn-admin",
+              "name": "中国行政区边界（内置）",
+              "tier": 3,
+              "provide": {
+                "category": "admin.division",
+                "fields": {
+                  "code": [
+                    "adcode"
+                  ],
+                  "name": [
+                    "name"
+                  ]
+                },
+                "tool": "admin_boundary_extract"
+              },
+              "cache_hit": false,
+              "license": "上游声明来自天地图，数据许可待核实",
+              "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+            }
+          },
+          "item": {
+            "key": "河南省各市行政区面/河南省各市行政区面",
+            "requirement": "河南省各市行政区面",
+            "entry": "河南省各市行政区面",
+            "category": "admin.division",
+            "params": {
+              "level": "市"
+            },
+            "fields": null,
+            "extent": {
+              "bbox": [
+                110.353676,
+                31.384459,
+                116.647011,
+                36.374184
+              ],
+              "source": "河南省",
+              "region": "河南省",
+              "pending": false
+            },
+            "scale_denominator": 1000000,
+            "mode": "auto",
+            "chosen": {
+              "source_id": "source.builtin.cn-admin",
+              "name": "中国行政区边界（内置）",
+              "tier": 3,
+              "provide": {
+                "category": "admin.division",
+                "fields": {
+                  "code": [
+                    "adcode"
+                  ],
+                  "name": [
+                    "name"
+                  ]
+                },
+                "tool": "admin_boundary_extract"
+              },
+              "cache_hit": false,
+              "license": "上游声明来自天地图，数据许可待核实",
+              "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+            },
+            "alternatives": [],
+            "excluded": [
+              {
+                "source_id": "source.portal.webmap-1m",
+                "name": "全国地理信息资源目录服务系统 1:100 万公众版",
+                "reasons": [
+                  "该来源尚未完成验证"
+                ]
+              }
+            ],
+            "available": true,
+            "reasons": [],
+            "notes": null,
+            "input": "",
+            "required": true,
+            "acquirable": true,
+            "geometry": "polygon",
+            "extent_expression": "河南省"
+          }
+        }
+      ],
+      "selected_at": "2026-10-28T15:47:34.755915Z"
+    },
+    "hn_population_2023": {
+      "find_id": "df-6f9a99a67b534ddc3cde79f8869aa55f",
+      "request": {
+        "need": {
+          "geometry": "table",
+          "name": "河南省各市人口统计数据",
+          "what": {
+            "category": "年度统计指标",
+            "description": "河南省各市人口统计指标，需要指标名、年份、单位与各市数值"
+          },
+          "extent": "河南省"
+        },
+        "guide": "statistical-choropleth",
+        "include_fallback": true
+      },
+      "rows": [
+        {
+          "route": "explore",
+          "row": "河南省各市人口统计数据",
+          "candidate": {
+            "id": "c-147f69eb6b25e6de",
+            "kind": "portal",
+            "name": "国家统计局国家数据",
+            "source_id": "source.portal.nbs",
+            "available": true,
+            "reasons": [
+              "没有可用的确定性来源，可由数据获取智能体探索并登记真实数据"
+            ],
+            "notes": [
+              "可能需要验证码；门户自动获取尚未启用"
+            ],
+            "handbook": "中国人口、经济等官方统计表；中国，依统计发布范围；门户兜底；不得绕过登录或验证码，不得用模型补造数值",
+            "tier": 11,
+            "network": true
+          },
+          "item": {
+            "key": "河南省各市人口统计数据/河南省各市人口统计数据",
+            "requirement": "河南省各市人口统计数据",
+            "entry": "河南省各市人口统计数据",
+            "category": "stats.annual_indicator",
+            "params": {},
+            "fields": null,
+            "extent": {
+              "bbox": [
+                110.353676,
+                31.384459,
+                116.647011,
+                36.374184
+              ],
+              "source": "河南省",
+              "region": "河南省",
+              "pending": false
+            },
+            "scale_denominator": 1000000,
+            "mode": "auto",
+            "alternatives": [],
+            "excluded": [
+              {
+                "source_id": "source.portal.nbs",
+                "name": "国家统计局国家数据",
+                "reasons": [
+                  "该来源尚未完成验证"
+                ]
+              }
+            ],
+            "available": false,
+            "reasons": [
+              "该来源尚未完成验证"
+            ],
+            "notes": null,
+            "input": "",
+            "required": true,
+            "acquirable": true,
+            "geometry": "table",
+            "extent_expression": "河南省"
+          }
+        }
+      ],
+      "fallback": [
+        {
+          "id": "c-147f69eb6b25e6de",
+          "kind": "portal",
+          "name": "国家统计局国家数据",
+          "source_id": "source.portal.nbs",
+          "available": true,
+          "reasons": [
+            "没有可用的确定性来源，可由数据获取智能体探索并登记真实数据"
+          ],
+          "notes": [
+            "可能需要验证码；门户自动获取尚未启用"
+          ],
+          "handbook": "中国人口、经济等官方统计表；中国，依统计发布范围；门户兜底；不得绕过登录或验证码，不得用模型补造数值",
+          "tier": 11,
+          "network": true
+        },
+        {
+          "id": "c-98f95ac082363e91",
+          "kind": "web_search",
+          "name": "公开来源搜索",
+          "available": true,
+          "reasons": [
+            "确定性来源不可用，可查找真实公开数据后登记"
+          ],
+          "notes": [
+            "不得编造数据；必须保留来源网址与许可"
+          ],
+          "tier": 12,
+          "network": true
+        }
+      ],
+      "selected_at": "2026-10-28T15:47:34.758994Z"
+    }
+  },
+  "plan": {
+    "api_version": "carto-plan/v1",
+    "plan_id": "cp-20261028-234734-1d06ef900d5b",
+    "version": 1,
+    "goal": "制作河南省各市2023年常住人口统计专题图（分级设色），A4横向版面，导出PNG。",
+    "guide": {
+      "id": "statistical-choropleth",
+      "version": "5.0.0",
+      "fingerprint": "sha256:52f2640beac372902acb8bcec300b5de6c169f65c47880017ef6ca485bd26814"
+    },
+    "facts": [
+      {
+        "name": "区域",
+        "value": "河南省",
+        "from": "conversation"
+      },
+      {
+        "name": "行政区层级",
+        "value": "市",
+        "from": "conversation"
+      },
+      {
+        "name": "统计年份",
+        "value": "2023",
+        "from": "conversation"
+      },
+      {
+        "name": "统计指标",
+        "value": "常住人口（总量）",
+        "from": "conversation"
+      },
+      {
+        "name": "指标口径",
+        "value": "常住人口总量，单位万人",
+        "from": "conversation"
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "人口数据以国家统计局或官方公开来源为准，单位统一为万人；获取时记录来源网址与访问时间",
+        "impact": "high"
+      },
+      {
+        "text": "河南省各市按17个省辖市及济源示范区口径（或数据源实际市数）关联",
+        "impact": "low"
+      },
+      {
+        "text": "分级方法默认自然断点，分5级有序渐变",
+        "impact": "low"
+      }
+    ],
+    "data": [
+      {
+        "layer_name": "河南省各市行政区面",
+        "style": "市域面",
+        "geometry": "polygon",
+        "id": "hn_city_boundary",
+        "name": "河南省各市行政区面",
+        "from": "acquire",
+        "find_id": "df-880221b0f6dd9e065041e5899633a152",
+        "choice": "c-94762253a5c45785"
+      },
+      {
+        "layer_name": "河南省各市2023年常住人口",
+        "geometry": "table",
+        "id": "hn_population_2023",
+        "name": "河南省各市2023年常住人口统计表",
+        "from": "acquire",
+        "find_id": "df-6f9a99a67b534ddc3cde79f8869aa55f",
+        "choice": {
+          "*": "recommended"
+        }
+      },
+      {
+        "layer_name": "河南省各市人口专题图层",
+        "geometry": "polygon",
+        "id": "hn_population_choropleth",
+        "name": "河南省各市人口专题图层",
+        "from": "step",
+        "step": "join_population",
+        "output": "河南省各市人口专题图层"
+      }
+    ],
+    "steps": [
+      {
+        "id": "acquire_boundary",
+        "title": "获取河南省各市行政区面",
+        "kind": "acquire",
+        "capabilities": [
+          "admin-boundaries",
+          "data-service"
+        ],
+        "data": [
+          "hn_city_boundary"
+        ],
+        "instructions": "按 find_id df-880221b0f6dd9e065041e5899633a152 获取河南省各市行政区面（admin.division，level=市），核验几何与名称字段",
+        "outputs": [
+          {
+            "label": "河南省各市行政区面",
+            "type": "layers",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "acquire_population",
+        "title": "获取2023年河南省各市常住人口数据",
+        "kind": "acquire",
+        "capabilities": [
+          "data-service",
+          "statistical-data-tools"
+        ],
+        "data": [
+          "hn_population_2023"
+        ],
+        "instructions": "按 find_id df-6f9a99a67b534ddc3cde79f8869aa55f 探索获取2023年河南省各市常住人口统计表，核验年份、指标、单位与各市数值，登记来源网址与访问时间",
+        "outputs": [
+          {
+            "label": "河南省各市2023年常住人口统计表",
+            "type": "dataset",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "join_population",
+        "title": "关联行政区与人口数据生成专题图层",
+        "capabilities": [
+          "vector-fields",
+          "vector-geometry",
+          "data-loading"
+        ],
+        "uses": [
+          "hn_city_boundary",
+          "hn_population_2023"
+        ],
+        "depends_on": [
+          "acquire_boundary",
+          "acquire_population"
+        ],
+        "instructions": "按地区名称键将人口统计表关联到行政区面，生成含人口数值字段的专题图层；检查重复键、非法数值与未匹配地区，记录有效/缺测/未匹配清单",
+        "outputs": [
+          {
+            "label": "河南省各市人口专题图层",
+            "type": "layers",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "symbolize",
+        "title": "人口专题分级设色",
+        "capabilities": [
+          "cartography-styling"
+        ],
+        "uses": [
+          "hn_population_choropleth"
+        ],
+        "depends_on": [
+          "join_population"
+        ],
+        "instructions": "对专题图层按常住人口数值做5级自然断点有序渐变分级设色，核对数值字段、各级上下界、颜色与图例",
+        "outputs": [
+          {
+            "label": "分级设色专题图层",
+            "type": "layers",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "layout_export",
+        "title": "版面编排与导出",
+        "capabilities": [
+          "print-layout",
+          "cartography-styling"
+        ],
+        "uses": [
+          "hn_population_choropleth"
+        ],
+        "depends_on": [
+          "symbolize"
+        ],
+        "instructions": "使用「统计专题版式」（A4横向）编排主图、标题、图例、比例尺、指北针与来源说明，标题为“河南省2023年常住人口”，图例标题写指标与单位，说明栏写年份、单位、来源、分级方法与缺测说明，导出PNG",
+        "outputs": [
+          {
+            "label": "河南省各市人口统计专题图PNG",
+            "type": "file",
+            "format": "png",
+            "required": false
+          }
+        ]
+      }
+    ],
+    "deliverables": [
+      {
+        "label": "河南省各市人口统计专题图PNG",
+        "type": "file",
+        "format": "png",
+        "required": false
+      }
+    ],
+    "checks": [
+      "行政区面覆盖河南省各市，几何与名称字段有效",
+      "人口统计表为2023年常住人口总量，单位与各市数值真实，含来源网址与访问时间",
+      "专题图层按地区精确关联，记录有效/缺测/未匹配数量",
+      "分级设色为5级有序渐变，数值字段与各级区间正确",
+      "版面含主图、标题、图例、比例尺、指北针、来源说明，无文字裁切遮挡",
+      "PNG成功导出且路径真实"
+    ]
+  },
+  "session_id": "0dcc212c-42ba-4a26-a652-174c249f7f5d",
+  "plan_id": "cp-20261028-234734-1d06ef900d5b",
+  "plan_version": 1,
+  "status": "completed_with_issues",
+  "needs_confirmation": false,
+  "confirmation_reasons": [],
+  "execution_mode": "build",
+  "find_results": {
+    "df-6f9a99a67b534ddc3cde79f8869aa55f": {
+      "created_at": "2026-10-28T15:47:08.751048Z",
+      "diagnostics": [
+        {
+          "code": "DATA_EXPLORATION_REQUIRED",
+          "message": "暂无确定性来源，但有可用探索途径；沿用本次 find_id 安排 acquire 步骤，由数据获取智能体探索并登记真实数据",
+          "row": "河南省各市人口统计数据"
+        }
+      ],
+      "expires_at": "2026-10-28T16:17:08.751048Z",
+      "fallback": [
+        {
+          "available": true,
+          "handbook": "中国人口、经济等官方统计表；中国，依统计发布范围；门户兜底；不得绕过登录或验证码，不得用模型补造数值",
+          "id": "c-147f69eb6b25e6de",
+          "kind": "portal",
+          "name": "国家统计局国家数据",
+          "network": true,
+          "notes": [
+            "可能需要验证码；门户自动获取尚未启用"
+          ],
+          "reasons": [
+            "没有可用的确定性来源，可由数据获取智能体探索并登记真实数据"
+          ],
+          "source_id": "source.portal.nbs",
+          "tier": 11
+        },
+        {
+          "available": true,
+          "id": "c-98f95ac082363e91",
+          "kind": "web_search",
+          "name": "公开来源搜索",
+          "network": true,
+          "notes": [
+            "不得编造数据；必须保留来源网址与许可"
+          ],
+          "reasons": [
+            "确定性来源不可用，可查找真实公开数据后登记"
+          ],
+          "tier": 12
+        }
+      ],
+      "find_id": "df-6f9a99a67b534ddc3cde79f8869aa55f",
+      "next_action": "plan_acquire",
+      "provided_matches": [],
+      "provided_unmatched": [],
+      "resolved": {
+        "category": "stats.annual_indicator",
+        "extent": {
+          "bbox": [
+            110.353676,
+            31.384459,
+            116.647011,
+            36.374184
+          ],
+          "pending": false,
+          "region": "河南省",
+          "source": "河南省"
+        },
+        "scale_denominator": 1000000
+      },
+      "rows": [
+        {
+          "candidates": [],
+          "category": "stats.annual_indicator",
+          "excluded": [
+            {
+              "reason": "确定性获取路径被排除：该来源尚未完成验证；该来源仍可通过探索获取，见 fallback 中的可用途径",
+              "source_id": "source.portal.nbs"
+            }
+          ],
+          "row": "河南省各市人口统计数据"
+        }
+      ],
+      "state": "exploration_required"
+    },
+    "df-880221b0f6dd9e065041e5899633a152": {
+      "created_at": "2026-10-28T15:47:08.750829Z",
+      "diagnostics": [],
+      "expires_at": "2026-10-28T16:17:08.750829Z",
+      "fallback": [],
+      "find_id": "df-880221b0f6dd9e065041e5899633a152",
+      "next_action": "plan_acquire",
+      "provided_matches": [],
+      "provided_unmatched": [],
+      "resolved": {
+        "category": "admin.division",
+        "extent": {
+          "bbox": [
+            110.353676,
+            31.384459,
+            116.647011,
+            36.374184
+          ],
+          "pending": false,
+          "region": "河南省",
+          "source": "河南省"
+        },
+        "scale_denominator": 1000000
+      },
+      "rows": [
+        {
+          "candidates": [
+            {
+              "available": true,
+              "choice": {
+                "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）",
+                "cache_hit": false,
+                "license": "上游声明来自天地图，数据许可待核实",
+                "name": "中国行政区边界（内置）",
+                "provide": {
+                  "category": "admin.division",
+                  "fields": {
+                    "code": [
+                      "adcode"
+                    ],
+                    "name": [
+                      "name"
+                    ]
+                  },
+                  "tool": "admin_boundary_extract"
+                },
+                "source_id": "source.builtin.cn-admin",
+                "tier": 3
+              },
+              "handbook": "中国省市县行政区面及派生边界线；中国省、市、县；上游许可及完整疆域表达仍须核实；公开地图依法送审",
+              "id": "c-94762253a5c45785",
+              "kind": "builtin_offline",
+              "name": "中国行政区边界（内置）",
+              "network": false,
+              "notes": [
+                "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实",
+                "上游声明来自天地图，数据许可待核实"
+              ],
+              "reasons": [
+                "来源提供所需类别并满足目录筛选条件",
+                "覆盖所需范围"
+              ],
+              "source_id": "source.builtin.cn-admin",
+              "tier": 7
+            }
+          ],
+          "category": "admin.division",
+          "excluded": [
+            {
+              "reason": "该来源尚未完成验证",
+              "source_id": "source.portal.webmap-1m"
+            }
+          ],
+          "recommended": "c-94762253a5c45785",
+          "row": "河南省各市行政区面"
+        }
+      ],
+      "state": "acquirable"
+    }
+  },
+  "flow_run_id": "fr-20261028-234738-749572ad9409",
+  "run": {
+    "carto_plan": {
+      "api_version": "carto-plan/v1",
+      "plan_id": "cp-20261028-234734-1d06ef900d5b",
+      "version": 1,
+      "goal": "制作河南省各市2023年常住人口统计专题图（分级设色），A4横向版面，导出PNG。",
+      "guide": {
+        "id": "statistical-choropleth",
+        "version": "5.0.0",
+        "fingerprint": "sha256:52f2640beac372902acb8bcec300b5de6c169f65c47880017ef6ca485bd26814"
+      },
+      "facts": [
+        {
+          "name": "区域",
+          "value": "河南省",
+          "from": "conversation"
+        },
+        {
+          "name": "行政区层级",
+          "value": "市",
+          "from": "conversation"
+        },
+        {
+          "name": "统计年份",
+          "value": "2023",
+          "from": "conversation"
+        },
+        {
+          "name": "统计指标",
+          "value": "常住人口（总量）",
+          "from": "conversation"
+        },
+        {
+          "name": "指标口径",
+          "value": "常住人口总量，单位万人",
+          "from": "conversation"
+        }
+      ],
+      "assumptions": [
+        {
+          "text": "人口数据以国家统计局或官方公开来源为准，单位统一为万人；获取时记录来源网址与访问时间",
+          "impact": "high"
+        },
+        {
+          "text": "河南省各市按17个省辖市及济源示范区口径（或数据源实际市数）关联",
+          "impact": "low"
+        },
+        {
+          "text": "分级方法默认自然断点，分5级有序渐变",
+          "impact": "low"
+        }
+      ],
+      "data": [
+        {
+          "layer_name": "河南省各市行政区面",
+          "style": "市域面",
+          "geometry": "polygon",
+          "id": "hn_city_boundary",
+          "name": "河南省各市行政区面",
+          "from": "acquire",
+          "find_id": "df-880221b0f6dd9e065041e5899633a152",
+          "choice": "c-94762253a5c45785"
+        },
+        {
+          "layer_name": "河南省各市2023年常住人口",
+          "geometry": "table",
+          "id": "hn_population_2023",
+          "name": "河南省各市2023年常住人口统计表",
+          "from": "acquire",
+          "find_id": "df-6f9a99a67b534ddc3cde79f8869aa55f",
+          "choice": {
+            "*": "recommended"
+          }
+        },
+        {
+          "layer_name": "河南省各市人口专题图层",
+          "geometry": "polygon",
+          "id": "hn_population_choropleth",
+          "name": "河南省各市人口专题图层",
+          "from": "step",
+          "step": "join_population",
+          "output": "河南省各市人口专题图层"
+        }
+      ],
+      "steps": [
+        {
+          "id": "acquire_boundary",
+          "title": "获取河南省各市行政区面",
+          "kind": "acquire",
+          "capabilities": [
+            "admin-boundaries",
+            "data-service"
+          ],
+          "data": [
+            "hn_city_boundary"
+          ],
+          "instructions": "按 find_id df-880221b0f6dd9e065041e5899633a152 获取河南省各市行政区面（admin.division，level=市），核验几何与名称字段",
+          "outputs": [
+            {
+              "label": "河南省各市行政区面",
+              "type": "layers",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "acquire_population",
+          "title": "获取2023年河南省各市常住人口数据",
+          "kind": "acquire",
+          "capabilities": [
+            "data-service",
+            "statistical-data-tools"
+          ],
+          "data": [
+            "hn_population_2023"
+          ],
+          "instructions": "按 find_id df-6f9a99a67b534ddc3cde79f8869aa55f 探索获取2023年河南省各市常住人口统计表，核验年份、指标、单位与各市数值，登记来源网址与访问时间",
+          "outputs": [
+            {
+              "label": "河南省各市2023年常住人口统计表",
+              "type": "dataset",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "join_population",
+          "title": "关联行政区与人口数据生成专题图层",
+          "capabilities": [
+            "vector-fields",
+            "vector-geometry",
+            "data-loading"
+          ],
+          "uses": [
+            "hn_city_boundary",
+            "hn_population_2023"
+          ],
+          "depends_on": [
+            "acquire_boundary",
+            "acquire_population"
+          ],
+          "instructions": "按地区名称键将人口统计表关联到行政区面，生成含人口数值字段的专题图层；检查重复键、非法数值与未匹配地区，记录有效/缺测/未匹配清单",
+          "outputs": [
+            {
+              "label": "河南省各市人口专题图层",
+              "type": "layers",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "symbolize",
+          "title": "人口专题分级设色",
+          "capabilities": [
+            "cartography-styling"
+          ],
+          "uses": [
+            "hn_population_choropleth"
+          ],
+          "depends_on": [
+            "join_population"
+          ],
+          "instructions": "对专题图层按常住人口数值做5级自然断点有序渐变分级设色，核对数值字段、各级上下界、颜色与图例",
+          "outputs": [
+            {
+              "label": "分级设色专题图层",
+              "type": "layers",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "layout_export",
+          "title": "版面编排与导出",
+          "capabilities": [
+            "print-layout",
+            "cartography-styling"
+          ],
+          "uses": [
+            "hn_population_choropleth"
+          ],
+          "depends_on": [
+            "symbolize"
+          ],
+          "instructions": "使用「统计专题版式」（A4横向）编排主图、标题、图例、比例尺、指北针与来源说明，标题为“河南省2023年常住人口”，图例标题写指标与单位，说明栏写年份、单位、来源、分级方法与缺测说明，导出PNG",
+          "outputs": [
+            {
+              "label": "河南省各市人口统计专题图PNG",
+              "type": "file",
+              "format": "png",
+              "required": false
+            }
+          ]
+        }
+      ],
+      "deliverables": [
+        {
+          "label": "河南省各市人口统计专题图PNG",
+          "type": "file",
+          "format": "png",
+          "required": false
+        }
+      ],
+      "checks": [
+        "行政区面覆盖河南省各市，几何与名称字段有效",
+        "人口统计表为2023年常住人口总量，单位与各市数值真实，含来源网址与访问时间",
+        "专题图层按地区精确关联，记录有效/缺测/未匹配数量",
+        "分级设色为5级有序渐变，数值字段与各级区间正确",
+        "版面含主图、标题、图例、比例尺、指北针、来源说明，无文字裁切遮挡",
+        "PNG成功导出且路径真实"
+      ]
+    },
+    "plan_history": [
+      {
+        "api_version": "carto-plan/v1",
+        "plan_id": "cp-20261028-234734-1d06ef900d5b",
+        "version": 1,
+        "goal": "制作河南省各市2023年常住人口统计专题图（分级设色），A4横向版面，导出PNG。",
+        "guide": {
+          "id": "statistical-choropleth",
+          "version": "5.0.0",
+          "fingerprint": "sha256:52f2640beac372902acb8bcec300b5de6c169f65c47880017ef6ca485bd26814"
+        },
+        "facts": [
+          {
+            "name": "区域",
+            "value": "河南省",
+            "from": "conversation"
+          },
+          {
+            "name": "行政区层级",
+            "value": "市",
+            "from": "conversation"
+          },
+          {
+            "name": "统计年份",
+            "value": "2023",
+            "from": "conversation"
+          },
+          {
+            "name": "统计指标",
+            "value": "常住人口（总量）",
+            "from": "conversation"
+          },
+          {
+            "name": "指标口径",
+            "value": "常住人口总量，单位万人",
+            "from": "conversation"
+          }
+        ],
+        "assumptions": [
+          {
+            "text": "人口数据以国家统计局或官方公开来源为准，单位统一为万人；获取时记录来源网址与访问时间",
+            "impact": "high"
+          },
+          {
+            "text": "河南省各市按17个省辖市及济源示范区口径（或数据源实际市数）关联",
+            "impact": "low"
+          },
+          {
+            "text": "分级方法默认自然断点，分5级有序渐变",
+            "impact": "low"
+          }
+        ],
+        "data": [
+          {
+            "layer_name": "河南省各市行政区面",
+            "style": "市域面",
+            "geometry": "polygon",
+            "id": "hn_city_boundary",
+            "name": "河南省各市行政区面",
+            "from": "acquire",
+            "find_id": "df-880221b0f6dd9e065041e5899633a152",
+            "choice": "c-94762253a5c45785"
+          },
+          {
+            "layer_name": "河南省各市2023年常住人口",
+            "geometry": "table",
+            "id": "hn_population_2023",
+            "name": "河南省各市2023年常住人口统计表",
+            "from": "acquire",
+            "find_id": "df-6f9a99a67b534ddc3cde79f8869aa55f",
+            "choice": {
+              "*": "recommended"
+            }
+          },
+          {
+            "layer_name": "河南省各市人口专题图层",
+            "geometry": "polygon",
+            "id": "hn_population_choropleth",
+            "name": "河南省各市人口专题图层",
+            "from": "step",
+            "step": "join_population",
+            "output": "河南省各市人口专题图层"
+          }
+        ],
+        "steps": [
+          {
+            "id": "acquire_boundary",
+            "title": "获取河南省各市行政区面",
+            "kind": "acquire",
+            "capabilities": [
+              "admin-boundaries",
+              "data-service"
+            ],
+            "data": [
+              "hn_city_boundary"
+            ],
+            "instructions": "按 find_id df-880221b0f6dd9e065041e5899633a152 获取河南省各市行政区面（admin.division，level=市），核验几何与名称字段",
+            "outputs": [
+              {
+                "label": "河南省各市行政区面",
+                "type": "layers",
+                "required": false
+              }
+            ]
+          },
+          {
+            "id": "acquire_population",
+            "title": "获取2023年河南省各市常住人口数据",
+            "kind": "acquire",
+            "capabilities": [
+              "data-service",
+              "statistical-data-tools"
+            ],
+            "data": [
+              "hn_population_2023"
+            ],
+            "instructions": "按 find_id df-6f9a99a67b534ddc3cde79f8869aa55f 探索获取2023年河南省各市常住人口统计表，核验年份、指标、单位与各市数值，登记来源网址与访问时间",
+            "outputs": [
+              {
+                "label": "河南省各市2023年常住人口统计表",
+                "type": "dataset",
+                "required": false
+              }
+            ]
+          },
+          {
+            "id": "join_population",
+            "title": "关联行政区与人口数据生成专题图层",
+            "capabilities": [
+              "vector-fields",
+              "vector-geometry",
+              "data-loading"
+            ],
+            "uses": [
+              "hn_city_boundary",
+              "hn_population_2023"
+            ],
+            "depends_on": [
+              "acquire_boundary",
+              "acquire_population"
+            ],
+            "instructions": "按地区名称键将人口统计表关联到行政区面，生成含人口数值字段的专题图层；检查重复键、非法数值与未匹配地区，记录有效/缺测/未匹配清单",
+            "outputs": [
+              {
+                "label": "河南省各市人口专题图层",
+                "type": "layers",
+                "required": false
+              }
+            ]
+          },
+          {
+            "id": "symbolize",
+            "title": "人口专题分级设色",
+            "capabilities": [
+              "cartography-styling"
+            ],
+            "uses": [
+              "hn_population_choropleth"
+            ],
+            "depends_on": [
+              "join_population"
+            ],
+            "instructions": "对专题图层按常住人口数值做5级自然断点有序渐变分级设色，核对数值字段、各级上下界、颜色与图例",
+            "outputs": [
+              {
+                "label": "分级设色专题图层",
+                "type": "layers",
+                "required": false
+              }
+            ]
+          },
+          {
+            "id": "layout_export",
+            "title": "版面编排与导出",
+            "capabilities": [
+              "print-layout",
+              "cartography-styling"
+            ],
+            "uses": [
+              "hn_population_choropleth"
+            ],
+            "depends_on": [
+              "symbolize"
+            ],
+            "instructions": "使用「统计专题版式」（A4横向）编排主图、标题、图例、比例尺、指北针与来源说明，标题为“河南省2023年常住人口”，图例标题写指标与单位，说明栏写年份、单位、来源、分级方法与缺测说明，导出PNG",
+            "outputs": [
+              {
+                "label": "河南省各市人口统计专题图PNG",
+                "type": "file",
+                "format": "png",
+                "required": false
+              }
+            ]
+          }
+        ],
+        "deliverables": [
+          {
+            "label": "河南省各市人口统计专题图PNG",
+            "type": "file",
+            "format": "png",
+            "required": false
+          }
+        ],
+        "checks": [
+          "行政区面覆盖河南省各市，几何与名称字段有效",
+          "人口统计表为2023年常住人口总量，单位与各市数值真实，含来源网址与访问时间",
+          "专题图层按地区精确关联，记录有效/缺测/未匹配数量",
+          "分级设色为5级有序渐变，数值字段与各级区间正确",
+          "版面含主图、标题、图例、比例尺、指北针、来源说明，无文字裁切遮挡",
+          "PNG成功导出且路径真实"
+        ]
+      }
+    ],
+    "guide": {
+      "meta": {
+        "id": "statistical-choropleth",
+        "name": "统计专题图",
+        "description": "将行政区和真实统计数据关联，制作人口、经济等指标的分级设色专题图，说明年份、统计口径、缺测和来源。已有指标图层可直接复用。",
+        "version": "5.0.0"
+      },
+      "body": "\n# 统计专题图\n\n## 什么时候用\n按省、市或县展示统计指标的空间分布。用户给出行政区面、统计表或已有专题图层时优先使用；没有的图层和统计数据再按区域、层级、年份和指标查找来源。年份、指标或范围仍不明确且会影响取数时，一次说明需要补齐的内容。\n\n## 需要的图层与处理\n- 行政区面：覆盖本次区域，按用户要求的省、市或县层级获取；已有含指标的专题面图层满足要求时直接复用。省级默认样式「省域面」，市级用「市域面」，县级用「县域面」；用于行政区定位与名称标注，后续统计表达采用真实指标的分级渲染。\n- 统计表：真实年份与单一指标的地区统计值，记录单位、来源网址、访问时间、发布口径、缺测和补源。已有图层含同口径数值时不重复获取或关联。\n- 专题图层：行政区与统计值按地区精确关联，或复用已经核验的指标面图层。标注真实名称字段；通常分为五级有序渐变。\n- 灰底图层：仅存在缺测、未匹配或排除地区时，复用同一已核验面源形成浅灰背景，置于专题层下面，图例不单列。\n\n## 做法\n1. 核对区域、行政区层级、统计年份、指标、单位、来源和明确排除的地区。只有仍缺数据时才取得官方原件和可关联表格，不虚构数值。已提供数据按其元数据核验，不重复询问已知内容。\n2. 检查面几何、数值和名称字段、有效范围与缺测。识别宽表、长表及真实列名，只选择指定年份的单一指标，口径列不能误当地区列或筛选开关。必要转换或关联只写独立派生数据，保留原始文件；显示坐标系不同用动态投影，不为显示而重投影。\n3. 关联前检查年份、地区键、元数据、重复键和非法数值。重复键、非法数值或无有效数据时停止。部分未匹配且有效值足以分级时，保留完整清单与空值继续；空值表示缺测，零仍是有效值。记录有效与缺测数、未匹配与排除清单、数值范围、实际字段及来源。\n4. 按分布和表达需要选择自然断点、分位数、等间距或标准差，通常五级，连续量使用有序渐变。读取实际渲染状态，核对数值字段、每级上下界、颜色与图例。单一不同值、非数值字段或分级失败时停止，不以统一填色冒充分级，不添加无依据的箭头、柱状图或比例符号。\n5. 排版后核对主图范围、图层、实际分级、图例级数区间、文字裁切和遮挡，再导出所需格式。明确参数或前置条件错误最多修正重试一次；文件存在不能替代图面核验。不自动加入路线图视觉质检，额外评审应先明确范围。\n\n## 版面\n使用版面「统计专题版式」，默认 A4 横向；用户可指定纸张和方向。主图只显示本次专题层、灰底层和明确需要的背景，专题层在上，范围按真实专题层确定。标题采用用户标题，否则用“地区 + 年份 + 指标”。图例只列专题层，标题写指标和单位，条目来自实际分级，不手绘色块或编造区间。说明栏写年份、单位、来源和分级方法；来源未知则如实写“来源未提供”。有灰底时写“灰色区域：无有效统计值”，分别说明缺测、未匹配和排除数量。字号与位置使用版面规定，检查真实元素矩形及警告。必须有主图、标题、图例、比例尺、指北针和来源说明。\n\n## 成果\n默认导出 PNG，用户也可要求 PDF 或 SVG。交付真实成果路径、行政区层级、指标与年份、单位与来源、分级方法及各级区间，说明缺测、未匹配、排除地区和数量。派生文件与质量报告如有生成则一并列出；使用已有图层时说明复用情况。\n\n## 注意事项\n- 不虚构指标、年份、单位、来源或数值。\n- 区分总量、占比、密度、增幅；缺少分母、两期数据或面积依据时保持原指标。\n- 内部错误时保留工程与已有成果，报告真实错误和未完成部分。\n",
+      "resources": [
+        {
+          "label": "省域面",
+          "type": "style",
+          "location": "公共资源库",
+          "line": 13
+        },
+        {
+          "label": "市域面",
+          "type": "style",
+          "location": "公共资源库",
+          "line": 13
+        },
+        {
+          "label": "县域面",
+          "type": "style",
+          "location": "公共资源库",
+          "line": 13
+        },
+        {
+          "label": "统计专题版式",
+          "type": "layout",
+          "location": "公共资源库",
+          "line": 26
+        }
+      ],
+      "diagnostics": []
+    },
+    "data_selections": {
+      "hn_city_boundary": {
+        "find_id": "df-880221b0f6dd9e065041e5899633a152",
+        "request": {
+          "need": {
+            "geometry": "polygon",
+            "name": "河南省各市行政区面",
+            "what": {
+              "category": "行政区划面",
+              "description": "河南省各市行政区边界面，用于人口专题图分级设色"
+            },
+            "extent": "河南省",
+            "params": {
+              "level": "市"
+            }
+          },
+          "guide": "statistical-choropleth",
+          "include_fallback": true
+        },
+        "rows": [
+          {
+            "route": "direct",
+            "row": "河南省各市行政区面",
+            "candidate": {
+              "id": "c-94762253a5c45785",
+              "kind": "builtin_offline",
+              "name": "中国行政区边界（内置）",
+              "source_id": "source.builtin.cn-admin",
+              "available": true,
+              "reasons": [
+                "来源提供所需类别并满足目录筛选条件",
+                "覆盖所需范围"
+              ],
+              "notes": [
+                "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实",
+                "上游声明来自天地图，数据许可待核实"
+              ],
+              "handbook": "中国省市县行政区面及派生边界线；中国省、市、县；上游许可及完整疆域表达仍须核实；公开地图依法送审",
+              "tier": 7,
+              "network": false,
+              "choice": {
+                "source_id": "source.builtin.cn-admin",
+                "name": "中国行政区边界（内置）",
+                "tier": 3,
+                "provide": {
+                  "category": "admin.division",
+                  "fields": {
+                    "code": [
+                      "adcode"
+                    ],
+                    "name": [
+                      "name"
+                    ]
+                  },
+                  "tool": "admin_boundary_extract"
+                },
+                "cache_hit": false,
+                "license": "上游声明来自天地图，数据许可待核实",
+                "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+              }
+            },
+            "item": {
+              "key": "河南省各市行政区面/河南省各市行政区面",
+              "requirement": "河南省各市行政区面",
+              "entry": "河南省各市行政区面",
+              "category": "admin.division",
+              "params": {
+                "level": "市"
+              },
+              "fields": null,
+              "extent": {
+                "bbox": [
+                  110.353676,
+                  31.384459,
+                  116.647011,
+                  36.374184
+                ],
+                "source": "河南省",
+                "region": "河南省",
+                "pending": false
+              },
+              "scale_denominator": 1000000,
+              "mode": "auto",
+              "chosen": {
+                "source_id": "source.builtin.cn-admin",
+                "name": "中国行政区边界（内置）",
+                "tier": 3,
+                "provide": {
+                  "category": "admin.division",
+                  "fields": {
+                    "code": [
+                      "adcode"
+                    ],
+                    "name": [
+                      "name"
+                    ]
+                  },
+                  "tool": "admin_boundary_extract"
+                },
+                "cache_hit": false,
+                "license": "上游声明来自天地图，数据许可待核实",
+                "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+              },
+              "alternatives": [],
+              "excluded": [
+                {
+                  "source_id": "source.portal.webmap-1m",
+                  "name": "全国地理信息资源目录服务系统 1:100 万公众版",
+                  "reasons": [
+                    "该来源尚未完成验证"
+                  ]
+                }
+              ],
+              "available": true,
+              "reasons": [],
+              "notes": null,
+              "input": "",
+              "required": true,
+              "acquirable": true,
+              "geometry": "polygon",
+              "extent_expression": "河南省"
+            }
+          }
+        ],
+        "selected_at": "2026-10-28T15:47:34.755915Z"
+      },
+      "hn_population_2023": {
+        "find_id": "df-6f9a99a67b534ddc3cde79f8869aa55f",
+        "request": {
+          "need": {
+            "geometry": "table",
+            "name": "河南省各市人口统计数据",
+            "what": {
+              "category": "年度统计指标",
+              "description": "河南省各市人口统计指标，需要指标名、年份、单位与各市数值"
+            },
+            "extent": "河南省"
+          },
+          "guide": "statistical-choropleth",
+          "include_fallback": true
+        },
+        "rows": [
+          {
+            "route": "explore",
+            "row": "河南省各市人口统计数据",
+            "candidate": {
+              "id": "c-147f69eb6b25e6de",
+              "kind": "portal",
+              "name": "国家统计局国家数据",
+              "source_id": "source.portal.nbs",
+              "available": true,
+              "reasons": [
+                "没有可用的确定性来源，可由数据获取智能体探索并登记真实数据"
+              ],
+              "notes": [
+                "可能需要验证码；门户自动获取尚未启用"
+              ],
+              "handbook": "中国人口、经济等官方统计表；中国，依统计发布范围；门户兜底；不得绕过登录或验证码，不得用模型补造数值",
+              "tier": 11,
+              "network": true
+            },
+            "item": {
+              "key": "河南省各市人口统计数据/河南省各市人口统计数据",
+              "requirement": "河南省各市人口统计数据",
+              "entry": "河南省各市人口统计数据",
+              "category": "stats.annual_indicator",
+              "params": {},
+              "fields": null,
+              "extent": {
+                "bbox": [
+                  110.353676,
+                  31.384459,
+                  116.647011,
+                  36.374184
+                ],
+                "source": "河南省",
+                "region": "河南省",
+                "pending": false
+              },
+              "scale_denominator": 1000000,
+              "mode": "auto",
+              "alternatives": [],
+              "excluded": [
+                {
+                  "source_id": "source.portal.nbs",
+                  "name": "国家统计局国家数据",
+                  "reasons": [
+                    "该来源尚未完成验证"
+                  ]
+                }
+              ],
+              "available": false,
+              "reasons": [
+                "该来源尚未完成验证"
+              ],
+              "notes": null,
+              "input": "",
+              "required": true,
+              "acquirable": true,
+              "geometry": "table",
+              "extent_expression": "河南省"
+            }
+          }
+        ],
+        "fallback": [
+          {
+            "id": "c-147f69eb6b25e6de",
+            "kind": "portal",
+            "name": "国家统计局国家数据",
+            "source_id": "source.portal.nbs",
+            "available": true,
+            "reasons": [
+              "没有可用的确定性来源，可由数据获取智能体探索并登记真实数据"
+            ],
+            "notes": [
+              "可能需要验证码；门户自动获取尚未启用"
+            ],
+            "handbook": "中国人口、经济等官方统计表；中国，依统计发布范围；门户兜底；不得绕过登录或验证码，不得用模型补造数值",
+            "tier": 11,
+            "network": true
+          },
+          {
+            "id": "c-98f95ac082363e91",
+            "kind": "web_search",
+            "name": "公开来源搜索",
+            "available": true,
+            "reasons": [
+              "确定性来源不可用，可查找真实公开数据后登记"
+            ],
+            "notes": [
+              "不得编造数据；必须保留来源网址与许可"
+            ],
+            "tier": 12,
+            "network": true
+          }
+        ],
+        "selected_at": "2026-10-28T15:47:34.758994Z"
+      }
+    },
+    "revisions": 0,
+    "final_verification": {
+      "ok": true,
+      "errors": []
+    },
+    "project_path": "/home/shared-user/研究生/实例/测试 1.qgz",
+    "acquired_inputs": {
+      "hn_city_boundary": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/output/acquired/河南省各市行政区面/河南省各市行政区面.gpkg",
+      "hn_population_2023": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.863b0ce3d945fde3f4a53cfb/307d3857bc4c1ab5/out/河南省各市人口统计数据.csv"
+    },
+    "source_notes": [
+      "内置行政区原始数据；来源声明为天地图，完整疆域表达未核实",
+      "复用较大范围的已缓存原件，按本次范围重新规范化",
+      "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实",
+      "河南省各市行政区面：来源 source.builtin.cn-admin；上游声明来自天地图，数据许可待核实；GeoCode 内置行政区数据（上游声明来自天地图）；获取时间 2026-10-28",
+      "来源方式：portal",
+      "来源网址：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm",
+      "数据年份2023年（2023年底常住人口），单位万人",
+      "来源为《河南统计年鉴2024》表3-3「各市常住人口数」与表3-5「各市人口数(2023年底)」，两表2023年常住人口数值完全一致，交叉核验通过",
+      "口径为常住人口总量（含济源示范区，省直辖县级单位，单独列出）",
+      "原始表格为图片(jpg)，经macOS Vision框架OCR转录并逐行核对",
+      "全省合计9815万人，18个地级市+济源示范区",
+      "只读使用用户登记的本机数据",
+      "来源方式：portal",
+      "来源网址：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm",
+      "数据年份2023年（2023年底常住人口），单位万人",
+      "来源为《河南统计年鉴2024》表3-3「各市常住人口数」与表3-5「各市人口数(2023年底)」，两表2023年常住人口数值完全一致，交叉核验通过",
+      "口径为常住人口总量（含济源示范区，省直辖县级单位，单独列出）",
+      "原始表格为图片(jpg)，经macOS Vision框架OCR转录并逐行核对",
+      "全省合计9815万人，18个地级市+济源示范区",
+      "河南省各市人口统计数据：来源 fallback.863b0ce3d945fde3f4a53cfb；河南省统计局《河南统计年鉴2024》公开数据，政府公开统计信息，用于公开制图需注明来源；数据来源：河南省统计局《河南统计年鉴2024》；获取时间 2026-10-28"
+    ],
+    "resource_fingerprint": "sha256:f55f92f4f1230f39ece5341ab0629726fdf3fd05ca49622d60427d85b73cd5d7",
+    "event_seq": 246,
+    "api_version": "flow-run/v1",
+    "flow_run_id": "fr-20261028-234738-749572ad9409",
+    "session_id": "0dcc212c-42ba-4a26-a652-174c249f7f5d",
+    "session_dir": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d",
+    "project_root": "/home/shared-user/研究生/QGIS-agent/enio2",
+    "flow_id": "statistical-choropleth",
+    "flow_version": "5.0.0",
+    "plan_cache_key": "cp-20261028-234734-1d06ef900d5b/v1",
+    "scheme": "default",
+    "origin": "orchestrator",
+    "status": "completed_with_issues",
+    "started_at": "2026-10-28T23:47:38.657772+08:00",
+    "finished_at": "2026-10-28T23:50:36.159098+08:00",
+    "inputs": {
+      "fact:区域": "河南省",
+      "fact:指标口径": "常住人口总量，单位万人",
+      "fact:统计年份": "2023",
+      "fact:统计指标": "常住人口（总量）",
+      "fact:行政区层级": "市"
+    },
+    "cursor": 5,
+    "steps": [
+      {
+        "id": "acquire_boundary",
+        "index": 1,
+        "title": "获取河南省各市行政区面",
+        "role": "",
+        "status": "completed",
+        "condition": {
+          "evaluated": false,
+          "result": false,
+          "by": "",
+          "reason": ""
+        },
+        "attempts": [
+          {
+            "run_id": "flow-fr-20261028-234738-749572ad9409-s01-v1-a1",
+            "mode": "acquire",
+            "started_at": "2026-10-28T23:47:38.680931+08:00",
+            "finished_at": "2026-10-28T23:47:38.78455+08:00",
+            "receipt": {
+              "status": "completed",
+              "summary": "获取河南省各市行政区面",
+              "outputs": {
+                "河南省各市行政区面": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/output/acquired/河南省各市行政区面/河南省各市行政区面.gpkg"
+              },
+              "issues": null
+            },
+            "receipt_repaired": false,
+            "verification": {
+              "ok": true,
+              "errors": []
+            },
+            "user_choice": null
+          }
+        ],
+        "outputs": {
+          "河南省各市行政区面": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/output/acquired/河南省各市行政区面/河南省各市行政区面.gpkg"
+        },
+        "automatic_failures": 0,
+        "user_retries": 0
+      },
+      {
+        "id": "acquire_population",
+        "index": 2,
+        "title": "获取2023年河南省各市常住人口数据",
+        "role": "system_data_acquisition",
+        "status": "completed",
+        "condition": {
+          "evaluated": false,
+          "result": false,
+          "by": "",
+          "reason": ""
+        },
+        "attempts": [
+          {
+            "data_id": "hn_population_2023",
+            "run_id": "flow-fr-20261028-234738-749572ad9409-s02-v1-a1",
+            "mode": "acquire",
+            "started_at": "2026-10-28T23:47:38.808912+08:00",
+            "finished_at": "2026-10-28T23:48:54.179657+08:00",
+            "receipt": {
+              "status": "completed",
+              "summary": "获取2023年河南省各市常住人口数据",
+              "outputs": {
+                "河南省各市2023年常住人口统计表": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.863b0ce3d945fde3f4a53cfb/307d3857bc4c1ab5/out/河南省各市人口统计数据.csv"
+              },
+              "issues": null
+            },
+            "receipt_repaired": false,
+            "verification": {
+              "ok": true,
+              "errors": []
+            },
+            "user_choice": null
+          }
+        ],
+        "outputs": {
+          "河南省各市2023年常住人口统计表": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.863b0ce3d945fde3f4a53cfb/307d3857bc4c1ab5/out/河南省各市人口统计数据.csv"
+        },
+        "automatic_failures": 0,
+        "user_retries": 0
+      },
+      {
+        "id": "join_population",
+        "index": 3,
+        "title": "关联行政区与人口数据生成专题图层",
+        "role": "plan_role_join_population",
+        "status": "completed",
+        "condition": {
+          "evaluated": true,
+          "result": true,
+          "by": "plan",
+          "reason": ""
+        },
+        "attempts": [
+          {
+            "run_id": "flow-fr-20261028-234738-749572ad9409-s03-v1-a1",
+            "mode": "step",
+            "started_at": "2026-10-28T23:48:54.201125+08:00",
+            "finished_at": "2026-10-28T23:49:31.186716+08:00",
+            "receipt": {
+              "status": "completed",
+              "summary": "按地区名称键将人口统计表关联到行政区面，生成含常住人口数值字段的专题图层；修正济源示范区→济源市名称差异并将字符串数值转为double，18/18全部匹配，无重复键、无非法数值、无缺测、无未匹配",
+              "outputs": {
+                "河南省各市人口专题图层": [
+                  {
+                    "layer_id": "____________82c437d6_6c21_4f70_b081_bf39046e8074",
+                    "layer_name": "河南省各市人口专题图层",
+                    "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/exports/河南省各市人口专题图层.gpkg",
+                    "数值字段": "常住人口(万人)",
+                    "数值范围": "73~1301万人",
+                    "有效匹配": 18,
+                    "未匹配": 0,
+                    "缺测": 0
+                  }
+                ]
+              },
+              "issues": []
+            },
+            "receipt_repaired": false,
+            "verification": {
+              "ok": true,
+              "errors": []
+            },
+            "user_choice": null
+          }
+        ],
+        "outputs": {
+          "河南省各市人口专题图层": [
+            {
+              "layer_id": "____________82c437d6_6c21_4f70_b081_bf39046e8074",
+              "layer_name": "河南省各市人口专题图层",
+              "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/exports/河南省各市人口专题图层.gpkg",
+              "数值字段": "常住人口(万人)",
+              "数值范围": "73~1301万人",
+              "有效匹配": 18,
+              "未匹配": 0,
+              "缺测": 0
+            }
+          ]
+        },
+        "automatic_failures": 0,
+        "user_retries": 0
+      },
+      {
+        "id": "symbolize",
+        "index": 4,
+        "title": "人口专题分级设色",
+        "role": "cartographer",
+        "status": "completed",
+        "condition": {
+          "evaluated": true,
+          "result": true,
+          "by": "plan",
+          "reason": ""
+        },
+        "attempts": [
+          {
+            "run_id": "flow-fr-20261028-234738-749572ad9409-s04-v1-a1",
+            "mode": "step",
+            "started_at": "2026-10-28T23:49:31.210046+08:00",
+            "finished_at": "2026-10-28T23:49:46.822401+08:00",
+            "receipt": {
+              "status": "completed",
+              "summary": "对河南省各市人口专题图层按常住人口(万人)字段完成5级Jenks自然断点有序渐变(YlOrRd)分级设色，并核对数值字段、各级区间、颜色与图例均正确",
+              "outputs": {
+                "分级设色专题图层": [
+                  {
+                    "layer_id": "____________82c437d6_6c21_4f70_b081_bf39046e8074",
+                    "layer_name": "河南省各市人口专题图层",
+                    "分类方法": "Jenks",
+                    "分级数": 5,
+                    "各级区间": [
+                      "73-237",
+                      "237-492",
+                      "492-677",
+                      "677-950",
+                      "950-1301"
+                    ],
+                    "数值字段": "常住人口(万人)",
+                    "色带": "YlOrRd"
+                  }
+                ]
+              },
+              "issues": []
+            },
+            "receipt_repaired": false,
+            "verification": {
+              "ok": true,
+              "errors": []
+            },
+            "user_choice": null
+          }
+        ],
+        "outputs": {
+          "分级设色专题图层": [
+            {
+              "layer_id": "____________82c437d6_6c21_4f70_b081_bf39046e8074",
+              "layer_name": "河南省各市人口专题图层",
+              "分类方法": "Jenks",
+              "分级数": 5,
+              "各级区间": [
+                "73-237",
+                "237-492",
+                "492-677",
+                "677-950",
+                "950-1301"
+              ],
+              "数值字段": "常住人口(万人)",
+              "色带": "YlOrRd"
+            }
+          ]
+        },
+        "automatic_failures": 0,
+        "user_retries": 0
+      },
+      {
+        "id": "layout_export",
+        "index": 5,
+        "title": "版面编排与导出",
+        "role": "cartographer",
+        "status": "completed",
+        "condition": {
+          "evaluated": true,
+          "result": true,
+          "by": "plan",
+          "reason": ""
+        },
+        "attempts": [
+          {
+            "run_id": "flow-fr-20261028-234738-749572ad9409-s05-v1-a1",
+            "mode": "step",
+            "started_at": "2026-10-28T23:49:46.854464+08:00",
+            "finished_at": "2026-10-28T23:50:36.135671+08:00",
+            "receipt": {
+              "status": "completed",
+              "summary": "使用「统计专题版式」A4横向编排河南省各市人口专题图（主图、标题、图例、比例尺、指北针、来源说明），Jenks五级分级设色，导出300dpi PNG。",
+              "outputs": {
+                "河南省各市人口统计专题图PNG": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/exports/河南省各市人口统计专题图.png"
+              },
+              "issues": []
+            },
+            "receipt_repaired": false,
+            "verification": {
+              "ok": true,
+              "errors": []
+            },
+            "user_choice": null
+          }
+        ],
+        "outputs": {
+          "河南省各市人口统计专题图PNG": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/exports/河南省各市人口统计专题图.png"
+        },
+        "automatic_failures": 0,
+        "user_retries": 0
+      }
+    ],
+    "result": {
+      "deliverables": {
+        "分级设色专题图层": [
+          {
+            "layer_id": "____________82c437d6_6c21_4f70_b081_bf39046e8074",
+            "layer_name": "河南省各市人口专题图层",
+            "分类方法": "Jenks",
+            "分级数": 5,
+            "各级区间": [
+              "73-237",
+              "237-492",
+              "492-677",
+              "677-950",
+              "950-1301"
+            ],
+            "数值字段": "常住人口(万人)",
+            "色带": "YlOrRd"
+          }
+        ],
+        "河南省各市2023年常住人口统计表": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.863b0ce3d945fde3f4a53cfb/307d3857bc4c1ab5/out/河南省各市人口统计数据.csv",
+        "河南省各市人口专题图层": [
+          {
+            "layer_id": "____________82c437d6_6c21_4f70_b081_bf39046e8074",
+            "layer_name": "河南省各市人口专题图层",
+            "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/exports/河南省各市人口专题图层.gpkg",
+            "数值字段": "常住人口(万人)",
+            "数值范围": "73~1301万人",
+            "有效匹配": 18,
+            "未匹配": 0,
+            "缺测": 0
+          }
+        ],
+        "河南省各市人口统计专题图PNG": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/exports/河南省各市人口统计专题图.png",
+        "河南省各市行政区面": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/output/acquired/河南省各市行政区面/河南省各市行政区面.gpkg"
+      },
+      "issues": [
+        "人工检查项：行政区面覆盖河南省各市，几何与名称字段有效",
+        "人工检查项：人口统计表为2023年常住人口总量，单位与各市数值真实，含来源网址与访问时间",
+        "人工检查项：专题图层按地区精确关联，记录有效/缺测/未匹配数量",
+        "人工检查项：分级设色为5级有序渐变，数值字段与各级区间正确",
+        "人工检查项：版面含主图、标题、图例、比例尺、指北针、来源说明，无文字裁切遮挡",
+        "人工检查项：PNG成功导出且路径真实"
+      ],
+      "summary": "流程「制作河南省各市2023年常住人口统计专题图（分级设色），A4横向版面，导出PNG。」已完成，但有待处理问题。\n数据来源说明：\n内置行政区原始数据；来源声明为天地图，完整疆域表达未核实\n复用较大范围的已缓存原件，按本次范围重新规范化\n来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实\n河南省各市行政区面：来源 source.builtin.cn-admin；上游声明来自天地图，数据许可待核实；GeoCode 内置行政区数据（上游声明来自天地图）；获取时间 2026-10-28\n来源方式：portal\n来源网址：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm\n数据年份2023年（2023年底常住人口），单位万人\n来源为《河南统计年鉴2024》表3-3「各市常住人口数」与表3-5「各市人口数(2023年底)」，两表2023年常住人口数值完全一致，交叉核验通过\n口径为常住人口总量（含济源示范区，省直辖县级单位，单独列出）\n原始表格为图片(jpg)，经macOS Vision框架OCR转录并逐行核对\n全省合计9815万人，18个地级市+济源示范区\n只读使用用户登记的本机数据\n来源方式：portal\n来源网址：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm\n数据年份2023年（2023年底常住人口），单位万人\n来源为《河南统计年鉴2024》表3-3「各市常住人口数」与表3-5「各市人口数(2023年底)」，两表2023年常住人口数值完全一致，交叉核验通过\n口径为常住人口总量（含济源示范区，省直辖县级单位，单独列出）\n原始表格为图片(jpg)，经macOS Vision框架OCR转录并逐行核对\n全省合计9815万人，18个地级市+济源示范区\n河南省各市人口统计数据：来源 fallback.863b0ce3d945fde3f4a53cfb；河南省统计局《河南统计年鉴2024》公开数据，政府公开统计信息，用于公开制图需注明来源；数据来源：河南省统计局《河南统计年鉴2024》；获取时间 2026-10-28\n{\n  \"分级设色专题图层\": [\n    {\n      \"layer_id\": \"____________82c437d6_6c21_4f70_b081_bf39046e8074\",\n      \"layer_name\": \"河南省各市人口专题图层\",\n      \"分类方法\": \"Jenks\",\n      \"分级数\": 5,\n      \"各级区间\": [\n        \"73-237\",\n        \"237-492\",\n        \"492-677\",\n        \"677-950\",\n        \"950-1301\"\n      ],\n      \"数值字段\": \"常住人口(万人)\",\n      \"色带\": \"YlOrRd\"\n    }\n  ],\n  \"河南省各市2023年常住人口统计表\": \"/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.863b0ce3d945fde3f4a53cfb/307d3857bc4c1ab5/out/河南省各市人口统计数据.csv\",\n  \"河南省各市人口专题图层\": [\n    {\n      \"layer_id\": \"____________82c437d6_6c21_4f70_b081_bf39046e8074\",\n      \"layer_name\": \"河南省各市人口专题图层\",\n      \"path\": \"/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/exports/河南省各市人口专题图层.gpkg\",\n      \"数值字段\": \"常住人口(万人)\",\n      \"数值范围\": \"73~1301万人\",\n      \"有效匹配\": 18,\n      \"未匹配\": 0,\n      \"缺测\": 0\n    }\n  ],\n  \"河南省各市人口统计专题图PNG\": \"/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/exports/河南省各市人口统计专题图.png\",\n  \"河南省各市行政区面\": \"/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/output/acquired/河南省各市行政区面/河南省各市行政区面.gpkg\"\n}\n人工检查项：行政区面覆盖河南省各市，几何与名称字段有效；人工检查项：人口统计表为2023年常住人口总量，单位与各市数值真实，含来源网址与访问时间；人工检查项：专题图层按地区精确关联，记录有效/缺测/未匹配数量；人工检查项：分级设色为5级有序渐变，数值字段与各级区间正确；人工检查项：版面含主图、标题、图例、比例尺、指北针、来源说明，无文字裁切遮挡；人工检查项：PNG成功导出且路径真实"
+    },
+    "run_json_path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/flows/fr-20261028-234738-749572ad9409/run.json",
+    "plan": {
+      "flow_roles": [
+        {
+          "id": "plan_role_join_population",
+          "slot": "",
+          "display_name": "关联行政区与人口数据生成专题图层",
+          "description": "按地区名称键将人口统计表关联到行政区面，生成含人口数值字段的专题图层；检查重复键、非法数值与未匹配地区，记录有效/缺测/未匹配清单",
+          "kind": "agent",
+          "tool_packages": [
+            "vector-fields",
+            "vector-geometry",
+            "data-loading"
+          ],
+          "provider": "openai-main"
+        }
+      ],
+      "plan_status": "ready",
+      "enrichment": {
+        "flow": "",
+        "done": 0,
+        "total": 0,
+        "failed": null
+      },
+      "compile_key": "cp-20261028-234734-1d06ef900d5b/v1",
+      "link_fingerprint": "",
+      "linked_at": "0001-01-01T00:00:00Z",
+      "compile_diagnostics": null,
+      "link_diagnostics": null,
+      "flow_dir": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/flows/system/statistical-choropleth",
+      "lock": {
+        "document_format": "flow/v6",
+        "api_version": "flow-lock/v1",
+        "resources": [
+          {
+            "type": "style",
+            "name": "省域面",
+            "id": "style.basemap-90a7082089",
+            "version": "1.0.0",
+            "digest": "sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+            "source": "library_builtin"
+          },
+          {
+            "type": "style",
+            "name": "市域面",
+            "id": "style.basemap-1a51d33883",
+            "version": "1.0.0",
+            "digest": "sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+            "source": "library_builtin"
+          },
+          {
+            "type": "style",
+            "name": "县域面",
+            "id": "style.basemap-fbe4b96472",
+            "version": "1.0.0",
+            "digest": "sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+            "source": "library_builtin"
+          },
+          {
+            "type": "layout",
+            "name": "统计专题版式",
+            "id": "layout.statistical",
+            "version": "1.0.0",
+            "digest": "sha256:8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+            "source": "library_builtin"
+          }
+        ]
+      },
+      "api_version": "flow-plan/v1",
+      "flow_id": "statistical-choropleth",
+      "flow_version": "5.0.0",
+      "name": "制作河南省各市2023年常住人口统计专题图（分级设色），A4横向版面，导出PNG。",
+      "description": "",
+      "scheme": "default",
+      "scheme_revision": "",
+      "catalog_revision": "",
+      "compiled_at": "2026-10-28T15:47:34.759305Z",
+      "compiler": {
+        "version": "",
+        "model": ""
+      },
+      "triggers": null,
+      "applicability": "",
+      "inputs": [
+        {
+          "key": "hn_city_boundary",
+          "label": "河南省各市行政区面",
+          "type": "text",
+          "required": false,
+          "default": null,
+          "options": null,
+          "description": ""
+        },
+        {
+          "key": "hn_population_2023",
+          "label": "河南省各市2023年常住人口统计表",
+          "type": "text",
+          "required": false,
+          "default": null,
+          "options": null,
+          "description": ""
+        },
+        {
+          "key": "hn_population_choropleth",
+          "label": "河南省各市人口专题图层",
+          "type": "text",
+          "required": false,
+          "default": null,
+          "options": null,
+          "description": ""
+        },
+        {
+          "key": "fact:区域",
+          "label": "区域",
+          "type": "text",
+          "required": false,
+          "default": null,
+          "options": null,
+          "description": ""
+        },
+        {
+          "key": "fact:行政区层级",
+          "label": "行政区层级",
+          "type": "text",
+          "required": false,
+          "default": null,
+          "options": null,
+          "description": ""
+        },
+        {
+          "key": "fact:统计年份",
+          "label": "统计年份",
+          "type": "text",
+          "required": false,
+          "default": null,
+          "options": null,
+          "description": ""
+        },
+        {
+          "key": "fact:统计指标",
+          "label": "统计指标",
+          "type": "text",
+          "required": false,
+          "default": null,
+          "options": null,
+          "description": ""
+        },
+        {
+          "key": "fact:指标口径",
+          "label": "指标口径",
+          "type": "text",
+          "required": false,
+          "default": null,
+          "options": null,
+          "description": ""
+        }
+      ],
+      "input_constraints": null,
+      "resources": [
+        {
+          "entry_count": 0,
+          "key": "library:style.basemap-90a7082089",
+          "id": "style.basemap-90a7082089",
+          "label": "省域面",
+          "name": "省域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面/省域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": [],
+          "base_dir_binding": ""
+        },
+        {
+          "entry_count": 0,
+          "key": "library:style.basemap-1a51d33883",
+          "id": "style.basemap-1a51d33883",
+          "label": "市域面",
+          "name": "市域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面/市域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": [],
+          "base_dir_binding": ""
+        },
+        {
+          "entry_count": 0,
+          "key": "library:style.basemap-fbe4b96472",
+          "id": "style.basemap-fbe4b96472",
+          "label": "县域面",
+          "name": "县域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面/县域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": [],
+          "base_dir_binding": ""
+        },
+        {
+          "entry_count": 0,
+          "key": "library:layout.statistical",
+          "id": "layout.statistical",
+          "label": "统计专题版式",
+          "name": "统计专题版式",
+          "type": "layout",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式/统计专题版式.layout.yaml",
+          "format": "layout_yaml",
+          "digest": "sha256:8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": [],
+          "base_dir_binding": ""
+        }
+      ],
+      "rules": [
+        "\n# 统计专题图\n\n## 什么时候用\n按省、市或县展示统计指标的空间分布。用户给出行政区面、统计表或已有专题图层时优先使用；没有的图层和统计数据再按区域、层级、年份和指标查找来源。年份、指标或范围仍不明确且会影响取数时，一次说明需要补齐的内容。\n\n## 需要的图层与处理\n- 行政区面：覆盖本次区域，按用户要求的省、市或县层级获取；已有含指标的专题面图层满足要求时直接复用。省级默认样式「省域面」，市级用「市域面」，县级用「县域面」；用于行政区定位与名称标注，后续统计表达采用真实指标的分级渲染。\n- 统计表：真实年份与单一指标的地区统计值，记录单位、来源网址、访问时间、发布口径、缺测和补源。已有图层含同口径数值时不重复获取或关联。\n- 专题图层：行政区与统计值按地区精确关联，或复用已经核验的指标面图层。标注真实名称字段；通常分为五级有序渐变。\n- 灰底图层：仅存在缺测、未匹配或排除地区时，复用同一已核验面源形成浅灰背景，置于专题层下面，图例不单列。\n\n## 做法\n1. 核对区域、行政区层级、统计年份、指标、单位、来源和明确排除的地区。只有仍缺数据时才取得官方原件和可关联表格，不虚构数值。已提供数据按其元数据核验，不重复询问已知内容。\n2. 检查面几何、数值和名称字段、有效范围与缺测。识别宽表、长表及真实列名，只选择指定年份的单一指标，口径列不能误当地区列或筛选开关。必要转换或关联只写独立派生数据，保留原始文件；显示坐标系不同用动态投影，不为显示而重投影。\n3. 关联前检查年份、地区键、元数据、重复键和非法数值。重复键、非法数值或无有效数据时停止。部分未匹配且有效值足以分级时，保留完整清单与空值继续；空值表示缺测，零仍是有效值。记录有效与缺测数、未匹配与排除清单、数值范围、实际字段及来源。\n4. 按分布和表达需要选择自然断点、分位数、等间距或标准差，通常五级，连续量使用有序渐变。读取实际渲染状态，核对数值字段、每级上下界、颜色与图例。单一不同值、非数值字段或分级失败时停止，不以统一填色冒充分级，不添加无依据的箭头、柱状图或比例符号。\n5. 排版后核对主图范围、图层、实际分级、图例级数区间、文字裁切和遮挡，再导出所需格式。明确参数或前置条件错误最多修正重试一次；文件存在不能替代图面核验。不自动加入路线图视觉质检，额外评审应先明确范围。\n\n## 版面\n使用版面「统计专题版式」，默认 A4 横向；用户可指定纸张和方向。主图只显示本次专题层、灰底层和明确需要的背景，专题层在上，范围按真实专题层确定。标题采用用户标题，否则用“地区 + 年份 + 指标”。图例只列专题层，标题写指标和单位，条目来自实际分级，不手绘色块或编造区间。说明栏写年份、单位、来源和分级方法；来源未知则如实写“来源未提供”。有灰底时写“灰色区域：无有效统计值”，分别说明缺测、未匹配和排除数量。字号与位置使用版面规定，检查真实元素矩形及警告。必须有主图、标题、图例、比例尺、指北针和来源说明。\n\n## 成果\n默认导出 PNG，用户也可要求 PDF 或 SVG。交付真实成果路径、行政区层级、指标与年份、单位与来源、分级方法及各级区间，说明缺测、未匹配、排除地区和数量。派生文件与质量报告如有生成则一并列出；使用已有图层时说明复用情况。\n\n## 注意事项\n- 不虚构指标、年份、单位、来源或数值。\n- 区分总量、占比、密度、增幅；缺少分母、两期数据或面积依据时保持原指标。\n- 内部错误时保留工程与已有成果，报告真实错误和未完成部分。\n"
+      ],
+      "notes": null,
+      "deliverables": "",
+      "steps": [
+        {
+          "data_ids": [
+            "hn_city_boundary"
+          ],
+          "id": "acquire_boundary",
+          "index": 1,
+          "title": "获取河南省各市行政区面",
+          "kind": "acquire",
+          "role": "",
+          "role_label": "",
+          "condition": null,
+          "instructions": "按 find_id df-880221b0f6dd9e065041e5899633a152 获取河南省各市行政区面（admin.division，level=市），核验几何与名称字段",
+          "completion": "",
+          "refs": {
+            "resources": [
+              "library:style.basemap-90a7082089",
+              "library:style.basemap-1a51d33883",
+              "library:style.basemap-fbe4b96472",
+              "library:layout.statistical"
+            ],
+            "inputs": null,
+            "outputs": null
+          },
+          "suggested_tools": null,
+          "expected_outputs": [
+            {
+              "label": "河南省各市行政区面",
+              "type": "layers",
+              "required": true
+            }
+          ],
+          "on_failure": "retry_then_ask",
+          "missing_capabilities": null,
+          "enrichment": "ready"
+        },
+        {
+          "data_ids": [
+            "hn_population_2023"
+          ],
+          "id": "acquire_population",
+          "index": 2,
+          "title": "获取2023年河南省各市常住人口数据",
+          "kind": "acquire",
+          "role": "",
+          "role_label": "",
+          "condition": null,
+          "instructions": "按 find_id df-6f9a99a67b534ddc3cde79f8869aa55f 探索获取2023年河南省各市常住人口统计表，核验年份、指标、单位与各市数值，登记来源网址与访问时间",
+          "completion": "",
+          "refs": {
+            "resources": [
+              "library:style.basemap-90a7082089",
+              "library:style.basemap-1a51d33883",
+              "library:style.basemap-fbe4b96472",
+              "library:layout.statistical"
+            ],
+            "inputs": null,
+            "outputs": null
+          },
+          "suggested_tools": null,
+          "expected_outputs": [
+            {
+              "label": "河南省各市2023年常住人口统计表",
+              "type": "dataset",
+              "required": true
+            }
+          ],
+          "on_failure": "retry_then_ask",
+          "missing_capabilities": null,
+          "enrichment": "ready"
+        },
+        {
+          "data_uses": [
+            "hn_city_boundary",
+            "hn_population_2023"
+          ],
+          "role_source": "plan_role",
+          "required_packages": [
+            "vector-fields",
+            "vector-geometry",
+            "data-loading"
+          ],
+          "id": "join_population",
+          "index": 3,
+          "title": "关联行政区与人口数据生成专题图层",
+          "kind": "agent",
+          "role": "plan_role_join_population",
+          "role_label": "关联行政区与人口数据生成专题图层",
+          "condition": null,
+          "instructions": "按地区名称键将人口统计表关联到行政区面，生成含人口数值字段的专题图层；检查重复键、非法数值与未匹配地区，记录有效/缺测/未匹配清单",
+          "completion": "",
+          "refs": {
+            "resources": [
+              "library:style.basemap-90a7082089",
+              "library:style.basemap-1a51d33883",
+              "library:style.basemap-fbe4b96472",
+              "library:layout.statistical"
+            ],
+            "inputs": [
+              "hn_city_boundary",
+              "hn_population_2023"
+            ],
+            "outputs": [
+              {
+                "step": "acquire_boundary",
+                "label": "河南省各市行政区面"
+              },
+              {
+                "step": "acquire_population",
+                "label": "河南省各市2023年常住人口统计表"
+              }
+            ]
+          },
+          "suggested_tools": null,
+          "expected_outputs": [
+            {
+              "label": "河南省各市人口专题图层",
+              "type": "layers",
+              "required": true
+            }
+          ],
+          "on_failure": "retry_then_ask",
+          "missing_capabilities": null,
+          "enrichment": "ready"
+        },
+        {
+          "data_uses": [
+            "hn_population_choropleth"
+          ],
+          "role_source": "scheme",
+          "required_packages": [
+            "cartography-styling"
+          ],
+          "id": "symbolize",
+          "index": 4,
+          "title": "人口专题分级设色",
+          "kind": "agent",
+          "role": "cartographer",
+          "role_label": "制图布局专家",
+          "condition": null,
+          "instructions": "对专题图层按常住人口数值做5级自然断点有序渐变分级设色，核对数值字段、各级上下界、颜色与图例",
+          "completion": "",
+          "refs": {
+            "resources": [
+              "library:style.basemap-90a7082089",
+              "library:style.basemap-1a51d33883",
+              "library:style.basemap-fbe4b96472",
+              "library:layout.statistical"
+            ],
+            "inputs": null,
+            "outputs": [
+              {
+                "step": "join_population",
+                "label": "河南省各市人口专题图层"
+              },
+              {
+                "step": "join_population",
+                "label": "河南省各市人口专题图层"
+              }
+            ]
+          },
+          "suggested_tools": null,
+          "expected_outputs": [
+            {
+              "label": "分级设色专题图层",
+              "type": "layers",
+              "required": true
+            }
+          ],
+          "on_failure": "retry_then_ask",
+          "missing_capabilities": null,
+          "enrichment": "ready"
+        },
+        {
+          "data_uses": [
+            "hn_population_choropleth"
+          ],
+          "role_source": "scheme",
+          "required_packages": [
+            "print-layout",
+            "cartography-styling"
+          ],
+          "id": "layout_export",
+          "index": 5,
+          "title": "版面编排与导出",
+          "kind": "agent",
+          "role": "cartographer",
+          "role_label": "制图布局专家",
+          "condition": null,
+          "instructions": "使用「统计专题版式」（A4横向）编排主图、标题、图例、比例尺、指北针与来源说明，标题为“河南省2023年常住人口”，图例标题写指标与单位，说明栏写年份、单位、来源、分级方法与缺测说明，导出PNG",
+          "completion": "",
+          "refs": {
+            "resources": [
+              "library:style.basemap-90a7082089",
+              "library:style.basemap-1a51d33883",
+              "library:style.basemap-fbe4b96472",
+              "library:layout.statistical"
+            ],
+            "inputs": null,
+            "outputs": [
+              {
+                "step": "join_population",
+                "label": "河南省各市人口专题图层"
+              },
+              {
+                "step": "symbolize",
+                "label": "分级设色专题图层"
+              }
+            ]
+          },
+          "suggested_tools": null,
+          "expected_outputs": [
+            {
+              "label": "河南省各市人口统计专题图PNG",
+              "type": "file",
+              "format": "png",
+              "required": true
+            }
+          ],
+          "on_failure": "retry_then_ask",
+          "missing_capabilities": null,
+          "enrichment": "ready"
+        }
+      ],
+      "diagnostics": null,
+      "roles": [
+        {
+          "id": "orchestrator",
+          "display_name": "编排智能体",
+          "description": "负责任务理解、选择流程或委派专业智能体、汇总结果",
+          "kind": "agent",
+          "flow_only": false,
+          "enabled": true,
+          "is_main": true,
+          "tool_packages": [
+            "data-service",
+            "flow-control",
+            "project-state",
+            "runtime-control",
+            "vector-selection"
+          ],
+          "tools": [
+            "close_instance",
+            "create_project",
+            "data_find",
+            "data_get",
+            "data_register",
+            "extract_by_attribute",
+            "extract_by_expression",
+            "extract_by_location",
+            "extract_selected_features",
+            "get_active_layer_info",
+            "get_layers_info",
+            "get_project_info",
+            "get_selected_features_info",
+            "hitl_request",
+            "open_project",
+            "output_get_info",
+            "plan_propose",
+            "plan_revise",
+            "random_extract",
+            "random_selection",
+            "reference_read",
+            "resource_get",
+            "selection_by_attribute",
+            "selection_by_expression",
+            "selection_clear"
+          ]
+        },
+        {
+          "id": "cartographer",
+          "display_name": "制图布局专家",
+          "description": "负责专题符号化、标注、版面编排、图表集成与地图导出",
+          "kind": "agent",
+          "flow_only": false,
+          "enabled": true,
+          "is_main": false,
+          "tool_packages": [
+            "canvas-navigation",
+            "cartography-styling",
+            "charts",
+            "data-service",
+            "print-layout",
+            "project-state",
+            "route-cartography",
+            "runtime-control",
+            "vector-selection"
+          ],
+          "tools": [
+            "bar_chart",
+            "box_plot",
+            "canvas_set_scale",
+            "canvas_zoom_to_extent",
+            "canvas_zoom_to_layer",
+            "cartography_25d_style",
+            "cartography_add_labels",
+            "cartography_graduated_style",
+            "cartography_heatmap_style",
+            "cartography_point_displacement",
+            "cartography_rule_based_style",
+            "cartography_set_style",
+            "cartography_symbolize_points_by_mapping",
+            "close_instance",
+            "create_project",
+            "data_find",
+            "data_get",
+            "data_register",
+            "export_layout_pdf",
+            "export_print_layout",
+            "extract_by_attribute",
+            "extract_by_expression",
+            "extract_by_location",
+            "extract_selected_features",
+            "get_active_layer_info",
+            "get_canvas_info",
+            "get_layers_info",
+            "get_map_extent",
+            "get_project_info",
+            "get_selected_features_info",
+            "hitl_request",
+            "import_layout_template",
+            "layer_get_style_info",
+            "layer_load_style",
+            "layer_load_styles",
+            "layer_save_style",
+            "layer_set_blend_mode",
+            "layer_set_color_ramp",
+            "layer_set_opacity",
+            "layer_set_symbol_size_scale",
+            "layout_add_attribute_table",
+            "layout_add_callouts",
+            "layout_add_decorative_border",
+            "layout_add_grid",
+            "layout_add_label",
+            "layout_add_legend",
+            "layout_add_map",
+            "layout_add_north_arrow",
+            "layout_add_overview",
+            "layout_add_picture",
+            "layout_add_scalebar",
+            "layout_add_shape",
+            "layout_align_items",
+            "layout_compose",
+            "layout_create",
+            "layout_delete",
+            "layout_distribute_items",
+            "layout_duplicate",
+            "layout_export_image",
+            "layout_export_svg",
+            "layout_get_item_corners",
+            "layout_get_item_properties",
+            "layout_get_items_properties",
+            "layout_group_items",
+            "layout_info",
+            "layout_list",
+            "layout_lock_item",
+            "layout_move_callout",
+            "layout_move_item",
+            "layout_remove_item",
+            "layout_rename",
+            "layout_resize_item",
+            "layout_save_template",
+            "layout_set_item_background",
+            "layout_set_item_frame",
+            "layout_set_item_rotation",
+            "layout_set_item_z_order",
+            "layout_set_label_style",
+            "layout_set_legend_style",
+            "layout_set_map_extent",
+            "layout_set_map_layers",
+            "layout_set_map_rotation",
+            "layout_set_map_scale",
+            "layout_set_north_arrow_style",
+            "layout_set_page_background",
+            "layout_set_page_size",
+            "layout_set_scalebar_style",
+            "layout_ungroup_items",
+            "mean_and_standard_deviation_plot",
+            "open_project",
+            "output_get_info",
+            "polar_plot",
+            "random_extract",
+            "random_selection",
+            "raster_layer_histogram",
+            "reference_read",
+            "resource_get",
+            "resource_preview",
+            "route_draw",
+            "route_points_build",
+            "scatter_3d_plot",
+            "scatter_plot",
+            "selection_by_attribute",
+            "selection_by_expression",
+            "selection_clear",
+            "vector_layer_histogram"
+          ]
+        },
+        {
+          "id": "data_engineer",
+          "display_name": "数据工程专家",
+          "description": "负责数据接入、字段治理、筛选转换与坐标系诊断及按需转换",
+          "kind": "agent",
+          "flow_only": false,
+          "enabled": true,
+          "is_main": false,
+          "tool_packages": [
+            "admin-boundaries",
+            "browser-data-acquisition",
+            "crs-projection",
+            "data-conversion",
+            "data-loading",
+            "data-service",
+            "file-operations",
+            "gee-remote-sensing",
+            "geocoding",
+            "gps-data",
+            "osm-data",
+            "project-state",
+            "runtime-control",
+            "statistical-data-tools",
+            "vector-fields",
+            "vector-selection"
+          ],
+          "tools": [
+            "add_autoincremental_field",
+            "add_field_to_attributes_table",
+            "add_unique_value_index_field",
+            "add_xy_fields",
+            "admin_boundary_extract",
+            "advanced_python_field_calculator",
+            "batch_nominatim_geocoder",
+            "browser_call_tool",
+            "browser_check_environment",
+            "browser_close",
+            "browser_list_tools",
+            "close_instance",
+            "convert_lines_to_polygons",
+            "convert_points_to_lines",
+            "convert_raster_to_vector",
+            "convert_vector_to_raster",
+            "create_attribute_index",
+            "create_directory",
+            "create_project",
+            "crs_define_projection",
+            "crs_find_projection",
+            "crs_reproject_vector",
+            "data_export_raster",
+            "data_export_vector",
+            "data_find",
+            "data_get",
+            "data_load_list",
+            "data_load_raster",
+            "data_load_vector",
+            "data_prepare_statistical",
+            "data_register",
+            "define_shapefile_projection",
+            "delete_column",
+            "delete_duplicates_by_attribute",
+            "drop_geometries",
+            "explode_hstore_field",
+            "export_layers_to_dxf",
+            "extract_binary",
+            "extract_by_attribute",
+            "extract_by_expression",
+            "extract_by_location",
+            "extract_selected_features",
+            "field_calculator",
+            "file_downloader",
+            "file_read",
+            "file_write",
+            "find_projection",
+            "gee_cancel_task",
+            "gee_check_environment",
+            "gee_run_script",
+            "gee_task_status",
+            "geocode_from_table",
+            "geocode_nominatim",
+            "geodata_inspect",
+            "geodata_thumbnail",
+            "get_active_layer_info",
+            "get_layers_info",
+            "get_project_info",
+            "get_selected_features_info",
+            "gps_download",
+            "gps_import_gpx",
+            "hitl_request",
+            "join_attributes_by_field_value",
+            "join_attributes_by_location",
+            "join_attributes_by_location_summary",
+            "join_attributes_by_nearest",
+            "open_project",
+            "order_by_expression",
+            "osm_check_environment",
+            "osm_get_features",
+            "osm_get_objects",
+            "osm_probe",
+            "osm_search",
+            "output_get_info",
+            "package_layers",
+            "random_extract",
+            "random_selection",
+            "refactor_fields",
+            "reference_read",
+            "rename_table_field",
+            "reproject_layer",
+            "resource_get",
+            "retain_fields",
+            "save_vector_features_to_file",
+            "selection_by_attribute",
+            "selection_by_expression",
+            "selection_clear",
+            "shell_execute",
+            "split_features_by_character",
+            "split_vector_layer",
+            "text_to_float",
+            "web_download_file",
+            "web_read_page",
+            "web_search"
+          ]
+        },
+        {
+          "id": "knowledge_engineer",
+          "display_name": "制图知识抽取专家",
+          "description": "从叙事原文抽取地点、事件和路线，编译为路线数据集",
+          "kind": "executor",
+          "executor": "route_knowledge",
+          "flow_only": true,
+          "enabled": true,
+          "is_main": false,
+          "tool_packages": [
+            "data-service",
+            "marching-route-knowledge-tools",
+            "project-state",
+            "runtime-control",
+            "vector-selection"
+          ],
+          "tools": [
+            "close_instance",
+            "create_project",
+            "data_find",
+            "data_get",
+            "data_register",
+            "extract_by_attribute",
+            "extract_by_expression",
+            "extract_by_location",
+            "extract_selected_features",
+            "get_active_layer_info",
+            "get_layers_info",
+            "get_project_info",
+            "get_selected_features_info",
+            "hitl_request",
+            "marching_route_compile_dataset",
+            "marching_route_get_extraction_contract",
+            "open_project",
+            "output_get_info",
+            "random_extract",
+            "random_selection",
+            "reference_read",
+            "resource_get",
+            "selection_by_attribute",
+            "selection_by_expression",
+            "selection_clear"
+          ]
+        },
+        {
+          "provider": "qwen",
+          "id": "quality_feedback",
+          "display_name": "质量反馈智能体",
+          "description": "使用多模态能力检查地图版面、配色和可读性，提出有证据的修改建议",
+          "kind": "agent",
+          "flow_only": false,
+          "enabled": true,
+          "is_main": false,
+          "tool_packages": [
+            "data-service",
+            "project-state",
+            "quality-feedback",
+            "runtime-control",
+            "vector-selection"
+          ],
+          "tools": [
+            "close_instance",
+            "create_project",
+            "data_find",
+            "data_get",
+            "data_register",
+            "extract_by_attribute",
+            "extract_by_expression",
+            "extract_by_location",
+            "extract_selected_features",
+            "get_active_layer_info",
+            "get_layers_info",
+            "get_project_info",
+            "get_selected_features_info",
+            "hitl_request",
+            "load_review_images",
+            "open_project",
+            "output_get_info",
+            "prepare_quality_review",
+            "random_extract",
+            "random_selection",
+            "reference_read",
+            "resource_get",
+            "selection_by_attribute",
+            "selection_by_expression",
+            "selection_clear"
+          ]
+        },
+        {
+          "id": "scripting_specialist",
+          "display_name": "脚本与高级数据专家",
+          "description": "仅在标准工具链不足或确需高级自动化时处理 PyQGIS、第三方扩展与复杂批处理",
+          "kind": "agent",
+          "flow_only": false,
+          "enabled": true,
+          "is_main": false,
+          "tool_packages": [
+            "admin-boundaries",
+            "browser-data-acquisition",
+            "data-service",
+            "gee-remote-sensing",
+            "gps-data",
+            "mesh-analysis",
+            "point-cloud",
+            "project-state",
+            "pyqgis-scripting",
+            "runtime-control",
+            "vector-selection"
+          ],
+          "tools": [
+            "admin_boundary_extract",
+            "browser_call_tool",
+            "browser_check_environment",
+            "browser_close",
+            "browser_list_tools",
+            "close_instance",
+            "create_project",
+            "data_find",
+            "data_get",
+            "data_register",
+            "export_cross_section_dataset_values",
+            "export_mesh_contours",
+            "export_mesh_edges",
+            "export_mesh_faces",
+            "export_mesh_on_grid",
+            "export_mesh_vertices",
+            "export_time_series_values",
+            "extract_by_attribute",
+            "extract_by_expression",
+            "extract_by_location",
+            "extract_selected_features",
+            "gee_cancel_task",
+            "gee_check_environment",
+            "gee_run_script",
+            "gee_task_status",
+            "generate_elevation_profile_image",
+            "get_active_layer_info",
+            "get_layers_info",
+            "get_project_info",
+            "get_selected_features_info",
+            "gps_download",
+            "gps_import_gpx",
+            "hitl_request",
+            "mesh_surface_to_polygon",
+            "open_project",
+            "output_get_info",
+            "pdal_clip",
+            "pdal_convert",
+            "pdal_info",
+            "pdal_merge",
+            "pdal_to_raster",
+            "pyqgis_cancel_task",
+            "pyqgis_execute_script",
+            "pyqgis_get_context",
+            "pyqgis_get_task_status",
+            "pyqgis_submit_script",
+            "pyqgis_validate_script",
+            "random_extract",
+            "random_selection",
+            "rasterize_mesh_dataset",
+            "reference_read",
+            "resource_get",
+            "selection_by_attribute",
+            "selection_by_expression",
+            "selection_clear",
+            "tin_mesh_creation",
+            "web_download_file",
+            "web_read_page",
+            "web_search"
+          ]
+        },
+        {
+          "id": "spatial_analyst",
+          "display_name": "空间分析专家",
+          "description": "负责矢量、栅格、网络、地形、水文与可视域分析",
+          "kind": "agent",
+          "flow_only": false,
+          "enabled": true,
+          "is_main": false,
+          "tool_packages": [
+            "admin-boundaries",
+            "data-service",
+            "gdal-processing",
+            "gee-remote-sensing",
+            "grass-analysis",
+            "mesh-analysis",
+            "network-analysis",
+            "project-state",
+            "raster-analysis",
+            "runtime-control",
+            "spatial-analysis",
+            "vector-creation",
+            "vector-geometry",
+            "vector-selection",
+            "visibility-analysis"
+          ],
+          "tools": [
+            "add_geometry_attributes",
+            "admin_boundary_extract",
+            "aspect",
+            "bounding_boxes",
+            "buffer",
+            "centroids",
+            "check_validity",
+            "clip",
+            "close_instance",
+            "collect_geometries",
+            "concave_hull",
+            "convex_hull",
+            "coverage_simplify",
+            "coverage_union",
+            "coverage_validate",
+            "create_constant_raster",
+            "create_grid",
+            "create_project",
+            "create_random_raster_uniform",
+            "create_spatial_index",
+            "data_find",
+            "data_get",
+            "data_register",
+            "dbscan_clustering",
+            "delaunay_triangulation",
+            "delete_duplicate_geometries",
+            "densify_by_count",
+            "densify_by_interval",
+            "difference",
+            "dissolve",
+            "distance_matrix",
+            "distance_to_nearest_hub",
+            "drop_z_values",
+            "explode_lines",
+            "export_cross_section_dataset_values",
+            "export_mesh_contours",
+            "export_mesh_edges",
+            "export_mesh_faces",
+            "export_mesh_on_grid",
+            "export_mesh_vertices",
+            "export_time_series_values",
+            "extend_lines",
+            "extract_by_attribute",
+            "extract_by_expression",
+            "extract_by_extent",
+            "extract_by_location",
+            "extract_selected_features",
+            "extract_specific_vertices",
+            "extract_vertices",
+            "fix_geometries",
+            "force_rhr",
+            "gdal_aspect",
+            "gdal_buffer_vectors",
+            "gdal_buildvrt",
+            "gdal_clip_raster_by_extent",
+            "gdal_clip_raster_by_mask",
+            "gdal_clip_vector_by_extent",
+            "gdal_clip_vector_by_polygon",
+            "gdal_contour",
+            "gdal_dissolve",
+            "gdal_hillshade",
+            "gdal_merge",
+            "gdal_offsetcurve",
+            "gdal_onesidebuffer",
+            "gdal_slope",
+            "gdal_translate",
+            "gdal_warp",
+            "gee_cancel_task",
+            "gee_check_environment",
+            "gee_run_script",
+            "gee_task_status",
+            "generate_elevation_profile_image",
+            "geometry_by_expression",
+            "get_active_layer_info",
+            "get_layers_info",
+            "get_project_info",
+            "get_selected_features_info",
+            "grass_r_contour",
+            "grass_r_slope_aspect",
+            "grass_r_watershed",
+            "grass_v_buffer",
+            "grass_v_clean",
+            "grass_v_generalize",
+            "heatmap",
+            "hillshade",
+            "hitl_request",
+            "idw_interpolation",
+            "interpolate_point_on_line",
+            "intersection",
+            "kmeans_clustering",
+            "line_intersections",
+            "line_of_sight",
+            "line_substring",
+            "lines_to_polygons",
+            "merge_lines",
+            "merge_vector_layers",
+            "mesh_surface_to_polygon",
+            "minimum_bounding_geometry",
+            "minimum_enclosing_circle",
+            "multipart_to_singleparts",
+            "nearest_neighbor",
+            "offset_line",
+            "open_project",
+            "oriented_minimum_bounding_box",
+            "output_get_info",
+            "point_on_surface",
+            "points_along_geometry",
+            "points_from_table",
+            "points_to_path",
+            "pole_of_inaccessibility",
+            "polygons_to_lines",
+            "random_extract",
+            "random_points_in_extent",
+            "random_points_in_polygons",
+            "random_selection",
+            "raster_reclassify",
+            "raster_sample",
+            "raster_statistics",
+            "rasterize_mesh_dataset",
+            "reference_read",
+            "regular_points",
+            "remove_null_geometries",
+            "resource_get",
+            "reverse_line_direction",
+            "rotate_features",
+            "selection_by_attribute",
+            "selection_by_expression",
+            "selection_clear",
+            "service_area_from_layer",
+            "service_area_from_point",
+            "set_m_value",
+            "set_z_value",
+            "shortest_path_layer_to_point",
+            "shortest_path_point_to_layer",
+            "shortest_path_point_to_point",
+            "simplify",
+            "single_sided_buffer",
+            "slope",
+            "smooth",
+            "snap_geometries_to_layer",
+            "snap_points_to_grid",
+            "split_lines_by_maximum_length",
+            "split_with_lines",
+            "subdivide",
+            "swap_xy_coordinates",
+            "symmetric_difference",
+            "tapered_buffer",
+            "terrain_ruggedness",
+            "terrain_tpi",
+            "tin_interpolation",
+            "tin_mesh_creation",
+            "translate_geometry",
+            "union",
+            "variable_width_buffer",
+            "viewshed",
+            "voronoi_polygons",
+            "wedge_buffers"
+          ]
+        }
+      ]
+    }
+  },
+  "created_at": "2026-10-28T15:47:34.759364Z",
+  "updated_at": "2026-10-28T15:50:36.321786Z",
+  "original_source": "制作河南省各市人口统计专题图",
+  "guide_snapshot": {
+    "package": {
+      "meta": {
+        "id": "statistical-choropleth",
+        "name": "统计专题图",
+        "description": "将行政区和真实统计数据关联，制作人口、经济等指标的分级设色专题图，说明年份、统计口径、缺测和来源。已有指标图层可直接复用。",
+        "version": "5.0.0"
+      },
+      "source": "builtin",
+      "enabled": true,
+      "guide_md": "---\n名称: 统计专题图\n说明: 将行政区和真实统计数据关联，制作人口、经济等指标的分级设色专题图，说明年份、统计口径、缺测和来源。已有指标图层可直接复用。\n版本: 5.0.0\n---\n\n# 统计专题图\n\n## 什么时候用\n按省、市或县展示统计指标的空间分布。用户给出行政区面、统计表或已有专题图层时优先使用；没有的图层和统计数据再按区域、层级、年份和指标查找来源。年份、指标或范围仍不明确且会影响取数时，一次说明需要补齐的内容。\n\n## 需要的图层与处理\n- 行政区面：覆盖本次区域，按用户要求的省、市或县层级获取；已有含指标的专题面图层满足要求时直接复用。省级默认样式「省域面」，市级用「市域面」，县级用「县域面」；用于行政区定位与名称标注，后续统计表达采用真实指标的分级渲染。\n- 统计表：真实年份与单一指标的地区统计值，记录单位、来源网址、访问时间、发布口径、缺测和补源。已有图层含同口径数值时不重复获取或关联。\n- 专题图层：行政区与统计值按地区精确关联，或复用已经核验的指标面图层。标注真实名称字段；通常分为五级有序渐变。\n- 灰底图层：仅存在缺测、未匹配或排除地区时，复用同一已核验面源形成浅灰背景，置于专题层下面，图例不单列。\n\n## 做法\n1. 核对区域、行政区层级、统计年份、指标、单位、来源和明确排除的地区。只有仍缺数据时才取得官方原件和可关联表格，不虚构数值。已提供数据按其元数据核验，不重复询问已知内容。\n2. 检查面几何、数值和名称字段、有效范围与缺测。识别宽表、长表及真实列名，只选择指定年份的单一指标，口径列不能误当地区列或筛选开关。必要转换或关联只写独立派生数据，保留原始文件；显示坐标系不同用动态投影，不为显示而重投影。\n3. 关联前检查年份、地区键、元数据、重复键和非法数值。重复键、非法数值或无有效数据时停止。部分未匹配且有效值足以分级时，保留完整清单与空值继续；空值表示缺测，零仍是有效值。记录有效与缺测数、未匹配与排除清单、数值范围、实际字段及来源。\n4. 按分布和表达需要选择自然断点、分位数、等间距或标准差，通常五级，连续量使用有序渐变。读取实际渲染状态，核对数值字段、每级上下界、颜色与图例。单一不同值、非数值字段或分级失败时停止，不以统一填色冒充分级，不添加无依据的箭头、柱状图或比例符号。\n5. 排版后核对主图范围、图层、实际分级、图例级数区间、文字裁切和遮挡，再导出所需格式。明确参数或前置条件错误最多修正重试一次；文件存在不能替代图面核验。不自动加入路线图视觉质检，额外评审应先明确范围。\n\n## 版面\n使用版面「统计专题版式」，默认 A4 横向；用户可指定纸张和方向。主图只显示本次专题层、灰底层和明确需要的背景，专题层在上，范围按真实专题层确定。标题采用用户标题，否则用“地区 + 年份 + 指标”。图例只列专题层，标题写指标和单位，条目来自实际分级，不手绘色块或编造区间。说明栏写年份、单位、来源和分级方法；来源未知则如实写“来源未提供”。有灰底时写“灰色区域：无有效统计值”，分别说明缺测、未匹配和排除数量。字号与位置使用版面规定，检查真实元素矩形及警告。必须有主图、标题、图例、比例尺、指北针和来源说明。\n\n## 成果\n默认导出 PNG，用户也可要求 PDF 或 SVG。交付真实成果路径、行政区层级、指标与年份、单位与来源、分级方法及各级区间，说明缺测、未匹配、排除地区和数量。派生文件与质量报告如有生成则一并列出；使用已有图层时说明复用情况。\n\n## 注意事项\n- 不虚构指标、年份、单位、来源或数值。\n- 区分总量、占比、密度、增幅；缺少分母、两期数据或面积依据时保持原指标。\n- 内部错误时保留工程与已有成果，报告真实错误和未完成部分。\n",
+      "guide": {
+        "meta": {
+          "id": "statistical-choropleth",
+          "name": "统计专题图",
+          "description": "将行政区和真实统计数据关联，制作人口、经济等指标的分级设色专题图，说明年份、统计口径、缺测和来源。已有指标图层可直接复用。",
+          "version": "5.0.0"
+        },
+        "body": "\n# 统计专题图\n\n## 什么时候用\n按省、市或县展示统计指标的空间分布。用户给出行政区面、统计表或已有专题图层时优先使用；没有的图层和统计数据再按区域、层级、年份和指标查找来源。年份、指标或范围仍不明确且会影响取数时，一次说明需要补齐的内容。\n\n## 需要的图层与处理\n- 行政区面：覆盖本次区域，按用户要求的省、市或县层级获取；已有含指标的专题面图层满足要求时直接复用。省级默认样式「省域面」，市级用「市域面」，县级用「县域面」；用于行政区定位与名称标注，后续统计表达采用真实指标的分级渲染。\n- 统计表：真实年份与单一指标的地区统计值，记录单位、来源网址、访问时间、发布口径、缺测和补源。已有图层含同口径数值时不重复获取或关联。\n- 专题图层：行政区与统计值按地区精确关联，或复用已经核验的指标面图层。标注真实名称字段；通常分为五级有序渐变。\n- 灰底图层：仅存在缺测、未匹配或排除地区时，复用同一已核验面源形成浅灰背景，置于专题层下面，图例不单列。\n\n## 做法\n1. 核对区域、行政区层级、统计年份、指标、单位、来源和明确排除的地区。只有仍缺数据时才取得官方原件和可关联表格，不虚构数值。已提供数据按其元数据核验，不重复询问已知内容。\n2. 检查面几何、数值和名称字段、有效范围与缺测。识别宽表、长表及真实列名，只选择指定年份的单一指标，口径列不能误当地区列或筛选开关。必要转换或关联只写独立派生数据，保留原始文件；显示坐标系不同用动态投影，不为显示而重投影。\n3. 关联前检查年份、地区键、元数据、重复键和非法数值。重复键、非法数值或无有效数据时停止。部分未匹配且有效值足以分级时，保留完整清单与空值继续；空值表示缺测，零仍是有效值。记录有效与缺测数、未匹配与排除清单、数值范围、实际字段及来源。\n4. 按分布和表达需要选择自然断点、分位数、等间距或标准差，通常五级，连续量使用有序渐变。读取实际渲染状态，核对数值字段、每级上下界、颜色与图例。单一不同值、非数值字段或分级失败时停止，不以统一填色冒充分级，不添加无依据的箭头、柱状图或比例符号。\n5. 排版后核对主图范围、图层、实际分级、图例级数区间、文字裁切和遮挡，再导出所需格式。明确参数或前置条件错误最多修正重试一次；文件存在不能替代图面核验。不自动加入路线图视觉质检，额外评审应先明确范围。\n\n## 版面\n使用版面「统计专题版式」，默认 A4 横向；用户可指定纸张和方向。主图只显示本次专题层、灰底层和明确需要的背景，专题层在上，范围按真实专题层确定。标题采用用户标题，否则用“地区 + 年份 + 指标”。图例只列专题层，标题写指标和单位，条目来自实际分级，不手绘色块或编造区间。说明栏写年份、单位、来源和分级方法；来源未知则如实写“来源未提供”。有灰底时写“灰色区域：无有效统计值”，分别说明缺测、未匹配和排除数量。字号与位置使用版面规定，检查真实元素矩形及警告。必须有主图、标题、图例、比例尺、指北针和来源说明。\n\n## 成果\n默认导出 PNG，用户也可要求 PDF 或 SVG。交付真实成果路径、行政区层级、指标与年份、单位与来源、分级方法及各级区间，说明缺测、未匹配、排除地区和数量。派生文件与质量报告如有生成则一并列出；使用已有图层时说明复用情况。\n\n## 注意事项\n- 不虚构指标、年份、单位、来源或数值。\n- 区分总量、占比、密度、增幅；缺少分母、两期数据或面积依据时保持原指标。\n- 内部错误时保留工程与已有成果，报告真实错误和未完成部分。\n",
+        "resources": [
+          {
+            "label": "省域面",
+            "type": "style",
+            "location": "公共资源库",
+            "line": 13
+          },
+          {
+            "label": "市域面",
+            "type": "style",
+            "location": "公共资源库",
+            "line": 13
+          },
+          {
+            "label": "县域面",
+            "type": "style",
+            "location": "公共资源库",
+            "line": 13
+          },
+          {
+            "label": "统计专题版式",
+            "type": "layout",
+            "location": "公共资源库",
+            "line": 26
+          }
+        ],
+        "diagnostics": []
+      },
+      "resources": [],
+      "resolved_resources": [
+        {
+          "label_field": "NAME",
+          "tags": [
+            "省级行政区",
+            "省界面",
+            "省域外框",
+            "省域面"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-90a7082089/preview?digest=sha256%3A443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+          "preview_status": "ready",
+          "key": "library:style.basemap-90a7082089",
+          "id": "style.basemap-90a7082089",
+          "label": "省域面",
+          "name": "省域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面/省域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "label_field": "无",
+          "tags": [
+            "地级市行政区",
+            "市域"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-1a51d33883/preview?digest=sha256%3A030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+          "preview_status": "ready",
+          "key": "library:style.basemap-1a51d33883",
+          "id": "style.basemap-1a51d33883",
+          "label": "市域面",
+          "name": "市域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面/市域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "label_field": "无",
+          "tags": [
+            "县级行政区",
+            "县域"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-fbe4b96472/preview?digest=sha256%3A365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+          "preview_status": "ready",
+          "key": "library:style.basemap-fbe4b96472",
+          "id": "style.basemap-fbe4b96472",
+          "label": "县域面",
+          "name": "县域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面/县域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "paper": "A4",
+          "orientation": "landscape",
+          "elements": [
+            "grid",
+            "legend",
+            "main_map",
+            "north_arrow",
+            "overview",
+            "scalebar",
+            "title"
+          ],
+          "preview_url": "/api/resources/by-id/layout.statistical/preview?digest=sha256%3A8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+          "preview_status": "ready",
+          "key": "library:layout.statistical",
+          "id": "layout.statistical",
+          "label": "统计专题版式",
+          "name": "统计专题版式",
+          "type": "layout",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式/统计专题版式.layout.yaml",
+          "format": "layout_yaml",
+          "digest": "sha256:8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        }
+      ],
+      "diagnostics": [],
+      "updated_at": "2026-10-28T01:19:00.482826499+08:00"
+    },
+    "doc": {
+      "meta": {
+        "id": "statistical-choropleth",
+        "name": "统计专题图",
+        "description": "将行政区和真实统计数据关联，制作人口、经济等指标的分级设色专题图，说明年份、统计口径、缺测和来源。已有指标图层可直接复用。",
+        "version": "5.0.0"
+      },
+      "body": "\n# 统计专题图\n\n## 什么时候用\n按省、市或县展示统计指标的空间分布。用户给出行政区面、统计表或已有专题图层时优先使用；没有的图层和统计数据再按区域、层级、年份和指标查找来源。年份、指标或范围仍不明确且会影响取数时，一次说明需要补齐的内容。\n\n## 需要的图层与处理\n- 行政区面：覆盖本次区域，按用户要求的省、市或县层级获取；已有含指标的专题面图层满足要求时直接复用。省级默认样式「省域面」，市级用「市域面」，县级用「县域面」；用于行政区定位与名称标注，后续统计表达采用真实指标的分级渲染。\n- 统计表：真实年份与单一指标的地区统计值，记录单位、来源网址、访问时间、发布口径、缺测和补源。已有图层含同口径数值时不重复获取或关联。\n- 专题图层：行政区与统计值按地区精确关联，或复用已经核验的指标面图层。标注真实名称字段；通常分为五级有序渐变。\n- 灰底图层：仅存在缺测、未匹配或排除地区时，复用同一已核验面源形成浅灰背景，置于专题层下面，图例不单列。\n\n## 做法\n1. 核对区域、行政区层级、统计年份、指标、单位、来源和明确排除的地区。只有仍缺数据时才取得官方原件和可关联表格，不虚构数值。已提供数据按其元数据核验，不重复询问已知内容。\n2. 检查面几何、数值和名称字段、有效范围与缺测。识别宽表、长表及真实列名，只选择指定年份的单一指标，口径列不能误当地区列或筛选开关。必要转换或关联只写独立派生数据，保留原始文件；显示坐标系不同用动态投影，不为显示而重投影。\n3. 关联前检查年份、地区键、元数据、重复键和非法数值。重复键、非法数值或无有效数据时停止。部分未匹配且有效值足以分级时，保留完整清单与空值继续；空值表示缺测，零仍是有效值。记录有效与缺测数、未匹配与排除清单、数值范围、实际字段及来源。\n4. 按分布和表达需要选择自然断点、分位数、等间距或标准差，通常五级，连续量使用有序渐变。读取实际渲染状态，核对数值字段、每级上下界、颜色与图例。单一不同值、非数值字段或分级失败时停止，不以统一填色冒充分级，不添加无依据的箭头、柱状图或比例符号。\n5. 排版后核对主图范围、图层、实际分级、图例级数区间、文字裁切和遮挡，再导出所需格式。明确参数或前置条件错误最多修正重试一次；文件存在不能替代图面核验。不自动加入路线图视觉质检，额外评审应先明确范围。\n\n## 版面\n使用版面「统计专题版式」，默认 A4 横向；用户可指定纸张和方向。主图只显示本次专题层、灰底层和明确需要的背景，专题层在上，范围按真实专题层确定。标题采用用户标题，否则用“地区 + 年份 + 指标”。图例只列专题层，标题写指标和单位，条目来自实际分级，不手绘色块或编造区间。说明栏写年份、单位、来源和分级方法；来源未知则如实写“来源未提供”。有灰底时写“灰色区域：无有效统计值”，分别说明缺测、未匹配和排除数量。字号与位置使用版面规定，检查真实元素矩形及警告。必须有主图、标题、图例、比例尺、指北针和来源说明。\n\n## 成果\n默认导出 PNG，用户也可要求 PDF 或 SVG。交付真实成果路径、行政区层级、指标与年份、单位与来源、分级方法及各级区间，说明缺测、未匹配、排除地区和数量。派生文件与质量报告如有生成则一并列出；使用已有图层时说明复用情况。\n\n## 注意事项\n- 不虚构指标、年份、单位、来源或数值。\n- 区分总量、占比、密度、增幅；缺少分母、两期数据或面积依据时保持原指标。\n- 内部错误时保留工程与已有成果，报告真实错误和未完成部分。\n",
+      "resources": [
+        {
+          "label": "省域面",
+          "type": "style",
+          "location": "公共资源库",
+          "line": 13
+        },
+        {
+          "label": "市域面",
+          "type": "style",
+          "location": "公共资源库",
+          "line": 13
+        },
+        {
+          "label": "县域面",
+          "type": "style",
+          "location": "公共资源库",
+          "line": 13
+        },
+        {
+          "label": "统计专题版式",
+          "type": "layout",
+          "location": "公共资源库",
+          "line": 26
+        }
+      ],
+      "diagnostics": []
+    },
+    "scope": {
+      "FlowID": "statistical-choropleth",
+      "FlowDir": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/flows/system/statistical-choropleth",
+      "Lock": {
+        "document_format": "flow/v6",
+        "api_version": "flow-lock/v1",
+        "resources": [
+          {
+            "type": "style",
+            "name": "省域面",
+            "id": "style.basemap-90a7082089",
+            "version": "1.0.0",
+            "digest": "sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+            "source": "library_builtin"
+          },
+          {
+            "type": "style",
+            "name": "市域面",
+            "id": "style.basemap-1a51d33883",
+            "version": "1.0.0",
+            "digest": "sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+            "source": "library_builtin"
+          },
+          {
+            "type": "style",
+            "name": "县域面",
+            "id": "style.basemap-fbe4b96472",
+            "version": "1.0.0",
+            "digest": "sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+            "source": "library_builtin"
+          },
+          {
+            "type": "layout",
+            "name": "统计专题版式",
+            "id": "layout.statistical",
+            "version": "1.0.0",
+            "digest": "sha256:8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+            "source": "library_builtin"
+          }
+        ]
+      },
+      "Linked": [
+        {
+          "label_field": "NAME",
+          "tags": [
+            "省级行政区",
+            "省界面",
+            "省域外框",
+            "省域面"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-90a7082089/preview?digest=sha256%3A443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+          "preview_status": "ready",
+          "key": "library:style.basemap-90a7082089",
+          "id": "style.basemap-90a7082089",
+          "label": "省域面",
+          "name": "省域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/省域面/省域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "label_field": "无",
+          "tags": [
+            "地级市行政区",
+            "市域"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-1a51d33883/preview?digest=sha256%3A030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+          "preview_status": "ready",
+          "key": "library:style.basemap-1a51d33883",
+          "id": "style.basemap-1a51d33883",
+          "label": "市域面",
+          "name": "市域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/市域面/市域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "label_field": "无",
+          "tags": [
+            "县级行政区",
+            "县域"
+          ],
+          "preview_url": "/api/resources/by-id/style.basemap-fbe4b96472/preview?digest=sha256%3A365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+          "preview_status": "ready",
+          "key": "library:style.basemap-fbe4b96472",
+          "id": "style.basemap-fbe4b96472",
+          "label": "县域面",
+          "name": "县域面",
+          "type": "style",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/styles/县域面/县域面.qml",
+          "format": "qml",
+          "geometry": "polygon",
+          "digest": "sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f",
+          "description": "由原预设导出的符号和标注",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        },
+        {
+          "paper": "A4",
+          "orientation": "landscape",
+          "elements": [
+            "grid",
+            "legend",
+            "main_map",
+            "north_arrow",
+            "overview",
+            "scalebar",
+            "title"
+          ],
+          "preview_url": "/api/resources/by-id/layout.statistical/preview?digest=sha256%3A8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+          "preview_status": "ready",
+          "key": "library:layout.statistical",
+          "id": "layout.statistical",
+          "label": "统计专题版式",
+          "name": "统计专题版式",
+          "type": "layout",
+          "version": "1.0.0",
+          "owner": "library_builtin",
+          "origin": "library_builtin",
+          "location": "公共资源库",
+          "root": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式",
+          "entry": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto/resources/system/layouts/统计专题版式/统计专题版式.layout.yaml",
+          "format": "layout_yaml",
+          "digest": "sha256:8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2",
+          "source": {
+            "author": "AutoCarto"
+          },
+          "legacy": false,
+          "entries": [],
+          "problems": []
+        }
+      ]
+    },
+    "lock_digest": "sha256:bcb78ac445759137ea2f7b32b13a1fcf7dde7f2e0a68df8ad58f47e32bbb6651"
+  }
+}

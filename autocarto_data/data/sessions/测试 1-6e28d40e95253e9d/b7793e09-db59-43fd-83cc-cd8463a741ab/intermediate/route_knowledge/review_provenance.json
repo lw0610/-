@@ -1,0 +1,389 @@
+{
+  "graph_sha256": "507c4a94f2c56da207218363e79623d66e1a9bcde980dcd4be5d1156d818c9aa",
+  "inherited_provenance": [],
+  "issue_resolutions": [],
+  "manual_records": [
+    {
+      "collection": "callouts",
+      "id": "callout_excel_266c60d186e38293d34c",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_2ae82dd7685154d18b1c",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_335ea18ea4ef764df8e8",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_371b352df4a3949a576f",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_37573ebb0b4f7f6a2193",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_3b70727a3d2b31d80be2",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_3c0497e5761ceb2fb590",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_46c7077322830844c92f",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_5aa9b1a854b9352bc1c2",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_692b2095090aec9100b0",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_76cf96da2ff24bf7b8f9",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_8d63800bf823ba520f8e",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_90ca897dd6f1dc8806af",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_9e8fc4a836cda00685b2",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_ac553290adf5119d6662",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_d7446be3a553e3bf7884",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_e69cdf9dd47e463bad3d",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "callouts",
+      "id": "callout_excel_e76d45faac45cdd177d1",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "spatial_entities",
+      "id": "place_excel_516868b41fae5fadcd6c",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "spatial_entities",
+      "id": "place_excel_9d6c78d85a4d77d549fe",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "spatial_entities",
+      "id": "place_excel_b83963a2d1e5f79ded21",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "spatial_entities",
+      "id": "place_excel_de9907edc03728bb5e94",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "spatial_entities",
+      "id": "place_excel_e795811ddc216080ffce",
+      "origin": "manual_added"
+    },
+    {
+      "collection": "spatial_entities",
+      "id": "place_excel_f5aa682b18945138e0fd",
+      "origin": "manual_added"
+    }
+  ],
+  "rendering_adaptations": [
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_transfer_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_transfer__render_cb416b3dd489292e",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_transfer"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_transfer_2",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_transfer__render_2843dfa749532cb1",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_transfer"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__p_gmd_44th_zaoyang",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_zaoyang_encirclement",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_gmd_zaoyang_encirclement"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__p_gmd_40th_zaoyang",
+      "rendered_role": "incoming",
+      "rendered_route_id": "c0001__rt_gmd_zaoyang_encirclement",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_zaoyang_encirclement"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__p_gmd_6th_39th_zaoyang",
+      "rendered_role": "incoming",
+      "rendered_route_id": "c0001__rt_gmd_zaoyang_encirclement",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_zaoyang_encirclement"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_115brigade_dushuzhen",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_dushuzhen_block__render_81d1c0a5d25c64f7",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_dushuzhen_block"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_cavalry40_dushuzhen",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_dushuzhen_block__render_c64cb5656f59fc37",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_dushuzhen_block"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_cavalry5_dushuzhen",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_dushuzhen_block__render_a44dccf8ea2b968a",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_dushuzhen_block"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__p_gmd_60th_61st_yujiahe",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_pursuit_yujiahe",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_gmd_pursuit_yujiahe"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_base_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_base_operations__render_4d8df874dc58af05",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_base_operations"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_base_2",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_base_operations__render_5fa5999145f33484",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_base_operations"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_110th_129th_jingziguan",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_jingziguan_block__render_7bc508204f113501",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_jingziguan_block"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_44th_jingziguan",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_jingziguan_block__render_d509512d7df7a67b",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_jingziguan_block"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_westward_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_westward__render_26d2738b86c4a7e1",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_westward"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_westward_2",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_westward__render_3c3834f949cffac6",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_westward"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_westward_3",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_westward__render_37b7a4b7cbe3b1c5",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_westward"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_westward_4",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_westward__render_10b6700506f2da03",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_westward"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_westward_5",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_westward__render_084db47021b62b67",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_westward"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_westward_6",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_westward__render_ab8e117ffb417554",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_westward"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_westward_7",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_westward__render_35ba88aaccf3fdeb",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_westward"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_westward_8",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_westward__render_f3e7078e1674dca2",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_westward"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_red25_westward_9",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_red25_westward__render_41d4a1ade36b63bc",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_red25_westward"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_38th_shuangshipu",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_shuangshipu_liangdang_block__render_588d124675c39357",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_shuangshipu_liangdang_block"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_huzongnan_shuangshipu",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_shuangshipu_liangdang_block__render_6069dd4b1eda94d0",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_shuangshipu_liangdang_block"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_huzongnan_liangdang",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_shuangshipu_liangdang_block__render_1788f21efd360373",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_shuangshipu_liangdang_block"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_3rd_14th_liangdang",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_shuangshipu_liangdang_block__render_3b5d74521d160caa",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_shuangshipu_liangdang_block"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__p_gmd_3rd_wushan_tianshui",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_tianshui_block",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_gmd_tianshui_block"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__p_gmd_3rd_gangu_tianshui",
+      "rendered_role": "incoming",
+      "rendered_route_id": "c0001__rt_gmd_tianshui_block",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_tianshui_block"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_37th_qinan",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_qinan_block__render_d626d316d39f68b5",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_qinan_block"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_6th_jingning_longde",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_jingning_longde_pursuit__render_7794e3416d0fa02e",
+      "source_role": "incoming",
+      "source_route_id": "c0001__rt_gmd_jingning_longde_pursuit"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_35th_guyuan_longde",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_jingning_longde_pursuit__render_e65d06e4f0e917c1",
+      "source_role": "main",
+      "source_route_id": "c0001__rt_gmd_jingning_longde_pursuit"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__p_gmd_35th_guyuan_pingliang",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__rt_gmd_jingning_longde_pursuit__render_05dac8726467b55a",
+      "source_role": "branch",
+      "source_route_id": "c0001__rt_gmd_jingning_longde_pursuit"
+    }
+  ],
+  "review_id": "7b24995f-2716-439d-b07b-32d5c6208f38",
+  "revision": 2,
+  "source_sha256": "348c44dd85b28f4296b0ceacafd1c855ed159cb28cfd9a65b56ad141539d1beb",
+  "version": 1
+}

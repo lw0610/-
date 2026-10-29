@@ -1,0 +1,72 @@
+{
+  "checkpoint_id": "flow-fr-20261029-023513-85307e886074-s01-v1-a1",
+  "session_id": "b7793e09-db59-43fd-83cc-cd8463a741ab",
+  "flow_run_id": "fr-20261029-023513-85307e886074",
+  "project_path": "/home/shared-user/研究生/实例/测试 1.qgz",
+  "instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_43310_1793211755",
+  "contexts": [
+    {
+      "ID": "b9c66813-1463-4ca6-b3b9-76ad5557e98d",
+      "Address": [
+        {
+          "ID": "system.route_knowledge",
+          "Type": "agent",
+          "SubID": ""
+        }
+      ],
+      "Info": {
+        "can_start": true,
+        "description": "可直接开始制图，也可以先修改抽取结果。",
+        "errors": [],
+        "review_id": "7b24995f-2716-439d-b07b-32d5c6208f38",
+        "revision": 1,
+        "session_id": "b7793e09-db59-43fd-83cc-cd8463a741ab",
+        "status": "awaiting_review",
+        "summary": {
+          "actors": 19,
+          "callouts": 0,
+          "events": 9,
+          "pending_issues": 0,
+          "routes": 11,
+          "spatial_entities": 89
+        },
+        "title": "知识抽取结果",
+        "type": "knowledge_review",
+        "updated_at": "2026-10-28T18:37:21.232482Z"
+      },
+      "IsRootCause": true,
+      "Parent": null
+    }
+  ],
+  "data": {
+    "checkpoint_id": "flow-fr-20261029-023513-85307e886074-s01-v1-a1",
+    "interrupt_contexts": [
+      {
+        "address": "agent:system.route_knowledge",
+        "id": "b9c66813-1463-4ca6-b3b9-76ad5557e98d",
+        "info": {
+          "can_start": true,
+          "description": "可直接开始制图，也可以先修改抽取结果。",
+          "errors": [],
+          "review_id": "7b24995f-2716-439d-b07b-32d5c6208f38",
+          "revision": 1,
+          "session_id": "b7793e09-db59-43fd-83cc-cd8463a741ab",
+          "status": "awaiting_review",
+          "summary": {
+            "actors": 19,
+            "callouts": 0,
+            "events": 9,
+            "pending_issues": 0,
+            "routes": 11,
+            "spatial_entities": 89
+          },
+          "title": "知识抽取结果",
+          "type": "knowledge_review",
+          "updated_at": "2026-10-28T18:37:21.232482Z"
+        },
+        "is_root_cause": true
+      }
+    ],
+    "mode_phase": "building"
+  }
+}

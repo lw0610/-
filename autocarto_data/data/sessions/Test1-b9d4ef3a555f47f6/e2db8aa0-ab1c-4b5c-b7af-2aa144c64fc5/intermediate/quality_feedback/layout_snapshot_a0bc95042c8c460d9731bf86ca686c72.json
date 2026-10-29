@@ -1,0 +1,489 @@
+{
+  "captured_at": "2026-08-24T16:20:00.745704+00:00",
+  "layout_item_ids": {
+    "callouts": {
+      "co_banqiao": {
+        "body": "callout_co_banqiao_body",
+        "box": "callout_co_banqiao_box",
+        "leader": "callout_co_banqiao_leader",
+        "title": "callout_co_banqiao_title"
+      },
+      "co_dushu": {
+        "body": "callout_co_dushu_body",
+        "box": "callout_co_dushu_box",
+        "leader": "callout_co_dushu_leader",
+        "title": "callout_co_dushu_title"
+      },
+      "co_fengyukou": {
+        "body": "callout_co_fengyukou_body",
+        "box": "callout_co_fengyukou_box",
+        "leader": "callout_co_fengyukou_leader",
+        "title": "callout_co_fengyukou_title"
+      },
+      "co_rendezvous": {
+        "body": "callout_co_rendezvous_body",
+        "box": "callout_co_rendezvous_box",
+        "leader": "callout_co_rendezvous_leader",
+        "title": "callout_co_rendezvous_title"
+      },
+      "co_silicun": {
+        "body": "callout_co_silicun_body",
+        "box": "callout_co_silicun_box",
+        "leader": "callout_co_silicun_leader",
+        "title": "callout_co_silicun_title"
+      },
+      "co_tianshui": {
+        "body": "callout_co_tianshui_body",
+        "box": "callout_co_tianshui_box",
+        "leader": "callout_co_tianshui_leader",
+        "title": "callout_co_tianshui_title"
+      },
+      "co_yujiahe": {
+        "body": "callout_co_yujiahe_body",
+        "box": "callout_co_yujiahe_box",
+        "leader": "callout_co_yujiahe_leader",
+        "title": "callout_co_yujiahe_title"
+      }
+    },
+    "standard": {
+      "decorative_border": "decorative_border_1",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "callout_co_banqiao_body": {
+        "item_id": "callout_co_banqiao_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 266.76746933638003,
+          "y": 178.4582312338362
+        },
+        "text": "9月初到达合水县板桥镇，进行短暂休整\n并与追击部队发生战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 28.0
+      },
+      "callout_co_banqiao_box": {
+        "item_id": "callout_co_banqiao_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 264.96746933638,
+          "y": 171.83440310883617
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 26.0
+      },
+      "callout_co_banqiao_leader": {
+        "item_id": "callout_co_banqiao_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.02217895627217,
+          "x": 246.96746933638002,
+          "y": 185.24121734494727
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 29.0
+      },
+      "callout_co_banqiao_title": {
+        "item_id": "callout_co_banqiao_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 266.76746933638003,
+          "y": 173.63440310883618
+        },
+        "text": "板桥镇战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 27.0
+      },
+      "callout_co_dushu_body": {
+        "item_id": "callout_co_dushu_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 577.3721305978319,
+          "y": 314.58410016929
+        },
+        "text": "11月26日，在恶劣天气和敌军突然堵截\n的情况下展开独树镇战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 8.0
+      },
+      "callout_co_dushu_box": {
+        "item_id": "callout_co_dushu_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 575.5721305978319,
+          "y": 307.96027204429004
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 6.0
+      },
+      "callout_co_dushu_leader": {
+        "item_id": "callout_co_dushu_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.022178956272114,
+          "x": 557.5721305978319,
+          "y": 321.36708628040117
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 9.0
+      },
+      "callout_co_dushu_title": {
+        "item_id": "callout_co_dushu_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 577.3721305978319,
+          "y": 309.76027204429005
+        },
+        "text": "独树镇战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 7.0
+      },
+      "callout_co_fengyukou_body": {
+        "item_id": "callout_co_fengyukou_body",
+        "rect_mm": {
+          "height": 7.474479166666667,
+          "width": 38.4,
+          "x": 353.19659247000186,
+          "y": 282.3825960365519
+        },
+        "text": "1935年7月，中共鄂豫陕省委召开会议，\n决定率领红二十五军继续西进，以配合\n中央红军北上",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 12.0
+      },
+      "callout_co_fengyukou_box": {
+        "item_id": "callout_co_fengyukou_box",
+        "rect_mm": {
+          "height": 15.898307291666669,
+          "width": 42.0,
+          "x": 351.39659247000185,
+          "y": 275.7587679115519
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 10.0
+      },
+      "callout_co_fengyukou_leader": {
+        "item_id": "callout_co_fengyukou_leader",
+        "rect_mm": {
+          "height": 11.999999999999943,
+          "width": 23.459641862939236,
+          "x": 333.39659247000185,
+          "y": 291.6570752032186
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 13.0
+      },
+      "callout_co_fengyukou_title": {
+        "item_id": "callout_co_fengyukou_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 353.19659247000186,
+          "y": 277.5587679115519
+        },
+        "text": "沣峪口会议",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 11.0
+      },
+      "callout_co_rendezvous_body": {
+        "item_id": "callout_co_rendezvous_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 385.6075136451096,
+          "y": 120.11857311864182
+        },
+        "text": "9月16日，红二十五军与陕甘红军胜利会\n师",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "callout_co_rendezvous_box": {
+        "item_id": "callout_co_rendezvous_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 383.80751364510957,
+          "y": 113.49474499364182
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "callout_co_rendezvous_leader": {
+        "item_id": "callout_co_rendezvous_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.022178956272114,
+          "x": 365.80751364510957,
+          "y": 126.90155922975293
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 5.0
+      },
+      "callout_co_rendezvous_title": {
+        "item_id": "callout_co_rendezvous_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 385.6075136451096,
+          "y": 115.29474499364181
+        },
+        "text": "永坪会师",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 3.0
+      },
+      "callout_co_silicun_body": {
+        "item_id": "callout_co_silicun_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 270.008561453891,
+          "y": 196.2842378801455
+        },
+        "text": "1935年8月21日，红二十五军在泾川四\n坡村一带与国民党军展开激烈战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 16.0
+      },
+      "callout_co_silicun_box": {
+        "item_id": "callout_co_silicun_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 268.208561453891,
+          "y": 189.66040975514548
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 14.0
+      },
+      "callout_co_silicun_leader": {
+        "item_id": "callout_co_silicun_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.022178956272143,
+          "x": 250.20856145389095,
+          "y": 203.06722399125658
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 17.0
+      },
+      "callout_co_silicun_title": {
+        "item_id": "callout_co_silicun_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 270.008561453891,
+          "y": 191.4604097551455
+        },
+        "text": "四坡村战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 15.0
+      },
+      "callout_co_tianshui_body": {
+        "item_id": "callout_co_tianshui_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 181.418710241929,
+          "y": 245.44080166239286
+        },
+        "text": "红二十五军一度包围天水城区并攻入天\n水北关，后因敌军增援逼近主动撤出",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 24.0
+      },
+      "callout_co_tianshui_box": {
+        "item_id": "callout_co_tianshui_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 179.618710241929,
+          "y": 238.81697353739284
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 22.0
+      },
+      "callout_co_tianshui_leader": {
+        "item_id": "callout_co_tianshui_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 25.022178956272143,
+          "x": 161.618710241929,
+          "y": 252.22378777350394
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 25.0
+      },
+      "callout_co_tianshui_title": {
+        "item_id": "callout_co_tianshui_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 181.418710241929,
+          "y": 240.61697353739285
+        },
+        "text": "天水战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 23.0
+      },
+      "callout_co_yujiahe_body": {
+        "item_id": "callout_co_yujiahe_body",
+        "rect_mm": {
+          "height": 7.474479166666667,
+          "width": 38.4,
+          "x": 431.52298530984564,
+          "y": 285.0835061344778
+        },
+        "text": "红二十五军到达庾家河后，与当地追击\n而来的国民党军发生战斗，由此开始在\n陕南站稳脚跟",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 20.0
+      },
+      "callout_co_yujiahe_box": {
+        "item_id": "callout_co_yujiahe_box",
+        "rect_mm": {
+          "height": 15.898307291666669,
+          "width": 42.0,
+          "x": 429.7229853098456,
+          "y": 278.4596780094778
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 18.0
+      },
+      "callout_co_yujiahe_leader": {
+        "item_id": "callout_co_yujiahe_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 23.459641862939293,
+          "x": 411.7229853098456,
+          "y": 294.3579853011445
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 21.0
+      },
+      "callout_co_yujiahe_title": {
+        "item_id": "callout_co_yujiahe_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 431.52298530984564,
+          "y": 280.2596780094778
+        },
+        "text": "庾家河战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 19.0
+      },
+      "decorative_border_1": {
+        "item_id": "decorative_border_1",
+        "outer_rect_mm": {
+          "height": 497.5713599715327,
+          "width": 727.85,
+          "x": 56.57499999999999,
+          "y": 48.214320014233664
+        },
+        "rect_mm": {
+          "height": 491.27135997153266,
+          "width": 721.5500000000001,
+          "x": 59.72499999999999,
+          "y": 51.36432001423366
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 30.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 98.0712109375,
+          "width": 41.338671875,
+          "x": 63.07,
+          "y": 441.21
+        },
+        "title": "图例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 33.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 484.5713599715327,
+          "width": 714.85,
+          "x": 63.07499999999999,
+          "y": 54.714320014233664
+        },
+        "scale": 1278347.4112670396,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 30.0,
+          "width": 20.0,
+          "x": 63.06999999999999,
+          "y": 54.71
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 35.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 12.711363636363636,
+          "width": 88.62272727272727,
+          "x": 689.3,
+          "y": 54.71
+        },
+        "text": "数据综述：红二十五军于1934年11月从河南罗山出发，沿鄂豫陕甘诸省战略转移\n，途经桐柏山、秦岭、陇东高原等地貌单元，经历独树镇战斗、四坡村战斗等重\n大战役，于1935年9月到达陕北与陕甘红军胜利会师。全图涵盖路线7段、关键\n节点33处、图文注记7幅，展现孤军长征的完整战略轨迹。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 32.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 84.63379082189961,
+          "x": 693.291,
+          "y": 526.1890000000001
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 30.0,
+        "z_value": 34.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 201.46818181818182,
+          "x": 319.77,
+          "y": 34.07
+        },
+        "text": "红二十五军行军路线图（1934—1935）",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 31.0
+      }
+    },
+    "layout": "红二十五军行军路线图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 594.0,
+      "width": 841.0
+    }
+  },
+  "layout_name": "红二十五军行军路线图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "e2db8aa0-ab1c-4b5c-b7af-2aa144c64fc5",
+  "snapshot_id": "a0bc95042c8c460d9731bf86ca686c72"
+}

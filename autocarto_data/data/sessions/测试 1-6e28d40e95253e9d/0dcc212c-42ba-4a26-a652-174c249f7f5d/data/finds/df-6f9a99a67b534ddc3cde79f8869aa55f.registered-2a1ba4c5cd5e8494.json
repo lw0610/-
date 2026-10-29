@@ -1,0 +1,37 @@
+{
+  "find_id": "df-6f9a99a67b534ddc3cde79f8869aa55f",
+  "row": "河南省各市人口统计数据",
+  "category": "stats.annual_indicator",
+  "paths": [
+    "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.863b0ce3d945fde3f4a53cfb/307d3857bc4c1ab5/out/河南省各市人口统计数据.csv"
+  ],
+  "source_id": "fallback.863b0ce3d945fde3f4a53cfb",
+  "kind": "portal",
+  "retrieved_at": "2026-10-28T15:48:48.712009Z",
+  "sha256": {
+    "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.863b0ce3d945fde3f4a53cfb/307d3857bc4c1ab5/out/河南省各市人口统计数据.csv": "c5560c5dd877eeb76e16d9a14de2f27156a2fd9130964ae694856395ac3d6969"
+  },
+  "license": "河南省统计局《河南统计年鉴2024》公开数据，政府公开统计信息，用于公开制图需注明来源",
+  "attribution": "数据来源：河南省统计局《河南统计年鉴2024》",
+  "notes": [
+    "来源方式：portal",
+    "来源网址：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm",
+    "数据年份2023年（2023年底常住人口），单位万人",
+    "来源为《河南统计年鉴2024》表3-3「各市常住人口数」与表3-5「各市人口数(2023年底)」，两表2023年常住人口数值完全一致，交叉核验通过",
+    "口径为常住人口总量（含济源示范区，省直辖县级单位，单独列出）",
+    "原始表格为图片(jpg)，经macOS Vision框架OCR转录并逐行核对",
+    "全省合计9815万人，18个地级市+济源示范区"
+  ],
+  "warnings": [
+    "只读使用用户登记的本机数据",
+    "来源方式：portal",
+    "来源网址：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm",
+    "数据年份2023年（2023年底常住人口），单位万人",
+    "来源为《河南统计年鉴2024》表3-3「各市常住人口数」与表3-5「各市人口数(2023年底)」，两表2023年常住人口数值完全一致，交叉核验通过",
+    "口径为常住人口总量（含济源示范区，省直辖县级单位，单独列出）",
+    "原始表格为图片(jpg)，经macOS Vision框架OCR转录并逐行核对",
+    "全省合计9815万人，18个地级市+济源示范区"
+  ],
+  "store_key": "307d3857bc4c1ab52d08567c1bec03f525e043833eed952e4f903b53f9d79d43",
+  "count": 18
+}

@@ -1,0 +1,283 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e5]:
+      - generic [ref=e7]:
+        - link "无障碍阅读" [ref=e8] [cursor=pointer]:
+          - /url: javascript:void(0);
+        - link "进入适老模式" [ref=e9] [cursor=pointer]:
+          - /url: javascript:void(0);
+      - generic [ref=e10]:
+        - link [ref=e12] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e15]:
+          - textbox "请输入您要搜索的内容" [ref=e16]
+          - button "Submit" [ref=e17] [cursor=pointer]
+    - list [ref=e20]:
+      - listitem [ref=e21]:
+        - link "首页" [ref=e22] [cursor=pointer]:
+          - /url: /
+      - listitem [ref=e23]:
+        - link "机构" [ref=e24] [cursor=pointer]:
+          - /url: /zjtj/zyld/
+      - listitem [ref=e25]:
+        - link "新闻" [ref=e26] [cursor=pointer]:
+          - /url: /zwxx/
+      - listitem [ref=e27]:
+        - link "数据" [ref=e28] [cursor=pointer]:
+          - /url: /tjfw/zxfb/
+      - listitem [ref=e29]:
+        - link "公开" [ref=e30] [cursor=pointer]:
+          - /url: /zfxxgk/
+      - listitem [ref=e31]:
+        - link "服务" [ref=e32] [cursor=pointer]:
+          - /url: /tjfw/
+      - listitem [ref=e33]:
+        - link "互动" [ref=e34] [cursor=pointer]:
+          - /url: /hdjl/
+      - listitem [ref=e35]:
+        - link "知识" [ref=e36] [cursor=pointer]:
+          - /url: https://www.stats.gov.cn/zsk/
+      - listitem [ref=e37]:
+        - link "专题" [ref=e38] [cursor=pointer]:
+          - /url: /syztzl/
+  - generic [ref=e39]:
+    - paragraph [ref=e41]:
+      - text: 您当前所在位置：
+      - link "首页" [ref=e42] [cursor=pointer]:
+        - /url: /
+      - text: ">"
+      - link "数据" [ref=e43] [cursor=pointer]:
+        - /url: http://tjj.henan.gov.cn/tjfw/zxfb
+      - text: ">"
+      - link "统计产品" [ref=e44] [cursor=pointer]:
+        - /url: http://tjj.henan.gov.cn/tjfw/tjsj
+      - text: "> 统计年鉴"
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - heading "统计产品" [level=2] [ref=e47]
+        - list [ref=e48]:
+          - listitem [ref=e49]:
+            - link "统计公报" [ref=e50] [cursor=pointer]:
+              - /url: /tjfw/tjgb/
+          - listitem [ref=e51]:
+            - link "统计年鉴" [ref=e52] [cursor=pointer]:
+              - /url: /tjfw/tjcbw/tjnj/
+          - listitem [ref=e53]:
+            - link "普查年鉴" [ref=e54] [cursor=pointer]:
+              - /url: /tjfw/tjsj/pcnj/
+          - listitem [ref=e55]:
+            - link "经济蓝皮书" [ref=e56] [cursor=pointer]:
+              - /url: /tjfw/tjsj/jjlps/
+          - listitem [ref=e57]:
+            - link "统计提要" [ref=e58] [cursor=pointer]:
+              - /url: /tjfw/tjsj/qtcbw/
+      - generic [ref=e59]:
+        - list [ref=e60]:
+          - listitem [ref=e61]:
+            - generic [ref=e62]: 2025-12-30
+            - link "统计年鉴2025" [ref=e63] [cursor=pointer]:
+              - /url: https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2025/zk/indexch.htm
+          - listitem [ref=e64]:
+            - generic [ref=e65]: 2024-12-11
+            - link "统计年鉴2024" [active] [ref=e66] [cursor=pointer]:
+              - /url: https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm
+          - listitem [ref=e67]:
+            - generic [ref=e68]: 2023-12-11
+            - link "统计年鉴2023" [ref=e69] [cursor=pointer]:
+              - /url: https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2023nj/zk/indexch.htm
+          - listitem [ref=e70]:
+            - generic [ref=e71]: 2023-01-05
+            - link "统计年鉴2022" [ref=e72] [cursor=pointer]:
+              - /url: https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2022/zk/indexch.htm
+          - listitem [ref=e73]:
+            - generic [ref=e74]: 2021-12-16
+            - link "统计年鉴2021" [ref=e75] [cursor=pointer]:
+              - /url: http://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2021nj/zk/indexch.htm
+          - listitem [ref=e76]:
+            - generic [ref=e77]: 2021-01-20
+            - link "统计年鉴2020" [ref=e78] [cursor=pointer]:
+              - /url: http://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2020nj/zk/indexch.htm
+          - listitem [ref=e79]:
+            - generic [ref=e80]: 2020-01-21
+            - link "统计年鉴2019" [ref=e81] [cursor=pointer]:
+              - /url: http://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2019/zk/indexch.htm
+          - listitem [ref=e82]:
+            - generic [ref=e83]: 2019-02-14
+            - link "统计年鉴2018" [ref=e84] [cursor=pointer]:
+              - /url: http://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2018/zk/indexch.htm
+          - listitem [ref=e85]:
+            - generic [ref=e86]: 2018-01-05
+            - link "统计年鉴2017" [ref=e87] [cursor=pointer]:
+              - /url: http://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2017/zk/indexch.htm
+          - listitem [ref=e88]:
+            - generic [ref=e89]: 2017-03-16
+            - link "统计年鉴2016" [ref=e90] [cursor=pointer]:
+              - /url: http://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2016/zk/indexch.htm
+          - listitem [ref=e91]:
+            - generic [ref=e92]: 2016-07-05
+            - link "统计年鉴2015" [ref=e93] [cursor=pointer]:
+              - /url: http://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2015/zk/indexch.htm
+          - listitem [ref=e94]:
+            - generic [ref=e95]: 2016-07-05
+            - link "统计年鉴2014" [ref=e96] [cursor=pointer]:
+              - /url: http://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2014/zk/indexch.htm
+          - listitem [ref=e97]:
+            - generic [ref=e98]: 2016-07-05
+            - link "统计年鉴2013" [ref=e99] [cursor=pointer]:
+              - /url: http://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2013/indexch.htm
+          - listitem [ref=e100]:
+            - generic [ref=e101]: 2016-07-05
+            - link "统计年鉴2012" [ref=e102] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2016/07-05/1367995.html
+          - listitem [ref=e103]:
+            - generic [ref=e104]: 2016-07-05
+            - link "统计年鉴2011" [ref=e105] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2016/07-05/1367994.html
+          - listitem [ref=e106]:
+            - generic [ref=e107]: 2016-07-05
+            - link "统计年鉴2010" [ref=e108] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2016/07-05/1367993.html
+          - listitem [ref=e109]:
+            - generic [ref=e110]: 2016-07-05
+            - link "统计年鉴2009" [ref=e111] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2016/07-05/1367992.html
+          - listitem [ref=e112]:
+            - generic [ref=e113]: 2016-07-05
+            - link "统计年鉴2008" [ref=e114] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2016/07-05/1367991.html
+          - listitem [ref=e115]:
+            - generic [ref=e116]: 2016-07-15
+            - link "统计年鉴2007" [ref=e117] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2016/07-05/1367990.html
+          - listitem [ref=e118]:
+            - generic [ref=e119]: 2016-07-15
+            - link "统计年鉴2006" [ref=e120] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2020/05-18/1489574.html
+          - listitem [ref=e121]:
+            - generic [ref=e122]: 2006-02-10
+            - link "统计年鉴2005" [ref=e123] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2020/05-18/1489571.html
+          - listitem [ref=e124]:
+            - generic [ref=e125]: 2005-01-20
+            - link "统计年鉴2004" [ref=e126] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2020/05-18/1489569.html
+          - listitem [ref=e127]:
+            - generic [ref=e128]: 2004-01-28
+            - link "统计年鉴2003" [ref=e129] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2020/05-18/1489566.html
+          - listitem [ref=e130]:
+            - generic [ref=e131]: 2003-01-23
+            - link "统计年鉴2002" [ref=e132] [cursor=pointer]:
+              - /url: http://tjj.henan.gov.cn/2020/05-18/1489564.html
+        - generic [ref=e133]:
+          - generic [ref=e134]:
+            - generic [ref=e135] [cursor=pointer]: 首页
+            - generic [ref=e136] [cursor=pointer]: 上一页
+            - generic [ref=e137] [cursor=pointer]: 下一页
+            - generic [ref=e138] [cursor=pointer]: 尾页
+            - generic [ref=e139]: 1 / 2
+          - generic [ref=e140]:
+            - generic [ref=e141]: 转到第
+            - textbox "转到第" [ref=e142]
+            - generic [ref=e143]: 页
+            - button "GO" [ref=e144] [cursor=pointer]
+  - generic [ref=e147]:
+    - combobox [ref=e148]:
+      - option "省直有关单位" [selected]
+      - option "河南省发展和改革委员会"
+      - option "河南省教育厅"
+      - option "河南省科学技术厅"
+      - option "河南省工业和信息化厅"
+      - option "河南省民族和宗教事务委员会"
+      - option "河南省公安厅"
+      - option "河南省民政厅"
+      - option "河南省司法厅"
+      - option "河南省财政厅"
+      - option "河南省水利厅"
+      - option "河南省人力资源和社会保障厅"
+      - option "河南省农业农村厅"
+      - option "河南省交通运输厅"
+      - option "河南省住房和城乡建设厅"
+      - option "河南省生态环境厅"
+      - option "河南省自然资源厅"
+    - combobox [ref=e149]:
+      - option "国家及各省统计局" [selected]
+      - option "国家统计局"
+      - option "北京"
+      - option "天津"
+      - option "河北"
+      - option "山西"
+      - option "内蒙古"
+      - option "辽宁"
+      - option "吉林"
+      - option "黑龙江"
+      - option "上海"
+      - option "江苏"
+      - option "浙江"
+      - option "安徽"
+      - option "福建"
+      - option "江西"
+      - option "山东"
+      - option "河南"
+      - option "湖北"
+      - option "湖南"
+      - option "广东"
+      - option "广西"
+      - option "海南"
+      - option "重庆"
+      - option "四川"
+      - option "贵州"
+      - option "云南"
+      - option "西藏"
+      - option "陕西"
+      - option "甘肃"
+      - option "青海"
+    - combobox [ref=e150]:
+      - option "各省辖市统计局" [selected]
+      - option "郑州市统计局"
+      - option "开封市统计局"
+      - option "洛阳市统计局"
+      - option "平顶山市统计局"
+      - option "安阳市统计局"
+      - option "鹤壁市统计局"
+      - option "新乡市统计局"
+      - option "焦作市统计局"
+      - option "濮阳市统计局"
+      - option "三门峡市统计局"
+      - option "南阳市统计局"
+      - option "商丘市统计局"
+      - option "信阳市统计局"
+      - option "周口市统计局"
+      - option "驻马店市统计局"
+      - option "济源产城融合示范区发展改革和统计局"
+    - combobox [ref=e151]:
+      - option "各省总队" [selected]
+      - option "天津总队"
+      - option "山西总队"
+      - option "江苏总队"
+      - option "浙江总队"
+      - option "安徽总队"
+      - option "河南总队"
+      - option "湖南总队"
+      - option "广东总队"
+      - option "云南总队"
+      - option "陕西总队"
+      - option "新疆总队"
+      - option "兵团总队"
+  - generic [ref=e154]:
+    - link [ref=e157] [cursor=pointer]:
+      - /url: https://bszs.conac.cn/sitename?method=show&id=096FFCCADFEE35F5E053022819ACF794
+    - generic [ref=e159]:
+      - paragraph [ref=e160]: Copyright 2006 All rights reserved.
+      - paragraph [ref=e161]:
+        - text: 版权所有：河南省统计局
+        - link "联系我们" [ref=e162] [cursor=pointer]:
+          - /url: /zjtj/jggk/jgsz/
+        - link "技术支持：大河网" [ref=e163] [cursor=pointer]:
+          - /url: https://www.dahe.cn/
+      - paragraph [ref=e164]:
+        - text: 郑公备：41010029000223 网站标识码：4100000066
+        - link "备案号：豫ICP备18019066号-2" [ref=e165] [cursor=pointer]:
+          - /url: https://beian.miit.gov.cn/
+      - paragraph [ref=e166]: 访问量：17569088
+    - img [ref=e169] [cursor=pointer]

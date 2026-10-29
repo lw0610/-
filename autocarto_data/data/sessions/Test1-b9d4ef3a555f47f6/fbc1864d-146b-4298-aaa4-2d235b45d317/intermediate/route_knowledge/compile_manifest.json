@@ -1,0 +1,27 @@
+{
+  "counts": {
+    "callouts.csv": 2,
+    "places.csv": 67,
+    "points.csv": 67,
+    "route_paths.csv": 86,
+    "routes.csv": 17,
+    "symbol_mapping.csv": 8
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "review": {
+    "provenance_file": "review_provenance.json",
+    "review_id": "a69ffc66-a5ad-4a87-bd1c-ca673e97b9eb",
+    "revision": 1
+  },
+  "schema_version": "1.0",
+  "task_id": "t1",
+  "title": "红二十五军长征初期路线",
+  "warnings": []
+}

@@ -1,0 +1,300 @@
+- generic [active]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - link [ref=e4] [cursor=pointer]:
+        - /url: https://www.stats.gov.cn/
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "登录" [ref=e8] [cursor=pointer]:
+            - /url: "#/pc/national/login"
+          - link "注册" [ref=e9] [cursor=pointer]:
+            - /url: "#/pc/national/register"
+          - generic [ref=e10] [cursor=pointer]:
+            - generic [ref=e11]: 
+            - text: English
+        - generic [ref=e14]:
+          - img [ref=e15] [cursor=pointer]
+          - generic [ref=e16]:
+            - img [ref=e17] [cursor=pointer]
+            - generic [ref=e18]:
+              - generic [ref=e19] [cursor=pointer]: GDP
+              - generic [ref=e20] [cursor=pointer]: CPI
+              - generic [ref=e21] [cursor=pointer]: 总人口
+              - generic [ref=e22] [cursor=pointer]: 社会消费品零售总额
+              - generic [ref=e23] [cursor=pointer]: 粮食产量
+              - generic [ref=e24] [cursor=pointer]: PMI
+              - generic [ref=e25] [cursor=pointer]: PPI
+              - generic [ref=e26] [cursor=pointer]: 城镇居民人均可支配收入
+            - generic [ref=e28]:
+              - textbox "如：2012年 北京 GDP" [ref=e29]
+              - button "搜索" [ref=e31] [cursor=pointer]
+      - main [ref=e32]:
+        - menubar [ref=e34]:
+          - menuitem "首页" [ref=e35] [cursor=pointer]
+          - menuitem "月度数据" [ref=e36] [cursor=pointer]
+          - menuitem "季度数据" [ref=e37] [cursor=pointer]
+          - menuitem "年度数据" [ref=e38] [cursor=pointer]
+          - menuitem [ref=e39] [cursor=pointer]:
+            - link "普查数据" [ref=e40]:
+              - /url: http://www.stats.gov.cn/sj/pcsj/
+          - menuitem "地区数据 " [ref=e41]:
+            - generic [ref=e42] [cursor=pointer]:
+              - text: 地区数据
+              - generic [ref=e43]: 
+          - menuitem "部门数据" [ref=e44] [cursor=pointer]
+          - menuitem "国际数据 " [ref=e45]:
+            - generic [ref=e46] [cursor=pointer]:
+              - text: 国际数据
+              - generic [ref=e47]: 
+          - menuitem "出版物" [ref=e48] [cursor=pointer]
+          - menuitem "我的收藏" [ref=e49] [cursor=pointer]
+          - menuitem "帮助" [ref=e50] [cursor=pointer]
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - paragraph [ref=e54]: 首页 . 分省年度数据
+            - generic [ref=e55]:
+              - generic [ref=e56]:
+                - generic [ref=e57]:
+                  - generic [ref=e58] [cursor=pointer]: 简单查询
+                  - generic [ref=e59] [cursor=pointer]: 高级查询
+                  - generic [ref=e60] [cursor=pointer]: 经济图表
+                - generic [ref=e61]:
+                  - button " 下载" [ref=e62] [cursor=pointer]:
+                    - generic [ref=e63]: 
+                    - text: 下载
+                  - button " 打印" [ref=e64] [cursor=pointer]:
+                    - generic [ref=e65]: 
+                    - text: 打印
+              - text:  
+            - generic [ref=e67]:
+              - generic [ref=e71]:
+                - tree [ref=e72]:
+                  - treeitem " 指标" [expanded] [ref=e73]:
+                    - generic [ref=e74] [cursor=pointer]:
+                      - generic [ref=e75]: 
+                      - generic [ref=e76]: 指标
+                    - group [ref=e78]:
+                      - treeitem "  分省年度数据" [expanded] [ref=e79]:
+                        - generic [ref=e80] [cursor=pointer]:
+                          - generic [ref=e81]: 
+                          - generic "分省年度数据" [ref=e82]: 
+                        - group [ref=e86]:
+                          - treeitem "  综合" [expanded] [ref=e87]:
+                            - generic [ref=e88] [cursor=pointer]:
+                              - generic [ref=e89]: 
+                              - generic "综合" [ref=e90]: 
+                            - group [ref=e94]:
+                              - treeitem "  行政区划" [ref=e95]:
+                                - generic [ref=e96] [cursor=pointer]:
+                                  - generic [ref=e97]: 
+                                  - generic "行政区划" [ref=e98]: 
+                              - treeitem "  法人单位数" [ref=e102]:
+                                - generic [ref=e103] [cursor=pointer]:
+                                  - generic [ref=e104]: 
+                                  - generic "法人单位数" [ref=e105]: 
+                              - treeitem "  企业法人单位数" [ref=e109]:
+                                - generic [ref=e110] [cursor=pointer]:
+                                  - generic [ref=e111]: 
+                                  - generic "企业法人单位数" [ref=e112]: 
+                          - treeitem "  国民经济核算" [ref=e116]:
+                            - generic [ref=e117] [cursor=pointer]:
+                              - generic [ref=e118]: 
+                              - generic "国民经济核算" [ref=e119]: 
+                          - treeitem "  人口" [ref=e123]:
+                            - generic [ref=e124] [cursor=pointer]:
+                              - generic [ref=e125]: 
+                              - generic "人口" [ref=e126]: 
+                          - treeitem "  就业人员和工资" [ref=e130]:
+                            - generic [ref=e131] [cursor=pointer]:
+                              - generic [ref=e132]: 
+                              - generic "就业人员和工资" [ref=e133]: 
+                          - treeitem "  固定资产投资和房地产" [ref=e137]:
+                            - generic [ref=e138] [cursor=pointer]:
+                              - generic [ref=e139]: 
+                              - generic "固定资产投资和房地产" [ref=e140]: 
+                          - treeitem "  对外经济贸易" [ref=e144]:
+                            - generic [ref=e145] [cursor=pointer]:
+                              - generic [ref=e146]: 
+                              - generic "对外经济贸易" [ref=e147]: 
+                          - treeitem "  能源" [ref=e151]:
+                            - generic [ref=e152] [cursor=pointer]:
+                              - generic [ref=e153]: 
+                              - generic "能源" [ref=e154]: 
+                          - treeitem "  财政" [ref=e158]:
+                            - generic [ref=e159] [cursor=pointer]:
+                              - generic [ref=e160]: 
+                              - generic "财政" [ref=e161]: 
+                          - treeitem "  价格指数" [ref=e165]:
+                            - generic [ref=e166] [cursor=pointer]:
+                              - generic [ref=e167]: 
+                              - generic "价格指数" [ref=e168]: 
+                          - treeitem "  人民生活" [ref=e172]:
+                            - generic [ref=e173] [cursor=pointer]:
+                              - generic [ref=e174]: 
+                              - generic "人民生活" [ref=e175]: 
+                          - treeitem "  城市概况" [ref=e179]:
+                            - generic [ref=e180] [cursor=pointer]:
+                              - generic [ref=e181]: 
+                              - generic "城市概况" [ref=e182]: 
+                          - treeitem "  资源和环境" [ref=e186]:
+                            - generic [ref=e187] [cursor=pointer]:
+                              - generic [ref=e188]: 
+                              - generic "资源和环境" [ref=e189]: 
+                          - treeitem "  农业" [ref=e193]:
+                            - generic [ref=e194] [cursor=pointer]:
+                              - generic [ref=e195]: 
+                              - generic "农业" [ref=e196]: 
+                          - treeitem "  工业" [ref=e200]:
+                            - generic [ref=e201] [cursor=pointer]:
+                              - generic [ref=e202]: 
+                              - generic "工业" [ref=e203]: 
+                          - treeitem "  建筑业" [ref=e207]:
+                            - generic [ref=e208] [cursor=pointer]:
+                              - generic [ref=e209]: 
+                              - generic "建筑业" [ref=e210]: 
+                          - treeitem "  运输和邮电" [ref=e214]:
+                            - generic [ref=e215] [cursor=pointer]:
+                              - generic [ref=e216]: 
+                              - generic "运输和邮电" [ref=e217]: 
+                          - treeitem "  社会消费品零售总额" [ref=e221]:
+                            - generic [ref=e222] [cursor=pointer]:
+                              - generic [ref=e223]: 
+                              - generic "社会消费品零售总额" [ref=e224]: 
+                          - treeitem "  批发和零售业" [ref=e228]:
+                            - generic [ref=e229] [cursor=pointer]:
+                              - generic [ref=e230]: 
+                              - generic "批发和零售业" [ref=e231]: 
+                          - treeitem "  住宿和餐饮业" [ref=e235]:
+                            - generic [ref=e236] [cursor=pointer]:
+                              - generic [ref=e237]: 
+                              - generic "住宿和餐饮业" [ref=e238]: 
+                          - treeitem "  旅游业" [ref=e242]:
+                            - generic [ref=e243] [cursor=pointer]:
+                              - generic [ref=e244]: 
+                              - generic "旅游业" [ref=e245]: 
+                          - treeitem "  金融业" [ref=e249]:
+                            - generic [ref=e250] [cursor=pointer]:
+                              - generic [ref=e251]: 
+                              - generic "金融业" [ref=e252]: 
+                          - treeitem "  教育" [ref=e256]:
+                            - generic [ref=e257] [cursor=pointer]:
+                              - generic [ref=e258]: 
+                              - generic "教育" [ref=e259]: 
+                          - treeitem "  科技" [ref=e263]:
+                            - generic [ref=e264] [cursor=pointer]:
+                              - generic [ref=e265]: 
+                              - generic "科技" [ref=e266]: 
+                          - treeitem "  卫生" [ref=e270]:
+                            - generic [ref=e271] [cursor=pointer]:
+                              - generic [ref=e272]: 
+                              - generic "卫生" [ref=e273]: 
+                          - treeitem "  社会服务" [ref=e277]:
+                            - generic [ref=e278] [cursor=pointer]:
+                              - generic [ref=e279]: 
+                              - generic "社会服务" [ref=e280]: 
+                          - treeitem "  文化" [ref=e284]:
+                            - generic [ref=e285] [cursor=pointer]:
+                              - generic [ref=e286]: 
+                              - generic "文化" [ref=e287]: 
+                          - treeitem "  体育" [ref=e291]:
+                            - generic [ref=e292] [cursor=pointer]:
+                              - generic [ref=e293]: 
+                              - generic "体育" [ref=e294]: 
+                          - treeitem "  公共管理、社会保障及其他" [ref=e298]:
+                            - generic [ref=e299] [cursor=pointer]:
+                              - generic [ref=e300]: 
+                              - generic "公共管理、社会保障及其他" [ref=e301]: 
+                - tree [ref=e305]:
+                  - treeitem " 地区" [ref=e306]:
+                    - generic [ref=e307] [cursor=pointer]:
+                      - generic [ref=e308]: 
+                      - generic [ref=e309]: 地区
+              - generic [ref=e311]: ⋮
+              - generic [ref=e313]:
+                - generic [ref=e314]:
+                  - generic [ref=e315]:
+                    - generic [ref=e317]:
+                      - button "" [ref=e318] [cursor=pointer]
+                      - button "" [ref=e320] [cursor=pointer]
+                      - button "" [ref=e322] [cursor=pointer]
+                      - button "" [ref=e324] [cursor=pointer]
+                    - generic [ref=e326]:
+                      - generic [ref=e327] [cursor=pointer]:
+                        - generic [ref=e328]: 
+                        - generic [ref=e329]: 添加收藏
+                      - generic [ref=e330]:
+                        - button " 数据管理" [ref=e331] [cursor=pointer]:
+                          - generic [ref=e332]: 
+                          - generic [ref=e333]: 数据管理
+                        - text: 
+                      - button " 报表管理" [ref=e335] [cursor=pointer]:
+                        - generic [ref=e336]: 
+                        - generic [ref=e337]: 报表管理
+                  - generic [ref=e338]:
+                    - generic [ref=e340]:
+                      - generic [ref=e342]:
+                        - text: 地区：
+                        - generic [ref=e344]:
+                          - textbox "请选择" [ref=e345] [cursor=pointer]
+                          - generic: 
+                      - generic [ref=e348]:
+                        - text: 时间：
+                        - generic [ref=e350]:
+                          - textbox "请选择" [ref=e351] [cursor=pointer]: 最近5年
+                          - generic: 
+                    - generic [ref=e354]:
+                      - generic [ref=e355]:
+                        - generic [ref=e356]:
+                          - table:
+                            - rowgroup:
+                              - row
+                        - generic [ref=e357]:
+                          - table:
+                            - rowgroup
+                          - generic [ref=e360]:
+                            - generic [ref=e361]: 
+                            - generic [ref=e362]: 暂无数据
+                      - generic [ref=e364]:
+                        - generic [ref=e365]: 
+                        - paragraph [ref=e366]: 加载中
+                - text:   
+            - text:   
+          - generic [ref=e372] [cursor=pointer]:
+            - paragraph [ref=e375]: 国家统计局
+            - paragraph [ref=e378]: 官方微博
+            - paragraph [ref=e381]: 官方微信
+            - paragraph [ref=e384]: 数据中国
+            - paragraph [ref=e387]: 帮助
+            - paragraph [ref=e390]: 返回顶部
+      - generic [ref=e391]:
+        - generic [ref=e392]:
+          - generic [ref=e393]: 相关链接
+          - generic [ref=e394] [cursor=pointer]:
+            - text: 统计法规
+            - generic [ref=e395]: 
+          - generic [ref=e396] [cursor=pointer]:
+            - text: 标准制度
+            - generic [ref=e397]: 
+          - generic [ref=e398] [cursor=pointer]:
+            - text: 统计数据生产过程
+            - generic [ref=e399]: 
+        - generic [ref=e401]:
+          - generic [ref=e402]:
+            - img [ref=e403] [cursor=pointer]
+            - generic [ref=e404]:
+              - paragraph [ref=e405]: 版权所有：国家统计局
+              - paragraph [ref=e406]: 咨询电话：010-68576320 周一至周五(上午8:30-11:30,下午1:30-4:30)
+              - paragraph [ref=e407]: 地址：北京市西城区月坛南街57号（100826）
+              - generic [ref=e408]:
+                - link "京ICP备05034670号-2" [ref=e409] [cursor=pointer]:
+                  - /url: https://beian.miit.gov.cn/#/Integrated/index
+                - link "京公网安备 11040102700142号" [ref=e410] [cursor=pointer]:
+                  - /url: http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11040102700142
+              - paragraph [ref=e413]: 网站标识码 bm36000002
+          - img [ref=e415] [cursor=pointer]
+    - generic [ref=e417]:
+      - generic [ref=e418]:
+        - generic [ref=e419]: 
+        - generic [ref=e420]: 为了获得更好的用户体验，请使用火狐、谷歌、360浏览器极速模式或IE9及以上版本的浏览器。
+      - generic [ref=e421] [cursor=pointer]: 
+  - textbox

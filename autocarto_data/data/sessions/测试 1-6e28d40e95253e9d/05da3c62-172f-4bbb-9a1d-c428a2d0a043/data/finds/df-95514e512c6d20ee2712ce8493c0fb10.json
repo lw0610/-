@@ -1,0 +1,274 @@
+{
+  "request": {
+    "need": {
+      "geometry": "polygon",
+      "name": "河流面",
+      "what": {
+        "category": "水域面",
+        "description": "面状河流与水域"
+      }
+    },
+    "guide": "marching-route",
+    "include_fallback": true
+  },
+  "result": {
+    "state": "acquirable",
+    "next_action": "plan_acquire",
+    "provided_matches": [],
+    "provided_unmatched": [
+      {
+        "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+        "reason": "无法在本地核验此数据格式：.txt"
+      },
+      {
+        "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+        "reason": "无法在本地核验此数据格式：.txt"
+      }
+    ],
+    "find_id": "df-95514e512c6d20ee2712ce8493c0fb10",
+    "created_at": "2026-10-28T17:16:45.528538Z",
+    "expires_at": "2026-10-28T17:46:45.528538Z",
+    "resolved": {
+      "category": "hydro.water_polygon",
+      "extent": {
+        "source": "",
+        "pending": true
+      },
+      "scale_denominator": 0
+    },
+    "rows": [
+      {
+        "row": "河流面",
+        "category": "hydro.water_polygon",
+        "recommended": "c-4dd44984994b08e2",
+        "candidates": [
+          {
+            "id": "c-4dd44984994b08e2",
+            "kind": "open_download",
+            "name": "Natural Earth 1:1000 万",
+            "source_id": "source.naturalearth.10m",
+            "available": true,
+            "reasons": [
+              "来源提供所需类别并满足目录筛选条件"
+            ],
+            "notes": [
+              "细节适用于小比例尺概览；中文名称以实际文件和字段核验结果为准",
+              "Public Domain",
+              "范围待定，执行前须补齐"
+            ],
+            "handbook": "全球及大区域的小比例尺河流、湖泊、地名；全球；数据经过概化，不能用于高精度分析",
+            "tier": 9,
+            "network": true,
+            "choice": {
+              "source_id": "source.naturalearth.10m",
+              "name": "Natural Earth 1:1000 万",
+              "tier": 5,
+              "provide": {
+                "category": "hydro.water_polygon",
+                "fields": {
+                  "name": [
+                    "name_zh",
+                    "name"
+                  ]
+                },
+                "url": "https://naturalearth.s3.amazonaws.com/10m_physical/ne_10m_lakes.zip"
+              },
+              "cache_hit": false,
+              "license": "Public Domain",
+              "attribution": "Made with Natural Earth"
+            }
+          },
+          {
+            "id": "c-62df764a495c65cc",
+            "kind": "open_download",
+            "name": "OpenStreetMap 中国区域提取包",
+            "source_id": "source.osm.geofabrik-china",
+            "available": true,
+            "reasons": [
+              "来源提供所需类别并满足目录筛选条件"
+            ],
+            "notes": [
+              "2026-10-25 官方目录约 1.5 GB；最新全国 Shapefile 包不可用，使用 PBF；实际体量以响应为准",
+              "ODbL-1.0",
+              "范围待定，执行前须补齐"
+            ],
+            "handbook": "中国较大范围的道路、铁路、水系、地名；中国区域提取包；下载量大；须署名 © OpenStreetMap contributors，并遵守 ODbL",
+            "tier": 9,
+            "network": true,
+            "choice": {
+              "source_id": "source.osm.geofabrik-china",
+              "name": "OpenStreetMap 中国区域提取包",
+              "tier": 5,
+              "provide": {
+                "category": "hydro.water_polygon",
+                "fields": {
+                  "name": [
+                    "name:zh",
+                    "name"
+                  ]
+                },
+                "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+                "layer": "multipolygons",
+                "filter": "natural = 'water' OR waterway = 'riverbank'"
+              },
+              "cache_hit": false,
+              "estimated_mb": 1536,
+              "license": "ODbL-1.0",
+              "attribution": "© OpenStreetMap contributors, Geofabrik"
+            }
+          },
+          {
+            "id": "c-5ffe11cb218542ee",
+            "kind": "online_query",
+            "name": "OpenStreetMap 在线查询",
+            "source_id": "source.osm.overpass",
+            "available": true,
+            "reasons": [
+              "来源提供所需类别并满足目录筛选条件"
+            ],
+            "notes": [
+              "ODbL-1.0",
+              "范围待定，执行前须补齐"
+            ],
+            "handbook": "区域道路、铁路、水系、站点、地名、建筑；全球；国内完整度因地区而异；公共节点有限流；须署名 © OpenStreetMap contributors",
+            "tier": 10,
+            "network": true,
+            "choice": {
+              "source_id": "source.osm.overpass",
+              "name": "OpenStreetMap 在线查询",
+              "tier": 6,
+              "provide": {
+                "category": "hydro.water_polygon",
+                "tags": [
+                  "natural=water",
+                  "waterway=riverbank"
+                ],
+                "types": "way,relation",
+                "fields": {
+                  "name": [
+                    "name:zh",
+                    "name"
+                  ]
+                }
+              },
+              "cache_hit": false,
+              "license": "ODbL-1.0",
+              "attribution": "© OpenStreetMap contributors"
+            }
+          }
+        ],
+        "excluded": [
+          {
+            "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+            "reason": "无法在本地核验此数据格式：.txt"
+          },
+          {
+            "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+            "reason": "无法在本地核验此数据格式：.txt"
+          },
+          {
+            "source_id": "source.portal.webmap-1m",
+            "reason": "该来源尚未完成验证"
+          }
+        ]
+      }
+    ],
+    "fallback": [],
+    "diagnostics": []
+  },
+  "items": {
+    "河流面": {
+      "key": "河流面/河流面",
+      "requirement": "河流面",
+      "entry": "河流面",
+      "category": "hydro.water_polygon",
+      "params": {},
+      "fields": null,
+      "extent": {
+        "source": "",
+        "pending": true
+      },
+      "scale_denominator": 0,
+      "mode": "auto",
+      "chosen": {
+        "source_id": "source.naturalearth.10m",
+        "name": "Natural Earth 1:1000 万",
+        "tier": 5,
+        "provide": {
+          "category": "hydro.water_polygon",
+          "fields": {
+            "name": [
+              "name_zh",
+              "name"
+            ]
+          },
+          "url": "https://naturalearth.s3.amazonaws.com/10m_physical/ne_10m_lakes.zip"
+        },
+        "cache_hit": false,
+        "license": "Public Domain",
+        "attribution": "Made with Natural Earth"
+      },
+      "alternatives": [
+        {
+          "source_id": "source.osm.geofabrik-china",
+          "name": "OpenStreetMap 中国区域提取包",
+          "tier": 5,
+          "provide": {
+            "category": "hydro.water_polygon",
+            "fields": {
+              "name": [
+                "name:zh",
+                "name"
+              ]
+            },
+            "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+            "layer": "multipolygons",
+            "filter": "natural = 'water' OR waterway = 'riverbank'"
+          },
+          "cache_hit": false,
+          "estimated_mb": 1536,
+          "license": "ODbL-1.0",
+          "attribution": "© OpenStreetMap contributors, Geofabrik"
+        },
+        {
+          "source_id": "source.osm.overpass",
+          "name": "OpenStreetMap 在线查询",
+          "tier": 6,
+          "provide": {
+            "category": "hydro.water_polygon",
+            "tags": [
+              "natural=water",
+              "waterway=riverbank"
+            ],
+            "types": "way,relation",
+            "fields": {
+              "name": [
+                "name:zh",
+                "name"
+              ]
+            }
+          },
+          "cache_hit": false,
+          "license": "ODbL-1.0",
+          "attribution": "© OpenStreetMap contributors"
+        }
+      ],
+      "excluded": [
+        {
+          "source_id": "source.portal.webmap-1m",
+          "name": "全国地理信息资源目录服务系统 1:100 万公众版",
+          "reasons": [
+            "该来源尚未完成验证"
+          ]
+        }
+      ],
+      "available": true,
+      "reasons": [],
+      "notes": null,
+      "input": "",
+      "required": true,
+      "acquirable": true,
+      "geometry": "polygon"
+    }
+  }
+}

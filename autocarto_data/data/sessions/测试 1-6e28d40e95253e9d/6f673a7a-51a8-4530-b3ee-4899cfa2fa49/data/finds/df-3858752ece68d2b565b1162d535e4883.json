@@ -1,0 +1,119 @@
+{
+  "request": {
+    "need": {
+      "geometry": "table",
+      "name": "河南省各地级市2020年第七次人口普查常住人口",
+      "what": {
+        "category": "stats.annual_indicator"
+      },
+      "extent": "河南省"
+    },
+    "guide": "statistical-choropleth",
+    "include_fallback": true
+  },
+  "result": {
+    "state": "exploration_required",
+    "next_action": "plan_acquire",
+    "provided_matches": [],
+    "provided_unmatched": [],
+    "find_id": "df-3858752ece68d2b565b1162d535e4883",
+    "created_at": "2026-10-28T11:58:19.33462Z",
+    "expires_at": "2026-10-28T12:28:19.33462Z",
+    "resolved": {
+      "category": "stats.annual_indicator",
+      "extent": {
+        "bbox": [
+          110.353676,
+          31.384459,
+          116.647011,
+          36.374184
+        ],
+        "source": "河南省",
+        "region": "河南省",
+        "pending": false
+      },
+      "scale_denominator": 1000000
+    },
+    "rows": [
+      {
+        "row": "河南省各地级市2020年第七次人口普查常住人口",
+        "category": "stats.annual_indicator",
+        "candidates": [],
+        "excluded": [
+          {
+            "source_id": "source.portal.nbs",
+            "reason": "该来源尚未完成验证"
+          }
+        ]
+      }
+    ],
+    "fallback": [
+      {
+        "id": "c-909caf6ff43aedca",
+        "kind": "portal",
+        "name": "国家统计局国家数据",
+        "source_id": "source.portal.nbs",
+        "available": true,
+        "reasons": [
+          "没有可用的确定性来源，可由数据获取智能体探索并登记真实数据"
+        ],
+        "notes": [
+          "可能需要验证码；门户自动获取尚未启用"
+        ],
+        "handbook": "中国人口、经济等官方统计表；中国，依统计发布范围；门户兜底；不得绕过登录或验证码，不得用模型补造数值",
+        "tier": 11,
+        "network": true
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "DATA_NO_CANDIDATE",
+        "message": "没有可用数据来源",
+        "row": "河南省各地级市2020年第七次人口普查常住人口"
+      }
+    ]
+  },
+  "items": {
+    "河南省各地级市2020年第七次人口普查常住人口": {
+      "key": "河南省各地级市2020年第七次人口普查常住人口/河南省各地级市2020年第七次人口普查常住人口",
+      "requirement": "河南省各地级市2020年第七次人口普查常住人口",
+      "entry": "河南省各地级市2020年第七次人口普查常住人口",
+      "category": "stats.annual_indicator",
+      "params": {},
+      "fields": null,
+      "extent": {
+        "bbox": [
+          110.353676,
+          31.384459,
+          116.647011,
+          36.374184
+        ],
+        "source": "河南省",
+        "region": "河南省",
+        "pending": false
+      },
+      "scale_denominator": 1000000,
+      "mode": "auto",
+      "alternatives": [],
+      "excluded": [
+        {
+          "source_id": "source.portal.nbs",
+          "name": "国家统计局国家数据",
+          "reasons": [
+            "该来源尚未完成验证"
+          ]
+        }
+      ],
+      "available": false,
+      "reasons": [
+        "该来源尚未完成验证"
+      ],
+      "notes": null,
+      "input": "",
+      "required": true,
+      "acquirable": true,
+      "geometry": "table",
+      "extent_expression": "河南省"
+    }
+  }
+}

@@ -1,0 +1,224 @@
+{
+  "request": {
+    "need": {
+      "geometry": "line",
+      "name": "国道",
+      "what": {
+        "category": "国道",
+        "description": "国道"
+      },
+      "extent": "鄂豫陕甘地区"
+    },
+    "include_fallback": true
+  },
+  "result": {
+    "state": "acquirable",
+    "next_action": "plan_acquire",
+    "provided_matches": [],
+    "provided_unmatched": [
+      {
+        "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+        "reason": "无法在本地核验此数据格式：.txt"
+      },
+      {
+        "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+        "reason": "无法在本地核验此数据格式：.txt"
+      }
+    ],
+    "find_id": "df-8477f4022acdfce4bac4b93391de3a7d",
+    "created_at": "2026-10-28T17:54:50.107892Z",
+    "expires_at": "2026-10-28T18:24:50.107892Z",
+    "resolved": {
+      "category": "transport.road.national",
+      "extent": {
+        "source": "鄂豫陕甘地区",
+        "pending": true
+      },
+      "scale_denominator": 0
+    },
+    "rows": [
+      {
+        "row": "国道",
+        "category": "transport.road.national",
+        "recommended": "c-cdf59f21dc6eb06d",
+        "candidates": [
+          {
+            "id": "c-cdf59f21dc6eb06d",
+            "kind": "open_download",
+            "name": "OpenStreetMap 中国区域提取包",
+            "source_id": "source.osm.geofabrik-china",
+            "available": true,
+            "reasons": [
+              "来源提供所需类别并满足目录筛选条件"
+            ],
+            "notes": [
+              "2026-10-25 官方目录约 1.5 GB；最新全国 Shapefile 包不可用，使用 PBF；实际体量以响应为准",
+              "ODbL-1.0",
+              "范围待定，执行前须补齐"
+            ],
+            "handbook": "中国较大范围的道路、铁路、水系、地名；中国区域提取包；下载量大；须署名 © OpenStreetMap contributors，并遵守 ODbL",
+            "tier": 9,
+            "network": true,
+            "choice": {
+              "source_id": "source.osm.geofabrik-china",
+              "name": "OpenStreetMap 中国区域提取包",
+              "tier": 5,
+              "provide": {
+                "category": "transport.road.national",
+                "fields": {
+                  "name": [
+                    "name:zh",
+                    "name"
+                  ],
+                  "ref": [
+                    "ref"
+                  ]
+                },
+                "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+                "layer": "lines",
+                "filter": "highway IN ('trunk','primary','secondary') AND regexp_match(ref, '(^|;)G[0-9]{3}(;|$)')"
+              },
+              "cache_hit": false,
+              "estimated_mb": 1536,
+              "license": "ODbL-1.0",
+              "attribution": "© OpenStreetMap contributors, Geofabrik"
+            }
+          },
+          {
+            "id": "c-3a838cb1e6b3a13b",
+            "kind": "online_query",
+            "name": "OpenStreetMap 在线查询",
+            "source_id": "source.osm.overpass",
+            "available": true,
+            "reasons": [
+              "来源提供所需类别并满足目录筛选条件"
+            ],
+            "notes": [
+              "ODbL-1.0",
+              "范围待定，执行前须补齐"
+            ],
+            "handbook": "区域道路、铁路、水系、站点、地名、建筑；全球；国内完整度因地区而异；公共节点有限流；须署名 © OpenStreetMap contributors",
+            "tier": 10,
+            "network": true,
+            "choice": {
+              "source_id": "source.osm.overpass",
+              "name": "OpenStreetMap 在线查询",
+              "tier": 6,
+              "provide": {
+                "category": "transport.road.national",
+                "tags": [
+                  "[\"highway\"~\"^(trunk|primary|secondary)$\"][\"ref\"~\"(^|;)G[0-9]{3}(;|$)\"]"
+                ],
+                "types": "way",
+                "fields": {
+                  "name": [
+                    "name:zh",
+                    "name"
+                  ],
+                  "ref": [
+                    "ref"
+                  ]
+                }
+              },
+              "cache_hit": false,
+              "license": "ODbL-1.0",
+              "attribution": "© OpenStreetMap contributors"
+            }
+          }
+        ],
+        "excluded": [
+          {
+            "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+            "reason": "无法在本地核验此数据格式：.txt"
+          },
+          {
+            "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+            "reason": "无法在本地核验此数据格式：.txt"
+          }
+        ]
+      }
+    ],
+    "fallback": [],
+    "diagnostics": [
+      {
+        "code": "DATA_EXTENT_UNRESOLVED",
+        "message": "图层范围无法在本地解析：鄂豫陕甘地区"
+      }
+    ]
+  },
+  "items": {
+    "国道": {
+      "key": "国道/国道",
+      "requirement": "国道",
+      "entry": "国道",
+      "category": "transport.road.national",
+      "params": {},
+      "fields": null,
+      "extent": {
+        "source": "鄂豫陕甘地区",
+        "pending": true
+      },
+      "scale_denominator": 0,
+      "mode": "auto",
+      "chosen": {
+        "source_id": "source.osm.geofabrik-china",
+        "name": "OpenStreetMap 中国区域提取包",
+        "tier": 5,
+        "provide": {
+          "category": "transport.road.national",
+          "fields": {
+            "name": [
+              "name:zh",
+              "name"
+            ],
+            "ref": [
+              "ref"
+            ]
+          },
+          "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
+          "layer": "lines",
+          "filter": "highway IN ('trunk','primary','secondary') AND regexp_match(ref, '(^|;)G[0-9]{3}(;|$)')"
+        },
+        "cache_hit": false,
+        "estimated_mb": 1536,
+        "license": "ODbL-1.0",
+        "attribution": "© OpenStreetMap contributors, Geofabrik"
+      },
+      "alternatives": [
+        {
+          "source_id": "source.osm.overpass",
+          "name": "OpenStreetMap 在线查询",
+          "tier": 6,
+          "provide": {
+            "category": "transport.road.national",
+            "tags": [
+              "[\"highway\"~\"^(trunk|primary|secondary)$\"][\"ref\"~\"(^|;)G[0-9]{3}(;|$)\"]"
+            ],
+            "types": "way",
+            "fields": {
+              "name": [
+                "name:zh",
+                "name"
+              ],
+              "ref": [
+                "ref"
+              ]
+            }
+          },
+          "cache_hit": false,
+          "license": "ODbL-1.0",
+          "attribution": "© OpenStreetMap contributors"
+        }
+      ],
+      "excluded": [],
+      "available": true,
+      "reasons": [],
+      "notes": null,
+      "input": "",
+      "required": true,
+      "acquirable": true,
+      "geometry": "line",
+      "extent_expression": "鄂豫陕甘地区"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_1341f9869d4bb151",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/a49afff1-1c5c-4fb7-a0c6-af1c44c9217a/flows/fr-20261028-234611-4f55086bba24/interrupt.json",
+      "name": "interrupt.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:46:28.744862708Z",
+      "modified_at": "2026-10-28T15:46:28.744862708Z",
+      "size": 110922,
+      "exists": true
+    },
+    {
+      "id": "f_3bfc3ad2fdeb6d29",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/a49afff1-1c5c-4fb7-a0c6-af1c44c9217a/flows/fr-20261028-234611-4f55086bba24/run.json",
+      "name": "run.json",
+      "kind": "run",
+      "group": "flow",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T15:46:11.794045541Z",
+      "modified_at": "2026-10-28T15:46:39.355039832Z",
+      "size": 55855,
+      "exists": true
+    }
+  ]
+}

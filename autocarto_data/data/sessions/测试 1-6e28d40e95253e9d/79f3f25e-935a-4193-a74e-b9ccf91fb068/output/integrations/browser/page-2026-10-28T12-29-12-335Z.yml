@@ -1,0 +1,56 @@
+- generic [active] [ref=f1e1]:
+  - iframe [ref=f1e2]:
+    - table [ref=f2e2]:
+      - rowgroup [ref=f2e3]:
+        - row [ref=f2e4]:
+          - cell [ref=f2e5]
+  - generic [ref=f1e3]:
+    - iframe [ref=f1e4]:
+      - table [ref=f3e2]:
+        - rowgroup [ref=f3e3]:
+          - row [ref=f3e4]:
+            - cell [ref=f3e5]:
+              - paragraph [ref=f3e6]:
+                - link [ref=f3e7] [cursor=pointer]:
+                  - /url: indexce.htm
+          - row [ref=f3e9]:
+            - cell [ref=f3e10]:
+              - link "版权声明" [ref=f3e11] [cursor=pointer]:
+                - /url: zk/notepyrightc.htm
+              - link "编辑说明" [ref=f3e12] [cursor=pointer]:
+                - /url: zk/html/note.htm
+              - link "编委会和编辑工作人员" [ref=f3e13] [cursor=pointer]:
+                - /url: zk/html/board.jpg
+              - link "最新书目" [ref=f3e14] [cursor=pointer]:
+                - /url: zk/html/sm.jpg
+              - link "在线销售" [ref=f3e15] [cursor=pointer]:
+                - /url: http://www.zgtjcbs.com
+          - row [ref=f3e16]:
+            - columnheader [ref=f3e17]:
+              - separator [ref=f3e18]
+              - link [ref=f3e20] [cursor=pointer]:
+                - /url: zk/indexch.htm
+              - list [ref=f3e22]:
+                - link [ref=f3e23] [cursor=pointer]:
+                  - /url: zk/html/ge0a.jpg
+                  - listitem [ref=f3e24]: 上 册
+                - link [ref=f3e25] [cursor=pointer]:
+                  - /url: zk/html/ge0b.jpg
+                  - listitem [ref=f3e26]: 中 册
+                - link [ref=f3e27] [cursor=pointer]:
+                  - /url: zk/html/ge0c.jpg
+                  - listitem [ref=f3e28]: 下 册
+              - separator [ref=f3e29]
+              - paragraph [ref=f3e30]
+              - separator [ref=f3e32]
+              - paragraph [ref=f3e33]
+              - paragraph [ref=f3e34]
+              - paragraph [ref=f3e35]
+              - paragraph [ref=f3e36]
+              - paragraph [ref=f3e37]
+    - iframe [ref=f1e5]:
+      - generic [ref=f4e1]:
+        - paragraph [ref=f4e2]
+        - generic:
+          - paragraph
+  - iframe [ref=f1e6]

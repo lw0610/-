@@ -1,0 +1,161 @@
+{
+  "request": {
+    "need": {
+      "geometry": "polygon",
+      "name": "省域面",
+      "what": {
+        "category": "行政区划面",
+        "description": "省级行政区面，覆盖红二十五军长征路线范围"
+      },
+      "params": {
+        "level": "省"
+      }
+    },
+    "guide": "marching-route",
+    "include_fallback": true
+  },
+  "result": {
+    "state": "acquirable",
+    "next_action": "plan_acquire",
+    "provided_matches": [],
+    "provided_unmatched": [
+      {
+        "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+        "reason": "无法在本地核验此数据格式：.txt"
+      },
+      {
+        "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+        "reason": "无法在本地核验此数据格式：.txt"
+      }
+    ],
+    "find_id": "df-8ce8539e802bcc0d8c4155cb34cac2f6",
+    "created_at": "2026-10-28T18:34:52.274481Z",
+    "expires_at": "2026-10-28T19:04:52.274481Z",
+    "resolved": {
+      "category": "admin.division",
+      "extent": {
+        "source": "",
+        "pending": true
+      },
+      "scale_denominator": 0
+    },
+    "rows": [
+      {
+        "row": "省域面",
+        "category": "admin.division",
+        "recommended": "c-cc5f3692d32c93a2",
+        "candidates": [
+          {
+            "id": "c-cc5f3692d32c93a2",
+            "kind": "builtin_offline",
+            "name": "中国行政区边界（内置）",
+            "source_id": "source.builtin.cn-admin",
+            "available": true,
+            "reasons": [
+              "来源提供所需类别并满足目录筛选条件"
+            ],
+            "notes": [
+              "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实",
+              "上游声明来自天地图，数据许可待核实",
+              "范围待定，执行前须补齐"
+            ],
+            "handbook": "中国省市县行政区面及派生边界线；中国省、市、县；上游许可及完整疆域表达仍须核实；公开地图依法送审",
+            "tier": 7,
+            "network": false,
+            "choice": {
+              "source_id": "source.builtin.cn-admin",
+              "name": "中国行政区边界（内置）",
+              "tier": 3,
+              "provide": {
+                "category": "admin.division",
+                "fields": {
+                  "code": [
+                    "adcode"
+                  ],
+                  "name": [
+                    "name"
+                  ]
+                },
+                "tool": "admin_boundary_extract"
+              },
+              "cache_hit": false,
+              "license": "上游声明来自天地图，数据许可待核实",
+              "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+            }
+          }
+        ],
+        "excluded": [
+          {
+            "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+            "reason": "无法在本地核验此数据格式：.txt"
+          },
+          {
+            "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+            "reason": "无法在本地核验此数据格式：.txt"
+          },
+          {
+            "source_id": "source.portal.webmap-1m",
+            "reason": "该来源尚未完成验证"
+          }
+        ]
+      }
+    ],
+    "fallback": [],
+    "diagnostics": []
+  },
+  "items": {
+    "省域面": {
+      "key": "省域面/省域面",
+      "requirement": "省域面",
+      "entry": "省域面",
+      "category": "admin.division",
+      "params": {
+        "level": "省"
+      },
+      "fields": null,
+      "extent": {
+        "source": "",
+        "pending": true
+      },
+      "scale_denominator": 0,
+      "mode": "auto",
+      "chosen": {
+        "source_id": "source.builtin.cn-admin",
+        "name": "中国行政区边界（内置）",
+        "tier": 3,
+        "provide": {
+          "category": "admin.division",
+          "fields": {
+            "code": [
+              "adcode"
+            ],
+            "name": [
+              "name"
+            ]
+          },
+          "tool": "admin_boundary_extract"
+        },
+        "cache_hit": false,
+        "license": "上游声明来自天地图，数据许可待核实",
+        "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+      },
+      "alternatives": [],
+      "excluded": [
+        {
+          "source_id": "source.portal.webmap-1m",
+          "name": "全国地理信息资源目录服务系统 1:100 万公众版",
+          "reasons": [
+            "该来源尚未完成验证"
+          ]
+        }
+      ],
+      "available": true,
+      "reasons": [],
+      "notes": null,
+      "input": "",
+      "required": true,
+      "acquirable": true,
+      "geometry": "polygon"
+    }
+  }
+}

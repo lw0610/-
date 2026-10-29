@@ -1,0 +1,204 @@
+{
+  "request": {
+    "need": {
+      "geometry": "point",
+      "name": "县级城市驻地",
+      "what": {
+        "category": "县级驻地",
+        "description": "县级城市驻地点"
+      },
+      "extent": "鄂豫陕甘地区"
+    },
+    "include_fallback": true
+  },
+  "result": {
+    "state": "acquirable",
+    "next_action": "plan_acquire",
+    "provided_matches": [],
+    "provided_unmatched": [
+      {
+        "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+        "reason": "无法在本地核验此数据格式：.txt"
+      },
+      {
+        "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+        "reason": "无法在本地核验此数据格式：.txt"
+      }
+    ],
+    "find_id": "df-cd48313f030a1b841161a1d62e3af5e3",
+    "created_at": "2026-10-28T17:54:50.112606Z",
+    "expires_at": "2026-10-28T18:24:50.112606Z",
+    "resolved": {
+      "category": "settlement.county_seat",
+      "extent": {
+        "source": "鄂豫陕甘地区",
+        "pending": true
+      },
+      "scale_denominator": 0
+    },
+    "rows": [
+      {
+        "row": "县级城市驻地",
+        "category": "settlement.county_seat",
+        "recommended": "c-c27b3f77872326a6",
+        "candidates": [
+          {
+            "id": "c-c27b3f77872326a6",
+            "kind": "builtin_offline",
+            "name": "中国行政区边界（内置）",
+            "source_id": "source.builtin.cn-admin",
+            "available": true,
+            "reasons": [
+              "来源提供所需类别并满足目录筛选条件"
+            ],
+            "notes": [
+              "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实",
+              "上游声明来自天地图，数据许可待核实",
+              "范围待定，执行前须补齐"
+            ],
+            "handbook": "中国省市县行政区面及派生边界线；中国省、市、县；上游许可及完整疆域表达仍须核实；公开地图依法送审",
+            "tier": 7,
+            "network": false,
+            "choice": {
+              "source_id": "source.builtin.cn-admin",
+              "name": "中国行政区边界（内置）",
+              "tier": 3,
+              "derived_from": "admin.division",
+              "derivation": {
+                "from": "admin.division",
+                "method": "point_on_surface",
+                "params": {
+                  "level": "县"
+                },
+                "quality": "approximate",
+                "note": "代表点不是驻地实际位置"
+              },
+              "provide": {
+                "category": "admin.division",
+                "fields": {
+                  "code": [
+                    "adcode"
+                  ],
+                  "name": [
+                    "name"
+                  ]
+                },
+                "tool": "admin_boundary_extract"
+              },
+              "cache_hit": false,
+              "license": "上游声明来自天地图，数据许可待核实",
+              "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+            }
+          }
+        ],
+        "excluded": [
+          {
+            "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+            "reason": "无法在本地核验此数据格式：.txt"
+          },
+          {
+            "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+            "reason": "无法在本地核验此数据格式：.txt"
+          },
+          {
+            "source_id": "source.portal.webmap-1m",
+            "reason": "该来源尚未完成验证"
+          },
+          {
+            "source_id": "source.portal.webmap-1m",
+            "reason": "该来源尚未完成验证"
+          },
+          {
+            "source_id": "source.tianditu",
+            "reason": "该来源尚未完成验证"
+          }
+        ]
+      }
+    ],
+    "fallback": [],
+    "diagnostics": [
+      {
+        "code": "DATA_EXTENT_UNRESOLVED",
+        "message": "图层范围无法在本地解析：鄂豫陕甘地区"
+      }
+    ]
+  },
+  "items": {
+    "县级城市驻地": {
+      "key": "县级城市驻地/县级城市驻地",
+      "requirement": "县级城市驻地",
+      "entry": "县级城市驻地",
+      "category": "settlement.county_seat",
+      "params": {},
+      "fields": null,
+      "extent": {
+        "source": "鄂豫陕甘地区",
+        "pending": true
+      },
+      "scale_denominator": 0,
+      "mode": "auto",
+      "chosen": {
+        "source_id": "source.builtin.cn-admin",
+        "name": "中国行政区边界（内置）",
+        "tier": 3,
+        "derived_from": "admin.division",
+        "derivation": {
+          "from": "admin.division",
+          "method": "point_on_surface",
+          "params": {
+            "level": "县"
+          },
+          "quality": "approximate",
+          "note": "代表点不是驻地实际位置"
+        },
+        "provide": {
+          "category": "admin.division",
+          "fields": {
+            "code": [
+              "adcode"
+            ],
+            "name": [
+              "name"
+            ]
+          },
+          "tool": "admin_boundary_extract"
+        },
+        "cache_hit": false,
+        "license": "上游声明来自天地图，数据许可待核实",
+        "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+      },
+      "alternatives": [],
+      "excluded": [
+        {
+          "source_id": "source.portal.webmap-1m",
+          "name": "全国地理信息资源目录服务系统 1:100 万公众版",
+          "reasons": [
+            "该来源尚未完成验证"
+          ]
+        },
+        {
+          "source_id": "source.portal.webmap-1m",
+          "name": "全国地理信息资源目录服务系统 1:100 万公众版",
+          "reasons": [
+            "该来源尚未完成验证"
+          ]
+        },
+        {
+          "source_id": "source.tianditu",
+          "name": "天地图",
+          "reasons": [
+            "该来源尚未完成验证"
+          ]
+        }
+      ],
+      "available": true,
+      "reasons": [],
+      "notes": null,
+      "input": "",
+      "required": true,
+      "acquirable": true,
+      "geometry": "point",
+      "extent_expression": "鄂豫陕甘地区"
+    }
+  }
+}

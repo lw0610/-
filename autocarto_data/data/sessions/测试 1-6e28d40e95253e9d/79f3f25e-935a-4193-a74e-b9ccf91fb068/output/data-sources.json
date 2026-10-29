@@ -1,0 +1,25 @@
+[
+  {
+    "find_id": "df-57b38c05db51a0db647619b38c8f5e07",
+    "row": "河南省行政区划面",
+    "category": "admin.division",
+    "paths": [
+      "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/acquired/河南省地级市行政区划面/河南省行政区划面.gpkg"
+    ],
+    "source_id": "source.builtin.cn-admin",
+    "kind": "builtin_offline",
+    "retrieved_at": "2026-10-28T12:28:41.269711Z",
+    "sha256": {
+      "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/79f3f25e-935a-4193-a74e-b9ccf91fb068/output/acquired/河南省地级市行政区划面/河南省行政区划面.gpkg": "f1ea584237757f19fb6fd7bdc01f7f24030cbfced3086c89a46d40d5a528cbe5"
+    },
+    "license": "上游声明来自天地图，数据许可待核实",
+    "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）",
+    "notes": [
+      "内置行政区原始数据；来源声明为天地图，完整疆域表达未核实",
+      "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实"
+    ],
+    "warnings": [],
+    "store_key": "31f183013cb45dd81227bdc12f855c6a69ae6664788c2f4a8245c6052e7e4028",
+    "count": 18
+  }
+]

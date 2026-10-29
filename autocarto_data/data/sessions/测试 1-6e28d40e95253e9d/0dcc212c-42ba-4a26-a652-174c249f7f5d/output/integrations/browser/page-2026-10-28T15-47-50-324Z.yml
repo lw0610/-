@@ -1,0 +1,5 @@
+- generic [active] [ref=e1]:
+  - heading "403 Forbidden" [level=1] [ref=e3]
+  - separator [ref=e4]
+  - generic [ref=e5]: "Client IP: 117.155.140.79"
+  - generic [ref=e6]: "eventID: 1249-1793231282.347-w-waf02cdm reason:UrlACL"

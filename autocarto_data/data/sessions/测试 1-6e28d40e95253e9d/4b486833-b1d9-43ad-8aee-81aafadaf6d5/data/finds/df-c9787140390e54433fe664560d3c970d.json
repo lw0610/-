@@ -1,0 +1,142 @@
+{
+  "request": {
+    "need": {
+      "geometry": "table",
+      "name": "河南省各市常住人口",
+      "what": {
+        "category": "年度统计指标",
+        "description": "河南省各地级市常住人口统计数据，需要城市名称和常住人口数"
+      },
+      "extent": "河南省"
+    },
+    "include_fallback": true
+  },
+  "result": {
+    "state": "exploration_required",
+    "next_action": "plan_acquire",
+    "provided_matches": [],
+    "provided_unmatched": [
+      {
+        "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/4b486833-b1d9-43ad-8aee-81aafadaf6d5/flows/fr-20261028-214704-e6e93a9b9f6a/run.json",
+        "reason": "GeoJSON没有可核验的几何"
+      }
+    ],
+    "find_id": "df-c9787140390e54433fe664560d3c970d",
+    "created_at": "2026-10-28T13:50:48.04352Z",
+    "expires_at": "2026-10-28T14:20:48.04352Z",
+    "resolved": {
+      "category": "stats.annual_indicator",
+      "extent": {
+        "bbox": [
+          110.353676,
+          31.384459,
+          116.647011,
+          36.374184
+        ],
+        "source": "河南省",
+        "region": "河南省",
+        "pending": false
+      },
+      "scale_denominator": 1000000
+    },
+    "rows": [
+      {
+        "row": "河南省各市常住人口",
+        "category": "stats.annual_indicator",
+        "candidates": [],
+        "excluded": [
+          {
+            "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/4b486833-b1d9-43ad-8aee-81aafadaf6d5/flows/fr-20261028-214704-e6e93a9b9f6a/run.json",
+            "reason": "GeoJSON没有可核验的几何"
+          },
+          {
+            "source_id": "source.portal.nbs",
+            "reason": "确定性获取路径被排除：该来源尚未完成验证；该来源仍可通过探索获取，见 fallback 中的可用途径"
+          }
+        ]
+      }
+    ],
+    "fallback": [
+      {
+        "id": "c-6fc1d84de15a0fe5",
+        "kind": "portal",
+        "name": "国家统计局国家数据",
+        "source_id": "source.portal.nbs",
+        "available": true,
+        "reasons": [
+          "没有可用的确定性来源，可由数据获取智能体探索并登记真实数据"
+        ],
+        "notes": [
+          "可能需要验证码；门户自动获取尚未启用"
+        ],
+        "handbook": "中国人口、经济等官方统计表；中国，依统计发布范围；门户兜底；不得绕过登录或验证码，不得用模型补造数值",
+        "tier": 11,
+        "network": true
+      },
+      {
+        "id": "c-9c18f7d8ebf263b1",
+        "kind": "web_search",
+        "name": "公开来源搜索",
+        "available": true,
+        "reasons": [
+          "确定性来源不可用，可查找真实公开数据后登记"
+        ],
+        "notes": [
+          "不得编造数据；必须保留来源网址与许可"
+        ],
+        "tier": 12,
+        "network": true
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "DATA_EXPLORATION_REQUIRED",
+        "message": "暂无确定性来源，但有可用探索途径；沿用本次 find_id 安排 acquire 步骤，由数据获取智能体探索并登记真实数据",
+        "row": "河南省各市常住人口"
+      }
+    ]
+  },
+  "items": {
+    "河南省各市常住人口": {
+      "key": "河南省各市常住人口/河南省各市常住人口",
+      "requirement": "河南省各市常住人口",
+      "entry": "河南省各市常住人口",
+      "category": "stats.annual_indicator",
+      "params": {},
+      "fields": null,
+      "extent": {
+        "bbox": [
+          110.353676,
+          31.384459,
+          116.647011,
+          36.374184
+        ],
+        "source": "河南省",
+        "region": "河南省",
+        "pending": false
+      },
+      "scale_denominator": 1000000,
+      "mode": "auto",
+      "alternatives": [],
+      "excluded": [
+        {
+          "source_id": "source.portal.nbs",
+          "name": "国家统计局国家数据",
+          "reasons": [
+            "该来源尚未完成验证"
+          ]
+        }
+      ],
+      "available": false,
+      "reasons": [
+        "该来源尚未完成验证"
+      ],
+      "notes": null,
+      "input": "",
+      "required": true,
+      "acquirable": true,
+      "geometry": "table",
+      "extent_expression": "河南省"
+    }
+  }
+}

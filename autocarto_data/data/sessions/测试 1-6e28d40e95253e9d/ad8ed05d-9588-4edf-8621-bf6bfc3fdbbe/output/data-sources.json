@@ -1,0 +1,63 @@
+[
+  {
+    "find_id": "df-abfdb7759f4120665e774971ee54efc2",
+    "row": "河南省市域行政区划面",
+    "category": "admin.division",
+    "paths": [
+      "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/acquired/河南省市域行政区划面/河南省市域行政区划面.gpkg"
+    ],
+    "source_id": "source.builtin.cn-admin",
+    "kind": "builtin_offline",
+    "retrieved_at": "2026-10-28T14:59:19.611961Z",
+    "sha256": {
+      "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/ad8ed05d-9588-4edf-8621-bf6bfc3fdbbe/output/acquired/河南省市域行政区划面/河南省市域行政区划面.gpkg": "efb22e5705ad734d5cd31a245a775ada64e2147537805705c7314b20a04db311"
+    },
+    "license": "上游声明来自天地图，数据许可待核实",
+    "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）",
+    "notes": [
+      "内置行政区原始数据；来源声明为天地图，完整疆域表达未核实",
+      "复用较大范围的已缓存原件，按本次范围重新规范化",
+      "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实"
+    ],
+    "warnings": [],
+    "store_key": "8527560088d0c5de84da1c6e8a07d09711b5163a910fb8a235aa423cb718a33b",
+    "count": 18
+  },
+  {
+    "find_id": "df-9f1f2d8ef08a2e6c144114c337304e94",
+    "row": "河南省各市常住人口统计表",
+    "category": "stats.annual_indicator",
+    "paths": [
+      "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.b4704369d9f9f413c24589bc/3a3efb79fc965c81/out/河南省各市常住人口统计表.csv"
+    ],
+    "source_id": "fallback.b4704369d9f9f413c24589bc",
+    "kind": "portal",
+    "retrieved_at": "2026-10-28T15:02:22.595418Z",
+    "sha256": {
+      "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.b4704369d9f9f413c24589bc/3a3efb79fc965c81/out/河南省各市常住人口统计表.csv": "ead33b7d224807900c2c2edc06e7df86cc24f0bbdfc74ebf4ae12352e624f598"
+    },
+    "license": "河南省统计局官方公开数据，来源《河南统计年鉴2024》；公开统计资料，引用需注明来源",
+    "attribution": "河南省统计局《河南统计年鉴2024》表3-3 各市常住人口数",
+    "notes": [
+      "来源方式：portal",
+      "来源网址：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm",
+      "数据年份2023年，单位为万人，来源《河南统计年鉴2024》表3-3各市常住人口数（Resident Population by City）",
+      "各市常住人口合计9817万人，与官方公报全省9815万人吻合（四舍五入误差2万人）",
+      "数据从官方年鉴图片原件（0303.jpg）经 OCR 提取并逐项核对；图片原件已保留",
+      "济源示范区在行政区划面中名称为济源市（adcode 419001），已统一为济源市以便关联",
+      "第三方统计年鉴分享站（tjnj.net）所载2023列数据与全省合计严重不符，已弃用，以官方年鉴图片为准"
+    ],
+    "warnings": [
+      "只读使用用户登记的本机数据",
+      "来源方式：portal",
+      "来源网址：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm",
+      "数据年份2023年，单位为万人，来源《河南统计年鉴2024》表3-3各市常住人口数（Resident Population by City）",
+      "各市常住人口合计9817万人，与官方公报全省9815万人吻合（四舍五入误差2万人）",
+      "数据从官方年鉴图片原件（0303.jpg）经 OCR 提取并逐项核对；图片原件已保留",
+      "济源示范区在行政区划面中名称为济源市（adcode 419001），已统一为济源市以便关联",
+      "第三方统计年鉴分享站（tjnj.net）所载2023列数据与全省合计严重不符，已弃用，以官方年鉴图片为准"
+    ],
+    "store_key": "3a3efb79fc965c81aa10202e976c54dbb8cb6a52d4df9c442cefab16df2aa294",
+    "count": 18
+  }
+]

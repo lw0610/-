@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_ac10077fffaa199e",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/05da3c62-172f-4bbb-9a1d-c428a2d0a043/intermediate/route_knowledge_extraction/20261028T171647-1690038211/source.txt",
+      "name": "source.txt",
+      "kind": "text",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T17:16:47.651538833Z",
+      "modified_at": "2026-10-28T17:16:47.651538833Z",
+      "size": 9457,
+      "exists": true
+    },
+    {
+      "id": "f_8eafa3905d92f629",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/05da3c62-172f-4bbb-9a1d-c428a2d0a043/intermediate/route_knowledge_extraction/20261028T171647-1690038211/state.json",
+      "name": "state.json",
+      "kind": "json",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T17:19:12.835737666Z",
+      "modified_at": "2026-10-28T17:21:32.723487249Z",
+      "size": 1219233,
+      "exists": true
+    },
+    {
+      "id": "f_e1f4f13d28c60683",
+      "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+      "name": "史料.txt",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "provided",
+        "label": "史料.txt"
+      },
+      "registered_at": "2026-10-28T17:16:36.174452Z",
+      "modified_at": "2026-10-28T16:12:54.154422Z",
+      "size": 9457,
+      "exists": true
+    }
+  ]
+}

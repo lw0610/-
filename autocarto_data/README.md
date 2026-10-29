@@ -19,7 +19,7 @@
 
 ## 大型影像
 
-两幅超过 Git 单文件限制的影像单独存放在 [runtime-data-20261029 Release](https://github.com/lw0610/-/releases/tag/runtime-data-20261029)。`large-files.json` 列出了原相对路径、文件大小、校验值和下载地址；如需完整文件结构，下载后放回对应路径。
+两幅超过 Git 单文件限制的影像单独存放在 [runtime-data-20261029 Release](https://github.com/lw0610/-/releases/tag/runtime-data-20261029)。`large-files.json` 列出了原相对路径、文件大小、校验值和下载地址；其中 `path` 相对于仓库中的 `autocarto_data/` 目录。如需完整文件结构，下载后放回对应路径。
 
 ## 使用说明
 

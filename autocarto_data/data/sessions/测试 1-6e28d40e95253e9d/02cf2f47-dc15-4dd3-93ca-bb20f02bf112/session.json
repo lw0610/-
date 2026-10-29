@@ -1,0 +1,91 @@
+{
+  "active_agent_config": "default",
+  "archived": false,
+  "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_67896_1793178763",
+  "bound_project_path": "/home/shared-user/研究生/实例/测试 1.qgz",
+  "carto_plans": [],
+  "compression_history": [],
+  "context_stats": {
+    "compressed_count": 0,
+    "estimated_tokens": 8,
+    "message_count": 1,
+    "total_chars": 42,
+    "total_tokens": 8
+  },
+  "created_at": "2026-10-28T17:12:58+08:00",
+  "description": "",
+  "execution_mode": "build",
+  "flow_run": null,
+  "last_error": "Build 模式不可用：创建 AgentRuntime 失败: resolve middleware packages for cartographer: middleware package \"route-cartography\" not found in governed registry",
+  "last_message_preview": "[error] Build 模式不可用：创建 AgentRuntime 失败: resolve middleware packages for cartographer: middleware package \"ro...",
+  "llm_config": {},
+  "messages": [
+    {
+      "content": "制作河南省各市人口统计专题图",
+      "role": "user"
+    },
+    {
+      "content": "制作河南省各市人口统计专题图",
+      "msg_type": "user",
+      "role": "user",
+      "timestamp": "2026-10-28T09:12:58.506Z"
+    },
+    {
+      "content": "正在分析您的请求...",
+      "data": {
+        "protocol_version": 1,
+        "status": "thinking"
+      },
+      "msg_type": "status",
+      "role": "system",
+      "timestamp": "2026-10-28T09:12:58.513Z"
+    },
+    {
+      "content": "Build 模式不可用：创建 AgentRuntime 失败: resolve middleware packages for cartographer: middleware package \"route-cartography\" not found in governed registry",
+      "data": {
+        "code": "AGENT_UNAVAILABLE",
+        "error_code": "AGENT_UNAVAILABLE",
+        "protocol_version": 1
+      },
+      "msg_type": "error",
+      "role": "system",
+      "timestamp": "2026-10-28T09:12:58.748Z"
+    }
+  ],
+  "name": "会话 10-28 17:12",
+  "name_auto_generated": true,
+  "project_path": "/home/shared-user/研究生/实例/测试 1.qgz",
+  "run_intent": "execute",
+  "runtime_failure_code": "AGENT_UNAVAILABLE",
+  "runtime_failure_reason": "Build 模式不可用：创建 AgentRuntime 失败: resolve middleware packages for cartographer: middleware package \"route-cartography\" not found in governed registry",
+  "runtime_status": "failed",
+  "runtime_summary": "Build 模式不可用：创建 AgentRuntime 失败: resolve middleware packages for cartographer: middleware package \"route-cartography\" not found in governed registry",
+  "session_id": "02cf2f47-dc15-4dd3-93ca-bb20f02bf112",
+  "snapshots": [],
+  "tags": [],
+  "title_source": "default",
+  "tool_calls": [],
+  "total_tokens_used": 8,
+  "updated_at": "2026-10-28T09:12:59.268Z",
+  "workflow_blocks": [
+    {
+      "agent": "orchestrator",
+      "agentDisplayName": "主智能体",
+      "entries": [
+        {
+          "content": "收到用户请求，开始分析任务需求...",
+          "id": "entry-20261028091258.507",
+          "phase": "thinking",
+          "timestamp": 1793178778507,
+          "type": "thinking"
+        }
+      ],
+      "finishedAt": 1793178778674,
+      "id": "wf-20261028091258.507",
+      "startedAt": 1793178778507,
+      "status": "error",
+      "summary": "收到用户请求，开始分析任务需求...",
+      "updatedAt": 1793178778674
+    }
+  ]
+}

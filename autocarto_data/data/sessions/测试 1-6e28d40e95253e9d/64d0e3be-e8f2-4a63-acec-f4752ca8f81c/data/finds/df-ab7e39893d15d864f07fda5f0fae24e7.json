@@ -1,0 +1,157 @@
+{
+  "request": {
+    "need": {
+      "geometry": "polygon",
+      "name": "河南省地级市行政区面",
+      "what": {
+        "description": "河南省地级市行政区划面，需要地级市名称与行政区划代码"
+      },
+      "extent": "河南省",
+      "params": {
+        "level": "市"
+      }
+    },
+    "guide": "statistical-choropleth",
+    "include_fallback": true
+  },
+  "result": {
+    "provided_matches": [],
+    "provided_unmatched": [],
+    "find_id": "df-ab7e39893d15d864f07fda5f0fae24e7",
+    "created_at": "2026-10-28T09:57:18.825489Z",
+    "expires_at": "2026-10-28T10:27:18.825489Z",
+    "resolved": {
+      "category": "admin.division",
+      "extent": {
+        "bbox": [
+          110.353676,
+          31.384459,
+          116.647011,
+          36.374184
+        ],
+        "source": "河南省",
+        "region": "河南省",
+        "pending": false
+      },
+      "scale_denominator": 1000000
+    },
+    "rows": [
+      {
+        "row": "河南省地级市行政区面",
+        "category": "admin.division",
+        "recommended": "c-11e41710fce9fed1",
+        "candidates": [
+          {
+            "id": "c-11e41710fce9fed1",
+            "kind": "builtin_offline",
+            "name": "中国行政区边界（内置）",
+            "source_id": "source.builtin.cn-admin",
+            "available": true,
+            "reasons": [
+              "来源提供所需类别并满足目录筛选条件",
+              "覆盖所需范围"
+            ],
+            "notes": [
+              "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实",
+              "上游声明来自天地图，数据许可待核实"
+            ],
+            "handbook": "中国省市县行政区面及派生边界线；中国省、市、县；上游许可及完整疆域表达仍须核实；公开地图依法送审",
+            "tier": 7,
+            "network": false,
+            "choice": {
+              "source_id": "source.builtin.cn-admin",
+              "name": "中国行政区边界（内置）",
+              "tier": 3,
+              "provide": {
+                "category": "admin.division",
+                "fields": {
+                  "code": [
+                    "adcode"
+                  ],
+                  "name": [
+                    "name"
+                  ]
+                },
+                "tool": "admin_boundary_extract"
+              },
+              "cache_hit": false,
+              "license": "上游声明来自天地图，数据许可待核实",
+              "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+            }
+          }
+        ],
+        "excluded": [
+          {
+            "source_id": "source.portal.webmap-1m",
+            "reason": "该来源尚未完成验证"
+          }
+        ]
+      }
+    ],
+    "fallback": [],
+    "diagnostics": []
+  },
+  "items": {
+    "河南省地级市行政区面": {
+      "key": "河南省地级市行政区面/河南省地级市行政区面",
+      "requirement": "河南省地级市行政区面",
+      "entry": "河南省地级市行政区面",
+      "category": "admin.division",
+      "params": {
+        "level": "市"
+      },
+      "fields": null,
+      "extent": {
+        "bbox": [
+          110.353676,
+          31.384459,
+          116.647011,
+          36.374184
+        ],
+        "source": "河南省",
+        "region": "河南省",
+        "pending": false
+      },
+      "scale_denominator": 1000000,
+      "mode": "auto",
+      "chosen": {
+        "source_id": "source.builtin.cn-admin",
+        "name": "中国行政区边界（内置）",
+        "tier": 3,
+        "provide": {
+          "category": "admin.division",
+          "fields": {
+            "code": [
+              "adcode"
+            ],
+            "name": [
+              "name"
+            ]
+          },
+          "tool": "admin_boundary_extract"
+        },
+        "cache_hit": false,
+        "license": "上游声明来自天地图，数据许可待核实",
+        "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）"
+      },
+      "alternatives": [],
+      "excluded": [
+        {
+          "source_id": "source.portal.webmap-1m",
+          "name": "全国地理信息资源目录服务系统 1:100 万公众版",
+          "reasons": [
+            "该来源尚未完成验证"
+          ]
+        }
+      ],
+      "available": true,
+      "reasons": [],
+      "notes": null,
+      "input": "",
+      "required": true,
+      "acquirable": true,
+      "geometry": "polygon",
+      "extent_expression": "河南省"
+    }
+  }
+}

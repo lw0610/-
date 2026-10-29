@@ -1,0 +1,477 @@
+- generic [active]:
+  - generic [ref=e2]:
+    - generic [ref=e3] [cursor=pointer]:
+      - button "×" [ref=e4]
+      - paragraph [ref=e6]: 关于新版国家统计局数据发布库上线的公告
+    - generic [ref=e7]:
+      - link [ref=e8] [cursor=pointer]:
+        - /url: https://www.stats.gov.cn/
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - link "登录" [ref=e12] [cursor=pointer]:
+            - /url: "#/pc/national/login"
+          - link "注册" [ref=e13] [cursor=pointer]:
+            - /url: "#/pc/national/register"
+          - generic [ref=e14] [cursor=pointer]:
+            - generic [ref=e15]: 
+            - text: English
+        - generic [ref=e18]:
+          - img [ref=e19] [cursor=pointer]
+          - generic [ref=e20]:
+            - img [ref=e21] [cursor=pointer]
+            - generic [ref=e22]:
+              - generic [ref=e23] [cursor=pointer]: GDP
+              - generic [ref=e24] [cursor=pointer]: CPI
+              - generic [ref=e25] [cursor=pointer]: 总人口
+              - generic [ref=e26] [cursor=pointer]: 社会消费品零售总额
+              - generic [ref=e27] [cursor=pointer]: 粮食产量
+              - generic [ref=e28] [cursor=pointer]: PMI
+              - generic [ref=e29] [cursor=pointer]: PPI
+              - generic [ref=e30] [cursor=pointer]: 城镇居民人均可支配收入
+            - generic [ref=e32]:
+              - textbox "如：2012年 北京 GDP" [ref=e33]
+              - button "搜索" [ref=e35] [cursor=pointer]
+      - main [ref=e36]:
+        - menubar [ref=e38]:
+          - menuitem "首页" [ref=e39] [cursor=pointer]
+          - menuitem "月度数据" [ref=e40] [cursor=pointer]
+          - menuitem "季度数据" [ref=e41] [cursor=pointer]
+          - menuitem "年度数据" [ref=e42] [cursor=pointer]
+          - menuitem [ref=e43] [cursor=pointer]:
+            - link "普查数据" [ref=e44]:
+              - /url: http://www.stats.gov.cn/sj/pcsj/
+          - menuitem "地区数据 " [ref=e45]:
+            - generic [ref=e46] [cursor=pointer]:
+              - text: 地区数据
+              - generic [ref=e47]: 
+          - menuitem "部门数据" [ref=e48] [cursor=pointer]
+          - menuitem "国际数据 " [ref=e49]:
+            - generic [ref=e50] [cursor=pointer]:
+              - text: 国际数据
+              - generic [ref=e51]: 
+          - menuitem "出版物" [ref=e52] [cursor=pointer]
+          - menuitem "我的收藏" [ref=e53] [cursor=pointer]
+          - menuitem "帮助" [ref=e54] [cursor=pointer]
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - generic [ref=e60]:
+              - generic [ref=e61]:
+                - generic [ref=e62]:
+                  - text:  
+                  - generic [ref=e63]: 国内生产总值（GDP）
+                  - generic [ref=e67]: 国民经济运行情况
+                  - generic [ref=e71]: 规模以上工业生产
+                  - generic [ref=e75]: 固定资产投资（不含农户）
+                  - generic [ref=e79]: 社会消费品零售总额
+                  - generic [ref=e83]: 全国居民收支
+                  - generic [ref=e87]: 居民消费价格指数（CPI）
+                  - generic [ref=e91]: 工业生产者价格指数（PPI）
+                  - generic [ref=e95]: 采购经理指数（PMI）
+                  - generic [ref=e99]: 工业经济效益
+                - list [ref=e103]:
+                  - listitem [ref=e104] [cursor=pointer]:
+                    - button "1" [ref=e105]
+                  - listitem [ref=e106] [cursor=pointer]:
+                    - button "2" [ref=e107]
+                  - listitem [ref=e108] [cursor=pointer]:
+                    - button "3" [ref=e109]
+                  - listitem [ref=e110] [cursor=pointer]:
+                    - button "4" [ref=e111]
+                  - listitem [ref=e112] [cursor=pointer]:
+                    - button "5" [ref=e113]
+                  - listitem [ref=e114] [cursor=pointer]:
+                    - button "6" [ref=e115]
+                  - listitem [ref=e116] [cursor=pointer]:
+                    - button "7" [ref=e117]
+                  - listitem [ref=e118] [cursor=pointer]:
+                    - button "8" [ref=e119]
+                  - listitem [ref=e120] [cursor=pointer]:
+                    - button "9" [ref=e121]
+                  - listitem [ref=e122] [cursor=pointer]:
+                    - button "10" [ref=e123]
+              - text: 
+            - generic [ref=e125]:
+              - generic [ref=e126]: 最新发布
+              - generic [ref=e131]:
+                - generic [ref=e132] [cursor=pointer]:
+                  - paragraph [ref=e134]: 2025年中国创新指数比上年增长6.4%
+                  - paragraph [ref=e135]: 2026-10-23
+                - generic [ref=e136] [cursor=pointer]:
+                  - paragraph [ref=e138]: 2026年三季度国内生产总值初步核算结果
+                  - paragraph [ref=e139]: 2026-10-20
+                - generic [ref=e140] [cursor=pointer]:
+                  - paragraph [ref=e142]: 前三季度经济运行总体平稳 高质量发展取得新成效
+                  - paragraph [ref=e143]: 2026-10-19
+                - generic [ref=e144] [cursor=pointer]:
+                  - paragraph [ref=e146]: 2026年9月份规模以上工业增加值增长5.5%
+                  - paragraph [ref=e147]: 2026-10-19
+                - generic [ref=e148] [cursor=pointer]:
+                  - paragraph [ref=e150]: 2026年1—9月份全国固定资产投资基本情况
+                  - paragraph [ref=e151]: 2026-10-19
+                - generic [ref=e152] [cursor=pointer]:
+                  - paragraph [ref=e154]: 2026年1—9月份全国房地产市场基本情况
+                  - paragraph [ref=e155]: 2026-10-19
+                - generic [ref=e156] [cursor=pointer]:
+                  - paragraph [ref=e158]: 2026年1—9月份社会消费品零售总额增长1.1%
+                  - paragraph [ref=e159]: 2026-10-19
+                - generic [ref=e160] [cursor=pointer]:
+                  - paragraph [ref=e162]: 2026年9月份能源生产情况
+                  - paragraph [ref=e163]: 2026-10-19
+                - generic [ref=e164] [cursor=pointer]:
+                  - paragraph [ref=e166]: 2026年前三季度居民收入和消费支出情况
+                  - paragraph [ref=e167]: 2026-10-19
+                - generic [ref=e168] [cursor=pointer]:
+                  - paragraph [ref=e170]: 2026年三季度全国规模以上工业产能利用率为73.1%
+                  - paragraph [ref=e171]: 2026-10-19
+          - generic [ref=e172]:
+            - generic [ref=e173]:
+              - generic [ref=e174]: 第七次人口普查
+              - generic [ref=e175]:
+                - link [ref=e177] [cursor=pointer]:
+                  - /url: https://www.stats.gov.cn/sj/pcsj/rkpc/7rp/indexch.htm
+                  - img "第七次人口普查" [ref=e178]
+                - generic [ref=e179]:
+                  - link [ref=e181] [cursor=pointer]:
+                    - /url: ./page.html#/pc/national/map
+                  - img [ref=e184] [cursor=pointer]
+            - generic [ref=e185]:
+              - generic [ref=e186]:
+                - generic [ref=e187]: 统计年鉴
+                - link [ref=e188] [cursor=pointer]:
+                  - /url: ./page.html#/pc/national/publication
+              - generic [ref=e190]:
+                - generic [ref=e191]: 统计公报
+                - link [ref=e192] [cursor=pointer]:
+                  - /url: ./page.html#/pc/national/publication
+            - generic [ref=e194]:
+              - link [ref=e195] [cursor=pointer]:
+                - /url: https://www.stats.gov.cn/zsk/
+              - generic [ref=e198] [cursor=pointer]
+            - text: 
+          - generic [ref=e224]:
+            - generic [ref=e226]:
+              - generic [ref=e227]: 快速查询（专题统计报表）
+              - generic [ref=e231]:
+                - generic [ref=e232]:
+                  - generic [ref=e233]: 月度
+                  - generic [ref=e235]:
+                    - generic [ref=e236] [cursor=pointer]:
+                      - paragraph [ref=e237]: 工业增加值增速
+                      - paragraph
+                    - generic [ref=e238] [cursor=pointer]:
+                      - paragraph [ref=e239]: 工业主要产品产量及增长速度
+                      - paragraph
+                    - generic [ref=e240] [cursor=pointer]:
+                      - paragraph [ref=e241]: 各地区工业增加值增长速度
+                      - paragraph
+                    - generic [ref=e242] [cursor=pointer]:
+                      - paragraph [ref=e243]: 分行业主要工业经济指标
+                      - paragraph
+                    - generic [ref=e244] [cursor=pointer]:
+                      - paragraph [ref=e245]: 固定资产投资（不含农户）
+                      - paragraph
+                    - generic [ref=e246] [cursor=pointer]:
+                      - paragraph [ref=e247]: 各地区固定资产投资（不含农户）
+                      - paragraph
+                    - generic [ref=e248] [cursor=pointer]:
+                      - paragraph [ref=e249]: 各行业固定资产投资(不含农户)
+                      - paragraph
+                    - generic [ref=e250] [cursor=pointer]:
+                      - paragraph [ref=e251]: 能源产品产量
+                      - paragraph
+                    - generic [ref=e252] [cursor=pointer]:
+                      - paragraph [ref=e253]: 房地产开发投资
+                      - paragraph
+                    - generic [ref=e254] [cursor=pointer]:
+                      - paragraph [ref=e255]: 各地区商品房销售面积增长情况
+                      - paragraph
+                    - generic [ref=e256] [cursor=pointer]:
+                      - paragraph [ref=e257]: 社会消费品零售总额
+                      - paragraph
+                - generic [ref=e258]:
+                  - generic [ref=e259]: 季度
+                  - generic [ref=e261]:
+                    - generic [ref=e262] [cursor=pointer]:
+                      - paragraph [ref=e263]: 分季国内生产总值指数
+                      - paragraph
+                    - generic [ref=e264] [cursor=pointer]:
+                      - paragraph [ref=e265]: 地区生产总值
+                      - paragraph
+                    - generic [ref=e266] [cursor=pointer]:
+                      - paragraph [ref=e267]: 国内生产总值增长速度
+                      - paragraph
+                    - generic [ref=e268] [cursor=pointer]:
+                      - paragraph [ref=e269]: 地区生产总值指数
+                      - paragraph
+                    - generic [ref=e270] [cursor=pointer]:
+                      - paragraph [ref=e271]: 城镇登记失业率
+                      - paragraph
+                    - generic [ref=e272] [cursor=pointer]:
+                      - paragraph [ref=e273]: 各地区农产品价格指数(上年同期=100)
+                      - paragraph
+                    - generic [ref=e274] [cursor=pointer]:
+                      - paragraph [ref=e275]: 各地区固定资产投资价格指数(上年同期=100)
+                      - paragraph
+                    - generic [ref=e276] [cursor=pointer]:
+                      - paragraph [ref=e277]: 累计农林牧渔业总产值
+                      - paragraph
+                    - generic [ref=e278] [cursor=pointer]:
+                      - paragraph [ref=e279]: 主要工业产品的生产、销售与库存
+                      - paragraph
+                    - generic [ref=e280] [cursor=pointer]:
+                      - paragraph [ref=e281]: 累计各地区建筑业总产值和竣工产值
+                      - paragraph
+                    - generic [ref=e282] [cursor=pointer]:
+                      - paragraph [ref=e283]: 累计各地区建筑业企业房屋竣工面积
+                      - paragraph
+                - generic [ref=e284]:
+                  - generic [ref=e285]: 年度
+                  - generic [ref=e287]:
+                    - generic [ref=e288] [cursor=pointer]:
+                      - paragraph [ref=e289]: 各地区行政区划
+                      - paragraph
+                    - generic [ref=e290] [cursor=pointer]:
+                      - paragraph [ref=e291]: 国民经济核算指标
+                      - paragraph
+                    - generic [ref=e292] [cursor=pointer]:
+                      - paragraph [ref=e293]: 人口基本情况
+                      - paragraph
+                    - generic [ref=e294] [cursor=pointer]:
+                      - paragraph [ref=e295]: 固定资产投资概况
+                      - paragraph
+                    - generic [ref=e296] [cursor=pointer]:
+                      - paragraph [ref=e297]: 社会消费品零售总额
+                      - paragraph
+                    - generic [ref=e298] [cursor=pointer]:
+                      - paragraph [ref=e299]: 对外贸易和利用外资
+                      - paragraph
+                    - generic [ref=e300] [cursor=pointer]:
+                      - paragraph [ref=e301]: 一般公共预算收支
+                      - paragraph
+                    - generic [ref=e302] [cursor=pointer]:
+                      - paragraph [ref=e303]: 居民消费价格指数(上年=100)（2016-）
+                      - paragraph
+                    - generic [ref=e304] [cursor=pointer]:
+                      - paragraph [ref=e305]: 工业生产者出厂价格指数(上年=100)
+                      - paragraph
+                    - generic [ref=e306] [cursor=pointer]:
+                      - paragraph [ref=e307]: 居民人均可支配收入
+                      - paragraph
+                    - generic [ref=e308] [cursor=pointer]:
+                      - paragraph [ref=e309]: 农业基本情况
+                      - paragraph
+            - generic [ref=e313]:
+              - generic [ref=e314]:
+                - generic [ref=e315]: 投入产出表
+                - generic [ref=e317]:
+                  - generic [ref=e318] [cursor=pointer]:
+                    - paragraph [ref=e320]: 2023年投入产出表
+                    - paragraph
+                  - generic [ref=e321] [cursor=pointer]:
+                    - paragraph [ref=e323]: 2020年投入产出表
+                    - paragraph
+                  - generic [ref=e324] [cursor=pointer]:
+                    - paragraph [ref=e326]: 2018年投入产出表
+                    - paragraph
+                  - generic [ref=e327] [cursor=pointer]:
+                    - paragraph [ref=e329]: 2017年投入产出表
+                    - paragraph
+                  - generic [ref=e330] [cursor=pointer]:
+                    - paragraph [ref=e332]: 2015年投入产出表
+                    - paragraph
+                  - generic [ref=e333] [cursor=pointer]:
+                    - paragraph [ref=e335]: 2012年投入产出表
+                    - paragraph
+                  - generic [ref=e336] [cursor=pointer]:
+                    - paragraph [ref=e338]: 2010年投入产出表
+                    - paragraph
+                  - generic [ref=e339] [cursor=pointer]:
+                    - paragraph [ref=e341]: 2007年投入产出表
+                    - paragraph
+                  - generic [ref=e342] [cursor=pointer]:
+                    - paragraph [ref=e344]: 2005年投入产出表
+                    - paragraph
+                  - generic [ref=e345] [cursor=pointer]:
+                    - paragraph [ref=e347]: 2002年投入产出表
+                    - paragraph
+              - generic [ref=e348]:
+                - generic [ref=e349]: 资金流量表
+                - generic [ref=e351]:
+                  - generic [ref=e352] [cursor=pointer]:
+                    - paragraph [ref=e354]: 2024年资金流量表
+                    - paragraph
+                  - generic [ref=e355] [cursor=pointer]:
+                    - paragraph [ref=e357]: 2023年资金流量表
+                    - paragraph
+                  - generic [ref=e358] [cursor=pointer]:
+                    - paragraph [ref=e360]: 2022年资金流量表
+                    - paragraph
+                  - generic [ref=e361] [cursor=pointer]:
+                    - paragraph [ref=e363]: 2021年资金流量表
+                    - paragraph
+                  - generic [ref=e364] [cursor=pointer]:
+                    - paragraph [ref=e366]: 2020年资金流量表
+                    - paragraph
+                  - generic [ref=e367] [cursor=pointer]:
+                    - paragraph [ref=e369]: 2019年资金流量表
+                    - paragraph
+                  - generic [ref=e370] [cursor=pointer]:
+                    - paragraph [ref=e372]: 2018年资金流量表
+                    - paragraph
+                  - generic [ref=e373] [cursor=pointer]:
+                    - paragraph [ref=e375]: 2017年资金流量表
+                    - paragraph
+                  - generic [ref=e376] [cursor=pointer]:
+                    - paragraph [ref=e378]: 2016年资金流量表
+                    - paragraph
+                  - generic [ref=e379] [cursor=pointer]:
+                    - paragraph [ref=e381]: 2015年资金流量表
+                    - paragraph
+                  - generic [ref=e382] [cursor=pointer]:
+                    - paragraph [ref=e384]: 2014年资金流量表
+                    - paragraph
+                  - generic [ref=e385] [cursor=pointer]:
+                    - paragraph [ref=e387]: 2013年资金流量表
+                    - paragraph
+          - generic [ref=e389]:
+            - generic [ref=e392]:
+              - generic [ref=e393]: 发布日程
+              - generic [ref=e397]:
+                - generic [ref=e401]:
+                  - generic [ref=e402]:
+                    - button "前一年" [ref=e403] [cursor=pointer]: 
+                    - button "上个月" [ref=e404] [cursor=pointer]: 
+                    - button "2026 年" [ref=e405] [cursor=pointer]
+                    - button "10月" [ref=e406] [cursor=pointer]
+                    - button "下个月" [ref=e407] [cursor=pointer]: 
+                    - button "后一年" [ref=e408] [cursor=pointer]: 
+                  - table [ref=e410]:
+                    - rowgroup [ref=e411]:
+                      - row [ref=e412]:
+                        - columnheader "一" [ref=e413]
+                        - columnheader "二" [ref=e414]
+                        - columnheader "三" [ref=e415]
+                        - columnheader "四" [ref=e416]
+                        - columnheader "五" [ref=e417]
+                        - columnheader "六" [ref=e418]
+                        - columnheader "日" [ref=e419]
+                      - row [ref=e420]:
+                        - cell "28" [ref=e421] [cursor=pointer]
+                        - cell "29" [ref=e424] [cursor=pointer]
+                        - cell "30" [ref=e427] [cursor=pointer]
+                        - cell "1" [ref=e430] [cursor=pointer]
+                        - cell "2" [ref=e433] [cursor=pointer]
+                        - cell "3" [ref=e436] [cursor=pointer]
+                        - cell "4" [ref=e439] [cursor=pointer]
+                      - row [ref=e442]:
+                        - cell "5" [ref=e443] [cursor=pointer]
+                        - cell "6" [ref=e446] [cursor=pointer]
+                        - cell "7" [ref=e449] [cursor=pointer]
+                        - cell "8" [ref=e452] [cursor=pointer]
+                        - cell "9" [ref=e455] [cursor=pointer]
+                        - cell "10" [ref=e458] [cursor=pointer]
+                        - cell "11" [ref=e461] [cursor=pointer]
+                      - row [ref=e464]:
+                        - cell "12" [ref=e465] [cursor=pointer]
+                        - cell "13" [ref=e468] [cursor=pointer]
+                        - cell "14" [ref=e471] [cursor=pointer]
+                        - cell "15" [ref=e474] [cursor=pointer]
+                        - cell "16" [ref=e477] [cursor=pointer]
+                        - cell "17" [ref=e480] [cursor=pointer]
+                        - cell "18" [ref=e483] [cursor=pointer]
+                      - row [ref=e486]:
+                        - cell "19" [ref=e487] [cursor=pointer]
+                        - cell "20" [ref=e490] [cursor=pointer]
+                        - cell "21" [ref=e493] [cursor=pointer]
+                        - cell "22" [ref=e496] [cursor=pointer]
+                        - cell "23" [ref=e499] [cursor=pointer]
+                        - cell "24" [ref=e502] [cursor=pointer]
+                        - cell "25" [ref=e505] [cursor=pointer]
+                      - row [ref=e508]:
+                        - cell "26" [ref=e509] [cursor=pointer]
+                        - cell "27" [ref=e512] [cursor=pointer]
+                        - cell "28" [ref=e515] [cursor=pointer]
+                        - cell "29" [ref=e518] [cursor=pointer]
+                        - cell "30" [ref=e521] [cursor=pointer]
+                        - cell "31" [ref=e524] [cursor=pointer]
+                        - cell "1" [ref=e527] [cursor=pointer]
+                      - row [ref=e530]:
+                        - cell "2" [ref=e531] [cursor=pointer]
+                        - cell "3" [ref=e534] [cursor=pointer]
+                        - cell "4" [ref=e537] [cursor=pointer]
+                        - cell "5" [ref=e540] [cursor=pointer]
+                        - cell "6" [ref=e543] [cursor=pointer]
+                        - cell "7" [ref=e546] [cursor=pointer]
+                        - cell "8" [ref=e549] [cursor=pointer]
+                - generic [ref=e552]:
+                  - generic [ref=e553]:
+                    - generic [ref=e554]: 今日发布（2026-10-28）
+                    - paragraph [ref=e555]: 今日无发布日程
+                  - generic [ref=e556]:
+                    - generic [ref=e557]: 明日发布（2026-10-29）
+                    - paragraph [ref=e558]: 明日无发布日程
+            - generic [ref=e560]:
+              - generic [ref=e561]: 数据解读
+              - generic [ref=e566]:
+                - generic [ref=e567] [cursor=pointer]:
+                  - paragraph [ref=e569]: 国家统计局社科文司统计师林梅解读2025年中国创新指数
+                  - paragraph [ref=e570]: 2026-10-23
+                - generic [ref=e571] [cursor=pointer]:
+                  - paragraph [ref=e573]: 郑学工：前三季度经济运行总体平稳、向新向优
+                  - paragraph [ref=e574]: 2026-10-20
+                - generic [ref=e575] [cursor=pointer]:
+                  - paragraph [ref=e577]: 魏锋华：前三季度农业经济形势稳中向好
+                  - paragraph [ref=e578]: 2026-10-20
+                - generic [ref=e579] [cursor=pointer]:
+                  - paragraph [ref=e581]: 王新：工业经济稳中有升 高质量发展稳步推进
+                  - paragraph [ref=e582]: 2026-10-20
+                - generic [ref=e583] [cursor=pointer]:
+                  - paragraph [ref=e585]: 胡汉舟：能源供给保障坚实有力 绿色低碳转型加快推进
+                  - paragraph [ref=e586]: 2026-10-20
+                - generic [ref=e587] [cursor=pointer]:
+                  - paragraph [ref=e589]: 于建勋：服务业平稳增长 新动能活力增强
+                  - paragraph [ref=e590]: 2026-10-20
+                - generic [ref=e591] [cursor=pointer]:
+                  - paragraph [ref=e593]: 翟善清：转型升级稳步推进 新动能投资较快增长
+                  - paragraph [ref=e594]: 2026-10-20
+                - generic [ref=e595] [cursor=pointer]:
+                  - paragraph [ref=e597]: 王全众：消费市场扩容提质 服务零售较快增长
+                  - paragraph [ref=e598]: 2026-10-20
+                - generic [ref=e599] [cursor=pointer]:
+                  - paragraph [ref=e601]: 肖宁：前三季度就业形势总体稳定
+                  - paragraph [ref=e602]: 2026-10-20
+                - generic [ref=e603] [cursor=pointer]:
+                  - paragraph [ref=e605]: 吴伟：前三季度居民收入和消费支出稳定增长
+                  - paragraph [ref=e606]: 2026-10-20
+      - generic [ref=e607]:
+        - generic [ref=e608]:
+          - generic [ref=e609]: 相关链接
+          - generic [ref=e610] [cursor=pointer]:
+            - text: 统计法规
+            - generic [ref=e611]: 
+          - generic [ref=e612] [cursor=pointer]:
+            - text: 标准制度
+            - generic [ref=e613]: 
+          - generic [ref=e614] [cursor=pointer]:
+            - text: 统计数据生产过程
+            - generic [ref=e615]: 
+        - generic [ref=e617]:
+          - generic [ref=e618]:
+            - img [ref=e619] [cursor=pointer]
+            - generic [ref=e620]:
+              - paragraph [ref=e621]: 版权所有：国家统计局
+              - paragraph [ref=e622]: 咨询电话：010-68576320 周一至周五(上午8:30-11:30,下午1:30-4:30)
+              - paragraph [ref=e623]: 地址：北京市西城区月坛南街57号（100826）
+              - generic [ref=e624]:
+                - link "京ICP备05034670号-2" [ref=e625] [cursor=pointer]:
+                  - /url: https://beian.miit.gov.cn/#/Integrated/index
+                - link "京公网安备 11040102700142号" [ref=e626] [cursor=pointer]:
+                  - /url: http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11040102700142
+              - paragraph [ref=e629]: 网站标识码 bm36000002
+          - img [ref=e631] [cursor=pointer]
+    - generic [ref=e633]:
+      - generic [ref=e634]:
+        - generic [ref=e635]: 
+        - generic [ref=e636]: 为了获得更好的用户体验，请使用火狐、谷歌、360浏览器极速模式或IE9及以上版本的浏览器。
+      - generic [ref=e637] [cursor=pointer]: 
+  - textbox

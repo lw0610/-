@@ -1,0 +1,377 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_c190b133cd0198fc",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/flows/fr-20261029-023513-85307e886074/interrupt.json",
+      "name": "interrupt.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:21.271522791Z",
+      "modified_at": "2026-10-28T18:37:21.271522791Z",
+      "size": 1595,
+      "exists": true
+    },
+    {
+      "id": "f_8c594b413783643c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/flows/fr-20261029-023513-85307e886074/run.json",
+      "name": "run.json",
+      "kind": "run",
+      "group": "flow",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:35:13.219376791Z",
+      "modified_at": "2026-10-28T18:38:48.676382582Z",
+      "size": 161330,
+      "exists": true
+    },
+    {
+      "id": "f_426c191df496f137",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge",
+      "name": "route_knowledge",
+      "kind": "folder",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "flow",
+        "label": "extract_route"
+      },
+      "flow_run_id": "fr-20261029-023513-85307e886074",
+      "step_id": "extract_route",
+      "registered_at": "2026-10-28T18:37:59.967899Z",
+      "modified_at": "2026-10-28T18:37:59.440109249Z",
+      "size": 480,
+      "exists": true
+    },
+    {
+      "id": "f_1853705aa74cd1c1",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/accepted_graph.json",
+      "name": "accepted_graph.json",
+      "kind": "json",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.439250207Z",
+      "modified_at": "2026-10-28T18:37:59.439250207Z",
+      "size": 396869,
+      "exists": true
+    },
+    {
+      "id": "f_12bffa9bbe63a8b4",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/callouts.csv",
+      "name": "callouts.csv",
+      "kind": "table",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.391938082Z",
+      "modified_at": "2026-10-28T18:37:59.391938082Z",
+      "size": 9952,
+      "exists": true
+    },
+    {
+      "id": "f_44aa6f30baca95be",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/compile_manifest.json",
+      "name": "compile_manifest.json",
+      "kind": "json",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.440306166Z",
+      "modified_at": "2026-10-28T18:37:59.440306166Z",
+      "size": 1973,
+      "exists": true
+    },
+    {
+      "id": "f_a25897c8796acb88",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/places.csv",
+      "name": "places.csv",
+      "kind": "table",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.385803458Z",
+      "modified_at": "2026-10-28T18:37:59.385803458Z",
+      "size": 12247,
+      "exists": true
+    },
+    {
+      "id": "f_85adf9573d53b470",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/points.csv",
+      "name": "points.csv",
+      "kind": "table",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.391072832Z",
+      "modified_at": "2026-10-28T18:37:59.391072832Z",
+      "size": 4059,
+      "exists": true
+    },
+    {
+      "id": "f_8c5d256359af2e79",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/review_provenance.json",
+      "name": "review_provenance.json",
+      "kind": "json",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.423338582Z",
+      "modified_at": "2026-10-28T18:37:59.423338582Z",
+      "size": 12950,
+      "exists": true
+    },
+    {
+      "id": "f_b81c6ea593a72727",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/route_paths.csv",
+      "name": "route_paths.csv",
+      "kind": "table",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.387531124Z",
+      "modified_at": "2026-10-28T18:37:59.387531124Z",
+      "size": 13847,
+      "exists": true
+    },
+    {
+      "id": "f_f7bd6c0726600b69",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/routes.csv",
+      "name": "routes.csv",
+      "kind": "table",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.386511541Z",
+      "modified_at": "2026-10-28T18:37:59.386511541Z",
+      "size": 6241,
+      "exists": true
+    },
+    {
+      "id": "f_aaa64182406205dd",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/source.txt",
+      "name": "source.txt",
+      "kind": "text",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.421673624Z",
+      "modified_at": "2026-10-28T18:37:59.421673624Z",
+      "size": 9457,
+      "exists": true
+    },
+    {
+      "id": "f_2af3d1500f7db7fb",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/symbol_mapping.csv",
+      "name": "symbol_mapping.csv",
+      "kind": "table",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.391349166Z",
+      "modified_at": "2026-10-28T18:37:59.391349166Z",
+      "size": 345,
+      "exists": true
+    },
+    {
+      "id": "f_a50aa0453148612a",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/symbols/battle.svg",
+      "name": "battle.svg",
+      "kind": "image",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.398116957Z",
+      "modified_at": "2026-10-28T18:37:59.398116957Z",
+      "size": 276,
+      "exists": true
+    },
+    {
+      "id": "f_52f679b101eebad7",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/symbols/meeting.svg",
+      "name": "meeting.svg",
+      "kind": "image",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.398767916Z",
+      "modified_at": "2026-10-28T18:37:59.398767916Z",
+      "size": 312,
+      "exists": true
+    },
+    {
+      "id": "f_c7bdafe8ef8c3d41",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/symbols/rendezvous.svg",
+      "name": "rendezvous.svg",
+      "kind": "image",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.403390957Z",
+      "modified_at": "2026-10-28T18:37:59.403390957Z",
+      "size": 286,
+      "exists": true
+    },
+    {
+      "id": "f_68f68bab4f8a1689",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/symbols/start_flag.svg",
+      "name": "start_flag.svg",
+      "kind": "image",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.397293124Z",
+      "modified_at": "2026-10-28T18:37:59.397293124Z",
+      "size": 214,
+      "exists": true
+    },
+    {
+      "id": "f_169b3dedff1884bb",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/symbols/waypoint.svg",
+      "name": "waypoint.svg",
+      "kind": "image",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.392824207Z",
+      "modified_at": "2026-10-28T18:37:59.392824207Z",
+      "size": 201,
+      "exists": true
+    },
+    {
+      "id": "f_383a9c3fad8c49f1",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/task_graph.json",
+      "name": "task_graph.json",
+      "kind": "json",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "flow",
+        "label": "extract_route"
+      },
+      "flow_run_id": "fr-20261029-023513-85307e886074",
+      "step_id": "extract_route",
+      "registered_at": "2026-10-28T18:37:59.968475Z",
+      "modified_at": "2026-10-28T18:37:59.420820749Z",
+      "size": 419249,
+      "exists": true
+    },
+    {
+      "id": "f_db406ca40633bc6e",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge/validation_report.json",
+      "name": "validation_report.json",
+      "kind": "json",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:37:59.422584583Z",
+      "modified_at": "2026-10-28T18:37:59.422584583Z",
+      "size": 4326,
+      "exists": true
+    },
+    {
+      "id": "f_f93a1a8b5c91fc6e",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge_extraction/20261028T183513-3708444081/source.txt",
+      "name": "source.txt",
+      "kind": "text",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:35:13.469356374Z",
+      "modified_at": "2026-10-28T18:35:13.469356374Z",
+      "size": 9457,
+      "exists": true
+    },
+    {
+      "id": "f_17c6aaade49f34a2",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/b7793e09-db59-43fd-83cc-cd8463a741ab/intermediate/route_knowledge_extraction/20261028T183513-3708444081/state.json",
+      "name": "state.json",
+      "kind": "json",
+      "group": "intermediate",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-28T18:35:13.471233707Z",
+      "modified_at": "2026-10-28T18:37:59.548091374Z",
+      "size": 1106147,
+      "exists": true
+    },
+    {
+      "id": "f_e1f4f13d28c60683",
+      "path": "/home/shared-user/研究生/QGIS-agent/数据/文本信息/史料.txt",
+      "name": "史料.txt",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "provided",
+        "label": "史料.txt"
+      },
+      "registered_at": "2026-10-28T18:34:44.371122Z",
+      "modified_at": "2026-10-28T16:12:54.154422Z",
+      "size": 9457,
+      "exists": true
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "request": {
+    "need": {
+      "geometry": "table",
+      "name": "河南省各市2020年七普常住人口统计表",
+      "what": {
+        "description": "河南省各地级市2020年第七次全国人口普查常住人口统计数据，需要城市名称和常住人口数值"
+      },
+      "extent": "河南省各市",
+      "fields": {
+        "地区": "地级市名称",
+        "常住人口": "2020年七普常住人口数"
+      }
+    },
+    "guide": "获取河南省各市2020年七普常住人口统计表",
+    "include_fallback": true
+  },
+  "result": {
+    "provided_matches": [],
+    "provided_unmatched": [],
+    "find_id": "df-b5a08433caf1d7af96780f266aaac9d2",
+    "created_at": "2026-10-28T10:33:04.354859Z",
+    "expires_at": "2026-10-28T11:03:04.354859Z",
+    "resolved": {
+      "category": "stats.annual_indicator",
+      "extent": {
+        "source": "河南省各市",
+        "pending": true
+      },
+      "scale_denominator": 0
+    },
+    "rows": [
+      {
+        "row": "河南省各市2020年七普常住人口统计表",
+        "category": "stats.annual_indicator",
+        "candidates": [],
+        "excluded": [
+          {
+            "source_id": "source.portal.nbs",
+            "reason": "该来源尚未完成验证"
+          }
+        ]
+      }
+    ],
+    "fallback": [
+      {
+        "id": "c-d2c35c9eeb9f3c10",
+        "kind": "portal",
+        "name": "国家统计局国家数据",
+        "source_id": "source.portal.nbs",
+        "available": true,
+        "reasons": [
+          "没有可用的确定性来源，可由数据获取智能体操作门户并登记"
+        ],
+        "notes": [
+          "可能需要验证码；门户自动获取尚未启用"
+        ],
+        "handbook": "中国人口、经济等官方统计表；中国，依统计发布范围；门户兜底；不得绕过登录或验证码，不得用模型补造数值",
+        "tier": 11,
+        "network": true
+      },
+      {
+        "id": "c-48c5b28016750054",
+        "kind": "web_search",
+        "name": "公开来源搜索",
+        "available": true,
+        "reasons": [
+          "确定性来源不可用，可查找真实公开数据后登记"
+        ],
+        "notes": [
+          "不得编造数据；必须保留来源网址与许可"
+        ],
+        "tier": 12,
+        "network": true
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "DATA_EXTENT_UNRESOLVED",
+        "message": "图层范围无法在本地解析：河南省各市"
+      },
+      {
+        "code": "DATA_NO_CANDIDATE",
+        "message": "没有可用数据来源",
+        "row": "河南省各市2020年七普常住人口统计表"
+      }
+    ]
+  },
+  "items": {
+    "河南省各市2020年七普常住人口统计表": {
+      "key": "河南省各市2020年七普常住人口统计表/河南省各市2020年七普常住人口统计表",
+      "requirement": "河南省各市2020年七普常住人口统计表",
+      "entry": "河南省各市2020年七普常住人口统计表",
+      "category": "stats.annual_indicator",
+      "params": {
+        "year": "2020"
+      },
+      "fields": {
+        "地区": "地级市名称",
+        "常住人口": "2020年七普常住人口数"
+      },
+      "extent": {
+        "source": "河南省各市",
+        "pending": true
+      },
+      "scale_denominator": 0,
+      "mode": "auto",
+      "alternatives": [],
+      "excluded": [
+        {
+          "source_id": "source.portal.nbs",
+          "name": "国家统计局国家数据",
+          "reasons": [
+            "该来源尚未完成验证"
+          ]
+        }
+      ],
+      "available": false,
+      "reasons": [
+        "该来源尚未完成验证"
+      ],
+      "notes": null,
+      "input": "",
+      "required": true,
+      "acquirable": true,
+      "geometry": "table",
+      "extent_expression": "河南省各市"
+    }
+  }
+}
