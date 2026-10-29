@@ -1,0 +1,22 @@
+{
+  "counts": {
+    "callouts.csv": 3,
+    "places.csv": 128,
+    "points.csv": 128,
+    "route_paths.csv": 140,
+    "routes.csv": 12,
+    "symbol_mapping.csv": 8
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "schema_version": "1.0",
+  "task_id": "task_march_4th_army",
+  "title": "国民革命军第四军独立团粤北至湘南行军路线",
+  "warnings": []
+}

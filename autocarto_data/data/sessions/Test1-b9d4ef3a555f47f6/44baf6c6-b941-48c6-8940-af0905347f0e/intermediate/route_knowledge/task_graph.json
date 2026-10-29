@@ -1,0 +1,5004 @@
+{
+  "actors": [
+    {
+      "actor_id": "c0001__actor_1",
+      "aliases": [
+        "本团",
+        "本部",
+        "第四军独立团",
+        "国民革命军第四军独立团",
+        "本军/本团",
+        "本团/本军"
+      ],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "c0001__e1",
+        "c0001__e1__src2",
+        "c0002__e_src_5033_5072",
+        "c0002__e_src_2716_2732",
+        "c0003__e_actor1",
+        "c0003__e_actor1__src2",
+        "c0004__e2",
+        "c0004__e21"
+      ],
+      "name": "国民革命军第四军独立团"
+    },
+    {
+      "actor_id": "c0002__a2",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "c0002__e_src_2781_2807",
+        "c0002__e_src_3621_3650"
+      ],
+      "name": "敌军"
+    },
+    {
+      "actor_id": "c0003__a2",
+      "aliases": [],
+      "confidence": 0.8,
+      "evidence_refs": [
+        "c0003__e_actor2"
+      ],
+      "name": "地方武装"
+    }
+  ],
+  "callouts": [
+    {
+      "anchor_ref": "c0001__place_liangtian_qiao",
+      "anchor_ref_type": "spatial_entity",
+      "body": "参谋标注石桥位置，此桥为本段行军重要通道，一旦损毁，全军渡河将大为困难。",
+      "callout_id": "c0001__callout_1",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "double",
+      "preferred_side": "right_top",
+      "priority": 1,
+      "template": "text_only",
+      "title": "重要通道",
+      "width_mm": 42
+    },
+    {
+      "anchor_ref": "c0001__place_weilingguan",
+      "anchor_ref_type": "spatial_entity",
+      "body": "关隘为粤湘两省天然分界，岭南水流汇入武江归入珠江，岭北溪水向北流入湘江流域。",
+      "callout_id": "c0001__callout_2",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "double",
+      "preferred_side": "right_top",
+      "priority": 1,
+      "template": "text_only",
+      "title": "粤湘分界",
+      "width_mm": 42
+    },
+    {
+      "anchor_ref": "c0003__se_liangtian_bridge",
+      "anchor_ref_type": "spatial_entity",
+      "body": "参谋标注的重要通道，一旦损毁全军渡河将大为困难",
+      "callout_id": "c0003__c1",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "double",
+      "preferred_side": "right_top",
+      "priority": 0,
+      "template": "text_only",
+      "title": "良田墟外石拱桥",
+      "width_mm": 42
+    }
+  ],
+  "events": [
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_1",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0001__e1",
+        "c0001__e1__src2"
+      ],
+      "location_ref": "c0001__place_jiaochang",
+      "name": "韶州集结",
+      "time_text": "六月二十日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_2",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e4"
+      ],
+      "location_ref": "c0001__place_changbaxu",
+      "name": "抵达长坝墟",
+      "time_text": "六月二十一日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_3",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e6"
+      ],
+      "location_ref": "c0001__place_lechang",
+      "name": "抵达乐昌",
+      "time_text": "六月二十一日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_4",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e8"
+      ],
+      "location_ref": "c0001__place_jiufengxu",
+      "name": "抵达九峰墟",
+      "time_text": "六月二十二日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_5",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e9",
+        "c0001__e9__src2",
+        "c0001__e9__src3",
+        "c0001__e9__src4"
+      ],
+      "location_ref": "c0001__place_weilingguan",
+      "name": "抵达蔚岭关",
+      "time_text": "六月二十三日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_6",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e10"
+      ],
+      "location_ref": "c0001__place_tangcun",
+      "name": "抵达塘村",
+      "time_text": "六月二十三日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_7",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e12"
+      ],
+      "location_ref": "c0001__place_liangtianxu",
+      "name": "抵达良田墟",
+      "time_text": "六月二十四日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_8",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e15"
+      ],
+      "location_ref": "c0001__place_chenzhou",
+      "name": "抵达郴州",
+      "time_text": "六月二十五日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_9",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e16"
+      ],
+      "location_ref": "c0001__place_wulipai",
+      "name": "抵达五里牌",
+      "time_text": "六月二十六日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_10",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e18"
+      ],
+      "location_ref": "c0001__place_yongxing",
+      "name": "抵达永兴",
+      "time_text": "六月二十六日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__evt_11",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__e20"
+      ],
+      "location_ref": "c0001__place_longhaitangxu",
+      "name": "抵达龙海塘墟",
+      "time_text": "六月二十七日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1",
+        "c0002__a2"
+      ],
+      "confidence": 0.9,
+      "description": "前卫部队在城南五里处与敌军警戒部队遭遇，短暂交火",
+      "event_id": "c0002__ev1",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__e_src_2807_2839"
+      ],
+      "location_ref": "c0002__se5",
+      "name": "遭遇战",
+      "time_text": "六月二十八日午后"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "本团主力就地宿营于城南村庄",
+      "event_id": "c0002__ev2",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_2839_2860"
+      ],
+      "location_ref": "c0002__se5",
+      "name": "宿营安仁城南",
+      "time_text": "六月二十八日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "原地驻留安仁城南休整",
+      "event_id": "c0002__ev3",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_2918_2929"
+      ],
+      "location_ref": "c0002__se5",
+      "name": "驻留休整",
+      "time_text": "六月二十九日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "派出侦察分队向安仁城东、西、北三个方向侦查",
+      "event_id": "c0002__ev4",
+      "event_type": "other",
+      "evidence_refs": [
+        "c0002__e_src_2937_2977"
+      ],
+      "location_ref": "c0002__se5",
+      "name": "侦察安仁周边",
+      "time_text": "六月二十九日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "前卫在此警戒，观察敌军有无追击动向",
+      "event_id": "c0002__ev5",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_3291_3309"
+      ],
+      "location_ref": "c0002__se9",
+      "name": "宿营高塘村警戒",
+      "time_text": "六月三十日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "抵达攸县南部的网岭墟宿营",
+      "event_id": "c0002__ev6",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_3345_3365"
+      ],
+      "location_ref": "c0002__se12",
+      "name": "宿营网岭墟",
+      "time_text": "六月三十日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "部队入城休整，宿营城内",
+      "event_id": "c0002__ev7",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_3650_3662"
+      ],
+      "location_ref": "c0002__se15",
+      "name": "宿营攸县城内",
+      "time_text": "七月初一日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1",
+        "c0002__a2"
+      ],
+      "confidence": 0.9,
+      "description": "前卫部队抵达河边，与敌军警戒部队接触",
+      "event_id": "c0002__ev8",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__e_src_3883_3915"
+      ],
+      "location_ref": "c0002__se20",
+      "name": "接触泗汾河防线",
+      "time_text": "七月初二日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "本团主力于泗汾河南岸村落宿营",
+      "event_id": "c0002__ev9",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_3915_3930"
+      ],
+      "location_ref": "c0002__se20",
+      "name": "宿营泗汾河南岸",
+      "time_text": "七月初二日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "原地驻留泗汾河南岸，全天侦查泗汾河全线",
+      "event_id": "c0002__ev10",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_4037_4047",
+        "c0002__e_src_4053_4095"
+      ],
+      "location_ref": "c0002__se20",
+      "name": "驻留泗汾河南岸侦察",
+      "time_text": "七月初三日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "向导带领侦察兵深入东侧山林探查",
+      "event_id": "c0002__ev11",
+      "event_type": "other",
+      "evidence_refs": [
+        "c0002__e_src_4144_4187"
+      ],
+      "location_ref": "c0002__se20",
+      "name": "侦察东侧山林",
+      "time_text": "七月初三日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1",
+        "c0002__a2"
+      ],
+      "confidence": 0.9,
+      "description": "凌晨发起作战，突破泗汾河防线",
+      "event_id": "c0002__ev12",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__e_src_4223_4238"
+      ],
+      "location_ref": "c0002__se20",
+      "name": "突破泗汾河防线",
+      "time_text": "七月初四日凌晨"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "傍晚进驻醴陵县城",
+      "event_id": "c0002__ev13",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_4342_4357"
+      ],
+      "location_ref": "c0002__se25",
+      "name": "宿营醴陵县城",
+      "time_text": "七月初四日傍晚"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "部队宿营株洲城外湘江滩地",
+      "event_id": "c0002__ev14",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_4670_4683"
+      ],
+      "location_ref": "c0002__se30",
+      "name": "宿营株洲城外",
+      "time_text": "七月初五日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "description": "原地驻株洲休整",
+      "event_id": "c0002__ev15",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0002__e_src_4765_4773"
+      ],
+      "location_ref": "c0002__se30",
+      "name": "驻株洲休整",
+      "time_text": "七月初六日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev1",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0003__e_ev1"
+      ],
+      "location_ref": "c0003__se_dongmen",
+      "name": "韶州集结",
+      "time_text": "六月二十日午后六时"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev2",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0003__e_ev2"
+      ],
+      "location_ref": "c0003__se_dongmen",
+      "name": "韶州出发",
+      "time_text": "六月二十一日拂晓四时半"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev3",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__e_ev3"
+      ],
+      "location_ref": "c0003__se_lechang",
+      "name": "抵达乐昌",
+      "time_text": "六月二十一日傍晚"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev4",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0003__e_ev4"
+      ],
+      "location_ref": "c0003__se_lechang",
+      "name": "乐昌出发",
+      "time_text": "六月二十二日凌晨五时"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev5",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__e_ev5"
+      ],
+      "location_ref": "c0003__se_jiufeng",
+      "name": "抵达九峰墟",
+      "time_text": "六月二十二日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev6",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0003__e_ev6"
+      ],
+      "location_ref": "c0003__se_jiufeng",
+      "name": "九峰墟出发",
+      "time_text": "六月二十三日寅时三刻"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev7",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__e_ev7"
+      ],
+      "location_ref": "c0003__se_weiling",
+      "name": "抵达蔚岭关",
+      "time_text": "六月二十三日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev8",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__e_ev8"
+      ],
+      "location_ref": "c0003__se_tangcun",
+      "name": "抵达塘村",
+      "time_text": "六月二十三日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev9",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0003__e_ev9"
+      ],
+      "location_ref": "c0003__se_tangcun",
+      "name": "塘村出发",
+      "time_text": "六月二十四日清晨五时"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev10",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__e_ev10"
+      ],
+      "location_ref": "c0003__se_liangtian",
+      "name": "抵达良田墟",
+      "time_text": "六月二十四日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev11",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0003__e_ev11"
+      ],
+      "location_ref": "c0003__se_liangtian",
+      "name": "良田墟出发",
+      "time_text": "六月二十五日四时半"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev12",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__e_ev12"
+      ],
+      "location_ref": "c0003__se_chenzhou",
+      "name": "抵达郴州",
+      "time_text": "六月二十五日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev13",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0003__e_ev13"
+      ],
+      "location_ref": "c0003__se_chenzhou",
+      "name": "郴州出发",
+      "time_text": "六月二十六日拂晓五时"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev14",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__e_ev14"
+      ],
+      "location_ref": "c0003__se_yongxing",
+      "name": "抵达永兴",
+      "time_text": "六月二十六日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev15",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0003__e_ev15"
+      ],
+      "location_ref": "c0003__se_yongxing",
+      "name": "永兴出发",
+      "time_text": "六月二十七日寅时三刻"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev16",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__e_ev16"
+      ],
+      "location_ref": "c0001__place_longhaitangxu",
+      "name": "抵达龙海塘墟",
+      "time_text": "六月二十七日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.95,
+      "event_id": "c0003__ev17",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0003__e_ev17"
+      ],
+      "location_ref": "c0001__place_longhaitangxu",
+      "name": "龙海塘墟出发",
+      "time_text": "六月二十八日凌晨四时"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev1",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0004__e3"
+      ],
+      "location_ref": "c0004__se2",
+      "name": "抵达安仁城南门外",
+      "time_text": "六月二十八日午后"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev2",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0004__e4"
+      ],
+      "location_ref": "c0004__se3",
+      "name": "城南遭遇战",
+      "time_text": "六月二十八日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev3",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0004__e5"
+      ],
+      "location_ref": "c0004__se4",
+      "name": "宿营安仁城南村庄",
+      "time_text": "六月二十八日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev4",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0004__e6"
+      ],
+      "location_ref": "c0004__se4",
+      "name": "驻留安仁休整",
+      "time_text": "六月二十九日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev5",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0004__e7"
+      ],
+      "location_ref": "c0004__se4",
+      "name": "自安仁出发",
+      "time_text": "六月三十日凌晨四时"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev6",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0004__e9"
+      ],
+      "location_ref": "c0004__se8",
+      "name": "抵达高塘村",
+      "time_text": "六月三十日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev7",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0004__e11"
+      ],
+      "location_ref": "c0004__se11",
+      "name": "抵达网岭墟",
+      "time_text": "六月三十日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev8",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0004__e12"
+      ],
+      "location_ref": "c0004__se11",
+      "name": "自网岭墟出发",
+      "time_text": "七月初一日拂晓四时半"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev9",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0004__e14"
+      ],
+      "location_ref": "c0004__se14",
+      "name": "抵达攸县南郊",
+      "time_text": "七月初一日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev10",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0004__e15"
+      ],
+      "location_ref": "c0004__se15",
+      "name": "入城休整",
+      "time_text": "七月初一日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev11",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0004__e16"
+      ],
+      "location_ref": "c0004__se16",
+      "name": "自攸县出城",
+      "time_text": "七月初二日清晨五时"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev12",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0004__e18"
+      ],
+      "location_ref": "c0004__se20",
+      "name": "抵达泗汾墟",
+      "time_text": "七月初二日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev13",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0004__e19"
+      ],
+      "location_ref": "c0004__se21",
+      "name": "宿营泗汾河南岸",
+      "time_text": "七月初二日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev14",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0004__e20"
+      ],
+      "location_ref": "c0004__se21",
+      "name": "驻留泗汾河南岸",
+      "time_text": "七月初三日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev15",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0004__e21"
+      ],
+      "location_ref": "c0004__se22",
+      "name": "突破泗汾河防线",
+      "time_text": "七月初四日凌晨"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev16",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0004__e22"
+      ],
+      "location_ref": "c0004__se26",
+      "name": "进驻醴陵县城",
+      "time_text": "七月初四日傍晚"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev17",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0004__e24"
+      ],
+      "location_ref": "c0004__se27",
+      "name": "自醴陵出发",
+      "time_text": "七月初五日拂晓五时"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev18",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0004__e26"
+      ],
+      "location_ref": "c0004__se31",
+      "name": "抵达株洲城南",
+      "time_text": "七月初五日"
+    },
+    {
+      "actor_refs": [
+        "c0001__actor_1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0004__ev19",
+      "event_type": "base",
+      "evidence_refs": [
+        "c0004__e28"
+      ],
+      "location_ref": "c0004__se32",
+      "name": "宿营株洲滩地",
+      "time_text": "七月初五日"
+    }
+  ],
+  "evidence": [
+    {
+      "end": 39,
+      "evidence_id": "c0001__e1",
+      "quote": "民国十五年六月初，国民革命军第四军独立团奉令自粤北韶关北上赴湘，增援湘南友军。",
+      "start": 0
+    },
+    {
+      "end": 207,
+      "evidence_id": "c0001__e1__src2",
+      "quote": "午后六时，本部全队集结于韶州府城，宿于东门外教场。",
+      "start": 182
+    },
+    {
+      "end": 323,
+      "evidence_id": "c0001__e2",
+      "quote": "城北约三里有浮桥跨武江，浮桥由木船连锁铺板而成，可供步兵单行，辎重车马不能通行。",
+      "start": 283
+    },
+    {
+      "end": 340,
+      "evidence_id": "c0001__e2__src2",
+      "quote": "本团辎重、驮马须绕道城西木桥渡河。",
+      "start": 323
+    },
+    {
+      "end": 467,
+      "evidence_id": "c0001__e3",
+      "quote": "拂晓四时半开拔，由韶州东门外教场出发，向北行，经腊石坝、转水村，沿武江左岸山道前进。",
+      "start": 425
+    },
+    {
+      "end": 512,
+      "evidence_id": "c0001__e4",
+      "quote": "行二十五华里抵达长坝墟。",
+      "start": 500
+    },
+    {
+      "end": 609,
+      "evidence_id": "c0001__e5",
+      "quote": "复向北行，经白土村、罗村，山路开始抬升，路面多大小卵石，驮马行进速度放缓。",
+      "start": 572
+    },
+    {
+      "end": 636,
+      "evidence_id": "c0001__e6",
+      "quote": "再行三十里，抵达乐昌县城南郊，傍晚扎营于城南河岸平地。",
+      "start": 609
+    },
+    {
+      "end": 880,
+      "evidence_id": "c0001__e7",
+      "quote": "经莲塘村、高塘坳，山道持续抬升，沿途多山涧，山涧水量随降雨变化，晴日仅浅流，遇暴雨则山洪骤发，阻断道路。",
+      "start": 828
+    },
+    {
+      "end": 893,
+      "evidence_id": "c0001__e8",
+      "quote": "前行三十华里，抵达九峰墟。",
+      "start": 880
+    },
+    {
+      "end": 1082,
+      "evidence_id": "c0001__e9",
+      "quote": "寅时三刻拔营，自九峰墟北向登山，目标蔚岭关。",
+      "start": 1060
+    },
+    {
+      "end": 1121,
+      "evidence_id": "c0001__e9__src2",
+      "quote": "自墟上行五里，山路急剧变陡，石阶多为山石凿成，部分石阶久经踩踏，表面光滑湿滑。",
+      "start": 1082
+    },
+    {
+      "end": 1141,
+      "evidence_id": "c0001__e9__src3",
+      "quote": "沿途不断有山涧横切道路，须踏石涉水而过。",
+      "start": 1121
+    },
+    {
+      "end": 1156,
+      "evidence_id": "c0001__e9__src4",
+      "quote": "行十八华里，抵达蔚岭山顶关隘。",
+      "start": 1141
+    },
+    {
+      "end": 1293,
+      "evidence_id": "c0001__e10",
+      "quote": "下岭行十二华里，抵达塘村。",
+      "start": 1280
+    },
+    {
+      "end": 1499,
+      "evidence_id": "c0001__e11",
+      "quote": "经李家坳、枫木岭、界牌铺。",
+      "start": 1486
+    },
+    {
+      "end": 1539,
+      "evidence_id": "c0001__e12",
+      "quote": "再前行，经大坪村，行三十华里，抵达良田墟。",
+      "start": 1518
+    },
+    {
+      "end": 1607,
+      "evidence_id": "c0001__e13",
+      "quote": "墟外有小河自东侧山间流出，河上建有石拱桥，桥面宽阔，可供车马通行。",
+      "start": 1574
+    },
+    {
+      "end": 1700,
+      "evidence_id": "c0001__e13__src2",
+      "quote": "参谋在路线图标注石桥位置，此桥为本段行军重要通道，一旦损毁，全军渡河将大为困难。",
+      "start": 1660
+    },
+    {
+      "end": 1777,
+      "evidence_id": "c0001__e14",
+      "quote": "经五里坳、平头岭，山岭起伏幅度变小，不再有高耸险隘。",
+      "start": 1751
+    },
+    {
+      "end": 1830,
+      "evidence_id": "c0001__e15",
+      "quote": "行三十五华里，抵达郴州城南郊，宿营于城外东河岸边。",
+      "start": 1805
+    },
+    {
+      "end": 2112,
+      "evidence_id": "c0001__e16",
+      "quote": "经下湄桥、铜坑湖、高坡村，行二十华里抵达五里牌。",
+      "start": 2088
+    },
+    {
+      "end": 2174,
+      "evidence_id": "c0001__e17",
+      "quote": "继续北行，经栖凤渡。",
+      "start": 2164
+    },
+    {
+      "end": 2198,
+      "evidence_id": "c0001__e17__src2",
+      "quote": "栖凤渡为东河渡口，渡口有渡船数艘，可载人马渡河。",
+      "start": 2174
+    },
+    {
+      "end": 2251,
+      "evidence_id": "c0001__e18",
+      "quote": "再向北行，经瓦灶村、竹塘铺，行三十华里抵达永兴县城南郊，宿营于城南河畔。",
+      "start": 2215
+    },
+    {
+      "end": 2407,
+      "evidence_id": "c0001__e19",
+      "quote": "经黄泥铺、碧塘村、湘阴渡。",
+      "start": 2394
+    },
+    {
+      "end": 2460,
+      "evidence_id": "c0001__e20",
+      "quote": "行四十华里抵达龙海塘墟。",
+      "start": 2448
+    },
+    {
+      "end": 2576,
+      "evidence_id": "c0001__e21",
+      "quote": "此地距安仁县城尚有三十余里，敌情报告称敌军一部驻守安仁，故前卫部队加强警戒，派出多组侦察兵，分多路探查安仁外围村庄。",
+      "start": 2518
+    },
+    {
+      "end": 2648,
+      "evidence_id": "c0002__e_src_2604_2648",
+      "quote": "凌晨四时出发，自龙海塘墟向东北方向转向，离开便江沿岸主驿道，转入乡间大路，目标安仁县城。",
+      "start": 2604
+    },
+    {
+      "end": 2690,
+      "evidence_id": "c0002__e_src_2678_2690",
+      "quote": "经平山村、洋塘、禾市铺。",
+      "start": 2678
+    },
+    {
+      "end": 2716,
+      "evidence_id": "c0002__e_src_2690_2716",
+      "quote": "禾市铺为乡间小集市，岔路向西通往耒阳，向东通往茶陵。",
+      "start": 2690
+    },
+    {
+      "end": 2732,
+      "evidence_id": "c0002__e_src_2716_2732",
+      "quote": "本团取东北方向，继续向安仁前进。",
+      "start": 2716
+    },
+    {
+      "end": 2781,
+      "evidence_id": "c0002__e_src_2763_2781",
+      "quote": "行三十华里，午后抵达安仁县城南门外。",
+      "start": 2763
+    },
+    {
+      "end": 2807,
+      "evidence_id": "c0002__e_src_2781_2807",
+      "quote": "敌军前锋已于前一日抵达安仁，在城南高地构筑简易工事。",
+      "start": 2781
+    },
+    {
+      "end": 2839,
+      "evidence_id": "c0002__e_src_2807_2839",
+      "quote": "前卫部队在城南五里处与敌军警戒部队遭遇，短暂交火，敌军向后撤退。",
+      "start": 2807
+    },
+    {
+      "end": 2860,
+      "evidence_id": "c0002__e_src_2839_2860",
+      "quote": "本团主力就地宿营于城南村庄，不再继续前进。",
+      "start": 2839
+    },
+    {
+      "end": 2929,
+      "evidence_id": "c0002__e_src_2918_2929",
+      "quote": "原地驻留安仁城南休整。",
+      "start": 2918
+    },
+    {
+      "end": 2977,
+      "evidence_id": "c0002__e_src_2937_2977",
+      "quote": "各部整修工事，派出侦察分队向安仁城东、西、北三个方向侦查，探明敌军主力布防位置。",
+      "start": 2937
+    },
+    {
+      "end": 3159,
+      "evidence_id": "c0002__e_src_3128_3159",
+      "quote": "凌晨四时，本团自安仁城南营地出发，向北转移，拟迂回至攸县方向。",
+      "start": 3128
+    },
+    {
+      "end": 3228,
+      "evidence_id": "c0002__e_src_3194_3228",
+      "quote": "经清溪村、禾滩、洋际墟，道路穿行于低矮丘陵之间，林木密集，视野受限。",
+      "start": 3194
+    },
+    {
+      "end": 3261,
+      "evidence_id": "c0002__e_src_3248_3261",
+      "quote": "行二十五华里，抵达高塘村。",
+      "start": 3248
+    },
+    {
+      "end": 3309,
+      "evidence_id": "c0002__e_src_3291_3309",
+      "quote": "前卫在此警戒，观察敌军有无追击动向。",
+      "start": 3291
+    },
+    {
+      "end": 3345,
+      "evidence_id": "c0002__e_src_3309_3345",
+      "quote": "休息两时，继续北行，经石坝、湖背村，山道渐趋平缓，进入洣水支流河谷地带。",
+      "start": 3309
+    },
+    {
+      "end": 3365,
+      "evidence_id": "c0002__e_src_3345_3365",
+      "quote": "再行三十华里，抵达攸县南部的网岭墟宿营。",
+      "start": 3345
+    },
+    {
+      "end": 3502,
+      "evidence_id": "c0002__e_src_3480_3502",
+      "quote": "拂晓四时半拔营，自网岭墟沿洣水河谷北向行进。",
+      "start": 3480
+    },
+    {
+      "end": 3535,
+      "evidence_id": "c0002__e_src_3526_3535",
+      "quote": "经皇图岭、新市墟。",
+      "start": 3526
+    },
+    {
+      "end": 3579,
+      "evidence_id": "c0002__e_src_3565_3579",
+      "quote": "行三十华里抵达攸县县城南郊。",
+      "start": 3565
+    },
+    {
+      "end": 3650,
+      "evidence_id": "c0002__e_src_3621_3650",
+      "quote": "本团侦察得知攸县守敌兵力不多，听闻本军抵达，已经向北撤退。",
+      "start": 3621
+    },
+    {
+      "end": 3662,
+      "evidence_id": "c0002__e_src_3650_3662",
+      "quote": "部队入城休整，宿营城内。",
+      "start": 3650
+    },
+    {
+      "end": 3775,
+      "evidence_id": "c0002__e_src_3747_3775",
+      "quote": "清晨五时出发，自攸县北门出城，沿洣水北岸驿道向西北行进。",
+      "start": 3747
+    },
+    {
+      "end": 3831,
+      "evidence_id": "c0002__e_src_3796_3831",
+      "quote": "经大同桥、鸭塘铺、石羊塘，一路沿河谷平地前进，丘陵散落在道路两侧远处。",
+      "start": 3796
+    },
+    {
+      "end": 3848,
+      "evidence_id": "c0002__e_src_3831_3848",
+      "quote": "行四十华里，抵达醴陵南境的泗汾墟。",
+      "start": 3831
+    },
+    {
+      "end": 3915,
+      "evidence_id": "c0002__e_src_3883_3915",
+      "quote": "敌军在泗汾河北岸构筑防线，前卫部队抵达河边，与敌军警戒部队接触。",
+      "start": 3883
+    },
+    {
+      "end": 3930,
+      "evidence_id": "c0002__e_src_3915_3930",
+      "quote": "本团主力于泗汾河南岸村落宿营。",
+      "start": 3915
+    },
+    {
+      "end": 4047,
+      "evidence_id": "c0002__e_src_4037_4047",
+      "quote": "原地驻留泗汾河南岸。",
+      "start": 4037
+    },
+    {
+      "end": 4095,
+      "evidence_id": "c0002__e_src_4053_4095",
+      "quote": "全天侦查泗汾河全线，上下游数里范围内寻找涉水渡河点，测绘北岸地形，观察敌军阵地分布。",
+      "start": 4053
+    },
+    {
+      "end": 4187,
+      "evidence_id": "c0002__e_src_4144_4187",
+      "quote": "向导带领侦察兵深入东侧山林，探查山间小径能否通行步兵与驮马，记录山路里程、水源与村落。",
+      "start": 4144
+    },
+    {
+      "end": 4238,
+      "evidence_id": "c0002__e_src_4223_4238",
+      "quote": "凌晨发起作战，突破泗汾河防线。",
+      "start": 4223
+    },
+    {
+      "end": 4287,
+      "evidence_id": "c0002__e_src_4238_4287",
+      "quote": "部队分三路行动，主力从泗汾石桥正面强渡，一部向东沿山间小路迂回，从上游浅滩涉水过河，包抄敌军右翼。",
+      "start": 4238
+    },
+    {
+      "end": 4342,
+      "evidence_id": "c0002__e_src_4305_4342",
+      "quote": "午后本军继续沿驿道北进，经马恋、大障，丘陵逐渐低矮，进入湘江下游平原边缘。",
+      "start": 4305
+    },
+    {
+      "end": 4357,
+      "evidence_id": "c0002__e_src_4342_4357",
+      "quote": "行三十华里，傍晚进驻醴陵县城。",
+      "start": 4342
+    },
+    {
+      "end": 4520,
+      "evidence_id": "c0002__e_src_4495_4520",
+      "quote": "拂晓五时自醴陵城北出发，沿渌水北岸官道向西北行进。",
+      "start": 4495
+    },
+    {
+      "end": 4580,
+      "evidence_id": "c0002__e_src_4567_4580",
+      "quote": "经板杉铺、姚家坝、白关铺。",
+      "start": 4567
+    },
+    {
+      "end": 4622,
+      "evidence_id": "c0002__e_src_4610_4622",
+      "quote": "行四十华里抵达株洲城南。",
+      "start": 4610
+    },
+    {
+      "end": 4656,
+      "evidence_id": "c0002__e_src_4622_4656",
+      "quote": "株洲临湘江东岸，为粤汉铁路线上的重镇，铁路与湘江在此交汇，水陆要道。",
+      "start": 4622
+    },
+    {
+      "end": 4683,
+      "evidence_id": "c0002__e_src_4670_4683",
+      "quote": "部队宿营株洲城外湘江滩地。",
+      "start": 4670
+    },
+    {
+      "end": 4773,
+      "evidence_id": "c0002__e_src_4765_4773",
+      "quote": "原地驻株洲休整。",
+      "start": 4765
+    },
+    {
+      "end": 5072,
+      "evidence_id": "c0002__e_src_5033_5072",
+      "quote": "民国十五年六月初，国民革命军第四军独立团奉令自粤北韶关北上赴湘，增援湘南友军。",
+      "start": 5033
+    },
+    {
+      "end": 5207,
+      "evidence_id": "c0003__e_actor1",
+      "quote": "全队分前卫、本队、后卫、辎重四序列行进，前卫派出侦察兵先行探路，测绘简易路径标记，向导多为本地乡民。",
+      "start": 5157
+    },
+    {
+      "end": 5240,
+      "evidence_id": "c0003__e_actor1__src2",
+      "quote": "午后六时，本部全队集结于韶州府城，宿于东门外教场。",
+      "start": 5215
+    },
+    {
+      "end": 6693,
+      "evidence_id": "c0003__e_actor2",
+      "quote": "侦查报告前方无敌军主力，仅有少量地方武装散在乡村，已经向北撤退。",
+      "start": 6661
+    },
+    {
+      "end": 5240,
+      "evidence_id": "c0003__e_shaoguan",
+      "quote": "午后六时，本部全队集结于韶州府城，宿于东门外教场。",
+      "start": 5215
+    },
+    {
+      "end": 5240,
+      "evidence_id": "c0003__e_dongmen",
+      "quote": "午后六时，本部全队集结于韶州府城，宿于东门外教场。",
+      "start": 5215
+    },
+    {
+      "end": 5500,
+      "evidence_id": "c0003__e_dongmen__src2",
+      "quote": "拂晓四时半开拔，由韶州东门外教场出发，向北行，经腊石坝、转水村，沿武江左岸山道前进。",
+      "start": 5458
+    },
+    {
+      "end": 5373,
+      "evidence_id": "c0003__e_chengxi_muqiao",
+      "quote": "本团辎重、驮马须绕道城西木桥渡河。",
+      "start": 5356
+    },
+    {
+      "end": 5435,
+      "evidence_id": "c0003__e_lashiba",
+      "quote": "当日清点各部人员与弹药，整理草鞋、干粮，夜间派出斥候北出十里，探查至腊石坝一带，回报沿途无敌军，唯山道多碎石，雨后容易打滑。",
+      "start": 5373
+    },
+    {
+      "end": 5500,
+      "evidence_id": "c0003__e_lashiba__src2",
+      "quote": "拂晓四时半开拔，由韶州东门外教场出发，向北行，经腊石坝、转水村，沿武江左岸山道前进。",
+      "start": 5458
+    },
+    {
+      "end": 5500,
+      "evidence_id": "c0003__e_zhuanshuicun",
+      "quote": "拂晓四时半开拔，由韶州东门外教场出发，向北行，经腊石坝、转水村，沿武江左岸山道前进。",
+      "start": 5458
+    },
+    {
+      "end": 5500,
+      "evidence_id": "c0003__e_changbaxu",
+      "quote": "拂晓四时半开拔，由韶州东门外教场出发，向北行，经腊石坝、转水村，沿武江左岸山道前进。",
+      "start": 5458
+    },
+    {
+      "end": 5545,
+      "evidence_id": "c0003__e_changbaxu__src2",
+      "quote": "行二十五华里抵达长坝墟。",
+      "start": 5533
+    },
+    {
+      "end": 5642,
+      "evidence_id": "c0003__e_baishuicun",
+      "quote": "复向北行，经白土村、罗村，山路开始抬升，路面多大小卵石，驮马行进速度放缓。",
+      "start": 5605
+    },
+    {
+      "end": 5642,
+      "evidence_id": "c0003__e_luocun",
+      "quote": "复向北行，经白土村、罗村，山路开始抬升，路面多大小卵石，驮马行进速度放缓。",
+      "start": 5605
+    },
+    {
+      "end": 5669,
+      "evidence_id": "c0003__e_lechang",
+      "quote": "再行三十里，抵达乐昌县城南郊，傍晚扎营于城南河岸平地。",
+      "start": 5642
+    },
+    {
+      "end": 5809,
+      "evidence_id": "c0003__e_lechang__src2",
+      "quote": "凌晨五时出发，由乐昌北门出城，西北方向入山。",
+      "start": 5787
+    },
+    {
+      "end": 5913,
+      "evidence_id": "c0003__e_liantang",
+      "quote": "经莲塘村、高塘坳，山道持续抬升，沿途多山涧，山涧水量随降雨变化，晴日仅浅流，遇暴雨则山洪骤发，阻断道路。",
+      "start": 5861
+    },
+    {
+      "end": 5913,
+      "evidence_id": "c0003__e_gaotangao",
+      "quote": "经莲塘村、高塘坳，山道持续抬升，沿途多山涧，山涧水量随降雨变化，晴日仅浅流，遇暴雨则山洪骤发，阻断道路。",
+      "start": 5861
+    },
+    {
+      "end": 5913,
+      "evidence_id": "c0003__e_jiufeng",
+      "quote": "经莲塘村、高塘坳，山道持续抬升，沿途多山涧，山涧水量随降雨变化，晴日仅浅流，遇暴雨则山洪骤发，阻断道路。",
+      "start": 5861
+    },
+    {
+      "end": 5926,
+      "evidence_id": "c0003__e_jiufeng__src2",
+      "quote": "前行三十华里，抵达九峰墟。",
+      "start": 5913
+    },
+    {
+      "end": 6115,
+      "evidence_id": "c0003__e_weiling",
+      "quote": "寅时三刻拔营，自九峰墟北向登山，目标蔚岭关。",
+      "start": 6093
+    },
+    {
+      "end": 6189,
+      "evidence_id": "c0003__e_weiling__src2",
+      "quote": "行十八华里，抵达蔚岭山顶关隘。",
+      "start": 6174
+    },
+    {
+      "end": 6326,
+      "evidence_id": "c0003__e_tangcun",
+      "quote": "下岭行十二华里，抵达塘村。",
+      "start": 6313
+    },
+    {
+      "end": 6532,
+      "evidence_id": "c0003__e_lijiaao",
+      "quote": "经李家坳、枫木岭、界牌铺。",
+      "start": 6519
+    },
+    {
+      "end": 6532,
+      "evidence_id": "c0003__e_fengmuling",
+      "quote": "经李家坳、枫木岭、界牌铺。",
+      "start": 6519
+    },
+    {
+      "end": 6532,
+      "evidence_id": "c0003__e_jiepaipu",
+      "quote": "经李家坳、枫木岭、界牌铺。",
+      "start": 6519
+    },
+    {
+      "end": 6572,
+      "evidence_id": "c0003__e_dapingcun",
+      "quote": "再前行，经大坪村，行三十华里，抵达良田墟。",
+      "start": 6551
+    },
+    {
+      "end": 6572,
+      "evidence_id": "c0003__e_liangtian",
+      "quote": "再前行，经大坪村，行三十华里，抵达良田墟。",
+      "start": 6551
+    },
+    {
+      "end": 6640,
+      "evidence_id": "c0003__e_liangtian_bridge",
+      "quote": "墟外有小河自东侧山间流出，河上建有石拱桥，桥面宽阔，可供车马通行。",
+      "start": 6607
+    },
+    {
+      "end": 6733,
+      "evidence_id": "c0003__e_liangtian_bridge__src2",
+      "quote": "参谋在路线图标注石桥位置，此桥为本段行军重要通道，一旦损毁，全军渡河将大为困难。",
+      "start": 6693
+    },
+    {
+      "end": 6810,
+      "evidence_id": "c0003__e_wuliaao",
+      "quote": "经五里坳、平头岭，山岭起伏幅度变小，不再有高耸险隘。",
+      "start": 6784
+    },
+    {
+      "end": 6810,
+      "evidence_id": "c0003__e_pingtouling",
+      "quote": "经五里坳、平头岭，山岭起伏幅度变小，不再有高耸险隘。",
+      "start": 6784
+    },
+    {
+      "end": 6863,
+      "evidence_id": "c0003__e_chenzhou",
+      "quote": "行三十五华里，抵达郴州城南郊，宿营于城外东河岸边。",
+      "start": 6838
+    },
+    {
+      "end": 7064,
+      "evidence_id": "c0003__e_chenzhou__src2",
+      "quote": "拂晓五时出发，自郴州东郊出发，沿湘南北向官道前进。",
+      "start": 7039
+    },
+    {
+      "end": 7145,
+      "evidence_id": "c0003__e_xiameiqiao",
+      "quote": "经下湄桥、铜坑湖、高坡村，行二十华里抵达五里牌。",
+      "start": 7121
+    },
+    {
+      "end": 7145,
+      "evidence_id": "c0003__e_tongkenghu",
+      "quote": "经下湄桥、铜坑湖、高坡村，行二十华里抵达五里牌。",
+      "start": 7121
+    },
+    {
+      "end": 7145,
+      "evidence_id": "c0003__e_gaopocun",
+      "quote": "经下湄桥、铜坑湖、高坡村，行二十华里抵达五里牌。",
+      "start": 7121
+    },
+    {
+      "end": 7145,
+      "evidence_id": "c0003__e_wulipai",
+      "quote": "经下湄桥、铜坑湖、高坡村，行二十华里抵达五里牌。",
+      "start": 7121
+    },
+    {
+      "end": 7207,
+      "evidence_id": "c0003__e_qifengdu",
+      "quote": "继续北行，经栖凤渡。",
+      "start": 7197
+    },
+    {
+      "end": 7284,
+      "evidence_id": "c0003__e_wazaocun",
+      "quote": "再向北行，经瓦灶村、竹塘铺，行三十华里抵达永兴县城南郊，宿营于城南河畔。",
+      "start": 7248
+    },
+    {
+      "end": 7284,
+      "evidence_id": "c0003__e_zhutangpu",
+      "quote": "再向北行，经瓦灶村、竹塘铺，行三十华里抵达永兴县城南郊，宿营于城南河畔。",
+      "start": 7248
+    },
+    {
+      "end": 7284,
+      "evidence_id": "c0003__e_yongxing",
+      "quote": "再向北行，经瓦灶村、竹塘铺，行三十华里抵达永兴县城南郊，宿营于城南河畔。",
+      "start": 7248
+    },
+    {
+      "end": 7404,
+      "evidence_id": "c0003__e_yongxing__src2",
+      "quote": "寅时三刻拔营，自永兴城南出发，沿便江西岸官道北行。",
+      "start": 7379
+    },
+    {
+      "end": 7440,
+      "evidence_id": "c0003__e_huangnipu",
+      "quote": "经黄泥铺、碧塘村、湘阴渡。",
+      "start": 7427
+    },
+    {
+      "end": 7440,
+      "evidence_id": "c0003__e_bitangcun",
+      "quote": "经黄泥铺、碧塘村、湘阴渡。",
+      "start": 7427
+    },
+    {
+      "end": 7440,
+      "evidence_id": "c0003__e_xiangyindu",
+      "quote": "经黄泥铺、碧塘村、湘阴渡。",
+      "start": 7427
+    },
+    {
+      "end": 7493,
+      "evidence_id": "c0003__e_longhaitang",
+      "quote": "行四十华里抵达龙海塘墟。",
+      "start": 7481
+    },
+    {
+      "end": 7723,
+      "evidence_id": "c0003__e_pingshancun",
+      "quote": "经平山村、洋塘、禾市铺。",
+      "start": 7711
+    },
+    {
+      "end": 7723,
+      "evidence_id": "c0003__e_yangtang",
+      "quote": "经平山村、洋塘、禾市铺。",
+      "start": 7711
+    },
+    {
+      "end": 7723,
+      "evidence_id": "c0003__e_heshipu",
+      "quote": "经平山村、洋塘、禾市铺。",
+      "start": 7711
+    },
+    {
+      "end": 5262,
+      "evidence_id": "c0003__e_bg_rivers",
+      "quote": "韶州北倚武江，南临浈水，二水在此汇合成北江。",
+      "start": 5240
+    },
+    {
+      "end": 5605,
+      "evidence_id": "c0003__e_bg_nanling",
+      "quote": "在此短暂休息，饮水，前卫侦察兵回报前方山路渐高，即将进入南岭支脉。",
+      "start": 5572
+    },
+    {
+      "end": 5240,
+      "evidence_id": "c0003__e_ev1",
+      "quote": "午后六时，本部全队集结于韶州府城，宿于东门外教场。",
+      "start": 5215
+    },
+    {
+      "end": 5500,
+      "evidence_id": "c0003__e_ev2",
+      "quote": "拂晓四时半开拔，由韶州东门外教场出发，向北行，经腊石坝、转水村，沿武江左岸山道前进。",
+      "start": 5458
+    },
+    {
+      "end": 5669,
+      "evidence_id": "c0003__e_ev3",
+      "quote": "再行三十里，抵达乐昌县城南郊，傍晚扎营于城南河岸平地。",
+      "start": 5642
+    },
+    {
+      "end": 5809,
+      "evidence_id": "c0003__e_ev4",
+      "quote": "凌晨五时出发，由乐昌北门出城，西北方向入山。",
+      "start": 5787
+    },
+    {
+      "end": 5926,
+      "evidence_id": "c0003__e_ev5",
+      "quote": "前行三十华里，抵达九峰墟。",
+      "start": 5913
+    },
+    {
+      "end": 6115,
+      "evidence_id": "c0003__e_ev6",
+      "quote": "寅时三刻拔营，自九峰墟北向登山，目标蔚岭关。",
+      "start": 6093
+    },
+    {
+      "end": 6189,
+      "evidence_id": "c0003__e_ev7",
+      "quote": "行十八华里，抵达蔚岭山顶关隘。",
+      "start": 6174
+    },
+    {
+      "end": 6326,
+      "evidence_id": "c0003__e_ev8",
+      "quote": "下岭行十二华里，抵达塘村。",
+      "start": 6313
+    },
+    {
+      "end": 6447,
+      "evidence_id": "c0003__e_ev9",
+      "quote": "清晨五时自塘村出发，向西北方向行进。",
+      "start": 6429
+    },
+    {
+      "end": 6572,
+      "evidence_id": "c0003__e_ev10",
+      "quote": "再前行，经大坪村，行三十华里，抵达良田墟。",
+      "start": 6551
+    },
+    {
+      "end": 6757,
+      "evidence_id": "c0003__e_ev11",
+      "quote": "四时半开拔，自良田墟北向行进。",
+      "start": 6742
+    },
+    {
+      "end": 6863,
+      "evidence_id": "c0003__e_ev12",
+      "quote": "行三十五华里，抵达郴州城南郊，宿营于城外东河岸边。",
+      "start": 6838
+    },
+    {
+      "end": 7064,
+      "evidence_id": "c0003__e_ev13",
+      "quote": "拂晓五时出发，自郴州东郊出发，沿湘南北向官道前进。",
+      "start": 7039
+    },
+    {
+      "end": 7284,
+      "evidence_id": "c0003__e_ev14",
+      "quote": "再向北行，经瓦灶村、竹塘铺，行三十华里抵达永兴县城南郊，宿营于城南河畔。",
+      "start": 7248
+    },
+    {
+      "end": 7404,
+      "evidence_id": "c0003__e_ev15",
+      "quote": "寅时三刻拔营，自永兴城南出发，沿便江西岸官道北行。",
+      "start": 7379
+    },
+    {
+      "end": 7493,
+      "evidence_id": "c0003__e_ev16",
+      "quote": "行四十华里抵达龙海塘墟。",
+      "start": 7481
+    },
+    {
+      "end": 7681,
+      "evidence_id": "c0003__e_ev17",
+      "quote": "凌晨四时出发，自龙海塘墟向东北方向转向，离开便江沿岸主驿道，转入乡间大路，目标安仁县城。",
+      "start": 7637
+    },
+    {
+      "end": 5295,
+      "evidence_id": "c0003__e_r1",
+      "quote": "城北陆路分两道，一道沿武江西岸取道乐昌入湘，为本军选定主行军路线；",
+      "start": 5262
+    },
+    {
+      "end": 5500,
+      "evidence_id": "c0003__e_r1__src2",
+      "quote": "拂晓四时半开拔，由韶州东门外教场出发，向北行，经腊石坝、转水村，沿武江左岸山道前进。",
+      "start": 5458
+    },
+    {
+      "end": 7723,
+      "evidence_id": "c0003__e_r1__src3",
+      "quote": "经平山村、洋塘、禾市铺。",
+      "start": 7711
+    },
+    {
+      "end": 7749,
+      "evidence_id": "c0004__e1",
+      "quote": "禾市铺为乡间小集市，岔路向西通往耒阳，向东通往茶陵。",
+      "start": 7723
+    },
+    {
+      "end": 7765,
+      "evidence_id": "c0004__e2",
+      "quote": "本团取东北方向，继续向安仁前进。",
+      "start": 7749
+    },
+    {
+      "end": 7814,
+      "evidence_id": "c0004__e3",
+      "quote": "行三十华里，午后抵达安仁县城南门外。",
+      "start": 7796
+    },
+    {
+      "end": 7872,
+      "evidence_id": "c0004__e4",
+      "quote": "前卫部队在城南五里处与敌军警戒部队遭遇，短暂交火，敌军向后撤退。",
+      "start": 7840
+    },
+    {
+      "end": 7893,
+      "evidence_id": "c0004__e5",
+      "quote": "本团主力就地宿营于城南村庄，不再继续前进。",
+      "start": 7872
+    },
+    {
+      "end": 7962,
+      "evidence_id": "c0004__e6",
+      "quote": "原地驻留安仁城南休整。",
+      "start": 7951
+    },
+    {
+      "end": 8192,
+      "evidence_id": "c0004__e7",
+      "quote": "凌晨四时，本团自安仁城南营地出发，向北转移，拟迂回至攸县方向。",
+      "start": 8161
+    },
+    {
+      "end": 8261,
+      "evidence_id": "c0004__e8",
+      "quote": "经清溪村、禾滩、洋际墟，道路穿行于低矮丘陵之间，林木密集，视野受限。",
+      "start": 8227
+    },
+    {
+      "end": 8294,
+      "evidence_id": "c0004__e9",
+      "quote": "行二十五华里，抵达高塘村。",
+      "start": 8281
+    },
+    {
+      "end": 8378,
+      "evidence_id": "c0004__e10",
+      "quote": "休息两时，继续北行，经石坝、湖背村，山道渐趋平缓，进入洣水支流河谷地带。",
+      "start": 8342
+    },
+    {
+      "end": 8398,
+      "evidence_id": "c0004__e11",
+      "quote": "再行三十华里，抵达攸县南部的网岭墟宿营。",
+      "start": 8378
+    },
+    {
+      "end": 8535,
+      "evidence_id": "c0004__e12",
+      "quote": "拂晓四时半拔营，自网岭墟沿洣水河谷北向行进。",
+      "start": 8513
+    },
+    {
+      "end": 8568,
+      "evidence_id": "c0004__e13",
+      "quote": "经皇图岭、新市墟。",
+      "start": 8559
+    },
+    {
+      "end": 8612,
+      "evidence_id": "c0004__e14",
+      "quote": "行三十华里抵达攸县县城南郊。",
+      "start": 8598
+    },
+    {
+      "end": 8695,
+      "evidence_id": "c0004__e15",
+      "quote": "部队入城休整，宿营城内。",
+      "start": 8683
+    },
+    {
+      "end": 8808,
+      "evidence_id": "c0004__e16",
+      "quote": "清晨五时出发，自攸县北门出城，沿洣水北岸驿道向西北行进。",
+      "start": 8780
+    },
+    {
+      "end": 8864,
+      "evidence_id": "c0004__e17",
+      "quote": "经大同桥、鸭塘铺、石羊塘，一路沿河谷平地前进，丘陵散落在道路两侧远处。",
+      "start": 8829
+    },
+    {
+      "end": 8881,
+      "evidence_id": "c0004__e18",
+      "quote": "行四十华里，抵达醴陵南境的泗汾墟。",
+      "start": 8864
+    },
+    {
+      "end": 8963,
+      "evidence_id": "c0004__e19",
+      "quote": "本团主力于泗汾河南岸村落宿营。",
+      "start": 8948
+    },
+    {
+      "end": 9080,
+      "evidence_id": "c0004__e20",
+      "quote": "原地驻留泗汾河南岸。",
+      "start": 9070
+    },
+    {
+      "end": 9320,
+      "evidence_id": "c0004__e21",
+      "quote": "部队分三路行动，主力从泗汾石桥正面强渡，一部向东沿山间小路迂回，从上游浅滩涉水过河，包抄敌军右翼。",
+      "start": 9271
+    },
+    {
+      "end": 9375,
+      "evidence_id": "c0004__e22",
+      "quote": "午后本军继续沿驿道北进，经马恋、大障，丘陵逐渐低矮，进入湘江下游平原边缘。",
+      "start": 9338
+    },
+    {
+      "end": 9472,
+      "evidence_id": "c0004__e23",
+      "quote": "入城之后，继续向北探查，探明醴陵至株洲、长沙的道路状况。",
+      "start": 9444
+    },
+    {
+      "end": 9553,
+      "evidence_id": "c0004__e24",
+      "quote": "拂晓五时自醴陵城北出发，沿渌水北岸官道向西北行进。",
+      "start": 9528
+    },
+    {
+      "end": 9613,
+      "evidence_id": "c0004__e25",
+      "quote": "经板杉铺、姚家坝、白关铺。",
+      "start": 9600
+    },
+    {
+      "end": 9655,
+      "evidence_id": "c0004__e26",
+      "quote": "行四十华里抵达株洲城南。",
+      "start": 9643
+    },
+    {
+      "end": 9689,
+      "evidence_id": "c0004__e27",
+      "quote": "株洲临湘江东岸，为粤汉铁路线上的重镇，铁路与湘江在此交汇，水陆要道。",
+      "start": 9655
+    },
+    {
+      "end": 9716,
+      "evidence_id": "c0004__e28",
+      "quote": "部队宿营株洲城外湘江滩地。",
+      "start": 9703
+    },
+    {
+      "end": 9435,
+      "evidence_id": "c0004__e29",
+      "quote": "城池依山临水，南北驿道穿城而过。",
+      "start": 9419
+    }
+  ],
+  "output_constraints": {
+    "self_intersection_policy": "allow_with_overpass"
+  },
+  "point_presentations": [],
+  "routes": [
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0001__e1",
+        "c0001__e1__src2",
+        "c0001__e3",
+        "c0001__e20",
+        "c0002__e_src_2604_2648",
+        "c0002__e_src_2678_2690",
+        "c0002__e_src_2763_2781"
+      ],
+      "name": "第四军独立团北上湘南主路线",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0001__place_jiaochang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_fuqiao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_lashiba",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_zhuanshuicun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_changbaxu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_baitucun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_luocun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_lechang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_liantang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_gaotangao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_jiufengxu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_weilingguan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_tangcun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_lijiaao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_fengmuling",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_jiepaipu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_dapingcun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_liangtianxu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_liangtian_qiao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_wuliaao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_pingtouting",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_chenzhou",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_xiameiqiao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_tongkenghu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_gaopocun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_wulipai",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_qifengdu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_wazaocun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_zhutangpu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_yongxing",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_huangnipu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_bitangcun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_xiangyindu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_longhaitangxu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se2",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se3",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se4",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se5",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0001__path_main",
+          "role": "main"
+        },
+        {
+          "attach_ref": "c0001__place_jiaochang",
+          "direction": "away_from_attach",
+          "nodes": [
+            {
+              "ref_id": "c0001__place_muqiao",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0001__path_branch_1",
+          "role": "branch"
+        }
+      ],
+      "route_id": "c0001__route_main_1",
+      "side": "friendly",
+      "topology": "branch"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__e_src_3128_3159",
+        "c0002__e_src_3194_3228",
+        "c0002__e_src_3248_3261",
+        "c0002__e_src_3309_3345",
+        "c0002__e_src_3345_3365"
+      ],
+      "name": "六月三十日行军",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__se5",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se6",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se7",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se8",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se9",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se10",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se11",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se12",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__r2_p1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0002__r2",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__e_src_3480_3502",
+        "c0002__e_src_3526_3535",
+        "c0002__e_src_3565_3579"
+      ],
+      "name": "七月初一日行军",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__se12",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se13",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se14",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se15",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__r3_p1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0002__r3",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__e_src_3747_3775",
+        "c0002__e_src_3796_3831",
+        "c0002__e_src_3831_3848"
+      ],
+      "name": "七月初二日行军",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__se15",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se16",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se17",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se18",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se19",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se20",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__r4_p1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0002__r4",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__e_src_4238_4287",
+        "c0002__e_src_4305_4342",
+        "c0002__e_src_4342_4357"
+      ],
+      "name": "七月初四日行军",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__se20",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se21",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se23",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se24",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se25",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__r5_p1",
+          "role": "main"
+        },
+        {
+          "attach_ref": "c0002__se20",
+          "direction": "away_from_attach",
+          "nodes": [
+            {
+              "ref_id": "c0002__se22",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__r5_p2",
+          "role": "branch"
+        }
+      ],
+      "route_id": "c0002__r5",
+      "side": "friendly",
+      "topology": "branch"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__e_src_4495_4520",
+        "c0002__e_src_4567_4580",
+        "c0002__e_src_4610_4622"
+      ],
+      "name": "七月初五日行军",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__se25",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se26",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se27",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se28",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se29",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se30",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__r6_p1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0002__r6",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "c0003__e_r1",
+        "c0003__e_r1__src2",
+        "c0003__e_r1__src3",
+        "c0004__e3",
+        "c0004__e4",
+        "c0004__e5"
+      ],
+      "name": "韶州至禾市铺行军路线",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0003__se_dongmen",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_lashiba",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_zhuanshuicun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_changbaxu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_baishuicun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_luocun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_lechang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_liantang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_gaotangao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_jiufeng",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_weiling",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_tangcun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_lijiaao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_fengmuling",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_jiepaipu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_dapingcun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_liangtian",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_liangtian_bridge",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_wuliaao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_pingtouling",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_chenzhou",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_xiameiqiao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_tongkenghu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_gaopocun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_wulipai",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_qifengdu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_wazaocun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_zhutangpu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_yongxing",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_huangnipu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_bitangcun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_xiangyindu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__place_longhaitangxu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se2",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se3",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__se4",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se2",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se3",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se4",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0003__p1_main",
+          "role": "main"
+        },
+        {
+          "attach_ref": "c0003__se_dongmen",
+          "direction": "away_from_attach",
+          "nodes": [
+            {
+              "ref_id": "c0003__se_chengxi_muqiao",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0003__p2_zizhong",
+          "role": "branch"
+        }
+      ],
+      "route_id": "c0003__r1",
+      "side": "friendly",
+      "topology": "branch"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0004__e7",
+        "c0004__e8",
+        "c0004__e9",
+        "c0004__e10",
+        "c0004__e11"
+      ],
+      "name": "安仁城南至网岭墟",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0004__se4",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se5",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se6",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se7",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se8",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se9",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se10",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se11",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0004__r2_p1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0004__r2",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0004__e12",
+        "c0004__e13",
+        "c0004__e14",
+        "c0004__e15"
+      ],
+      "name": "网岭墟至攸县县城",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0004__se11",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se12",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se13",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se14",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se15",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0004__r3_p1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0004__r3",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0004__e16",
+        "c0004__e17",
+        "c0004__e18",
+        "c0004__e19"
+      ],
+      "name": "攸县县城至泗汾墟",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0004__se16",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se17",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se18",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se19",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se20",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se21",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0004__r4_p1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0004__r4",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0004__e19",
+        "c0004__e20",
+        "c0004__e21",
+        "c0004__e22"
+      ],
+      "name": "泗汾墟至醴陵县城",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0004__se21",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se22",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se24",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se25",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se26",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0004__r5_p1",
+          "role": "main"
+        },
+        {
+          "attach_ref": "c0004__se21",
+          "direction": "away_from_attach",
+          "nodes": [
+            {
+              "ref_id": "c0004__se23",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0004__r5_p2",
+          "role": "branch"
+        }
+      ],
+      "route_id": "c0004__r5",
+      "side": "friendly",
+      "topology": "branch"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0004__e24",
+        "c0004__e25",
+        "c0004__e26",
+        "c0004__e28"
+      ],
+      "name": "醴陵县城至株洲城南",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0004__se27",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se28",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se29",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se30",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se31",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0004__se32",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0004__r6_p1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0004__r6",
+      "side": "friendly",
+      "topology": "standard"
+    }
+  ],
+  "schema_version": "1.0",
+  "spatial_entities": [
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_shaoguan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e1",
+        "c0001__e1__src2"
+      ],
+      "factual": true,
+      "lat": 24.81,
+      "lon": 113.59,
+      "map_role": "background",
+      "name": "韶州府城"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_jiaochang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e1",
+        "c0001__e1__src2",
+        "c0001__e3"
+      ],
+      "factual": true,
+      "lat": 24.81,
+      "lon": 113.6,
+      "map_role": "route_node",
+      "name": "东门外教场"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_fuqiao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e2",
+        "c0001__e2__src2"
+      ],
+      "factual": true,
+      "lat": 24.82,
+      "lon": 113.59,
+      "map_role": "route_node",
+      "name": "城北浮桥"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_muqiao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e2",
+        "c0001__e2__src2"
+      ],
+      "factual": true,
+      "lat": 24.81,
+      "lon": 113.58,
+      "map_role": "route_node",
+      "name": "城西木桥"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_lashiba",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e3"
+      ],
+      "factual": true,
+      "lat": 24.85,
+      "lon": 113.58,
+      "map_role": "route_node",
+      "name": "腊石坝"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_zhuanshuicun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e3"
+      ],
+      "factual": true,
+      "lat": 24.9,
+      "lon": 113.57,
+      "map_role": "route_node",
+      "name": "转水村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_changbaxu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e4"
+      ],
+      "factual": true,
+      "lat": 24.95,
+      "lon": 113.56,
+      "map_role": "route_node",
+      "name": "长坝墟"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_baitucun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e5"
+      ],
+      "factual": true,
+      "lat": 25,
+      "lon": 113.55,
+      "map_role": "route_node",
+      "name": "白土村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_luocun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e5"
+      ],
+      "factual": true,
+      "lat": 25.05,
+      "lon": 113.53,
+      "map_role": "route_node",
+      "name": "罗村"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_lechang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e6"
+      ],
+      "factual": true,
+      "lat": 25.13,
+      "lon": 113.48,
+      "map_role": "route_node",
+      "name": "乐昌县城"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_liantang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e7"
+      ],
+      "factual": true,
+      "lat": 25.16,
+      "lon": 113.45,
+      "map_role": "route_node",
+      "name": "莲塘村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_gaotangao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e7"
+      ],
+      "factual": true,
+      "lat": 25.2,
+      "lon": 113.4,
+      "map_role": "route_node",
+      "name": "高塘坳"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_jiufengxu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e8"
+      ],
+      "factual": true,
+      "lat": 25.25,
+      "lon": 113.35,
+      "map_role": "route_node",
+      "name": "九峰墟"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_weilingguan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e9",
+        "c0001__e9__src2",
+        "c0001__e9__src3",
+        "c0001__e9__src4"
+      ],
+      "factual": true,
+      "lat": 25.32,
+      "lon": 113.3,
+      "map_role": "route_node",
+      "name": "蔚岭关"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_tangcun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e10"
+      ],
+      "factual": true,
+      "lat": 25.38,
+      "lon": 113.25,
+      "map_role": "route_node",
+      "name": "塘村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_lijiaao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e11"
+      ],
+      "factual": true,
+      "lat": 25.42,
+      "lon": 113.2,
+      "map_role": "route_node",
+      "name": "李家坳"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_fengmuling",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e11"
+      ],
+      "factual": true,
+      "lat": 25.48,
+      "lon": 113.15,
+      "map_role": "route_node",
+      "name": "枫木岭"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_jiepaipu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e11"
+      ],
+      "factual": true,
+      "lat": 25.52,
+      "lon": 113.1,
+      "map_role": "route_node",
+      "name": "界牌铺"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_dapingcun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e12"
+      ],
+      "factual": true,
+      "lat": 25.56,
+      "lon": 113.05,
+      "map_role": "route_node",
+      "name": "大坪村"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_liangtianxu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e12"
+      ],
+      "factual": true,
+      "lat": 25.6,
+      "lon": 113,
+      "map_role": "route_node",
+      "name": "良田墟"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_liangtian_qiao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e13",
+        "c0001__e13__src2"
+      ],
+      "factual": true,
+      "lat": 25.6,
+      "lon": 113,
+      "map_role": "route_node",
+      "name": "良田墟石拱桥"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_wuliaao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e14"
+      ],
+      "factual": true,
+      "lat": 25.65,
+      "lon": 112.98,
+      "map_role": "route_node",
+      "name": "五里坳"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_pingtouting",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e14"
+      ],
+      "factual": true,
+      "lat": 25.7,
+      "lon": 112.99,
+      "map_role": "route_node",
+      "name": "平头岭"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_chenzhou",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e15"
+      ],
+      "factual": true,
+      "lat": 25.77,
+      "lon": 113.01,
+      "map_role": "route_node",
+      "name": "郴州城"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_xiameiqiao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e16"
+      ],
+      "factual": true,
+      "lat": 25.8,
+      "lon": 113.02,
+      "map_role": "route_node",
+      "name": "下湄桥"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_tongkenghu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e16"
+      ],
+      "factual": true,
+      "lat": 25.85,
+      "lon": 113.03,
+      "map_role": "route_node",
+      "name": "铜坑湖"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_gaopocun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e16"
+      ],
+      "factual": true,
+      "lat": 25.9,
+      "lon": 113.04,
+      "map_role": "route_node",
+      "name": "高坡村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_wulipai",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e16"
+      ],
+      "factual": true,
+      "lat": 25.95,
+      "lon": 113.05,
+      "map_role": "route_node",
+      "name": "五里牌"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_qifengdu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e17",
+        "c0001__e17__src2"
+      ],
+      "factual": true,
+      "lat": 26.02,
+      "lon": 113.08,
+      "map_role": "route_node",
+      "name": "栖凤渡"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_wazaocun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e18"
+      ],
+      "factual": true,
+      "lat": 26.08,
+      "lon": 113.1,
+      "map_role": "route_node",
+      "name": "瓦灶村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_zhutangpu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e18"
+      ],
+      "factual": true,
+      "lat": 26.15,
+      "lon": 113.12,
+      "map_role": "route_node",
+      "name": "竹塘铺"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_yongxing",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e18"
+      ],
+      "factual": true,
+      "lat": 26.25,
+      "lon": 113.11,
+      "map_role": "route_node",
+      "name": "永兴县城"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_huangnipu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e19"
+      ],
+      "factual": true,
+      "lat": 26.3,
+      "lon": 113.1,
+      "map_role": "route_node",
+      "name": "黄泥铺"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_bitangcun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e19"
+      ],
+      "factual": true,
+      "lat": 26.35,
+      "lon": 113.08,
+      "map_role": "route_node",
+      "name": "碧塘村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_xiangyindu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e19"
+      ],
+      "factual": true,
+      "lat": 26.4,
+      "lon": 113.05,
+      "map_role": "route_node",
+      "name": "湘阴渡"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__place_longhaitangxu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e20",
+        "c0002__e_src_2604_2648",
+        "c0003__e_longhaitang"
+      ],
+      "factual": true,
+      "lat": 26.45,
+      "lon": 113.02,
+      "map_role": "route_node",
+      "name": "龙海塘墟"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__bg_wujiang",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0001__e1",
+        "c0001__e1__src2"
+      ],
+      "factual": true,
+      "lat": 25,
+      "lon": 113.5,
+      "map_role": "background",
+      "name": "武江"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__bg_zhenshui",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0001__e1",
+        "c0001__e1__src2"
+      ],
+      "factual": true,
+      "lat": 24.8,
+      "lon": 113.65,
+      "map_role": "background",
+      "name": "浈水"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__bg_nanling",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0001__e9",
+        "c0001__e9__src2",
+        "c0001__e9__src3",
+        "c0001__e9__src4"
+      ],
+      "factual": true,
+      "lat": 25.3,
+      "lon": 113.3,
+      "map_role": "background",
+      "name": "南岭"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__bg_pianjiang",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0001__e19"
+      ],
+      "factual": true,
+      "lat": 26.35,
+      "lon": 113.1,
+      "map_role": "background",
+      "name": "便江"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__bg_anren",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__e21"
+      ],
+      "factual": true,
+      "lat": 26.71,
+      "lon": 113.27,
+      "map_role": "background",
+      "name": "安仁县城"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se2",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_2678_2690",
+        "c0003__e_pingshancun"
+      ],
+      "factual": true,
+      "lat": 25.98,
+      "lon": 113.18,
+      "map_role": "route_node",
+      "name": "平山村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se3",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_2678_2690",
+        "c0003__e_yangtang"
+      ],
+      "factual": true,
+      "lat": 26.02,
+      "lon": 113.22,
+      "map_role": "route_node",
+      "name": "洋塘"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se4",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_2678_2690",
+        "c0003__e_heshipu",
+        "c0004__e1"
+      ],
+      "factual": true,
+      "lat": 26.05,
+      "lon": 113.25,
+      "map_role": "route_node",
+      "name": "禾市铺"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se5",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_2763_2781",
+        "c0002__e_src_2839_2860"
+      ],
+      "factual": true,
+      "lat": 26.1,
+      "lon": 113.27,
+      "map_role": "route_node",
+      "name": "安仁县城南门外"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se6",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3194_3228"
+      ],
+      "factual": true,
+      "lat": 26.15,
+      "lon": 113.28,
+      "map_role": "route_node",
+      "name": "清溪村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se7",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3194_3228"
+      ],
+      "factual": true,
+      "lat": 26.2,
+      "lon": 113.3,
+      "map_role": "route_node",
+      "name": "禾滩"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se8",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3194_3228"
+      ],
+      "factual": true,
+      "lat": 26.25,
+      "lon": 113.32,
+      "map_role": "route_node",
+      "name": "洋际墟"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se9",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3248_3261"
+      ],
+      "factual": true,
+      "lat": 26.3,
+      "lon": 113.35,
+      "map_role": "route_node",
+      "name": "高塘村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se10",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3309_3345"
+      ],
+      "factual": true,
+      "lat": 26.35,
+      "lon": 113.38,
+      "map_role": "route_node",
+      "name": "石坝"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se11",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3309_3345"
+      ],
+      "factual": true,
+      "lat": 26.4,
+      "lon": 113.4,
+      "map_role": "route_node",
+      "name": "湖背村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se12",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3345_3365"
+      ],
+      "factual": true,
+      "lat": 26.45,
+      "lon": 113.42,
+      "map_role": "route_node",
+      "name": "网岭墟"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se13",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3526_3535"
+      ],
+      "factual": true,
+      "lat": 26.5,
+      "lon": 113.45,
+      "map_role": "route_node",
+      "name": "皇图岭"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se14",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3526_3535"
+      ],
+      "factual": true,
+      "lat": 26.55,
+      "lon": 113.48,
+      "map_role": "route_node",
+      "name": "新市墟"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se15",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3565_3579"
+      ],
+      "factual": true,
+      "lat": 26.6,
+      "lon": 113.5,
+      "map_role": "route_node",
+      "name": "攸县县城南郊"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se16",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3747_3775"
+      ],
+      "factual": true,
+      "lat": 26.61,
+      "lon": 113.5,
+      "map_role": "route_node",
+      "name": "攸县北门"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se17",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3796_3831"
+      ],
+      "factual": true,
+      "lat": 26.65,
+      "lon": 113.48,
+      "map_role": "route_node",
+      "name": "大同桥"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se18",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3796_3831"
+      ],
+      "factual": true,
+      "lat": 26.7,
+      "lon": 113.45,
+      "map_role": "route_node",
+      "name": "鸭塘铺"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se19",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3796_3831"
+      ],
+      "factual": true,
+      "lat": 26.75,
+      "lon": 113.42,
+      "map_role": "route_node",
+      "name": "石羊塘"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se20",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_3831_3848",
+        "c0002__e_src_3915_3930"
+      ],
+      "factual": true,
+      "lat": 26.8,
+      "lon": 113.4,
+      "map_role": "route_node",
+      "name": "泗汾墟"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se21",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4238_4287"
+      ],
+      "factual": true,
+      "lat": 26.81,
+      "lon": 113.41,
+      "map_role": "route_node",
+      "name": "泗汾石桥"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se22",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4238_4287"
+      ],
+      "factual": true,
+      "lat": 26.82,
+      "lon": 113.45,
+      "map_role": "route_node",
+      "name": "上游浅滩"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se23",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4305_4342"
+      ],
+      "factual": true,
+      "lat": 26.85,
+      "lon": 113.38,
+      "map_role": "route_node",
+      "name": "马恋"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se24",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4305_4342"
+      ],
+      "factual": true,
+      "lat": 26.9,
+      "lon": 113.35,
+      "map_role": "route_node",
+      "name": "大障"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se25",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4342_4357"
+      ],
+      "factual": true,
+      "lat": 26.95,
+      "lon": 113.3,
+      "map_role": "route_node",
+      "name": "醴陵县城"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se26",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4495_4520"
+      ],
+      "factual": true,
+      "lat": 26.96,
+      "lon": 113.3,
+      "map_role": "route_node",
+      "name": "醴陵城北"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se27",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4567_4580"
+      ],
+      "factual": true,
+      "lat": 27,
+      "lon": 113.25,
+      "map_role": "route_node",
+      "name": "板杉铺"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se28",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4567_4580"
+      ],
+      "factual": true,
+      "lat": 27.05,
+      "lon": 113.2,
+      "map_role": "route_node",
+      "name": "姚家坝"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se29",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4567_4580"
+      ],
+      "factual": true,
+      "lat": 27.1,
+      "lon": 113.15,
+      "map_role": "route_node",
+      "name": "白关铺"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se30",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__e_src_4610_4622",
+        "c0002__e_src_4670_4683"
+      ],
+      "factual": true,
+      "lat": 27.15,
+      "lon": 113.1,
+      "map_role": "route_node",
+      "name": "株洲城南"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se_bg1",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0002__e_src_2690_2716"
+      ],
+      "factual": true,
+      "lat": 26.4,
+      "lon": 112.85,
+      "map_role": "background",
+      "name": "耒阳"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se_bg2",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0002__e_src_2690_2716"
+      ],
+      "factual": true,
+      "lat": 26.75,
+      "lon": 113.55,
+      "map_role": "background",
+      "name": "茶陵"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__se_bg3",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0002__e_src_4622_4656"
+      ],
+      "factual": true,
+      "lat": 27.2,
+      "lon": 113,
+      "map_role": "background",
+      "name": "湘江"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_shaoguan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_shaoguan"
+      ],
+      "factual": true,
+      "lat": 24.81,
+      "lon": 113.59,
+      "map_role": "route_node",
+      "name": "韶州府城"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_dongmen",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_dongmen",
+        "c0003__e_dongmen__src2"
+      ],
+      "factual": true,
+      "lat": 24.81,
+      "lon": 113.6,
+      "map_role": "route_node",
+      "name": "东门外教场"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_chengxi_muqiao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_chengxi_muqiao"
+      ],
+      "factual": true,
+      "lat": 24.82,
+      "lon": 113.58,
+      "map_role": "route_node",
+      "name": "城西木桥"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_lashiba",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_lashiba",
+        "c0003__e_lashiba__src2"
+      ],
+      "factual": true,
+      "lat": 24.88,
+      "lon": 113.58,
+      "map_role": "route_node",
+      "name": "腊石坝"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_zhuanshuicun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_zhuanshuicun"
+      ],
+      "factual": true,
+      "lat": 24.92,
+      "lon": 113.55,
+      "map_role": "route_node",
+      "name": "转水村"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_changbaxu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_changbaxu",
+        "c0003__e_changbaxu__src2"
+      ],
+      "factual": true,
+      "lat": 24.96,
+      "lon": 113.52,
+      "map_role": "route_node",
+      "name": "长坝墟"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_baishuicun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_baishuicun"
+      ],
+      "factual": true,
+      "lat": 25,
+      "lon": 113.5,
+      "map_role": "route_node",
+      "name": "白土村"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_luocun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_luocun"
+      ],
+      "factual": true,
+      "lat": 25.03,
+      "lon": 113.48,
+      "map_role": "route_node",
+      "name": "罗村"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_lechang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_lechang",
+        "c0003__e_lechang__src2"
+      ],
+      "factual": true,
+      "lat": 25.06,
+      "lon": 113.46,
+      "map_role": "route_node",
+      "name": "乐昌县城南郊"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_liantang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_liantang"
+      ],
+      "factual": true,
+      "lat": 25.1,
+      "lon": 113.42,
+      "map_role": "route_node",
+      "name": "莲塘村"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_gaotangao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_gaotangao"
+      ],
+      "factual": true,
+      "lat": 25.13,
+      "lon": 113.38,
+      "map_role": "route_node",
+      "name": "高塘坳"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_jiufeng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_jiufeng",
+        "c0003__e_jiufeng__src2"
+      ],
+      "factual": true,
+      "lat": 25.16,
+      "lon": 113.35,
+      "map_role": "route_node",
+      "name": "九峰墟"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_weiling",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_weiling",
+        "c0003__e_weiling__src2"
+      ],
+      "factual": true,
+      "lat": 25.22,
+      "lon": 113.3,
+      "map_role": "route_node",
+      "name": "蔚岭山顶关隘"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_tangcun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_tangcun"
+      ],
+      "factual": true,
+      "lat": 25.26,
+      "lon": 113.28,
+      "map_role": "route_node",
+      "name": "塘村"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_lijiaao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_lijiaao"
+      ],
+      "factual": true,
+      "lat": 25.3,
+      "lon": 113.25,
+      "map_role": "route_node",
+      "name": "李家坳"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_fengmuling",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_fengmuling"
+      ],
+      "factual": true,
+      "lat": 25.33,
+      "lon": 113.22,
+      "map_role": "route_node",
+      "name": "枫木岭"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_jiepaipu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_jiepaipu"
+      ],
+      "factual": true,
+      "lat": 25.36,
+      "lon": 113.2,
+      "map_role": "route_node",
+      "name": "界牌铺"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_dapingcun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_dapingcun"
+      ],
+      "factual": true,
+      "lat": 25.4,
+      "lon": 113.18,
+      "map_role": "route_node",
+      "name": "大坪村"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_liangtian",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_liangtian"
+      ],
+      "factual": true,
+      "lat": 25.44,
+      "lon": 113.15,
+      "map_role": "route_node",
+      "name": "良田墟"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_liangtian_bridge",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_liangtian_bridge",
+        "c0003__e_liangtian_bridge__src2"
+      ],
+      "factual": true,
+      "lat": 25.45,
+      "lon": 113.16,
+      "map_role": "route_node",
+      "name": "良田墟外石拱桥"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_wuliaao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_wuliaao"
+      ],
+      "factual": true,
+      "lat": 25.5,
+      "lon": 113.12,
+      "map_role": "route_node",
+      "name": "五里坳"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_pingtouling",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_pingtouling"
+      ],
+      "factual": true,
+      "lat": 25.54,
+      "lon": 113.1,
+      "map_role": "route_node",
+      "name": "平头岭"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_chenzhou",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_chenzhou",
+        "c0003__e_chenzhou__src2"
+      ],
+      "factual": true,
+      "lat": 25.6,
+      "lon": 113.08,
+      "map_role": "route_node",
+      "name": "郴州城南郊"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_xiameiqiao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_xiameiqiao"
+      ],
+      "factual": true,
+      "lat": 25.63,
+      "lon": 113.07,
+      "map_role": "route_node",
+      "name": "下湄桥"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_tongkenghu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_tongkenghu"
+      ],
+      "factual": true,
+      "lat": 25.66,
+      "lon": 113.06,
+      "map_role": "route_node",
+      "name": "铜坑湖"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_gaopocun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_gaopocun"
+      ],
+      "factual": true,
+      "lat": 25.69,
+      "lon": 113.05,
+      "map_role": "route_node",
+      "name": "高坡村"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_wulipai",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_wulipai"
+      ],
+      "factual": true,
+      "lat": 25.72,
+      "lon": 113.04,
+      "map_role": "route_node",
+      "name": "五里牌"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_qifengdu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_qifengdu"
+      ],
+      "factual": true,
+      "lat": 25.78,
+      "lon": 113.08,
+      "map_role": "route_node",
+      "name": "栖凤渡"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_wazaocun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_wazaocun"
+      ],
+      "factual": true,
+      "lat": 25.84,
+      "lon": 113.1,
+      "map_role": "route_node",
+      "name": "瓦灶村"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_zhutangpu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_zhutangpu"
+      ],
+      "factual": true,
+      "lat": 25.9,
+      "lon": 113.12,
+      "map_role": "route_node",
+      "name": "竹塘铺"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_yongxing",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_yongxing",
+        "c0003__e_yongxing__src2"
+      ],
+      "factual": true,
+      "lat": 25.98,
+      "lon": 113.15,
+      "map_role": "route_node",
+      "name": "永兴县城南郊"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_huangnipu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_huangnipu"
+      ],
+      "factual": true,
+      "lat": 26.05,
+      "lon": 113.18,
+      "map_role": "route_node",
+      "name": "黄泥铺"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_bitangcun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_bitangcun"
+      ],
+      "factual": true,
+      "lat": 26.12,
+      "lon": 113.2,
+      "map_role": "route_node",
+      "name": "碧塘村"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_xiangyindu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__e_xiangyindu"
+      ],
+      "factual": true,
+      "lat": 26.18,
+      "lon": 113.22,
+      "map_role": "route_node",
+      "name": "湘阴渡"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__bg_wujiang",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0003__e_bg_rivers"
+      ],
+      "factual": true,
+      "lat": 24.95,
+      "lon": 113.5,
+      "map_role": "background",
+      "name": "武江"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__bg_zhenshui",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0003__e_bg_rivers"
+      ],
+      "factual": true,
+      "lat": 24.8,
+      "lon": 113.65,
+      "map_role": "background",
+      "name": "浈水"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__bg_beijiang",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0003__e_bg_rivers"
+      ],
+      "factual": true,
+      "lat": 24.75,
+      "lon": 113.6,
+      "map_role": "background",
+      "name": "北江"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__bg_nanling",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0003__e_bg_nanling"
+      ],
+      "factual": true,
+      "lat": 25.2,
+      "lon": 113.3,
+      "map_role": "background",
+      "name": "南岭"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se2",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e3"
+      ],
+      "factual": true,
+      "lat": 26.7,
+      "lon": 113.7,
+      "map_role": "route_node",
+      "name": "安仁县城南门外"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se3",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e4"
+      ],
+      "factual": true,
+      "lat": 26.65,
+      "lon": 113.7,
+      "map_role": "event_anchor",
+      "name": "安仁城南五里处"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se4",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e5"
+      ],
+      "factual": true,
+      "lat": 26.68,
+      "lon": 113.7,
+      "map_role": "route_node",
+      "name": "安仁城南村庄"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se5",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e8"
+      ],
+      "factual": true,
+      "lat": 26.75,
+      "lon": 113.72,
+      "map_role": "route_node",
+      "name": "清溪村"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se6",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e8"
+      ],
+      "factual": true,
+      "lat": 26.78,
+      "lon": 113.74,
+      "map_role": "route_node",
+      "name": "禾滩"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se7",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e8"
+      ],
+      "factual": true,
+      "lat": 26.81,
+      "lon": 113.76,
+      "map_role": "route_node",
+      "name": "洋际墟"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se8",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e9"
+      ],
+      "factual": true,
+      "lat": 26.85,
+      "lon": 113.78,
+      "map_role": "route_node",
+      "name": "高塘村"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se9",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e10"
+      ],
+      "factual": true,
+      "lat": 26.88,
+      "lon": 113.8,
+      "map_role": "route_node",
+      "name": "石坝"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se10",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e10"
+      ],
+      "factual": true,
+      "lat": 26.91,
+      "lon": 113.82,
+      "map_role": "route_node",
+      "name": "湖背村"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se11",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e11"
+      ],
+      "factual": true,
+      "lat": 26.95,
+      "lon": 113.85,
+      "map_role": "route_node",
+      "name": "网岭墟"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se12",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e13"
+      ],
+      "factual": true,
+      "lat": 26.98,
+      "lon": 113.87,
+      "map_role": "route_node",
+      "name": "皇图岭"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se13",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e13"
+      ],
+      "factual": true,
+      "lat": 27.02,
+      "lon": 113.89,
+      "map_role": "route_node",
+      "name": "新市墟"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se14",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e14"
+      ],
+      "factual": true,
+      "lat": 27.05,
+      "lon": 113.9,
+      "map_role": "route_node",
+      "name": "攸县县城南郊"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se15",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e15"
+      ],
+      "factual": true,
+      "lat": 27.08,
+      "lon": 113.92,
+      "map_role": "route_node",
+      "name": "攸县县城"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se16",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e16"
+      ],
+      "factual": true,
+      "lat": 27.09,
+      "lon": 113.92,
+      "map_role": "route_node",
+      "name": "攸县北门"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se17",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e17"
+      ],
+      "factual": true,
+      "lat": 27.12,
+      "lon": 113.9,
+      "map_role": "route_node",
+      "name": "大同桥"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se18",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e17"
+      ],
+      "factual": true,
+      "lat": 27.15,
+      "lon": 113.88,
+      "map_role": "route_node",
+      "name": "鸭塘铺"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se19",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e17"
+      ],
+      "factual": true,
+      "lat": 27.18,
+      "lon": 113.86,
+      "map_role": "route_node",
+      "name": "石羊塘"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se20",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e18"
+      ],
+      "factual": true,
+      "lat": 27.21,
+      "lon": 113.84,
+      "map_role": "route_node",
+      "name": "泗汾墟"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se21",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e19"
+      ],
+      "factual": true,
+      "lat": 27.22,
+      "lon": 113.84,
+      "map_role": "route_node",
+      "name": "泗汾河南岸村落"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se22",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e21"
+      ],
+      "factual": true,
+      "lat": 27.23,
+      "lon": 113.84,
+      "map_role": "route_node",
+      "name": "泗汾石桥"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se23",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e21"
+      ],
+      "factual": true,
+      "lat": 27.24,
+      "lon": 113.86,
+      "map_role": "route_node",
+      "name": "上游浅滩"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se24",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e22"
+      ],
+      "factual": true,
+      "lat": 27.26,
+      "lon": 113.82,
+      "map_role": "route_node",
+      "name": "马恋"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se25",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e22"
+      ],
+      "factual": true,
+      "lat": 27.28,
+      "lon": 113.8,
+      "map_role": "route_node",
+      "name": "大障"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se26",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e22"
+      ],
+      "factual": true,
+      "lat": 27.3,
+      "lon": 113.78,
+      "map_role": "route_node",
+      "name": "醴陵县城"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se27",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e24"
+      ],
+      "factual": true,
+      "lat": 27.32,
+      "lon": 113.78,
+      "map_role": "route_node",
+      "name": "醴陵城北"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se28",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e25"
+      ],
+      "factual": true,
+      "lat": 27.35,
+      "lon": 113.75,
+      "map_role": "route_node",
+      "name": "板杉铺"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se29",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e25"
+      ],
+      "factual": true,
+      "lat": 27.38,
+      "lon": 113.72,
+      "map_role": "route_node",
+      "name": "姚家坝"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se30",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e25"
+      ],
+      "factual": true,
+      "lat": 27.41,
+      "lon": 113.69,
+      "map_role": "route_node",
+      "name": "白关铺"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se31",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e26"
+      ],
+      "factual": true,
+      "lat": 27.45,
+      "lon": 113.65,
+      "map_role": "route_node",
+      "name": "株洲城南"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se32",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e28"
+      ],
+      "factual": true,
+      "lat": 27.46,
+      "lon": 113.64,
+      "map_role": "route_node",
+      "name": "株洲城外湘江滩地"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se_bg1",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e1"
+      ],
+      "factual": true,
+      "lat": 26.4,
+      "lon": 112.8,
+      "map_role": "background",
+      "name": "耒阳"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se_bg2",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e1"
+      ],
+      "factual": true,
+      "lat": 26.7,
+      "lon": 113.5,
+      "map_role": "background",
+      "name": "茶陵"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se_bg3",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0004__e6"
+      ],
+      "factual": true,
+      "lat": 26.7,
+      "lon": 113.7,
+      "map_role": "background",
+      "name": "安仁周边"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se_bg4",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0004__e23"
+      ],
+      "factual": true,
+      "lat": 28.2,
+      "lon": 112.9,
+      "map_role": "background",
+      "name": "长沙"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se_bg5",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0004__e27"
+      ],
+      "factual": true,
+      "lat": 27.5,
+      "lon": 113,
+      "map_role": "background",
+      "name": "湘江"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se_bg6",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0004__e10"
+      ],
+      "factual": true,
+      "lat": 26.9,
+      "lon": 113.5,
+      "map_role": "background",
+      "name": "洣水"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0004__se_bg7",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0004__e29"
+      ],
+      "factual": true,
+      "lat": 27.3,
+      "lon": 113.6,
+      "map_role": "background",
+      "name": "渌水"
+    }
+  ],
+  "task": {
+    "input_crs": "EPSG:4326",
+    "map_type": "marching_route",
+    "task_id": "task_march_4th_army",
+    "title": "国民革命军第四军独立团粤北至湘南行军路线"
+  }
+}

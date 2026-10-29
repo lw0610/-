@@ -1,0 +1,175 @@
+{
+  "created_at": "2026-09-19T17:10:23.453988+00:00",
+  "images": {
+    "final": {
+      "metadata": null,
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/2f2f0b68-0874-4cef-beef-7b148884b00d/exports/行军路线图_initial_review_quality_20260919T171023Z_9ce6ad85_final.png",
+      "role": "final"
+    },
+    "original": {
+      "byte_size": 2887383,
+      "dpi": {
+        "source": "png_pHYs",
+        "x": 140.005,
+        "y": 140.005
+      },
+      "height": 2314,
+      "mime_type": "image/png",
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/2f2f0b68-0874-4cef-beef-7b148884b00d/exports/行军路线图_initial_review_quality_20260919T171023Z_9ce6ad85_original.png",
+      "role": "original",
+      "sha256": "e489b295442b35902959a6b1a1c15d74fa7ff0ecf050ab546387ac77ccafc058",
+      "source_path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/2f2f0b68-0874-4cef-beef-7b148884b00d/exports/行军路线图_initial_review.png",
+      "width": 3274
+    }
+  },
+  "review_context": {
+    "applied_suggestions": [],
+    "derived_dpi": {
+      "source": "png_metadata",
+      "x": 139.999,
+      "y": 139.942
+    },
+    "initial_export_dpi": 140.005,
+    "layout_item_ids": {
+      "callouts": null,
+      "standard": {
+        "decorative_border": "decorative_border_1",
+        "legend": "legend",
+        "main_map": "main_map",
+        "north_arrow": "north_arrow",
+        "overview": "overview",
+        "scalebar": "scalebar",
+        "title": "title"
+      }
+    },
+    "layout_item_state": {
+      "items": {
+        "decorative_border_1": {
+          "item_id": "decorative_border_1",
+          "outer_rect_mm": {
+            "height": 349.61301120919387,
+            "width": 517.9,
+            "x": 38.05000000000001,
+            "y": 35.193494395403064
+          },
+          "rect_mm": {
+            "height": 343.31301120919386,
+            "width": 511.59999999999997,
+            "x": 41.20000000000001,
+            "y": 38.34349439540306
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 2.0
+        },
+        "legend": {
+          "item_id": "legend",
+          "rect_mm": {
+            "height": 113.4712109375,
+            "width": 26.1486328125,
+            "x": 44.55,
+            "y": 264.83
+          },
+          "title": "图例",
+          "type": "QgsLayoutItemLegend",
+          "z_value": 5.0
+        },
+        "main_map": {
+          "item_id": "main_map",
+          "layers": [],
+          "map_rotation": 0.0,
+          "rect_mm": {
+            "height": 336.61301120919387,
+            "width": 504.9,
+            "x": 44.55000000000001,
+            "y": 41.693494395403064
+          },
+          "scale": 1640431.3719872325,
+          "type": "QgsLayoutItemMap",
+          "z_value": 1.0
+        },
+        "north_arrow": {
+          "item_id": "north_arrow",
+          "rect_mm": {
+            "height": 25.0,
+            "width": 25.0,
+            "x": 44.55000000000001,
+            "y": 41.69
+          },
+          "type": "QgsLayoutItemPicture",
+          "z_value": 7.0
+        },
+        "overview": {
+          "item_id": "overview",
+          "rect_mm": {
+            "height": 21.370454545454546,
+            "width": 58.893181818181816,
+            "x": 490.56,
+            "y": 41.69
+          },
+          "text": "【数据综述】\n红二十五军长征及转战路线覆盖鄂豫皖苏区出发，经\n豫南、陕南、甘宁等地区，跨越秦岭、淮河等重要地\n理单元。全图共标示16条行军路线段、45个关键地点\n节点，涵盖出发地、途经城镇、战斗地点及会师区域\n，完整呈现了红二十五军战略转移的空间轨迹与历史\n进程。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 4.0
+        },
+        "scalebar": {
+          "item_id": "scalebar",
+          "rect_mm": {
+            "height": 13.096235795454545,
+            "width": 87.40038830045033,
+            "x": 462.05,
+            "y": 365.21
+          },
+          "segments": 4,
+          "segments_left": 0,
+          "type": "QgsLayoutItemScaleBar",
+          "unit_label": "km",
+          "units": "kilometers",
+          "units_per_segment": 40.0,
+          "z_value": 6.0
+        },
+        "title": {
+          "item_id": "title",
+          "rect_mm": {
+            "height": 14.143181818181818,
+            "width": 173.7590909090909,
+            "x": 210.12,
+            "y": 24.2
+          },
+          "text": "红二十五军长征及转战行军路线图",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 3.0
+        }
+      },
+      "layout": "行军路线图",
+      "missing_item_ids": [],
+      "page_size_mm": {
+        "height": 420.0,
+        "width": 594.0
+      }
+    },
+    "layout_name": "行军路线图",
+    "layout_snapshot": {
+      "byte_size": 3683,
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/2f2f0b68-0874-4cef-beef-7b148884b00d/intermediate/quality_feedback/layout_snapshot_64ea595520c64a7dbc9fc0f198f16165.json",
+      "schema_version": "quality-feedback-layout-snapshot/v1",
+      "sha256": "f6f2f04942fdaea90f2f38e391154b6f5864120ddc9f9f5f63eac852c45bd08a"
+    },
+    "locked_content": [
+      "标题：红二十五军长征及转战行军路线图",
+      "综述：【数据综述】红二十五军长征及转战路线覆盖鄂豫皖苏区出发，经豫南、陕南、甘宁等地区，跨越秦岭、淮河等重要地理单元。全图共标示16条行军路线段、45个关键地点节点，涵盖出发地、途经城镇、战斗地点及会师区域，完整呈现了红二十五军战略转移的空间轨迹与历史进程。",
+      "图例标题：图例",
+      "比例尺单位：km",
+      "16条行军路线段（bezier_arrow），其中9条红色（route_red_reference）、7条蓝色（route_blue_reference）",
+      "45个点位节点，5种军标类型：start_flag、waypoint、battle、enemy_node、rendezvous",
+      "比例尺 1:1,640,431",
+      "工程 CRS: EPSG:4004",
+      "页面: A1 横向 594×420mm，审查 DPI=140",
+      "底图图层（8个）：省域、县级城市驻地、铁路、公路、国道、地区界线、河流线、河流面",
+      "图例语义：包含省域、地区界线、河流面、河流线、铁路、公路、国道、县级城市驻地、points（军标）",
+      "字号规则（A1，mm）：标题 11.5 / 综述正文 2.5 / 图例标题 3.5 / 图例正文 2.5 / 比例尺 2"
+    ],
+    "task_requirement": "使用 current_session 知识抽取成果绘制红二十五军长征及转战行军路线图初版。要求：基于 8 个底图图层完成路线绘制、点符号化；创建 A1 横向布局，包含主图、标题、图例、数据综述、比例尺、指北针；导出初版 PNG 用于质量反馈审查；保存布局快照。"
+  },
+  "review_id": "20260919T171023Z_9ce6ad85",
+  "schema_version": "quality-feedback/v3",
+  "status": "initial_ready"
+}

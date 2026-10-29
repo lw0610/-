@@ -1,0 +1,8 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+route_seg1,第一段：何家冲至独树镇,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_seg2,第二段：独树镇至庾家河,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_seg3,第三段：庾家河至沣峪口（区域转战）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_seg4,第四段：沣峪口至两当,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_seg5,第五段：两当至隆德,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_seg6,第六段：隆德至板桥镇,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_seg7,第七段：板桥镇至永坪镇,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass

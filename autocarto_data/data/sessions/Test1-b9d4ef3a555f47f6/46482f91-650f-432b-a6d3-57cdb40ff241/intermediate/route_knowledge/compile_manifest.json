@@ -1,0 +1,22 @@
+{
+  "counts": {
+    "callouts.csv": 4,
+    "places.csv": 56,
+    "points.csv": 56,
+    "route_paths.csv": 62,
+    "routes.csv": 7,
+    "symbol_mapping.csv": 8
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "schema_version": "1.0",
+  "task_id": "red25army-strategic-transfer-1934-35",
+  "title": "红二十五军战略转移行军路线（1934.11—1935.9）",
+  "warnings": []
+}

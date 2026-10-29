@@ -1,0 +1,587 @@
+{
+  "captured_at": "2026-09-26T04:56:15.428154+00:00",
+  "layout_item_ids": {
+    "callouts": {
+      "c0001__c1": {
+        "body": "callout_c0001__c1_body",
+        "box": "callout_c0001__c1_box",
+        "leader": [
+          "callout_c0001__c1_leader_1",
+          "callout_c0001__c1_leader_2"
+        ],
+        "title": "callout_c0001__c1_title"
+      },
+      "c0001__c2": {
+        "body": "callout_c0001__c2_body",
+        "box": "callout_c0001__c2_box",
+        "leader": [
+          "callout_c0001__c2_leader_1",
+          "callout_c0001__c2_leader_2"
+        ],
+        "title": "callout_c0001__c2_title"
+      },
+      "c0001__c3": {
+        "body": "callout_c0001__c3_body",
+        "box": "callout_c0001__c3_box",
+        "leader": [
+          "callout_c0001__c3_leader_1",
+          "callout_c0001__c3_leader_2"
+        ],
+        "title": "callout_c0001__c3_title"
+      },
+      "c0001__c4": {
+        "body": "callout_c0001__c4_body",
+        "box": "callout_c0001__c4_box",
+        "leader": [
+          "callout_c0001__c4_leader_1",
+          "callout_c0001__c4_leader_2"
+        ],
+        "title": "callout_c0001__c4_title"
+      },
+      "c0001__c5": {
+        "body": "callout_c0001__c5_body",
+        "box": "callout_c0001__c5_box",
+        "leader": [
+          "callout_c0001__c5_leader_1",
+          "callout_c0001__c5_leader_2"
+        ],
+        "title": "callout_c0001__c5_title"
+      },
+      "c0001__c6": {
+        "body": "callout_c0001__c6_body",
+        "box": "callout_c0001__c6_box",
+        "leader": [
+          "callout_c0001__c6_leader_1",
+          "callout_c0001__c6_leader_2"
+        ],
+        "title": "callout_c0001__c6_title"
+      },
+      "c0001__c7": {
+        "body": "callout_c0001__c7_body",
+        "box": "callout_c0001__c7_box",
+        "leader": [
+          "callout_c0001__c7_leader_1",
+          "callout_c0001__c7_leader_2"
+        ],
+        "title": "callout_c0001__c7_title"
+      }
+    },
+    "standard": {
+      "decorative_border": "decorative_border",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "callout_c0001__c1_body": {
+        "item_id": "callout_c0001__c1_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 631.8535292624989,
+          "y": 316.87744933597014
+        },
+        "text": "长征首场恶战，吴焕先持刀率部白刃近\n战，徐海东驰援突围。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "callout_c0001__c1_box": {
+        "item_id": "callout_c0001__c1_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 630.053529262499,
+          "y": 310.25362121097015
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "callout_c0001__c1_leader_1": {
+        "item_id": "callout_c0001__c1_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 37.65931857638884,
+          "x": 612.053529262499,
+          "y": 323.6604354470813
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 5.0
+      },
+      "callout_c0001__c1_leader_2": {
+        "item_id": "callout_c0001__c1_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 40.34068142361116,
+          "x": 612.053529262499,
+          "y": 323.6604354470813
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 6.0
+      },
+      "callout_c0001__c1_title": {
+        "item_id": "callout_c0001__c1_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 631.8535292624989,
+          "y": 312.05362121097016
+        },
+        "text": "独树镇战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 3.0
+      },
+      "callout_c0001__c2_body": {
+        "item_id": "callout_c0001__c2_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 474.85108333333244,
+          "y": 275.2476830193036
+        },
+        "text": "正式决定创建鄂豫陕革命根据地，是战\n略转折点。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 9.0
+      },
+      "callout_c0001__c2_box": {
+        "item_id": "callout_c0001__c2_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 473.05108333333243,
+          "y": 268.62385489430363
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 7.0
+      },
+      "callout_c0001__c2_leader_1": {
+        "item_id": "callout_c0001__c2_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 37.6593185763889,
+          "x": 455.05108333333243,
+          "y": 282.03066913041476
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 10.0
+      },
+      "callout_c0001__c2_leader_2": {
+        "item_id": "callout_c0001__c2_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 40.3406814236111,
+          "x": 455.05108333333243,
+          "y": 282.03066913041476
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 11.0
+      },
+      "callout_c0001__c2_title": {
+        "item_id": "callout_c0001__c2_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 474.85108333333244,
+          "y": 270.42385489430364
+        },
+        "text": "庾家河会议",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 8.0
+      },
+      "callout_c0001__c3_body": {
+        "item_id": "callout_c0001__c3_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 435.85108333333244,
+          "y": 312.65449725541475
+        },
+        "text": "会议期间遭突袭，击溃敌军3个团，程子\n华、徐海东负重伤。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 14.0
+      },
+      "callout_c0001__c3_box": {
+        "item_id": "callout_c0001__c3_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 434.05108333333243,
+          "y": 306.03066913041476
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 12.0
+      },
+      "callout_c0001__c3_leader_1": {
+        "item_id": "callout_c0001__c3_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 1.3406814236111018,
+          "x": 453.7104019097213,
+          "y": 294.03066913041476
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 15.0
+      },
+      "callout_c0001__c3_leader_2": {
+        "item_id": "callout_c0001__c3_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 1.3406814236111018,
+          "x": 455.05108333333243,
+          "y": 294.03066913041476
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 16.0
+      },
+      "callout_c0001__c3_title": {
+        "item_id": "callout_c0001__c3_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 435.85108333333244,
+          "y": 307.8306691304148
+        },
+        "text": "庾家河战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 13.0
+      },
+      "callout_c0001__c4_body": {
+        "item_id": "callout_c0001__c4_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 275.7713154166663,
+          "y": 198.7269221943037
+        },
+        "text": "军政委吴焕先壮烈牺牲，全歼敌军1000\n余人。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 19.0
+      },
+      "callout_c0001__c4_box": {
+        "item_id": "callout_c0001__c4_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 273.9713154166663,
+          "y": 192.1030940693037
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 17.0
+      },
+      "callout_c0001__c4_leader_1": {
+        "item_id": "callout_c0001__c4_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 37.6593185763889,
+          "x": 255.9713154166663,
+          "y": 205.5099083054148
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 20.0
+      },
+      "callout_c0001__c4_leader_2": {
+        "item_id": "callout_c0001__c4_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 40.3406814236111,
+          "x": 255.9713154166663,
+          "y": 205.5099083054148
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 21.0
+      },
+      "callout_c0001__c4_title": {
+        "item_id": "callout_c0001__c4_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 275.7713154166663,
+          "y": 193.9030940693037
+        },
+        "text": "四坡村掌曲战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 18.0
+      },
+      "callout_c0001__c5_body": {
+        "item_id": "callout_c0001__c5_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 319.15395350416594,
+          "y": 165.65980789013696
+        },
+        "text": "遭受较大损失，方炳仁牺牲，韩先楚、\n刘震掩护突围。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 24.0
+      },
+      "callout_c0001__c5_box": {
+        "item_id": "callout_c0001__c5_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 317.35395350416593,
+          "y": 159.03597976513694
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 22.0
+      },
+      "callout_c0001__c5_leader_1": {
+        "item_id": "callout_c0001__c5_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 37.6593185763889,
+          "x": 299.35395350416593,
+          "y": 172.44279400124805
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 25.0
+      },
+      "callout_c0001__c5_leader_2": {
+        "item_id": "callout_c0001__c5_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 40.3406814236111,
+          "x": 299.35395350416593,
+          "y": 172.44279400124805
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 26.0
+      },
+      "callout_c0001__c5_title": {
+        "item_id": "callout_c0001__c5_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 319.15395350416594,
+          "y": 160.83597976513695
+        },
+        "text": "板桥镇战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 23.0
+      },
+      "callout_c0001__c6_body": {
+        "item_id": "callout_c0001__c6_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 264.3059791666663,
+          "y": 174.51156930402587
+        },
+        "text": "调整军政领导体系，动员进军陕北革命\n根据地。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 29.0
+      },
+      "callout_c0001__c6_box": {
+        "item_id": "callout_c0001__c6_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 262.5059791666663,
+          "y": 167.88774117902585
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 27.0
+      },
+      "callout_c0001__c6_leader_1": {
+        "item_id": "callout_c0001__c6_leader_1",
+        "rect_mm": {
+          "height": 1.3406814236111018,
+          "width": 18.0,
+          "x": 304.5059791666663,
+          "y": 173.25046687347032
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 30.0
+      },
+      "callout_c0001__c6_leader_2": {
+        "item_id": "callout_c0001__c6_leader_2",
+        "rect_mm": {
+          "height": 1.3406814236111018,
+          "width": 18.0,
+          "x": 304.5059791666663,
+          "y": 174.59114829708142
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 31.0
+      },
+      "callout_c0001__c6_title": {
+        "item_id": "callout_c0001__c6_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 264.3059791666663,
+          "y": 169.68774117902586
+        },
+        "text": "豹子川会议",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 28.0
+      },
+      "callout_c0001__c7_body": {
+        "item_id": "callout_c0001__c7_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 429.4531639541656,
+          "y": 98.9155739484703
+        },
+        "text": "与陕北红二十六、二十七军会师，长征\n胜利结束。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 34.0
+      },
+      "callout_c0001__c7_box": {
+        "item_id": "callout_c0001__c7_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 427.65316395416556,
+          "y": 92.2917458234703
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 32.0
+      },
+      "callout_c0001__c7_leader_1": {
+        "item_id": "callout_c0001__c7_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 37.6593185763889,
+          "x": 409.65316395416556,
+          "y": 105.69856005958141
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 35.0
+      },
+      "callout_c0001__c7_leader_2": {
+        "item_id": "callout_c0001__c7_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 40.3406814236111,
+          "x": 409.65316395416556,
+          "y": 105.69856005958141
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 36.0
+      },
+      "callout_c0001__c7_title": {
+        "item_id": "callout_c0001__c7_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 429.4531639541656,
+          "y": 94.09174582347029
+        },
+        "text": "永坪镇会师",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 33.0
+      },
+      "decorative_border": {
+        "item_id": "decorative_border",
+        "outer_rect_mm": {
+          "height": 489.58508826082834,
+          "width": 727.85,
+          "x": 56.57499999999999,
+          "y": 52.20745586958583
+        },
+        "rect_mm": {
+          "height": 483.28508826082833,
+          "width": 721.5500000000001,
+          "x": 59.72499999999999,
+          "y": 55.35745586958583
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 37.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 100.2712109375,
+          "width": 25.075000000000003,
+          "x": 63.07,
+          "y": 435.03
+        },
+        "title": "图例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 40.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 476.58508826082834,
+          "width": 714.85,
+          "x": 63.07499999999999,
+          "y": 58.70745586958583
+        },
+        "scale": 1158639.9940076289,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 20.0,
+          "width": 20.0,
+          "x": 63.07,
+          "y": 58.71
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 42.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 12.711363636363636,
+          "width": 88.62272727272727,
+          "x": 689.3,
+          "y": 58.71
+        },
+        "text": "红二十五军于1934年11月从河南罗山何家冲出发，途经河南、湖北、陕西、甘肃\n等省，经历独树镇战斗、庾家河战斗等重大战役，翻越秦岭、渡过丹江，最终于\n1935年9月到达陕甘革命根据地与陕北红军会师，历时近一年，是长征中最早到\n达陕北的红军队伍。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 39.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 91.84702260301492,
+          "x": 686.078,
+          "y": 522.196
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 30.0,
+        "z_value": 41.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 139.12272727272727,
+          "x": 350.94,
+          "y": 41.22
+        },
+        "text": "红二十五军长征行军路线图",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 38.0
+      }
+    },
+    "layout": "红二十五军长征行军路线图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 594.0,
+      "width": 841.0
+    }
+  },
+  "layout_name": "红二十五军长征行军路线图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "1c38d9b5-9493-476f-8036-140bc427615c",
+  "snapshot_id": "87060553dee7453daae5aab75320695d"
+}

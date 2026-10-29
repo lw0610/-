@@ -1,0 +1,27 @@
+{
+  "counts": {
+    "callouts.csv": 7,
+    "places.csv": 75,
+    "points.csv": 18,
+    "route_paths.csv": 77,
+    "routes.csv": 5,
+    "symbol_mapping.csv": 4
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "review": {
+    "provenance_file": "review_provenance.json",
+    "review_id": "b2f28871-c19f-45d9-ae29-4ff288c32cea",
+    "revision": 2
+  },
+  "schema_version": "1.0",
+  "task_id": "t0001",
+  "title": "红二十五军长征行军路线",
+  "warnings": []
+}

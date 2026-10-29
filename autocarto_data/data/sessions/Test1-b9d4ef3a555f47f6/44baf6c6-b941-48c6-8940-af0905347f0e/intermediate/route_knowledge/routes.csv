@@ -1,0 +1,13 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+c0001__route_main_1,第四军独立团北上湘南主路线,branch,branch_bezier,branch_bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=branch;self_intersection_policy=allow_with_overpass
+c0002__r2,六月三十日行军,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0002__r3,七月初一日行军,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0002__r4,七月初二日行军,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0002__r5,七月初四日行军,branch,branch_bezier,branch_bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=branch;self_intersection_policy=allow_with_overpass
+c0002__r6,七月初五日行军,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0003__r1,韶州至禾市铺行军路线,branch,branch_bezier,branch_bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=branch;self_intersection_policy=allow_with_overpass
+c0004__r2,安仁城南至网岭墟,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0004__r3,网岭墟至攸县县城,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0004__r4,攸县县城至泗汾墟,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0004__r5,泗汾墟至醴陵县城,branch,branch_bezier,branch_bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=branch;self_intersection_policy=allow_with_overpass
+c0004__r6,醴陵县城至株洲城南,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass

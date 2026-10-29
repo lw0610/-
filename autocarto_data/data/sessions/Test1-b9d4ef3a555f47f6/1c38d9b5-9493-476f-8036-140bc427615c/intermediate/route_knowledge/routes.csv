@@ -1,0 +1,6 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+c0001__r1,战略转移初期,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__r2,转战陕南,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__r3,第一次大范围转战,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__r4,西进甘肃（北段）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__r5,挺进陕甘（南段及后续）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass

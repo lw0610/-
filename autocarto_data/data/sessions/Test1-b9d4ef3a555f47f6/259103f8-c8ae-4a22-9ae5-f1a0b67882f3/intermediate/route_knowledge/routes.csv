@@ -1,0 +1,9 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+c0001__R1,红二十五军长征初期路线,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0002__r1,渡澧河入伏牛山,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0002__r2,奔袭卢氏,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0002__r3,叫河镇突围入陕,branch,branch_bezier,branch_bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=branch;self_intersection_policy=allow_with_overpass
+c0002__r4,庾家河战斗及转移,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0002__r5,鄂陕边游击及创建根据地,branch,branch_bezier,branch_bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=branch;self_intersection_policy=allow_with_overpass
+c0002__r6,反第二次围剿机动,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0003__route_1,红二十五军反围剿及西征北上路线,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass

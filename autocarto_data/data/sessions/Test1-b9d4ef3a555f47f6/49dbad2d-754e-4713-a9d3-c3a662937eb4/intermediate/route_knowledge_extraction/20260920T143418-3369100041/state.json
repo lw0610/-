@@ -1,0 +1,688 @@
+{
+  "status": "blocked",
+  "error": "片段 c0001 校验失败（已重试一次，候选已保留）: /graph/evidence/0/evidence_id: 图对象 ID \"EV1\" 重复；首次声明位于 /events/0; /graph/evidence/1/evidence_id: 图对象 ID \"EV2\" 重复；首次声明位于 /events/1; /graph/evidence/2/evidence_id: 图对象 ID \"EV3\" 重复；首次声明位于 /events/2; /graph/evidence/3/evidence_id: 图对象 ID \"EV4\" 重复；首次声明位于 /events/3; /graph/evidence/4/evidence_id: 图对象 ID \"EV5\" 重复；首次声明位于 /events/4; /graph/evidence/5/evidence_id: 图对象 ID \"EV6\" 重复；首次声明位于 /events/5; /graph/evidence/6/evidence_id: 图对象 ID \"EV7\" 重复；首次声明位于 /events/6; /graph/evidence/7/evidence_id: 图对象 ID \"EV8\" 重复；首次声明位于 /events/7; /graph/evidence/8/evidence_id: 图对象 ID \"EV9\" 重复；首次声明位于 /events/8; /graph/actors/0/evidence_refs/0: 图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/1: 图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/2: 图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/3: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/4: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/5: 图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/6: 图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个; /graph/actors/1/evidence_refs/0: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/actors/1/evidence_refs/1: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/actors/2/evidence_refs/0: 图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/0/evidence_refs/0: 图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/1/evidence_refs/0: 图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/2/evidence_refs/0: 图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/3/evidence_refs/0: 图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/3/evidence_refs/1: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/3/evidence_refs/2: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/4/evidence_refs/0: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/5/evidence_refs/0: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/9/evidence_refs/0: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/10/evidence_refs/0: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/12/evidence_refs/0: 图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/13/evidence_refs/0: 图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个; /graph/events/0/evidence_refs/0: 图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个; /graph/events/1/evidence_refs/0: 图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个; /graph/events/2/evidence_refs/0: 图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个; /graph/events/3/evidence_refs/0: 图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个; /graph/events/4/evidence_refs/0: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/events/5/evidence_refs/0: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/events/6/evidence_refs/0: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/events/7/evidence_refs/0: 图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个; /graph/events/8/evidence_refs/0: 图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个; /graph/routes/0/evidence_refs/0: 图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个; /graph/routes/0/evidence_refs/1: 图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个; /graph/routes/0/evidence_refs/2: 图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个; /graph/routes/1/evidence_refs/0: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/routes/1/evidence_refs/1: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/routes/2/evidence_refs/0: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/routes/2/evidence_refs/1: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/routes/2/evidence_refs/2: 图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个; /graph/routes/2/evidence_refs/3: 图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个",
+  "contract_id": "tkg-v1-sha256:759bb97acbceb20c2067b12552cb45341f26d6d5c93dbd96686d5a5086bb524e",
+  "source_sha256": "77d2291264373f5d5b2054c867966a03f4be87ce66587790528da56aa5466637",
+  "chunks": null,
+  "attempts": [
+    {
+      "stage": "extract",
+      "id": "c0001",
+      "attempt": 1,
+      "status": "response_received",
+      "started_at": "2026-09-20T14:34:18.719761Z",
+      "finished_at": "2026-09-20T14:36:58.854533Z",
+      "duration_ms": 160134,
+      "finish_reason": "stop",
+      "response": "{\n  \"graph\": {\n    \"schema_version\": \"1.0\",\n    \"task\": {\n      \"task_id\": \"t1\",\n      \"title\": \"红二十五军长征初期路线图\",\n      \"map_type\": \"marching_route\",\n      \"input_crs\": \"EPSG:4326\"\n    },\n    \"actors\": [\n      {\n        \"actor_id\": \"A1\",\n        \"name\": \"红二十五军\",\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV3\", \"EV4\", \"EV7\", \"EV8\", \"EV9\", \"EV10\"]\n      },\n      {\n        \"actor_id\": \"A2\",\n        \"name\": \"中共鄂豫皖省委\",\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV1\", \"EV11\"]\n      },\n      {\n        \"actor_id\": \"A3\",\n        \"name\": \"红二十五军手枪团\",\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV5\", \"EV6\"]\n      },\n      {\n        \"actor_id\": \"A4\",\n        \"name\": \"红二十五军第二二三团\",\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV9\"]\n      },\n      {\n        \"actor_id\": \"A5\",\n        \"name\": \"红二十五军第二二四团\",\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV8\"]\n      }\n    ],\n    \"spatial_entities\": [\n      {\n        \"entity_id\": \"L1\",\n        \"name\": \"罗山何家冲\",\n        \"entity_kind\": \"place\",\n        \"lon\": 114.3,\n        \"lat\": 32.1,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV2\", \"EV3\"]\n      },\n      {\n        \"entity_id\": \"L2\",\n        \"name\": \"光山县花山寨\",\n        \"entity_kind\": \"place\",\n        \"lon\": 114.2,\n        \"lat\": 31.8,\n        \"factual\": true,\n        \"map_role\": \"event_anchor\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV1\"]\n      },\n      {\n        \"entity_id\": \"L3\",\n        \"name\": \"罗山县殷家湾\",\n        \"entity_kind\": \"place\",\n        \"lon\": 114.3,\n        \"lat\": 32.1,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV2\"]\n      },\n      {\n        \"entity_id\": \"L4\",\n        \"name\": \"东双河与柳林之间\",\n        \"entity_kind\": \"place\",\n        \"lon\": 114.1,\n        \"lat\": 32.0,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.5,\n        \"evidence_refs\": [\"EV4\"]\n      },\n      {\n        \"entity_id\": \"L5\",\n        \"name\": \"桐柏山区\",\n        \"entity_kind\": \"region\",\n        \"lon\": 113.5,\n        \"lat\": 32.3,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.5,\n        \"evidence_refs\": [\"EV4\"]\n      },\n      {\n        \"entity_id\": \"L6\",\n        \"name\": \"枣阳\",\n        \"entity_kind\": \"place\",\n        \"lon\": 112.8,\n        \"lat\": 32.0,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.7,\n        \"evidence_refs\": [\"EV5\"]\n      },\n      {\n        \"entity_id\": \"L7\",\n        \"name\": \"桐柏歇马岭\",\n        \"entity_kind\": \"place\",\n        \"lon\": 113.2,\n        \"lat\": 32.4,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV6\"]\n      },\n      {\n        \"entity_id\": \"L8\",\n        \"name\": \"栗园\",\n        \"entity_kind\": \"place\",\n        \"lon\": 113.2,\n        \"lat\": 32.4,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV7\"]\n      },\n      {\n        \"entity_id\": \"L9\",\n        \"name\": \"平氏镇\",\n        \"entity_kind\": \"place\",\n        \"lon\": 113.1,\n        \"lat\": 32.5,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV7\"]\n      },\n      {\n        \"entity_id\": \"L10\",\n        \"name\": \"泌阳县城东部\",\n        \"entity_kind\": \"region\",\n        \"lon\": 113.4,\n        \"lat\": 32.7,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.5,\n        \"evidence_refs\": [\"EV7\"]\n      },\n      {\n        \"entity_id\": \"L11\",\n        \"name\": \"方城县独树镇\",\n        \"entity_kind\": \"place\",\n        \"lon\": 113.2,\n        \"lat\": 33.1,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.7,\n        \"evidence_refs\": [\"EV8\"]\n      },\n      {\n        \"entity_id\": \"L12\",\n        \"name\": \"七里岗\",\n        \"entity_kind\": \"place\",\n        \"lon\": 113.2,\n        \"lat\": 33.1,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV8\"]\n      },\n      {\n        \"entity_id\": \"L13\",\n        \"name\": \"杨楼村\",\n        \"entity_kind\": \"place\",\n        \"lon\": 113.1,\n        \"lat\": 33.1,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV9\"]\n      },\n      {\n        \"entity_id\": \"L14\",\n        \"name\": \"叶县保安寨\",\n        \"entity_kind\": \"place\",\n        \"lon\": 113.0,\n        \"lat\": 33.2,\n        \"factual\": true,\n        \"map_role\": \"background\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV9\"]\n      },\n      {\n        \"entity_id\": \"L15\",\n        \"name\": \"沈庄\",\n        \"entity_kind\": \"place\",\n        \"lon\": 113.0,\n        \"lat\": 33.2,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.6,\n        \"evidence_refs\": [\"EV9\"]\n      },\n      {\n        \"entity_id\": \"L16\",\n        \"name\": \"伏牛山东麓\",\n        \"entity_kind\": \"region\",\n        \"lon\": 112.5,\n        \"lat\": 33.5,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.5,\n        \"evidence_refs\": [\"EV9\"]\n      },\n      {\n        \"entity_id\": \"L17\",\n        \"name\": \"叶县方城边界\",\n        \"entity_kind\": \"region\",\n        \"lon\": 112.8,\n        \"lat\": 33.4,\n        \"factual\": true,\n        \"map_role\": \"route_node\",\n        \"coordinate_source\": \"llm_estimated\",\n        \"coordinate_confidence\": 0.5,\n        \"evidence_refs\": [\"EV10\"]\n      }\n    ],\n    \"events\": [\n      {\n        \"event_id\": \"E1\",\n        \"name\": \"花山寨会议\",\n        \"event_type\": \"meeting\",\n        \"location_ref\": \"L2\",\n        \"time_text\": \"1934年11月11日\",\n        \"actor_refs\": [\"A2\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV1\"]\n      },\n      {\n        \"event_id\": \"E2\",\n        \"name\": \"何家冲出发\",\n        \"event_type\": \"departure\",\n        \"location_ref\": \"L1\",\n        \"time_text\": \"1934年11月16日\",\n        \"actor_refs\": [\"A1\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV3\"]\n      },\n      {\n        \"event_id\": \"E3\",\n        \"name\": \"越过平汉铁路\",\n        \"event_type\": \"passage\",\n        \"location_ref\": \"L4\",\n        \"time_text\": \"1934年11月17日晚\",\n        \"actor_refs\": [\"A1\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV4\"]\n      },\n      {\n        \"event_id\": \"E4\",\n        \"name\": \"到达桐柏山区\",\n        \"event_type\": \"arrival\",\n        \"location_ref\": \"L5\",\n        \"time_text\": \"1934年11月19日\",\n        \"actor_refs\": [\"A1\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV4\"]\n      },\n      {\n        \"event_id\": \"E5\",\n        \"name\": \"佯攻枣阳\",\n        \"event_type\": \"battle\",\n        \"location_ref\": \"L6\",\n        \"time_text\": \"1934年11月22日\",\n        \"actor_refs\": [\"A3\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV5\"]\n      },\n      {\n        \"event_id\": \"E6\",\n        \"name\": \"歇马岭会合\",\n        \"event_type\": \"rendezvous\",\n        \"location_ref\": \"L7\",\n        \"time_text\": \"1934年11月23日\",\n        \"actor_refs\": [\"A3\", \"A1\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV6\"]\n      },\n      {\n        \"event_id\": \"E7\",\n        \"name\": \"栗园战斗\",\n        \"event_type\": \"battle\",\n        \"location_ref\": \"L8\",\n        \"time_text\": \"1934年11月23日下午\",\n        \"actor_refs\": [\"A1\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV7\"]\n      },\n      {\n        \"event_id\": \"E8\",\n        \"name\": \"独树镇战斗\",\n        \"event_type\": \"battle\",\n        \"location_ref\": \"L11\",\n        \"time_text\": \"1934年11月26日下午1时\",\n        \"actor_refs\": [\"A5\", \"A1\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV8\"]\n      },\n      {\n        \"event_id\": \"E9\",\n        \"name\": \"穿越许南公路\",\n        \"event_type\": \"passage\",\n        \"location_ref\": \"L15\",\n        \"time_text\": \"1934年11月26日夜至27日拂晓\",\n        \"actor_refs\": [\"A1\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV9\"]\n      },\n      {\n        \"event_id\": \"E10\",\n        \"name\": \"抵达伏牛山东麓\",\n        \"event_type\": \"arrival\",\n        \"location_ref\": \"L16\",\n        \"time_text\": \"1934年11月27日拂晓\",\n        \"actor_refs\": [\"A1\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV9\"]\n      },\n      {\n        \"event_id\": \"E11\",\n        \"name\": \"沿叶方边界西进\",\n        \"event_type\": \"passage\",\n        \"location_ref\": \"L17\",\n        \"time_text\": \"1934年11月27日上午\",\n        \"actor_refs\": [\"A1\"],\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV10\"]\n      }\n    ],\n    \"routes\": [\n      {\n        \"route_id\": \"R1\",\n        \"name\": \"红二十五军战略转移初期\",\n        \"side\": \"friendly\",\n        \"confidence\": 1,\n        \"evidence_refs\": [\"EV3\", \"EV4\", \"EV5\", \"EV6\", \"EV7\", \"EV8\", \"EV9\", \"EV10\"],\n        \"paths\": [\n          {\n            \"path_id\": \"P1\",\n            \"role\": \"main\",\n            \"nodes\": [\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L1\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L3\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L4\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L5\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L7\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L8\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L9\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L10\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L11\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L12\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L13\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L15\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L16\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L17\"}\n            ]\n          },\n          {\n            \"path_id\": \"P2\",\n            \"role\": \"branch\",\n            \"attach_ref\": \"P1\",\n            \"nodes\": [\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L5\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L6\"},\n              {\"ref_type\": \"spatial_entity\", \"ref_id\": \"L7\"}\n            ]\n          }\n        ]\n      }\n    ],\n    \"evidence\": [\n      {\"evidence_id\": \"EV1\", \"source_refs\": [\"src:268:306\"]},\n      {\"evidence_id\": \"EV2\", \"source_refs\": [\"src:736:778\"]},\n      {\"evidence_id\": \"EV3\", \"source_refs\": [\"src:958:1025\"]},\n      {\"evidence_id\": \"EV4\", \"source_refs\": [\"src:1100:1185\"]},\n      {\"evidence_id\": \"EV5\", \"source_refs\": [\"src:1535:1582\"]},\n      {\"evidence_id\": \"EV6\", \"source_refs\": [\"src:1608:1636\"]},\n      {\"evidence_id\": \"EV7\", \"source_refs\": [\"src:1636:1703\"]},\n      {\"evidence_id\": \"EV8\", \"source_refs\": [\"src:2139:2208\"]},\n      {\"evidence_id\": \"EV9\", \"source_refs\": [\"src:2452:2532\"]},\n      {\"evidence_id\": \"EV10\", \"source_refs\": [\"src:2575:2629\"]},\n      {\"evidence_id\": \"EV11\", \"source_refs\": [\"src:306:401\"]}\n    ],\n    \"output_constraints\": {\n      \"self_intersection_policy\": \"allow_with_overpass\"\n    }\n  },\n  \"unresolved\": []\n}",
+      "error": "/graph/routes/0/paths/1/attach_ref: 引用 \"P1\" 必须指向 spatial_entities，实际为 paths",
+      "response_shape": "envelope",
+      "input_token_estimate": 33151,
+      "max_output_tokens": 81920,
+      "candidate_revision": 1,
+      "validation": {
+        "diagnostics": [
+          {
+            "layer": "structure",
+            "code": "reference_kind_mismatch",
+            "target": "/graph/routes/0/paths/1/attach_ref",
+            "message": "引用 \"P1\" 必须指向 spatial_entities，实际为 paths"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "extract",
+      "id": "c0001",
+      "attempt": 2,
+      "status": "response_received",
+      "started_at": "2026-09-20T14:36:58.8614Z",
+      "finished_at": "2026-09-20T14:38:39.881445Z",
+      "duration_ms": 101020,
+      "finish_reason": "stop",
+      "response": "{\"graph\":{\"schema_version\":\"1.0\",\"task\":{\"task_id\":\"T001\",\"title\":\"红二十五军长征先期阶段\",\"map_type\":\"marching_route\",\"input_crs\":\"EPSG:4326\"},\"actors\":[{\"actor_id\":\"A1\",\"name\":\"红二十五军\",\"confidence\":1,\"evidence_refs\":[\"EV2\",\"EV3\",\"EV4\",\"EV6\",\"EV7\",\"EV8\",\"EV9\"]},{\"actor_id\":\"A2\",\"name\":\"红二十五军手枪团\",\"confidence\":1,\"evidence_refs\":[\"EV5\",\"EV6\"]},{\"actor_id\":\"A3\",\"name\":\"中共鄂豫皖省委\",\"confidence\":1,\"evidence_refs\":[\"EV1\"]}],\"spatial_entities\":[{\"entity_id\":\"SE1\",\"entity_kind\":\"place\",\"name\":\"何家冲\",\"lon\":114.3,\"lat\":32.1,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV2\"]},{\"entity_id\":\"SE2\",\"entity_kind\":\"place\",\"name\":\"花山寨\",\"lon\":114.2,\"lat\":31.8,\"factual\":true,\"map_role\":\"event_anchor\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV1\"]},{\"entity_id\":\"SE3\",\"entity_kind\":\"place\",\"name\":\"东双河与柳林之间\",\"lon\":114.1,\"lat\":32.0,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV3\"]},{\"entity_id\":\"SE4\",\"entity_kind\":\"region\",\"name\":\"桐柏山区\",\"lon\":113.5,\"lat\":32.3,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV4\",\"EV5\",\"EV6\"]},{\"entity_id\":\"SE5\",\"entity_kind\":\"place\",\"name\":\"枣阳\",\"lon\":112.7,\"lat\":32.0,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV5\"]},{\"entity_id\":\"SE6\",\"entity_kind\":\"place\",\"name\":\"歇马岭\",\"lon\":113.2,\"lat\":32.4,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV6\"]},{\"entity_id\":\"SE7\",\"entity_kind\":\"place\",\"name\":\"栗园\",\"lon\":113.2,\"lat\":32.4,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV10\"]},{\"entity_id\":\"SE8\",\"entity_kind\":\"place\",\"name\":\"平氏镇\",\"lon\":113.3,\"lat\":32.6,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV10\"]},{\"entity_id\":\"SE9\",\"entity_kind\":\"region\",\"name\":\"泌阳县城东部\",\"lon\":113.4,\"lat\":32.8,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV10\"]},{\"entity_id\":\"SE10\",\"entity_kind\":\"place\",\"name\":\"独树镇\",\"lon\":113.1,\"lat\":33.1,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV7\"]},{\"entity_id\":\"SE11\",\"entity_kind\":\"place\",\"name\":\"七里岗\",\"lon\":113.1,\"lat\":33.1,\"factual\":true,\"map_role\":\"event_anchor\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV7\"]},{\"entity_id\":\"SE12\",\"entity_kind\":\"place\",\"name\":\"杨楼村\",\"lon\":113.1,\"lat\":33.1,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV11\"]},{\"entity_id\":\"SE13\",\"entity_kind\":\"place\",\"name\":\"沈庄\",\"lon\":113.2,\"lat\":33.3,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV8\"]},{\"entity_id\":\"SE14\",\"entity_kind\":\"region\",\"name\":\"伏牛山东麓\",\"lon\":112.5,\"lat\":33.5,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV9\"]},{\"entity_id\":\"SE15\",\"entity_kind\":\"region\",\"name\":\"叶县、方城边界\",\"lon\":113.0,\"lat\":33.4,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV12\"]}],\"events\":[{\"event_id\":\"EV1\",\"name\":\"花山寨会议\",\"event_type\":\"meeting\",\"location_ref\":\"SE2\",\"confidence\":1,\"evidence_refs\":[\"EV1\"],\"actor_refs\":[\"A3\"],\"time_text\":\"1934年11月11日\"},{\"event_id\":\"EV2\",\"name\":\"出发长征\",\"event_type\":\"departure\",\"location_ref\":\"SE1\",\"confidence\":1,\"evidence_refs\":[\"EV2\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月16日\"},{\"event_id\":\"EV3\",\"name\":\"越过平汉铁路\",\"event_type\":\"passage\",\"location_ref\":\"SE3\",\"confidence\":1,\"evidence_refs\":[\"EV3\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月17日晚\"},{\"event_id\":\"EV4\",\"name\":\"到达桐柏山区\",\"event_type\":\"arrival\",\"location_ref\":\"SE4\",\"confidence\":1,\"evidence_refs\":[\"EV4\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月19日\"},{\"event_id\":\"EV5\",\"name\":\"佯攻枣阳\",\"event_type\":\"battle\",\"location_ref\":\"SE5\",\"confidence\":1,\"evidence_refs\":[\"EV5\"],\"actor_refs\":[\"A2\"],\"time_text\":\"1934年11月22日\"},{\"event_id\":\"EV6\",\"name\":\"歇马岭会合\",\"event_type\":\"meeting\",\"location_ref\":\"SE6\",\"confidence\":1,\"evidence_refs\":[\"EV6\"],\"actor_refs\":[\"A1\",\"A2\"],\"time_text\":\"1934年11月23日\"},{\"event_id\":\"EV7\",\"name\":\"独树镇战斗\",\"event_type\":\"battle\",\"location_ref\":\"SE10\",\"confidence\":1,\"evidence_refs\":[\"EV7\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月26日下午\"},{\"event_id\":\"EV8\",\"name\":\"穿越许南公路\",\"event_type\":\"passage\",\"location_ref\":\"SE13\",\"confidence\":1,\"evidence_refs\":[\"EV8\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月26日夜\"},{\"event_id\":\"EV9\",\"name\":\"抵达伏牛山东麓\",\"event_type\":\"arrival\",\"location_ref\":\"SE14\",\"confidence\":1,\"evidence_refs\":[\"EV9\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月27日拂晓\"}],\"evidence\":[{\"evidence_id\":\"EV1\",\"source_refs\":[\"src:268:306\",\"src:306:401\"]},{\"evidence_id\":\"EV2\",\"source_refs\":[\"src:0:53\",\"src:958:1025\"]},{\"evidence_id\":\"EV3\",\"source_refs\":[\"src:1100:1185\"]},{\"evidence_id\":\"EV4\",\"source_refs\":[\"src:1100:1185\"]},{\"evidence_id\":\"EV5\",\"source_refs\":[\"src:1535:1582\"]},{\"evidence_id\":\"EV6\",\"source_refs\":[\"src:1608:1636\"]},{\"evidence_id\":\"EV7\",\"source_refs\":[\"src:2139:2208\",\"src:2208:2243\",\"src:2243:2275\",\"src:2350:2411\"]},{\"evidence_id\":\"EV8\",\"source_refs\":[\"src:2452:2532\"]},{\"evidence_id\":\"EV9\",\"source_refs\":[\"src:2452:2532\"]},{\"evidence_id\":\"EV10\",\"source_refs\":[\"src:1636:1703\"]},{\"evidence_id\":\"EV11\",\"source_refs\":[\"src:2452:2532\"]},{\"evidence_id\":\"EV12\",\"source_refs\":[\"src:2575:2629\"]}],\"routes\":[{\"route_id\":\"R1\",\"name\":\"红二十五军长征出发至桐柏山区\",\"side\":\"friendly\",\"confidence\":1,\"evidence_refs\":[\"EV2\",\"EV3\",\"EV4\"],\"paths\":[{\"path_id\":\"P1\",\"role\":\"main\",\"nodes\":[{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE1\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE3\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE4\"}]}]},{\"route_id\":\"R2\",\"name\":\"手枪团佯动与归建\",\"side\":\"friendly\",\"confidence\":1,\"evidence_refs\":[\"EV5\",\"EV6\"],\"paths\":[{\"path_id\":\"P2\",\"role\":\"branch\",\"nodes\":[{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE4\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE5\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE6\"}]}]},{\"route_id\":\"R3\",\"name\":\"红二十五军北上伏牛山\",\"side\":\"friendly\",\"confidence\":1,\"evidence_refs\":[\"EV6\",\"EV7\",\"EV8\",\"EV9\",\"EV10\",\"EV11\",\"EV12\"],\"paths\":[{\"path_id\":\"P3\",\"role\":\"main\",\"nodes\":[{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE6\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE7\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE8\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE9\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE10\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE12\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE13\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE14\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE15\"}]}]}],\"output_constraints\":{\"self_intersection_policy\":\"allow_with_overpass\"}},\"unresolved\":[]}",
+      "error": "/graph/evidence/0/evidence_id: 图对象 ID \"EV1\" 重复；首次声明位于 /events/0; /graph/evidence/1/evidence_id: 图对象 ID \"EV2\" 重复；首次声明位于 /events/1; /graph/evidence/2/evidence_id: 图对象 ID \"EV3\" 重复；首次声明位于 /events/2; /graph/evidence/3/evidence_id: 图对象 ID \"EV4\" 重复；首次声明位于 /events/3; /graph/evidence/4/evidence_id: 图对象 ID \"EV5\" 重复；首次声明位于 /events/4; /graph/evidence/5/evidence_id: 图对象 ID \"EV6\" 重复；首次声明位于 /events/5; /graph/evidence/6/evidence_id: 图对象 ID \"EV7\" 重复；首次声明位于 /events/6; /graph/evidence/7/evidence_id: 图对象 ID \"EV8\" 重复；首次声明位于 /events/7; /graph/evidence/8/evidence_id: 图对象 ID \"EV9\" 重复；首次声明位于 /events/8; /graph/actors/0/evidence_refs/0: 图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/1: 图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/2: 图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/3: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/4: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/5: 图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个; /graph/actors/0/evidence_refs/6: 图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个; /graph/actors/1/evidence_refs/0: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/actors/1/evidence_refs/1: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/actors/2/evidence_refs/0: 图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/0/evidence_refs/0: 图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/1/evidence_refs/0: 图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/2/evidence_refs/0: 图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/3/evidence_refs/0: 图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/3/evidence_refs/1: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/3/evidence_refs/2: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/4/evidence_refs/0: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/5/evidence_refs/0: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/9/evidence_refs/0: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/10/evidence_refs/0: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/12/evidence_refs/0: 图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个; /graph/spatial_entities/13/evidence_refs/0: 图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个; /graph/events/0/evidence_refs/0: 图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个; /graph/events/1/evidence_refs/0: 图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个; /graph/events/2/evidence_refs/0: 图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个; /graph/events/3/evidence_refs/0: 图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个; /graph/events/4/evidence_refs/0: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/events/5/evidence_refs/0: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/events/6/evidence_refs/0: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/events/7/evidence_refs/0: 图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个; /graph/events/8/evidence_refs/0: 图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个; /graph/routes/0/evidence_refs/0: 图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个; /graph/routes/0/evidence_refs/1: 图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个; /graph/routes/0/evidence_refs/2: 图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个; /graph/routes/1/evidence_refs/0: 图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个; /graph/routes/1/evidence_refs/1: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/routes/2/evidence_refs/0: 图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个; /graph/routes/2/evidence_refs/1: 图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个; /graph/routes/2/evidence_refs/2: 图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个; /graph/routes/2/evidence_refs/3: 图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个",
+      "response_shape": "envelope",
+      "input_token_estimate": 33659,
+      "max_output_tokens": 81920,
+      "candidate_revision": 2,
+      "validation": {
+        "diagnostics": [
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/0/evidence_id",
+            "message": "图对象 ID \"EV1\" 重复；首次声明位于 /events/0"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/1/evidence_id",
+            "message": "图对象 ID \"EV2\" 重复；首次声明位于 /events/1"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/2/evidence_id",
+            "message": "图对象 ID \"EV3\" 重复；首次声明位于 /events/2"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/3/evidence_id",
+            "message": "图对象 ID \"EV4\" 重复；首次声明位于 /events/3"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/4/evidence_id",
+            "message": "图对象 ID \"EV5\" 重复；首次声明位于 /events/4"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/5/evidence_id",
+            "message": "图对象 ID \"EV6\" 重复；首次声明位于 /events/5"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/6/evidence_id",
+            "message": "图对象 ID \"EV7\" 重复；首次声明位于 /events/6"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/7/evidence_id",
+            "message": "图对象 ID \"EV8\" 重复；首次声明位于 /events/7"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/8/evidence_id",
+            "message": "图对象 ID \"EV9\" 重复；首次声明位于 /events/8"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/0",
+            "message": "图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/1",
+            "message": "图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/2",
+            "message": "图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/3",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/4",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/5",
+            "message": "图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/6",
+            "message": "图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/1/evidence_refs/0",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/1/evidence_refs/1",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/2/evidence_refs/0",
+            "message": "图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/0/evidence_refs/0",
+            "message": "图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/1/evidence_refs/0",
+            "message": "图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/2/evidence_refs/0",
+            "message": "图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/3/evidence_refs/0",
+            "message": "图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/3/evidence_refs/1",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/3/evidence_refs/2",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/4/evidence_refs/0",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/5/evidence_refs/0",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/9/evidence_refs/0",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/10/evidence_refs/0",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/12/evidence_refs/0",
+            "message": "图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/13/evidence_refs/0",
+            "message": "图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/0/evidence_refs/0",
+            "message": "图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/1/evidence_refs/0",
+            "message": "图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/2/evidence_refs/0",
+            "message": "图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/3/evidence_refs/0",
+            "message": "图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/4/evidence_refs/0",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/5/evidence_refs/0",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/6/evidence_refs/0",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/7/evidence_refs/0",
+            "message": "图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/8/evidence_refs/0",
+            "message": "图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/0/evidence_refs/0",
+            "message": "图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/0/evidence_refs/1",
+            "message": "图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/0/evidence_refs/2",
+            "message": "图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/1/evidence_refs/0",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/1/evidence_refs/1",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/2/evidence_refs/0",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/2/evidence_refs/1",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/2/evidence_refs/2",
+            "message": "图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/2/evidence_refs/3",
+            "message": "图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个"
+          }
+        ]
+      }
+    }
+  ],
+  "boundaries": null,
+  "issues": null,
+  "aliases": {},
+  "graph": null,
+  "budget": {
+    "mode": "model_settings",
+    "estimation": "conservative_utf8_json_bytes",
+    "max_output_tokens": 81920,
+    "max_context_tokens": 1000000,
+    "fixed_input_estimate": 20156,
+    "source_budget_estimate": 10240,
+    "output_expansion_estimate": 8,
+    "limiting_factor": "output_budget"
+  },
+  "fragment_candidates": [
+    {
+      "chunk": {
+        "id": "c0001",
+        "start": 0,
+        "end": 2629,
+        "text": "1934年11月16日，红二十五军高举“中国工农红军北上抗日第二先遣队”的旗帜，从河南罗山何家冲出发长征。在中国共产党的领导下，这支只有2980余人的队伍，以坚定的革命信念和顽强的战斗作风，孤军北上，率先到达陕甘根据地，同当地的红二十六、红二十七军会师，合编为红十五军团，并打破了敌人的重兵“围剿”，为中共中央把中国革命的大本营安置在西北创造了条件。红二十五军的长征是中国工农红军长征的重要组成部分，在波澜壮阔的红军长征史诗中写下了独具特色的光辉一页。\n\n\n\n中国工农红军第二十五军长征路线图\n\n出发：辗转征战桐柏、伏牛山区，成功入陕\n\n1934年11月11日，中共鄂豫皖省委在光山县花山寨召开第十四次常委会议。根据中共中央指示精神和郑位三转达程子华带来的中革军委副主席周恩来的口头指示，结合鄂豫皖革命根据地实际，会议决定省委率红二十五军主力向平汉铁路以西实行战略转移，为发展红军和创建新根据地而斗争；以平汉铁路以西鄂豫边界的桐柏山区或豫西的伏牛山区为初步目标；部队在行动中对外称“中国工农红军北上抗日第二先遣队”；留一部分武装重新组建红二十八军，继续坚持鄂豫皖苏区的武装斗争。会议还讨论了部队整编和红二十五军领导人调整等问题。会上，徐海东主动建议由中央派来的程子华任军长，自己改任副军长。省委同意这一建议。同时决定补选程子华为省委常委。程子华没有参加省委常委会议，郑位三向他传达了会议精神。程子华提出，中央派他来是当参谋长的，请郑位三报告省委，他不当军长。但省委的决定没有改变。\n\n花山寨会议后，红二十五军根据省委决定，立即进行战略转移准备。此时，斗争形势依然严峻。国民党东北军九个师和“豫鄂皖三省追剿纵队”五个支队共40多个团的兵力，准备将红二十五军围歼于鄂东北地区。为迅速实行战略转移，红二十五军秘密西移至罗山县殷家湾、何家冲一带，加紧进行准备工作。首先整编部队，撤销师一级建制，军直辖第二二三团、第二二四团、第二二五团和手枪团，全军共2980余人。程子华任军长，吴焕先任政治委员，徐海东任副军长，戴季英任政治部主任。其次进行政治动员，向全体指战员讲解形势，进行“打远游击”和“创建新苏区”的思想教育。最后实行轻装，每人准备三天干粮和两双草鞋，妥善安置不能随军行动的伤病员。全军仅用三四天时间就完成了准备工作。\n\n1934年11月16日，红二十五军在鄂豫皖省委率领下，高举中国工农红军北上抗日第二先遣队的旗帜，由罗山县何家冲出发西进，开始长征。红二十五军指战员非常年轻，他们平均年龄不过十七八岁，还有一批十二三岁的少年儿童。就是这样一支朝气蓬勃的“娃娃军”，辗转征战，创造了不可磨灭的历史功绩。\n\n11月17日，红二十五军击退敌“追剿纵队”第五支队进攻后，于当晚由信阳城南东双河与柳林之间越过平汉铁路向西疾行，11月19日进入桐柏山区，到达战略转移的第一个目的地。\n\n蒋介石得知红二十五军进入桐柏山区后，急令“豫鄂皖三省追剿纵队”五个支队和东北军第一一五师跟踪追击；同时令驻河南南阳、泌阳、方城、叶县一带的国民党第四十军和驻湖北老河口一带的第四十四师迎头堵截，企图以30多个团的优势兵力形成前后夹击之势，将孤军远离鄂豫皖苏区的红二十五军包围消灭。\n\n红二十五军进入桐柏山区后，中共鄂豫边工委书记张星江闻讯赶到军部，向中共鄂豫皖省委介绍了桐柏山区的地理环境、国民党军队的兵力部署和地方反动武装盘踞地点等情况。鄂豫皖省委听取介绍并经实地考察后，认为桐柏山区距离平汉线太近，红军回旋范围较小，难以立足发展；同时群众基础以及地理物质条件都不适宜，遂改变在桐柏山区建立根据地的设想，决定避开敌军重兵堵截，绕道群众基础好的东北浅山区，再转西北进入伏牛山区，相机创建新的根据地。\n\n为隐蔽向北行动意图，迷惑和调动敌人，11月22日，红二十五军手枪团在徐海东率领下佯攻枣阳。随后突然掉头东返，冲破敌军堵截，立即向东北方向转移。11月23日，手枪团急行军赶赴桐柏歇马岭与主力部队会合。下午，在歇马岭、栗园一带击退敌“追剿纵队”第二支队进攻，趁夜绕开国民党第四十军重兵控制的通道，向西通过平氏镇，沿泌阳县城东部乘虚北上。\n\n泌阳县城东北地区地势平坦，围寨林立。许多地主豪绅盘踞村落围寨，且拥有相当数量的武装，戒备森严。为迅速北上，省委决定开展政治攻势。在进入围寨前，省委常委、秘书长郑位三事先给寨主写信，宣传中国共产党抗日救国主张，晓以民族大义，促其保持中立；红二十五军政委吴焕先召开干部会议，进行政治思想动员，要求部队严格遵守群众纪律，不打土豪、不进围寨。在省委和全军指战员共同努力下，多数地主武装保持中立，红军得以迅速通过围寨。\n\n红二十五军沿泌阳北上后，庞炳勋急令国民党第四十军第一一五旅由赊旗镇北返方城之独树镇、七里岗、砚山铺一带，迎头堵击红二十五军；又令驻叶县之骑兵团，火速南下保安寨配合堵截；再令其骑兵第五师，由泌阳向独树镇紧追。与此同时，第四十军第一一六旅正由新野北上南召，以阻止红二十五军进入伏牛山区；“追剿纵队”五个支队仍在加紧追击。形势对红二十五军十分不利。\n\n为争得先机，红二十五军日夜兼程，意图趁敌军尚未回防至方城以北之空隙，迅速通过许（昌）南（阳）公路，进入伏牛山。11月26日下午1时，红二十五军先头部队第二二四团急行军至方城县独树镇附近，准备由七里岗越过许南公路，突遭敌军第一一五旅和骑兵团猛烈攻击。此时风雪交加，能见度低，红军未能及时察觉敌军，瞬间陷入万分险恶的境地。千钧一发之际，军政委吴焕先疾步赶到先头团，立即指挥部队就地抵抗。看到敌军攻势愈发猛烈，吴焕先从交通队员身上抽出大刀，高呼：“同志们！现在是生死存亡的关头，决不能后退！共产党员跟我来！”他带领部队与敌人展开殊死搏斗。激战正酣之时，副军长徐海东率领第二二三团跑步驰援，即刻投入战斗，红二十五军指战员凭借钢铁意志终于打退敌人进攻，稳住了阵地。\n\n为打开缺口穿越许南公路，第二二三团向七里岗守敌发起三次冲锋，但均未能突破防线。红二十五军当即调整部署，乘夜色后撤至杨楼村一带集结，并在地下党同志带领下连夜突围，于叶县保安寨以北沈庄附近成功穿越许南公路，11月27日拂晓顺利抵达伏牛山东麓。\n\n独树镇战斗是红二十五军战略转移途中一次极为险恶的战斗，关系到红二十五军的生死存亡。\n\n11月27日上午，红二十五军击退由拐河、常村尾追而来的敌四十军第一一五旅和骑兵团，沿叶县、方城边界西进。",
+        "hard_cut": false
+      },
+      "revision": 2,
+      "raw": "{\"graph\":{\"schema_version\":\"1.0\",\"task\":{\"task_id\":\"T001\",\"title\":\"红二十五军长征先期阶段\",\"map_type\":\"marching_route\",\"input_crs\":\"EPSG:4326\"},\"actors\":[{\"actor_id\":\"A1\",\"name\":\"红二十五军\",\"confidence\":1,\"evidence_refs\":[\"EV2\",\"EV3\",\"EV4\",\"EV6\",\"EV7\",\"EV8\",\"EV9\"]},{\"actor_id\":\"A2\",\"name\":\"红二十五军手枪团\",\"confidence\":1,\"evidence_refs\":[\"EV5\",\"EV6\"]},{\"actor_id\":\"A3\",\"name\":\"中共鄂豫皖省委\",\"confidence\":1,\"evidence_refs\":[\"EV1\"]}],\"spatial_entities\":[{\"entity_id\":\"SE1\",\"entity_kind\":\"place\",\"name\":\"何家冲\",\"lon\":114.3,\"lat\":32.1,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV2\"]},{\"entity_id\":\"SE2\",\"entity_kind\":\"place\",\"name\":\"花山寨\",\"lon\":114.2,\"lat\":31.8,\"factual\":true,\"map_role\":\"event_anchor\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV1\"]},{\"entity_id\":\"SE3\",\"entity_kind\":\"place\",\"name\":\"东双河与柳林之间\",\"lon\":114.1,\"lat\":32.0,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV3\"]},{\"entity_id\":\"SE4\",\"entity_kind\":\"region\",\"name\":\"桐柏山区\",\"lon\":113.5,\"lat\":32.3,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV4\",\"EV5\",\"EV6\"]},{\"entity_id\":\"SE5\",\"entity_kind\":\"place\",\"name\":\"枣阳\",\"lon\":112.7,\"lat\":32.0,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV5\"]},{\"entity_id\":\"SE6\",\"entity_kind\":\"place\",\"name\":\"歇马岭\",\"lon\":113.2,\"lat\":32.4,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV6\"]},{\"entity_id\":\"SE7\",\"entity_kind\":\"place\",\"name\":\"栗园\",\"lon\":113.2,\"lat\":32.4,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV10\"]},{\"entity_id\":\"SE8\",\"entity_kind\":\"place\",\"name\":\"平氏镇\",\"lon\":113.3,\"lat\":32.6,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV10\"]},{\"entity_id\":\"SE9\",\"entity_kind\":\"region\",\"name\":\"泌阳县城东部\",\"lon\":113.4,\"lat\":32.8,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV10\"]},{\"entity_id\":\"SE10\",\"entity_kind\":\"place\",\"name\":\"独树镇\",\"lon\":113.1,\"lat\":33.1,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV7\"]},{\"entity_id\":\"SE11\",\"entity_kind\":\"place\",\"name\":\"七里岗\",\"lon\":113.1,\"lat\":33.1,\"factual\":true,\"map_role\":\"event_anchor\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV7\"]},{\"entity_id\":\"SE12\",\"entity_kind\":\"place\",\"name\":\"杨楼村\",\"lon\":113.1,\"lat\":33.1,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV11\"]},{\"entity_id\":\"SE13\",\"entity_kind\":\"place\",\"name\":\"沈庄\",\"lon\":113.2,\"lat\":33.3,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV8\"]},{\"entity_id\":\"SE14\",\"entity_kind\":\"region\",\"name\":\"伏牛山东麓\",\"lon\":112.5,\"lat\":33.5,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV9\"]},{\"entity_id\":\"SE15\",\"entity_kind\":\"region\",\"name\":\"叶县、方城边界\",\"lon\":113.0,\"lat\":33.4,\"factual\":true,\"map_role\":\"route_node\",\"coordinate_source\":\"llm_estimated\",\"coordinate_confidence\":0.6,\"evidence_refs\":[\"EV12\"]}],\"events\":[{\"event_id\":\"EV1\",\"name\":\"花山寨会议\",\"event_type\":\"meeting\",\"location_ref\":\"SE2\",\"confidence\":1,\"evidence_refs\":[\"EV1\"],\"actor_refs\":[\"A3\"],\"time_text\":\"1934年11月11日\"},{\"event_id\":\"EV2\",\"name\":\"出发长征\",\"event_type\":\"departure\",\"location_ref\":\"SE1\",\"confidence\":1,\"evidence_refs\":[\"EV2\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月16日\"},{\"event_id\":\"EV3\",\"name\":\"越过平汉铁路\",\"event_type\":\"passage\",\"location_ref\":\"SE3\",\"confidence\":1,\"evidence_refs\":[\"EV3\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月17日晚\"},{\"event_id\":\"EV4\",\"name\":\"到达桐柏山区\",\"event_type\":\"arrival\",\"location_ref\":\"SE4\",\"confidence\":1,\"evidence_refs\":[\"EV4\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月19日\"},{\"event_id\":\"EV5\",\"name\":\"佯攻枣阳\",\"event_type\":\"battle\",\"location_ref\":\"SE5\",\"confidence\":1,\"evidence_refs\":[\"EV5\"],\"actor_refs\":[\"A2\"],\"time_text\":\"1934年11月22日\"},{\"event_id\":\"EV6\",\"name\":\"歇马岭会合\",\"event_type\":\"meeting\",\"location_ref\":\"SE6\",\"confidence\":1,\"evidence_refs\":[\"EV6\"],\"actor_refs\":[\"A1\",\"A2\"],\"time_text\":\"1934年11月23日\"},{\"event_id\":\"EV7\",\"name\":\"独树镇战斗\",\"event_type\":\"battle\",\"location_ref\":\"SE10\",\"confidence\":1,\"evidence_refs\":[\"EV7\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月26日下午\"},{\"event_id\":\"EV8\",\"name\":\"穿越许南公路\",\"event_type\":\"passage\",\"location_ref\":\"SE13\",\"confidence\":1,\"evidence_refs\":[\"EV8\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月26日夜\"},{\"event_id\":\"EV9\",\"name\":\"抵达伏牛山东麓\",\"event_type\":\"arrival\",\"location_ref\":\"SE14\",\"confidence\":1,\"evidence_refs\":[\"EV9\"],\"actor_refs\":[\"A1\"],\"time_text\":\"1934年11月27日拂晓\"}],\"evidence\":[{\"evidence_id\":\"EV1\",\"source_refs\":[\"src:268:306\",\"src:306:401\"]},{\"evidence_id\":\"EV2\",\"source_refs\":[\"src:0:53\",\"src:958:1025\"]},{\"evidence_id\":\"EV3\",\"source_refs\":[\"src:1100:1185\"]},{\"evidence_id\":\"EV4\",\"source_refs\":[\"src:1100:1185\"]},{\"evidence_id\":\"EV5\",\"source_refs\":[\"src:1535:1582\"]},{\"evidence_id\":\"EV6\",\"source_refs\":[\"src:1608:1636\"]},{\"evidence_id\":\"EV7\",\"source_refs\":[\"src:2139:2208\",\"src:2208:2243\",\"src:2243:2275\",\"src:2350:2411\"]},{\"evidence_id\":\"EV8\",\"source_refs\":[\"src:2452:2532\"]},{\"evidence_id\":\"EV9\",\"source_refs\":[\"src:2452:2532\"]},{\"evidence_id\":\"EV10\",\"source_refs\":[\"src:1636:1703\"]},{\"evidence_id\":\"EV11\",\"source_refs\":[\"src:2452:2532\"]},{\"evidence_id\":\"EV12\",\"source_refs\":[\"src:2575:2629\"]}],\"routes\":[{\"route_id\":\"R1\",\"name\":\"红二十五军长征出发至桐柏山区\",\"side\":\"friendly\",\"confidence\":1,\"evidence_refs\":[\"EV2\",\"EV3\",\"EV4\"],\"paths\":[{\"path_id\":\"P1\",\"role\":\"main\",\"nodes\":[{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE1\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE3\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE4\"}]}]},{\"route_id\":\"R2\",\"name\":\"手枪团佯动与归建\",\"side\":\"friendly\",\"confidence\":1,\"evidence_refs\":[\"EV5\",\"EV6\"],\"paths\":[{\"path_id\":\"P2\",\"role\":\"branch\",\"nodes\":[{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE4\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE5\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE6\"}]}]},{\"route_id\":\"R3\",\"name\":\"红二十五军北上伏牛山\",\"side\":\"friendly\",\"confidence\":1,\"evidence_refs\":[\"EV6\",\"EV7\",\"EV8\",\"EV9\",\"EV10\",\"EV11\",\"EV12\"],\"paths\":[{\"path_id\":\"P3\",\"role\":\"main\",\"nodes\":[{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE6\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE7\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE8\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE9\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE10\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE12\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE13\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE14\"},{\"ref_type\":\"spatial_entity\",\"ref_id\":\"SE15\"}]}]}],\"output_constraints\":{\"self_intersection_policy\":\"allow_with_overpass\"}},\"unresolved\":[]}",
+      "response_shape": "envelope",
+      "validation": {
+        "diagnostics": [
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/0/evidence_id",
+            "message": "图对象 ID \"EV1\" 重复；首次声明位于 /events/0"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/1/evidence_id",
+            "message": "图对象 ID \"EV2\" 重复；首次声明位于 /events/1"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/2/evidence_id",
+            "message": "图对象 ID \"EV3\" 重复；首次声明位于 /events/2"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/3/evidence_id",
+            "message": "图对象 ID \"EV4\" 重复；首次声明位于 /events/3"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/4/evidence_id",
+            "message": "图对象 ID \"EV5\" 重复；首次声明位于 /events/4"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/5/evidence_id",
+            "message": "图对象 ID \"EV6\" 重复；首次声明位于 /events/5"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/6/evidence_id",
+            "message": "图对象 ID \"EV7\" 重复；首次声明位于 /events/6"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/7/evidence_id",
+            "message": "图对象 ID \"EV8\" 重复；首次声明位于 /events/7"
+          },
+          {
+            "layer": "structure",
+            "code": "duplicate_id",
+            "target": "/graph/evidence/8/evidence_id",
+            "message": "图对象 ID \"EV9\" 重复；首次声明位于 /events/8"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/0",
+            "message": "图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/1",
+            "message": "图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/2",
+            "message": "图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/3",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/4",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/5",
+            "message": "图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/0/evidence_refs/6",
+            "message": "图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/1/evidence_refs/0",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/1/evidence_refs/1",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/actors/2/evidence_refs/0",
+            "message": "图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/0/evidence_refs/0",
+            "message": "图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/1/evidence_refs/0",
+            "message": "图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/2/evidence_refs/0",
+            "message": "图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/3/evidence_refs/0",
+            "message": "图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/3/evidence_refs/1",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/3/evidence_refs/2",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/4/evidence_refs/0",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/5/evidence_refs/0",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/9/evidence_refs/0",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/10/evidence_refs/0",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/12/evidence_refs/0",
+            "message": "图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/spatial_entities/13/evidence_refs/0",
+            "message": "图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/0/evidence_refs/0",
+            "message": "图谱引用对象 \"EV1\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/1/evidence_refs/0",
+            "message": "图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/2/evidence_refs/0",
+            "message": "图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/3/evidence_refs/0",
+            "message": "图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/4/evidence_refs/0",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/5/evidence_refs/0",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/6/evidence_refs/0",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/7/evidence_refs/0",
+            "message": "图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/events/8/evidence_refs/0",
+            "message": "图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/0/evidence_refs/0",
+            "message": "图谱引用对象 \"EV2\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/0/evidence_refs/1",
+            "message": "图谱引用对象 \"EV3\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/0/evidence_refs/2",
+            "message": "图谱引用对象 \"EV4\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/1/evidence_refs/0",
+            "message": "图谱引用对象 \"EV5\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/1/evidence_refs/1",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/2/evidence_refs/0",
+            "message": "图谱引用对象 \"EV6\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/2/evidence_refs/1",
+            "message": "图谱引用对象 \"EV7\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/2/evidence_refs/2",
+            "message": "图谱引用对象 \"EV8\" 存在重复声明，不能选择其中一个"
+          },
+          {
+            "layer": "structure",
+            "code": "ambiguous_reference",
+            "target": "/graph/routes/2/evidence_refs/3",
+            "message": "图谱引用对象 \"EV9\" 存在重复声明，不能选择其中一个"
+          }
+        ]
+      },
+      "status": "needs_repair"
+    }
+  ],
+  "completion": {
+    "version": 1,
+    "all_routes_required": true,
+    "extraction_complete": false,
+    "boundary_complete": false,
+    "route_pass_complete": false,
+    "adaptation_complete": false
+  },
+  "extraction_cache": {
+    "status": "miss",
+    "key": "cf30245f66f47f2bacb4e2ff013ed52f9a5b3c30e4bba57a51917dd1b7c6d083"
+  }
+}

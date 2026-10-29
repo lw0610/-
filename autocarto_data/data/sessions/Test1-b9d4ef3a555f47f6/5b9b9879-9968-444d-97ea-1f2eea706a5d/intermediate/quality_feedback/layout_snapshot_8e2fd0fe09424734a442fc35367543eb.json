@@ -1,0 +1,281 @@
+{
+  "captured_at": "2026-09-27T05:19:54.683151+00:00",
+  "layout_item_ids": {
+    "callouts": {
+      "callout_2c995f46-0d66-480a-af5c-0b80cf6258c0": {
+        "body": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_body",
+        "box": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_box",
+        "image": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_image",
+        "leader": [
+          "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_leader_1",
+          "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_leader_2"
+        ],
+        "title": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_title"
+      },
+      "callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4": {
+        "body": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_body",
+        "box": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_box",
+        "image": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_image",
+        "leader": [
+          "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_leader_1",
+          "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_leader_2"
+        ],
+        "title": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_title"
+      }
+    },
+    "standard": {
+      "decorative_border": "decorative_border",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_body": {
+        "item_id": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_body",
+        "rect_mm": {
+          "height": 14.948958333333334,
+          "width": 38.4,
+          "x": 631.8535292624989,
+          "y": 306.91147711374794
+        },
+        "text": "1934年11月26日，红二十五军在方城县\n独树镇七里岗附近遭到敌军堵截。部队\n在风雪和饥寒中展开激战，吴焕先、徐\n海东等指挥反击，稳住阵地，随后乘夜\n突围，于27日进入伏牛山区，保存了主\n力。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 11.0
+      },
+      "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_box": {
+        "item_id": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_box",
+        "rect_mm": {
+          "height": 42.87278645833333,
+          "width": 42.0,
+          "x": 630.053529262499,
+          "y": 280.78764898874795
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 8.0
+      },
+      "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_image": {
+        "item_id": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_image",
+        "rect_mm": {
+          "height": 18.0,
+          "width": 38.4,
+          "x": 631.8535292624989,
+          "y": 282.58764898874796
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 9.0
+      },
+      "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_leader_1": {
+        "item_id": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_leader_1",
+        "rect_mm": {
+          "height": 37.4363932291667,
+          "width": 18.0,
+          "x": 612.053529262499,
+          "y": 298.2240422179146
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 12.0
+      },
+      "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_leader_2": {
+        "item_id": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_leader_2",
+        "rect_mm": {
+          "height": 29.436393229166697,
+          "width": 18.0,
+          "x": 612.053529262499,
+          "y": 306.2240422179146
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 13.0
+      },
+      "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_title": {
+        "item_id": "callout_callout_2c995f46-0d66-480a-af5c-0b80cf6258c0_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 631.8535292624989,
+          "y": 302.08764898874796
+        },
+        "text": "独树镇战斗",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 10.0
+      },
+      "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_body": {
+        "item_id": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_body",
+        "rect_mm": {
+          "height": 14.948958333333334,
+          "width": 38.4,
+          "x": 696.1334369708318,
+          "y": 398.20217078458114
+        },
+        "text": "1934年11月16日，红二十五军从河南罗\n山县何家冲出发，开始长征。部队以“中\n国工农红军北上抗日第二先遣队”为旗号\n，在程子华、吴焕先、徐海东等率领下\n西进，踏上由鄂豫皖向陕北转移的征程\n。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 5.0
+      },
+      "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_box": {
+        "item_id": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_box",
+        "rect_mm": {
+          "height": 42.87278645833333,
+          "width": 42.0,
+          "x": 694.3334369708318,
+          "y": 372.07834265958115
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_image": {
+        "item_id": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_image",
+        "rect_mm": {
+          "height": 18.0,
+          "width": 38.4,
+          "x": 696.1334369708318,
+          "y": 373.87834265958116
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 3.0
+      },
+      "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_leader_1": {
+        "item_id": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_leader_1",
+        "rect_mm": {
+          "height": 37.4363932291667,
+          "width": 18.0,
+          "x": 676.3334369708318,
+          "y": 389.5147358887478
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 6.0
+      },
+      "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_leader_2": {
+        "item_id": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_leader_2",
+        "rect_mm": {
+          "height": 29.436393229166697,
+          "width": 18.0,
+          "x": 676.3334369708318,
+          "y": 397.5147358887478
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 7.0
+      },
+      "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_title": {
+        "item_id": "callout_callout_f970d8aa-8815-4c85-9e69-cb0716bcd0f4_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 696.1334369708318,
+          "y": 393.37834265958116
+        },
+        "text": "何家冲",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "decorative_border": {
+        "item_id": "decorative_border",
+        "outer_rect_mm": {
+          "height": 489.58508826082834,
+          "width": 727.85,
+          "x": 56.57499999999999,
+          "y": 52.20745586958583
+        },
+        "rect_mm": {
+          "height": 483.28508826082833,
+          "width": 721.5500000000001,
+          "x": 59.72499999999999,
+          "y": 55.35745586958583
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 14.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 78.4712109375,
+          "width": 47.2880859375,
+          "x": 63.075,
+          "y": 456.82
+        },
+        "title": "图例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 17.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 476.58508826082834,
+          "width": 714.85,
+          "x": 63.07499999999999,
+          "y": 58.70745586958583
+        },
+        "scale": 1158639.9940076289,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 25.0,
+          "width": 25.0,
+          "x": 63.07499999999999,
+          "y": 58.71
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 19.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 18.48409090909091,
+          "width": 83.7159090909091,
+          "x": 694.21,
+          "y": 58.71
+        },
+        "text": "红二十五军长征行军路线图数据综述\n\n1934年11月至1935年9月，红二十五军在程子华、吴焕先、徐海东等率领下\n，从河南罗山县何家冲出发，历经独树镇战斗、庾家河战斗等重要战役，转\n战豫鄂陕甘四省，行程近万里，最终到达陕北与陕北红军会师。本图绘制路\n线16段，标注关键节点81处，涵盖战斗、会议、会师等重要历史事件。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 16.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 91.84702260301492,
+          "x": 686.078,
+          "y": 522.196
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 30.0,
+        "z_value": 18.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 139.12272727272727,
+          "x": 350.94,
+          "y": 38.07
+        },
+        "text": "红二十五军长征行军路线图",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 15.0
+      }
+    },
+    "layout": "红二十五军长征行军路线图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 594.0,
+      "width": 841.0
+    }
+  },
+  "layout_name": "红二十五军长征行军路线图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "5b9b9879-9968-444d-97ea-1f2eea706a5d",
+  "snapshot_id": "8e2fd0fe09424734a442fc35367543eb"
+}

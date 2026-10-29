@@ -1,0 +1,41 @@
+{
+  "graph_sha256": "4886fdc7edd4f443e2a7a265773d123d6776024f4976a308ef7ba908da3f2014",
+  "inherited_provenance": [],
+  "issue_resolutions": [
+    {
+      "action": "confirmed",
+      "explanation": "确认",
+      "issue_id": "c0002__u1",
+      "revision": 3,
+      "source": "human_review",
+      "subject_refs": [
+        "c0002__p2"
+      ]
+    },
+    {
+      "action": "confirmed",
+      "explanation": "确认",
+      "issue_id": "c0002__u3",
+      "revision": 2,
+      "source": "human_review",
+      "subject_refs": [
+        "c0002__p8"
+      ]
+    },
+    {
+      "action": "confirmed",
+      "explanation": "确认",
+      "issue_id": "route_review:c0001__R1",
+      "revision": 2,
+      "source": "human_review",
+      "subject_refs": [
+        "c0001__R1"
+      ]
+    }
+  ],
+  "manual_records": [],
+  "review_id": "3831babe-c0cd-4d76-b465-13753848d7ec",
+  "revision": 3,
+  "source_sha256": "4d1ed8734bfa2706c858eb01731287fa898259fa42c83b8e32b500f23458534e",
+  "version": 1
+}

@@ -1,0 +1,17 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+c0001__R1,红二十五军长征初期,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R2,第一次大范围转战,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R5,再次北上及荆紫关行动,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R6,袁家沟口后至沣峪口,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R7,西征北上,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R8,四坡村及之后北上,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R9,永坪会师后作战,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R10,敌军四十军一一五旅堵截,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R11,敌军六十师封锁追击,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R12,敌军一部进逼蓝田葛牌镇沣峪口,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R13,陕军警备第一旅推进袁家沟口,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R14,敌军围攻柞水宁陕佛坪,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R15,敌军追堵双石铺两当,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R16,敌军追击天水秦安,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R17,敌军堵截秦安静宁,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__R18,敌军阻击隆德四坡村,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass

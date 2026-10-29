@@ -1,0 +1,38 @@
+{
+  "counts": {
+    "callouts.csv": 29,
+    "places.csv": 114,
+    "points.csv": 105,
+    "route_paths.csv": 128,
+    "routes.csv": 23,
+    "symbol_mapping.csv": 5
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "review": {
+    "accepted_graph_file": "accepted_graph.json",
+    "provenance_file": "review_provenance.json",
+    "review_id": "3acc52b2-efe6-4da1-8fed-390a291ecffe",
+    "revision": 3
+  },
+  "schema_version": "1.0",
+  "task_id": "t0001",
+  "title": "红二十五军长征及敌军围堵路线",
+  "warnings": [
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字"
+  ]
+}

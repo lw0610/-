@@ -1,0 +1,61 @@
+{
+  "error_count": 0,
+  "is_valid": true,
+  "issues": [
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[107].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[108].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[109].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[110].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[111].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[112].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[113].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[114].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[115].coordinate_confidence",
+      "severity": "warning"
+    }
+  ],
+  "warning_count": 9
+}

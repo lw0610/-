@@ -1,0 +1,323 @@
+{
+  "captured_at": "2026-09-15T12:42:14.604362+00:00",
+  "layout_item_ids": {
+    "callouts": {
+      "c0001__callout_1": {
+        "body": "callout_c0001__callout_1_body",
+        "box": "callout_c0001__callout_1_box",
+        "leader": [
+          "callout_c0001__callout_1_leader_1",
+          "callout_c0001__callout_1_leader_2"
+        ],
+        "title": "callout_c0001__callout_1_title"
+      },
+      "c0001__callout_2": {
+        "body": "callout_c0001__callout_2_body",
+        "box": "callout_c0001__callout_2_box",
+        "leader": [
+          "callout_c0001__callout_2_leader_1",
+          "callout_c0001__callout_2_leader_2"
+        ],
+        "title": "callout_c0001__callout_2_title"
+      },
+      "c0003__c1": {
+        "body": "callout_c0003__c1_body",
+        "box": "callout_c0003__c1_box",
+        "leader": [
+          "callout_c0003__c1_leader_1",
+          "callout_c0003__c1_leader_2"
+        ],
+        "title": "callout_c0003__c1_title"
+      }
+    },
+    "standard": {
+      "decorative_border": "decorative_border_1",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "callout_c0001__callout_1_body": {
+        "item_id": "callout_c0001__callout_1_body",
+        "rect_mm": {
+          "height": 7.474479166666667,
+          "width": 38.4,
+          "x": 619.0124999999989,
+          "y": 776.1297316304137
+        },
+        "text": "参谋标注石桥位置，此桥为本段行军重\n要通道，一旦损毁，全军渡河将大为困\n难。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "callout_c0001__callout_1_box": {
+        "item_id": "callout_c0001__callout_1_box",
+        "rect_mm": {
+          "height": 15.898307291666669,
+          "width": 42.0,
+          "x": 617.212499999999,
+          "y": 769.5059035054138
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "callout_c0001__callout_1_leader_1": {
+        "item_id": "callout_c0001__callout_1_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 37.41016927083331,
+          "x": 599.212499999999,
+          "y": 785.4042107970805
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 5.0
+      },
+      "callout_c0001__callout_1_leader_2": {
+        "item_id": "callout_c0001__callout_1_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 40.58983072916669,
+          "x": 599.212499999999,
+          "y": 785.4042107970805
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 6.0
+      },
+      "callout_c0001__callout_1_title": {
+        "item_id": "callout_c0001__callout_1_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 619.0124999999989,
+          "y": 771.3059035054138
+        },
+        "text": "重要通道",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 3.0
+      },
+      "callout_c0001__callout_2_body": {
+        "item_id": "callout_c0001__callout_2_body",
+        "rect_mm": {
+          "height": 7.474479166666667,
+          "width": 38.4,
+          "x": 636.8837499999987,
+          "y": 792.8095649637471
+        },
+        "text": "关隘为粤湘两省天然分界，岭南水流汇\n入武江归入珠江，岭北溪水向北流入湘\n江流域。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 9.0
+      },
+      "callout_c0001__callout_2_box": {
+        "item_id": "callout_c0001__callout_2_box",
+        "rect_mm": {
+          "height": 15.898307291666669,
+          "width": 42.0,
+          "x": 635.0837499999988,
+          "y": 786.1857368387472
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 7.0
+      },
+      "callout_c0001__callout_2_leader_1": {
+        "item_id": "callout_c0001__callout_2_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 37.41016927083331,
+          "x": 617.0837499999988,
+          "y": 802.0840441304139
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 10.0
+      },
+      "callout_c0001__callout_2_leader_2": {
+        "item_id": "callout_c0001__callout_2_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 40.58983072916669,
+          "x": 617.0837499999988,
+          "y": 802.0840441304139
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 11.0
+      },
+      "callout_c0001__callout_2_title": {
+        "item_id": "callout_c0001__callout_2_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 636.8837499999987,
+          "y": 787.9857368387471
+        },
+        "text": "粤湘分界",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 8.0
+      },
+      "callout_c0003__c1_body": {
+        "item_id": "callout_c0003__c1_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 589.543833333332,
+          "y": 824.9636639220805
+        },
+        "text": "参谋标注的重要通道，一旦损毁全军渡\n河将大为困难",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 14.0
+      },
+      "callout_c0003__c1_box": {
+        "item_id": "callout_c0003__c1_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 587.7438333333321,
+          "y": 818.3398357970806
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 12.0
+      },
+      "callout_c0003__c1_leader_1": {
+        "item_id": "callout_c0003__c1_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 1.3406814236111586,
+          "x": 607.4031519097209,
+          "y": 806.3398357970806
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 15.0
+      },
+      "callout_c0003__c1_leader_2": {
+        "item_id": "callout_c0003__c1_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 1.3406814236111586,
+          "x": 608.7438333333321,
+          "y": 806.3398357970806
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 16.0
+      },
+      "callout_c0003__c1_title": {
+        "item_id": "callout_c0003__c1_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 589.543833333332,
+          "y": 820.1398357970805
+        },
+        "text": "良田墟外石拱桥",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 13.0
+      },
+      "decorative_border_1": {
+        "item_id": "decorative_border_1",
+        "outer_rect_mm": {
+          "height": 489.58508826082834,
+          "width": 727.85,
+          "x": 56.57499999999999,
+          "y": 52.20745586958583
+        },
+        "rect_mm": {
+          "height": 483.28508826082833,
+          "width": 721.5500000000001,
+          "x": 59.72499999999999,
+          "y": 55.35745586958583
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 17.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 107.5712109375,
+          "width": 28.075000000000003,
+          "x": 63.07,
+          "y": 427.73
+        },
+        "title": "图例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 20.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 476.58508826082834,
+          "width": 714.85,
+          "x": 63.07499999999999,
+          "y": 58.70745586958583
+        },
+        "scale": 1158639.9940076289,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 30.0,
+          "width": 30.0,
+          "x": 63.07,
+          "y": 58.71
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 22.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 15.886363636363637,
+          "width": 88.62272727272727,
+          "x": 689.3,
+          "y": 58.71
+        },
+        "text": "数据综述：本图展示第四军行军路线，区域涵盖华中腹地，地形以平原丘陵为主\n。行军沿途跨越多条河流，铁路与公路网络交织，国道干线贯通南北。图中标注\n重要关隘、桥梁等战略节点，反映了行军路线与地形、交通的密切关系。底图包\n含省域行政区划、县级城市驻地、铁路、公路、国道、地区界线及河流水系等要\n素。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 19.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 91.84702260301492,
+          "x": 686.078,
+          "y": 522.196
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 30.0,
+        "z_value": 21.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 92.94090909090909,
+          "x": 374.03,
+          "y": 41.22
+        },
+        "text": "第四军行军路线图",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 18.0
+      }
+    },
+    "layout": "行军路线图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 594.0,
+      "width": 841.0
+    }
+  },
+  "layout_name": "行军路线图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "44baf6c6-b941-48c6-8940-af0905347f0e",
+  "snapshot_id": "c4510b1c957846e987628d4fcebbe864"
+}

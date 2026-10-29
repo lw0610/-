@@ -1,0 +1,27 @@
+{
+  "counts": {
+    "callouts.csv": 0,
+    "places.csv": 45,
+    "points.csv": 45,
+    "route_paths.csv": 66,
+    "routes.csv": 16,
+    "symbol_mapping.csv": 8
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "review": {
+    "provenance_file": "review_provenance.json",
+    "review_id": "2f54608f-2b5e-4d16-bb20-698b7842717d",
+    "revision": 1
+  },
+  "schema_version": "1.0",
+  "task_id": "t1",
+  "title": "中国工农红军第二十五军长征及转战经过",
+  "warnings": []
+}

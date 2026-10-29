@@ -1,0 +1,2935 @@
+{
+  "actors": [
+    {
+      "actor_id": "c0001__a1",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "c0001__EVID1"
+      ],
+      "name": "红二十五军"
+    },
+    {
+      "actor_id": "c0001__a2",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "c0001__EVID5"
+      ],
+      "name": "红二十五军手枪团"
+    },
+    {
+      "actor_id": "c0001__a3",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "c0001__EVID2"
+      ],
+      "name": "中共鄂豫皖省委"
+    },
+    {
+      "actor_id": "c0002__a1",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0002__EVID1"
+      ],
+      "name": "红二十五军"
+    },
+    {
+      "actor_id": "c0002__a2",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0002__EVID6"
+      ],
+      "name": "手枪团一部"
+    },
+    {
+      "actor_id": "c0002__a3",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0002__EVID1"
+      ],
+      "name": "国民党第四十军"
+    },
+    {
+      "actor_id": "c0002__a4",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0002__EVID7",
+        "c0002__EVID7__src2",
+        "c0002__EVID7__src3"
+      ],
+      "name": "国民党第六十师"
+    },
+    {
+      "actor_id": "c0002__a5",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0002__EVID13"
+      ],
+      "name": "陕军"
+    },
+    {
+      "actor_id": "c0003__actor_1",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0003__EVID1"
+      ],
+      "name": "红二十五军"
+    },
+    {
+      "actor_id": "c0003__actor_2",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0003__EVID5"
+      ],
+      "name": "敌警备第一旅"
+    },
+    {
+      "actor_id": "c0003__actor_3",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0003__EVID12"
+      ],
+      "name": "冯雨三部"
+    },
+    {
+      "actor_id": "c0003__actor_4",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0003__EVID15"
+      ],
+      "name": "王均第三军第十二师一部"
+    },
+    {
+      "actor_id": "c0003__actor_5",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0003__EVID20"
+      ],
+      "name": "马开基部"
+    },
+    {
+      "actor_id": "c0003__actor_6",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0003__EVID26"
+      ],
+      "name": "红二十六军"
+    },
+    {
+      "actor_id": "c0003__actor_7",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0003__EVID26"
+      ],
+      "name": "红二十七军"
+    },
+    {
+      "actor_id": "c0003__actor_8",
+      "aliases": [],
+      "confidence": 1,
+      "evidence_refs": [
+        "c0003__EVID26"
+      ],
+      "name": "红十五军团"
+    }
+  ],
+  "callouts": [],
+  "events": [
+    {
+      "actor_refs": [
+        "c0001__a1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__EV1",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0001__EVID1"
+      ],
+      "location_ref": "c0001__E1",
+      "name": "何家冲出发",
+      "time_text": "1934年11月16日"
+    },
+    {
+      "actor_refs": [
+        "c0001__a1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__EV2",
+      "event_type": "passage",
+      "evidence_refs": [
+        "c0001__EVID3"
+      ],
+      "location_ref": "c0001__E3",
+      "name": "越过平汉铁路",
+      "time_text": "1934年11月17日晚"
+    },
+    {
+      "actor_refs": [
+        "c0001__a1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__EV3",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__EVID4"
+      ],
+      "location_ref": "c0001__E5",
+      "name": "到达桐柏山区",
+      "time_text": "1934年11月19日"
+    },
+    {
+      "actor_refs": [
+        "c0001__a2"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__EV4",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0001__EVID5"
+      ],
+      "location_ref": "c0001__E6",
+      "name": "佯攻枣阳",
+      "time_text": "1934年11月22日"
+    },
+    {
+      "actor_refs": [
+        "c0001__a1",
+        "c0001__a2"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__EV5",
+      "event_type": "rendezvous",
+      "evidence_refs": [
+        "c0001__EVID6",
+        "c0001__EVID6__src2"
+      ],
+      "location_ref": "c0001__E7",
+      "name": "歇马岭会合",
+      "time_text": "1934年11月23日"
+    },
+    {
+      "actor_refs": [
+        "c0001__a1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__EV6",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0001__EVID8"
+      ],
+      "location_ref": "c0001__E11",
+      "name": "独树镇战斗",
+      "time_text": "1934年11月26日"
+    },
+    {
+      "actor_refs": [
+        "c0001__a1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__EV7",
+      "event_type": "passage",
+      "evidence_refs": [
+        "c0001__EVID9"
+      ],
+      "location_ref": "c0001__E15",
+      "name": "穿越许南公路",
+      "time_text": "1934年11月26日夜"
+    },
+    {
+      "actor_refs": [
+        "c0001__a1"
+      ],
+      "confidence": 0.9,
+      "event_id": "c0001__EV8",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0001__EVID10"
+      ],
+      "location_ref": "c0001__E16",
+      "name": "抵达伏牛山东麓",
+      "time_text": "1934年11月27日拂晓"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1",
+        "c0002__a3"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev1",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID1"
+      ],
+      "location_ref": "c0002__loc1",
+      "name": "孤石滩渡河遭夹击",
+      "time_text": "28日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev2",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID2"
+      ],
+      "location_ref": "c0002__loc3",
+      "name": "古木庄交界岭击退敌军"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev3",
+      "event_type": "passage",
+      "evidence_refs": [
+        "c0002__EVID2"
+      ],
+      "location_ref": "c0002__loc8",
+      "name": "进入伏牛山深处"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev4",
+      "event_type": "other",
+      "evidence_refs": [
+        "c0002__EVID3"
+      ],
+      "location_ref": "c0002__loc8",
+      "name": "决定向陕南转移"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev5",
+      "event_type": "passage",
+      "evidence_refs": [
+        "c0002__EVID4"
+      ],
+      "location_ref": "c0002__loc9",
+      "name": "直奔卢氏"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev6",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0002__EVID5"
+      ],
+      "location_ref": "c0002__loc10",
+      "name": "到达叫河镇宿营",
+      "time_text": "12月4日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a2"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev7",
+      "event_type": "other",
+      "evidence_refs": [
+        "c0002__EVID6"
+      ],
+      "location_ref": "c0002__loc11",
+      "name": "手枪团佯动朱阳关",
+      "time_text": "12月5日凌晨"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev8",
+      "event_type": "passage",
+      "evidence_refs": [
+        "c0002__EVID7",
+        "c0002__EVID7__src2",
+        "c0002__EVID7__src3"
+      ],
+      "location_ref": "c0002__loc12",
+      "name": "主力突围翻越姬家岭等",
+      "time_text": "12月5日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev9",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID8",
+        "c0002__EVID8__src2",
+        "c0002__EVID8__src3",
+        "c0002__EVID8__src4"
+      ],
+      "location_ref": "c0002__loc15",
+      "name": "攻占铁锁关",
+      "time_text": "12月8日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev10",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "c0002__EVID9",
+        "c0002__EVID9__src2",
+        "c0002__EVID9__src3"
+      ],
+      "location_ref": "c0002__loc17",
+      "name": "进至庾家河召开常委会议",
+      "time_text": "12月9日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1",
+        "c0002__a3"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev11",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID9",
+        "c0002__EVID9__src2",
+        "c0002__EVID9__src3"
+      ],
+      "location_ref": "c0002__loc17",
+      "name": "庾家河战斗"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev12",
+      "event_type": "other",
+      "evidence_refs": [
+        "c0002__EVID10"
+      ],
+      "location_ref": "c0002__loc18",
+      "name": "转移至蔡家川整编"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev13",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID12"
+      ],
+      "location_ref": "c0002__loc21",
+      "name": "攻克镇安",
+      "time_text": "1935年1月9日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1",
+        "c0002__a5"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev14",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID13"
+      ],
+      "location_ref": "c0002__loc22",
+      "name": "蔡玉窑文公岭战斗",
+      "time_text": "1月下旬"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev15",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "c0002__EVID14",
+        "c0002__EVID14__src2",
+        "c0002__EVID14__src3"
+      ],
+      "location_ref": "c0002__loc19",
+      "name": "郧西会议",
+      "time_text": "2月19日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1",
+        "c0002__a5"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev16",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID15",
+        "c0002__EVID15__src2"
+      ],
+      "location_ref": "c0002__loc24",
+      "name": "华阳伏击战",
+      "time_text": "3月10日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev17",
+      "event_type": "turn",
+      "evidence_refs": [
+        "c0002__EVID16"
+      ],
+      "location_ref": "c0002__loc25",
+      "name": "向汉中前进受阻折返"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev18",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID17"
+      ],
+      "location_ref": "c0002__loc27",
+      "name": "九间房设伏",
+      "time_text": "4月初"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev19",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID18"
+      ],
+      "location_ref": "c0002__loc16",
+      "name": "攻克雒南",
+      "time_text": "4月18日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev20",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0002__EVID19"
+      ],
+      "location_ref": "c0002__loc28",
+      "name": "攻克龙驹寨",
+      "time_text": "5月4日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev21",
+      "event_type": "turn",
+      "evidence_refs": [
+        "c0002__EVID20"
+      ],
+      "location_ref": "c0002__loc29",
+      "name": "攻山阳不克南下郧西",
+      "time_text": "5月14日"
+    },
+    {
+      "actor_refs": [
+        "c0002__a1"
+      ],
+      "confidence": 1,
+      "event_id": "c0002__ev22",
+      "event_type": "passage",
+      "evidence_refs": [
+        "c0002__EVID21"
+      ],
+      "location_ref": "c0002__loc30",
+      "name": "北上商县东转庾家河",
+      "time_text": "6月初"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_1",
+      "event_type": "departure",
+      "evidence_refs": [
+        "c0003__EVID1"
+      ],
+      "location_ref": "c0003__se_1",
+      "name": "从庾家河出发",
+      "time_text": "6月10日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_2",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0003__EVID2"
+      ],
+      "location_ref": "c0003__se_2",
+      "name": "包围商南县城",
+      "time_text": "13日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_3",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID2"
+      ],
+      "location_ref": "c0003__se_3",
+      "name": "攻占富水关",
+      "time_text": "14日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_4",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID2"
+      ],
+      "location_ref": "c0003__se_4",
+      "name": "进占青山街",
+      "time_text": "14日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_5",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0003__EVID3"
+      ],
+      "location_ref": "c0003__se_5",
+      "name": "远程奔袭荆紫关",
+      "time_text": "16日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_6",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0003__EVID5"
+      ],
+      "location_ref": "c0003__se_6",
+      "name": "伏击敌警备第一旅",
+      "time_text": "7月2日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_7",
+      "event_type": "other",
+      "evidence_refs": [
+        "c0003__EVID6"
+      ],
+      "location_ref": "c0003__se_8",
+      "name": "威逼西安"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_8",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "c0003__EVID8"
+      ],
+      "location_ref": "c0003__se_10",
+      "name": "召开紧急会议",
+      "time_text": "7月15日晚"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_9",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID13"
+      ],
+      "location_ref": "c0003__se_15",
+      "name": "占领双石铺",
+      "time_text": "7月31日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_10",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID14"
+      ],
+      "location_ref": "c0003__se_16",
+      "name": "攻占两当县城"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_11",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID15"
+      ],
+      "location_ref": "c0003__se_18",
+      "name": "攻占天水县城北关",
+      "time_text": "8月9日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_12",
+      "event_type": "passage",
+      "evidence_refs": [
+        "c0003__EVID16"
+      ],
+      "location_ref": "c0003__se_19",
+      "name": "强渡渭河"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_13",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID17"
+      ],
+      "location_ref": "c0003__se_20",
+      "name": "逼近静宁县城",
+      "time_text": "8月14日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_14",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID18"
+      ],
+      "location_ref": "c0003__se_21",
+      "name": "进抵兴隆镇",
+      "time_text": "15日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_15",
+      "event_type": "passage",
+      "evidence_refs": [
+        "c0003__EVID20"
+      ],
+      "location_ref": "c0003__se_25",
+      "name": "徒涉汭河",
+      "time_text": "21日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_16",
+      "event_type": "passage",
+      "evidence_refs": [
+        "c0003__EVID21"
+      ],
+      "location_ref": "c0003__se_27",
+      "name": "涉过泾河",
+      "time_text": "8月31日晚"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_17",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID22"
+      ],
+      "location_ref": "c0003__se_28",
+      "name": "进抵板桥镇",
+      "time_text": "9月3日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_18",
+      "event_type": "battle",
+      "evidence_refs": [
+        "c0003__EVID22"
+      ],
+      "location_ref": "c0003__se_28",
+      "name": "遭敌骑兵团袭击",
+      "time_text": "次日晨"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_19",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID24",
+        "c0003__EVID24__src2"
+      ],
+      "location_ref": "c0003__se_29",
+      "name": "到达豹子川",
+      "time_text": "9月7日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_20",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "c0003__EVID24",
+        "c0003__EVID24__src2"
+      ],
+      "location_ref": "c0003__se_29",
+      "name": "召开省委会议",
+      "time_text": "9月7日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_21",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "c0003__EVID25"
+      ],
+      "location_ref": "c0003__se_30",
+      "name": "到达永坪镇",
+      "time_text": "9月15日"
+    },
+    {
+      "actor_refs": [],
+      "confidence": 1,
+      "event_id": "c0003__ev_22",
+      "event_type": "rendezvous",
+      "evidence_refs": [
+        "c0003__EVID26"
+      ],
+      "location_ref": "c0003__se_30",
+      "name": "与红二十六、红二十七军会师"
+    }
+  ],
+  "evidence": [
+    {
+      "end": 1032,
+      "evidence_id": "c0001__EVID1",
+      "quote": "\n\n1934年11月16日，红二十五军在鄂豫皖省委率领下，高举中国工农红军北上抗日第二先遣队的旗帜，由罗山县何家冲出发西进，开始长征。",
+      "start": 965
+    },
+    {
+      "end": 313,
+      "evidence_id": "c0001__EVID2",
+      "quote": "\n1934年11月11日，中共鄂豫皖省委在光山县花山寨召开第十四次常委会议。",
+      "start": 275
+    },
+    {
+      "end": 1192,
+      "evidence_id": "c0001__EVID3",
+      "quote": "\n\n11月17日，红二十五军击退敌“追剿纵队”第五支队进攻后，于当晚由信阳城南东双河与柳林之间越过平汉铁路向西疾行，11月19日进入桐柏山区，到达战略转移的第一个目的地。",
+      "start": 1107
+    },
+    {
+      "end": 1192,
+      "evidence_id": "c0001__EVID4",
+      "quote": "\n\n11月17日，红二十五军击退敌“追剿纵队”第五支队进攻后，于当晚由信阳城南东双河与柳林之间越过平汉铁路向西疾行，11月19日进入桐柏山区，到达战略转移的第一个目的地。",
+      "start": 1107
+    },
+    {
+      "end": 1589,
+      "evidence_id": "c0001__EVID5",
+      "quote": "\n\n为隐蔽向北行动意图，迷惑和调动敌人，11月22日，红二十五军手枪团在徐海东率领下佯攻枣阳。",
+      "start": 1542
+    },
+    {
+      "end": 1643,
+      "evidence_id": "c0001__EVID6",
+      "quote": "11月23日，手枪团急行军赶赴桐柏歇马岭与主力部队会合。",
+      "start": 1615
+    },
+    {
+      "end": 1710,
+      "evidence_id": "c0001__EVID6__src2",
+      "quote": "下午，在歇马岭、栗园一带击退敌“追剿纵队”第二支队进攻，趁夜绕开国民党第四十军重兵控制的通道，向西通过平氏镇，沿泌阳县城东部乘虚北上。",
+      "start": 1643
+    },
+    {
+      "end": 1710,
+      "evidence_id": "c0001__EVID7",
+      "quote": "下午，在歇马岭、栗园一带击退敌“追剿纵队”第二支队进攻，趁夜绕开国民党第四十军重兵控制的通道，向西通过平氏镇，沿泌阳县城东部乘虚北上。",
+      "start": 1643
+    },
+    {
+      "end": 2215,
+      "evidence_id": "c0001__EVID8",
+      "quote": "11月26日下午1时，红二十五军先头部队第二二四团急行军至方城县独树镇附近，准备由七里岗越过许南公路，突遭敌军第一一五旅和骑兵团猛烈攻击。",
+      "start": 2146
+    },
+    {
+      "end": 2539,
+      "evidence_id": "c0001__EVID9",
+      "quote": "红二十五军当即调整部署，乘夜色后撤至杨楼村一带集结，并在地下党同志带领下连夜突围，于叶县保安寨以北沈庄附近成功穿越许南公路，11月27日拂晓顺利抵达伏牛山东麓。",
+      "start": 2459
+    },
+    {
+      "end": 2539,
+      "evidence_id": "c0001__EVID10",
+      "quote": "红二十五军当即调整部署，乘夜色后撤至杨楼村一带集结，并在地下党同志带领下连夜突围，于叶县保安寨以北沈庄附近成功穿越许南公路，11月27日拂晓顺利抵达伏牛山东麓。",
+      "start": 2459
+    },
+    {
+      "end": 2636,
+      "evidence_id": "c0001__EVID11",
+      "quote": "\n\n11月27日上午，红二十五军击退由拐河、常村尾追而来的敌四十军第一一五旅和骑兵团，沿叶县、方城边界西进。",
+      "start": 2582
+    },
+    {
+      "end": 2688,
+      "evidence_id": "c0002__EVID1",
+      "quote": "28日，红二十五军正准备由孤石滩渡过澧河时，遭到国民党第四十军骑兵第五师和第一一五旅、骑兵团的南北夹击。",
+      "start": 2636
+    },
+    {
+      "end": 2759,
+      "evidence_id": "c0002__EVID2",
+      "quote": "红二十五军分两路击退敌军进攻，渡过澧河，并急速向西北方向前进，在古木庄、交界岭再次击退尾追之敌，经由神林村、鲁山熊背、下汤等地进入伏牛山深处。",
+      "start": 2688
+    },
+    {
+      "end": 2983,
+      "evidence_id": "c0002__EVID3",
+      "quote": "于是，省委再次改变在伏牛山区创建根据地的计划，决定继续向西转移，先进入敌人力量相对薄弱的陕西南部商洛山区，再择机创建根据地。",
+      "start": 2921
+    },
+    {
+      "end": 3112,
+      "evidence_id": "c0002__EVID4",
+      "quote": "布告颁发后，红二十五军即日夜兼程向陕南前进，途中击溃袭扰阻击的土匪、地方民团，直奔豫陕边界的卢氏。",
+      "start": 3063
+    },
+    {
+      "end": 3421,
+      "evidence_id": "c0002__EVID5",
+      "quote": "\n\n12月4日，红二十五军到达卢氏城东南叫河镇一带宿营，准备由朱阳关入陕，却得知朱阳关已在三天前被国民党军抢占。",
+      "start": 3365
+    },
+    {
+      "end": 3714,
+      "evidence_id": "c0002__EVID6",
+      "quote": "12月5日凌晨，手枪团一部向朱阳关方向前进，制造红军即将从朱阳关大举入陕的假象，成功迷惑了敌人。",
+      "start": 3666
+    },
+    {
+      "end": 3758,
+      "evidence_id": "c0002__EVID7",
+      "quote": "而主力部队则在陈廷贤带领下，秘密从叫河镇出发，翻过姬家岭，进入一条名为文峪河的深山峡谷。",
+      "start": 3714
+    },
+    {
+      "end": 3795,
+      "evidence_id": "c0002__EVID7__src2",
+      "quote": "这条峡谷，山高林密，道路崎岖，素有“七十二道水峪河，二十五里脚不干”之称。",
+      "start": 3758
+    },
+    {
+      "end": 3854,
+      "evidence_id": "c0002__EVID7__src3",
+      "quote": "红军部队由陈廷贤带路，沿着县城南侧与洛河之间的隘路悄然穿行，天亮后翻越柏盘岭，将敌第六十师筹谋多日的堵击防线置于侧后。",
+      "start": 3795
+    },
+    {
+      "end": 3880,
+      "evidence_id": "c0002__EVID8",
+      "quote": "\n\n12月8日，红二十五军主力抵达豫陕交界的铁锁关。",
+      "start": 3854
+    },
+    {
+      "end": 3907,
+      "evidence_id": "c0002__EVID8__src2",
+      "quote": "铁锁关又名箭杆岭，地势险要，是河南进入陕西的重要通道。",
+      "start": 3880
+    },
+    {
+      "end": 3939,
+      "evidence_id": "c0002__EVID8__src3",
+      "quote": "由于敌军主力已被红军佯动所迷惑，此处防守空虚，仅有少量民团把守。",
+      "start": 3907
+    },
+    {
+      "end": 3994,
+      "evidence_id": "c0002__EVID8__src4",
+      "quote": "红二十五军迅速击溃守关民团，一举攻占铁锁关，进入陕西南部雒南县（今洛南县）境内，成功摆脱国民党军队的围追堵截。",
+      "start": 3939
+    },
+    {
+      "end": 4047,
+      "evidence_id": "c0002__EVID9",
+      "quote": "\n12月9日，红二十五军历尽艰辛冲破敌人重兵围截，进至雒南县之庾家河。",
+      "start": 4012
+    },
+    {
+      "end": 4110,
+      "evidence_id": "c0002__EVID9__src2",
+      "quote": "在这里，省委召开第十八次常委会议，研究决定在鄂豫陕边创建新的革命根据地，不失时机地解决了选择新区和制定当前方针任务等重大问题。",
+      "start": 4047
+    },
+    {
+      "end": 4184,
+      "evidence_id": "c0002__EVID9__src3",
+      "quote": "会议被尾追之敌突袭打断，红军战士英勇奋战、浴血拼杀，战斗至黄昏，反复冲杀20多次，终于将敌人击溃，但军长程子华、副军长徐海东以及营以上干部大多负伤。",
+      "start": 4110
+    },
+    {
+      "end": 4241,
+      "evidence_id": "c0002__EVID10",
+      "quote": "庾家河战斗后，红二十五军连夜向西转移至蔡家川进行了整编，并休整一周，从思想上、组织上、军事上为创建根据地作了准备。",
+      "start": 4184
+    },
+    {
+      "end": 4334,
+      "evidence_id": "c0002__EVID11",
+      "quote": "\n\n为选择适合创建根据地的地方，12月19日，红二十五军从蔡家川出发，以飘忽式游击行动，大回旋南下郧西、北返雒南、东入卢氏、西转蓝田，在鄂陕边发动群众，组建鄂陕游击师，创建鄂陕边根据地。",
+      "start": 4241
+    },
+    {
+      "end": 4382,
+      "evidence_id": "c0002__EVID12",
+      "quote": "\n\n1935年1月9日，从雒南再度南下的红二十五军攻克镇安县城，亮出红军旗帜，发动群众开展斗争。",
+      "start": 4334
+    },
+    {
+      "end": 4502,
+      "evidence_id": "c0002__EVID13",
+      "quote": "红二十五军在运动中调动敌人，经过蔡玉窑、文公岭两次战斗，基本击溃敌军，红军趁势在陕东南开辟根据地。",
+      "start": 4453
+    },
+    {
+      "end": 4524,
+      "evidence_id": "c0002__EVID14",
+      "quote": "\n\n2月中旬，为掌握主动，红军继续南下郧西。",
+      "start": 4502
+    },
+    {
+      "end": 4578,
+      "evidence_id": "c0002__EVID14__src2",
+      "quote": "19日，在郧西召开了一次关键会议，讨论了红二十五军的发展方向，统一了思想，坚定了创建鄂豫陕革命根据地的决心。",
+      "start": 4524
+    },
+    {
+      "end": 4589,
+      "evidence_id": "c0002__EVID14__src3",
+      "quote": "下旬，红军由郧西转进。",
+      "start": 4578
+    },
+    {
+      "end": 4612,
+      "evidence_id": "c0002__EVID15",
+      "quote": "3月10日，在华阳东南伏击尾追陕军警备第二旅。",
+      "start": 4589
+    },
+    {
+      "end": 4630,
+      "evidence_id": "c0002__EVID15__src2",
+      "quote": "战后，红军发动群众创建了华阳根据地。",
+      "start": 4612
+    },
+    {
+      "end": 4675,
+      "evidence_id": "c0002__EVID16",
+      "quote": "\n\n另外，为进一步打通与红四方面军和川陕省委的联系，红二十五军向汉中前进，但受阻折返华阳。",
+      "start": 4630
+    },
+    {
+      "end": 4721,
+      "evidence_id": "c0002__EVID17",
+      "quote": "3月下旬，红二十五军东返，4月初抵达蓝田葛牌镇，并在葛牌镇以南九间房设伏，一举歼灭尾追之敌。",
+      "start": 4675
+    },
+    {
+      "end": 4853,
+      "evidence_id": "c0002__EVID18",
+      "quote": "4月18日，红二十五军东进攻克雒南县城，乘胜进入雒南、商县、商南、卢氏四县边界地区，收回雒南游击队，派方升普率部开展群众工作，开辟了豫陕根据地。",
+      "start": 4781
+    },
+    {
+      "end": 5105,
+      "evidence_id": "c0002__EVID19",
+      "quote": "5月4日，红二十五军攻克龙驹寨（今丹凤县城），在此进行整训。",
+      "start": 5075
+    },
+    {
+      "end": 5213,
+      "evidence_id": "c0002__EVID20",
+      "quote": "\n\n5月14日，红二十五军计划首先攻占山阳县，创造有利于反“围剿”的战场，但久攻不克，敌人主力步步逼近，于是撤围南下郧西活动，吸引敌人迅速向郧西集中。",
+      "start": 5138
+    },
+    {
+      "end": 5280,
+      "evidence_id": "c0002__EVID21",
+      "quote": "6月初，红二十五军从郧西出发北上直插商县地区，不久东转庾家河地区，跳到外线作战，打乱了敌人部署，迫使其向东南进攻的矛头不得不转而向北。",
+      "start": 5213
+    },
+    {
+      "end": 5328,
+      "evidence_id": "c0003__EVID1",
+      "quote": "\n\n6月10日，红二十五军从庾家河出发，又掉头向东南大踏步前进，调动、分散、疲惫敌人，创造战机。",
+      "start": 5280
+    },
+    {
+      "end": 5353,
+      "evidence_id": "c0003__EVID2",
+      "quote": "13日包围商南县城，14日攻占富水关、进占青山街。",
+      "start": 5328
+    },
+    {
+      "end": 5435,
+      "evidence_id": "c0003__EVID3",
+      "quote": "而红二十五军继续向东南挺进，16日远程奔袭荆紫关，缴获大批军用物资，取得第二次反“围剿”的第一个重大胜利。",
+      "start": 5382
+    },
+    {
+      "end": 5481,
+      "evidence_id": "c0003__EVID4",
+      "quote": "\n\n6月17日，红二十五军挥师西进，计划诱敌深入到根据地中心区域，选择有利战场，歼灭其一路。",
+      "start": 5435
+    },
+    {
+      "end": 5522,
+      "evidence_id": "c0003__EVID5",
+      "quote": "7月2日，在袁家沟口成功伏击敌警备第一旅，取得第二个重大胜利。",
+      "start": 5491
+    },
+    {
+      "end": 5596,
+      "evidence_id": "c0003__EVID6",
+      "quote": "\n\n之后，红二十五军再次转到外线，北出终南山，威逼西安城，迫使敌准备西进陕甘堵截中央红军的部队停止行动，深入陕南苏区的国民党军也被迫回撤，保卫西安。",
+      "start": 5522
+    },
+    {
+      "end": 5794,
+      "evidence_id": "c0003__EVID7",
+      "quote": "7月15日，原中共鄂豫皖省委交通员石健民来到驻长安子午镇的红二十五军军部，再次确认了该消息，并带来了中共中央于数月前发出的指示和几份文件。",
+      "start": 5725
+    },
+    {
+      "end": 5901,
+      "evidence_id": "c0003__EVID8",
+      "quote": "\n\n当晚，中共鄂豫陕省委立即在长安沣峪口召开紧急会议，传达中央文件指示精神，分析当前形势，决定省委率领红二十五军西征北上，到陕甘苏区会合红二十六军，鄂陕、豫陕两特委合并为鄂豫陕特委，继续坚持鄂豫陕革命根据地的斗争。",
+      "start": 5794
+    },
+    {
+      "end": 5926,
+      "evidence_id": "c0003__EVID9",
+      "quote": "\n\n7月16日，红二十五军从沣峪口出发，继续长征。",
+      "start": 5901
+    },
+    {
+      "end": 6008,
+      "evidence_id": "c0003__EVID10",
+      "quote": "”这一天，红二十五军冒着大雨沿秦岭北麓向西挺进，多次打退陕军骑兵团的尾追。",
+      "start": 5971
+    },
+    {
+      "end": 6056,
+      "evidence_id": "c0003__EVID11",
+      "quote": "7月22日，为摆脱尾追之敌，红二十五军突然折入秦岭山中，向南进军，作出威逼汉中的姿态以迷惑敌人。",
+      "start": 6008
+    },
+    {
+      "end": 6152,
+      "evidence_id": "c0003__EVID12",
+      "quote": "红二十五军随即改变行动方向，向西疾进，进入汉中留坝县境，并于27日到达江口镇，击溃盘踞在该地的反动民团冯雨三部。",
+      "start": 6096
+    },
+    {
+      "end": 6399,
+      "evidence_id": "c0003__EVID13",
+      "quote": "\n\n7月31日，红二十五军占领川陕公路要地双石铺，并俘获敌少将参议一名，缴获大量文件和报纸，由此获悉中央红军正在北上，国民党军大量兵力部署于川西北、甘南边境、渭河沿线和西（安）兰（州）公路上，意图堵截中央红军，而其后方留守处设在天水。",
+      "start": 6282
+    },
+    {
+      "end": 6475,
+      "evidence_id": "c0003__EVID14",
+      "quote": "\n\n随后，红二十五军迅速进入甘肃境内，攻占两当县城，翻越麦积山，直逼天水。",
+      "start": 6438
+    },
+    {
+      "end": 6493,
+      "evidence_id": "c0003__EVID15",
+      "quote": "8月9日，红军一举攻占天水县城北关。",
+      "start": 6475
+    },
+    {
+      "end": 6561,
+      "evidence_id": "c0003__EVID16",
+      "quote": "在牵制敌人目的达到后，红二十五军果断放弃攻占天水的计划，强渡渭河。",
+      "start": 6528
+    },
+    {
+      "end": 6690,
+      "evidence_id": "c0003__EVID17",
+      "quote": "\n8月14日，红二十五军逼近陇东静宁县城，切断了横贯陕、甘两省的交通大动脉西兰公路。",
+      "start": 6648
+    },
+    {
+      "end": 6714,
+      "evidence_id": "c0003__EVID18",
+      "quote": "15日，进抵静宁县城以北兴隆镇（今属宁夏西吉）。",
+      "start": 6690
+    },
+    {
+      "end": 6955,
+      "evidence_id": "c0003__EVID19",
+      "quote": "\n\n8月17日，红二十五军离开兴隆镇，继续沿西兰公路东进。",
+      "start": 6926
+    },
+    {
+      "end": 7016,
+      "evidence_id": "c0003__EVID20",
+      "quote": "21日，红二十五军进至泾川县境，因连日暴雨，河水猛涨无法北渡泾河，军首长决定在县城以西的王村翻越王母宫塬徒涉泾河支流汭河。",
+      "start": 6955
+    },
+    {
+      "end": 7456,
+      "evidence_id": "c0003__EVID21",
+      "quote": "8月31日晚，红二十五军从四十里铺涉过泾河，向东北方向前进。",
+      "start": 7426
+    },
+    {
+      "end": 7566,
+      "evidence_id": "c0003__EVID22",
+      "quote": "\n\n9月3日，红二十五军进抵合水板桥镇宿营，次日晨，后卫部队突遭敌骑兵团袭击，由于地势对红军不利，此次战斗损失200余人。",
+      "start": 7505
+    },
+    {
+      "end": 7616,
+      "evidence_id": "c0003__EVID23",
+      "quote": "板桥镇战斗后，为了防止敌人尾追纠缠，徐海东命令部队向东北方向的豹子川疾进，沿陕甘边界的崇山峻岭前行。",
+      "start": 7566
+    },
+    {
+      "end": 7634,
+      "evidence_id": "c0003__EVID24",
+      "quote": "\n\n9月7日，红二十五军到达豹子川。",
+      "start": 7616
+    },
+    {
+      "end": 7674,
+      "evidence_id": "c0003__EVID24__src2",
+      "quote": "中共鄂豫陕省委在此召开会议，决定由程子华代理省委书记兼军政治委员、徐海东任军长。",
+      "start": 7634
+    },
+    {
+      "end": 7757,
+      "evidence_id": "c0003__EVID25",
+      "quote": "9月15日，红二十五军胜利到达陕西延川永坪镇，完成长征，这时全军共3400多人。",
+      "start": 7717
+    },
+    {
+      "end": 7842,
+      "evidence_id": "c0003__EVID26",
+      "quote": "\n\n红二十五军到达陕甘根据地后，与红二十六、红二十七军胜利会师，随后合编为红十五军团。",
+      "start": 7799
+    }
+  ],
+  "output_constraints": {
+    "self_intersection_policy": "allow_with_overpass"
+  },
+  "point_presentations": [],
+  "routes": [
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "c0001__EVID1",
+        "c0001__EVID3",
+        "c0001__EVID4",
+        "c0001__EVID5",
+        "c0001__EVID6",
+        "c0001__EVID6__src2",
+        "c0001__EVID7",
+        "c0001__EVID8",
+        "c0001__EVID9",
+        "c0001__EVID10",
+        "c0001__EVID11"
+      ],
+      "name": "红二十五军长征初期路线",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0001__E1",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E3",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E4",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E5",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E6",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E7",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E9",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E10",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E11",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E12",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E13",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E15",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E16",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0001__E17",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0001__P1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0001__R1",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 1,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__EVID1",
+        "c0002__EVID2"
+      ],
+      "name": "渡澧河入伏牛山",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__loc1",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc3",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc4",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc5",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc6",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc7",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__p1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0002__r1",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 1,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__EVID4",
+        "c0002__EVID5"
+      ],
+      "name": "奔袭卢氏",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__loc9",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc10",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__p2",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0002__r2",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 1,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__EVID6",
+        "c0002__EVID7",
+        "c0002__EVID7__src2",
+        "c0002__EVID7__src3",
+        "c0002__EVID8",
+        "c0002__EVID8__src2",
+        "c0002__EVID8__src3",
+        "c0002__EVID8__src4"
+      ],
+      "name": "叫河镇突围入陕",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__loc10",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc12",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc13",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc14",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc15",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc16",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__p3",
+          "role": "main"
+        },
+        {
+          "attach_ref": "c0002__loc10",
+          "direction": "away_from_attach",
+          "nodes": [
+            {
+              "ref_id": "c0002__loc11",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__p4",
+          "role": "branch"
+        }
+      ],
+      "route_id": "c0002__r3",
+      "side": "friendly",
+      "topology": "branch"
+    },
+    {
+      "confidence": 1,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__EVID9",
+        "c0002__EVID9__src2",
+        "c0002__EVID9__src3",
+        "c0002__EVID10"
+      ],
+      "name": "庾家河战斗及转移",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__loc16",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc17",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc18",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__p5",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0002__r4",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 1,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__EVID11",
+        "c0002__EVID12",
+        "c0002__EVID13",
+        "c0002__EVID14",
+        "c0002__EVID14__src2",
+        "c0002__EVID14__src3",
+        "c0002__EVID15",
+        "c0002__EVID15__src2",
+        "c0002__EVID16",
+        "c0002__EVID17",
+        "c0002__EVID18"
+      ],
+      "name": "鄂陕边游击及创建根据地",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__loc18",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc19",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc16",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc9",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc20",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc21",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc22",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc23",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc19",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc24",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc26",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc27",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc16",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__p6",
+          "role": "main"
+        },
+        {
+          "attach_ref": "c0002__loc24",
+          "direction": "away_from_attach",
+          "nodes": [
+            {
+              "ref_id": "c0002__loc25",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__p7",
+          "role": "branch"
+        }
+      ],
+      "route_id": "c0002__r5",
+      "side": "friendly",
+      "topology": "branch"
+    },
+    {
+      "confidence": 1,
+      "enabled": true,
+      "evidence_refs": [
+        "c0002__EVID19",
+        "c0002__EVID20",
+        "c0002__EVID21"
+      ],
+      "name": "反第二次围剿机动",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0002__loc28",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc29",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc19",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc30",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0002__loc17",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0002__p8",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0002__r6",
+      "side": "friendly",
+      "topology": "standard"
+    },
+    {
+      "confidence": 1,
+      "enabled": true,
+      "evidence_refs": [
+        "c0003__EVID1",
+        "c0003__EVID2",
+        "c0003__EVID3",
+        "c0003__EVID5",
+        "c0003__EVID6",
+        "c0003__EVID8",
+        "c0003__EVID10",
+        "c0003__EVID11",
+        "c0003__EVID12",
+        "c0003__EVID13",
+        "c0003__EVID14",
+        "c0003__EVID15",
+        "c0003__EVID16",
+        "c0003__EVID17",
+        "c0003__EVID18",
+        "c0003__EVID19",
+        "c0003__EVID20",
+        "c0003__EVID21",
+        "c0003__EVID22",
+        "c0003__EVID23",
+        "c0003__EVID24",
+        "c0003__EVID24__src2",
+        "c0003__EVID25"
+      ],
+      "name": "红二十五军反围剿及西征北上路线",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "c0003__se_1",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_2",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_3",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_4",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_5",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_6",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_7",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_8",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_9",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_10",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_11",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_12",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_13",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_14",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_15",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_16",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_17",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_18",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_19",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_20",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_21",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_22",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_23",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_24",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_25",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_26",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_27",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_28",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_29",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "c0003__se_30",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "c0003__path_1",
+          "role": "main"
+        }
+      ],
+      "route_id": "c0003__route_1",
+      "side": "friendly",
+      "topology": "standard"
+    }
+  ],
+  "schema_version": "1.0",
+  "spatial_entities": [
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E1",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID1"
+      ],
+      "factual": true,
+      "lat": 32.1,
+      "lon": 114.15,
+      "map_role": "route_node",
+      "name": "罗山何家冲"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E2",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID2"
+      ],
+      "factual": true,
+      "lat": 32,
+      "lon": 114.9,
+      "map_role": "background",
+      "name": "光山县花山寨"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E3",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID3"
+      ],
+      "factual": true,
+      "lat": 32.15,
+      "lon": 114.05,
+      "map_role": "route_node",
+      "name": "信阳东双河"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E4",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID3"
+      ],
+      "factual": true,
+      "lat": 32.15,
+      "lon": 114,
+      "map_role": "route_node",
+      "name": "信阳柳林"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E5",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0001__EVID4"
+      ],
+      "factual": true,
+      "lat": 32.3,
+      "lon": 113.4,
+      "map_role": "route_node",
+      "name": "桐柏山区"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E6",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID5"
+      ],
+      "factual": true,
+      "lat": 32.05,
+      "lon": 112.75,
+      "map_role": "route_node",
+      "name": "枣阳"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E7",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID6",
+        "c0001__EVID6__src2"
+      ],
+      "factual": true,
+      "lat": 32.35,
+      "lon": 113.45,
+      "map_role": "route_node",
+      "name": "桐柏歇马岭"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E8",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID6",
+        "c0001__EVID6__src2"
+      ],
+      "factual": true,
+      "lat": 32.35,
+      "lon": 113.45,
+      "map_role": "background",
+      "name": "栗园"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E9",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID7"
+      ],
+      "factual": true,
+      "lat": 32.55,
+      "lon": 113.15,
+      "map_role": "route_node",
+      "name": "平氏镇"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E10",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID7"
+      ],
+      "factual": true,
+      "lat": 32.75,
+      "lon": 113.35,
+      "map_role": "route_node",
+      "name": "泌阳县城东部"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E11",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID8"
+      ],
+      "factual": true,
+      "lat": 33.35,
+      "lon": 113.05,
+      "map_role": "route_node",
+      "name": "独树镇"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E12",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID8"
+      ],
+      "factual": true,
+      "lat": 33.35,
+      "lon": 113.05,
+      "map_role": "route_node",
+      "name": "七里岗"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E13",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID9"
+      ],
+      "factual": true,
+      "lat": 33.3,
+      "lon": 113,
+      "map_role": "route_node",
+      "name": "杨楼村"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E14",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID9"
+      ],
+      "factual": true,
+      "lat": 33.45,
+      "lon": 113.25,
+      "map_role": "background",
+      "name": "叶县保安寨"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E15",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0001__EVID9"
+      ],
+      "factual": true,
+      "lat": 33.4,
+      "lon": 113.2,
+      "map_role": "route_node",
+      "name": "沈庄"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E16",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0001__EVID10"
+      ],
+      "factual": true,
+      "lat": 33.5,
+      "lon": 112.5,
+      "map_role": "route_node",
+      "name": "伏牛山东麓"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0001__E17",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0001__EVID11"
+      ],
+      "factual": true,
+      "lat": 33.4,
+      "lon": 113,
+      "map_role": "route_node",
+      "name": "叶县、方城边界"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc1",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID1"
+      ],
+      "factual": true,
+      "lat": 33.4,
+      "lon": 113.1,
+      "map_role": "route_node",
+      "name": "孤石滩"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc2",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0002__EVID1"
+      ],
+      "factual": true,
+      "lat": 33.5,
+      "lon": 113.2,
+      "map_role": "background",
+      "name": "澧河"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc3",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID2"
+      ],
+      "factual": true,
+      "lat": 33.6,
+      "lon": 113,
+      "map_role": "route_node",
+      "name": "古木庄"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc4",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID2"
+      ],
+      "factual": true,
+      "lat": 33.7,
+      "lon": 112.9,
+      "map_role": "route_node",
+      "name": "交界岭"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc5",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID2"
+      ],
+      "factual": true,
+      "lat": 33.8,
+      "lon": 112.8,
+      "map_role": "route_node",
+      "name": "神林村"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc6",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID2"
+      ],
+      "factual": true,
+      "lat": 33.9,
+      "lon": 112.7,
+      "map_role": "route_node",
+      "name": "鲁山熊背"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc7",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID2"
+      ],
+      "factual": true,
+      "lat": 34,
+      "lon": 112.6,
+      "map_role": "route_node",
+      "name": "下汤"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc8",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0002__EVID2"
+      ],
+      "factual": true,
+      "lat": 34.1,
+      "lon": 112.5,
+      "map_role": "background",
+      "name": "伏牛山"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc9",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID4"
+      ],
+      "factual": true,
+      "lat": 34,
+      "lon": 111,
+      "map_role": "route_node",
+      "name": "卢氏"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc10",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID5"
+      ],
+      "factual": true,
+      "lat": 33.8,
+      "lon": 111.2,
+      "map_role": "route_node",
+      "name": "叫河镇"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc11",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID6"
+      ],
+      "factual": true,
+      "lat": 33.9,
+      "lon": 111.1,
+      "map_role": "route_node",
+      "name": "朱阳关"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc12",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID7",
+        "c0002__EVID7__src2",
+        "c0002__EVID7__src3"
+      ],
+      "factual": true,
+      "lat": 33.9,
+      "lon": 111.3,
+      "map_role": "route_node",
+      "name": "姬家岭"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc13",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID7",
+        "c0002__EVID7__src2",
+        "c0002__EVID7__src3"
+      ],
+      "factual": true,
+      "lat": 34,
+      "lon": 111.4,
+      "map_role": "route_node",
+      "name": "文峪河"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc14",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID7",
+        "c0002__EVID7__src2",
+        "c0002__EVID7__src3"
+      ],
+      "factual": true,
+      "lat": 34.1,
+      "lon": 111.5,
+      "map_role": "route_node",
+      "name": "柏盘岭"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc15",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID8",
+        "c0002__EVID8__src2",
+        "c0002__EVID8__src3",
+        "c0002__EVID8__src4"
+      ],
+      "factual": true,
+      "lat": 34.2,
+      "lon": 111.6,
+      "map_role": "route_node",
+      "name": "铁锁关"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc16",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID8",
+        "c0002__EVID8__src2",
+        "c0002__EVID8__src3",
+        "c0002__EVID8__src4"
+      ],
+      "factual": true,
+      "lat": 34.1,
+      "lon": 110.1,
+      "map_role": "route_node",
+      "name": "雒南县"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc17",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID9",
+        "c0002__EVID9__src2",
+        "c0002__EVID9__src3"
+      ],
+      "factual": true,
+      "lat": 34.2,
+      "lon": 110.2,
+      "map_role": "route_node",
+      "name": "庾家河"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc18",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID10"
+      ],
+      "factual": true,
+      "lat": 34.3,
+      "lon": 110.3,
+      "map_role": "route_node",
+      "name": "蔡家川"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc19",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID11"
+      ],
+      "factual": true,
+      "lat": 33,
+      "lon": 110.4,
+      "map_role": "route_node",
+      "name": "郧西"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc20",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID11"
+      ],
+      "factual": true,
+      "lat": 34.1,
+      "lon": 109.3,
+      "map_role": "route_node",
+      "name": "蓝田"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc21",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID12"
+      ],
+      "factual": true,
+      "lat": 33.4,
+      "lon": 109.1,
+      "map_role": "route_node",
+      "name": "镇安"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc22",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID13"
+      ],
+      "factual": true,
+      "lat": 33.5,
+      "lon": 109.2,
+      "map_role": "route_node",
+      "name": "蔡玉窑"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc23",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID13"
+      ],
+      "factual": true,
+      "lat": 33.6,
+      "lon": 109.3,
+      "map_role": "route_node",
+      "name": "文公岭"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc24",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID15",
+        "c0002__EVID15__src2"
+      ],
+      "factual": true,
+      "lat": 33.5,
+      "lon": 108.5,
+      "map_role": "route_node",
+      "name": "华阳"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc25",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID16"
+      ],
+      "factual": true,
+      "lat": 33,
+      "lon": 107,
+      "map_role": "route_node",
+      "name": "汉中"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc26",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID17"
+      ],
+      "factual": true,
+      "lat": 34,
+      "lon": 109.5,
+      "map_role": "route_node",
+      "name": "葛牌镇"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc27",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID17"
+      ],
+      "factual": true,
+      "lat": 34,
+      "lon": 109.6,
+      "map_role": "route_node",
+      "name": "九间房"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc28",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID19"
+      ],
+      "factual": true,
+      "lat": 33.6,
+      "lon": 110.3,
+      "map_role": "route_node",
+      "name": "龙驹寨"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc29",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID20"
+      ],
+      "factual": true,
+      "lat": 33.5,
+      "lon": 109.8,
+      "map_role": "route_node",
+      "name": "山阳县"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0002__loc30",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0002__EVID21"
+      ],
+      "factual": true,
+      "lat": 33.8,
+      "lon": 109.9,
+      "map_role": "route_node",
+      "name": "商县"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_1",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID1"
+      ],
+      "factual": true,
+      "lat": 33.6,
+      "lon": 110.8,
+      "map_role": "route_node",
+      "name": "庾家河"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_2",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID2"
+      ],
+      "factual": true,
+      "lat": 33.52,
+      "lon": 110.88,
+      "map_role": "route_node",
+      "name": "商南县城"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_3",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID2"
+      ],
+      "factual": true,
+      "lat": 33.55,
+      "lon": 110.95,
+      "map_role": "route_node",
+      "name": "富水关"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_4",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID2"
+      ],
+      "factual": true,
+      "lat": 33.5,
+      "lon": 110.92,
+      "map_role": "route_node",
+      "name": "青山街"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_5",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID3"
+      ],
+      "factual": true,
+      "lat": 33.35,
+      "lon": 110.92,
+      "map_role": "route_node",
+      "name": "荆紫关"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_6",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID5"
+      ],
+      "factual": true,
+      "lat": 33.8,
+      "lon": 110.5,
+      "map_role": "route_node",
+      "name": "袁家沟口"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_7",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID6"
+      ],
+      "factual": true,
+      "lat": 34,
+      "lon": 108.9,
+      "map_role": "route_node",
+      "name": "终南山"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_8",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID6"
+      ],
+      "factual": true,
+      "lat": 34.2,
+      "lon": 108.9,
+      "map_role": "route_node",
+      "name": "西安"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_9",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID7"
+      ],
+      "factual": true,
+      "lat": 34.1,
+      "lon": 108.9,
+      "map_role": "route_node",
+      "name": "长安子午镇"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_10",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID8"
+      ],
+      "factual": true,
+      "lat": 34,
+      "lon": 108.8,
+      "map_role": "route_node",
+      "name": "沣峪口"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_11",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0003__EVID10"
+      ],
+      "factual": true,
+      "lat": 34.1,
+      "lon": 108.5,
+      "map_role": "route_node",
+      "name": "秦岭北麓"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_12",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0003__EVID11"
+      ],
+      "factual": true,
+      "lat": 33.8,
+      "lon": 107.5,
+      "map_role": "route_node",
+      "name": "秦岭山中"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_13",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0003__EVID12"
+      ],
+      "factual": true,
+      "lat": 33.8,
+      "lon": 106.9,
+      "map_role": "route_node",
+      "name": "留坝县"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_14",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID12"
+      ],
+      "factual": true,
+      "lat": 33.9,
+      "lon": 107,
+      "map_role": "route_node",
+      "name": "江口镇"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_15",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID13"
+      ],
+      "factual": true,
+      "lat": 33.9,
+      "lon": 106.5,
+      "map_role": "route_node",
+      "name": "双石铺"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_16",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID14"
+      ],
+      "factual": true,
+      "lat": 33.9,
+      "lon": 106.3,
+      "map_role": "route_node",
+      "name": "两当县城"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_17",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID14"
+      ],
+      "factual": true,
+      "lat": 34.3,
+      "lon": 105.9,
+      "map_role": "route_node",
+      "name": "麦积山"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_18",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID15"
+      ],
+      "factual": true,
+      "lat": 34.6,
+      "lon": 105.7,
+      "map_role": "route_node",
+      "name": "天水县城北关"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_19",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID16"
+      ],
+      "factual": true,
+      "lat": 34.7,
+      "lon": 105.5,
+      "map_role": "route_node",
+      "name": "渭河"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_20",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID17"
+      ],
+      "factual": true,
+      "lat": 35.5,
+      "lon": 105.7,
+      "map_role": "route_node",
+      "name": "静宁县城"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_21",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID18"
+      ],
+      "factual": true,
+      "lat": 35.6,
+      "lon": 105.7,
+      "map_role": "route_node",
+      "name": "兴隆镇"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_22",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "c0003__EVID20"
+      ],
+      "factual": true,
+      "lat": 35.4,
+      "lon": 107.3,
+      "map_role": "route_node",
+      "name": "泾川县"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_23",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID20"
+      ],
+      "factual": true,
+      "lat": 35.4,
+      "lon": 107.2,
+      "map_role": "route_node",
+      "name": "王村"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_24",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID20"
+      ],
+      "factual": true,
+      "lat": 35.4,
+      "lon": 107.2,
+      "map_role": "route_node",
+      "name": "王母宫塬"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_25",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID20"
+      ],
+      "factual": true,
+      "lat": 35.3,
+      "lon": 107.2,
+      "map_role": "route_node",
+      "name": "汭河"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_26",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID21"
+      ],
+      "factual": true,
+      "lat": 35.5,
+      "lon": 107.3,
+      "map_role": "route_node",
+      "name": "四十里铺"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_27",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID21"
+      ],
+      "factual": true,
+      "lat": 35.5,
+      "lon": 107.3,
+      "map_role": "route_node",
+      "name": "泾河"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_28",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID22"
+      ],
+      "factual": true,
+      "lat": 35.8,
+      "lon": 107.5,
+      "map_role": "route_node",
+      "name": "板桥镇"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_29",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID24",
+        "c0003__EVID24__src2"
+      ],
+      "factual": true,
+      "lat": 36,
+      "lon": 108,
+      "map_role": "route_node",
+      "name": "豹子川"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "c0003__se_30",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "c0003__EVID25"
+      ],
+      "factual": true,
+      "lat": 36.8,
+      "lon": 109.5,
+      "map_role": "route_node",
+      "name": "永坪镇"
+    }
+  ],
+  "task": {
+    "input_crs": "EPSG:4326",
+    "map_type": "marching_route",
+    "task_id": "t0001",
+    "title": "红二十五军长征初期路线"
+  }
+}
