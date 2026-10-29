@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_2eade051120f5a89",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/boundaries/boundary_city_410000.geojson",
+      "name": "boundary_city_410000.geojson",
+      "kind": "vector",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "admin_boundary_extract",
+        "label": "admin_boundary_extract",
+        "call_id": "call_00_V6Dg94AF77Vay3WDWojm5142",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T12:47:43.818847Z",
+      "modified_at": "2026-10-26T12:11:10.787644749Z",
+      "size": 138520,
+      "exists": true
+    },
+    {
+      "id": "f_c7938fde18dcbf22",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/boundaries/boundary_city_410000.provenance.json",
+      "name": "boundary_city_410000.provenance.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "admin_boundary_extract",
+        "label": "admin_boundary_extract",
+        "call_id": "call_00_V6Dg94AF77Vay3WDWojm5142",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T12:47:43.816724Z",
+      "modified_at": "2026-10-26T12:11:10.787282166Z",
+      "size": 1350,
+      "exists": true
+    },
+    {
+      "id": "f_ea0a37be9d4e2687",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/3ace679a-072d-47e4-9294-398efc6ab9a9/output/osm/osm-data.geojson",
+      "name": "osm-data.geojson",
+      "kind": "vector",
+      "group": "source",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "osm_get_features",
+        "label": "按范围下载 OSM 要素",
+        "call_id": "call_00_8nswFTfkbzTVIAeyPEQ95116",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T12:18:21.454552Z",
+      "modified_at": "2026-10-26T12:18:21.359050958Z",
+      "size": 23254760,
+      "exists": true
+    },
+    {
+      "id": "f_830b6bc9673e6271",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/3ace679a-072d-47e4-9294-398efc6ab9a9/output/osm/osm-data.geojson.source.json",
+      "name": "osm-data.geojson.source.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "osm_get_features",
+        "label": "按范围下载 OSM 要素",
+        "call_id": "call_00_8nswFTfkbzTVIAeyPEQ95116",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T12:18:21.454914Z",
+      "modified_at": "2026-10-26T12:49:20.923064499Z",
+      "size": 2984,
+      "exists": true
+    },
+    {
+      "id": "f_815fac88fd1e2cf8",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/3ace679a-072d-47e4-9294-398efc6ab9a9/temp/previews/f_ea0a37be9d4e2687-1793017230452502000.png",
+      "name": "f_ea0a37be9d4e2687-1793017230452502000.png",
+      "kind": "image",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "preview",
+        "label": "数据缩略图"
+      },
+      "registered_at": "2026-10-26T12:20:31.409437Z",
+      "modified_at": "2026-10-26T12:20:31.408421874Z",
+      "size": 120868,
+      "exists": true
+    }
+  ]
+}

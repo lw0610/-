@@ -135,3 +135,37 @@ secrets.enc
 
 # Migration backup kept locally
 /docs/refactor-v6/evidence/builtin-resource-v5-backup.tar.gz
+
+# Share the sanitized runtime snapshot; keep credentials and live state local.
+!/autocarto_data/
+/autocarto_data/*
+!/autocarto_data/README.md
+!/autocarto_data/large-files.json
+!/autocarto_data/config/
+/autocarto_data/config/*
+!/autocarto_data/config/config.yaml
+!/autocarto_data/config/resource_bindings.yaml
+!/autocarto_data/config/agent_configs/
+!/autocarto_data/config/agent_configs/.active_agent_config
+!/autocarto_data/flows/
+!/autocarto_data/data/
+/autocarto_data/data/*
+!/autocarto_data/data/*.csv
+!/autocarto_data/data/symbol/
+!/autocarto_data/data/reference_inputs/
+!/autocarto_data/data/acquired/
+!/autocarto_data/data/boundaries/
+!/autocarto_data/data/knowledge_reviews/
+!/autocarto_data/data/sessions/
+/autocarto_data/**/*.bak
+/autocarto_data/**/.history/
+/autocarto_data/**/logs/
+/autocarto_data/**/temp/
+/autocarto_data/**/tmp/
+/autocarto_data/**/*.lock
+/autocarto_data/**/.run-event-seq
+/autocarto_data/**/.master_key
+/autocarto_data/**/secrets.enc
+/autocarto_data/**/*.db
+/autocarto_data/**/*.db-wal
+/autocarto_data/**/*.db-shm

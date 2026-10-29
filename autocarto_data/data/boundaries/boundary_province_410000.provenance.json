@@ -1,0 +1,44 @@
+{
+  "source": {
+    "repository": "https://github.com/zzhonglei/GeoCode-Release",
+    "commit": "6e3534f7af3675b19bd3c5d54c94022959dccdd2",
+    "asset": {
+      "upstream_path": "contributions/china-admin-boundaries/skill/data/china_province.geojson",
+      "local_path": "data/china_province.geojson",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/data/china_province.geojson",
+      "bytes": 1973055,
+      "sha256": "672b321924533dc2d4eb1429de322e3b612a5c9de860f518828a25e75ba6f262",
+      "git_blob_sha1": "5fa860bc533369e9509390038a9b46fceb123295",
+      "feature_count": 34,
+      "declared_crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      }
+    },
+    "path": "/home/shared-user/Library/Application Support/QGIS/QGIS3/profiles/default/python/plugins/autocarto/tools/system/admin-boundaries/assets/中国行政区边界/data/china_province.geojson"
+  },
+  "selection": {
+    "name": "河南省",
+    "adcode": "410000",
+    "gb": "156410000",
+    "level": "province"
+  },
+  "geometry": {
+    "valid": true,
+    "type": "MultiPolygon",
+    "bounds": [
+      110.353676,
+      31.384459,
+      116.647011,
+      36.374184
+    ],
+    "vertices": 1485,
+    "crs": "EPSG:4326",
+    "axis_order": "longitude,latitude"
+  },
+  "boundary_path": "autocarto_data/data/boundaries/boundary_province_410000.geojson",
+  "boundary_sha256": "69f1b65dff394e5e84eb64337de6fbf8b1ace2160b34befa602619f6b1bb0cc7",
+  "processing": "精确提取原始面，保留坐标与属性；未简化、缓冲、修复或改变基准"
+}

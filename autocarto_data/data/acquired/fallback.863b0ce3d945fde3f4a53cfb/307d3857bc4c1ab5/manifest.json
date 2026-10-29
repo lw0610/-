@@ -1,0 +1,95 @@
+{
+  "key": "307d3857bc4c1ab52d08567c1bec03f525e043833eed952e4f903b53f9d79d43",
+  "spec": {
+    "source_id": "fallback.863b0ce3d945fde3f4a53cfb",
+    "source_version": "c5560c5dd877eeb76e16d9a14de2f27156a2fd9130964ae694856395ac3d6969",
+    "category": "stats.annual_indicator",
+    "params": {},
+    "query": "{\"category\":\"stats.annual_indicator\",\"path\":\"河南省各市2023年常住人口.csv\"}",
+    "bbox": [
+      110.353676,
+      31.384459,
+      116.647011,
+      36.374184
+    ],
+    "scale_band": 1000000,
+    "normalize": {
+      "derivation": null,
+      "fields": null,
+      "filename": "河南省各市人口统计数据.csv",
+      "filter": "TRUE",
+      "geometry": "table",
+      "simplify_mm": 0
+    },
+    "adapter_version": "v4.1"
+  },
+  "created_at": "2026-10-28T15:48:48.702505Z",
+  "expires_at": "2026-11-27T15:48:48.702505Z",
+  "raw_files": [
+    "raw/河南省各市2023年常住人口.csv"
+  ],
+  "output_files": [
+    "out/河南省各市人口统计数据.csv"
+  ],
+  "files": [
+    {
+      "path": "out/河南省各市人口统计数据.csv",
+      "sha256": "c5560c5dd877eeb76e16d9a14de2f27156a2fd9130964ae694856395ac3d6969",
+      "bytes": 525
+    },
+    {
+      "path": "raw/河南省各市2023年常住人口.csv",
+      "sha256": "c5560c5dd877eeb76e16d9a14de2f27156a2fd9130964ae694856395ac3d6969",
+      "bytes": 525
+    }
+  ],
+  "bytes": 1050,
+  "license": "河南省统计局《河南统计年鉴2024》公开数据，政府公开统计信息，用于公开制图需注明来源",
+  "attribution": "数据来源：河南省统计局《河南统计年鉴2024》",
+  "notes": [
+    "只读使用用户登记的本机数据",
+    "来源方式：portal",
+    "来源网址：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/indexch.htm",
+    "数据年份2023年（2023年底常住人口），单位万人",
+    "来源为《河南统计年鉴2024》表3-3「各市常住人口数」与表3-5「各市人口数(2023年底)」，两表2023年常住人口数值完全一致，交叉核验通过",
+    "口径为常住人口总量（含济源示范区，省直辖县级单位，单独列出）",
+    "原始表格为图片(jpg)，经macOS Vision框架OCR转录并逐行核对",
+    "全省合计9815万人，18个地级市+济源示范区"
+  ],
+  "metadata": {
+    "fetch": {
+      "files": [
+        "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/output/河南省各市2023年常住人口.csv"
+      ],
+      "format": "csv",
+      "query": "",
+      "urls": [],
+      "retrieved_at": "2026-10-28T15:48:48.699226Z",
+      "bytes": 525,
+      "sha256": {
+        "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/测试 1-6e28d40e95253e9d/0dcc212c-42ba-4a26-a652-174c249f7f5d/output/河南省各市2023年常住人口.csv": "c5560c5dd877eeb76e16d9a14de2f27156a2fd9130964ae694856395ac3d6969"
+      },
+      "notes": [
+        "只读使用用户登记的本机数据"
+      ]
+    },
+    "normalize": {
+      "count": 18,
+      "fields": {
+        "单位": 1,
+        "地区": 1,
+        "常住人口(万人)": 1,
+        "年份": 1
+      },
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.863b0ce3d945fde3f4a53cfb/.partial-3628160351/out/河南省各市人口统计数据.csv",
+      "paths": [
+        "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/fallback.863b0ce3d945fde3f4a53cfb/.partial-3628160351/out/河南省各市人口统计数据.csv"
+      ]
+    },
+    "validate": {
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    }
+  }
+}

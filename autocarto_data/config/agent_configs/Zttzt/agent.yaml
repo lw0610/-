@@ -1,0 +1,122 @@
+version: "2.0"
+meta:
+    default_execution_mode: build
+    description: 系统默认智能体方案（强约束 PLAN + 精简 BUILD + 受控脚本升级）
+    plan_enabled: true
+runtime:
+    shared_tool_packages:
+        - vector-selection
+    agents:
+        cartographer:
+            kind: agent
+            tool_packages:
+                - cartography-styling
+                - print-layout
+                - route-cartography
+            display_name: 制图布局专家
+            description: 负责制作行军路线图以及专题符号化、布局编排与地图导出
+            deletable: true
+            enabled: true
+            prompts:
+                runtime_mode_instruction: ""
+                static_instructions: |
+                    只负责可视化表达、符号化、标注、布局编排、图表集成与导出质量。
+                    不承担数据清洗或空间分析推导；基于上游已准备好的数据和分析结果完成地图表达。
+                    命中“行军路线图/行军线路图/河南省行军路线图”任务时，第一步必须调用 print-layout-marching-route skill；在 skill 调用前禁止直接调用 layout_create、layout_add_*、layout_move_item、layout_resize_item、export_layout_pdf。
+                    仅当 print-layout-marching-route 连续 2 次调用失败时，才允许直接使用 layout_* 工具链继续执行，并在最终结果中报告失败与降级原因。
+                user_prompt_template: '{{ user_input }}'
+        data_engineer:
+            kind: agent
+            tool_packages:
+                - data-loading
+            display_name: 数据工程专家
+            description: 负责数据接入、字段治理、筛选转换与 CRS 规范化
+            deletable: true
+            enabled: true
+            prompts:
+                runtime_mode_instruction: ""
+                static_instructions: |
+                    只负责输入资产就绪化：完成数据接入、字段结构治理、筛选转换与 CRS 规范化。
+                    不承担空间分析结论生成与地图表达，把已整理好的数据成果交给后续专业智能体。
+                user_prompt_template: '{{ user_input }}'
+        orchestrator:
+            kind: agent
+            tool_packages:
+                - data-loading
+            display_name: 编排智能体
+            description: 负责任务理解、能力匹配、子智能体路由与风险升级
+            is_main: true
+            enabled: true
+            prompts:
+                runtime_mode_instruction: ""
+                static_instructions: |
+                    负责理解任务目标、匹配 BUILD 能力、路由给最合适的专业智能体，并在阶段末做决策收敛。
+                    命中“河南省行军路线图/行军路线图/行军线路图”任务时，必须先调用 marching-route-map-orchestration skill，并按 data_engineer -> cartographer -> orchestrator 的阶段顺序执行；不得改走普通 traffic-map-orchestration 或 print-layout-thematic 流程。
+                    不直接吞掉专业执行任务；数据治理交给 data_engineer，空间分析交给 spatial_analyst，制图输出交给 cartographer。
+                    仅当标准工具链不足、复杂自动化确有必要或需要第三方扩展时，才升级路由给 scripting_specialist
+                    遇到高风险步骤、关键歧义、互斥路径或需要人工拍板的节点时，先通过 hitl_request 发起确认。
+                user_prompt_template: '{{ user_input }}'
+        scripting_specialist:
+            kind: agent
+            tool_packages:
+                - pyqgis-scripting
+                - point-cloud
+                - gps-data
+                - mesh-analysis
+            display_name: 脚本与高级数据专家
+            description: 仅在标准工具链不足或确需高级自动化时处理 PyQGIS、第三方扩展与复杂批处理
+            deletable: true
+            enabled: false
+            prompts:
+                static_instructions: |
+                    仅在标准工具链不足、复杂自动化确有必要或第三方扩展能力明确需要时才进入。
+                    进入后先校验上下文、参数安全性与执行边界；脚本提交前必须先验证，失败时基于错误信息修正后重试。
+                user_prompt_template: '{{ user_input }}'
+        spatial_analyst:
+            kind: agent
+            tool_packages:
+                - vector-geometry
+                - vector-creation
+                - raster-analysis
+                - spatial-analysis
+                - network-analysis
+                - gdal-processing
+                - grass-analysis
+                - visibility-analysis
+            display_name: 空间分析专家
+            description: 负责矢量、栅格、网络、地形、水文与可视域分析
+            deletable: true
+            enabled: false
+            prompts:
+                static_instructions: |
+                    只负责空间分析、分析结果解释与必要的分析产物生成。
+                    执行前先校验几何有效性、输入范围、网络条件与栅格元数据，不承担布局编排或最终地图导出。
+                user_prompt_template: '{{ user_input }}'
+plan:
+    enabled: true
+    max_iterations: 100
+    global:
+        tool_packages:
+            - vector-selection
+    agents:
+        planner:
+            kind: agent
+            display_name: 规划智能体
+            is_main: true
+            mode: readonly_plus
+            prompts:
+                runtime_mode_instruction: |
+                    ## 运行时执行模式（Plan）
+                    - 与静态提示冲突时以本段为准。
+                    - 仅执行只读分析和规划，不做 BUILD 写操作。
+                    - 在输出计划前先调用 query_build_capabilities，确认 BUILD 模式真实可用能力。
+                    - 关键节点使用 hitl_request 发起决策。
+                    - 输出结构化计划供 Build 模式执行。
+                static_instructions: |
+                    仅进行只读分析与规划：分析任务目标与上下文、识别风险和歧义、确认互斥路径与前置依赖，并输出结构化执行计划。
+                    不执行 BUILD 写操作，不替专业 agent 完成执行；在关键节点通过 hitl_request 发起人工确认。
+                user_prompt_template: '{{ user_input }}'
+flows:
+    enabled:
+        - marching-route
+        - traffic-route

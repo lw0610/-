@@ -1,0 +1,127 @@
+{
+  "key": "31f183013cb45dd81227bdc12f855c6a69ae6664788c2f4a8245c6052e7e4028",
+  "spec": {
+    "source_id": "source.builtin.cn-admin",
+    "source_version": "1.0.0",
+    "category": "admin.division",
+    "params": {
+      "level": "市"
+    },
+    "query": "{\"category\":\"admin.division\",\"fields\":{\"code\":[\"adcode\"],\"name\":[\"name\"]},\"tool\":\"admin_boundary_extract\"}",
+    "bbox": [
+      110.353676,
+      31.384459,
+      116.647011,
+      36.374184
+    ],
+    "scale_band": 1000000,
+    "normalize": {
+      "derivation": null,
+      "fields": null,
+      "filename": "河南省行政区划面.gpkg",
+      "filter": "TRUE",
+      "geometry": "polygon",
+      "simplify_mm": 0
+    },
+    "adapter_version": "v4.1"
+  },
+  "created_at": "2026-10-28T12:28:41.259908Z",
+  "raw_files": [
+    "raw/boundary.geojson"
+  ],
+  "output_files": [
+    "out/河南省行政区划面.gpkg"
+  ],
+  "files": [
+    {
+      "path": "out/河南省行政区划面.gpkg",
+      "sha256": "f1ea584237757f19fb6fd7bdc01f7f24030cbfced3086c89a46d40d5a528cbe5",
+      "bytes": 204800
+    },
+    {
+      "path": "raw/boundary.geojson",
+      "sha256": "10da24ff90f12b79ebcc964a9de351320c5aff3edb3e4b29fcdaa300ab891da4",
+      "bytes": 138520
+    },
+    {
+      "path": "raw/boundary.provenance.json",
+      "sha256": "8d448e03fdb8c8a226bdb05ca8c546d67c29e0b6ecd3ef6ae38065890280f406",
+      "bytes": 1384
+    }
+  ],
+  "bytes": 344704,
+  "license": "上游声明来自天地图，数据许可待核实",
+  "attribution": "GeoCode 内置行政区数据（上游声明来自天地图）",
+  "notes": [
+    "内置行政区原始数据；来源声明为天地图，完整疆域表达未核实",
+    "来源未经系统认证；南海诸岛、钓鱼岛等岛屿完整性未核实"
+  ],
+  "metadata": {
+    "fetch": {
+      "files": [
+        "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/source.builtin.cn-admin/.partial-4284880964/raw/boundary.geojson"
+      ],
+      "format": "geojson",
+      "query": "{\"level\":\"市\",\"within\":\"河南省\"}",
+      "urls": [],
+      "retrieved_at": "2026-10-28T12:28:41.133181Z",
+      "bytes": 138520,
+      "sha256": {
+        "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/source.builtin.cn-admin/.partial-4284880964/raw/boundary.geojson": "10da24ff90f12b79ebcc964a9de351320c5aff3edb3e4b29fcdaa300ab891da4"
+      },
+      "notes": [
+        "内置行政区原始数据；来源声明为天地图，完整疆域表达未核实"
+      ]
+    },
+    "normalize": {
+      "clip_applied": true,
+      "clip_bbox": [
+        110.353676,
+        31.384459,
+        116.647011,
+        36.374184
+      ],
+      "clip_crs": "EPSG:4326",
+      "clip_empty_features": 0,
+      "clip_input_features": 18,
+      "clip_kind": "bbox",
+      "clip_nonmatching_geometry_features": 0,
+      "clip_output_features": 18,
+      "clip_source_crs": "EPSG:4326",
+      "count": 18,
+      "crs": "EPSG:4326",
+      "extent": [
+        110.353676,
+        31.384459,
+        116.647011,
+        36.374184
+      ],
+      "extent_wgs84": [
+        110.353676,
+        31.384459,
+        116.647011,
+        36.374184
+      ],
+      "fields": {
+        "adcode": 1,
+        "gb": 1,
+        "level": 1,
+        "name": 1
+      },
+      "geometry_type": "MultiPolygon",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/source.builtin.cn-admin/.partial-4284880964/out/河南省行政区划面.gpkg",
+      "paths": [
+        "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/source.builtin.cn-admin/.partial-4284880964/out/河南省行政区划面.gpkg"
+      ],
+      "sha256": {
+        "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/acquired/source.builtin.cn-admin/.partial-4284880964/out/河南省行政区划面.gpkg": "f1ea584237757f19fb6fd7bdc01f7f24030cbfced3086c89a46d40d5a528cbe5"
+      },
+      "warnings": []
+    },
+    "validate": {
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    }
+  }
+}

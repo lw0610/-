@@ -1,0 +1,44 @@
+{
+  "source": {
+    "repository": "https://github.com/zzhonglei/GeoCode-Release",
+    "commit": "6e3534f7af3675b19bd3c5d54c94022959dccdd2",
+    "asset": {
+      "upstream_path": "contributions/china-admin-boundaries/skill/data/china_county.geojson",
+      "local_path": "data/china_county.geojson",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/data/china_county.geojson",
+      "bytes": 11856930,
+      "sha256": "22db6c54b9cb0118ecdcc8a117bf2da4fc24a2229cdba7e6e55dbb5dd56e8246",
+      "git_blob_sha1": "39d4984ba9b36d572e44a90198427ef882b62412",
+      "feature_count": 2891,
+      "declared_crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      }
+    },
+    "path": "/home/shared-user/Library/Application Support/QGIS/QGIS3/profiles/default/python/plugins/autocarto/tools/system/admin-boundaries/assets/中国行政区边界/data/china_county.geojson"
+  },
+  "selection": {
+    "name": "固始县",
+    "adcode": "411525",
+    "gb": "156411525",
+    "level": "county"
+  },
+  "geometry": {
+    "valid": true,
+    "type": "MultiPolygon",
+    "bounds": [
+      115.344343,
+      31.755105,
+      115.934616,
+      32.581482
+    ],
+    "vertices": 165,
+    "crs": "EPSG:4326",
+    "axis_order": "longitude,latitude"
+  },
+  "boundary_path": "autocarto_data/data/boundaries/boundary_county_411525.geojson",
+  "boundary_sha256": "2aa71adf6295a275e828502e92eba2c15fcdf96822167e6face07a68026072dd",
+  "processing": "精确提取原始面，保留坐标与属性；未简化、缓冲、修复或改变基准"
+}

@@ -1,0 +1,15 @@
+{"type": "workflow_progress", "stage_id": 1, "stage": "Loading region: boundary_province_120000.geojson", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 1, "stage": "Loading region: boundary_province_120000.geojson", "phase": "completed", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "筛选 Sentinel-2 候选影像", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "筛选 Sentinel-2 候选影像", "phase": "completed", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 3, "stage": "逐像元中值合成", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 3, "stage": "逐像元中值合成", "phase": "completed", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 4, "stage": "覆盖检查", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 5, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 5, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 30}
+{"type": "workflow_progress", "stage_id": 4, "stage": "覆盖检查", "phase": "running", "elapsed_seconds": 30}
+{"type": "workflow_progress", "stage_id": 5, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 53}
+{"type": "workflow_progress", "stage_id": 4, "stage": "覆盖检查", "phase": "completed", "elapsed_seconds": 53}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载影像", "phase": "running", "elapsed_seconds": 0}
+{"type": "download_progress", "download_id": 1, "filename": "tianjin_s2_summer2024_median_10m.tif", "phase": "preparing", "percent": null}
+{"type": "download_progress", "download_id": 1, "filename": "tianjin_s2_summer2024_median_10m.tif", "phase": "downloading", "percent": 0.0, "completed_bytes": 0, "total_bytes": 1758524736}

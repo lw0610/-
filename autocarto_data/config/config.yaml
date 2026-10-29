@@ -1,0 +1,192 @@
+llm:
+  active: openai-main
+  quick_model: ''
+  providers:
+  - vision: false
+    name: local-openai-compat
+    provider: openai
+    model: qwen3:4b
+    base_url: http://127.0.0.1:11434/v1
+    max_tokens: 4096
+    temperature: 0.7
+    thinking_enabled: false
+    thinking_budget: 10240
+    max_context_tokens: 32768
+    max_context_usage: 90
+    auto_compress_threshold: 85
+    compress_strategy: summary
+  - vision: false
+    name: openai-main
+    provider: openai
+    model: deepseek-v4-pro
+    base_url: https://api.deepseek.com
+    max_tokens: 81920
+    temperature: 0.7
+    thinking_enabled: false
+    thinking_budget: 10240
+    max_context_tokens: 128000
+    max_context_usage: 90
+    auto_compress_threshold: 85
+    compress_strategy: summary
+  - vision: false
+    name: anthropic-sonnet
+    provider: anthropic
+    model: claude-sonnet-4-0
+    base_url: ''
+    max_tokens: 4096
+    temperature: 0.7
+    thinking_enabled: false
+    thinking_budget: 10240
+    max_context_tokens: 200000
+    max_context_usage: 90
+    auto_compress_threshold: 85
+    compress_strategy: summary
+  - vision: false
+    name: qwen
+    provider: openai
+    model: qwen3.7-plus
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    max_tokens: 81920
+    temperature: 0.7
+    thinking_enabled: false
+    thinking_budget: 10240
+    max_context_tokens: 1000000
+    max_context_usage: 90
+    auto_compress_threshold: 85
+    compress_strategy: summary
+acquisition:
+  network_policy: direct
+  fallback_policy: allow
+  exclusive_agent: true
+  agent_model: openai-main
+  max_download_mb: 2048
+  store_max_gb: 20
+  concurrency: 2
+  per_host: 1
+  auto_fallback: true
+  web_search_enabled: true
+  overpass_endpoint: ''
+plan:
+  confirm: never
+image2:
+  enabled: true
+  base_url: https://www.packyapi.ai/v1
+integrations:
+  osm:
+    enabled: true
+    endpoints: []
+    nominatim_url: ''
+    proxy_url: ''
+    timeout_seconds: 120
+    total_timeout_seconds: 600
+    max_attempts: 3
+    max_response_mb: 200
+  gee:
+    enabled: true
+    python: python3
+    project: ''
+    proxy_url: ''
+    timeout_seconds: 300
+  browser:
+    enabled: true
+    command: /opt/homebrew/bin/npx
+    args:
+    - -y
+    - '@playwright/mcp@0.0.83'
+    browser: chrome
+    headless: false
+    timeout_seconds: 60
+  web:
+    enabled: true
+    search_provider: exa
+    timeout_seconds: 60
+    max_download_mb: 1000
+ports:
+  agent_system:
+    default: 3000
+    range:
+    - 50000
+    - 50099
+    protocol: websocket
+    description: 智能体系统 WebSocket 服务
+    health_check_interval: 30
+    bind_retry_count: 3
+    bind_retry_delay: 1000
+    auto_fallback: true
+log:
+  level: INFO
+  dir: ''
+  max_size: 10485760
+  max_backups: 5
+  max_age: 30
+  max_total_size: 104857600
+  compress: false
+agent:
+  loop_max_iterations: 100
+  use_skill_engine: true
+performance:
+  tool_call_timeout: 60000
+  agent_response_timeout: 200000
+  max_concurrent_tasks: 5
+  memory:
+    enabled: true
+    max_task_memory_mb: 2048
+  cache:
+    enabled: true
+    ttl: 300
+    max_size_mb: 100
+    strategy: lru
+compute:
+  port: 0
+  port_config:
+    default: 0
+    range: []
+    protocol: ''
+    description: ''
+    health_check_interval: 0
+    bind_retry_count: 0
+    bind_retry_delay: 0
+    auto_fallback: null
+  max_workers: 2
+  python_path: ''
+plan_mode:
+  enabled: true
+services:
+  lifecycle:
+    auto_start_on_app_launch: true
+    auto_stop_on_app_exit: true
+    auto_restart_on_failure: true
+session:
+  default_name_pattern: 会话 MM-DD HH:mm
+  default_execution_mode: build
+  auto_title_enabled: true
+  auto_title_max_input_tokens: 512
+  auto_snapshot_before_compress: true
+  max_snapshots_per_session: 10
+  auto_archive:
+    enabled: false
+    days: 30
+  auto_cleanup:
+    enabled: false
+    archive_retention_days: 90
+  timeout:
+    idle_timeout_seconds: 0
+    max_duration_seconds: 0
+  concurrency:
+    max_active_sessions: 0
+    max_messages_per_session: 0
+  recovery:
+    auto_save_interval_seconds: 60
+    enable_crash_recovery: true
+ui:
+  main_panel:
+    visible: true
+    floating: false
+    area: 2
+    geometry: {}
+    tabified: true
+    tabified_with: ''
+qgis:
+  executable_path: ''
+  recent_projects: []
+data_dir: ''

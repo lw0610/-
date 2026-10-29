@@ -1,0 +1,43 @@
+{
+  "source": {
+    "repository": "https://github.com/zzhonglei/GeoCode-Release",
+    "commit": "6e3534f7af3675b19bd3c5d54c94022959dccdd2",
+    "asset": {
+      "upstream_path": "contributions/china-admin-boundaries/skill/data/china_city.geojson",
+      "local_path": "data/china_city.geojson",
+      "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/data/china_city.geojson",
+      "bytes": 4989113,
+      "sha256": "a3038b09823597c5b03ea2563455cebcc90559e83764f5d49d38a1403ad8683a",
+      "git_blob_sha1": "c0ba0fb1233aa7029501ef238ed5ba5d8b871968",
+      "feature_count": 375,
+      "declared_crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      }
+    },
+    "path": "/home/shared-user/Library/Application Support/QGIS/QGIS3/profiles/default/python/plugins/autocarto/tools/system/admin-boundaries/assets/中国行政区边界/data/china_city.geojson"
+  },
+  "selection": {
+    "name": "河南省",
+    "adcode": "410000",
+    "gb": "156410000",
+    "level": "city"
+  },
+  "geometry": {
+    "valid": true,
+    "crs": "EPSG:4326",
+    "bounds": [
+      110.353676,
+      31.384459,
+      116.647011,
+      36.374184
+    ],
+    "count": 18,
+    "vertices": 5952
+  },
+  "boundary_path": "autocarto_data/data/boundaries/boundary_city_410000.geojson",
+  "boundary_sha256": "10da24ff90f12b79ebcc964a9de351320c5aff3edb3e4b29fcdaa300ab891da4",
+  "processing": "精确提取原始面，保留坐标与属性；未简化、缓冲、修复或改变基准"
+}

@@ -1,0 +1,45 @@
+{
+  "repository": "https://github.com/zzhonglei/GeoCode-Release",
+  "commit": "6e3534f7af3675b19bd3c5d54c94022959dccdd2",
+  "skill": "china-admin-boundaries",
+  "skill_version": "0.1.0",
+  "source": {
+    "upstream_path": "contributions/china-admin-boundaries/skill/data/china_province.geojson",
+    "local_path": "data/china_province.geojson",
+    "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/data/china_province.geojson",
+    "bytes": 1973055,
+    "sha256": "672b321924533dc2d4eb1429de322e3b612a5c9de860f518828a25e75ba6f262",
+    "git_blob_sha1": "5fa860bc533369e9509390038a9b46fceb123295",
+    "feature_count": 34,
+    "declared_crs": {
+      "type": "name",
+      "properties": {
+        "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+      }
+    }
+  },
+  "source_statement": "GeoCode upstream declares Tianditu-sourced WGS84 administrative polygons; no independent legal or survey certification is asserted",
+  "selection": {
+    "name": "天津市",
+    "adcode": "120000",
+    "gb": "156120000",
+    "level": "province"
+  },
+  "geometry": {
+    "type": "MultiPolygon",
+    "valid": true,
+    "bounds": [
+      116.700958,
+      38.554333,
+      118.057182,
+      40.244442
+    ],
+    "polygon_parts": 1,
+    "vertices": 472,
+    "crs": "EPSG:4326",
+    "axis_order": "longitude,latitude",
+    "source_crs": "urn:ogc:def:crs:OGC:1.3:CRS84"
+  },
+  "processing": "Exact single-feature extraction; original coordinates and attributes retained, no simplification, buffering, repair or datum relabeling",
+  "boundary_path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/1bcdb6e4-cda9-4084-b881-75de053e39ee/output/integrations/gee/run-608588342/output/boundary_province_120000.geojson"
+}
