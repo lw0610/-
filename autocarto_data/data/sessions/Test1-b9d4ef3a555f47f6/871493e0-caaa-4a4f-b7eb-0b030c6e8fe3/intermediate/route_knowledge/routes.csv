@@ -1,0 +1,15 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+R01_chuzh,长征初期：何家冲至庾家河,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R02_dahuixuan,鄂豫陕大回旋,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R03_fanweijiao_1a,第一次反围剿：蔡玉窑—文公岭转战,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R04_fanweijiao_1b,第一次反围剿：西进—东返（独立行动）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R05_fanweijiao_2,第二次反围剿：龙驹寨至袁家沟口机动,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R06_waixian,袁家沟口战后外线行动至沣峪口,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R07_xizheng,西征北上：沣峪口至永坪,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R08_huishihou,永坪会师后：劳山—榆林桥—直罗镇,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+E01_115lv,敌一一五旅：方城至七里岗,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+E02_qibing,敌骑兵：叶县至保安寨,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+E03_60shi,敌六十师：朱阳关封锁至庾家河奔袭,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+E08_maobingwen,毛炳文部：兰州至隆德增援,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+E09_mahongbin,马鸿宾三十五师：隆德—四坡村—板桥镇追击,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+E10_db110,东北军一一〇师：甘泉至劳山推进,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass

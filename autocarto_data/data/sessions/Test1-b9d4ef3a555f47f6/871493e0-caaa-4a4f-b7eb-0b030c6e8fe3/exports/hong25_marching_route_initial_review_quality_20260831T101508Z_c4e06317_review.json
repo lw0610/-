@@ -1,0 +1,407 @@
+{
+  "created_at": "2026-08-31T10:15:08.862137+00:00",
+  "images": {
+    "final": {
+      "metadata": {
+        "byte_size": 4042573,
+        "dpi": {
+          "source": "png_pHYs",
+          "x": 140.005,
+          "y": 140.005
+        },
+        "height": 3274,
+        "mime_type": "image/png",
+        "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/871493e0-caaa-4a4f-b7eb-0b030c6e8fe3/exports/hong25_marching_route_initial_review_quality_20260831T101508Z_c4e06317_final.png",
+        "role": "final",
+        "sha256": "acca29bdcd7104ffba09bbe3b950db8881cd08d988d1d96accfd08c1af6d9355",
+        "width": 4635
+      },
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/871493e0-caaa-4a4f-b7eb-0b030c6e8fe3/exports/hong25_marching_route_initial_review_quality_20260831T101508Z_c4e06317_final.png",
+      "role": "final"
+    },
+    "original": {
+      "byte_size": 4038181,
+      "dpi": {
+        "source": "png_pHYs",
+        "x": 140.005,
+        "y": 140.005
+      },
+      "height": 3274,
+      "mime_type": "image/png",
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/871493e0-caaa-4a4f-b7eb-0b030c6e8fe3/exports/hong25_marching_route_initial_review_quality_20260831T101508Z_c4e06317_original.png",
+      "role": "original",
+      "sha256": "fe52a3773b81b643e524fb59ff0e0235da3fbe2d8398bacb4dd0b1e261d6d317",
+      "source_path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/871493e0-caaa-4a4f-b7eb-0b030c6e8fe3/exports/hong25_marching_route_initial_review.png",
+      "width": 4635
+    }
+  },
+  "review_context": {
+    "applied_suggestions": [
+      {
+        "status": "executed",
+        "suggestion_id": "S01_overlap_yongping"
+      },
+      {
+        "status": "executed",
+        "suggestion_id": "S02_overlap_sipoicun"
+      },
+      {
+        "status": "executed",
+        "suggestion_id": "S03_overlap_yujiahe"
+      }
+    ],
+    "derived_dpi": {
+      "source": "png_metadata",
+      "x": 139.987,
+      "y": 139.999
+    },
+    "initial_export_dpi": 140.005,
+    "layout_item_ids": {
+      "callouts": {
+        "co_sipoicun": {
+          "body": "callout_co_sipoicun_body",
+          "box": "callout_co_sipoicun_box",
+          "leader": [
+            "callout_co_sipoicun_leader_1",
+            "callout_co_sipoicun_leader_2"
+          ],
+          "title": "callout_co_sipoicun_title"
+        },
+        "co_yongping": {
+          "body": "callout_co_yongping_body",
+          "box": "callout_co_yongping_box",
+          "leader": [
+            "callout_co_yongping_leader_1",
+            "callout_co_yongping_leader_2"
+          ],
+          "title": "callout_co_yongping_title"
+        },
+        "co_yujiahe": {
+          "body": "callout_co_yujiahe_body",
+          "box": "callout_co_yujiahe_box",
+          "leader": [
+            "callout_co_yujiahe_leader_1",
+            "callout_co_yujiahe_leader_2"
+          ],
+          "title": "callout_co_yujiahe_title"
+        }
+      },
+      "standard": {
+        "decorative_border": "decorative_border_1",
+        "legend": "legend",
+        "main_map": "main_map",
+        "north_arrow": "north_arrow",
+        "overview": "overview",
+        "scalebar": "scalebar",
+        "title": "title"
+      }
+    },
+    "layout_item_state": {
+      "items": {
+        "callout_co_sipoicun_body": {
+          "item_id": "callout_co_sipoicun_body",
+          "rect_mm": {
+            "height": 4.982986111111111,
+            "width": 38.4,
+            "x": 169.25270833333312,
+            "y": 176.95580801930345
+          },
+          "text": "军政委吴焕先壮烈牺牲。四坡村是西征\n北上途中最重要的战斗节点之一。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 9.0
+        },
+        "callout_co_sipoicun_box": {
+          "item_id": "callout_co_sipoicun_box",
+          "rect_mm": {
+            "height": 13.406814236111112,
+            "width": 42.0,
+            "x": 167.4527083333331,
+            "y": 170.33197989430343
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 7.0
+        },
+        "callout_co_sipoicun_leader_1": {
+          "item_id": "callout_co_sipoicun_leader_1",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 37.6593185763889,
+            "x": 149.4527083333331,
+            "y": 183.73879413041453
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 10.0
+        },
+        "callout_co_sipoicun_leader_2": {
+          "item_id": "callout_co_sipoicun_leader_2",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 40.3406814236111,
+            "x": 149.4527083333331,
+            "y": 183.73879413041453
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 11.0
+        },
+        "callout_co_sipoicun_title": {
+          "item_id": "callout_co_sipoicun_title",
+          "rect_mm": {
+            "height": 3.823828125,
+            "width": 38.4,
+            "x": 169.25270833333312,
+            "y": 172.13197989430344
+          },
+          "text": "四坡村战斗",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 8.0
+        },
+        "callout_co_yongping_body": {
+          "item_id": "callout_co_yongping_body",
+          "rect_mm": {
+            "height": 7.474479166666667,
+            "width": 38.4,
+            "x": 446.2570833333322,
+            "y": 97.02223163041481
+          },
+          "text": "红二十五军与红二十六军、红二十七军\n胜利会师，长征主线在永坪结束。随后\n合编为红十五军团。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 14.0
+        },
+        "callout_co_yongping_box": {
+          "item_id": "callout_co_yongping_box",
+          "rect_mm": {
+            "height": 15.898307291666669,
+            "width": 42.0,
+            "x": 444.4570833333322,
+            "y": 90.3984035054148
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 12.0
+        },
+        "callout_co_yongping_leader_1": {
+          "item_id": "callout_co_yongping_leader_1",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 37.41016927083331,
+            "x": 426.4570833333322,
+            "y": 106.29671079708147
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 15.0
+        },
+        "callout_co_yongping_leader_2": {
+          "item_id": "callout_co_yongping_leader_2",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 40.58983072916669,
+            "x": 426.4570833333322,
+            "y": 106.29671079708147
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 16.0
+        },
+        "callout_co_yongping_title": {
+          "item_id": "callout_co_yongping_title",
+          "rect_mm": {
+            "height": 3.823828125,
+            "width": 38.4,
+            "x": 446.2570833333322,
+            "y": 92.1984035054148
+          },
+          "text": "永坪会师",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 13.0
+        },
+        "callout_co_yujiahe_body": {
+          "item_id": "callout_co_yujiahe_body",
+          "rect_mm": {
+            "height": 7.474479166666667,
+            "width": 38.4,
+            "x": 470.0854166666659,
+            "y": 284.67035663041446
+          },
+          "text": "庾家河会议决定在鄂豫陕边地区创建新\n的革命根据地，红二十五军由此展开大\n范围转战。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 4.0
+        },
+        "callout_co_yujiahe_box": {
+          "item_id": "callout_co_yujiahe_box",
+          "rect_mm": {
+            "height": 15.898307291666669,
+            "width": 42.0,
+            "x": 468.28541666666587,
+            "y": 278.04652850541447
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 2.0
+        },
+        "callout_co_yujiahe_leader_1": {
+          "item_id": "callout_co_yujiahe_leader_1",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 37.41016927083331,
+            "x": 450.28541666666587,
+            "y": 293.94483579708117
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 5.0
+        },
+        "callout_co_yujiahe_leader_2": {
+          "item_id": "callout_co_yujiahe_leader_2",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 40.58983072916669,
+            "x": 450.28541666666587,
+            "y": 293.94483579708117
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 6.0
+        },
+        "callout_co_yujiahe_title": {
+          "item_id": "callout_co_yujiahe_title",
+          "rect_mm": {
+            "height": 3.823828125,
+            "width": 38.4,
+            "x": 470.0854166666659,
+            "y": 279.8465285054145
+          },
+          "text": "庾家河会议",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 3.0
+        },
+        "decorative_border_1": {
+          "item_id": "decorative_border_1",
+          "outer_rect_mm": {
+            "height": 489.58508826082834,
+            "width": 727.85,
+            "x": 56.57499999999999,
+            "y": 52.20745586958583
+          },
+          "rect_mm": {
+            "height": 483.28508826082833,
+            "width": 721.5500000000001,
+            "x": 59.72499999999999,
+            "y": 55.35745586958583
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 17.0
+        },
+        "legend": {
+          "item_id": "legend",
+          "rect_mm": {
+            "height": 97.7712109375,
+            "width": 26.1486328125,
+            "x": 63.07,
+            "y": 437.529
+          },
+          "title": "图例",
+          "type": "QgsLayoutItemLegend",
+          "z_value": 21.0
+        },
+        "main_map": {
+          "item_id": "main_map",
+          "layers": [],
+          "map_rotation": 0.0,
+          "rect_mm": {
+            "height": 476.58508826082834,
+            "width": 714.85,
+            "x": 63.07499999999999,
+            "y": 58.70745586958583
+          },
+          "scale": 1158639.9940076289,
+          "type": "QgsLayoutItemMap",
+          "z_value": 1.0
+        },
+        "north_arrow": {
+          "item_id": "north_arrow",
+          "rect_mm": {
+            "height": 25.0,
+            "width": 25.0,
+            "x": 63.06999999999999,
+            "y": 58.71
+          },
+          "type": "QgsLayoutItemPicture",
+          "z_value": 22.0
+        },
+        "overview": {
+          "item_id": "overview",
+          "rect_mm": {
+            "height": 15.597727272727273,
+            "width": 88.62272727272727,
+            "x": 689.297,
+            "y": 58.71
+          },
+          "text": "【数据综述】本图标绘红二十五军长征及鄂豫陕转战路线，涵盖14段行军路线、\n59个关键节点。红色箭头示主力长征转战线路，蓝色箭头示鄂豫陕根据地反\"围\n剿\"作战方向。途经河南、湖北、陕西、甘肃四省，涉及庾家河、四坡村、永坪\n等重要战斗节点。底图含省域界线、县级城市驻地660处、铁路7段、国道73条\n及河流水系。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 20.0
+        },
+        "scalebar": {
+          "item_id": "scalebar",
+          "rect_mm": {
+            "height": 13.096235795454545,
+            "width": 91.84702260301492,
+            "x": 686.078,
+            "y": 522.196
+          },
+          "segments": 4,
+          "segments_left": 0,
+          "type": "QgsLayoutItemScaleBar",
+          "unit_label": "km",
+          "units": "kilometers",
+          "units_per_segment": 30.0,
+          "z_value": 18.0
+        },
+        "title": {
+          "item_id": "title",
+          "rect_mm": {
+            "height": 14.143181818181818,
+            "width": 208.39545454545456,
+            "x": 316.303,
+            "y": 41.214
+          },
+          "text": "红二十五军长征及鄂豫陕转战行军路线图",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 19.0
+        }
+      },
+      "layout": "红二十五军行军路线图",
+      "missing_item_ids": [],
+      "page_size_mm": {
+        "height": 594.0,
+        "width": 841.0
+      }
+    },
+    "layout_name": "红二十五军行军路线图",
+    "layout_snapshot": {
+      "byte_size": 9928,
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/871493e0-caaa-4a4f-b7eb-0b030c6e8fe3/intermediate/quality_feedback/layout_snapshot_69ed487f6d7242b5bb621e1e2ed93081.json",
+      "schema_version": "quality-feedback-layout-snapshot/v1",
+      "sha256": "4e9ba02d7b6893ca8b346ed13ce6e306edea78034188df6128e6667a361a8cec"
+    },
+    "locked_content": [
+      "标题: 红二十五军长征及鄂豫陕转战行军路线图",
+      "数据综述全文",
+      "图文标注-庾家河会议全文",
+      "图文标注-四坡村战斗全文",
+      "图文标注-永坪会师全文",
+      "图例标题: 图例",
+      "比例尺单位: 千米/km",
+      "14段路线拓扑与方向",
+      "59个关键节点符号",
+      "工程CRS: EPSG:4004",
+      "地图比例尺: 1:1158640",
+      "底图8个原始图层",
+      "专题图层3个",
+      "图例符号颜色语义",
+      "比例尺4段每段30km",
+      "指北方向正北向上",
+      "纸张规格A1横向841x594mm",
+      "字号表(主标题11.5/图例标题3.5/图例正文2.5/比例尺2/综述标题3.5/综述正文2.5)"
+    ],
+    "task_requirement": "制作红二十五军长征及鄂豫陕转战行军路线图。要求：1.调用cartography_build_and_draw_from_tables使用dataset_source=current_session 2.使用print-layout-thematic skill制作完整布局 3.底图严格使用8个原始图层不得加载转换副本 4.不得因CRS不同请求重投影 5.布局包含主图标题图例数据综述比例尺指北针网格 6.输出包含主图标题网格路线符号图文标注框图例数据综述比例尺指北针的可交付专题图"
+  },
+  "review_id": "20260831T101508Z_c4e06317",
+  "schema_version": "quality-feedback/v3",
+  "status": "final_ready",
+  "updated_at": "2026-08-31T10:21:34.805415+00:00"
+}

@@ -1,0 +1,169 @@
+{
+  "created_at": "2026-09-14T10:08:40.308312+00:00",
+  "images": {
+    "final": {
+      "metadata": null,
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/8221f08d-4040-42c4-ab1a-c5a6664112b4/exports/红二十五军行军路线图_初版_quality_20260914T100840Z_cbbd8f3a_final.png",
+      "role": "final"
+    },
+    "original": {
+      "byte_size": 3767345,
+      "dpi": {
+        "source": "png_pHYs",
+        "x": 140.005,
+        "y": 140.005
+      },
+      "height": 3274,
+      "mime_type": "image/png",
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/8221f08d-4040-42c4-ab1a-c5a6664112b4/exports/红二十五军行军路线图_初版_quality_20260914T100840Z_cbbd8f3a_original.png",
+      "role": "original",
+      "sha256": "e280d889e1a1649df71de6936efb75fb181e1d2b15ad9fdb18dab7b9b556ac64",
+      "source_path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/8221f08d-4040-42c4-ab1a-c5a6664112b4/exports/红二十五军行军路线图_初版.png",
+      "width": 4635
+    }
+  },
+  "review_context": {
+    "applied_suggestions": [],
+    "derived_dpi": {
+      "source": "png_metadata",
+      "x": 139.987,
+      "y": 139.999
+    },
+    "initial_export_dpi": 140.005,
+    "layout_item_ids": {
+      "callouts": null,
+      "standard": {
+        "decorative_border": "decorative_border",
+        "legend": "legend",
+        "main_map": "main_map",
+        "north_arrow": "north_arrow",
+        "overview": "overview",
+        "scalebar": "scalebar",
+        "title": "title"
+      }
+    },
+    "layout_item_state": {
+      "items": {
+        "decorative_border": {
+          "item_id": "decorative_border",
+          "outer_rect_mm": {
+            "height": 517.9,
+            "width": 616.8570066352266,
+            "x": 112.07149668238668,
+            "y": 38.05000000000001
+          },
+          "rect_mm": {
+            "height": 511.59999999999997,
+            "width": 610.5570066352267,
+            "x": 115.22149668238669,
+            "y": 41.20000000000001
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 2.0
+        },
+        "legend": {
+          "item_id": "legend",
+          "rect_mm": {
+            "height": 106.7712109375,
+            "width": 28.075000000000003,
+            "x": 118.57,
+            "y": 442.68
+          },
+          "title": "图例",
+          "type": "QgsLayoutItemLegend",
+          "z_value": 5.0
+        },
+        "main_map": {
+          "item_id": "main_map",
+          "layers": [],
+          "map_rotation": 0.0,
+          "rect_mm": {
+            "height": 504.9,
+            "width": 603.8570066352266,
+            "x": 118.57149668238668,
+            "y": 44.55000000000001
+          },
+          "scale": 1890928.4199307794,
+          "type": "QgsLayoutItemMap",
+          "z_value": 1.0
+        },
+        "north_arrow": {
+          "item_id": "north_arrow",
+          "rect_mm": {
+            "height": 20.0,
+            "width": 20.0,
+            "x": 118.57,
+            "y": 44.55
+          },
+          "type": "QgsLayoutItemPicture",
+          "z_value": 7.0
+        },
+        "overview": {
+          "item_id": "overview",
+          "rect_mm": {
+            "height": 15.597727272727273,
+            "width": 69.57272727272726,
+            "x": 652.86,
+            "y": 44.55
+          },
+          "text": "红二十五军长征及转战经过行军路线图展示了1934年至1935年\n间红二十五军长征过程中的主要行军路线和重要战斗地点。地\n图涵盖河南、湖北、陕西、甘肃等省份，标注了出发地、重要\n战役地点和会师地点等关键节点。行军路线穿越秦岭山脉，跨\n越多条河流，展现了红军艰苦奋斗的革命历程。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 4.0
+        },
+        "scalebar": {
+          "item_id": "scalebar",
+          "rect_mm": {
+            "height": 13.096235795454545,
+            "width": 76.76759450499209,
+            "x": 645.66,
+            "y": 536.3539999999999
+          },
+          "segments": 4,
+          "segments_left": 0,
+          "type": "QgsLayoutItemScaleBar",
+          "unit_label": "km",
+          "units": "kilometers",
+          "units_per_segment": 30.0,
+          "z_value": 6.0
+        },
+        "title": {
+          "item_id": "title",
+          "rect_mm": {
+            "height": 14.143181818181818,
+            "width": 196.85,
+            "x": 322.07,
+            "y": 23.91
+          },
+          "text": "红二十五军长征及转战经过行军路线图",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 3.0
+        }
+      },
+      "layout": "红二十五军行军路线图",
+      "missing_item_ids": [],
+      "page_size_mm": {
+        "height": 594.0,
+        "width": 841.0
+      }
+    },
+    "layout_name": "红二十五军行军路线图",
+    "layout_snapshot": {
+      "byte_size": 3715,
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/8221f08d-4040-42c4-ab1a-c5a6664112b4/intermediate/quality_feedback/layout_snapshot_585e71b1418a40988e88a111ce460d78.json",
+      "schema_version": "quality-feedback-layout-snapshot/v1",
+      "sha256": "facacd0993783a792a2de98f3109178e0c48951f2f1fb6d9f92083cc74826e5e"
+    },
+    "locked_content": [
+      "所有文字原文：标题'中国工农红军第二十五军长征及转战经过'、数据综述文字",
+      "路线、节点、方向与拓扑：5条行军路线的几何形状、26个节点的地理位置和连接关系",
+      "地图范围、比例、CRS和图层：A1横向841×594mm、主图范围、8个底图图层",
+      "图例类别、符号与颜色语义映射：start_flag/battle/waypoint/meeting四类军标符号",
+      "比例尺数值与指北方向",
+      "当前纸张规格对应的字号表（禁止修改任何font_size）"
+    ],
+    "task_requirement": "制作中国工农红军第二十五军长征及转战经过行军路线图。包含从1934年11月16日何家冲出发到1935年9月16日永坪会师的完整路线，以及鄂豫陕根据地期间的多次转战行动。底图包含省域、县级城市驻地、铁路、公路、国道、地区界线、河流线、河流面。"
+  },
+  "review_id": "20260914T100840Z_cbbd8f3a",
+  "schema_version": "quality-feedback/v3",
+  "status": "initial_ready"
+}

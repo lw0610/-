@@ -1,0 +1,1646 @@
+{
+  "actors": [
+    {
+      "actor_id": "actor_red25",
+      "aliases": [
+        "中国工农红军第二十五军",
+        "部队"
+      ],
+      "confidence": 0.98,
+      "evidence_refs": [
+        "ev01"
+      ],
+      "name": "红二十五军"
+    },
+    {
+      "actor_id": "actor_epywa_province",
+      "aliases": [],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev07"
+      ],
+      "name": "中共鄂豫皖省委"
+    },
+    {
+      "actor_id": "actor_epysc_province",
+      "aliases": [],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev22"
+      ],
+      "name": "中共鄂豫陕省委"
+    },
+    {
+      "actor_id": "actor_shanggan_red",
+      "aliases": [],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev33"
+      ],
+      "name": "陕甘红军"
+    },
+    {
+      "actor_id": "actor_red26",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "ev34"
+      ],
+      "name": "红二十六军"
+    },
+    {
+      "actor_id": "actor_red27",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "ev34"
+      ],
+      "name": "红二十七军"
+    },
+    {
+      "actor_id": "actor_red15",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "ev34"
+      ],
+      "name": "红十五军团"
+    },
+    {
+      "actor_id": "actor_kmt40_115",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "ev37"
+      ],
+      "name": "国民党第四十军第一一五旅"
+    },
+    {
+      "actor_id": "actor_kmt60",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "ev38"
+      ],
+      "name": "国民党第六十师"
+    },
+    {
+      "actor_id": "actor_dongbeijun",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev39"
+      ],
+      "name": "东北军"
+    },
+    {
+      "actor_id": "actor_xibeijun",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev39"
+      ],
+      "name": "西北军"
+    },
+    {
+      "actor_id": "actor_shaanxi_local",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev39"
+      ],
+      "name": "陕西地方部队"
+    },
+    {
+      "actor_id": "actor_jingbei1",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev41"
+      ],
+      "name": "陕军警备第一旅"
+    },
+    {
+      "actor_id": "actor_kmt38",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev43"
+      ],
+      "name": "陕军第三十八军"
+    },
+    {
+      "actor_id": "actor_hu_zongnan",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev43"
+      ],
+      "name": "胡宗南部"
+    },
+    {
+      "actor_id": "actor_chuanjun",
+      "aliases": [],
+      "confidence": 0.8,
+      "evidence_refs": [
+        "ev43"
+      ],
+      "name": "川军一部"
+    },
+    {
+      "actor_id": "actor_wang_jun",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev44"
+      ],
+      "name": "王均第三军"
+    },
+    {
+      "actor_id": "actor_lu_dachang",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev44"
+      ],
+      "name": "鲁大昌第十四师"
+    },
+    {
+      "actor_id": "actor_mao_bingwen",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev45"
+      ],
+      "name": "毛炳文第三十七军"
+    },
+    {
+      "actor_id": "actor_ma_hongbin",
+      "aliases": [],
+      "confidence": 0.85,
+      "evidence_refs": [
+        "ev46"
+      ],
+      "name": "马鸿宾第三十五师"
+    }
+  ],
+  "callouts": [
+    {
+      "anchor_ref": "se_hejiachong",
+      "anchor_ref_type": "spatial_entity",
+      "body": "1934年11月16日，红二十五军从河南省罗山县何家冲出发，开始向西实行战略转移。",
+      "callout_id": "callout_hejiachong",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "double",
+      "preferred_side": "right_top",
+      "priority": 10,
+      "template": "text_only",
+      "title": "长征出发",
+      "width_mm": 42
+    },
+    {
+      "anchor_ref": "evt_yujiahe_meeting",
+      "anchor_ref_type": "event",
+      "body": "1934年12月10日，中共鄂豫皖省委召开会议，决定创建鄂豫陕革命根据地。",
+      "callout_id": "callout_yujiahe_meeting",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "double",
+      "preferred_side": "right_top",
+      "priority": 10,
+      "template": "text_only",
+      "title": "庾家河会议",
+      "width_mm": 42
+    },
+    {
+      "anchor_ref": "evt_fengyukou_meeting",
+      "anchor_ref_type": "event",
+      "body": "1935年7月15日，中共鄂豫陕省委决定红二十五军继续西征北上。",
+      "callout_id": "callout_fengyukou_meeting",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "double",
+      "preferred_side": "right_top",
+      "priority": 10,
+      "template": "text_only",
+      "title": "沣峪口会议",
+      "width_mm": 42
+    },
+    {
+      "anchor_ref": "evt_yongping_rendezvous",
+      "anchor_ref_type": "event",
+      "body": "1935年9月16日，红二十五军与陕甘红军会师，长征至此结束。",
+      "callout_id": "callout_yongping",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "double",
+      "preferred_side": "right_top",
+      "priority": 10,
+      "template": "text_only",
+      "title": "永坪会师",
+      "width_mm": 42
+    }
+  ],
+  "events": [
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.98,
+      "description": "红二十五军从何家冲出发开始战略转移",
+      "event_id": "evt_departure",
+      "event_type": "departure",
+      "evidence_refs": [
+        "ev01"
+      ],
+      "location_ref": "se_hejiachong",
+      "name": "何家冲出发",
+      "priority": 10,
+      "time_text": "1934年11月16日"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.95,
+      "description": "红二十五军在独树镇同堵截部队发生激战",
+      "event_id": "evt_dushu_battle",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev03"
+      ],
+      "location_ref": "se_dushu_qiligang",
+      "name": "独树镇战斗",
+      "priority": 9,
+      "time_text": "1934年11月26日"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.9,
+      "description": "红二十五军攻破豫陕交界的铁锁关",
+      "event_id": "evt_tiesuoguan",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev05"
+      ],
+      "location_ref": "se_tiesuoguan",
+      "name": "攻破铁锁关",
+      "priority": 8,
+      "time_text": "1934年12月8日"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.95,
+      "description": "红二十五军到达陕西雒南县庾家河",
+      "event_id": "evt_arrival_yujiahe",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "ev06"
+      ],
+      "location_ref": "se_yujiahe",
+      "name": "到达庾家河",
+      "priority": 8,
+      "time_text": "1934年12月9日"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.9,
+      "description": "部队在庾家河一带作战",
+      "event_id": "evt_yujiahe_battle",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev07"
+      ],
+      "location_ref": "se_yujiahe",
+      "name": "庾家河作战",
+      "priority": 8,
+      "time_text": "1934年12月10日"
+    },
+    {
+      "actor_refs": [
+        "actor_epywa_province"
+      ],
+      "confidence": 0.95,
+      "description": "中共鄂豫皖省委召开会议，决定创建鄂豫陕革命根据地",
+      "event_id": "evt_yujiahe_meeting",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "ev07"
+      ],
+      "location_ref": "se_yujiahe",
+      "name": "庾家河会议",
+      "priority": 10,
+      "time_text": "1934年12月10日"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.8,
+      "description": "反围剿作战",
+      "event_id": "evt_caiyukiao_battle",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev14"
+      ],
+      "location_ref": "se_caiyukiao",
+      "name": "蔡玉窑作战",
+      "priority": 6,
+      "time_text": "1935年初"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.8,
+      "description": "葛牌镇附近的文公岭作战",
+      "event_id": "evt_wengongling_battle",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev14"
+      ],
+      "location_ref": "se_wengongling",
+      "name": "文公岭作战",
+      "priority": 6,
+      "time_text": "1935年初"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.85,
+      "description": "红二十五军奔袭淅川荆紫关",
+      "event_id": "evt_jingziguan",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev18"
+      ],
+      "location_ref": "se_jingziguan",
+      "name": "奔袭荆紫关",
+      "priority": 7,
+      "time_text": "1935年6月"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.95,
+      "description": "红二十五军在袁家沟口取得重要战斗胜利",
+      "event_id": "evt_yuanjiagoukou_battle",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev20"
+      ],
+      "location_ref": "se_yuanjiagoukou",
+      "name": "袁家沟口战斗",
+      "priority": 9,
+      "time_text": "1935年7月2日"
+    },
+    {
+      "actor_refs": [
+        "actor_epysc_province"
+      ],
+      "confidence": 0.95,
+      "description": "中共鄂豫陕省委在沣峪口召开会议，决定红二十五军继续西征北上",
+      "event_id": "evt_fengyukou_meeting",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "ev22"
+      ],
+      "location_ref": "se_fengyukou",
+      "name": "沣峪口会议",
+      "priority": 10,
+      "time_text": "1935年7月15日"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.95,
+      "description": "部队从沣峪口出发沿秦岭地区向西行进",
+      "event_id": "evt_fengyukou_departure",
+      "event_type": "departure",
+      "evidence_refs": [
+        "ev23"
+      ],
+      "location_ref": "se_fengyukou",
+      "name": "从沣峪口出发西征",
+      "priority": 8,
+      "time_text": "1935年7月16日"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.85,
+      "description": "部队在天水北关一带作战",
+      "event_id": "evt_tianshui_battle",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev27"
+      ],
+      "location_ref": "se_tianshui",
+      "name": "天水北关作战",
+      "priority": 7,
+      "time_text": "1935年7月底"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.95,
+      "description": "红二十五军在泾川县四坡村同国民党军发生激战",
+      "event_id": "evt_sipoocun_battle",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev29"
+      ],
+      "location_ref": "se_sipoocun",
+      "name": "四坡村战斗",
+      "priority": 9,
+      "time_text": "1935年8月21日"
+    },
+    {
+      "actor_refs": [
+        "actor_red25"
+      ],
+      "confidence": 0.95,
+      "description": "红二十五军到达陕西延川县永坪镇",
+      "event_id": "evt_yongping_arrival",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "ev32"
+      ],
+      "location_ref": "se_yongpingzhen",
+      "name": "到达永坪镇",
+      "priority": 9,
+      "time_text": "1935年9月15日"
+    },
+    {
+      "actor_refs": [
+        "actor_red25",
+        "actor_shanggan_red"
+      ],
+      "confidence": 0.98,
+      "description": "红二十五军与陕甘红军会师，长征结束",
+      "event_id": "evt_yongping_rendezvous",
+      "event_type": "rendezvous",
+      "evidence_refs": [
+        "ev33"
+      ],
+      "location_ref": "se_yongpingzhen",
+      "name": "永坪会师",
+      "priority": 10,
+      "time_text": "1935年9月16日"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "ev01",
+      "quote": "1934年11月16日，红二十五军从河南省罗山县何家冲出发，开始向西实行战略转移"
+    },
+    {
+      "evidence_id": "ev02",
+      "quote": "于11月26日到达河南省方城县独树镇七里岗"
+    },
+    {
+      "evidence_id": "ev03",
+      "quote": "红二十五军在独树镇同堵截部队发生激战"
+    },
+    {
+      "evidence_id": "ev04",
+      "quote": "突出重围后进入伏牛山区，继续向西穿越卢氏山区"
+    },
+    {
+      "evidence_id": "ev05",
+      "quote": "于12月8日攻破豫陕交界的铁锁关"
+    },
+    {
+      "evidence_id": "ev06",
+      "quote": "12月9日到达陕西雒南县庾家河"
+    },
+    {
+      "evidence_id": "ev07",
+      "quote": "12月10日，部队在庾家河一带作战，中共鄂豫皖省委同时召开会议，决定创建鄂豫陕革命根据地"
+    },
+    {
+      "evidence_id": "ev08",
+      "quote": "在鄂豫陕边区进行了持续数月的往返转战"
+    },
+    {
+      "evidence_id": "ev09",
+      "quote": "红二十五军从庾家河地区向南进入湖北郧西二天门一带"
+    },
+    {
+      "evidence_id": "ev10",
+      "quote": "随后北返陕西洛南、商县地区"
+    },
+    {
+      "evidence_id": "ev11",
+      "quote": "又向东进入河南卢氏"
+    },
+    {
+      "evidence_id": "ev12",
+      "quote": "之后转向西部的蓝田和葛牌镇方向"
+    },
+    {
+      "evidence_id": "ev13",
+      "quote": "1935年初，红二十五军围绕鄂豫陕根据地进行了多次反\"围剿\"行动"
+    },
+    {
+      "evidence_id": "ev14",
+      "quote": "先后在蔡玉窑、葛牌镇附近的文公岭等地作战"
+    },
+    {
+      "evidence_id": "ev15",
+      "quote": "并在柞水、宁陕、佛坪和华阳之间往返机动"
+    },
+    {
+      "evidence_id": "ev16",
+      "quote": "这些地点属于根据地时期的不同作战区域，不是一条从蔡玉窑依次经过葛牌镇、柞水、宁陕、佛坪再到华阳的连续行军路线"
+    },
+    {
+      "evidence_id": "ev17",
+      "quote": "1935年6月，红二十五军从郧西二天门地区再次北上"
+    },
+    {
+      "evidence_id": "ev18",
+      "quote": "随后奔袭淅川荆紫关"
+    },
+    {
+      "evidence_id": "ev19",
+      "quote": "完成荆紫关行动后，部队转向陕西山阳袁家沟口地区"
+    },
+    {
+      "evidence_id": "ev20",
+      "quote": "7月2日，红二十五军在袁家沟口取得重要战斗胜利"
+    },
+    {
+      "evidence_id": "ev21",
+      "quote": "随后北出终南山，逼近西安南部，最终到达沣峪口"
+    },
+    {
+      "evidence_id": "ev22",
+      "quote": "1935年7月15日，中共鄂豫陕省委在沣峪口召开会议，决定红二十五军继续西征北上"
+    },
+    {
+      "evidence_id": "ev23",
+      "quote": "7月16日，部队从沣峪口出发，沿秦岭地区向西行进"
+    },
+    {
+      "evidence_id": "ev24",
+      "quote": "途中折向秦岭南侧，到达留坝江口一带"
+    },
+    {
+      "evidence_id": "ev25",
+      "quote": "于7月底到达凤县双石铺"
+    },
+    {
+      "evidence_id": "ev26",
+      "quote": "首先到达两当，随后继续向天水推进"
+    },
+    {
+      "evidence_id": "ev27",
+      "quote": "部队在天水北关一带作战后转向北部，经秦安到达静宁"
+    },
+    {
+      "evidence_id": "ev28",
+      "quote": "再由静宁进入隆德"
+    },
+    {
+      "evidence_id": "ev29",
+      "quote": "8月21日，红二十五军在泾川县四坡村同国民党军发生激战"
+    },
+    {
+      "evidence_id": "ev30",
+      "quote": "经合水县板桥镇到达华池县豹子川"
+    },
+    {
+      "evidence_id": "ev31",
+      "quote": "随后进入保安永宁山一带"
+    },
+    {
+      "evidence_id": "ev32",
+      "quote": "9月15日，红二十五军到达陕西延川县永坪镇"
+    },
+    {
+      "evidence_id": "ev33",
+      "quote": "9月16日与陕甘红军会师，红二十五军长征至此结束"
+    },
+    {
+      "evidence_id": "ev34",
+      "quote": "永坪会师以后，红二十五军与红二十六军、红二十七军合编为红十五军团"
+    },
+    {
+      "evidence_id": "ev35",
+      "quote": "红十五军团随后又在劳山、榆林桥和直罗镇等地区作战"
+    },
+    {
+      "evidence_id": "ev36",
+      "quote": "各支国民党军的行动相互独立，并不是一条首尾相连的连续行军路线"
+    },
+    {
+      "evidence_id": "ev37",
+      "quote": "国民党第四十军第一一五旅等部队从南阳、方城方向进至独树镇七里岗一带实施堵截"
+    },
+    {
+      "evidence_id": "ev38",
+      "quote": "国民党第六十师在五里川、朱阳关方向封锁入陕通道，随后又从鸡头关方向追向庾家河"
+    },
+    {
+      "evidence_id": "ev39",
+      "quote": "东北军、西北军和陕西地方部队分别从西安、蓝田、商洛和汉中等方向向根据地推进"
+    },
+    {
+      "evidence_id": "ev40",
+      "quote": "一部分部队由西安方向向蓝田、葛牌镇和沣峪口方向进逼"
+    },
+    {
+      "evidence_id": "ev41",
+      "quote": "陕军警备第一旅由商洛、山阳方向向袁家沟口推进"
+    },
+    {
+      "evidence_id": "ev42",
+      "quote": "另有部队分别向柞水、宁陕和佛坪方向实施围攻"
+    },
+    {
+      "evidence_id": "ev43",
+      "quote": "陕军第三十八军以及胡宗南部、川军一部在双石铺和两当方向实施追堵"
+    },
+    {
+      "evidence_id": "ev44",
+      "quote": "王均第三军和鲁大昌第十四师在天水、秦安方向追击红军"
+    },
+    {
+      "evidence_id": "ev45",
+      "quote": "毛炳文第三十七军在秦安、静宁方向实施堵截"
+    },
+    {
+      "evidence_id": "ev46",
+      "quote": "马鸿宾第三十五师则在隆德和四坡村方向阻击红军"
+    }
+  ],
+  "output_constraints": {
+    "self_intersection_policy": "allow_with_overpass"
+  },
+  "point_presentations": [],
+  "routes": [
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "ev01",
+        "ev02",
+        "ev05",
+        "ev06"
+      ],
+      "name": "长征初始转移（何家冲至庾家河）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "se_hejiachong",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_dushu_qiligang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_tiesuoguan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yujiahe",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "route_initial_main",
+          "role": "main"
+        }
+      ],
+      "route_id": "route_initial",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.85,
+      "enabled": true,
+      "evidence_refs": [
+        "ev09",
+        "ev10",
+        "ev11",
+        "ev12"
+      ],
+      "name": "第一次大范围转战（庾家河至葛牌镇）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "se_yujiahe",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yunxi_tianmen",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_luonan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_shangxian",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_lushi",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_lantian",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_gepaizhen",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "route_first_transfer_main",
+          "role": "main"
+        }
+      ],
+      "route_id": "route_first_transfer",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "ev17",
+        "ev18",
+        "ev19",
+        "ev20",
+        "ev21"
+      ],
+      "name": "1935年6月北上行动（郧西二天门至沣峪口）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "se_yunxi_tianmen",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_jingziguan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yuanjiagoukou",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_fengyukou",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "route_north_june_main",
+          "role": "main"
+        }
+      ],
+      "route_id": "route_north_june",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    },
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "ev23",
+        "ev24",
+        "ev25",
+        "ev26",
+        "ev27",
+        "ev28",
+        "ev29",
+        "ev30",
+        "ev31",
+        "ev32"
+      ],
+      "name": "西征北上至永坪（沣峪口至永坪镇）",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "se_fengyukou",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_liuba_jiangkou",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_shuangshipu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_liangdang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_tianshui",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_qinan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_jingning",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_longde",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_sipoocun",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_banqiaozhen",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_baozichuan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yongningshan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yongpingzhen",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "route_western_main",
+          "role": "main"
+        }
+      ],
+      "route_id": "route_western",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    }
+  ],
+  "schema_version": "1.0",
+  "spatial_entities": [
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "河南省罗山县，红二十五军长征出发地",
+      "entity_id": "se_hejiachong",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev01"
+      ],
+      "factual": true,
+      "lat": 32.05,
+      "lon": 114.32,
+      "map_role": "route_node",
+      "name": "何家冲"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "河南省方城县独树镇七里岗，红二十五军与敌激战处",
+      "entity_id": "se_dushu_qiligang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev02",
+        "ev03"
+      ],
+      "factual": true,
+      "lat": 33.25,
+      "lon": 113.3,
+      "map_role": "route_node",
+      "name": "独树镇七里岗"
+    },
+    {
+      "coordinate_confidence": 0.65,
+      "coordinate_source": "llm_estimated",
+      "description": "豫陕交界关口",
+      "entity_id": "se_tiesuoguan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev05"
+      ],
+      "factual": true,
+      "lat": 33.95,
+      "lon": 110.75,
+      "map_role": "route_node",
+      "name": "铁锁关"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "陕西雒南县庾家河，鄂豫皖省委会议所在地",
+      "entity_id": "se_yujiahe",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev06",
+        "ev07"
+      ],
+      "factual": true,
+      "lat": 33.78,
+      "lon": 110.48,
+      "map_role": "route_node",
+      "name": "庾家河"
+    },
+    {
+      "coordinate_confidence": 0.65,
+      "coordinate_source": "llm_estimated",
+      "description": "湖北郧西二天门地区",
+      "entity_id": "se_yunxi_tianmen",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev09",
+        "ev17"
+      ],
+      "factual": true,
+      "lat": 32.95,
+      "lon": 110.2,
+      "map_role": "route_node",
+      "name": "郧西二天门"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "陕西洛南",
+      "entity_id": "se_luonan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev10"
+      ],
+      "factual": true,
+      "lat": 33.95,
+      "lon": 110.15,
+      "map_role": "route_node",
+      "name": "洛南"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "陕西商县",
+      "entity_id": "se_shangxian",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev10"
+      ],
+      "factual": true,
+      "lat": 33.87,
+      "lon": 109.92,
+      "map_role": "route_node",
+      "name": "商县"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "河南卢氏",
+      "entity_id": "se_lushi",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev11"
+      ],
+      "factual": true,
+      "lat": 34.05,
+      "lon": 111.05,
+      "map_role": "route_node",
+      "name": "卢氏"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "陕西蓝田",
+      "entity_id": "se_lantian",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev12"
+      ],
+      "factual": true,
+      "lat": 34.15,
+      "lon": 109.32,
+      "map_role": "route_node",
+      "name": "蓝田"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "陕西蓝田葛牌镇",
+      "entity_id": "se_gepaizhen",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev12"
+      ],
+      "factual": true,
+      "lat": 33.85,
+      "lon": 109.15,
+      "map_role": "route_node",
+      "name": "葛牌镇"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "淅川荆紫关",
+      "entity_id": "se_jingziguan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev18"
+      ],
+      "factual": true,
+      "lat": 33.35,
+      "lon": 110.82,
+      "map_role": "route_node",
+      "name": "荆紫关"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "陕西山阳袁家沟口",
+      "entity_id": "se_yuanjiagoukou",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev19",
+        "ev20"
+      ],
+      "factual": true,
+      "lat": 33.52,
+      "lon": 109.88,
+      "map_role": "route_node",
+      "name": "袁家沟口"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "西安南部沣峪口",
+      "entity_id": "se_fengyukou",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev21",
+        "ev22"
+      ],
+      "factual": true,
+      "lat": 33.82,
+      "lon": 108.88,
+      "map_role": "route_node",
+      "name": "沣峪口"
+    },
+    {
+      "coordinate_confidence": 0.65,
+      "coordinate_source": "llm_estimated",
+      "description": "留坝江口一带",
+      "entity_id": "se_liuba_jiangkou",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev24"
+      ],
+      "factual": true,
+      "lat": 33.72,
+      "lon": 107.02,
+      "map_role": "route_node",
+      "name": "留坝江口"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "凤县双石铺",
+      "entity_id": "se_shuangshipu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev25"
+      ],
+      "factual": true,
+      "lat": 33.88,
+      "lon": 106.52,
+      "map_role": "route_node",
+      "name": "双石铺"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "甘肃两当",
+      "entity_id": "se_liangdang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev26"
+      ],
+      "factual": true,
+      "lat": 33.95,
+      "lon": 106.3,
+      "map_role": "route_node",
+      "name": "两当"
+    },
+    {
+      "coordinate_confidence": 0.75,
+      "coordinate_source": "llm_estimated",
+      "description": "甘肃天水",
+      "entity_id": "se_tianshui",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev26",
+        "ev27"
+      ],
+      "factual": true,
+      "lat": 34.58,
+      "lon": 105.72,
+      "map_role": "route_node",
+      "name": "天水"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "甘肃秦安",
+      "entity_id": "se_qinan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev27"
+      ],
+      "factual": true,
+      "lat": 34.98,
+      "lon": 105.68,
+      "map_role": "route_node",
+      "name": "秦安"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "甘肃静宁",
+      "entity_id": "se_jingning",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev27",
+        "ev28"
+      ],
+      "factual": true,
+      "lat": 35.52,
+      "lon": 105.72,
+      "map_role": "route_node",
+      "name": "静宁"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "宁夏隆德",
+      "entity_id": "se_longde",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev28"
+      ],
+      "factual": true,
+      "lat": 35.62,
+      "lon": 106.02,
+      "map_role": "route_node",
+      "name": "隆德"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "泾川县四坡村",
+      "entity_id": "se_sipoocun",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev29"
+      ],
+      "factual": true,
+      "lat": 35.48,
+      "lon": 107.32,
+      "map_role": "route_node",
+      "name": "四坡村"
+    },
+    {
+      "coordinate_confidence": 0.65,
+      "coordinate_source": "llm_estimated",
+      "description": "合水县板桥镇",
+      "entity_id": "se_banqiaozhen",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev30"
+      ],
+      "factual": true,
+      "lat": 35.78,
+      "lon": 107.82,
+      "map_role": "route_node",
+      "name": "板桥镇"
+    },
+    {
+      "coordinate_confidence": 0.65,
+      "coordinate_source": "llm_estimated",
+      "description": "华池县豹子川",
+      "entity_id": "se_baozichuan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev30"
+      ],
+      "factual": true,
+      "lat": 36.18,
+      "lon": 107.52,
+      "map_role": "route_node",
+      "name": "豹子川"
+    },
+    {
+      "coordinate_confidence": 0.65,
+      "coordinate_source": "llm_estimated",
+      "description": "保安永宁山",
+      "entity_id": "se_yongningshan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev31"
+      ],
+      "factual": true,
+      "lat": 36.48,
+      "lon": 107.02,
+      "map_role": "route_node",
+      "name": "永宁山"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "description": "陕西延川县永坪镇",
+      "entity_id": "se_yongpingzhen",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev32",
+        "ev33"
+      ],
+      "factual": true,
+      "lat": 36.78,
+      "lon": 109.35,
+      "map_role": "route_node",
+      "name": "永坪镇"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "description": "反围剿作战地点",
+      "entity_id": "se_caiyukiao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev14"
+      ],
+      "factual": true,
+      "lat": 33.48,
+      "lon": 109.48,
+      "map_role": "event_anchor",
+      "name": "蔡玉窑"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "description": "葛牌镇附近，反围剿作战地点",
+      "entity_id": "se_wengongling",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev14"
+      ],
+      "factual": true,
+      "lat": 33.72,
+      "lon": 109.12,
+      "map_role": "event_anchor",
+      "name": "文公岭"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "description": "反围剿往返机动区域",
+      "entity_id": "se_zhashui",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev15"
+      ],
+      "factual": true,
+      "lat": 33.68,
+      "lon": 109.1,
+      "map_role": "event_anchor",
+      "name": "柞水"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "description": "反围剿往返机动区域",
+      "entity_id": "se_ningshan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev15"
+      ],
+      "factual": true,
+      "lat": 33.52,
+      "lon": 108.52,
+      "map_role": "event_anchor",
+      "name": "宁陕"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "description": "反围剿往返机动区域",
+      "entity_id": "se_foping",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev15"
+      ],
+      "factual": true,
+      "lat": 33.52,
+      "lon": 107.98,
+      "map_role": "event_anchor",
+      "name": "佛坪"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "description": "反围剿往返机动区域",
+      "entity_id": "se_huayang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev15"
+      ],
+      "factual": true,
+      "lat": 33.22,
+      "lon": 107.28,
+      "map_role": "event_anchor",
+      "name": "华阳"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_tongbaishan",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "ev01"
+      ],
+      "factual": true,
+      "lat": 32.5,
+      "lon": 113.5,
+      "map_role": "background",
+      "name": "桐柏山区"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_zaoyang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev01"
+      ],
+      "factual": true,
+      "lat": 32.08,
+      "lon": 112.82,
+      "map_role": "background",
+      "name": "枣阳"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_funiushan",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "ev04"
+      ],
+      "factual": true,
+      "lat": 33.5,
+      "lon": 111.5,
+      "map_role": "background",
+      "name": "伏牛山区"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_lushishan",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "ev04"
+      ],
+      "factual": true,
+      "lat": 33.85,
+      "lon": 111,
+      "map_role": "background",
+      "name": "卢氏山区"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_zhongnanshan",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "ev21"
+      ],
+      "factual": true,
+      "lat": 34,
+      "lon": 108.9,
+      "map_role": "background",
+      "name": "终南山"
+    },
+    {
+      "coordinate_confidence": 0.5,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_qinling",
+      "entity_kind": "region",
+      "evidence_refs": [
+        "ev23"
+      ],
+      "factual": true,
+      "lat": 34,
+      "lon": 108,
+      "map_role": "background",
+      "name": "秦岭"
+    },
+    {
+      "coordinate_confidence": 0.7,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_xian",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev21",
+        "ev40"
+      ],
+      "factual": true,
+      "lat": 34.27,
+      "lon": 108.95,
+      "map_role": "background",
+      "name": "西安"
+    },
+    {
+      "coordinate_confidence": 0.65,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_nanyang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev37"
+      ],
+      "factual": true,
+      "lat": 33,
+      "lon": 112.53,
+      "map_role": "background",
+      "name": "南阳"
+    },
+    {
+      "coordinate_confidence": 0.65,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_fangcheng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev37"
+      ],
+      "factual": true,
+      "lat": 33.28,
+      "lon": 113,
+      "map_role": "background",
+      "name": "方城"
+    },
+    {
+      "coordinate_confidence": 0.55,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_wulichuan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev38"
+      ],
+      "factual": true,
+      "lat": 33.7,
+      "lon": 111.05,
+      "map_role": "background",
+      "name": "五里川"
+    },
+    {
+      "coordinate_confidence": 0.55,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_zhuyangguan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev38"
+      ],
+      "factual": true,
+      "lat": 33.8,
+      "lon": 110.85,
+      "map_role": "background",
+      "name": "朱阳关"
+    },
+    {
+      "coordinate_confidence": 0.55,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_jitougguan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev38"
+      ],
+      "factual": true,
+      "lat": 33.75,
+      "lon": 110.55,
+      "map_role": "background",
+      "name": "鸡头关"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_shangluo",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev39"
+      ],
+      "factual": true,
+      "lat": 33.85,
+      "lon": 109.95,
+      "map_role": "background",
+      "name": "商洛"
+    },
+    {
+      "coordinate_confidence": 0.65,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_hanzhong",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev39"
+      ],
+      "factual": true,
+      "lat": 33.07,
+      "lon": 107.02,
+      "map_role": "background",
+      "name": "汉中"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_laoshan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev35"
+      ],
+      "factual": true,
+      "lat": 36.35,
+      "lon": 109.05,
+      "map_role": "background",
+      "name": "劳山"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_yulinqiao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev35"
+      ],
+      "factual": true,
+      "lat": 36.72,
+      "lon": 109.25,
+      "map_role": "background",
+      "name": "榆林桥"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_zhiluozhen",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev35"
+      ],
+      "factual": true,
+      "lat": 36.05,
+      "lon": 108.52,
+      "map_role": "background",
+      "name": "直罗镇"
+    },
+    {
+      "coordinate_confidence": 0.6,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_shangnan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev17"
+      ],
+      "factual": true,
+      "lat": 33.52,
+      "lon": 110.88,
+      "map_role": "background",
+      "name": "商南"
+    }
+  ],
+  "task": {
+    "input_crs": "EPSG:4326",
+    "map_type": "marching_route",
+    "task_id": "red25_army_long_march",
+    "title": "中国工农红军第二十五军长征及转战经过"
+  }
+}

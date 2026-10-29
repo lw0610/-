@@ -1,0 +1,140 @@
+{
+  "graph_sha256": "e16ade0fa5ef44d899749d3ae71c51963ed107fa4a370a9a92bc7faed4487dcd",
+  "inherited_provenance": [],
+  "issue_resolutions": [],
+  "manual_records": [],
+  "rendering_adaptations": [
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__path_1_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_1",
+      "source_role": "main",
+      "source_route_id": "c0001__route_1"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__path_2_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_2",
+      "source_role": "main",
+      "source_route_id": "c0001__route_2"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__path_3_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_3",
+      "source_role": "main",
+      "source_route_id": "c0001__route_3"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__path_4_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_4",
+      "source_role": "main",
+      "source_route_id": "c0001__route_4"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__path_g1_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g1__render_557191e91139455a",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g1"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__path_g1_2",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g1__render_29377668fda0ce43",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g1"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__path_g2_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g2",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g2"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__path_g3_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g3__render_b4a7e9ab06b43dd6",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g3"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__path_g3_2",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g3__render_5b5b515afc60e79d",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g3"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__path_g3_3",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g3__render_968029185a6388fe",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g3"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__path_g4_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g4",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g4"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__path_g10_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g10__render_4858619642ccf618",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g10"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__path_g10_2",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g10__render_e75daba0efe3d264",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g10"
+    },
+    {
+      "operation": "normalize_path",
+      "path_id": "c0001__path_g12_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g12",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g12"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__path_g13_1",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g13__render_35810db865318ceb",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g13"
+    },
+    {
+      "operation": "split_path",
+      "path_id": "c0001__path_g13_2",
+      "rendered_role": "main",
+      "rendered_route_id": "c0001__route_g13__render_c7a1366b0efec77e",
+      "source_role": "main",
+      "source_route_id": "c0001__route_g13"
+    }
+  ],
+  "review_id": "9e6d02ce-26ab-42cf-992b-57626f99a84b",
+  "revision": 2,
+  "source_sha256": "0f1073928449bddc7a2ae9e59fd3348951314fdeb95c87a9569fdfa7a4c77fb8",
+  "version": 1
+}

@@ -1,0 +1,66 @@
+{
+  "status": "blocked",
+  "error": "context canceled",
+  "contract_id": "tkg-v1-sha256:6139a50bed4ff6b6990db58d7340916cea979e2646db42bd6018f2a7130e569c",
+  "source_sha256": "8ae694e54ebdc2956dc18c3f51f24f4abcf83281f5ccfb3f8f8f6ba9b9d5ad86",
+  "chunks": null,
+  "attempts": [
+    {
+      "stage": "extract",
+      "id": "c0001",
+      "attempt": 1,
+      "status": "cancelled",
+      "started_at": "2026-09-26T09:27:42.683879Z",
+      "finished_at": "2026-09-26T09:27:52.629602Z",
+      "duration_ms": 9945,
+      "error": "context canceled",
+      "input_token_estimate": 13184,
+      "max_output_tokens": 81920
+    }
+  ],
+  "boundaries": null,
+  "issues": null,
+  "aliases": {},
+  "graph": null,
+  "budget": {
+    "mode": "model_settings",
+    "estimation": "conservative_utf8_json_bytes",
+    "max_output_tokens": 81920,
+    "max_context_tokens": 1000000,
+    "fixed_input_estimate": 11355,
+    "source_budget_estimate": 10240,
+    "output_expansion_estimate": 8,
+    "limiting_factor": "output_budget"
+  },
+  "fragment_candidates": [
+    {
+      "chunk": {
+        "id": "c0001",
+        "start": 0,
+        "end": 695,
+        "text": "1934年11月16日，红二十五军从河南省罗山县何家冲出发，开始向西实行战略转移。为摆脱国民党军的围追堵截，部队先向桐柏山方向作大范围迂回，途径朱堂、东双河、青石桥、黄龙寺、月河店、桐柏6个地区后于11月22日抵达枣阳附近，为了隐蔽北上意图，迷惑和调动敌人，红二十五军派少数部队佯攻湖北枣阳县城，主力掉头东进，并在保安寨冲破敌军阻拦，随后转向东北，一路经过界碑口、鸿仪河、栗园、平氏、泌阳、刘庄铺、贾楼、王店，于11月26日到达河南省方城县独树镇七里岗。红二十五军在独树镇同堵截部队发生了长征首场恶战，军政委吴焕先持刀率部队与敌军白刃近战，副军长徐海东带后续部队驰援完成突围，战役造成红军伤亡300余人。\n\n突出重围后红二十五军经过高老山、孤石滩、神林、熊背、下汤等地一路向西进入伏牛山区，后继续向西穿越庙子、栾川、陶湾、叫河、大石河、卢氏于12月8日攻破豫陕交界的铁锁关，进入陕南境内，12月9日到达陕西雒南县庾家河。12月10日，部队在庾家河召开庾家河会议（中共鄂豫皖省委第18次常委会议），正式决定创建鄂豫陕革命根据地，以商洛中心，在鄂、豫、陕边区建立苏区。是红二十五军从“转移”转向“建根据地”的战略转折点。庾家河会议期间遭国民党军第60师先头部队突袭，红军被迫中断会议组织反击，程子华、徐海东在激战中均负重伤。经整日20余次反复冲杀，红军击溃国民党军3个团，毙伤敌军300余人，自身伤亡百余人。此战使红二十五军摆脱国民党军尾追，完成了战略转移第一阶段任务。\n\n庾家河会议以后，红二十五军没有继续“转移”，而是在鄂豫陕边区进行了持续数月的往返转战。这个时期包含多次相对独立的军事行动",
+        "hard_cut": false
+      },
+      "revision": 1,
+      "raw": "",
+      "validation": {
+        "diagnostics": null
+      },
+      "status": "extracting"
+    }
+  ],
+  "completion": {
+    "version": 2,
+    "all_routes_required": true,
+    "extraction_complete": false,
+    "boundary_complete": false,
+    "route_pass_complete": false,
+    "semantic_attempted": false,
+    "semantic_complete": false,
+    "adaptation_complete": false
+  },
+  "extraction_cache": {
+    "status": "miss",
+    "key": "fecb0608cf8104d53705b3c34ba44febd8e13f2c17700e2c38b6bc0373a46bd0"
+  }
+}

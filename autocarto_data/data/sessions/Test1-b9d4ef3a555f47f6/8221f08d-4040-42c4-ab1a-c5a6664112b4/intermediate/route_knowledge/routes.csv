@@ -1,0 +1,6 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+c0001__r1,长征初期转移,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__r2,第一次大范围转战,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__r3,1935年6月北上及袁家沟口战斗,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__r4,西征北上,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+c0001__r5,进军甘肃至陕北,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass

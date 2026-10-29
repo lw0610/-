@@ -1,0 +1,513 @@
+{
+  "created_at": "2026-08-31T10:46:03.371588+00:00",
+  "images": {
+    "final": {
+      "metadata": {
+        "byte_size": 2825061,
+        "dpi": {
+          "source": "png_pHYs",
+          "x": 140.005,
+          "y": 140.005
+        },
+        "height": 2314,
+        "mime_type": "image/png",
+        "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/819313e8-e1d7-43a4-bc91-29342d899522/exports/红二十五军行军路线图_初版审查_quality_20260831T104603Z_75fd3ad4_final.png",
+        "role": "final",
+        "sha256": "1acd93ab4160cf5aad502cf23d06113b2ba67978f4bfecf23cc2c6665118b7de",
+        "width": 3274
+      },
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/819313e8-e1d7-43a4-bc91-29342d899522/exports/红二十五军行军路线图_初版审查_quality_20260831T104603Z_75fd3ad4_final.png",
+      "role": "final"
+    },
+    "original": {
+      "byte_size": 2842138,
+      "dpi": {
+        "source": "png_pHYs",
+        "x": 140.005,
+        "y": 140.005
+      },
+      "height": 2314,
+      "mime_type": "image/png",
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/819313e8-e1d7-43a4-bc91-29342d899522/exports/红二十五军行军路线图_初版审查_quality_20260831T104603Z_75fd3ad4_original.png",
+      "role": "original",
+      "sha256": "9cb66cdf5349103319985d56e40d9a4def609e1f3fa7388cbd8d91fbce711920",
+      "source_path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/819313e8-e1d7-43a4-bc91-29342d899522/exports/红二十五军行军路线图_初版审查.png",
+      "width": 3274
+    }
+  },
+  "review_context": {
+    "applied_suggestions": [
+      {
+        "actual_parameters": {
+          "container_item_id": "main_map",
+          "x": 355,
+          "y": 52
+        },
+        "status": "applied",
+        "suggestion_id": "overlap_001_yongping",
+        "target_item_ids": [
+          "callout_callout_yongping_box",
+          "callout_callout_yongping_title",
+          "callout_callout_yongping_body",
+          "callout_callout_yongping_leader_1",
+          "callout_callout_yongping_leader_2"
+        ]
+      },
+      {
+        "actual_parameters": {
+          "container_item_id": "main_map",
+          "x": 405,
+          "y": 192
+        },
+        "status": "applied",
+        "suggestion_id": "overlap_002_yujiahe",
+        "target_item_ids": [
+          "callout_callout_yujiahe_meeting_box",
+          "callout_callout_yujiahe_meeting_title",
+          "callout_callout_yujiahe_meeting_body",
+          "callout_callout_yujiahe_meeting_leader_1",
+          "callout_callout_yujiahe_meeting_leader_2"
+        ]
+      },
+      {
+        "actual_parameters": {
+          "container_item_id": "main_map",
+          "x": 225,
+          "y": 192
+        },
+        "status": "applied",
+        "suggestion_id": "overlap_003_fengyukou",
+        "target_item_ids": [
+          "callout_callout_fengyukou_meeting_box",
+          "callout_callout_fengyukou_meeting_title",
+          "callout_callout_fengyukou_meeting_body",
+          "callout_callout_fengyukou_meeting_leader_1",
+          "callout_callout_fengyukou_meeting_leader_2"
+        ]
+      },
+      {
+        "actual_parameters": {
+          "container_item_id": "main_map",
+          "x": 455,
+          "y": 252
+        },
+        "status": "applied",
+        "suggestion_id": "overlap_004_hejiachong",
+        "target_item_ids": [
+          "callout_callout_hejiachong_box",
+          "callout_callout_hejiachong_title",
+          "callout_callout_hejiachong_body",
+          "callout_callout_hejiachong_leader_1",
+          "callout_callout_hejiachong_leader_2"
+        ]
+      }
+    ],
+    "derived_dpi": {
+      "source": "png_metadata",
+      "x": 139.999,
+      "y": 139.942
+    },
+    "initial_export_dpi": 140.005,
+    "layout_item_ids": {
+      "callouts": {
+        "callout_fengyukou_meeting": {
+          "body": "callout_callout_fengyukou_meeting_body",
+          "box": "callout_callout_fengyukou_meeting_box",
+          "leader": [
+            "callout_callout_fengyukou_meeting_leader_1",
+            "callout_callout_fengyukou_meeting_leader_2"
+          ],
+          "title": "callout_callout_fengyukou_meeting_title"
+        },
+        "callout_hejiachong": {
+          "body": "callout_callout_hejiachong_body",
+          "box": "callout_callout_hejiachong_box",
+          "leader": [
+            "callout_callout_hejiachong_leader_1",
+            "callout_callout_hejiachong_leader_2"
+          ],
+          "title": "callout_callout_hejiachong_title"
+        },
+        "callout_yongping": {
+          "body": "callout_callout_yongping_body",
+          "box": "callout_callout_yongping_box",
+          "leader": [
+            "callout_callout_yongping_leader_1",
+            "callout_callout_yongping_leader_2"
+          ],
+          "title": "callout_callout_yongping_title"
+        },
+        "callout_yujiahe_meeting": {
+          "body": "callout_callout_yujiahe_meeting_body",
+          "box": "callout_callout_yujiahe_meeting_box",
+          "leader": [
+            "callout_callout_yujiahe_meeting_leader_1",
+            "callout_callout_yujiahe_meeting_leader_2"
+          ],
+          "title": "callout_callout_yujiahe_meeting_title"
+        }
+      },
+      "standard": {
+        "decorative_border": "decorative_border_1",
+        "legend": "legend",
+        "main_map": "main_map",
+        "north_arrow": "north_arrow",
+        "overview": "overview",
+        "scalebar": "scalebar",
+        "title": "title"
+      }
+    },
+    "layout_item_state": {
+      "items": {
+        "callout_callout_fengyukou_meeting_body": {
+          "item_id": "callout_callout_fengyukou_meeting_body",
+          "rect_mm": {
+            "height": 4.982986111111111,
+            "width": 38.4,
+            "x": 269.67599999999925,
+            "y": 198.7970194934862
+          },
+          "text": "1935年7月15日，中共鄂豫陕省委决定红\n二十五军继续西征北上。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 14.0
+        },
+        "callout_callout_fengyukou_meeting_box": {
+          "item_id": "callout_callout_fengyukou_meeting_box",
+          "rect_mm": {
+            "height": 13.406814236111112,
+            "width": 42.0,
+            "x": 267.87599999999924,
+            "y": 192.1731913684862
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 12.0
+        },
+        "callout_callout_fengyukou_meeting_leader_1": {
+          "item_id": "callout_callout_fengyukou_meeting_leader_1",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 37.6593185763889,
+            "x": 249.87599999999924,
+            "y": 205.5800056045973
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 15.0
+        },
+        "callout_callout_fengyukou_meeting_leader_2": {
+          "item_id": "callout_callout_fengyukou_meeting_leader_2",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 40.3406814236111,
+            "x": 249.87599999999924,
+            "y": 205.5800056045973
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 16.0
+        },
+        "callout_callout_fengyukou_meeting_title": {
+          "item_id": "callout_callout_fengyukou_meeting_title",
+          "rect_mm": {
+            "height": 3.823828125,
+            "width": 38.4,
+            "x": 269.67599999999925,
+            "y": 193.9731913684862
+          },
+          "text": "沣峪口会议",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 13.0
+        },
+        "callout_callout_hejiachong_body": {
+          "item_id": "callout_callout_hejiachong_body",
+          "rect_mm": {
+            "height": 7.474479166666667,
+            "width": 38.4,
+            "x": 498.5639999999989,
+            "y": 270.77827643793063
+          },
+          "text": "1934年11月16日，红二十五军从河南省\n罗山县何家冲出发，开始向西实行战略\n转移。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 4.0
+        },
+        "callout_callout_hejiachong_box": {
+          "item_id": "callout_callout_hejiachong_box",
+          "rect_mm": {
+            "height": 15.898307291666669,
+            "width": 42.0,
+            "x": 496.7639999999989,
+            "y": 264.15444831293064
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 2.0
+        },
+        "callout_callout_hejiachong_leader_1": {
+          "item_id": "callout_callout_hejiachong_leader_1",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 37.41016927083331,
+            "x": 478.7639999999989,
+            "y": 280.05275560459734
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 5.0
+        },
+        "callout_callout_hejiachong_leader_2": {
+          "item_id": "callout_callout_hejiachong_leader_2",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 40.58983072916669,
+            "x": 478.7639999999989,
+            "y": 280.05275560459734
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 6.0
+        },
+        "callout_callout_hejiachong_title": {
+          "item_id": "callout_callout_hejiachong_title",
+          "rect_mm": {
+            "height": 3.823828125,
+            "width": 38.4,
+            "x": 498.5639999999989,
+            "y": 265.95444831293065
+          },
+          "text": "长征出发",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 3.0
+        },
+        "callout_callout_yongping_body": {
+          "item_id": "callout_callout_yongping_body",
+          "rect_mm": {
+            "height": 4.982986111111111,
+            "width": 38.4,
+            "x": 289.45124999999916,
+            "y": 74.25501949348627
+          },
+          "text": "1935年9月16日，红二十五军与陕甘红\n军会师，长征至此结束。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 19.0
+        },
+        "callout_callout_yongping_box": {
+          "item_id": "callout_callout_yongping_box",
+          "rect_mm": {
+            "height": 13.406814236111112,
+            "width": 42.0,
+            "x": 287.65124999999915,
+            "y": 67.63119136848627
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 17.0
+        },
+        "callout_callout_yongping_leader_1": {
+          "item_id": "callout_callout_yongping_leader_1",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 37.6593185763889,
+            "x": 269.65124999999915,
+            "y": 81.03800560459739
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 20.0
+        },
+        "callout_callout_yongping_leader_2": {
+          "item_id": "callout_callout_yongping_leader_2",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 40.3406814236111,
+            "x": 269.65124999999915,
+            "y": 81.03800560459739
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 21.0
+        },
+        "callout_callout_yongping_title": {
+          "item_id": "callout_callout_yongping_title",
+          "rect_mm": {
+            "height": 3.823828125,
+            "width": 38.4,
+            "x": 289.45124999999916,
+            "y": 69.43119136848627
+          },
+          "text": "永坪会师",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 18.0
+        },
+        "callout_callout_yujiahe_meeting_body": {
+          "item_id": "callout_callout_yujiahe_meeting_body",
+          "rect_mm": {
+            "height": 4.982986111111111,
+            "width": 38.4,
+            "x": 336.9959999999995,
+            "y": 200.48001949348617
+          },
+          "text": "1934年12月10日，中共鄂豫皖省委召开\n会议，决定创建鄂豫陕革命根据地。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 9.0
+        },
+        "callout_callout_yujiahe_meeting_box": {
+          "item_id": "callout_callout_yujiahe_meeting_box",
+          "rect_mm": {
+            "height": 13.406814236111112,
+            "width": 42.0,
+            "x": 335.1959999999995,
+            "y": 193.85619136848615
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 7.0
+        },
+        "callout_callout_yujiahe_meeting_leader_1": {
+          "item_id": "callout_callout_yujiahe_meeting_leader_1",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 37.6593185763889,
+            "x": 317.1959999999995,
+            "y": 207.26300560459725
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 10.0
+        },
+        "callout_callout_yujiahe_meeting_leader_2": {
+          "item_id": "callout_callout_yujiahe_meeting_leader_2",
+          "rect_mm": {
+            "height": 12.0,
+            "width": 40.3406814236111,
+            "x": 317.1959999999995,
+            "y": 207.26300560459725
+          },
+          "type": "QgsLayoutItemPolyline",
+          "z_value": 11.0
+        },
+        "callout_callout_yujiahe_meeting_title": {
+          "item_id": "callout_callout_yujiahe_meeting_title",
+          "rect_mm": {
+            "height": 3.823828125,
+            "width": 38.4,
+            "x": 336.9959999999995,
+            "y": 195.65619136848616
+          },
+          "text": "庾家河会议",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 8.0
+        },
+        "decorative_border_1": {
+          "item_id": "decorative_border_1",
+          "outer_rect_mm": {
+            "height": 349.61301120919387,
+            "width": 517.9,
+            "x": 38.05000000000001,
+            "y": 35.193494395403064
+          },
+          "rect_mm": {
+            "height": 343.31301120919386,
+            "width": 511.59999999999997,
+            "x": 41.20000000000001,
+            "y": 38.34349439540306
+          },
+          "type": "QgsLayoutItemShape",
+          "z_value": 22.0
+        },
+        "legend": {
+          "item_id": "legend",
+          "rect_mm": {
+            "height": 106.0712109375,
+            "width": 41.338671875,
+            "x": 44.55,
+            "y": 272.23
+          },
+          "title": "图例",
+          "type": "QgsLayoutItemLegend",
+          "z_value": 25.0
+        },
+        "main_map": {
+          "item_id": "main_map",
+          "layers": [],
+          "map_rotation": 0.0,
+          "rect_mm": {
+            "height": 336.61301120919387,
+            "width": 504.9,
+            "x": 44.55000000000001,
+            "y": 41.693494395403064
+          },
+          "scale": 1640431.3719872325,
+          "type": "QgsLayoutItemMap",
+          "z_value": 1.0
+        },
+        "north_arrow": {
+          "item_id": "north_arrow",
+          "rect_mm": {
+            "height": 25.0,
+            "width": 25.0,
+            "x": 44.55000000000001,
+            "y": 41.69
+          },
+          "type": "QgsLayoutItemPicture",
+          "z_value": 27.0
+        },
+        "overview": {
+          "item_id": "overview",
+          "rect_mm": {
+            "height": 30.31818181818182,
+            "width": 60.04772727272727,
+            "x": 489.4,
+            "y": 41.69
+          },
+          "text": "红二十五军长征及转战经过行军路线图\n\n红二十五军于1934年11月从河南罗山何家冲出发，沿\n鄂豫皖边界西进，经桐柏、泌阳等地进入鄂豫陕边区\n。1934年12月鄂豫皖省委在庾家河召开会议，决定创\n建鄂豫陕革命根据地。1935年7月省委在凤峪口决定\n继续西征北上，最终于同年9月在甘肃永坪与陕甘红军\n胜利会师，完成长征。全程途经河南、湖北、陕西、\n甘肃四省，跨越秦岭、伏牛山等山脉，是中国工农红\n军长征的重要组成部分。",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 24.0
+        },
+        "scalebar": {
+          "item_id": "scalebar",
+          "rect_mm": {
+            "height": 13.096235795454545,
+            "width": 87.40038830045033,
+            "x": 462.05,
+            "y": 365.21
+          },
+          "segments": 4,
+          "segments_left": 0,
+          "type": "QgsLayoutItemScaleBar",
+          "unit_label": "km",
+          "units": "kilometers",
+          "units_per_segment": 40.0,
+          "z_value": 26.0
+        },
+        "title": {
+          "item_id": "title",
+          "rect_mm": {
+            "height": 14.143181818181818,
+            "width": 196.85,
+            "x": 198.575,
+            "y": 24.2
+          },
+          "text": "红二十五军长征及转战经过行军路线图",
+          "type": "QgsLayoutItemLabel",
+          "z_value": 23.0
+        }
+      },
+      "layout": "红二十五军行军路线图",
+      "missing_item_ids": [],
+      "page_size_mm": {
+        "height": 420.0,
+        "width": 594.0
+      }
+    },
+    "layout_name": "红二十五军行军路线图",
+    "layout_snapshot": {
+      "byte_size": 12624,
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/819313e8-e1d7-43a4-bc91-29342d899522/intermediate/quality_feedback/layout_snapshot_4797aaf11c494f79af8c84ab03e0ffbe.json",
+      "schema_version": "quality-feedback-layout-snapshot/v1",
+      "sha256": "87d6c6116f4d1d628ff692c385c3699dcf63c535b0c7b940311b65446eab7a79"
+    },
+    "locked_content": [
+      "所有文字原文：标题'红二十五军长征及转战经过行军路线图'；数据综述标题和正文；4组图文标注的标题和正文（长征出发、庾家河会议、沣峪口会议、永坪会师）；图例标题",
+      "路线、节点、方向与拓扑：4条行军路线（route_initial、route_first_transfer、route_north_june、route_western）的路径、方向和连接关系；27个节点的符号类型和位置",
+      "地图范围、比例、CRS和图层：主图范围、比例尺1:1640431、EPSG:4004、8个底图图层",
+      "图例类别、符号与颜色语义映射：省域/县级城市驻地/铁路/公路/国道/地区界线/河流线/河流面/points/route_arrow_red_reference 的符号和颜色",
+      "比例尺数值与指北方向：比例尺4段×40km、指北针样式1",
+      "A1纸张规格对应字号表：主标题11.5mm、图例标题3.5mm、图例正文2.5mm、比例尺2mm、综述标题3.5mm、综述正文2.5mm"
+    ],
+    "task_requirement": "制作中国工农红军第二十五军长征及转战经过行军路线图，包含从1934年11月何家冲出发到1935年9月永坪会师的完整路线，含4条阶段性路线、27个节点、4组图文标注，底图含省域、县级城市驻地、铁路、公路、国道、地区界线、河流线、河流面。"
+  },
+  "review_id": "20260831T104603Z_75fd3ad4",
+  "schema_version": "quality-feedback/v3",
+  "status": "final_ready",
+  "updated_at": "2026-08-31T10:52:39.545061+00:00"
+}

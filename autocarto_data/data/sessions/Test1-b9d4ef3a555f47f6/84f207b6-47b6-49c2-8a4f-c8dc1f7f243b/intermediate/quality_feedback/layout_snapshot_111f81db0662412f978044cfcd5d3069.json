@@ -1,0 +1,124 @@
+{
+  "captured_at": "2026-09-27T03:49:02.828097+00:00",
+  "layout_item_ids": {
+    "callouts": null,
+    "standard": {
+      "decorative_border": "decorative_border",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "decorative_border": {
+        "item_id": "decorative_border",
+        "outer_rect_mm": {
+          "height": 489.58508826082834,
+          "width": 727.85,
+          "x": 56.57499999999999,
+          "y": 52.20745586958583
+        },
+        "rect_mm": {
+          "height": 483.28508826082833,
+          "width": 721.5500000000001,
+          "x": 59.72499999999999,
+          "y": 55.35745586958583
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 114.4712109375,
+          "width": 25.075000000000003,
+          "x": 63.07,
+          "y": 420.83
+        },
+        "title": "图 例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 5.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 476.58508826082834,
+          "width": 714.85,
+          "x": 63.07499999999999,
+          "y": 58.70745586958583
+        },
+        "scale": 1158639.9940076289,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 20.0,
+          "width": 20.0,
+          "x": 68.07,
+          "y": 63.71
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 7.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 15.597727272727273,
+          "width": 83.7159090909091,
+          "x": 694.2,
+          "y": 58.71
+        },
+        "text": "红二十五军长征路线综述：1934年11月，红二十五军在军长程子华、副军长\n徐海东率领下，从河南罗山何家冲出发，途经鄂豫陕三省，历经独树镇战斗\n、庾家河战斗等重要战役，翻越秦岭、渡过丹江，最终于1935年9月到达陕\n北延川永坪镇，率先完成长征。全军途经多处关隘要道，跨越伏牛山、秦岭\n等天然屏障，是中国工农红军长征中第一支到达陕北的部队。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 91.83778371423513,
+          "x": 686.087,
+          "y": 522.196
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 30.0,
+        "z_value": 6.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 139.12272727272727,
+          "x": 350.94,
+          "y": 41.22
+        },
+        "text": "红二十五军长征行军路线图",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 3.0
+      }
+    },
+    "layout": "红二十五军长征行军路线图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 594.0,
+      "width": 841.0
+    }
+  },
+  "layout_name": "红二十五军长征行军路线图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "84f207b6-47b6-49c2-8a4f-c8dc1f7f243b",
+  "snapshot_id": "111f81db0662412f978044cfcd5d3069"
+}

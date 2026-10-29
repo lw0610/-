@@ -1,0 +1,5 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+route_initial,长征初始转移（何家冲至庾家河）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_first_transfer,第一次大范围转战（庾家河至葛牌镇）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_north_june,1935年6月北上行动（郧西二天门至沣峪口）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_western,西征北上至永坪（沣峪口至永坪镇）,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
