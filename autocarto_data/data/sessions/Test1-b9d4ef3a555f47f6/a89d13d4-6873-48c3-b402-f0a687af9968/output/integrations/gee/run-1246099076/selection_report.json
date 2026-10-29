@@ -1,0 +1,70 @@
+{
+  "date": "2025-11-14",
+  "mean_cloud": 0.0074918,
+  "coverage": 0.9997,
+  "bands": [
+    "B4",
+    "B3",
+    "B2",
+    "B8"
+  ],
+  "coverage_scale": 30,
+  "target_coverage": 0.99,
+  "meets_target": true,
+  "candidate_count": 10,
+  "checked_candidates": [
+    {
+      "date": "2025-11-14",
+      "mean_cloud": 0.0074918,
+      "coverage": 0.9997
+    }
+  ],
+  "scene_count": 5,
+  "image_ids": [
+    "COPERNICUS/S2_SR_HARMONIZED/20251114T025859_20251114T030501_T49RGP",
+    "COPERNICUS/S2_SR_HARMONIZED/20251114T025859_20251114T030501_T49RGQ",
+    "COPERNICUS/S2_SR_HARMONIZED/20251114T025859_20251114T030501_T50RKU",
+    "COPERNICUS/S2_SR_HARMONIZED/20251114T025859_20251114T030501_T50RKV",
+    "COPERNICUS/S2_SR_HARMONIZED/20251114T025859_20251114T030501_T50RLV"
+  ],
+  "scene_ids_truncated": false,
+  "method": "same_day_cloud_masked_mosaic",
+  "dataset": "COPERNICUS/S2_SR_HARMONIZED",
+  "sensor": "Sentinel-2 MSI",
+  "search_start": "2025-10-06",
+  "search_end_exclusive": "2026-10-06",
+  "cloud_filter_lt": 20,
+  "export_crs": "EPSG:32650",
+  "export_scale": 10,
+  "roi_bounds": {
+    "geodesic": false,
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          113.69807700000001,
+          29.97192799999997
+        ],
+        [
+          115.07665100000003,
+          29.97192799999997
+        ],
+        [
+          115.07665100000003,
+          31.362866000000025
+        ],
+        [
+          113.69807700000001,
+          31.362866000000025
+        ],
+        [
+          113.69807700000001,
+          29.97192799999997
+        ]
+      ]
+    ]
+  },
+  "boundary_source": "Tianditu (china-admin-boundaries skill)",
+  "boundary_adcode": "420100",
+  "boundary_name": "武汉市"
+}

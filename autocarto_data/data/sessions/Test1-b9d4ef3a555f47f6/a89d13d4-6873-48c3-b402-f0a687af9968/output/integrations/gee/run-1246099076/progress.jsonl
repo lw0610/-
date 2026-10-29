@@ -1,0 +1,232 @@
+{"type": "workflow_progress", "stage_id": 1, "stage": "Loading region: boundary_city_420100.geojson", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 1, "stage": "Loading region: boundary_city_420100.geojson", "phase": "completed", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "按日期和平均云量筛选候选影像", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "按日期和平均云量筛选候选影像", "phase": "completed", "elapsed_seconds": 3}
+{"type": "workflow_progress", "stage_id": 3, "stage": "检查候选 1/10：2025-11-14", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 4, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 4, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 10}
+{"type": "workflow_progress", "stage_id": 3, "stage": "检查候选 1/10：2025-11-14", "phase": "completed", "elapsed_seconds": 10}
+{"type": "workflow_progress", "stage_id": 5, "stage": "记录所选观测场景", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 5, "stage": "记录所选观测场景", "phase": "completed", "elapsed_seconds": 25}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 0}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "preparing", "percent": null}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 0.0, "completed_bytes": 0, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 0.20736675006961458, "completed_bytes": 3427328, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 0.8269268040571096, "completed_bytes": 13667328, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 1.6538536081142192, "completed_bytes": 27334656, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 2.480780412171329, "completed_bytes": 41001984, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 2.6881471622409436, "completed_bytes": 44429312, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 2.895513912310558, "completed_bytes": 47856640, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 3.5150739662980532, "completed_bytes": 58096640, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 30}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 4.1346340202855485, "completed_bytes": 68336640, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 4.342000770355162, "completed_bytes": 71763968, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 5.1689275744122725, "completed_bytes": 85431296, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 5.788487628399768, "completed_bytes": 95671296, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 5.995854378469382, "completed_bytes": 99098624, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 6.615414432456877, "completed_bytes": 109338624, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 6.822781182526492, "completed_bytes": 112765952, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 8.061901290501481, "completed_bytes": 133245952, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 8.269268040571097, "completed_bytes": 136673280, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 8.476634790640711, "completed_bytes": 140100608, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 60}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 9.096194844628206, "completed_bytes": 150340608, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 9.30356159469782, "completed_bytes": 153767936, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 10.130488398754931, "completed_bytes": 167435264, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 10.750048452742424, "completed_bytes": 177675264, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 11.36960850672992, "completed_bytes": 187915264, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 11.576975256799535, "completed_bytes": 191342592, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 11.78434200686915, "completed_bytes": 194769920, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 12.403902060856645, "completed_bytes": 205009920, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 90}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 12.611268810926259, "completed_bytes": 208437248, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 13.230828864913754, "completed_bytes": 218677248, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 13.43819561498337, "completed_bytes": 222104576, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 14.057755668970863, "completed_bytes": 232344576, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 14.677315722958358, "completed_bytes": 242584576, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 15.50424252701547, "completed_bytes": 256251904, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 15.711609277085083, "completed_bytes": 259679232, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 15.918976027154697, "completed_bytes": 263106560, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 120}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 16.745902831211808, "completed_bytes": 276773888, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 17.365462885199303, "completed_bytes": 287013888, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 17.572829635268917, "completed_bytes": 290441216, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 17.78019638533853, "completed_bytes": 293868544, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 18.399756439326026, "completed_bytes": 304108544, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 19.01931649331352, "completed_bytes": 314348544, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 19.226683243383135, "completed_bytes": 317775872, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 19.43404999345275, "completed_bytes": 321203200, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 20.67317010142774, "completed_bytes": 341683200, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 150}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 21.50009690548485, "completed_bytes": 355350528, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 22.119656959472344, "completed_bytes": 365590528, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 22.73921701345984, "completed_bytes": 375830528, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 23.56614381751695, "completed_bytes": 389497856, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 24.39307062157406, "completed_bytes": 403165184, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 24.441267190437895, "completed_bytes": 403961770, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 180}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 24.648633940507512, "completed_bytes": 407389098, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 24.792633249930386, "completed_bytes": 409769098, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 25.0, "completed_bytes": 413196426, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 25.619560053987495, "completed_bytes": 423436426, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 25.82692680405711, "completed_bytes": 426863754, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 26.24166030419634, "completed_bytes": 433718410, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 27.06858710825345, "completed_bytes": 447385738, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 27.688147162240945, "completed_bytes": 457625738, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 28.515073966298054, "completed_bytes": 471293066, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 210}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 28.722440716367668, "completed_bytes": 474720394, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 30.581120878330154, "completed_bytes": 505440394, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 30.788487628399768, "completed_bytes": 508867722, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 30.99585437846938, "completed_bytes": 512295050, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 31.203221128538996, "completed_bytes": 515722378, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 31.41058787860861, "completed_bytes": 519149706, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 32.6497079865836, "completed_bytes": 539629706, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 32.85707473665322, "completed_bytes": 543057034, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 33.47663479064071, "completed_bytes": 553297034, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 240}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 34.09619484462821, "completed_bytes": 563537034, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 35.3353149526032, "completed_bytes": 584017034, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 35.54268170267281, "completed_bytes": 587444362, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 35.750048452742426, "completed_bytes": 590871690, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 36.576975256799535, "completed_bytes": 604539018, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 37.403902060856645, "completed_bytes": 618206346, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 37.61126881092626, "completed_bytes": 621633674, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 270}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 38.230828864913754, "completed_bytes": 631873674, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 38.43819561498337, "completed_bytes": 635301002, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 38.64556236505298, "completed_bytes": 638728330, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 38.8529291151226, "completed_bytes": 642155658, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 40.09204922309759, "completed_bytes": 662635658, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 40.9189760271547, "completed_bytes": 676302986, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 41.12634277722431, "completed_bytes": 679730314, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 41.74590283121181, "completed_bytes": 689970314, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 300}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 42.57282963526892, "completed_bytes": 703637642, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 42.780196385338535, "completed_bytes": 707064970, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 43.399756439326026, "completed_bytes": 717304970, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 43.607123189395644, "completed_bytes": 720732298, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 44.226683243383135, "completed_bytes": 730972298, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 44.846243297370634, "completed_bytes": 741212298, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 45.465803351358126, "completed_bytes": 751452298, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 46.085363405345625, "completed_bytes": 761692298, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 46.50009690548485, "completed_bytes": 768546954, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 330}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 46.70746365555446, "completed_bytes": 771974282, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 47.32702370954196, "completed_bytes": 782214282, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 47.94658376352945, "completed_bytes": 792454282, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 48.15395051359907, "completed_bytes": 795881610, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 48.77351056758656, "completed_bytes": 806121610, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 48.98087731765618, "completed_bytes": 809548938, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 49.744436681066546, "completed_bytes": 822168938, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 49.95180343113616, "completed_bytes": 825596266, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 360}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 50.57136348512366, "completed_bytes": 835836266, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 50.77873023519327, "completed_bytes": 839263594, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 51.03429355412673, "completed_bytes": 843487508, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 51.24166030419634, "completed_bytes": 846914836, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 52.068587108253446, "completed_bytes": 860582164, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 52.895513912310555, "completed_bytes": 874249492, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 53.515073966298054, "completed_bytes": 884489492, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 53.722440716367664, "completed_bytes": 887916820, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 54.34200077035516, "completed_bytes": 898156820, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 390}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 55.16892757441227, "completed_bytes": 911824148, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 56.61541443245688, "completed_bytes": 935731476, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 57.44234123651399, "completed_bytes": 949398804, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 57.6497079865836, "completed_bytes": 952826132, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 57.85707473665322, "completed_bytes": 956253460, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 420}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 58.68400154071033, "completed_bytes": 969920788, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 59.30356159469782, "completed_bytes": 980160788, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 59.510928344767436, "completed_bytes": 983588116, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 59.925661844906664, "completed_bytes": 990442772, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 60.54522189889416, "completed_bytes": 1000682772, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 61.164781952881654, "completed_bytes": 1010922772, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 61.78434200686915, "completed_bytes": 1021162772, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 450}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 480}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 61.99170875693876, "completed_bytes": 1024590100, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 510}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 62.61126881092626, "completed_bytes": 1034830100, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 63.230828864913754, "completed_bytes": 1045070100, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 64.26512241904048, "completed_bytes": 1062164756, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 64.47248916911009, "completed_bytes": 1065592084, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 64.6798559191797, "completed_bytes": 1069019412, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 64.88722266924933, "completed_bytes": 1072446740, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 66.12634277722431, "completed_bytes": 1092926740, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 66.74590283121181, "completed_bytes": 1103166740, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 67.16063633135104, "completed_bytes": 1110021396, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 540}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 67.78019638533853, "completed_bytes": 1120261396, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 68.19492988547776, "completed_bytes": 1127116052, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 69.64141674352237, "completed_bytes": 1151023380, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 69.84878349359198, "completed_bytes": 1154450708, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 70.46834354757948, "completed_bytes": 1164690708, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 70.67571029764909, "completed_bytes": 1168118036, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 71.29527035163659, "completed_bytes": 1178358036, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 570}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 72.1221971556937, "completed_bytes": 1192025364, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 72.74175720968118, "completed_bytes": 1202265364, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 72.9491239597508, "completed_bytes": 1205692692, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 73.09312326917367, "completed_bytes": 1208072692, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 73.14131983803752, "completed_bytes": 1208869278, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 73.96824664209463, "completed_bytes": 1222536606, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 74.58780669608213, "completed_bytes": 1232776606, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 75.41473350013923, "completed_bytes": 1246443934, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 600}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 76.03429355412672, "completed_bytes": 1256683934, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 76.86122035818383, "completed_bytes": 1270351262, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 77.06858710825345, "completed_bytes": 1273778590, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 77.68814716224094, "completed_bytes": 1284018590, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 77.89551391231056, "completed_bytes": 1287445918, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 630}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 78.10288066238017, "completed_bytes": 1290873246, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 78.72244071636767, "completed_bytes": 1301113246, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 78.92980746643728, "completed_bytes": 1304540574, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 80.16892757441227, "completed_bytes": 1325020574, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 80.78848762839976, "completed_bytes": 1335260574, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 80.99585437846939, "completed_bytes": 1338687902, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 81.8227811825265, "completed_bytes": 1352355230, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 82.44234123651398, "completed_bytes": 1362595230, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 82.6497079865836, "completed_bytes": 1366022558, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 660}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 82.85707473665322, "completed_bytes": 1369449886, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 83.47663479064072, "completed_bytes": 1379689886, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 83.68400154071033, "completed_bytes": 1383117214, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 84.30356159469783, "completed_bytes": 1393357214, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 85.13048839875493, "completed_bytes": 1407024542, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 85.75004845274242, "completed_bytes": 1417264542, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 85.95741520281204, "completed_bytes": 1420691870, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 86.57697525679953, "completed_bytes": 1430931870, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 86.78434200686915, "completed_bytes": 1434359198, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 690}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 87.40390206085664, "completed_bytes": 1444599198, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 87.81863556099587, "completed_bytes": 1451453854, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 88.64556236505298, "completed_bytes": 1465121182, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 89.26512241904048, "completed_bytes": 1475361182, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 89.47248916911009, "completed_bytes": 1478788510, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 89.88722266924933, "completed_bytes": 1485643166, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 90.50678272323681, "completed_bytes": 1495883166, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 91.12634277722431, "completed_bytes": 1506123166, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 91.33370952729393, "completed_bytes": 1509550494, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 91.95326958128142, "completed_bytes": 1519790494, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 720}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 92.78019638533853, "completed_bytes": 1533457822, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 93.60712318939564, "completed_bytes": 1547125150, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 94.22668324338314, "completed_bytes": 1557365150, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 94.84624329737063, "completed_bytes": 1567605150, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 95.67317010142774, "completed_bytes": 1581272478, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 96.08790360156696, "completed_bytes": 1588127134, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 96.91483040562407, "completed_bytes": 1601794462, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 97.1221971556937, "completed_bytes": 1605221790, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 97.74175720968118, "completed_bytes": 1615461790, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 98.36131726366868, "completed_bytes": 1625701790, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 98.50531657309156, "completed_bytes": 1628081790, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "running", "elapsed_seconds": 750}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 98.76087989202502, "completed_bytes": 1632305704, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 99.0, "completed_bytes": 1642545704, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "downloading", "percent": 99.0, "completed_bytes": 1652785704, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "validating", "percent": 99.0, "completed_bytes": 1652785704, "total_bytes": 1652785704}
+{"type": "download_progress", "download_id": 1, "filename": "s2_wuhan_2025-11-14.tif", "phase": "completed", "percent": 100.0, "completed_bytes": 1652785704, "total_bytes": 1652785704}
+{"type": "workflow_progress", "stage_id": 6, "stage": "下载武汉市 Sentinel-2 影像", "phase": "completed", "elapsed_seconds": 766}

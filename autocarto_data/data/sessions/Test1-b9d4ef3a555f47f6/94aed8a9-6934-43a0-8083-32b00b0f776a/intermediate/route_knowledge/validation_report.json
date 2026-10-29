@@ -1,0 +1,85 @@
+{
+  "error_count": 0,
+  "is_valid": true,
+  "issues": [
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[94].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[95].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[96].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[97].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[98].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[99].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[100].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[101].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[102].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "invalid_confidence",
+      "message": "置信度必须是 0 到 1 之间的数字",
+      "path": "spatial_entities[103].coordinate_confidence",
+      "severity": "warning"
+    },
+    {
+      "code": "background_entity_in_route",
+      "message": "背景地点不能作为路线节点",
+      "path": "routes[0].paths[0].nodes[23].ref_id",
+      "severity": "warning"
+    },
+    {
+      "code": "background_entity_in_route",
+      "message": "背景地点不能作为路线节点",
+      "path": "routes[2].paths[0].nodes[1].ref_id",
+      "severity": "warning"
+    },
+    {
+      "code": "background_entity_in_route",
+      "message": "背景地点不能作为路线节点",
+      "path": "routes[2].paths[0].nodes[14].ref_id",
+      "severity": "warning"
+    }
+  ],
+  "warning_count": 13
+}

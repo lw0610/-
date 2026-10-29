@@ -1,0 +1,124 @@
+{
+  "captured_at": "2026-09-27T10:23:52.089486+00:00",
+  "layout_item_ids": {
+    "callouts": null,
+    "standard": {
+      "decorative_border": "decorative_border_1",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "decorative_border_1": {
+        "item_id": "decorative_border_1",
+        "outer_rect_mm": {
+          "height": 349.61301120919387,
+          "width": 517.9,
+          "x": 38.05000000000001,
+          "y": 35.193494395403064
+        },
+        "rect_mm": {
+          "height": 343.31301120919386,
+          "width": 511.59999999999997,
+          "x": 41.20000000000001,
+          "y": 38.34349439540306
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 106.7712109375,
+          "width": 25.075000000000003,
+          "x": 44.55,
+          "y": 271.53
+        },
+        "title": "图 例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 5.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 336.61301120919387,
+          "width": 504.9,
+          "x": 44.55000000000001,
+          "y": 41.693494395403064
+        },
+        "scale": 1640431.3719872325,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 25.0,
+          "width": 25.0,
+          "x": 44.55000000000001,
+          "y": 41.69
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 7.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 21.370454545454546,
+          "width": 58.60454545454545,
+          "x": 490.85,
+          "y": 41.69
+        },
+        "text": "本图展示红二十五军长征行军路线。路线途经鄂豫皖\n陕甘等省，跨越秦岭、大巴山等山脉，渡过丹江、渭\n河等水系。图中以红色箭头标示主力部队行军方向，\n蓝色箭头标示各支队转移路线，并标注出发地、途经\n要地、重要战斗及会师地点等关键节点。底图包含省\n域界线、河流水系、铁路公路及县级城市驻地等地理\n要素，为理解红军长征的战略转移提供空间参考。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 87.40038830045033,
+          "x": 462.05,
+          "y": 365.21
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 40.0,
+        "z_value": 6.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 139.12272727272727,
+          "x": 227.44,
+          "y": 21.05
+        },
+        "text": "红二十五军长征行军路线图",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 3.0
+      }
+    },
+    "layout": "红二十五军长征行军路线图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 420.0,
+      "width": 594.0
+    }
+  },
+  "layout_name": "红二十五军长征行军路线图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "94aed8a9-6934-43a0-8083-32b00b0f776a",
+  "snapshot_id": "2c083c1db42f4ebe931a7e719549681a"
+}

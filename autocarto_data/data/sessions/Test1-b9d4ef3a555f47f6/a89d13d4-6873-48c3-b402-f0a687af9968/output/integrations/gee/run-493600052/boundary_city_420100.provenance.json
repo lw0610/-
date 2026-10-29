@@ -1,0 +1,45 @@
+{
+  "repository": "https://github.com/zzhonglei/GeoCode-Release",
+  "commit": "6e3534f7af3675b19bd3c5d54c94022959dccdd2",
+  "skill": "china-admin-boundaries",
+  "skill_version": "0.1.0",
+  "source": {
+    "upstream_path": "contributions/china-admin-boundaries/skill/data/china_city.geojson",
+    "local_path": "data/china_city.geojson",
+    "url": "https://raw.githubusercontent.com/zzhonglei/GeoCode-Release/6e3534f7af3675b19bd3c5d54c94022959dccdd2/contributions/china-admin-boundaries/skill/data/china_city.geojson",
+    "bytes": 4989113,
+    "sha256": "a3038b09823597c5b03ea2563455cebcc90559e83764f5d49d38a1403ad8683a",
+    "git_blob_sha1": "c0ba0fb1233aa7029501ef238ed5ba5d8b871968",
+    "feature_count": 375,
+    "declared_crs": {
+      "type": "name",
+      "properties": {
+        "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+      }
+    }
+  },
+  "source_statement": "GeoCode upstream declares Tianditu-sourced WGS84 administrative polygons; no independent legal or survey certification is asserted",
+  "selection": {
+    "name": "武汉市",
+    "adcode": "420100",
+    "gb": "156420100",
+    "level": "city"
+  },
+  "geometry": {
+    "type": "MultiPolygon",
+    "valid": true,
+    "bounds": [
+      113.698077,
+      29.971928,
+      115.076651,
+      31.362866
+    ],
+    "polygon_parts": 2,
+    "vertices": 369,
+    "crs": "EPSG:4326",
+    "axis_order": "longitude,latitude",
+    "source_crs": "urn:ogc:def:crs:OGC:1.3:CRS84"
+  },
+  "processing": "Exact single-feature extraction; original coordinates and attributes retained, no simplification, buffering, repair or datum relabeling",
+  "boundary_path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/a89d13d4-6873-48c3-b402-f0a687af9968/output/integrations/gee/run-493600052/boundary_city_420100.geojson"
+}

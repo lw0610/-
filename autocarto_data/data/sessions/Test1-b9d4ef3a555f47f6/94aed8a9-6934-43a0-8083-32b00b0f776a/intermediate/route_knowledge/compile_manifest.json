@@ -1,0 +1,42 @@
+{
+  "counts": {
+    "callouts.csv": 0,
+    "places.csv": 98,
+    "points.csv": 88,
+    "route_paths.csv": 117,
+    "routes.csv": 17,
+    "symbol_mapping.csv": 5
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "review": {
+    "accepted_graph_file": "accepted_graph.json",
+    "provenance_file": "review_provenance.json",
+    "review_id": "5b9d05cc-6df6-4400-bec1-b58fd37f1db0",
+    "revision": 1
+  },
+  "schema_version": "1.0",
+  "task_id": "t0001",
+  "title": "红二十五军长征及国民党军围追堵截路线",
+  "warnings": [
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "置信度必须是 0 到 1 之间的数字",
+    "背景地点不能作为路线节点",
+    "背景地点不能作为路线节点",
+    "背景地点不能作为路线节点"
+  ]
+}

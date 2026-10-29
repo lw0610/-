@@ -1,0 +1,257 @@
+{
+  "captured_at": "2026-09-23T17:44:45.190256+00:00",
+  "layout_item_ids": {
+    "callouts": {
+      "c0003__callout_1": {
+        "body": "callout_c0003__callout_1_body",
+        "box": "callout_c0003__callout_1_box",
+        "leader": [
+          "callout_c0003__callout_1_leader_1",
+          "callout_c0003__callout_1_leader_2"
+        ],
+        "title": "callout_c0003__callout_1_title"
+      },
+      "c0003__callout_2": {
+        "body": "callout_c0003__callout_2_body",
+        "box": "callout_c0003__callout_2_box",
+        "leader": [
+          "callout_c0003__callout_2_leader_1",
+          "callout_c0003__callout_2_leader_2"
+        ],
+        "title": "callout_c0003__callout_2_title"
+      }
+    },
+    "standard": {
+      "decorative_border": "decorative_border",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "callout_c0003__callout_1_body": {
+        "item_id": "callout_c0003__callout_1_body",
+        "rect_mm": {
+          "height": 2.4914930555555554,
+          "width": 38.4,
+          "x": 176.67503900402752,
+          "y": 143.84151029879092
+        },
+        "text": "军政委吴焕先在此激战中不幸中弹牺牲",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "callout_c0003__callout_1_box": {
+        "item_id": "callout_c0003__callout_1_box",
+        "rect_mm": {
+          "height": 10.915321180555557,
+          "width": 42.0,
+          "x": 174.8750390040275,
+          "y": 137.2176821737909
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "callout_c0003__callout_1_leader_1": {
+        "item_id": "callout_c0003__callout_1_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 1.091532118055568,
+          "x": 194.78350688597195,
+          "y": 148.13300335434647
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 5.0
+      },
+      "callout_c0003__callout_1_leader_2": {
+        "item_id": "callout_c0003__callout_1_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 1.091532118055568,
+          "x": 195.8750390040275,
+          "y": 148.13300335434647
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 6.0
+      },
+      "callout_c0003__callout_1_title": {
+        "item_id": "callout_c0003__callout_1_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 176.67503900402752,
+          "y": 139.01768217379092
+        },
+        "text": "吴焕先牺牲",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 3.0
+      },
+      "callout_c0003__callout_2_body": {
+        "item_id": "callout_c0003__callout_2_body",
+        "rect_mm": {
+          "height": 4.982986111111111,
+          "width": 38.4,
+          "x": 162.222155645404,
+          "y": 129.48135092644327
+        },
+        "text": "制定“三大禁令、四项注意”，赠送“回汉\n兄弟亲如一家”锦幛",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 9.0
+      },
+      "callout_c0003__callout_2_box": {
+        "item_id": "callout_c0003__callout_2_box",
+        "rect_mm": {
+          "height": 13.406814236111112,
+          "width": 42.0,
+          "x": 160.422155645404,
+          "y": 122.85752280144327
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 7.0
+      },
+      "callout_c0003__callout_2_leader_1": {
+        "item_id": "callout_c0003__callout_2_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 37.6593185763889,
+          "x": 142.422155645404,
+          "y": 136.26433703755438
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 10.0
+      },
+      "callout_c0003__callout_2_leader_2": {
+        "item_id": "callout_c0003__callout_2_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 40.3406814236111,
+          "x": 142.422155645404,
+          "y": 136.26433703755438
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 11.0
+      },
+      "callout_c0003__callout_2_title": {
+        "item_id": "callout_c0003__callout_2_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 162.222155645404,
+          "y": 124.65752280144326
+        },
+        "text": "兴隆镇民族政策",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 8.0
+      },
+      "decorative_border": {
+        "item_id": "decorative_border",
+        "outer_rect_mm": {
+          "height": 370.0,
+          "width": 439.96960065117037,
+          "x": 77.01519967441482,
+          "y": 25.0
+        },
+        "rect_mm": {
+          "height": 363.7,
+          "width": 433.66960065117036,
+          "x": 80.16519967441482,
+          "y": 28.15
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 12.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 129.6712109375,
+          "width": 26.5580078125,
+          "x": 83.52,
+          "y": 258.83
+        },
+        "title": "图例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 15.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 357.0,
+          "width": 426.96960065117037,
+          "x": 83.51519967441482,
+          "y": 31.5
+        },
+        "scale": 2674313.051044959,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 25.0,
+          "width": 25.0,
+          "x": 83.51999999999998,
+          "y": 31.5
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 17.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 15.597727272727273,
+          "width": 48.502272727272725,
+          "x": 461.99,
+          "y": 31.5
+        },
+        "text": "本图展示红二十五军长征行军路线，途经豫\n陕交界地带，跨越秦岭山区。全图标注了出\n发地、重要战斗地点、会师地点及沿途关键\n节点，完整呈现了红二十五军战略转移的历\n史轨迹与空间格局。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 14.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 88.27537591124336,
+          "x": 422.21,
+          "y": 375.404
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 50.0,
+        "z_value": 16.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 139.12272727272727,
+          "x": 227.44,
+          "y": 10.86
+        },
+        "text": "红二十五军长征行军路线图",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 13.0
+      }
+    },
+    "layout": "行军路线图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 420.0,
+      "width": 594.0
+    }
+  },
+  "layout_name": "行军路线图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "9773b43e-771e-450d-a270-78245690c16d",
+  "snapshot_id": "f1cdfd318d48483ea98bee6b1a5ee9c0"
+}
