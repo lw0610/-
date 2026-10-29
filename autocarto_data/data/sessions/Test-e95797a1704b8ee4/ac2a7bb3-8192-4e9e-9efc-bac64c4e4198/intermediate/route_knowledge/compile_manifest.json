@@ -1,0 +1,22 @@
+{
+  "counts": {
+    "callouts.csv": 2,
+    "places.csv": 12,
+    "points.csv": 12,
+    "route_paths.csv": 13,
+    "routes.csv": 1,
+    "symbol_mapping.csv": 8
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "schema_version": "1.0",
+  "task_id": "luoyang_campaign_1948",
+  "title": "1948年洛阳战役行军路线图",
+  "warnings": []
+}

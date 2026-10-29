@@ -1,0 +1,629 @@
+{
+  "actors": [
+    {
+      "actor_id": "actor_4th_column",
+      "aliases": [
+        "第四纵队"
+      ],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev_actor_4th"
+      ],
+      "name": "陈谢集团第四纵队"
+    },
+    {
+      "actor_id": "actor_9th_column",
+      "aliases": [
+        "第九纵队"
+      ],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev_actor_9th"
+      ],
+      "name": "陈谢集团第九纵队"
+    },
+    {
+      "actor_id": "actor_3rd_column",
+      "aliases": [
+        "第三纵队"
+      ],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev_actor_3rd"
+      ],
+      "name": "华东野军陈唐兵团第三纵队"
+    }
+  ],
+  "callouts": [
+    {
+      "anchor_ref": "se_lyang",
+      "anchor_ref_type": "spatial_entity",
+      "body": "1948年3月陈谢集团发起洛阳战役，洛阳是中原战略要地",
+      "callout_id": "callout_overview",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "straight",
+      "preferred_side": "right_top",
+      "priority": 10,
+      "template": "text_only",
+      "title": "洛阳战役概述",
+      "width_mm": 42
+    },
+    {
+      "anchor_ref": "evt_liberation",
+      "anchor_ref_type": "event",
+      "body": "切断国民党军陇海铁路联系，配合宜川战役，为淮海战役创造条件",
+      "callout_id": "callout_significance",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "straight",
+      "preferred_side": "right_top",
+      "priority": 9,
+      "template": "text_only",
+      "title": "战略意义",
+      "width_mm": 42
+    }
+  ],
+  "events": [
+    {
+      "actor_refs": [
+        "actor_4th_column"
+      ],
+      "confidence": 0.9,
+      "event_id": "evt_depart_4th",
+      "event_type": "departure",
+      "evidence_refs": [
+        "ev_evt_depart_4th"
+      ],
+      "location_ref": "se_lushi",
+      "name": "第四纵队出发",
+      "time_text": "1948年3月初"
+    },
+    {
+      "actor_refs": [
+        "actor_9th_column"
+      ],
+      "confidence": 0.9,
+      "event_id": "evt_depart_9th",
+      "event_type": "departure",
+      "evidence_refs": [
+        "ev_evt_depart_9th"
+      ],
+      "location_ref": "se_lushan",
+      "name": "第九纵队出发",
+      "time_text": "1948年3月初"
+    },
+    {
+      "actor_refs": [
+        "actor_3rd_column"
+      ],
+      "confidence": 0.9,
+      "event_id": "evt_depart_3rd",
+      "event_type": "departure",
+      "evidence_refs": [
+        "ev_evt_depart_3rd"
+      ],
+      "location_ref": "se_minquan",
+      "name": "第三纵队出发",
+      "time_text": "1948年3月初"
+    },
+    {
+      "actor_refs": [
+        "actor_4th_column",
+        "actor_9th_column"
+      ],
+      "confidence": 0.95,
+      "event_id": "evt_outer_battle",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev_evt_outer_battle"
+      ],
+      "location_ref": "se_lyang",
+      "name": "外围战斗",
+      "priority": 8,
+      "time_text": "3月7日"
+    },
+    {
+      "actor_refs": [
+        "actor_4th_column",
+        "actor_9th_column"
+      ],
+      "confidence": 0.95,
+      "event_id": "evt_siege",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev_evt_siege"
+      ],
+      "location_ref": "se_lyang",
+      "name": "攻城战斗",
+      "priority": 9,
+      "time_text": "3月9日"
+    },
+    {
+      "actor_refs": [
+        "actor_4th_column",
+        "actor_9th_column"
+      ],
+      "confidence": 0.95,
+      "event_id": "evt_clear",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev_evt_clear"
+      ],
+      "location_ref": "se_lyang",
+      "name": "肃清老城",
+      "priority": 8,
+      "time_text": "3月11日至14日"
+    },
+    {
+      "actor_refs": [
+        "actor_4th_column",
+        "actor_9th_column",
+        "actor_3rd_column"
+      ],
+      "confidence": 0.95,
+      "event_id": "evt_liberation",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "ev_evt_liberation"
+      ],
+      "location_ref": "se_lyang",
+      "name": "洛阳解放",
+      "priority": 10,
+      "time_text": "3月14日晚"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "ev_actor_4th",
+      "quote": "陈谢集团第四纵队主力，出发地为豫西卢氏县"
+    },
+    {
+      "evidence_id": "ev_actor_9th",
+      "quote": "陈谢集团第九纵队一部，从鲁山县出发"
+    },
+    {
+      "evidence_id": "ev_actor_3rd",
+      "quote": "华东野军陈（士榘）唐（亮）兵团第三纵队，从民权县方向西进"
+    },
+    {
+      "evidence_id": "ev_se_lyang",
+      "quote": "洛阳位于河南省西部，地处陇海铁路与洛河交汇处，是中原战略要地"
+    },
+    {
+      "evidence_id": "ev_se_lushi",
+      "quote": "出发地为豫西卢氏县"
+    },
+    {
+      "evidence_id": "ev_se_guanpo",
+      "quote": "经官坡镇、五里川镇向北推进"
+    },
+    {
+      "evidence_id": "ev_se_wulichuan",
+      "quote": "经官坡镇、五里川镇向北推进"
+    },
+    {
+      "evidence_id": "ev_se_luanchuan",
+      "quote": "第四纵队路线：卢氏县 → 官坡镇 → 五里川镇 → 栾川县城"
+    },
+    {
+      "evidence_id": "ev_se_yiyang",
+      "quote": "伊阳县城（今汝阳县）→ 洛阳城南"
+    },
+    {
+      "evidence_id": "ev_se_lushan",
+      "quote": "从鲁山县出发"
+    },
+    {
+      "evidence_id": "ev_se_nanzhao",
+      "quote": "经南召县城、嵩县县城向洛阳方向开进"
+    },
+    {
+      "evidence_id": "ev_se_songxian",
+      "quote": "经南召县城、嵩县县城向洛阳方向开进"
+    },
+    {
+      "evidence_id": "ev_se_yichuan",
+      "quote": "第九纵队路线：鲁山县 → 南召县 → 嵩县 → 伊川县 → 洛阳城东南"
+    },
+    {
+      "evidence_id": "ev_se_minquan",
+      "quote": "从民权县方向西进"
+    },
+    {
+      "evidence_id": "ev_se_lanfeng",
+      "quote": "沿陇海铁路经兰封、开封北侧向洛阳逼近"
+    },
+    {
+      "evidence_id": "ev_se_kaifeng",
+      "quote": "沿陇海铁路经兰封、开封北侧向洛阳逼近"
+    },
+    {
+      "evidence_id": "ev_se_yanshi",
+      "quote": "第三纵队路线：民权县 → 兰封县（今兰考县）→ 开封北侧 → 偃师县 → 洛阳城东"
+    },
+    {
+      "evidence_id": "ev_evt_depart_4th",
+      "quote": "陈谢集团第四纵队主力，出发地为豫西卢氏县"
+    },
+    {
+      "evidence_id": "ev_evt_depart_9th",
+      "quote": "陈谢集团第九纵队一部，从鲁山县出发"
+    },
+    {
+      "evidence_id": "ev_evt_depart_3rd",
+      "quote": "华东野军陈（士榘）唐（亮）兵团第三纵队，从民权县方向西进"
+    },
+    {
+      "evidence_id": "ev_evt_outer_battle",
+      "quote": "3月7日：外围战斗开始，各纵队抵达洛阳城郊"
+    },
+    {
+      "evidence_id": "ev_evt_siege",
+      "quote": "3月9日：攻城战斗发起"
+    },
+    {
+      "evidence_id": "ev_evt_clear",
+      "quote": "3月11日至14日：攻城部队肃清老城守敌"
+    },
+    {
+      "evidence_id": "ev_evt_liberation",
+      "quote": "3月14日晚：洛阳全城解放"
+    },
+    {
+      "evidence_id": "ev_route_main",
+      "quote": "第三纵队路线：民权县 → 兰封县（今兰考县）→ 开封北侧 → 偃师县 → 洛阳城东"
+    },
+    {
+      "evidence_id": "ev_route_4th",
+      "quote": "第四纵队路线：卢氏县 → 官坡镇 → 五里川镇 → 栾川县城 → 伊阳县城（今汝阳县）→ 洛阳城南"
+    },
+    {
+      "evidence_id": "ev_route_9th",
+      "quote": "第九纵队路线：鲁山县 → 南召县 → 嵩县 → 伊川县 → 洛阳城东南"
+    },
+    {
+      "evidence_id": "ev_callout_overview",
+      "quote": "1948年3月，中国人民解放军陈（赓）谢（富治）集团发起洛阳战役"
+    },
+    {
+      "evidence_id": "ev_callout_significance",
+      "quote": "洛阳战役切断了国民党军在中原的陇海铁路联系"
+    }
+  ],
+  "output_constraints": {
+    "self_intersection_policy": "allow_with_overpass"
+  },
+  "point_presentations": [
+    {
+      "anchor_ref": "se_lushi",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "pp_start_lushi",
+      "priority": 5,
+      "symbol_type": "start_flag",
+      "visible": true
+    },
+    {
+      "anchor_ref": "se_lushan",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "pp_start_lushan",
+      "priority": 5,
+      "symbol_type": "start_flag",
+      "visible": true
+    },
+    {
+      "anchor_ref": "se_minquan",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "pp_start_minquan",
+      "priority": 5,
+      "symbol_type": "start_flag",
+      "visible": true
+    },
+    {
+      "anchor_ref": "se_lyang",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "pp_battle_lyang",
+      "priority": 10,
+      "symbol_type": "battle",
+      "visible": true
+    }
+  ],
+  "routes": [
+    {
+      "confidence": 0.9,
+      "enabled": true,
+      "evidence_refs": [
+        "ev_route_main",
+        "ev_route_4th",
+        "ev_route_9th"
+      ],
+      "name": "洛阳战役行军路线",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "se_yanshi",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_lyang",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "path_main",
+          "role": "main"
+        },
+        {
+          "attach_ref": "se_lyang",
+          "direction": "toward_attach",
+          "nodes": [
+            {
+              "ref_id": "se_lushi",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_guanpo",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_wulichuan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_luanchuan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yiyang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_lyang",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "path_incoming_4th",
+          "role": "incoming"
+        },
+        {
+          "attach_ref": "se_lyang",
+          "direction": "toward_attach",
+          "nodes": [
+            {
+              "ref_id": "se_lushan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_nanzhao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_songxian",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yichuan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_lyang",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "path_incoming_9th",
+          "role": "incoming"
+        }
+      ],
+      "route_id": "route_luoyang_campaign",
+      "side": "friendly",
+      "topology": "multi_start"
+    }
+  ],
+  "schema_version": "1.0",
+  "spatial_entities": [
+    {
+      "coordinate_confidence": 0.9,
+      "coordinate_source": "llm_estimated",
+      "description": "中原战略要地",
+      "entity_id": "se_lyang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_lyang"
+      ],
+      "factual": true,
+      "lat": 34.62,
+      "lon": 112.45,
+      "map_role": "route_node",
+      "name": "洛阳"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_lushi",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_lushi"
+      ],
+      "factual": true,
+      "lat": 34.05,
+      "lon": 111.05,
+      "map_role": "route_node",
+      "name": "卢氏县"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_guanpo",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_guanpo"
+      ],
+      "factual": true,
+      "lat": 33.85,
+      "lon": 111.25,
+      "map_role": "route_node",
+      "name": "官坡镇"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_wulichuan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_wulichuan"
+      ],
+      "factual": true,
+      "lat": 33.75,
+      "lon": 111.45,
+      "map_role": "route_node",
+      "name": "五里川镇"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_luanchuan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_luanchuan"
+      ],
+      "factual": true,
+      "lat": 33.78,
+      "lon": 111.65,
+      "map_role": "route_node",
+      "name": "栾川县城"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_yiyang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_yiyang"
+      ],
+      "factual": true,
+      "lat": 34.15,
+      "lon": 112.47,
+      "map_role": "route_node",
+      "name": "伊阳县城"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_lushan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_lushan"
+      ],
+      "factual": true,
+      "lat": 33.74,
+      "lon": 112.9,
+      "map_role": "route_node",
+      "name": "鲁山县"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_nanzhao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_nanzhao"
+      ],
+      "factual": true,
+      "lat": 33.49,
+      "lon": 112.43,
+      "map_role": "route_node",
+      "name": "南召县"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_songxian",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_songxian"
+      ],
+      "factual": true,
+      "lat": 34.13,
+      "lon": 112.08,
+      "map_role": "route_node",
+      "name": "嵩县"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_yichuan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_yichuan"
+      ],
+      "factual": true,
+      "lat": 34.55,
+      "lon": 112.42,
+      "map_role": "route_node",
+      "name": "伊川县"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_minquan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_minquan"
+      ],
+      "factual": true,
+      "lat": 34.65,
+      "lon": 115.13,
+      "map_role": "route_node",
+      "name": "民权县"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_lanfeng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_lanfeng"
+      ],
+      "factual": true,
+      "lat": 34.82,
+      "lon": 114.82,
+      "map_role": "route_node",
+      "name": "兰封县"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_kaifeng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_kaifeng"
+      ],
+      "factual": true,
+      "lat": 34.8,
+      "lon": 114.35,
+      "map_role": "route_node",
+      "name": "开封"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_yanshi",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev_se_yanshi"
+      ],
+      "factual": true,
+      "lat": 34.73,
+      "lon": 112.78,
+      "map_role": "route_node",
+      "name": "偃师县"
+    }
+  ],
+  "task": {
+    "input_crs": "EPSG:4326",
+    "map_type": "marching_route",
+    "task_id": "luoyang_campaign_1948",
+    "title": "1948年洛阳战役行军路线图"
+  }
+}

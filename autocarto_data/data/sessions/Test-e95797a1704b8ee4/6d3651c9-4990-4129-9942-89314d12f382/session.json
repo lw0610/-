@@ -1,0 +1,80 @@
+{
+  "active_agent_config": "Zttzt",
+  "archived": false,
+  "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_51440_1781515782",
+  "bound_project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test.qgz",
+  "checkpoint_id": "task-6d3651c9-4990-4129-9942-89314d12f382-1781516810961714000",
+  "compression_history": [],
+  "context_stats": {
+    "compressed_count": 0,
+    "estimated_tokens": 63,
+    "message_count": 4,
+    "total_chars": 324,
+    "total_tokens": 63
+  },
+  "created_at": "2026-06-15T17:46:02+08:00",
+  "description": "",
+  "execution_mode": "build",
+  "last_message_preview": "[status] 已创建新会话。",
+  "llm_config": {},
+  "messages": [
+    {
+      "content": "制作一个河南省的行军路线图，要求：\n1.先使用data_engineer子智能体添加所行军路线图的所需图层。\n2.调用cargo",
+      "role": "user"
+    },
+    {
+      "content": "制作一个河南省的行军路线图，要求：\n1.先使用data_engineer子智能体添加所行军路线图的所需图层。\n2.调用cargo",
+      "msg_type": "user",
+      "role": "user",
+      "timestamp": "2026-06-15T09:46:50.863Z"
+    },
+    {
+      "content": "任务已取消",
+      "msg_type": "status",
+      "role": "system",
+      "timestamp": "2026-06-15T09:46:53.903Z"
+    },
+    {
+      "content": "已创建新会话。",
+      "msg_type": "status",
+      "role": "system",
+      "timestamp": "2026-06-15T09:47:03.041Z"
+    }
+  ],
+  "name": "制作河南省行军路线图",
+  "name_auto_generated": false,
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test.qgz",
+  "run_id": "task-6d3651c9-4990-4129-9942-89314d12f382-1781516810961714000",
+  "run_intent": "execute",
+  "runtime_phase": "building",
+  "runtime_revision": "Zttzt:3261d67bf0ccaebc",
+  "runtime_status": "running",
+  "runtime_summary": "收到用户请求，开始分析任务需求...",
+  "session_id": "6d3651c9-4990-4129-9942-89314d12f382",
+  "snapshots": [],
+  "tags": [],
+  "title_source": "llm",
+  "tool_calls": [],
+  "total_tokens_used": 63,
+  "updated_at": "2026-06-15T17:47:23+08:00",
+  "workflow_blocks": [
+    {
+      "agent": "orchestrator",
+      "agentDisplayName": "主智能体",
+      "entries": [
+        {
+          "content": "收到用户请求，开始分析任务需求...",
+          "id": "entry-20260615094650.863",
+          "phase": "thinking",
+          "timestamp": 1781516810863,
+          "type": "thinking"
+        }
+      ],
+      "id": "wf-20260615094650.863",
+      "startedAt": 1781516810863,
+      "status": "running",
+      "summary": "收到用户请求，开始分析任务需求...",
+      "updatedAt": 1781516810863
+    }
+  ]
+}

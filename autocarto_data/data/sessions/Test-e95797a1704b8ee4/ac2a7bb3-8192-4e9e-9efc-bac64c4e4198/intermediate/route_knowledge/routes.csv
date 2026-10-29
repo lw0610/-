@@ -1,0 +1,2 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+route_luoyang_campaign,洛阳战役行军路线,main,multi_start_bezier,multi_start_bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=multi_start;self_intersection_policy=allow_with_overpass

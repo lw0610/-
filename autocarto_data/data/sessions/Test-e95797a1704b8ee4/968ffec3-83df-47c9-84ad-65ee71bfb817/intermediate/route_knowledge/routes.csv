@@ -1,0 +1,7 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+R_MAIN_01,友方主线第一段,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R_MAIN_02,友方主线第二段,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R_MAIN_03,友方主线第三段,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R_MAIN_04,友方主线第四段,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+R_BRANCH_01,友方分叉路线,branch,branch_bezier,branch_bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=branch;self_intersection_policy=allow_with_overpass
+R_ENEMY_01,敌方多起点路线,enemy,multi_start_bezier,multi_start_bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=multi_start;self_intersection_policy=allow_with_overpass

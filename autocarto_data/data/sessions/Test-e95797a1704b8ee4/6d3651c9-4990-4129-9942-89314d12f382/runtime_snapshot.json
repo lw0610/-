@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "session_id": "6d3651c9-4990-4129-9942-89314d12f382",
+  "active_config_name": "Zttzt",
+  "runtime_revision": "Zttzt:3261d67bf0ccaebc",
+  "messages": [
+    {
+      "role": "user",
+      "content": "制作一个河南省的行军路线图，要求：\n1.先使用data_engineer子智能体添加所行军路线图的所需图层。\n2.调用cargo"
+    },
+    {
+      "role": "user",
+      "content": "制作一个河南省的行军路线图，要求：\n1.先使用data_engineer子智能体添加所行军路线图的所需图层。\n2.调用cargo"
+    },
+    {
+      "role": "system",
+      "content": "任务已取消"
+    },
+    {
+      "role": "system",
+      "content": "已创建新会话。"
+    }
+  ],
+  "runtime_projection": {
+    "runtime_status": "cancelled",
+    "run_id": "task-6d3651c9-4990-4129-9942-89314d12f382-1781516810961714000",
+    "execution_mode": "build",
+    "phase": "building",
+    "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_51440_1781515782",
+    "bound_project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test.qgz",
+    "checkpoint_id": "task-6d3651c9-4990-4129-9942-89314d12f382-1781516810961714000",
+    "runtime_revision": "Zttzt:3261d67bf0ccaebc",
+    "active_agent_config": "Zttzt",
+    "updated_at": "2026-06-15T09:46:53Z",
+    "runtime_summary": "收到用户请求，开始分析任务需求...",
+    "workflow_blocks": [
+      {
+        "agent": "orchestrator",
+        "agentDisplayName": "主智能体",
+        "entries": [
+          {
+            "content": "收到用户请求，开始分析任务需求...",
+            "id": "entry-20260615094650.863",
+            "phase": "thinking",
+            "timestamp": 1781516810863,
+            "type": "thinking"
+          }
+        ],
+        "finishedAt": 1781516813901,
+        "id": "wf-20260615094650.863",
+        "startedAt": 1781516810863,
+        "status": "completed",
+        "summary": "收到用户请求，开始分析任务需求...",
+        "updatedAt": 1781516813901
+      }
+    ]
+  },
+  "created_at": "2026-06-15T17:46:02+08:00",
+  "last_active_at": "2026-06-15T09:47:03.56Z"
+}

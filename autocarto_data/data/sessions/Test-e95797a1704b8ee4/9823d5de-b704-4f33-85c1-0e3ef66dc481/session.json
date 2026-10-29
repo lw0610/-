@@ -1,0 +1,148 @@
+{
+  "active_agent_config": "default",
+  "archived": false,
+  "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_56340_1781246544",
+  "bound_project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test.qgz",
+  "checkpoint_id": "task-9823d5de-b704-4f33-85c1-0e3ef66dc481-1781247109489806000",
+  "compression_history": [],
+  "context_stats": {
+    "compressed_count": 0,
+    "estimated_tokens": 151,
+    "message_count": 3,
+    "total_chars": 778,
+    "total_tokens": 151
+  },
+  "created_at": "2026-06-12T14:51:00+08:00",
+  "description": "",
+  "execution_mode": "build",
+  "last_message_preview": "[assistant] **【操作】** 加载矢量图层\n\n**【结果】** ✅ 图层加载成功！\n\n| 属性 | 详情 |\n|------|------|\n| **图层名** | 河南省市域 |\n| **要素数** | 18 ...",
+  "llm_config": {},
+  "messages": [
+    {
+      "content": "加载矢量图层：图层名：河南省市域，路径：/home/shared-user/研究生/QGIS-agent/数据/底图数据/data_style/河南交通图/河南省市域.shp。",
+      "role": "user"
+    },
+    {
+      "content": "加载矢量图层：图层名：河南省市域，路径：/home/shared-user/研究生/QGIS-agent/数据/底图数据/data_style/河南交通图/河南省市域.shp。",
+      "role": "user"
+    },
+    {
+      "content": "**【操作】** 加载矢量图层\n\n**【结果】** ✅ 图层加载成功！\n\n| 属性 | 详情 |\n|------|------|\n| **图层名** | 河南省市域 |\n| **要素数** | 18 |\n| **几何类型** | Polygon（面） |\n| **字段数** | 10 |\n| **坐标系** | 待确认（未自动识别） |\n\n**【输出位置】** 已加载到当前 QGIS 工程中。\n\n> 💡 提示：该图层坐标系未被自动识别，如需定义投影或进一步处理，请告知。",
+      "role": "assistant"
+    },
+    {
+      "content": "**【操作】** 加载矢量图层\n\n**【结果】** ✅ 图层加载成功！\n\n| 属性 | 详情 |\n|------|------|\n| **图层名** | 河南省市域 |\n| **要素数** | 18 |\n| **几何类型** | Polygon（面） |\n| **字段数** | 10 |\n| **坐标系** | 待确认（未自动识别） |\n\n**【输出位置】** 已加载到当前 QGIS 工程中。\n\n> 💡 提示：该图层坐标系未被自动识别，如需定义投影或进一步处理，请告知。",
+      "data": {
+        "mode_phase": "building",
+        "protocol_version": 1
+      },
+      "msg_type": "assistant",
+      "role": "assistant",
+      "timestamp": "2026-06-12T06:51:56.859Z"
+    }
+  ],
+  "name": "加载河南省市域矢量图层",
+  "name_auto_generated": false,
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test.qgz",
+  "run_id": "task-9823d5de-b704-4f33-85c1-0e3ef66dc481-1781247109489806000",
+  "run_intent": "execute",
+  "runtime_phase": "building",
+  "runtime_revision": "default:5827592b78762c10",
+  "runtime_status": "completed",
+  "runtime_summary": "The vector layer was loaded successfully. Let me summarize the result for the user.\n\n- Layer name: 河南省市域\n- Features: 18\n- Geometry type: Polygon\n- CRS: (not detected explicitly, but it's likely a Chinese coordinate system)\n- Fields: 10\n\nThe load was successful. Let me report this to the user.",
+  "session_id": "9823d5de-b704-4f33-85c1-0e3ef66dc481",
+  "snapshots": [],
+  "tags": [],
+  "title_source": "llm",
+  "tool_calls": [],
+  "total_tokens_used": 151,
+  "updated_at": "2026-06-12T06:51:57.381Z",
+  "workflow_blocks": [
+    {
+      "agent": "orchestrator",
+      "agentDisplayName": "主智能体",
+      "entries": [
+        {
+          "content": "收到用户请求，开始分析任务需求...",
+          "id": "entry-20260612065149.388",
+          "phase": "thinking",
+          "timestamp": 1781247109388,
+          "type": "thinking"
+        },
+        {
+          "content": "识别到需要 主智能体 处理此任务",
+          "data": {
+            "mode_phase": "building"
+          },
+          "id": "entry-20260612065152.212",
+          "phase": "thinking",
+          "timestamp": 1781247112212,
+          "type": "thinking"
+        },
+        {
+          "content": "The user wants to load a vector layer. Let me use the data_load_vector tool to load the shapefile.\n\nFirst, let me check the project info to understand the current state.",
+          "data": {
+            "mode_phase": "building",
+            "thinking_kind": "reasoning"
+          },
+          "id": "entry-20260612065152.284",
+          "phase": "thinking",
+          "timestamp": 1781247112284,
+          "type": "thinking"
+        },
+        {
+          "content": "工具 data_load_vector 执行成功",
+          "data": {
+            "mode_phase": "building",
+            "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 18, 几何类型: Polygon, 坐标系: , 字段数: 10, resolved_from: absolute:exact\",\"output\":\"河南省市域\",\"success\":true}",
+            "result_parts": [
+              {
+                "text": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 18, 几何类型: Polygon, 坐标系: , 字段数: 10, resolved_from: absolute:exact\",\"output\":\"河南省市域\",\"success\":true}",
+                "type": "text"
+              }
+            ],
+            "status": "completed",
+            "status_source": "payload_success",
+            "success": true,
+            "tool": "data_load_vector"
+          },
+          "id": "entry-20260612065152.353",
+          "phase": "tool_result",
+          "timestamp": 1781247112590,
+          "toolCard": {
+            "args": {
+              "layer_name": "河南省市域",
+              "path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/data_style/河南交通图/河南省市域.shp"
+            },
+            "finishedAt": 1781247112590,
+            "id": "tool-20260612065152.353",
+            "result": "{\"error\":\"\",\"info\":\"矢量图层加载成功。要素数: 18, 几何类型: Polygon, 坐标系: , 字段数: 10, resolved_from: absolute:exact\",\"output\":\"河南省市域\",\"success\":true}",
+            "startedAt": 1781247112353,
+            "status": "completed",
+            "statusSource": "payload_success",
+            "success": true,
+            "tool": "data_load_vector"
+          },
+          "type": "tool"
+        },
+        {
+          "content": "The vector layer was loaded successfully. Let me summarize the result for the user.\n\n- Layer name: 河南省市域\n- Features: 18\n- Geometry type: Polygon\n- CRS: (not detected explicitly, but it's likely a Chinese coordinate system)\n- Fields: 10\n\nThe load was successful. Let me report this to the user.",
+          "data": {
+            "mode_phase": "building",
+            "thinking_kind": "reasoning"
+          },
+          "id": "entry-20260612065156.767",
+          "phase": "thinking",
+          "timestamp": 1781247116767,
+          "type": "thinking"
+        }
+      ],
+      "finishedAt": 1781247116859,
+      "id": "wf-20260612065149.388",
+      "startedAt": 1781247109388,
+      "status": "completed",
+      "summary": "The vector layer was loaded successfully. Let me summarize the result for the user.\n\n- Layer name: 河南省市域\n- Features: 18\n- Geometry type: Polygon\n- CRS: (not detected explicitly, but it's likely a Chinese coordinate system)\n- Fields: 10\n\nThe load was successful. Let me report this to the user.",
+      "updatedAt": 1781247116859
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+place_id,name,x,y,symbol_type,priority,place_type,date,desc
+se_smx,三门峡,111.194,34.777,start_flag,100,place,,友方主线 R_MAIN_01 出发点
+se_shanzhou,陕州,111.104,34.721,waypoint,50,place,,
+se_mianchi,渑池,111.762,34.767,waypoint,50,place,,
+se_yima,义马,111.874,34.747,waypoint,50,place,,
+se_xinan,新安,112.132,34.728,waypoint,50,place,,
+se_ly,洛阳,112.454,34.619,start_flag,100,place,,R_MAIN_01 终点、R_MAIN_02 起点、R_BRANCH_01 起点、R_ENEMY_01 终点
+se_yanshi,偃师,112.789,34.727,waypoint,50,place,,
+se_gongyi,巩义,112.972,34.754,enemy_node,60,place,,R_MAIN_02 和 R_ENEMY_01 共享节点
+se_xingyang,荥阳,113.383,34.787,waypoint,50,place,,
+se_zz,郑州,113.625,34.747,start_flag,100,place,,R_MAIN_02 终点、R_MAIN_03 起点、R_ENEMY_01 主路径起点及两条 incoming 汇入点
+se_zhongmu,中牟,114.022,34.718,waypoint,50,place,,
+se_kf,开封,114.307,34.798,waypoint,50,place,,发生战斗
+se_weishi,尉氏,114.193,34.411,waypoint,50,place,,
+se_tongxu,通许,114.467,34.48,waypoint,50,place,,
+se_qixian,杞县,114.782,34.55,waypoint,50,place,,
+se_lankao,兰考,114.821,34.823,waypoint,50,place,,
+se_minquan,民权,115.148,34.648,waypoint,50,place,,
+se_ningling,宁陵,115.314,34.455,waypoint,50,place,,
+se_sq,商丘,115.657,34.415,start_flag,100,place,,R_MAIN_03 终点、R_MAIN_04 起点
+se_yucheng,虞城,115.863,34.4,waypoint,50,place,,
+se_xiayi,夏邑,116.131,34.237,waypoint,50,place,,
+se_yongcheng,永城,116.449,33.929,waypoint,50,place,,永城汇集点
+se_yichuan,伊川,112.425,34.421,waypoint,50,place,,
+se_ruyang,汝阳,112.473,34.154,waypoint,50,place,,
+se_ruzhou,汝州,112.844,34.167,waypoint,50,place,,
+se_baofeng,宝丰,113.054,33.869,waypoint,50,place,,
+se_pds,平顶山,113.192,33.766,waypoint,50,place,,R_BRANCH_01 分叉连接点
+se_yexian,叶县,113.357,33.626,waypoint,50,place,,
+se_fangcheng,方城,113.01,33.255,waypoint,50,place,,
+se_ny,南阳,112.529,32.99,waypoint,50,place,,南阳重要会合节点
+se_lushan,鲁山,112.906,33.738,waypoint,50,place,,
+se_nanzhao,南召,112.429,33.49,waypoint,50,place,,
+se_zhenping,镇平,112.234,33.033,waypoint,50,place,,
+se_neixiang,内乡,111.849,33.044,waypoint,50,place,,内乡汇集点
+se_xinxiang,新乡,113.927,35.303,enemy_node,60,place,,
+se_huojia,获嘉,113.657,35.26,enemy_node,60,place,,
+se_yuanyang,原阳,113.94,35.067,enemy_node,60,place,,
+se_jiaozuo,焦作,113.241,35.215,enemy_node,60,place,,
+se_xiuwu,修武,113.447,35.223,enemy_node,60,place,,
+se_wuzhi,武陟,113.397,35.099,enemy_node,60,place,,
+se_xingze,荥泽,113.454,34.889,enemy_node,60,place,,
+se_xinmi,新密,113.391,34.539,enemy_node,60,place,,
+se_dengfeng,登封,113.03,34.459,enemy_node,60,place,,
+se_xc,许昌,113.852,34.035,meeting,6,place,,独立会合点，不属于任何启用路线
+se_yx_region,豫西节点区,112.18,34.61,base,3,region,,区域背景标注，带基地符号
+se_yz_region,豫中节点区,113.65,34.5,base,3,region,,区域背景标注，带基地符号
+se_yd_region,豫东节点区,115.3,34.55,base,3,region,,区域背景标注，带基地符号
+se_yn_region,豫南节点区,112.65,33.15,base,3,region,,区域背景标注，带基地符号

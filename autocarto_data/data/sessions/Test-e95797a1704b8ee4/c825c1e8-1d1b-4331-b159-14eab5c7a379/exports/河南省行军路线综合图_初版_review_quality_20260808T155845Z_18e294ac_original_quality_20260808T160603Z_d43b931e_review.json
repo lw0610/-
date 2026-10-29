@@ -1,0 +1,126 @@
+{
+  "created_at": "2026-08-08T16:06:03.942581+00:00",
+  "images": {
+    "final": {
+      "metadata": null,
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-e95797a1704b8ee4/c825c1e8-1d1b-4331-b159-14eab5c7a379/exports/河南省行军路线综合图_初版_review_quality_20260808T155845Z_18e294ac_original_quality_20260808T160603Z_d43b931e_final.png",
+      "role": "final"
+    },
+    "original": {
+      "byte_size": 1955978,
+      "dpi": {
+        "source": "png_pHYs",
+        "x": 100.0,
+        "y": 100.0
+      },
+      "height": 4681,
+      "mime_type": "image/png",
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-e95797a1704b8ee4/c825c1e8-1d1b-4331-b159-14eab5c7a379/exports/河南省行军路线综合图_初版_review_quality_20260808T155845Z_18e294ac_original_quality_20260808T160603Z_d43b931e_original.png",
+      "role": "original",
+      "sha256": "e77f00e1bcfd1781e2e5788940caddf3e09fcba3d0ff8582a9ce03639ff56b0d",
+      "source_path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-e95797a1704b8ee4/c825c1e8-1d1b-4331-b159-14eab5c7a379/exports/河南省行军路线综合图_初版_review_quality_20260808T155845Z_18e294ac_original.png",
+      "width": 3311
+    }
+  },
+  "review_context": {
+    "applied_suggestions": [],
+    "initial_export_dpi": 100.0,
+    "layout_item_ids": {
+      "decorative_border_1": "decorative_border_1",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    },
+    "layout_item_state": {
+      "items": {
+        "decorative_border_1": {
+          "rect_mm": {
+            "height": 1017.35,
+            "width": 721.55,
+            "x": 59.725,
+            "y": 85.825
+          },
+          "type": "shape"
+        },
+        "legend": {
+          "rect_mm": {
+            "height": 140.55,
+            "width": 32.105,
+            "x": 63.07,
+            "y": 959.29
+          },
+          "type": "legend"
+        },
+        "main_map": {
+          "rect_mm": {
+            "height": 1010.65,
+            "width": 714.85,
+            "x": 63.075,
+            "y": 89.175
+          },
+          "type": "map"
+        },
+        "north_arrow": {
+          "rect_mm": {
+            "height": 30,
+            "width": 20,
+            "x": 63.07,
+            "y": 89.18
+          },
+          "type": "picture"
+        },
+        "overview": {
+          "rect_mm": {
+            "height": 25.41,
+            "width": 80.54,
+            "x": 697.38,
+            "y": 89.18
+          },
+          "type": "label"
+        },
+        "scalebar": {
+          "rect_mm": {
+            "height": 13.1,
+            "width": 60.48,
+            "x": 717.45,
+            "y": 1086.72
+          },
+          "type": "scalebar"
+        },
+        "title": {
+          "rect_mm": {
+            "height": 18.18,
+            "width": 150.38,
+            "x": 388.74,
+            "y": 64.49
+          },
+          "type": "label"
+        }
+      },
+      "page_size_mm": {
+        "height": 1189,
+        "width": 841
+      }
+    },
+    "layout_name": "河南省行军路线综合图",
+    "locked_content": [
+      "标题文字：河南省行军路线综合图",
+      "所有路线拓扑（6条路线的节点顺序和连接关系）",
+      "点符号分类（出发旗标/战斗/会合/汇集点/敌方节点/经过点/基地）",
+      "许昌不属于任何路线",
+      "四个区域标注不属于任何路线",
+      "5处图文标注的标题和正文原文",
+      "底图图层",
+      "图例语义",
+      "比例尺数值",
+      "指北方向"
+    ],
+    "task_requirement": "制作河南省行军路线综合图。包含4条友方主线(R_MAIN_01~04)、1条友方分叉路线(R_BRANCH_01含平顶山支路)、1条敌方多起点汇入路线(R_ENEMY_01)。点符号按出发旗标/战斗/会合/汇集点/敌方节点/经过点/基地分类设置。5处图文标注(image_enabled=true, image_top_text_bottom模板, 30mm宽, double引线)。许昌和四个区域标注不属于任何路线。A0竖版布局，含标题/图例/数据综述/比例尺/指北针/装饰边框。"
+  },
+  "review_id": "20260808T160603Z_d43b931e",
+  "schema_version": "quality-feedback/v2",
+  "status": "initial_ready"
+}
