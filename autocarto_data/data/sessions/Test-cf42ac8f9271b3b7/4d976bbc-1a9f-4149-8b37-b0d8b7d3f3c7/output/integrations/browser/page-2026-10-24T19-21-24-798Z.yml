@@ -1,0 +1,194 @@
+- generic [ref=e1]:
+  - navigation "main navigation" [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e5]:
+        - button " 运行" [ref=e74] [cursor=pointer]:
+          - generic [ref=e7]: 
+          - generic [ref=e9]: 运行
+        - text: 
+        - button " 分享" [ref=e75] [cursor=pointer]:
+          - generic [ref=e11]: 
+          - generic [ref=e13]: 分享
+        - button " 导出" [ref=e76] [cursor=pointer]:
+          - generic [ref=e15]: 
+          - generic [ref=e17]: 导出
+      - generic [ref=e19]:
+        - button " 向导" [ref=e77] [cursor=pointer]:
+          - generic [ref=e21]: 
+          - generic [ref=e23]: 向导
+        - text: 
+      - generic [ref=e25]:
+        - button " 保存" [ref=e78] [cursor=pointer]:
+          - generic [ref=e27]: 
+          - generic [ref=e29]: 保存
+        - text: 
+        - button " 加载" [ref=e79] [cursor=pointer]:
+          - generic [ref=e31]: 
+          - generic [ref=e33]: 加载
+      - generic [ref=e35]:
+        - button " 设置" [active] [ref=e80] [cursor=pointer]:
+          - generic [ref=e37]: 
+          - generic [ref=e39]: 设置
+        - button " 帮助" [ref=e81] [cursor=pointer]:
+          - generic [ref=e41]: 
+          - generic [ref=e43]: 帮助
+      - link [ref=e45] [cursor=pointer]:
+        - /url: index.html
+        - text: overpass turbo
+        - img "overpass turbo logo" [ref=e46]
+    - list [ref=e50]:
+      - listitem [ref=e51]:
+        - generic "地图视图" [ref=e82] [cursor=pointer]: 地图
+      - listitem [ref=e53]:
+        - generic "数据视图" [ref=e83] [cursor=pointer]: 数据
+  - generic [ref=e85]:
+    - textbox [ref=e86]
+    - generic [ref=e89]:
+      - generic [ref=e91]:
+        - generic [ref=e92]: "1"
+        - generic [ref=e93]: "2"
+        - generic [ref=e94]: "3"
+        - generic [ref=e95]: "4"
+        - generic [ref=e96]: "5"
+        - generic [ref=e97]: "6"
+        - generic [ref=e98]: "7"
+        - generic [ref=e99]: "8"
+        - generic [ref=e100]: "9"
+      - generic [ref=e103]:
+        - generic [ref=e104]: /*
+        - generic [ref=e105]: This is an example Overpass query.
+        - generic [ref=e106]: Try it out by pressing the Run button above!
+        - generic [ref=e107]: You can find more examples with the Load tool.
+        - generic [ref=e108]: "*/"
+        - generic [ref=e109]: node
+        - generic [ref=e110]: "[amenity=drinking_water]"
+        - generic [ref=e111]: "({{bbox}});"
+        - generic [ref=e112]: out;
+  - generic [ref=e57]:
+    - generic [ref=e58]:
+      - generic:
+        - generic:
+          - generic [ref=e114]:
+            - button "Zoom in" [ref=e115] [cursor=pointer]: +
+            - button "Zoom out" [ref=e116] [cursor=pointer]: −
+          - generic [ref=e117]:
+            - link "" [ref=e118] [cursor=pointer]:
+              - /url: "#"
+            - link "" [ref=e120] [cursor=pointer]:
+              - /url: "#"
+            - link "" [ref=e122] [cursor=pointer]:
+              - /url: "#"
+            - link "" [ref=e124] [cursor=pointer]:
+              - /url: "#"
+            - link "" [ref=e126] [cursor=pointer]:
+              - /url: "#"
+        - generic [ref=e128]:
+          - searchbox [ref=e129]
+          - generic: 
+        - generic: 100 m
+        - generic [ref=e132]:
+          - link "Leaflet" [ref=e133] [cursor=pointer]:
+            - /url: https://leafletjs.com
+          - text: "| ©"
+          - link "OpenStreetMap" [ref=e138] [cursor=pointer]:
+            - /url: https://www.openstreetmap.org/copyright
+          - text: contributors
+      - text: 
+    - generic [ref=e139]:
+      - textbox [ref=e140]
+      - generic [ref=e143]:
+        - generic [ref=e144]: "1"
+        - generic [ref=e147]: no data loaded yet
+  - text: 
+  - generic [ref=e159]:
+    - banner [ref=e160]:
+      - paragraph [ref=e161]:
+        - generic [ref=e162]: 
+        - text: 设置
+      - button "close" [ref=e164] [cursor=pointer]
+    - generic [ref=e165]:
+      - generic [ref=e166]:
+        - heading "常规设置" [level=3] [ref=e167]
+        - generic [ref=e168]:
+          - generic [ref=e169]: 界面语言
+          - generic [ref=e171]:
+            - textbox "界面语言" [ref=e172]: auto
+            - button "show all items" [ref=e173] [cursor=pointer]
+        - generic [ref=e175]:
+          - generic [ref=e176]: 服务器
+          - generic [ref=e178]:
+            - textbox "服务器" [ref=e179]: https://overpass-api.de/api/
+            - button "show all items" [ref=e180] [cursor=pointer]
+        - generic [ref=e184] [cursor=pointer]:
+          - checkbox "当 Overpass API 未返回可见数据时，禁用警告/自动修复消息。" [ref=e185]
+          - text: 当 Overpass API 未返回可见数据时，禁用警告/自动修复消息。
+        - generic [ref=e188] [cursor=pointer]:
+          - checkbox "当 Overpass API 返回大量数据时，禁用警告。" [ref=e189]
+          - text: 当 Overpass API 返回大量数据时，禁用警告。
+      - generic [ref=e190]:
+        - heading "编辑器" [level=3] [ref=e191]
+        - generic [ref=e192]:
+          - generic [ref=e194] [cursor=pointer]:
+            - checkbox "启用富文本代码编辑器" [checked] [ref=e195]
+            - text: 启用富文本代码编辑器
+          - paragraph [ref=e196]: 在移动设备上建议禁用此项；需要重新加载页面才能生效
+        - generic [ref=e197]:
+          - generic [ref=e198]: 编辑器宽度
+          - textbox "编辑器宽度" [ref=e200]
+          - paragraph [ref=e201]: 例如 "400px"，留空则使用默认值
+      - generic [ref=e202]:
+        - heading "地图" [level=3] [ref=e203]
+        - generic [ref=e204]:
+          - generic [ref=e205]: 瓦片服务器
+          - generic [ref=e207]:
+            - textbox "瓦片服务器" [ref=e208]: "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            - button "show all items" [ref=e209] [cursor=pointer]
+        - generic [ref=e211]:
+          - generic [ref=e212]: 瓦片不透明度
+          - spinbutton "瓦片不透明度" [ref=e214]: "1"
+          - paragraph [ref=e215]: 背景瓦片透明度：0=透明 … 1=可见
+        - generic [ref=e218] [cursor=pointer]:
+          - checkbox "在地图中心显示十字准星。" [ref=e219]
+          - text: 在地图中心显示十字准星。
+        - generic [ref=e222] [cursor=pointer]:
+          - checkbox "不将小型要素显示为兴趣点 (POI)。" [ref=e223]
+          - text: 不将小型要素显示为兴趣点 (POI)。
+        - generic [ref=e226] [cursor=pointer]:
+          - checkbox "显示关于已加载和已显示数据的一些统计信息。" [checked] [ref=e227]
+          - text: 显示关于已加载和已显示数据的一些统计信息。
+      - generic [ref=e228]:
+        - heading "分享" [level=3] [ref=e229]
+        - generic [ref=e232] [cursor=pointer]:
+          - checkbox "在分享链接中包含当前地图状态" [checked] [ref=e233]
+          - text: 在分享链接中包含当前地图状态
+        - generic [ref=e234]:
+          - generic [ref=e235]: 压缩
+          - generic [ref=e237]:
+            - textbox "压缩" [ref=e238]: auto
+            - button "show all items" [ref=e239] [cursor=pointer]
+      - generic [ref=e241]:
+        - heading "导出" [level=3] [ref=e242]
+        - generic [ref=e245] [cursor=pointer]:
+          - checkbox "在导出的图像上显示比例尺。" [checked] [ref=e246]
+          - text: 在导出的图像上显示比例尺。
+        - generic [ref=e249] [cursor=pointer]:
+          - checkbox "在导出的图像上显示版权信息。" [checked] [ref=e250]
+          - text: 在导出的图像上显示版权信息。
+    - contentinfo [ref=e251]:
+      - generic [ref=e254]:
+        - button "重置" [ref=e255] [cursor=pointer]
+        - button " 保存" [ref=e257] [cursor=pointer]:
+          - generic [ref=e258]: 
+          - generic [ref=e260]: 保存
+        - button "关闭" [ref=e261] [cursor=pointer]
+  - text:                
+  - log [ref=e151]
+  - log [ref=e152]
+  - log [ref=e153]
+  - log [ref=e154]
+  - log [ref=e155]
+  - status [ref=e156]
+  - status [ref=e263]
+  - status [ref=e264]
+  - status [ref=e265]
+  - status [ref=e266]

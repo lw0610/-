@@ -1,0 +1,534 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_13a48be17b1d75f7",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/exports/广东省河流线.geojson",
+      "name": "广东省河流线.geojson",
+      "kind": "vector",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:26:18.008606578Z",
+      "modified_at": "2026-10-24T19:26:18.008606578Z",
+      "size": 9135353,
+      "exists": true
+    },
+    {
+      "id": "f_8bdec76e565296eb",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/browser/console-2026-10-24T19-20-58-670Z.log",
+      "name": "console-2026-10-24T19-20-58-670Z.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:21:14.211032536Z",
+      "modified_at": "2026-10-24T19:21:14.211032536Z",
+      "size": 682,
+      "exists": true
+    },
+    {
+      "id": "f_9aab76db7de96f5b",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/browser/page-2026-10-24T19-21-02-587Z.yml",
+      "name": "page-2026-10-24T19-21-02-587Z.yml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:21:02.588280953Z",
+      "modified_at": "2026-10-24T19:21:02.588280953Z",
+      "size": 2167,
+      "exists": true
+    },
+    {
+      "id": "f_a0edf38540cdc07e",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/browser/page-2026-10-24T19-21-24-798Z.yml",
+      "name": "page-2026-10-24T19-21-24-798Z.yml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:21:24.799280786Z",
+      "modified_at": "2026-10-24T19:21:24.799280786Z",
+      "size": 8377,
+      "exists": true
+    },
+    {
+      "id": "f_b56d07e5c809d274",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/browser/page-2026-10-24T19-21-31-262Z.yml",
+      "name": "page-2026-10-24T19-21-31-262Z.yml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:21:31.263255203Z",
+      "modified_at": "2026-10-24T19:21:31.263255203Z",
+      "size": 8918,
+      "exists": true
+    },
+    {
+      "id": "f_290470c0fba7090e",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/downloads/download-3057464389/ne_10m_rivers_lake_centerlines.zip",
+      "name": "ne_10m_rivers_lake_centerlines.zip",
+      "kind": "archive",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "web_download_file",
+        "label": "下载公开文件",
+        "call_id": "call_01_QSMHjuz0sepsQkpUz7R56062",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:16:37.640196Z",
+      "modified_at": "2026-10-24T19:16:37.639754369Z",
+      "size": 2079507,
+      "exists": true
+    },
+    {
+      "id": "f_bb5dbeba1807345e",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/downloads/download-3057464389/source.json",
+      "name": "source.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:16:37.640016328Z",
+      "modified_at": "2026-10-24T19:16:37.640016328Z",
+      "size": 867,
+      "exists": true
+    },
+    {
+      "id": "f_78aea1b4e5588a72",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/downloads/download-3171503244/ne_10m_rivers_lake_centerlines.geojson",
+      "name": "ne_10m_rivers_lake_centerlines.geojson",
+      "kind": "vector",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "web_download_file",
+        "label": "下载公开文件",
+        "call_id": "call_01_Evj4bPksNVi95JL1RS6d7728",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:16:59.7625Z",
+      "modified_at": "2026-10-24T19:16:59.761335911Z",
+      "size": 7307743,
+      "exists": true
+    },
+    {
+      "id": "f_ba71b1edb57fef7a",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/downloads/download-3171503244/source.json",
+      "name": "source.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:16:59.762065078Z",
+      "modified_at": "2026-10-24T19:16:59.762065078Z",
+      "size": 940,
+      "exists": true
+    },
+    {
+      "id": "f_08164f728e9d9e60",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-2046884170/_gee_worker.py",
+      "name": "_gee_worker.py",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:24:51.706709203Z",
+      "modified_at": "2026-10-24T19:24:51.706709203Z",
+      "size": 43507,
+      "exists": true
+    },
+    {
+      "id": "f_c6c98b80800d093c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-2046884170/_worker_result.json",
+      "name": "_worker_result.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:25:42.338440245Z",
+      "modified_at": "2026-10-24T19:25:42.338440245Z",
+      "size": 1057,
+      "exists": true
+    },
+    {
+      "id": "f_d8c32848487ad834",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-2046884170/guangdong_rivers_freeflowing.geojson",
+      "name": "guangdong_rivers_freeflowing.geojson",
+      "kind": "vector",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_j2XYRP0ZSG4WZAEbNGUL4538",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:25:42.410398Z",
+      "modified_at": "2026-10-24T19:25:42.338190911Z",
+      "size": 19946533,
+      "exists": true
+    },
+    {
+      "id": "f_b6d2a4d6b6720335",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-2046884170/progress.jsonl",
+      "name": "progress.jsonl",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_j2XYRP0ZSG4WZAEbNGUL4538",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:25:42.410934Z",
+      "modified_at": "2026-10-24T19:25:41.867160244Z",
+      "size": 674,
+      "exists": true
+    },
+    {
+      "id": "f_4ba7d8dc5b8ffaaa",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-2046884170/script.py",
+      "name": "script.py",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_j2XYRP0ZSG4WZAEbNGUL4538",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:25:42.411252Z",
+      "modified_at": "2026-10-24T19:24:51.706881078Z",
+      "size": 1825,
+      "exists": true
+    },
+    {
+      "id": "f_cac87c5313c694ce",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-2046884170/stderr.log",
+      "name": "stderr.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_j2XYRP0ZSG4WZAEbNGUL4538",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:25:42.411566Z",
+      "modified_at": "2026-10-24T19:25:42.410168703Z",
+      "size": 0,
+      "exists": true
+    },
+    {
+      "id": "f_443c1dfd17b4e205",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-2046884170/stdout.log",
+      "name": "stdout.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_j2XYRP0ZSG4WZAEbNGUL4538",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:25:42.411874Z",
+      "modified_at": "2026-10-24T19:25:42.410154203Z",
+      "size": 976,
+      "exists": true
+    },
+    {
+      "id": "f_178e4f1ab47047c9",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-260673475/_gee_worker.py",
+      "name": "_gee_worker.py",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:24:05.285195369Z",
+      "modified_at": "2026-10-24T19:24:05.285195369Z",
+      "size": 43507,
+      "exists": true
+    },
+    {
+      "id": "f_de66f59de0e808e8",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-260673475/_worker_result.json",
+      "name": "_worker_result.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:24:15.434253036Z",
+      "modified_at": "2026-10-24T19:24:15.434253036Z",
+      "size": 1078,
+      "exists": true
+    },
+    {
+      "id": "f_9d9d241b8c44ead6",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-260673475/progress.jsonl",
+      "name": "progress.jsonl",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:24:15.427794828Z",
+      "modified_at": "2026-10-24T19:24:15.427794828Z",
+      "size": 547,
+      "exists": true
+    },
+    {
+      "id": "f_8360e3e9ae9889dc",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-260673475/script.py",
+      "name": "script.py",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:24:05.285339328Z",
+      "modified_at": "2026-10-24T19:24:05.285339328Z",
+      "size": 748,
+      "exists": true
+    },
+    {
+      "id": "f_18f8217ba968e0ab",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-260673475/stderr.log",
+      "name": "stderr.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:24:15.486208328Z",
+      "modified_at": "2026-10-24T19:24:15.486208328Z",
+      "size": 2429,
+      "exists": true
+    },
+    {
+      "id": "f_cee6f7bbfb1827cf",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-260673475/stdout.log",
+      "name": "stdout.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:24:15.486179036Z",
+      "modified_at": "2026-10-24T19:24:15.486179036Z",
+      "size": 534,
+      "exists": true
+    },
+    {
+      "id": "f_d70472c46293cfbb",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-3735495071/_gee_worker.py",
+      "name": "_gee_worker.py",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:23:40.311541536Z",
+      "modified_at": "2026-10-24T19:23:40.311541536Z",
+      "size": 43507,
+      "exists": true
+    },
+    {
+      "id": "f_b604dd0ad502c542",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-3735495071/_worker_result.json",
+      "name": "_worker_result.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-24T19:23:49.114934369Z",
+      "modified_at": "2026-10-24T19:23:49.114934369Z",
+      "size": 1057,
+      "exists": true
+    },
+    {
+      "id": "f_0d0d81327679e6fd",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-3735495071/progress.jsonl",
+      "name": "progress.jsonl",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_wXYsEvkmRVMCJVhQXrs60326",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:23:49.173676Z",
+      "modified_at": "2026-10-24T19:23:45.381111203Z",
+      "size": 298,
+      "exists": true
+    },
+    {
+      "id": "f_a659059215bf2fdf",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-3735495071/script.py",
+      "name": "script.py",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_wXYsEvkmRVMCJVhQXrs60326",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:23:49.174097Z",
+      "modified_at": "2026-10-24T19:23:40.312052619Z",
+      "size": 581,
+      "exists": true
+    },
+    {
+      "id": "f_4ddb586e574bf622",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-3735495071/stderr.log",
+      "name": "stderr.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_wXYsEvkmRVMCJVhQXrs60326",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:23:49.174355Z",
+      "modified_at": "2026-10-24T19:23:49.171635953Z",
+      "size": 0,
+      "exists": true
+    },
+    {
+      "id": "f_0a8bdbf3f189c42c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/output/integrations/gee/run-3735495071/stdout.log",
+      "name": "stdout.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_wXYsEvkmRVMCJVhQXrs60326",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-24T19:23:49.171922Z",
+      "modified_at": "2026-10-24T19:23:49.171687994Z",
+      "size": 269,
+      "exists": true
+    },
+    {
+      "id": "f_cb9aad0f3fefb49c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/temp/previews/f_13a48be17b1d75f7-1792870015874378000.png",
+      "name": "f_13a48be17b1d75f7-1792870015874378000.png",
+      "kind": "image",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "preview",
+        "label": "数据缩略图"
+      },
+      "registered_at": "2026-10-24T19:26:56.217954Z",
+      "modified_at": "2026-10-24T19:26:56.216687703Z",
+      "size": 208814,
+      "exists": true
+    },
+    {
+      "id": "f_7d998a24c1f380f4",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/temp/previews/f_78aea1b4e5588a72-1792869459527125000.png",
+      "name": "f_78aea1b4e5588a72-1792869459527125000.png",
+      "kind": "image",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "preview",
+        "label": "数据缩略图"
+      },
+      "registered_at": "2026-10-24T19:17:39.77117Z",
+      "modified_at": "2026-10-24T19:17:39.770222869Z",
+      "size": 63354,
+      "exists": true
+    },
+    {
+      "id": "f_accabe09cf8c22c7",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/4d976bbc-1a9f-4149-8b37-b0d8b7d3f3c7/temp/previews/f_d8c32848487ad834-1792869963848394000.png",
+      "name": "f_d8c32848487ad834-1792869963848394000.png",
+      "kind": "image",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "preview",
+        "label": "数据缩略图"
+      },
+      "registered_at": "2026-10-24T19:26:04.694288Z",
+      "modified_at": "2026-10-24T19:26:04.693219578Z",
+      "size": 208328,
+      "exists": true
+    }
+  ]
+}

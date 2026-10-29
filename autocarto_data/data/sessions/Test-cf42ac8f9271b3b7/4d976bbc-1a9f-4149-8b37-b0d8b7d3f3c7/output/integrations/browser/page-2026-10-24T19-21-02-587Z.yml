@@ -1,0 +1,59 @@
+- generic [active] [ref=e1]:
+  - navigation "main navigation" [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e5]:
+        - button " Run" [ref=e6] [cursor=pointer]:
+          - generic [ref=e7]: 
+          - generic [ref=e9]: Run
+        - text: 
+        - button " Share" [ref=e10] [cursor=pointer]:
+          - generic [ref=e11]: 
+          - generic [ref=e13]: Share
+        - button " Export" [ref=e14] [cursor=pointer]:
+          - generic [ref=e15]: 
+          - generic [ref=e17]: Export
+      - generic [ref=e19]:
+        - button " Wizard" [ref=e20] [cursor=pointer]:
+          - generic [ref=e21]: 
+          - generic [ref=e23]: Wizard
+        - text: 
+      - generic [ref=e25]:
+        - button " Save" [ref=e26] [cursor=pointer]:
+          - generic [ref=e27]: 
+          - generic [ref=e29]: Save
+        - text: 
+        - button " Load" [ref=e30] [cursor=pointer]:
+          - generic [ref=e31]: 
+          - generic [ref=e33]: Load
+      - generic [ref=e35]:
+        - button " Settings" [ref=e36] [cursor=pointer]:
+          - generic [ref=e37]: 
+          - generic [ref=e39]: Settings
+        - button " Help" [ref=e40] [cursor=pointer]:
+          - generic [ref=e41]: 
+          - generic [ref=e43]: Help
+      - link [ref=e45] [cursor=pointer]:
+        - /url: index.html
+        - text: overpass turbo
+        - img "overpass turbo logo" [ref=e46]
+    - list [ref=e50]:
+      - listitem [ref=e51]:
+        - generic [ref=e52] [cursor=pointer]: Map
+      - listitem [ref=e53]:
+        - generic [ref=e54] [cursor=pointer]: Data
+  - textbox [ref=e56]
+  - generic [ref=e63]:
+    - progressbar [ref=e64]
+    - generic [ref=e65]:
+      - heading "overpass turbo loading..." [level=4] [ref=e66]
+      - list [ref=e67]:
+        - listitem [ref=e68]:
+          - generic [ref=e69]: 
+          - text: translate ui
+        - listitem [ref=e70]:
+          - generic [ref=e71]: 
+          - text: load settings
+        - listitem [ref=e72]:
+          - generic [ref=e73]: 
+          - text: ide starting up
+  - text:                

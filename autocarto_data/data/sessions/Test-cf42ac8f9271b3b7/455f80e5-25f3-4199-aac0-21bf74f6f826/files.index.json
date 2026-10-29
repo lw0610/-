@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_3231d58358479f3e",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/455f80e5-25f3-4199-aac0-21bf74f6f826/exports/hunan_railways_clean.geojson",
+      "name": "hunan_railways_clean.geojson",
+      "kind": "vector",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-26T04:36:01.473670791Z",
+      "modified_at": "2026-10-26T04:36:01.473670791Z",
+      "size": 8626446,
+      "exists": true
+    },
+    {
+      "id": "f_a5839de1aaf83237",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/455f80e5-25f3-4199-aac0-21bf74f6f826/exports/hunan_rivers_clean.geojson",
+      "name": "hunan_rivers_clean.geojson",
+      "kind": "vector",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-26T04:36:01.283907291Z",
+      "modified_at": "2026-10-26T04:36:01.283907291Z",
+      "size": 11312480,
+      "exists": true
+    },
+    {
+      "id": "f_460ba45c752c10c1",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/455f80e5-25f3-4199-aac0-21bf74f6f826/output/osm/hunan_railways.geojson",
+      "name": "hunan_railways.geojson",
+      "kind": "vector",
+      "group": "source",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "osm_get_features",
+        "label": "按范围下载 OSM 要素",
+        "call_id": "call_01_KWw4pDdOHptz0SeihJTG0632",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T04:33:03.207445Z",
+      "modified_at": "2026-10-26T04:33:03.046949833Z",
+      "size": 7260979,
+      "exists": true
+    },
+    {
+      "id": "f_8bd349e3cb8ef7ea",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/455f80e5-25f3-4199-aac0-21bf74f6f826/output/osm/hunan_railways.geojson.source.json",
+      "name": "hunan_railways.geojson.source.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "osm_get_features",
+        "label": "按范围下载 OSM 要素",
+        "call_id": "call_01_KWw4pDdOHptz0SeihJTG0632",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T04:33:03.207906Z",
+      "modified_at": "2026-10-26T04:33:03.047450833Z",
+      "size": 3361,
+      "exists": true
+    },
+    {
+      "id": "f_fa22918ac3fff28c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/455f80e5-25f3-4199-aac0-21bf74f6f826/output/osm/hunan_rivers.geojson",
+      "name": "hunan_rivers.geojson",
+      "kind": "vector",
+      "group": "source",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "osm_get_features",
+        "label": "按范围下载 OSM 要素",
+        "call_id": "call_00_fbVrRypZzFTDCWW8dRiY1680",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T04:33:56.882552Z",
+      "modified_at": "2026-10-26T04:33:56.799060791Z",
+      "size": 9713493,
+      "exists": true
+    },
+    {
+      "id": "f_a95762063ab23d52",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/455f80e5-25f3-4199-aac0-21bf74f6f826/output/osm/hunan_rivers.geojson.source.json",
+      "name": "hunan_rivers.geojson.source.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "osm_get_features",
+        "label": "按范围下载 OSM 要素",
+        "call_id": "call_00_fbVrRypZzFTDCWW8dRiY1680",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T04:33:56.882823Z",
+      "modified_at": "2026-10-26T04:33:56.799184041Z",
+      "size": 2811,
+      "exists": true
+    },
+    {
+      "id": "f_5bf7a210be9fad9b",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/455f80e5-25f3-4199-aac0-21bf74f6f826/temp/previews/f_460ba45c752c10c1-1792989227932924000.png",
+      "name": "f_460ba45c752c10c1-1792989227932924000.png",
+      "kind": "image",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "preview",
+        "label": "数据缩略图"
+      },
+      "registered_at": "2026-10-26T04:33:49.270771Z",
+      "modified_at": "2026-10-26T04:33:49.265595666Z",
+      "size": 18654,
+      "exists": true
+    },
+    {
+      "id": "f_468c85e3c5ae2329",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/455f80e5-25f3-4199-aac0-21bf74f6f826/temp/previews/f_fa22918ac3fff28c-1792989288848406000.png",
+      "name": "f_fa22918ac3fff28c-1792989288848406000.png",
+      "kind": "image",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "preview",
+        "label": "数据缩略图"
+      },
+      "registered_at": "2026-10-26T04:34:49.164481Z",
+      "modified_at": "2026-10-26T04:34:49.163524416Z",
+      "size": 7588,
+      "exists": true
+    }
+  ]
+}
