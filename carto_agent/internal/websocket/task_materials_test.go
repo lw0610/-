@@ -62,3 +62,46 @@ func TestTaskAttachmentsAreReadableAndRetainedAcrossUserTurns(t *testing.T) {
 		t.Fatalf("folder child unreadable: %q %v", text, err)
 	}
 }
+
+func TestUserDirectoryReferencesFromChatAndInterruptAnswers(t *testing.T) {
+	t.Setenv("AUTOCARTO_HOME", t.TempDir())
+	t.Setenv("AUTOCARTO_PROJECT_ROOT", t.TempDir())
+	project := filepath.Join(t.TempDir(), "map.qgz")
+	folder := filepath.Join(t.TempDir(), "底图数据", "China_map")
+	if err := os.MkdirAll(folder, 0700); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(folder, "省界.txt")
+	if err := os.WriteFile(path, []byte("provided boundary"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		name string
+		msg  Message
+	}{
+		{"chat", Message{Content: "根据史料内容，加载" + folder + "\n下的矢量图层，制作行军路线图"}},
+		{"card_text", Message{Type: MsgTypeInterruptResponse, Data: map[string]any{"user_data": map[string]any{"text": "数据在" + folder}}}},
+		{"card_decision", Message{Type: MsgTypeInterruptResponse, Data: map[string]any{"user_data": map[string]any{"decisions": map[string]any{"basemap": map[string]any{"text": "数据在" + folder}}}}}},
+		{"card_attachment", Message{Type: MsgTypeInterruptResponse, Data: map[string]any{"user_data": map[string]any{"attachments": []map[string]any{{"path": folder}}}}}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := toolsession.WithContext(context.Background(), tc.name, project, "")
+			server := &DeepServer{}
+			if err := server.bindTaskReferences(ctx, tc.name, project, tc.msg, schema.UserMessage(tc.msg.Content)); err != nil {
+				t.Fatal(err)
+			}
+			text, err := fileops.ReadText(ctx, path)
+			if err != nil || text != "provided boundary" {
+				t.Fatalf("human-provided folder not readable: %q %v", text, err)
+			}
+			dir, err := config.ResolveSessionDir(project, tc.name)
+			if err != nil {
+				t.Fatal(err)
+			}
+			bindings, err := dataservice.LoadBindings(dir)
+			if err != nil || len(bindings) != 1 || bindings[0].Path != folder || !bindings[0].Current {
+				t.Fatalf("folder not registered as current material: %+v %v", bindings, err)
+			}
+		})
+	}
+}

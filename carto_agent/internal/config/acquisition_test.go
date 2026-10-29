@@ -1,9 +1,40 @@
 package config
 
 import (
+	"encoding/json"
 	"gopkg.in/yaml.v3"
+	"strings"
 	"testing"
 )
+
+func TestAcquisitionLoadsHistoricalSettingsWithoutExposingRemovedControls(t *testing.T) {
+	var c Config
+	if err := yaml.Unmarshal([]byte(`acquisition:
+  max_download_mb: 256
+  exclusive_agent: true
+  agent_model: retired-model
+  allow_shell: true
+  budget:
+    acquisition_timeout_seconds: 900
+    acquisition_max_tool_calls: 80
+    step_timeout_seconds: 600
+    step_max_tool_calls: 60
+    run_timeout_seconds: 3600
+`), &c); err != nil {
+		t.Fatal(err)
+	}
+	a := c.Acquisition.WithDefaults()
+	if a.MaxDownloadMB != 256 {
+		t.Fatal("existing acquisition settings changed", a)
+	}
+	if err := a.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := json.Marshal(a)
+	if err != nil || strings.Contains(string(raw), "budget") || strings.Contains(string(raw), "max_tool_calls") || strings.Contains(string(raw), "exclusive_agent") || strings.Contains(string(raw), "agent_model") || strings.Contains(string(raw), "allow_shell") {
+		t.Fatalf("removed execution settings were exposed again: %s, %v", raw, err)
+	}
+}
 
 func TestAcquisitionDefaultsPreserveExplicitFalse(t *testing.T) {
 	var c Config

@@ -6,11 +6,21 @@ import (
 	"strings"
 
 	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/knowledge"
+	"github.com/autocarto/carto_agent/internal/plan"
 	"github.com/cloudwego/eino/schema"
 )
 
 // RouteKnowledgeExecutor adapts a declared knowledge step without copying source text.
 type RouteKnowledgeExecutor struct{}
+
+// KnowledgeReviewReference keeps the confirmed draft attached to its step even
+// when dataset generation fails and the remaining plan is revised.
+type KnowledgeReviewReference struct {
+	ReviewID string `json:"review_id"`
+	Revision int64  `json:"revision"`
+	Status   string `json:"status"`
+}
 
 func NewRouteKnowledgeExecutor() ExecutorAdapter { return RouteKnowledgeExecutor{} }
 
@@ -44,7 +54,7 @@ func (RouteKnowledgeExecutor) BuildInput(step flow.StepPlan, run *RunState) ([]*
 			forceRefresh = flag
 		}
 	}
-	if !foundSource {
+	if !foundSource && (run.CartoPlan == nil || run.CartoPlan.APIVersion != plan.APIVersion) {
 		return nil, fmt.Errorf("知识步骤必须引用已提供的 conversation_text 输入")
 	}
 	if run.Cursor >= 0 && run.Cursor < len(run.Steps) {
@@ -53,6 +63,45 @@ func (RouteKnowledgeExecutor) BuildInput(step flow.StepPlan, run *RunState) ([]*
 		}
 	}
 	payload := map[string]any{"source_ref": "current_task_input", "force_refresh": forceRefresh}
+	if run.CartoPlan != nil && run.CartoPlan.APIVersion == plan.APIVersion {
+		refs := []string{}
+		inputs := EffectiveInputs(run)
+		for _, id := range step.Refs.Inputs {
+			data, ok := run.CartoPlan.DataByID(id)
+			if !ok {
+				continue
+			}
+			if data.Source == "user" && data.Ref == "消息原文" {
+				refs = append(refs, "current_user_message")
+				continue
+			}
+			ref, ok := inputs[id].(string)
+			if !ok || ref == "" {
+				return nil, fmt.Errorf("原文输入 %s 尚未解析为文件引用", data.Name)
+			}
+			refs = append(refs, ref)
+		}
+		for _, ref := range step.Refs.Outputs {
+			for _, previous := range run.Steps {
+				if previous.ID == ref.Step {
+					path, ok := previous.Outputs[ref.Label].(string)
+					if !ok || path == "" {
+						return nil, fmt.Errorf("原文产出 %s 尚未解析为文件引用", ref.Label)
+					}
+					refs = append(refs, path)
+				}
+			}
+		}
+		if len(refs) == 0 {
+			return nil, fmt.Errorf("知识步骤缺少已绑定的原文输入")
+		}
+		if len(refs) == 1 {
+			payload["source_ref"] = refs[0]
+		} else {
+			delete(payload, "source_ref")
+			payload["source_refs"] = refs
+		}
+	}
 	if strings.TrimSpace(step.Instructions) != "" {
 		payload["rules"] = step.Instructions
 	}
@@ -61,40 +110,17 @@ func (RouteKnowledgeExecutor) BuildInput(step flow.StepPlan, run *RunState) ([]*
 			payload[key] = value
 		}
 	}
-	// Previously saved plans used linked resource handles. New plans carry
-	// explicit preset parameters, which take precedence over those snapshots.
-	if payload["route_style"] == nil || payload["symbols"] == nil {
-		seenTypes := map[string]bool{}
-		for _, key := range step.Refs.Resources {
-			var selected *flow.ResourcePlan
-			for index := range run.Plan.Resources {
-				if run.Plan.Resources[index].Key == key {
-					selected = &run.Plan.Resources[index]
-					break
-				}
-			}
-			if selected == nil {
-				return nil, fmt.Errorf("知识步骤引用未知资源: %s", key)
-			}
-			if selected.Type != "symbols" && selected.Type != "route_style" {
+	if !forceRefresh {
+		for _, state := range run.Steps {
+			if state.ID != step.ID || len(state.Attempts) == 0 {
 				continue
 			}
-			if strings.TrimSpace(step.Parameters[selected.Type]) != "" {
-				continue
+			receipt := state.Attempts[len(state.Attempts)-1].Receipt
+			if receipt != nil && receipt.KnowledgeReview != nil && receipt.KnowledgeReview.Status == knowledge.ReviewCompileFailed {
+				payload["review_id"] = receipt.KnowledgeReview.ReviewID
+				payload["revision"] = receipt.KnowledgeReview.Revision
 			}
-			if seenTypes[selected.Type] {
-				return nil, fmt.Errorf("知识步骤引用多个 %s 资源，无法确定本次使用项", selected.Type)
-			}
-			seenTypes[selected.Type] = true
-			handle := selected.ResolvedResource().Handle()
-			if handle == nil || selected.ID == "" {
-				return nil, fmt.Errorf("知识资源尚未链接为可执行句柄: %s", key)
-			}
-			if selected.Type == "route_style" {
-				payload["route_style"] = handle
-			} else {
-				payload["symbols"] = handle
-			}
+			break
 		}
 	}
 	encoded, err := json.Marshal(payload)
@@ -106,10 +132,11 @@ func (RouteKnowledgeExecutor) BuildInput(step flow.StepPlan, run *RunState) ([]*
 
 func (RouteKnowledgeExecutor) ToReceipt(step flow.StepPlan, content string) (Receipt, error) {
 	var envelope struct {
-		Success *bool          `json:"success"`
-		Data    map[string]any `json:"data"`
-		Info    string         `json:"info"`
-		Message string         `json:"message"`
+		Success         *bool                     `json:"success"`
+		Data            map[string]any            `json:"data"`
+		Info            string                    `json:"info"`
+		Message         string                    `json:"message"`
+		KnowledgeReview *KnowledgeReviewReference `json:"knowledge_review"`
 	}
 	if err := json.Unmarshal([]byte(content), &envelope); err != nil || envelope.Success == nil {
 		return Receipt{}, fmt.Errorf("知识执行器未返回有效 success/data JSON")
@@ -122,7 +149,7 @@ func (RouteKnowledgeExecutor) ToReceipt(step flow.StepPlan, content string) (Rec
 		if message == "" {
 			message = "知识执行器未完成"
 		}
-		return Receipt{Status: "failed", Summary: message, Outputs: map[string]any{}, Issues: []string{message}}, nil
+		return Receipt{Status: "failed", Summary: message, Outputs: map[string]any{}, Issues: []string{message}, KnowledgeReview: envelope.KnowledgeReview}, nil
 	}
 	dir, _ := envelope.Data["dataset_dir"].(string)
 	if strings.TrimSpace(dir) == "" {

@@ -51,6 +51,9 @@ const (
 )
 
 type consumeEventsOptions struct {
+	replanPlanID      string
+	replanPlanVersion int
+	traceAgent        string
 	flowRunID         string
 	flowStepID        string
 	originalSource    *string
@@ -63,7 +66,9 @@ type consumeEventsOptions struct {
 }
 
 type consumeEventsResult struct {
+	Messages        []*schema.Message
 	SuccessfulTools []flowrun.ToolSummary
+	StyleTools      []flowrun.ToolSummary
 	LastContent     string
 	Interrupted     bool
 	Err             error
@@ -378,7 +383,7 @@ func (s *DeepServer) processTask(ctx context.Context, conn *websocket.Conn, msg 
 
 	flowContext := flowSessionContext{Conn: conn, Session: sess, SessionID: sessionID, ProjectPath: projectPath, InstanceID: boundInstanceID, OriginalSource: msg.Content, Scheme: s.GetRuntimeActiveConfigName(), Mode: execMode}
 	s.setFlowContext(flowContext)
-	input, err := s.injectCartographicRules(ctx, injectRuntimeExecutionMode(sess.GetMessages(), execMode, thinkingEnabled), flowContext.Scheme, sessionID)
+	input, err := s.injectTaskContext(ctx, injectRuntimeExecutionMode(sess.GetMessages(), execMode, thinkingEnabled), flowContext.Scheme, sessionID, execMode)
 	if err != nil {
 		s.sendSessionError(conn, sessionID, err.Error())
 		s.markSessionRuntimeFinished(sessionID, sessionRuntimeStatusFailed, err.Error())
@@ -473,6 +478,7 @@ func (s *DeepServer) consumeEvents(
 	toolActivitySeen := false
 	emittedWorkflowTexts := make(map[string]struct{})
 	result := consumeEventsResult{}
+	styleCalls := map[string]json.RawMessage{}
 	fileStore, _ := sessionfiles.New(projectPath, sessionID)
 	artifactDefinitions := map[string]tooldefinition.ToolDefinition{}
 	if fileStore != nil {
@@ -531,6 +537,9 @@ func (s *DeepServer) consumeEvents(
 					continue // Application state is neither assistant prose nor model output JSON.
 				}
 				if !mv.IsStreaming && !isRuntimeProgressMessage(mv.Message) {
+					if options.traceAgent != "" && event.AgentName == options.traceAgent {
+						result.Messages = append(result.Messages, mv.Message)
+					}
 					lastContent = summarizeSchemaMessageContent(mv.Message)
 				}
 
@@ -554,6 +563,9 @@ func (s *DeepServer) consumeEvents(
 
 					for _, toolCall := range mv.Message.ToolCalls {
 						toolName := toolCall.Function.Name
+						if flowrun.IsStyleTool(toolName) {
+							styleCalls[toolCall.ID] = json.RawMessage(toolCall.Function.Arguments)
+						}
 						var toolArgs map[string]interface{}
 						json.Unmarshal([]byte(toolCall.Function.Arguments), &toolArgs)
 						logger.Info(
@@ -594,6 +606,10 @@ func (s *DeepServer) consumeEvents(
 					friendlyName := getAgentFriendlyName(currentAgent)
 
 					assessment := determineToolStatus(mv.ToolName, lastContent)
+					if flowrun.IsStyleTool(mv.ToolName) {
+						result.StyleTools = append(result.StyleTools, flowrun.ToolSummary{Name: mv.ToolName, Arguments: styleCalls[mv.Message.ToolCallID], Result: lastContent})
+						delete(styleCalls, mv.Message.ToolCallID)
+					}
 					if assessment.Status == "completed" {
 						if fileStore != nil {
 							registerToolArtifacts(fileStore, artifactDefinitions[mv.ToolName], mv.ToolName, currentAgent, mv.Message, options)
@@ -818,7 +834,7 @@ func (s *DeepServer) consumeEvents(
 		sess.AddMessage(assistantMsg)
 	}
 
-	if options.emitFinalResponse && lastContent != "" && options.flowRunID == "" && !s.hasPendingCartographicPlan(sessionID) {
+	if options.emitFinalResponse && options.replanPlanID == "" && lastContent != "" && options.flowRunID == "" && !s.hasPendingCartographicPlan(sessionID) {
 		s.sendSessionMessage(conn, Message{
 			Type:      MsgTypeResponse,
 			SessionID: sessionID,
@@ -827,11 +843,11 @@ func (s *DeepServer) consumeEvents(
 		})
 	}
 
-	if options.flowRunID == "" && !s.hasPendingCartographicPlan(sessionID) {
+	if options.flowRunID == "" && options.replanPlanID == "" && !s.hasPendingCartographicPlan(sessionID) {
 		s.markSessionRuntimeFinished(sessionID, sessionRuntimeStatusCompleted, "")
 	}
 	s.persistManagedSessionState(sessionID, projectPath, options.executionMode)
-	if options.flowRunID == "" {
+	if options.flowRunID == "" && options.replanPlanID == "" {
 		s.maybeAutoCompressSessionContext(ctx, conn, sessionID, projectPath, sess, options.executionMode)
 	}
 	result.LastContent = lastContent
@@ -1015,6 +1031,17 @@ func (s *DeepServer) handleInterruptResponse(conn *websocket.Conn, msg Message) 
 		return
 	}
 
+	user := schema.UserMessage(msg.Content)
+	if err := s.bindTaskReferences(context.Background(), pending.SessionID, pending.ProjectPath, msg, user); err != nil {
+		s.setPendingInterrupt(conn, pending.SessionID, pending)
+		s.sendSessionError(conn, pending.SessionID, err.Error())
+		return
+	}
+	if strings.TrimSpace(msg.Content) != "" {
+		pending.Session.AddMessage(user)
+		s.persistManagedSessionState(pending.SessionID, pending.ProjectPath, executionModeBuild)
+	}
+
 	// 用户确认，构建 ResumeParams
 	targets := make(map[string]any)
 	userData := data["user_data"]
@@ -1120,10 +1147,18 @@ func (s *DeepServer) resumeTask(ctx context.Context, conn *websocket.Conn, pendi
 
 	// 复用事件消费逻辑（支持多次中断场景）
 	options := pending.FlowOptions
-	options.emitFinalResponse = options.flowRunID == ""
-	options.persistAssistant = true
+	options.emitFinalResponse = options.flowRunID == "" && options.replanPlanID == ""
+	options.persistAssistant = options.replanPlanID == ""
 	options.modePhase = strings.TrimSpace(pending.ModePhase)
 	resumeResult := s.consumeEvents(resumeCtx, conn, iter, pending.Runner, pending.CheckpointID, pending.SessionID, pending.ProjectPath, pending.Session, options)
+	if options.replanPlanID != "" {
+		if err := s.finishCartographicReplan(pending.SessionID, pending.ProjectPath, options, resumeResult); err != nil {
+			if resumeResult.Err == nil {
+				s.sendSessionError(conn, pending.SessionID, err.Error())
+			}
+			return
+		}
+	}
 	s.finishFlowResume(resumeCtx, pending, resumeResult)
 	if pending.FlowOptions.flowRunID == "" && resumeResult.Err == nil && !resumeResult.Interrupted && s.hasPendingCartographicPlan(pending.SessionID) {
 		state, err := s.startPendingCartographicPlan(resumeCtx, pending.SessionID)

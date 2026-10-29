@@ -22,11 +22,10 @@ export default function FlowProgressCard({ run, messages, renderMessage, onResum
   const completedSummary = lastCompleted?.attempts.at(-1)?.receipt?.summary
   const detail = run.status === 'failed' ? currentStep?.last_failure || run.result.issues.join('\n')
     : run.status.startsWith('completed') ? completedSummary : ''
-  const content = finished ? [labels[run.status], detail].filter(Boolean).join('\n\n')
-    : `${labels[run.status] || run.status}${currentStep ? `：${currentStep.title}` : ''}`
+  const content = [labels[run.status], detail].filter(Boolean).join('\n\n')
   const declared = run.carto_plan?.deliverables
   const outputs = declared?.length
-    ? Object.fromEntries(declared.filter(output => output.label in run.result.deliverables).map(output => [output.label, run.result.deliverables[output.label]]))
+    ? Object.fromEntries(declared.map(output => typeof output === 'string' ? output : output.label).filter(label => label in run.result.deliverables).map(label => [label, run.result.deliverables[label]]))
     : run.result.deliverables
   const requestResume = async (choice?: ResourceResumeChoice) => {
     if (!onResume) return
@@ -34,11 +33,10 @@ export default function FlowProgressCard({ run, messages, renderMessage, onResum
     try { if (!await (choice ? onResume(run, choice) : onResume(run))) setResumeRequested(false) } catch (error) { setResumeRequested(false); setResumeError(error instanceof Error ? error.message : '继续请求发送失败') }
   }
   return <section id={`flow-run-${run.flow_run_id}`} aria-label={`流程进度 ${run.carto_plan?.goal || run.plan?.name || run.name || run.flow_id}`} className="mb-3">
-    <MessageBubble message={{ id: `flow-summary-${run.flow_run_id}`, type: finished ? 'assistant' : 'status', content, timestamp: Date.parse(run.finished_at || run.started_at) || 0 }}>
+    {finished && <MessageBubble message={{ id: `flow-summary-${run.flow_run_id}`, type: 'assistant', content, timestamp: Date.parse(run.finished_at || run.started_at) || 0 }}>
       {!!Object.keys(outputs).length && <div className="mt-3"><FlowOutputs outputs={outputs}/></div>}
       {onOpenDetails && <button type="button" className="mt-2 rounded border border-zinc-200 px-1.5 py-0.5 text-[10px] text-zinc-500 dark:border-zinc-700" onClick={onOpenDetails}>查看详情</button>}
-    </MessageBubble>
-    {!finished && onOpenDetails && <div className="mb-2 text-center"><button type="button" className="rounded border border-zinc-200 px-1.5 py-0.5 text-[10px] text-zinc-500 dark:border-zinc-700" onClick={onOpenDetails}>查看详情</button></div>}
+    </MessageBubble>}
     {!run.carto_plan && <p className="mb-2 text-xs text-text-muted">旧版运行记录（只读）</p>}
     {run.resource_change && onResume && <div role="alert" className="mb-3 rounded border border-amber-300 bg-amber-50 p-2 text-xs text-amber-950 dark:bg-amber-950 dark:text-amber-100">
       <p>{run.resource_change.message}</p>

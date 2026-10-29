@@ -1,54 +1,6 @@
 document_format: flow/v6
 apiVersion: flow-lock/v1
 resources:
-    - type: style
-      name: 省域面
-      id: style.basemap-90a7082089
-      version: 1.0.0
-      digest: sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1
-      source: library_builtin
-    - type: style
-      name: 省界
-      id: style.basemap-d3f458378b
-      version: 1.0.0
-      digest: sha256:3bc4227da1aefc386667829113ed64a77ecab48b5d3424efb6bd72901a164313
-      source: library_builtin
-    - type: style
-      name: 河流面
-      id: style.basemap-cd19de795c
-      version: 1.0.0
-      digest: sha256:a96d40376efac47e905ee2c8a95cd76cb7a1cb0e61c5e84248d331d2e4afd104
-      source: library_builtin
-    - type: style
-      name: 河流线
-      id: style.basemap-5046d6b037
-      version: 1.0.0
-      digest: sha256:06821c6c49b3b9b40d47edc197f57b83feb9043764e771b5380f824f6e776eeb
-      source: library_builtin
-    - type: style
-      name: 高速公路
-      id: style.basemap-534c553126
-      version: 1.0.0
-      digest: sha256:4463616216f420f5010e7b87b5eaab6f7d512fcc6fc6cc1302e99ab67f218cea
-      source: library_builtin
-    - type: style
-      name: 国道
-      id: style.basemap-60b6b42fed
-      version: 1.0.0
-      digest: sha256:b5f0cd4eda56a9e33badd21b4b45f4537d894131a426a50268ec8b99534726d5
-      source: library_builtin
-    - type: style
-      name: 铁路
-      id: style.basemap-97492a0e5d
-      version: 1.0.0
-      digest: sha256:da200b2effea27334b24aee424a23d714de0460fb80664400b539a3363831ab2
-      source: library_builtin
-    - type: style
-      name: 县级城市驻地
-      id: style.basemap-09d9d27346
-      version: 1.0.0
-      digest: sha256:6c01b330222353447ed8aa89d691181a607bfd1ae0cbeccbc8af84e77c850940
-      source: library_builtin
     - type: layout
       name: 四角对齐版式
       id: layout.four-corner

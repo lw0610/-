@@ -60,13 +60,20 @@ func ArtifactPaths(value any, fields ...string) []string {
 	walk = func(v any) {
 		switch x := v.(type) {
 		case map[string]any:
+			// Command results use output for stdout/stderr, even when the
+			// command prints an absolute path. Artifacts need explicit fields.
+			_, commandResult := x["exit_code"]
 			for key, entry := range x {
 				// Source metadata describes inputs, not files produced by this call.
 				if key == "source_record" || key == "source_path" {
 					continue
 				}
 				switch key {
-				case "path", "output", "output_path", "file_path", "image_path", "pdf_path", "svg_path", "dataset_dir", "artifact_paths":
+				case "output":
+					if !commandResult {
+						add(entry)
+					}
+				case "path", "output_path", "file_path", "image_path", "pdf_path", "svg_path", "dataset_dir", "artifact_paths":
 					add(entry)
 				}
 				if object, ok := entry.(map[string]any); ok {
@@ -135,6 +142,55 @@ func ResultPaths(value any, parts []map[string]any, fields ...string) []string {
 	}
 	sort.Strings(result)
 	return result
+}
+
+// ResultNames reads names paired with real file sources in tool receipts. Callers
+// still register only ResultPaths; source metadata cannot introduce new files.
+func ResultNames(value any, parts []map[string]any) map[string]string {
+	names := map[string]string{}
+	var walk func(any)
+	walk = func(value any) {
+		if raw, ok := value.(string); ok {
+			if json.Unmarshal([]byte(raw), &value) != nil {
+				return
+			}
+		}
+		switch object := value.(type) {
+		case map[string]any:
+			name, _ := object["layer_name"].(string)
+			if name == "" && object["reference_type"] == "project_layer" {
+				name, _ = object["name"].(string)
+			}
+			if name != "" {
+				for _, key := range []string{"source", "path", "output_path"} {
+					path, _ := object[key].(string)
+					path = strings.Split(path, "|layername=")[0]
+					if filepath.IsAbs(path) {
+						names[filepath.Clean(path)] = name
+					}
+				}
+			}
+			for key, child := range object {
+				if key != "source_record" {
+					switch child.(type) {
+					case map[string]any, []any:
+						walk(child)
+					}
+				}
+			}
+		case []any:
+			for _, child := range object {
+				walk(child)
+			}
+		}
+	}
+	walk(value)
+	for _, part := range parts {
+		if part["type"] == "text" {
+			walk(part["text"])
+		}
+	}
+	return names
 }
 
 // FailedResult examines tool/bridge envelopes, never arbitrary feature

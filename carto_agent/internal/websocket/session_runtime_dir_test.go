@@ -84,36 +84,3 @@ func TestSessionSnapshot_RestoresAfterBackendRestart(t *testing.T) {
 		t.Fatalf("unexpected restored messages payload: %#v", restored["messages"])
 	}
 }
-
-func TestMigrateLegacySessionsBaseDirFallsBackAcrossDevices(t *testing.T) {
-	crossDeviceRoot := requireCrossDeviceDir(t)
-	legacyBaseDir := filepath.Join(t.TempDir(), "autoc", "sessions", "demo.qgz")
-	legacySessionDir := filepath.Join(legacyBaseDir, "sid-001")
-	if err := os.MkdirAll(legacySessionDir, 0o755); err != nil {
-		t.Fatalf("mkdir legacy session dir failed: %v", err)
-	}
-	legacySessionFile := filepath.Join(legacySessionDir, "session.json")
-	legacyContent := []byte(`{"session_id":"sid-001"}`)
-	if err := os.WriteFile(legacySessionFile, legacyContent, 0o644); err != nil {
-		t.Fatalf("write legacy session failed: %v", err)
-	}
-
-	canonicalBaseDir := filepath.Join(crossDeviceRoot, "autocarto-session-test", "demo")
-	_ = os.RemoveAll(filepath.Dir(canonicalBaseDir))
-
-	if err := migrateLegacySessionsBaseDir(legacyBaseDir, canonicalBaseDir); err != nil {
-		t.Fatalf("migrateLegacySessionsBaseDir failed: %v", err)
-	}
-	if _, err := os.Stat(legacySessionFile); !os.IsNotExist(err) {
-		t.Fatalf("legacy session file should be removed, err=%v", err)
-	}
-	migratedSessionFile := filepath.Join(canonicalBaseDir, "sid-001", "session.json")
-	data, err := os.ReadFile(migratedSessionFile)
-	if err != nil {
-		t.Fatalf("read migrated session failed: %v", err)
-	}
-	if string(data) != string(legacyContent) {
-		t.Fatalf("migrated session content mismatch: got=%q want=%q", string(data), string(legacyContent))
-	}
-	_ = os.RemoveAll(filepath.Dir(canonicalBaseDir))
-}

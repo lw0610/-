@@ -8,23 +8,21 @@ metadata:
   runtime: qgis
 spec:
   description: >-
-    加载本地栅格文件，默认复用工程中相同数据源的图层，返回实际图层标识、名称和坐标系。
-    需要同一数据的第二个独立图层时，设置 reuse_existing=false 并指定不同图层名。
+    加载本地栅格文件或复用已有 layer_id，默认立即显示到图层面板与画布。
+    正式成图图层按流程从底到顶逐个加载，加载一层就显示一层；仅供计算的输入显式传 show=false 留在后台。同源文件复用并刷新内容。
   parameters:
     - name: path
       type: string
-      required: true
-      description: 栅格文件路径；相对路径按项目根解析
+      description: 栅格文件路径，与 layer_id 至少提供一个；相对路径按项目根解析
+    - {name: layer_id, type: string, description: 已准备的栅格图层 ID；提供时直接使用该图层，无需文件路径}
+    - {name: show, type: boolean, default: true, description: 默认立即显示；false 仅在后台准备供计算。首次显示插到顶部，已显示图层保持位置}
     - name: layer_name
       type: string
       description: 图层名称（可选）
-    - name: reuse_existing
-      type: boolean
-      default: true
-      description: 默认复用相同数据源；设为 false 时创建独立图层，建议同时提供不同图层名
 execution:
   handler: handlers.loader.load_raster_handler
   param_mapping:
     path: '{{ path }}'
+    layer_id: '{{ layer_id }}'
+    show: '{{ show }}'
     layer_name: '{{ layer_name }}'
-    reuse_existing: '{{ reuse_existing }}'

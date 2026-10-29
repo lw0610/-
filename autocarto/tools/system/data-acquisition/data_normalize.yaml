@@ -66,6 +66,30 @@
         "type": "string",
         "required": true,
         "description": "新输出文件路径"
+      },
+      {
+        "name": "merge_by",
+        "type": "string",
+        "required": false,
+        "description": "系统路由表指定的取舍参数"
+      },
+      {
+        "name": "min_length_m",
+        "type": "number",
+        "required": false,
+        "description": "系统路由表指定的取舍参数"
+      },
+      {
+        "name": "min_area_m2",
+        "type": "number",
+        "required": false,
+        "description": "系统路由表指定的取舍参数"
+      },
+      {
+        "name": "merge_distance_m",
+        "type": "number",
+        "required": false,
+        "description": "系统路由表指定的取舍参数"
       }
     ]
   },
@@ -80,7 +104,11 @@
       "fields": "{{ fields }}",
       "standard_fields": "{{ standard_fields }}",
       "simplify_tolerance_m": "{{ simplify_tolerance_m }}",
-      "output": "{{ output }}"
+      "output": "{{ output }}",
+      "merge_by": "{{ merge_by }}",
+      "min_length_m": "{{ min_length_m }}",
+      "min_area_m2": "{{ min_area_m2 }}",
+      "merge_distance_m": "{{ merge_distance_m }}"
     }
   }
 }

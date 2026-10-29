@@ -44,21 +44,21 @@ func (a *datasetContinuationAgent) Run(_ context.Context, input *adk.AgentInput,
 		var err error
 		switch len(a.calls) {
 		case 1:
-			if !strings.Contains(text.String(), a.dataset) || !strings.Contains(text.String(), "（session，dataset）") {
+			if !strings.Contains(text.String(), a.dataset) || !strings.Contains(text.String(), `"kind":"dataset"`) {
 				err = fmt.Errorf("route-cartography 未收到已登记数据集的精确路径和类型")
 			} else if content, readErr := os.ReadFile(filepath.Join(a.dataset, "routes.csv")); readErr != nil {
 				err = readErr
 			} else if !strings.Contains(string(content), "existing-route") {
 				err = fmt.Errorf("route-cartography 未读取已有路线数据")
 			}
-			outputs["路线图层"] = []string{"existing-route-layer"}
+			outputs["route_layers"] = []string{"existing-route-layer"}
 		case 2:
 			if !strings.Contains(text.String(), "existing-route-layer") {
 				err = fmt.Errorf("导出步骤未收到前一步图层产出")
 			} else {
 				err = os.WriteFile(a.export, []byte("%PDF-1.4\nmock export fixture\n%%EOF\n"), 0600)
 			}
-			outputs["路线图PDF"] = a.export
+			outputs["route_pdf"] = a.export
 		default:
 			err = fmt.Errorf("已有成果续作只应执行制图和导出，实际执行第 %d 次", len(a.calls))
 		}
@@ -94,14 +94,14 @@ func TestIndexedDatasetContinuesThroughProposalBuildAndFlowRun(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			data := plan.Data{ID: "confirmed-routes", Name: "已确认路线数据集", From: "session"}
+			data := plan.Data{ID: "confirmed-routes", Name: "已确认路线数据集", Source: "user"}
 			switch reference {
 			case "path_with_kind":
-				data.Path, data.Kind = artifact.Path, "dataset"
+				data.Ref, data.Kind = artifact.Path, "dataset"
 			case "path_infers_dataset":
-				data.Path = artifact.Path
+				data.Ref = artifact.Path
 			case "file_id":
-				data.FileID = artifact.ID
+				data.Ref = artifact.ID
 			}
 			env := flow.Environment{
 				Scheme: "test", PlanningInstructions: "已有成果直接进入剩余制图步骤",
@@ -124,10 +124,10 @@ func TestIndexedDatasetContinuesThroughProposalBuildAndFlowRun(t *testing.T) {
 			p.Goal = "从已确认并编译的数据集继续制图和导出"
 			p.Data = []plan.Data{data}
 			p.Steps = []plan.Step{
-				{ID: "draw", Title: "制作路线地图", Capabilities: []string{"route-cartography"}, Uses: []string{data.ID}, Instructions: "使用已确认路线数据集制作路线图层", Outputs: []flow.OutputDeclaration{{Label: "路线图层", Type: "layers"}}},
-				{ID: "export", Title: "导出路线地图", Capabilities: []string{"print-layout"}, DependsOn: []string{"draw"}, Instructions: "将前一步路线图层导出为PDF", Outputs: []flow.OutputDeclaration{{Label: "路线图PDF", Type: "file", Format: "pdf"}}},
+				{ID: "draw", Title: "制作路线地图", Capabilities: []string{"route-cartography"}, Inputs: []string{data.ID}, Instructions: "使用已确认路线数据集制作路线图层", Produces: []plan.Product{{ID: "route_layers", Kind: "layer"}}},
+				{ID: "export", Title: "导出路线地图", Capabilities: []string{"print-layout"}, Inputs: []string{"route_layers"}, Instructions: "将前一步路线图层导出为PDF", Produces: []plan.Product{{ID: "route_pdf", Kind: "file", Format: "pdf"}}},
 			}
-			p.Deliverables = []flow.OutputDeclaration{{Label: "路线图PDF", Type: "file", Format: "pdf"}}
+			p.Deliverables = []flow.OutputDeclaration{{Label: "route_pdf", Type: "file", Format: "pdf"}}
 			raw, err := json.Marshal(p)
 			if err != nil {
 				t.Fatal(err)
@@ -156,14 +156,14 @@ func TestIndexedDatasetContinuesThroughProposalBuildAndFlowRun(t *testing.T) {
 			if _, pending := s.getPendingInterrupt(run.SessionID); pending {
 				t.Fatal("已有确认成果续作不应留下新的人工确认")
 			}
-			if state.Inputs[data.ID] != artifact.Path || state.Result.Deliverables["路线图PDF"] != export {
+			if state.Inputs[data.ID] != artifact.Path || state.Result.Deliverables["route_pdf"] != export {
 				t.Fatalf("数据集或最终交付物交接错误：inputs=%v result=%+v", state.Inputs, state.Result)
 			}
 			if len(state.Plan.Inputs) != 1 || state.Plan.Inputs[0].Type != "dataset" {
 				t.Fatalf("目录应以dataset输入进入执行器，不能当文字或单张表：%+v", state.Plan.Inputs)
 			}
 			persisted, err := (flowrun.FileRunStore{}).Load(ctx, store.Dir, state.ID)
-			if err != nil || persisted.Status != "completed" || persisted.Inputs[data.ID] != artifact.Path || persisted.Result.Deliverables["路线图PDF"] != export {
+			if err != nil || persisted.Status != "completed" || persisted.Inputs[data.ID] != artifact.Path || persisted.Result.Deliverables["route_pdf"] != export {
 				t.Fatalf("续作持久化不完整：state=%+v err=%v", persisted, err)
 			}
 			cards, err := s.ListPlans(ctx, run.SessionID, run.ProjectPath)
@@ -171,7 +171,7 @@ func TestIndexedDatasetContinuesThroughProposalBuildAndFlowRun(t *testing.T) {
 				t.Fatalf("恢复后的计划状态错误：cards=%+v err=%v", cards, err)
 			}
 			resolved := cards[0].Plan.Data[0]
-			if resolved.Kind != "dataset" || resolved.Path != artifact.Path || resolved.FileID != artifact.ID || resolved.From != "session" {
+			if resolved.Kind != "dataset" || resolved.Ref != artifact.Path || resolved.Source != "user" {
 				t.Fatalf("恢复后必须保留同一会话成果身份：%+v", resolved)
 			}
 		})

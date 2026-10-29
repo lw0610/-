@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/autocarto/carto_agent/internal/networkproxy"
 	"io"
 	"net/http"
 	"net/url"
@@ -132,14 +133,7 @@ func newClient(options Options) (*client, error) {
 	}
 	hc := options.HTTPClient
 	if hc == nil {
-		transport := http.DefaultTransport.(*http.Transport).Clone()
-		if options.ProxyURL != "" {
-			u, e := url.Parse(options.ProxyURL)
-			if e != nil {
-				return nil, e
-			}
-			transport.Proxy = http.ProxyURL(u)
-		}
+		transport := networkproxy.Transport(options.ProxyURL)
 		hc = &http.Client{Transport: transport, CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			if len(via) > 0 && req.URL.Host != via[0].URL.Host {
 				return &permanentEndpointError{"OSM 服务重定向到不同主机"}

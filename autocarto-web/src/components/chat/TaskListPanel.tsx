@@ -140,7 +140,6 @@ export default function TaskListPanel({ tasks, className }: Props) {
             const rowCls = taskRowClassName[tone] || taskRowClassName.todo
             const taskContent = String(task.content || `任务 ${idx + 1}`)
             const taskPriority = String(task.priority || '').trim()
-            const taskOwner = String(task.owner || '').trim()
             return (
               <div
                 key={`${idx}-${taskContent}`}
@@ -175,11 +174,6 @@ export default function TaskListPanel({ tasks, className }: Props) {
                       )}
                     </div>
 
-                    {taskOwner && (
-                      <div className="mt-1 text-[8px] text-zinc-400 dark:text-zinc-500">
-                        负责人 {taskOwner}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>

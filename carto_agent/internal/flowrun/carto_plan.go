@@ -82,6 +82,7 @@ func (c *Controller) advancePlanData(ctx context.Context, e *execution, step flo
 				request.Messages = prepared.Messages
 				state.Role = prepared.Role.ID
 				state.Attempts[len(state.Attempts)-1].DataID = id
+				state.Attempts[len(state.Attempts)-1].Role = prepared.Role.ID
 				if err := c.save(ctx, e); err != nil {
 					return err
 				}
@@ -102,7 +103,7 @@ func (c *Controller) advancePlanData(ctx context.Context, e *execution, step flo
 		if err := c.failPlanData(ctx, e, failure, true); err != nil {
 			return err
 		}
-		if IsTerminal(run.Status) {
+		if IsTerminal(run.Status) || run.Status == "interrupted" {
 			return nil
 		}
 	}
@@ -157,6 +158,10 @@ func bindPlanData(run *RunState, id string, result DataResult) {
 		run.AcquiredInputs = map[string]any{}
 	}
 	run.AcquiredInputs[id] = result.Value
+	if run.InputDetails == nil {
+		run.InputDetails = map[string]map[string]any{}
+	}
+	run.InputDetails[id] = result.Details
 	run.SourceNotes = append(run.SourceNotes, result.Notes...)
 	run.ResourceFingerprint, _ = flow.ResourceSnapshotFingerprint(run.Plan)
 }
@@ -199,7 +204,7 @@ func (c *Controller) failPlanData(ctx context.Context, e *execution, failure err
 	state.Status = "failed"
 	last.Verification = Verification{Errors: []string{failure.Error()}}
 	if llm.IsNonRecoverableServiceError(failure) {
-		return c.finish(ctx, e, "failed", failure.Error())
+		return c.pausePlan(ctx, e, failure.Error())
 	}
 	if err := c.save(ctx, e); err != nil {
 		return err
@@ -221,10 +226,26 @@ func planStepContext(step flow.StepPlan, run *RunState) string {
 		fmt.Fprintf(&b, "- %s：%s（%s）\n", f.Name, value, f.From)
 	}
 	b.WriteString("【可用数据】\n")
+	if run.CartoPlan.APIVersion == plan.APIVersion {
+		b.WriteString("数据已由准备阶段获取并检查。来源说明中已完成的裁剪、字段统一、合并和比例尺取舍直接复用；只执行本步尚未完成的分析与制图，不自行提高筛选阈值或重复概化。\n")
+	}
 	values := EffectiveInputs(run)
 	for _, id := range step.DataUses {
 		d, ok := run.CartoPlan.DataByID(id)
 		if !ok {
+			if o, producer, exists := run.CartoPlan.ProductByID(id); exists {
+				for _, state := range run.Steps {
+					if state.ID == producer {
+						raw, _ := json.Marshal(state.Outputs[o.ID])
+						fmt.Fprintf(&b, "- %s：%s（前序步骤产出）\n", id, raw)
+					}
+				}
+			}
+			continue
+		}
+		if details := run.InputDetails[id]; len(details) > 0 {
+			raw, _ := json.Marshal(details)
+			fmt.Fprintf(&b, "- %s：%s\n", d.Name, raw)
 			continue
 		}
 		value := values[id]

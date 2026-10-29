@@ -2,10 +2,10 @@ package flow
 
 import (
 	"fmt"
-	"sort"
+	"strings"
 )
 
-// ResolvePlanCapabilities uses the same package catalog as runtime role overlays.
+// ResolvePlanCapabilities resolves package names in saved capability-based plans.
 func ResolvePlanCapabilities(names []string, env Environment) ([]string, error) {
 	ids, reason := resolvePackages(names, env)
 	if reason != "" {
@@ -14,101 +14,87 @@ func ResolvePlanCapabilities(names []string, env Environment) ([]string, error) 
 	return ids, nil
 }
 
-// AssignPlanRole selects by actual capabilities; a guide never names a role.
-func AssignPlanRole(plan *FlowPlan, step *StepPlan, names []string, hint string, env Environment) error {
+// AssignPlanRole binds a step to an enabled child in the selected scheme.
+// A selected role retains its own tools, model and instructions.
+func AssignPlanRole(_ *FlowPlan, step *StepPlan, names []string, hint string, env Environment) error {
+	executor := ""
 	for _, name := range names {
 		if name == "路线知识抽取" || name == "route_knowledge" {
-			if len(names) != 1 {
-				return fmt.Errorf("系统专家应单独作为一个步骤")
-			}
-			role := FlowRoleSpec{ID: "system.route_knowledge", DisplayName: "路线知识抽取", Kind: "executor", Executor: "route_knowledge", Provider: env.MainProvider}
-			exists := false
-			for _, r := range plan.FlowRoles {
-				if r.ID == role.ID {
-					exists = true
-				}
-			}
-			if !exists {
-				plan.FlowRoles = append(plan.FlowRoles, role)
-			}
-			step.Kind = "executor"
-			step.Executor = "route_knowledge"
-			step.Role = role.ID
-			step.RoleLabel = role.DisplayName
-			return nil
+			executor = "route_knowledge"
 		}
 	}
-	ids, err := ResolvePlanCapabilities(names, env)
-	if err != nil {
-		return err
+	var selected *RoleSpec
+	if hint = strings.TrimSpace(hint); hint != "" {
+		selected = roleByID(hint, env.Roles)
+		if selected == nil || !selected.Enabled || selected.IsMain {
+			return fmt.Errorf("步骤「%s」指定的子智能体 %s 未在当前方案中启用，请从方案角色目录选择 role_hint", step.Title, hint)
+		}
+	} else {
+		// Older saved plans declared capabilities instead of a role. Only an
+		// unambiguous existing child can satisfy that contract; never invent one.
+		if len(names) == 0 {
+			return fmt.Errorf("步骤「%s」未选择执行子智能体，请用 role_hint 指定当前方案中的角色", step.Title)
+		}
+		var ids []string
+		if executor == "" {
+			var err error
+			ids, err = ResolvePlanCapabilities(names, env)
+			if err != nil {
+				return err
+			}
+		}
+		for _, role := range env.Roles {
+			if !role.Enabled || role.IsMain {
+				continue
+			}
+			matches := role.Kind == "executor" && role.Executor == executor
+			if executor == "" {
+				matches = (role.Kind == "" || role.Kind == "agent") && len(missingPackages(ids, role.ToolPackages)) == 0
+			}
+			if !matches {
+				continue
+			}
+			if selected != nil {
+				return fmt.Errorf("步骤「%s」有多个可用子智能体，请用 role_hint 从当前方案中明确选择", step.Title)
+			}
+			copy := role
+			selected = &copy
+		}
+		if selected == nil {
+			return fmt.Errorf("步骤「%s」在当前方案中没有匹配的子智能体，请按已有角色职责调整任务", step.Title)
+		}
 	}
-	step.RequiredPackages = ids
+	if executor != "" && (selected.Kind != "executor" || selected.Executor != executor) {
+		return fmt.Errorf("步骤「%s」需要路线知识抽取，请选择方案中使用 %s 执行器的子智能体", step.Title, executor)
+	}
 	needsVision := false
-	for _, id := range ids {
-		if id == "quality-feedback" {
-			needsVision = true
-		}
+	for _, id := range selected.ToolPackages {
+		needsVision = needsVision || id == "quality-feedback"
 	}
-	isVision := func(provider string) bool {
+	for _, output := range step.ExpectedOutputs {
+		needsVision = needsVision || output.Type == "review_initial" || output.Type == "review_final"
+	}
+	if needsVision {
+		provider := selected.Provider
 		if provider == "" {
 			provider = env.MainProvider
 		}
-		for _, p := range env.VisionProviders {
-			if provider == p {
-				return true
-			}
+		vision := false
+		for _, id := range env.VisionProviders {
+			vision = vision || id == provider
 		}
-		return false
-	}
-	provider := env.MainProvider
-	if needsVision && !isVision(provider) {
-		if len(env.VisionProviders) == 0 {
-			return fmt.Errorf("步骤 %s 需要支持读图的模型，请先在模型设置中配置", step.Title)
+		if !vision {
+			return fmt.Errorf("子智能体「%s」配置的模型不支持读图，请选择方案中支持读图的子智能体", selected.DisplayName)
 		}
-		provider = env.VisionProviders[0]
 	}
-	candidates := append([]RoleSpec{}, env.Roles...)
-	sort.SliceStable(candidates, func(i, j int) bool {
-		if len(candidates[i].ToolPackages) != len(candidates[j].ToolPackages) {
-			return len(candidates[i].ToolPackages) < len(candidates[j].ToolPackages)
-		}
-		return candidates[i].ID < candidates[j].ID
-	})
-	eligible := func(r RoleSpec) bool {
-		return r.Enabled && !r.FlowOnly && (r.Kind == "" || r.Kind == "agent") && (!needsVision || isVision(r.Provider))
-	}
-	selectRole := func(r RoleSpec, extra []string) {
+	step.Kind = selected.Kind
+	if step.Kind == "" {
 		step.Kind = "agent"
-		step.Role = r.ID
-		step.RoleLabel = r.DisplayName
-		step.GrantedPackages = extra
-		step.RoleSource = "scheme"
 	}
-	if hint != "" {
-		for _, r := range candidates {
-			if r.ID == hint && eligible(r) {
-				missing := missingPackages(ids, r.ToolPackages)
-				if grantReason(missing, env) == "" {
-					selectRole(r, missing)
-					return nil
-				}
-			}
-		}
-	}
-	for _, r := range candidates {
-		if eligible(r) && len(missingPackages(ids, r.ToolPackages)) == 0 {
-			selectRole(r, nil)
-			return nil
-		}
-	}
-	if reason := grantReason(ids, env); reason != "" {
-		return fmt.Errorf("%s：步骤 %s 无法临时补齐所需能力", reason, step.Title)
-	}
-	role := FlowRoleSpec{ID: "plan_role_" + step.ID, DisplayName: step.Title, Description: step.Instructions, Kind: "agent", ToolPackages: ids, Provider: provider}
-	plan.FlowRoles = append(plan.FlowRoles, role)
-	step.Kind = "agent"
-	step.Role = role.ID
-	step.RoleLabel = role.DisplayName
-	step.RoleSource = "plan_role"
+	step.Executor = selected.Executor
+	step.Role, step.RoleLabel = selected.ID, selected.DisplayName
+	step.RoleSource = "scheme"
+	step.RequiredPackages = append([]string{}, selected.ToolPackages...)
+	step.GrantedPackages = nil
 	return nil
 }

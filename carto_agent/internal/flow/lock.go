@@ -90,6 +90,21 @@ func retainedLock(lock *resource.Lock, doc *FlowDoc) *resource.Lock {
 			}
 		}
 	}
+	for _, ref := range doc.Layers {
+		retained := false
+		if lock != nil {
+			for _, entry := range lock.Layers {
+				if entry.Name == ref.Name {
+					out.Layers = append(out.Layers, entry)
+					retained = true
+					break
+				}
+			}
+		}
+		if !retained && ref.ID != "" && ref.Digest != "" {
+			out.Layers = append(out.Layers, resource.LayerLockEntry{ID: ref.ID, Name: ref.Name, Digest: ref.Digest})
+		}
+	}
 	return out
 }
 

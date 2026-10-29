@@ -104,3 +104,16 @@ export function loadStyleLayerPreview(id: string, instanceId: string, layerId: s
     method: 'POST', body: JSON.stringify({instance_id: instanceId, layer_id: layerId}),
   }, signal, 60000)
 }
+
+const layerPath = (id: string) => `/api/layers/${encodeURIComponent(id)}`
+export const layerApi = {
+  list: () => api.get<import('./types').LayerCatalog>('/api/layers'),
+  scan: (path: string, pack?: string) => api.post<import('./types').LayerScan>('/api/layers/import/scan', {path, pack}, {timeoutMs: 120000}),
+  import: (pack: string, entries: import('./types').LayerManifest[]) => api.post<{items: import('./types').LayerItem[]}>('/api/layers/import/confirm', {pack, entries}, {timeoutMs: 120000}),
+  update: (id: string, edit: Partial<import('./types').LayerManifest>) => api.patch<import('./types').LayerItem>(layerPath(id), edit),
+  remove: (id: string) => api.delete(layerPath(id)),
+  regeneratePreview: (id: string) => api.post<import('./types').LayerItem>(`${layerPath(id)}/preview`, {}, {timeoutMs: 60000}),
+}
+export function loadLayerPreview(id: string, signal?: AbortSignal): Promise<Blob> {
+  return fetchPreviewImage(`${layerPath(id)}/preview`, {}, signal, 60000)
+}

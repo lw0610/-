@@ -2,28 +2,102 @@ apiVersion: tool/v1
 kind: Tool
 metadata:
   name: data_register
-  display_name: 登记兜底取得的数据
+  display_name: 登记已取得的数据
   domain: data-service
   runtime: internal
 spec:
-  description: 把真实门户、搜索或自定义OSM取得的当前会话文件与需求核验、规范化、入仓并登记来源；未经登记的兜底文件不得作为计划数据。
+  description: 核验当前会话中已取得的真实文件并登记来源。三种输入：计划已经绑定需求时直接提交文件与来源；Build沿data_find/data_get查询时传find_id、row、kind；Build通过OSM/GEE等工具直接取得文件时传need（同data_find结构），无需补造查询或重新下载。已绑定计划Need/Selection优先，不用新need替换当前任务。
   parameters:
+    - name: need
+      type: object
+      required: false
+      description: Build中已通过OSM/GEE等专用工具取得文件、没有绑定查询时填写；与data_find的need结构相同。填写真实name、what和extent，不创建查询或重复下载。已绑定计划需求时省略。数据需求对象。what必须是对象，category与description至少填写一项，也可同时填写；同时填写时按category确定类别，description保留补充说明，例如 {"category":"河流","description":"线状河流，需要河名"}。不能填写字符串或数字；数据清单模式已移除。
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            description: 本次数据名称
+          what:
+            type: object
+            properties:
+              description:
+                type: string
+                description: 需要的数据含义或对已选类别的补充说明，例如线状河流，需要河名；不是流程文档。可与category同时填写。
+              category:
+                type: string
+                description: 已知类别名称或类别编号。与description同时填写时以本字段确定类别；类别无效时会提示更正，不根据description静默替换。
+            additionalProperties: false
+            anyOf:
+            - required:
+              - description
+            - required:
+              - category
+          geometry:
+            type: string
+            enum:
+            - point
+            - line
+            - polygon
+            - raster
+            - table
+          extent:
+            type: string
+            description: 研究区边界文件绝对路径、实际图层编号、区域或 bbox:南,西,北,东；已知边界时直接传真实文件路径，不把未绑定的自拟图层名称当范围。直接登记必须提供已确定的范围。
+          scale:
+            type: string
+            description: 地图比例尺，例如 auto 或 1:500000；不是栅格像元分辨率，不能填100米。分辨率按类别支持的need.params字段表达。
+          fields:
+            type: object
+            additionalProperties:
+              type: string
+          params:
+            type: object
+            description: 类别所需的附加参数，键和值由数据类别目录定义。缺失或不合法时，按返回的diagnostics.parameters中的path、required、allowed_values补齐；不要猜测默认值或更换已识别的类别。
+            additionalProperties:
+              type: string
+        additionalProperties: false
+        required:
+        - name
+        - what
+        - extent
+
+    - name: need_id
+      type: string
+      required: false
+      description: 仅计划已绑定需求时使用，通常省略；Build直接登记使用need，不能把自行命名的编号填入这里。
+    - name: source_title
+      type: string
+      required: false
+      description: 原始来源标题；直接need登记和计划需求登记必填。
+    - name: table_ref
+      type: string
+      required: false
+      description: 表号或页码
+    - name: method
+      type: string
+      required: false
+      description: 取得或读取方式，如 osm、gee、html、pdf、vision、ocr；直接need登记和计划需求登记必填。
+    - name: original_path
+      type: string
+      required: false
+      description: 原始图片或文档路径
     - name: find_id
       type: string
-      required: true
-      description: data_find返回并允许兜底的查询编号。
+      required: false
+      description: 按查询登记时，填写 data_get 返回的真实 find_id，并同时填写 row 和 kind。直接need登记或计划已绑定需求时省略；不能使用needs_input响应或自己猜编号。
     - name: row
       type: string
-      required: true
-      description: 查询结果的数据行名称。
+      required: false
+      description: 按查询登记时必填，精确沿用 preparation.rows 中的 row；不是自行概括的类别名。
     - name: path
       type: string
       required: true
       description: 当前会话目录内真实下载文件的绝对路径。
     - name: kind
       type: string
-      required: true
-      description: portal、web_search或custom_osm。
+      required: false
+      description: 按查询登记时必填，沿用 preparation.fallback 中可用项的 kind，如 portal、web_search、custom_osm。直接need登记使用method描述实际取得方式，不必填kind。
     - name: url
       type: string
       required: true
@@ -40,9 +114,26 @@ spec:
       type: array
       required: false
       description: 数据年份、口径、近似、取舍与注意事项。
+  examples:
+  - description: Build已通过OSM工具取得文件后直接登记，不重复下载
+    args:
+      need:
+        name: 城市地铁站点
+        what:
+          category: 地铁站点
+        geometry: point
+        extent: 从上游回执取得的真实市域边界文件绝对路径
+        scale: auto
+      path: OSM工具返回的真实站点文件绝对路径
+      source_title: OpenStreetMap地铁站点
+      method: osm
+      url: 工具来源记录中的实际公开网址
+      license: ODbL 1.0
+      attribution: © OpenStreetMap contributors
 execution:
   backend_tool: data_register
   param_mapping:
+    need: '{{ need }}'
     find_id: '{{ find_id }}'
     row: '{{ row }}'
     path: '{{ path }}'
@@ -51,3 +142,8 @@ execution:
     license: '{{ license }}'
     attribution: '{{ attribution }}'
     notes: '{{ notes }}'
+    need_id: '{{ need_id }}'
+    source_title: '{{ source_title }}'
+    table_ref: '{{ table_ref }}'
+    method: '{{ method }}'
+    original_path: '{{ original_path }}'

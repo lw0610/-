@@ -139,12 +139,12 @@ def get_project_info(params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         project = QgsProject.instance()
         project_identity = resolve_project_identity(project.title(), project.fileName())
         crs = project.crs()
-        layers = project.mapLayers()
+        layers = [node.layer() for node in project.layerTreeRoot().findLayers()]
         vector_count = sum(
-            1 for layer in layers.values() if layer.type() == QgsMapLayer.VectorLayer
+            1 for layer in layers if layer.type() == QgsMapLayer.VectorLayer
         )
         raster_count = sum(
-            1 for layer in layers.values() if layer.type() == QgsMapLayer.RasterLayer
+            1 for layer in layers if layer.type() == QgsMapLayer.RasterLayer
         )
 
         info = {
@@ -186,12 +186,10 @@ def get_layers_info(params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
 
         include_invisible = params.get("include_invisible", True)
         project = QgsProject.instance()
-        layers = project.mapLayers()
-
         layers_info = []
-        for _, layer in layers.items():
-            node = project.layerTreeRoot().findLayer(layer.id())
-            visible = node is not None and node.isVisible()
+        for node in project.layerTreeRoot().findLayers():
+            layer = node.layer()
+            visible = node.isVisible()
             if not include_invisible and not visible:
                 continue
             info = _get_layer_detailed_info(layer)

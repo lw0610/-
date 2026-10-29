@@ -3,7 +3,7 @@ kind: Tool
 metadata:
   name: file_write
   display_name: 写入文本文件
-  keywords: [写文件, CSV, 脚本, 来源说明]
+  keywords: [写文件, CSV表格, 脚本, 来源说明]
   domain: file-operations
   runtime: internal
 spec:

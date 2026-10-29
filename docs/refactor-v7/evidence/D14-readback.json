@@ -1,0 +1,1978 @@
+[
+  {
+    "name": "省域面",
+    "saved_qml": {
+      "renderer": "QgsSingleSymbolRenderer",
+      "labels": {
+        "enabled": true,
+        "field": "NAME",
+        "size_mm": 5.2,
+        "color": "#242424",
+        "font": ".AppleSystemUIFont",
+        "bold": true,
+        "obstacle": false,
+        "placement": "horizontal",
+        "merge_lines": false,
+        "repeat_mm": 0.0,
+        "display_all": true,
+        "buffer": {
+          "enabled": true,
+          "color": "#ffffff",
+          "size_mm": 0.7
+        }
+      },
+      "symbol": {
+        "type": "fill",
+        "layers": [
+          {
+            "fill": "#ffffff",
+            "opacity": 1.0,
+            "outline": "#707070",
+            "outline_opacity": 1.0,
+            "outline_width_mm": 0.5,
+            "outline_style": "dash_dot"
+          }
+        ]
+      }
+    },
+    "calls": [
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "fill",
+                "layers": [
+                  {
+                    "fill": "#FFFFFF",
+                    "outline": "#707070",
+                    "outline_width": 0.5,
+                    "outline_style": "dash_dot"
+                  }
+                ]
+              },
+              "labels": {
+                "field": "NAME",
+                "size": 5.2,
+                "color": "#242424",
+                "placement": "horizontal",
+                "display_all": true,
+                "buffer": {
+                  "color": "#ffffff",
+                  "size": 0.7
+                },
+                "bold": true,
+                "obstacle": false
+              },
+              "layer": "___1_ea37dd7d_2e89_4343_8a16_25b22bbcc72a"
+            }
+          ],
+          "scale": 1
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "___1_ea37dd7d_2e89_4343_8a16_25b22bbcc72a",
+                "layer_name": "省域面1",
+                "request": {
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#FFFFFF",
+                        "outline": "#707070",
+                        "outline_width": 0.5,
+                        "outline_style": "dash_dot"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "field": "NAME",
+                    "size": 5.2,
+                    "color": "#242424",
+                    "placement": "horizontal",
+                    "display_all": true,
+                    "buffer": {
+                      "color": "#ffffff",
+                      "size": 0.7
+                    },
+                    "bold": true,
+                    "obstacle": false
+                  },
+                  "layer": "___1_ea37dd7d_2e89_4343_8a16_25b22bbcc72a"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#ffffff",
+                        "opacity": 1.0,
+                        "outline": "#707070",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.5,
+                        "outline_style": "dash_dot"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": true,
+                    "field": "NAME",
+                    "size_mm": 5.2,
+                    "color": "#242424",
+                    "font": "PingFang SC",
+                    "placement": "horizontal",
+                    "bold": true,
+                    "obstacle": false,
+                    "merge_lines": false,
+                    "repeat_mm": 0.0,
+                    "display_all": true,
+                    "buffer": {
+                      "enabled": true,
+                      "color": "#ffffff",
+                      "size_mm": 0.7
+                    }
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": true,
+                    "field": "NAME",
+                    "size_mm": 5.2,
+                    "color": "#242424",
+                    "font": "PingFang SC",
+                    "bold": true,
+                    "obstacle": false,
+                    "placement": "horizontal",
+                    "merge_lines": false,
+                    "repeat_mm": 0.0,
+                    "display_all": true,
+                    "buffer": {
+                      "enabled": true,
+                      "color": "#ffffff",
+                      "size_mm": 0.7
+                    }
+                  },
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#ffffff",
+                        "opacity": 1.0,
+                        "outline": "#707070",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.5,
+                        "outline_style": "dash_dot"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 1.0
+          }
+        }
+      },
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "fill",
+                "layers": [
+                  {
+                    "fill": "#FFFFFF",
+                    "outline": "#707070",
+                    "outline_width": 0.5,
+                    "outline_style": "dash_dot"
+                  }
+                ]
+              },
+              "labels": {
+                "field": "NAME",
+                "size": 5.2,
+                "color": "#242424",
+                "placement": "horizontal",
+                "display_all": true,
+                "buffer": {
+                  "color": "#ffffff",
+                  "size": 0.7
+                },
+                "bold": true,
+                "obstacle": false
+              },
+              "layer": "___2_34db0a9b_c6ec_4dfe_82a2_5e1b24a98949"
+            }
+          ],
+          "scale": 0.35
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "___2_34db0a9b_c6ec_4dfe_82a2_5e1b24a98949",
+                "layer_name": "省域面2",
+                "request": {
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#FFFFFF",
+                        "outline": "#707070",
+                        "outline_width": 0.5,
+                        "outline_style": "dash_dot"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "field": "NAME",
+                    "size": 5.2,
+                    "color": "#242424",
+                    "placement": "horizontal",
+                    "display_all": true,
+                    "buffer": {
+                      "color": "#ffffff",
+                      "size": 0.7
+                    },
+                    "bold": true,
+                    "obstacle": false
+                  },
+                  "layer": "___2_34db0a9b_c6ec_4dfe_82a2_5e1b24a98949"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#ffffff",
+                        "opacity": 1.0,
+                        "outline": "#707070",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.175,
+                        "outline_style": "dash_dot"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": true,
+                    "field": "NAME",
+                    "size_mm": 1.8199999999999998,
+                    "color": "#242424",
+                    "font": "PingFang SC",
+                    "placement": "horizontal",
+                    "bold": true,
+                    "obstacle": false,
+                    "merge_lines": false,
+                    "repeat_mm": 0.0,
+                    "display_all": true,
+                    "buffer": {
+                      "enabled": true,
+                      "color": "#ffffff",
+                      "size_mm": 0.24499999999999997
+                    }
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": true,
+                    "field": "NAME",
+                    "size_mm": 1.8199999999999998,
+                    "color": "#242424",
+                    "font": "PingFang SC",
+                    "bold": true,
+                    "obstacle": false,
+                    "placement": "horizontal",
+                    "merge_lines": false,
+                    "repeat_mm": 0.0,
+                    "display_all": true,
+                    "buffer": {
+                      "enabled": true,
+                      "color": "#ffffff",
+                      "size_mm": 0.24499999999999997
+                    }
+                  },
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#ffffff",
+                        "opacity": 1.0,
+                        "outline": "#707070",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.175,
+                        "outline_style": "dash_dot"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 0.35
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "省界",
+    "saved_qml": {
+      "renderer": "QgsSingleSymbolRenderer",
+      "labels": {
+        "enabled": false
+      },
+      "symbol": {
+        "type": "line",
+        "layers": [
+          {
+            "color": "#2399e9",
+            "opacity": 1.0,
+            "width_mm": 0.5,
+            "style": "solid",
+            "dash_mm": [],
+            "offset_mm": 0.0,
+            "cap": "flat"
+          },
+          {
+            "color": "#a6cee3",
+            "opacity": 1.0,
+            "width_mm": 0.5,
+            "style": "solid",
+            "dash_mm": [],
+            "offset_mm": 0.4,
+            "cap": "flat"
+          }
+        ]
+      }
+    },
+    "calls": [
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "line",
+                "layers": [
+                  {
+                    "color": "#2399E9",
+                    "width": 0.5
+                  },
+                  {
+                    "color": "#A6CEE3",
+                    "width": 0.5,
+                    "offset": 0.4
+                  }
+                ]
+              },
+              "labels": null,
+              "layer": "__1_06a0ed3d_1d55_445a_982d_0a7548117001"
+            }
+          ],
+          "scale": 1
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "__1_06a0ed3d_1d55_445a_982d_0a7548117001",
+                "layer_name": "省界1",
+                "request": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#2399E9",
+                        "width": 0.5
+                      },
+                      {
+                        "color": "#A6CEE3",
+                        "width": 0.5,
+                        "offset": 0.4
+                      }
+                    ]
+                  },
+                  "labels": null,
+                  "layer": "__1_06a0ed3d_1d55_445a_982d_0a7548117001"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#2399e9",
+                        "opacity": 1.0,
+                        "width_mm": 0.5,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      },
+                      {
+                        "color": "#a6cee3",
+                        "opacity": 1.0,
+                        "width_mm": 0.5,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.4,
+                        "cap": "flat"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": false
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": false
+                  },
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#2399e9",
+                        "opacity": 1.0,
+                        "width_mm": 0.5,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      },
+                      {
+                        "color": "#a6cee3",
+                        "opacity": 1.0,
+                        "width_mm": 0.5,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.4,
+                        "cap": "flat"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 1.0
+          }
+        }
+      },
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "line",
+                "layers": [
+                  {
+                    "color": "#2399E9",
+                    "width": 0.5
+                  },
+                  {
+                    "color": "#A6CEE3",
+                    "width": 0.5,
+                    "offset": 0.4
+                  }
+                ]
+              },
+              "labels": null,
+              "layer": "__2_e6641209_8a33_4924_b926_0c24679d069c"
+            }
+          ],
+          "scale": 0.35
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "__2_e6641209_8a33_4924_b926_0c24679d069c",
+                "layer_name": "省界2",
+                "request": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#2399E9",
+                        "width": 0.5
+                      },
+                      {
+                        "color": "#A6CEE3",
+                        "width": 0.5,
+                        "offset": 0.4
+                      }
+                    ]
+                  },
+                  "labels": null,
+                  "layer": "__2_e6641209_8a33_4924_b926_0c24679d069c"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#2399e9",
+                        "opacity": 1.0,
+                        "width_mm": 0.175,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      },
+                      {
+                        "color": "#a6cee3",
+                        "opacity": 1.0,
+                        "width_mm": 0.175,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.13999999999999999,
+                        "cap": "flat"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": false
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": false
+                  },
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#2399e9",
+                        "opacity": 1.0,
+                        "width_mm": 0.175,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      },
+                      {
+                        "color": "#a6cee3",
+                        "opacity": 1.0,
+                        "width_mm": 0.175,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.13999999999999999,
+                        "cap": "flat"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 0.35
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "河流面",
+    "saved_qml": {
+      "renderer": "QgsSingleSymbolRenderer",
+      "labels": {
+        "enabled": true,
+        "field": "NAME",
+        "size_mm": 2.6,
+        "color": "#242424",
+        "font": ".AppleSystemUIFont",
+        "bold": true,
+        "obstacle": true,
+        "placement": "horizontal",
+        "merge_lines": false,
+        "repeat_mm": 0.0,
+        "display_all": false,
+        "buffer": {
+          "enabled": false,
+          "color": "#ffffff",
+          "size_mm": 1.0
+        }
+      },
+      "symbol": {
+        "type": "fill",
+        "layers": [
+          {
+            "fill": "#a6cee3",
+            "opacity": 1.0,
+            "outline": "#a6cee3",
+            "outline_opacity": 1.0,
+            "outline_width_mm": 0.26,
+            "outline_style": "solid"
+          }
+        ]
+      }
+    },
+    "calls": [
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "fill",
+                "layers": [
+                  {
+                    "fill": "#A6CEE3",
+                    "outline": "#A6CEE3",
+                    "outline_width": 0.26
+                  }
+                ]
+              },
+              "labels": null,
+              "layer": "___1_ff36a943_da68_470b_80a0_4043fab1d460"
+            }
+          ],
+          "scale": 1
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "___1_ff36a943_da68_470b_80a0_4043fab1d460",
+                "layer_name": "河流面1",
+                "request": {
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#A6CEE3",
+                        "outline": "#A6CEE3",
+                        "outline_width": 0.26
+                      }
+                    ]
+                  },
+                  "labels": null,
+                  "layer": "___1_ff36a943_da68_470b_80a0_4043fab1d460"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#a6cee3",
+                        "opacity": 1.0,
+                        "outline": "#a6cee3",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.26,
+                        "outline_style": "solid"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": false
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": false
+                  },
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#a6cee3",
+                        "opacity": 1.0,
+                        "outline": "#a6cee3",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.26,
+                        "outline_style": "solid"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 1.0
+          }
+        }
+      },
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "fill",
+                "layers": [
+                  {
+                    "fill": "#A6CEE3",
+                    "outline": "#A6CEE3",
+                    "outline_width": 0.26
+                  }
+                ]
+              },
+              "labels": null,
+              "layer": "___2_9096b637_e56a_4b47_9978_fb79e56ce486"
+            }
+          ],
+          "scale": 0.35
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "___2_9096b637_e56a_4b47_9978_fb79e56ce486",
+                "layer_name": "河流面2",
+                "request": {
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#A6CEE3",
+                        "outline": "#A6CEE3",
+                        "outline_width": 0.26
+                      }
+                    ]
+                  },
+                  "labels": null,
+                  "layer": "___2_9096b637_e56a_4b47_9978_fb79e56ce486"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#a6cee3",
+                        "opacity": 1.0,
+                        "outline": "#a6cee3",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": false
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": false
+                  },
+                  "symbol": {
+                    "type": "fill",
+                    "layers": [
+                      {
+                        "fill": "#a6cee3",
+                        "opacity": 1.0,
+                        "outline": "#a6cee3",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 0.35
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "河流线",
+    "saved_qml": {
+      "renderer": "QgsSingleSymbolRenderer",
+      "labels": {
+        "enabled": true,
+        "field": "NAME",
+        "size_mm": 3.5277777777777777,
+        "color": "#a6cee3",
+        "font": ".AppleSystemUIFont",
+        "bold": false,
+        "obstacle": true,
+        "placement": "line",
+        "merge_lines": true,
+        "repeat_mm": 0.0,
+        "display_all": false,
+        "buffer": {
+          "enabled": false,
+          "color": "#ffffff",
+          "size_mm": 1.0
+        }
+      },
+      "symbol": {
+        "type": "line",
+        "layers": [
+          {
+            "color": "#a6cee3",
+            "opacity": 1.0,
+            "width_mm": 0.46,
+            "style": "solid",
+            "dash_mm": [],
+            "offset_mm": 0.0,
+            "cap": "flat"
+          }
+        ]
+      }
+    },
+    "calls": [
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "line",
+                "layers": [
+                  {
+                    "color": "#A6CEE3",
+                    "width": 0.46
+                  }
+                ]
+              },
+              "labels": {
+                "field": "NAME",
+                "size": 10,
+                "unit": "pt",
+                "color": "#A6CEE3",
+                "placement": "line",
+                "merge_lines": true,
+                "repeat": 0
+              },
+              "layer": "___1_b9300c8d_a30a_4911_889b_7553dcd50d8d"
+            }
+          ],
+          "scale": 1
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "___1_b9300c8d_a30a_4911_889b_7553dcd50d8d",
+                "layer_name": "河流线1",
+                "request": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#A6CEE3",
+                        "width": 0.46
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "field": "NAME",
+                    "size": 10,
+                    "unit": "pt",
+                    "color": "#A6CEE3",
+                    "placement": "line",
+                    "merge_lines": true,
+                    "repeat": 0
+                  },
+                  "layer": "___1_b9300c8d_a30a_4911_889b_7553dcd50d8d"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#a6cee3",
+                        "opacity": 1.0,
+                        "width_mm": 0.46,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": true,
+                    "field": "NAME",
+                    "size_mm": 3.5277777777777777,
+                    "color": "#a6cee3",
+                    "font": "PingFang SC",
+                    "placement": "line",
+                    "bold": false,
+                    "obstacle": true,
+                    "merge_lines": true,
+                    "repeat_mm": 0.0,
+                    "display_all": false,
+                    "buffer": {
+                      "enabled": false
+                    }
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": true,
+                    "field": "NAME",
+                    "size_mm": 3.5277777777777777,
+                    "color": "#a6cee3",
+                    "font": "PingFang SC",
+                    "bold": false,
+                    "obstacle": true,
+                    "placement": "line",
+                    "merge_lines": true,
+                    "repeat_mm": 0.0,
+                    "display_all": false,
+                    "buffer": {
+                      "enabled": false,
+                      "color": "#ffffff",
+                      "size_mm": 1.0
+                    }
+                  },
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#a6cee3",
+                        "opacity": 1.0,
+                        "width_mm": 0.46,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 1.0
+          }
+        }
+      },
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "line",
+                "layers": [
+                  {
+                    "color": "#A6CEE3",
+                    "width": 0.46
+                  }
+                ]
+              },
+              "labels": {
+                "field": "NAME",
+                "size": 10,
+                "unit": "pt",
+                "color": "#A6CEE3",
+                "placement": "line",
+                "merge_lines": true,
+                "repeat": 0
+              },
+              "layer": "___2_f302bb68_690e_42e7_81fa_974898afa79e"
+            }
+          ],
+          "scale": 0.35
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "___2_f302bb68_690e_42e7_81fa_974898afa79e",
+                "layer_name": "河流线2",
+                "request": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#A6CEE3",
+                        "width": 0.46
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "field": "NAME",
+                    "size": 10,
+                    "unit": "pt",
+                    "color": "#A6CEE3",
+                    "placement": "line",
+                    "merge_lines": true,
+                    "repeat": 0
+                  },
+                  "layer": "___2_f302bb68_690e_42e7_81fa_974898afa79e"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#a6cee3",
+                        "opacity": 1.0,
+                        "width_mm": 0.161,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": true,
+                    "field": "NAME",
+                    "size_mm": 1.8,
+                    "color": "#a6cee3",
+                    "font": "PingFang SC",
+                    "placement": "line",
+                    "bold": false,
+                    "obstacle": true,
+                    "merge_lines": true,
+                    "repeat_mm": 0.0,
+                    "display_all": false,
+                    "buffer": {
+                      "enabled": false
+                    }
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": true,
+                    "field": "NAME",
+                    "size_mm": 1.8,
+                    "color": "#a6cee3",
+                    "font": "PingFang SC",
+                    "bold": false,
+                    "obstacle": true,
+                    "placement": "line",
+                    "merge_lines": true,
+                    "repeat_mm": 0.0,
+                    "display_all": false,
+                    "buffer": {
+                      "enabled": false,
+                      "color": "#ffffff",
+                      "size_mm": 1.0
+                    }
+                  },
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#a6cee3",
+                        "opacity": 1.0,
+                        "width_mm": 0.161,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 0.35
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "高速公路",
+    "saved_qml": {
+      "renderer": "QgsSingleSymbolRenderer",
+      "labels": {
+        "enabled": false
+      },
+      "symbol": {
+        "type": "line",
+        "layers": [
+          {
+            "color": "#000000",
+            "opacity": 1.0,
+            "width_mm": 0.4,
+            "style": "solid",
+            "dash_mm": [],
+            "offset_mm": 0.0,
+            "cap": "flat"
+          },
+          {
+            "color": "#c0c0c0",
+            "opacity": 1.0,
+            "width_mm": 0.3,
+            "style": "solid",
+            "dash_mm": [],
+            "offset_mm": 0.0,
+            "cap": "flat"
+          }
+        ]
+      }
+    },
+    "calls": [
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "line",
+                "layers": [
+                  {
+                    "color": "#000000",
+                    "width": 0.4
+                  },
+                  {
+                    "color": "#C0C0C0",
+                    "width": 0.3
+                  }
+                ]
+              },
+              "labels": null,
+              "layer": "____1_323b4cf1_94e9_448d_b2cd_82fabe7313d0"
+            }
+          ],
+          "scale": 1
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "____1_323b4cf1_94e9_448d_b2cd_82fabe7313d0",
+                "layer_name": "高速公路1",
+                "request": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#000000",
+                        "width": 0.4
+                      },
+                      {
+                        "color": "#C0C0C0",
+                        "width": 0.3
+                      }
+                    ]
+                  },
+                  "labels": null,
+                  "layer": "____1_323b4cf1_94e9_448d_b2cd_82fabe7313d0"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#000000",
+                        "opacity": 1.0,
+                        "width_mm": 0.4,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      },
+                      {
+                        "color": "#c0c0c0",
+                        "opacity": 1.0,
+                        "width_mm": 0.3,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": false
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": false
+                  },
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#000000",
+                        "opacity": 1.0,
+                        "width_mm": 0.4,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      },
+                      {
+                        "color": "#c0c0c0",
+                        "opacity": 1.0,
+                        "width_mm": 0.3,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 1.0
+          }
+        }
+      },
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "line",
+                "layers": [
+                  {
+                    "color": "#000000",
+                    "width": 0.4
+                  },
+                  {
+                    "color": "#C0C0C0",
+                    "width": 0.3
+                  }
+                ]
+              },
+              "labels": null,
+              "layer": "____2_bb4563c0_601d_4a61_a69f_e6bd9a7a60b8"
+            }
+          ],
+          "scale": 0.35
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "____2_bb4563c0_601d_4a61_a69f_e6bd9a7a60b8",
+                "layer_name": "高速公路2",
+                "request": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#000000",
+                        "width": 0.4
+                      },
+                      {
+                        "color": "#C0C0C0",
+                        "width": 0.3
+                      }
+                    ]
+                  },
+                  "labels": null,
+                  "layer": "____2_bb4563c0_601d_4a61_a69f_e6bd9a7a60b8"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#000000",
+                        "opacity": 1.0,
+                        "width_mm": 0.13999999999999999,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      },
+                      {
+                        "color": "#c0c0c0",
+                        "opacity": 1.0,
+                        "width_mm": 0.105,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": false
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": false
+                  },
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#000000",
+                        "opacity": 1.0,
+                        "width_mm": 0.13999999999999999,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      },
+                      {
+                        "color": "#c0c0c0",
+                        "opacity": 1.0,
+                        "width_mm": 0.105,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 0.35
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "国道",
+    "saved_qml": {
+      "renderer": "QgsSingleSymbolRenderer",
+      "labels": {
+        "enabled": false
+      },
+      "symbol": {
+        "type": "line",
+        "layers": [
+          {
+            "color": "#ffb957",
+            "opacity": 1.0,
+            "width_mm": 0.3,
+            "style": "solid",
+            "dash_mm": [],
+            "offset_mm": 0.0,
+            "cap": "flat"
+          }
+        ]
+      }
+    },
+    "calls": [
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "line",
+                "layers": [
+                  {
+                    "color": "#FFB957",
+                    "width": 0.3
+                  }
+                ]
+              },
+              "labels": null,
+              "layer": "__1_1b52ee0e_dc08_49db_baec_a590126bca04"
+            }
+          ],
+          "scale": 1
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "__1_1b52ee0e_dc08_49db_baec_a590126bca04",
+                "layer_name": "国道1",
+                "request": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#FFB957",
+                        "width": 0.3
+                      }
+                    ]
+                  },
+                  "labels": null,
+                  "layer": "__1_1b52ee0e_dc08_49db_baec_a590126bca04"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#ffb957",
+                        "opacity": 1.0,
+                        "width_mm": 0.3,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": false
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": false
+                  },
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#ffb957",
+                        "opacity": 1.0,
+                        "width_mm": 0.3,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 1.0
+          }
+        }
+      },
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "line",
+                "layers": [
+                  {
+                    "color": "#FFB957",
+                    "width": 0.3
+                  }
+                ]
+              },
+              "labels": null,
+              "layer": "__2_2d72b532_12b4_47b6_abb7_ec6f59f42d51"
+            }
+          ],
+          "scale": 0.35
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "__2_2d72b532_12b4_47b6_abb7_ec6f59f42d51",
+                "layer_name": "国道2",
+                "request": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#FFB957",
+                        "width": 0.3
+                      }
+                    ]
+                  },
+                  "labels": null,
+                  "layer": "__2_2d72b532_12b4_47b6_abb7_ec6f59f42d51"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#ffb957",
+                        "opacity": 1.0,
+                        "width_mm": 0.105,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": false
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": false
+                  },
+                  "symbol": {
+                    "type": "line",
+                    "layers": [
+                      {
+                        "color": "#ffb957",
+                        "opacity": 1.0,
+                        "width_mm": 0.105,
+                        "style": "solid",
+                        "dash_mm": [],
+                        "offset_mm": 0.0,
+                        "cap": "flat"
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 0.35
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "县级城市驻地",
+    "saved_qml": {
+      "renderer": "QgsSingleSymbolRenderer",
+      "labels": {
+        "enabled": true,
+        "field": "name",
+        "size_mm": 3.0,
+        "color": "#000000",
+        "font": ".AppleSystemUIFont",
+        "bold": false,
+        "obstacle": true,
+        "placement": "around_point",
+        "merge_lines": false,
+        "repeat_mm": 0.0,
+        "display_all": false,
+        "buffer": {
+          "enabled": false,
+          "color": "#ffffff",
+          "size_mm": 1.0
+        }
+      },
+      "symbol": {
+        "type": "marker",
+        "layers": [
+          {
+            "fill": null,
+            "opacity": 0.0,
+            "outline": "#000000",
+            "outline_opacity": 1.0,
+            "outline_width_mm": 0.1,
+            "outline_style": "solid",
+            "shape": "circle",
+            "size_mm": 1.8
+          },
+          {
+            "fill": null,
+            "opacity": 0.0,
+            "outline": "#000000",
+            "outline_opacity": 1.0,
+            "outline_width_mm": 0.1,
+            "outline_style": "solid",
+            "shape": "circle",
+            "size_mm": 0.8
+          }
+        ]
+      }
+    },
+    "calls": [
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "marker",
+                "layers": [
+                  {
+                    "shape": "circle",
+                    "size": 1.8,
+                    "fill": null,
+                    "outline": "#000000",
+                    "outline_width": 0.1
+                  },
+                  {
+                    "shape": "circle",
+                    "size": 0.8,
+                    "fill": null,
+                    "outline": "#000000",
+                    "outline_width": 0.1
+                  }
+                ]
+              },
+              "labels": {
+                "field": "name",
+                "size": 3,
+                "color": "#000000",
+                "placement": "around_point"
+              },
+              "layer": "______1_99d12a0d_186b_4843_92c0_fdb187c5d321"
+            }
+          ],
+          "scale": 1
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "______1_99d12a0d_186b_4843_92c0_fdb187c5d321",
+                "layer_name": "县级城市驻地1",
+                "request": {
+                  "symbol": {
+                    "type": "marker",
+                    "layers": [
+                      {
+                        "shape": "circle",
+                        "size": 1.8,
+                        "fill": null,
+                        "outline": "#000000",
+                        "outline_width": 0.1
+                      },
+                      {
+                        "shape": "circle",
+                        "size": 0.8,
+                        "fill": null,
+                        "outline": "#000000",
+                        "outline_width": 0.1
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "field": "name",
+                    "size": 3,
+                    "color": "#000000",
+                    "placement": "around_point"
+                  },
+                  "layer": "______1_99d12a0d_186b_4843_92c0_fdb187c5d321"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "marker",
+                    "layers": [
+                      {
+                        "fill": null,
+                        "opacity": 0.0,
+                        "outline": "#000000",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid",
+                        "shape": "circle",
+                        "size_mm": 1.8
+                      },
+                      {
+                        "fill": null,
+                        "opacity": 0.0,
+                        "outline": "#000000",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid",
+                        "shape": "circle",
+                        "size_mm": 0.8
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": true,
+                    "field": "name",
+                    "size_mm": 3.0,
+                    "color": "#000000",
+                    "font": "PingFang SC",
+                    "placement": "around_point",
+                    "bold": false,
+                    "obstacle": true,
+                    "merge_lines": false,
+                    "repeat_mm": 0.0,
+                    "display_all": false,
+                    "buffer": {
+                      "enabled": false
+                    }
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": true,
+                    "field": "name",
+                    "size_mm": 3.0,
+                    "color": "#000000",
+                    "font": "PingFang SC",
+                    "bold": false,
+                    "obstacle": true,
+                    "placement": "around_point",
+                    "merge_lines": false,
+                    "repeat_mm": 0.0,
+                    "display_all": false,
+                    "buffer": {
+                      "enabled": false,
+                      "color": "#ffffff",
+                      "size_mm": 1.0
+                    }
+                  },
+                  "symbol": {
+                    "type": "marker",
+                    "layers": [
+                      {
+                        "fill": null,
+                        "opacity": 0.0,
+                        "outline": "#000000",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid",
+                        "shape": "circle",
+                        "size_mm": 1.8
+                      },
+                      {
+                        "fill": null,
+                        "opacity": 0.0,
+                        "outline": "#000000",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid",
+                        "shape": "circle",
+                        "size_mm": 0.8
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 1.0
+          }
+        }
+      },
+      {
+        "tool": "layer_set_symbology",
+        "arguments": {
+          "items": [
+            {
+              "symbol": {
+                "type": "marker",
+                "layers": [
+                  {
+                    "shape": "circle",
+                    "size": 1.8,
+                    "fill": null,
+                    "outline": "#000000",
+                    "outline_width": 0.1
+                  },
+                  {
+                    "shape": "circle",
+                    "size": 0.8,
+                    "fill": null,
+                    "outline": "#000000",
+                    "outline_width": 0.1
+                  }
+                ]
+              },
+              "labels": {
+                "field": "name",
+                "size": 3,
+                "color": "#000000",
+                "placement": "around_point"
+              },
+              "layer": "______2_1517292f_b030_41af_b5d0_c2f92df23be0"
+            }
+          ],
+          "scale": 0.35
+        },
+        "result": {
+          "success": true,
+          "info": "已设置符号并读回 QGIS 实际状态",
+          "data": {
+            "items": [
+              {
+                "success": true,
+                "layer_id": "______2_1517292f_b030_41af_b5d0_c2f92df23be0",
+                "layer_name": "县级城市驻地2",
+                "request": {
+                  "symbol": {
+                    "type": "marker",
+                    "layers": [
+                      {
+                        "shape": "circle",
+                        "size": 1.8,
+                        "fill": null,
+                        "outline": "#000000",
+                        "outline_width": 0.1
+                      },
+                      {
+                        "shape": "circle",
+                        "size": 0.8,
+                        "fill": null,
+                        "outline": "#000000",
+                        "outline_width": 0.1
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "field": "name",
+                    "size": 3,
+                    "color": "#000000",
+                    "placement": "around_point"
+                  },
+                  "layer": "______2_1517292f_b030_41af_b5d0_c2f92df23be0"
+                },
+                "requested": {
+                  "symbol": {
+                    "type": "marker",
+                    "layers": [
+                      {
+                        "fill": null,
+                        "opacity": 0.0,
+                        "outline": "#000000",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid",
+                        "shape": "circle",
+                        "size_mm": 0.63
+                      },
+                      {
+                        "fill": null,
+                        "opacity": 0.0,
+                        "outline": "#000000",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid",
+                        "shape": "circle",
+                        "size_mm": 0.27999999999999997
+                      }
+                    ]
+                  },
+                  "labels": {
+                    "enabled": true,
+                    "field": "name",
+                    "size_mm": 1.8,
+                    "color": "#000000",
+                    "font": "PingFang SC",
+                    "placement": "around_point",
+                    "bold": false,
+                    "obstacle": true,
+                    "merge_lines": false,
+                    "repeat_mm": 0.0,
+                    "display_all": false,
+                    "buffer": {
+                      "enabled": false
+                    }
+                  }
+                },
+                "actual": {
+                  "renderer": "QgsSingleSymbolRenderer",
+                  "labels": {
+                    "enabled": true,
+                    "field": "name",
+                    "size_mm": 1.8,
+                    "color": "#000000",
+                    "font": "PingFang SC",
+                    "bold": false,
+                    "obstacle": true,
+                    "placement": "around_point",
+                    "merge_lines": false,
+                    "repeat_mm": 0.0,
+                    "display_all": false,
+                    "buffer": {
+                      "enabled": false,
+                      "color": "#ffffff",
+                      "size_mm": 1.0
+                    }
+                  },
+                  "symbol": {
+                    "type": "marker",
+                    "layers": [
+                      {
+                        "fill": null,
+                        "opacity": 0.0,
+                        "outline": "#000000",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid",
+                        "shape": "circle",
+                        "size_mm": 0.63
+                      },
+                      {
+                        "fill": null,
+                        "opacity": 0.0,
+                        "outline": "#000000",
+                        "outline_opacity": 1.0,
+                        "outline_width_mm": 0.1,
+                        "outline_style": "solid",
+                        "shape": "circle",
+                        "size_mm": 0.27999999999999997
+                      }
+                    ]
+                  }
+                },
+                "warnings": [],
+                "differences": []
+              }
+            ],
+            "scale": 0.35
+          }
+        }
+      }
+    ]
+  }
+]

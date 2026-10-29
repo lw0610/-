@@ -36,16 +36,20 @@ func failConfirmedCompilation(t *testing.T, store *ReviewStore, review *Review) 
 }
 
 func TestRetryCompilationPreservesConfirmationAndOnlyChangesDrawingPresets(t *testing.T) {
-	for _, existing := range []bool{false, true} {
-		t.Run(map[bool]string{false: "missing_original_presets", true: "existing_compile_options"}[existing], func(t *testing.T) {
+	for _, scenario := range []string{"missing_original_presets", "existing_compile_options", "built_in_defaults"} {
+		t.Run(scenario, func(t *testing.T) {
+			existing := scenario != "missing_original_presets"
 			var args map[string]any
 			if existing {
 				args = map[string]any{"route_style": "旧路线", "symbols": "旧符号", "rules": "保留事实规则", "output_dir": "original-output", "other": map[string]any{"value": "retained"}}
 			}
 			store, review := newCompilationRetryReview(t, args)
 			failed := failConfirmedCompilation(t, store, review)
-			retry, err := store.RetryCompilation(review.SessionID, review.ReviewID, review.Revision,
-				map[string]string{"route_style": "红蓝对比", "symbols": "军标", "rules": "不能替换原有事实规则"})
+			presets := map[string]string{"route_style": "红蓝对比", "symbols": "军标", "rules": "不能替换原有事实规则"}
+			if scenario == "built_in_defaults" {
+				presets = nil
+			}
+			retry, err := store.RetryCompilation(review.SessionID, review.ReviewID, review.Revision, presets)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -56,6 +60,9 @@ func TestRetryCompilationPreservesConfirmationAndOnlyChangesDrawingPresets(t *te
 				t.Fatal("retry modified confirmed facts or original extraction")
 			}
 			want := map[string]any{"route_style": "红蓝对比", "symbols": "军标"}
+			if scenario == "built_in_defaults" {
+				want = map[string]any{}
+			}
 			if existing {
 				for _, key := range []string{"rules", "output_dir", "other"} {
 					want[key] = args[key]

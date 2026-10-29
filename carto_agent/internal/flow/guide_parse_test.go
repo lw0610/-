@@ -36,7 +36,7 @@ func TestGuideExample(t *testing.T) {
 		t.Fatal("body was changed")
 	}
 	encoded, _ := json.Marshal(g)
-	for _, field := range []string{`"data":`, `"layers":`, `"method":`, `"checks":`, `"info":`} {
+	for _, field := range []string{`"data":`, `"method":`, `"checks":`, `"info":`} {
 		if strings.Contains(string(encoded), field) {
 			t.Fatal("structured execution field survived:", field)
 		}

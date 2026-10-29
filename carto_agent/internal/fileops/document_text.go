@@ -22,7 +22,7 @@ import (
 
 const maxDocumentTextBytes = 16 << 20
 
-// ReadText reads the complete, authorized source text. It never substitutes a
+// ReadText reads complete local source text. It never substitutes a
 // task description for file contents or returns a silently truncated document.
 // Images and scanned PDFs require a separate media/OCR-capable reader.
 func ReadText(ctx context.Context, path string) (string, error) {

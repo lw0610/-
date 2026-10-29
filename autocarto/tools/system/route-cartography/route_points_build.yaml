@@ -11,7 +11,7 @@ metadata:
   domain: route-cartography
   runtime: qgis
 spec:
-  description: 从 points.csv 生成专题点图层、按符号资源设置符号，并保留地名和非空 meeting_label 的参与者标注。
+  description: 从 points.csv 生成专题点图层，使用数据集的 symbol_mapping.csv 设置符号，并保留地名和非空 meeting_label 的参与者标注。
   parameters:
   - name: dataset_source
     type: string
@@ -35,7 +35,7 @@ spec:
     description: 生成或复用的点图层名称，默认专题点
   - name: symbols
     type: string
-    description: 可选符号预设名称（军标、图例或用户预设）；省略时读取运行数据集 symbol_mapping.csv
+    description: 仅用户明确指定使用外部符号表时填写其预设名称；省略时使用数据集已生成的 symbol_mapping.csv，不加载外部符号表。
   - name: default_symbol_types
     type: array
     items:

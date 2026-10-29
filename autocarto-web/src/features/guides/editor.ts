@@ -12,7 +12,7 @@ export const guideTemplate = `---
 说明这份流程适合制作什么地图。
 
 ## 需要的图层与处理
-写清需要的数据、范围、处理方式和标注要求。样式可从资源库插入。
+写清需要的数据、范围、处理方式和标注要求。图层、样式可从资源库插入。
 
 ## 做法
 依据真实材料核验数据，然后处理图层并制作地图。
@@ -32,11 +32,11 @@ export function resourceTypeLabel(types: ResourceTypeDefinition[], type: string)
 }
 
 export function insertResourceReference(markdown: string, resource: { label: string; type: string }): string {
-  if (!['style', 'layout'].includes(resource.type)) throw new Error('请选择样式或版面')
+  if (!['style', 'layout', 'layer'].includes(resource.type)) throw new Error('请选择图层、样式或版面')
   const name = resource.label.replace(/[\r\n「」]/g, '').trim()
   if (!name) throw new Error('资源名称不能为空')
   // Insert plain prose; no special section is needed or interpreted at runtime.
-  return `${markdown.trimEnd()}\n\n使用${resource.type === 'layout' ? '版面' : '样式'}「${name}」。\n`
+  return `${markdown.trimEnd()}\n\n使用${resource.type === 'layout' ? '版面' : resource.type === 'layer' ? '内置图层' : '样式'}「${name}」。\n`
 }
 
 export function flowBody(markdown: string): string {

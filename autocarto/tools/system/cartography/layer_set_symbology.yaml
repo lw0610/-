@@ -1,0 +1,76 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_set_symbology
+  display_name: 按参数设置符号与标注
+  runtime: qgis
+  domain: cartography
+spec:
+  description: 一次设置多个矢量图层的面、线、点多层符号与标注；符号层按自下而上叠加。尺寸默认毫米，scale统一缩放，线宽最低0.1毫米，字号最低1.8毫米。返回原请求、换算后的期望设置、独立QGIS读回、警告及差异；省略symbol或labels保持该部分，labels为null关闭标注。
+  parameters:
+    - name: items
+      type: array
+      required: true
+      description: 待设置的图层列表，每项指定图层、符号和标注；省略符号或标注时保留对应设置
+      schema:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required: [layer]
+          properties:
+            layer: {type: string, description: 图层ID或唯一名称}
+            symbol:
+              type: object
+              required: [type, layers]
+              properties:
+                type: {type: string, enum: [fill, line, marker]}
+                layers:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      fill: {type: [string, 'null'], description: 面或点填充颜色；null为空心}
+                      opacity: {type: number, minimum: 0, maximum: 1, default: 1}
+                      outline: {type: string, description: 面或点描边颜色}
+                      outline_width: {type: number, minimum: 0, description: 描边宽度，毫米}
+                      outline_style: {type: string, enum: [solid, dash, dot, dash_dot, dash_dot_dot, none]}
+                      color: {type: string, description: 线颜色}
+                      width: {type: number, minimum: 0, description: 线宽，毫米}
+                      style: {type: string, enum: [solid, dash, dot, dash_dot, dash_dot_dot, none]}
+                      dash: {type: array, items: {type: number, exclusiveMinimum: 0}, description: "自定义虚线段与间隔毫米列表，如[4,4]"}
+                      offset: {type: number, description: 线偏移毫米，可负}
+                      cap: {type: string, enum: [flat, square, round]}
+                      shape: {type: string, enum: [circle, square, triangle, star]}
+                      size: {type: number, exclusiveMinimum: 0, description: 点大小，毫米}
+            labels:
+              type: [object, 'null']
+              properties:
+                field: {type: string, default: auto, description: auto优先内置图层清单label_field，否则NAME/name/name:zh/名称；缺失报告警告并关闭标注}
+                size: {type: number, exclusiveMinimum: 0, default: 3}
+                unit: {type: string, enum: [mm, pt], default: mm}
+                color: {type: string, default: '#000000'}
+                font: {type: string, default: auto, description: auto选本机可用微软雅黑/苹方/思源黑体/Noto Sans CJK；缺失字体同样回退}
+                bold: {type: boolean, default: false, description: 是否使用粗体；省域标注按流程设true}
+                obstacle: {type: boolean, default: true, description: 图层要素是否参与其他标注的避让；省域按流程设false}
+                placement: {type: string, enum: [horizontal, line, around_point]}
+                merge_lines: {type: boolean, default: false}
+                repeat: {type: number, minimum: 0, default: 0, description: 重复间隔毫米，0不重复}
+                display_all: {type: boolean, default: false, description: 是否显示所有要素标注；省名按流程设true}
+                buffer:
+                  type: [object, 'null']
+                  description: 可选文字描边；省略关闭
+                  properties:
+                    color: {type: string, default: '#ffffff'}
+                    size: {type: number, minimum: 0, default: 0.5, description: 毫米}
+    - name: scale
+      type: number
+      required: false
+      default: 1
+      description: 整体尺寸比例，A1=1，A4=0.35；线宽/字号/点大小/偏移/虚线/描边同时缩放
+execution:
+  handler: handlers.style.set_symbology_handler
+  param_mapping:
+    items: '{{ items }}'
+    scale: '{{ scale }}'

@@ -18,7 +18,7 @@ func (f cartoRunner) Run(c context.Context, r StepRequest) (StepResult, error) {
 func cartoFixture(t *testing.T, n int) (*plan.Plan, *flow.FlowPlan, StartRequest) {
 	t.Helper()
 	t.Setenv("AUTOCARTO_HOME", t.TempDir())
-	p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-fixture", Version: 1, Goal: "制图"}
+	p := &plan.Plan{APIVersion: plan.LegacyAPIVersion, ID: "cp-fixture", Version: 1, Goal: "制图"}
 	for i := 0; i < n; i++ {
 		id := string(rune('a' + i))
 		p.Steps = append(p.Steps, plan.Step{ID: id, Title: id, Capabilities: []string{"read"}, Instructions: "执行可核验操作", Outputs: []flow.OutputDeclaration{{Label: id, Type: "text"}}})

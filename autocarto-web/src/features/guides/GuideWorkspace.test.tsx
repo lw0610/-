@@ -2,10 +2,11 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import GuideWorkspace from './GuideWorkspace'
 import { useConnectionStore } from '@/stores/connectionStore'
-import type { GuideDetail } from './types'
+import type { GuideDetail, LayerItem } from './types'
 const mocks = vi.hoisted(() => ({list: vi.fn(), get: vi.fn(), save: vi.fn(), create: vi.fn(), import: vi.fn(), copy: vi.fn(), export: vi.fn(), setEnabled: vi.fn()}))
 vi.mock('./api', () => ({guideApi: mocks}))
 vi.mock('./ResourceLibrary', () => ({default: () => <p>样式与版面库</p>}))
+vi.mock('./LayerLibrary', () => ({default: ({onSelect}: {onSelect?: (item: LayerItem) => void}) => <button onClick={() => onSelect?.({name: '省域面'} as LayerItem)}>插入流程引用</button>}))
 vi.mock('@/hooks/useUnsavedChangesGuard', () => ({useUnsavedChangesGuard: vi.fn(), confirmDiscardChanges: () => true}))
 vi.mock('@/lib/config-form-helpers', () => ({isDesktopRuntime: () => false, pickDirectoryPath: vi.fn(), pickFilePath: vi.fn()}))
 const markdown = '---\n名称: 河流图\n说明: 制作真实河流图\n版本: 2.0.0\n---\n# 河流图\n\n任意组织正文，读取真实河流数据，使用样式「蓝色河流」。'
@@ -31,6 +32,13 @@ it('keeps builtin prose read only and does not enable it merely by selecting it'
   render(<GuideWorkspace/>); fireEvent.click(await screen.findByRole('button', {name: /河流图 制作真实河流图/})); await screen.findByRole('button', {name: '启用'})
   expect(mocks.setEnabled).not.toHaveBeenCalled(); expect(screen.queryByRole('button', {name: '编辑流程'})).not.toBeInTheDocument(); expect(screen.queryByRole('button', {name: '保存'})).not.toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', {name: '启用'})); await waitFor(() => expect(mocks.setEnabled).toHaveBeenCalledWith('river', true)); expect(screen.getByRole('button', {name: '复制为我的流程'})).toBeInTheDocument()
+})
+it('inserts a selected builtin layer into the editable flow and saves its reference', async () => {
+  render(<GuideWorkspace/>); fireEvent.click(await screen.findByRole('button', {name: /河流图 制作真实河流图/})); fireEvent.click(await screen.findByRole('button', {name: '编辑流程'}))
+  fireEvent.click(screen.getByText('插入内置图层引用')); fireEvent.click(screen.getByText('插入流程引用'))
+  expect(screen.getByLabelText('FLOW.md 内容')).toHaveValue(`${markdown}\n\n使用内置图层「省域面」。\n`)
+  expect(screen.getByText('已插入图层引用，请补充用途后保存流程。')).toBeVisible()
+  fireEvent.click(screen.getByRole('button', {name: '保存'})); await waitFor(() => expect(mocks.save).toHaveBeenCalledWith('river', expect.stringContaining('内置图层「省域面」')))
 })
 it('exports the document with dependencies and offers no data packaging option', async () => {
   mocks.export.mockResolvedValue({zip_path: '/tmp/river.zip'})

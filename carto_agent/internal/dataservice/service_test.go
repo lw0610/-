@@ -166,7 +166,7 @@ func TestGetVerifiedUserBindingAndAutomaticNeed(t *testing.T) {
 	if _, err = os.Stat(got.ProvenancePath); err != nil {
 		t.Fatal(err)
 	}
-	index, _ := sessionfiles.NewWithRoots(s.options.SessionID, s.options.SessionDir)
+	index, _ := sessionfiles.NewAt(s.options.SessionID, s.options.SessionDir)
 	files, err := index.List(true)
 	if err != nil || len(files) < 3 {
 		t.Fatal(files, err)

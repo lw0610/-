@@ -1,9 +1,12 @@
 import importlib
 import importlib.util
+import json
 import logging
 import os
 import re
 from typing import Any, Dict, List, Optional, Tuple
+
+from .runtime import qgis_json_default
 
 logger = logging.getLogger(__name__)
 
@@ -164,17 +167,21 @@ class ProcessingToolExecutor:
 
             logger.info("算法执行成功，结果: %s", result)
 
+            result_data, output_layers = self._publish_algorithm_outputs(
+                definition, params, result
+            )
             self._refresh_canvas()
 
-            result_info = str(result)
+            result_info = str(result_data)
             if validation_info:
                 result_info = f"{result_info}; {validation_info}"
             if retry_diagnostic:
                 result_info = f"{result_info}; {retry_diagnostic}"
             return {
                 "success": True,
-                "output": f"工具 {tool_name} 执行成功",
+                "output": result_data,
                 "info": result_info,
+                "output_layers": output_layers,
             }
         except Exception as e:
             logger.error("执行工具 %s 失败: %s", tool_name, e, exc_info=True)
@@ -377,6 +384,52 @@ class ProcessingToolExecutor:
             logger.error("几何修复后重试仍失败: %s", diagnostic)
             return None, diagnostic
 
+    def _publish_algorithm_outputs(self, definition, params, result):
+        """Keep counters/paths and register working vectors without displaying them."""
+        data = dict(result)
+        output_layers = []
+        for parameter in definition.get("parameters", []):
+            name, kind = parameter["name"], parameter.get("type")
+            if name not in result:
+                continue
+            value = result[name]
+            if kind == "output_layer":
+                from qgis.core import QgsVectorLayer
+                if definition.get("auto_load") is False:
+                    # Diagnostics keep their counters; transient output layers
+                    # are not map contents. Explicit file outputs stay available.
+                    if isinstance(value, QgsVectorLayer) and value.providerType() == "memory":
+                        data.pop(name)
+                    else:
+                        path = value.source() if isinstance(value, QgsVectorLayer) else str(value)
+                        data[name] = path
+                        output_layers.append({"path": path, "auto_load": False})
+                    continue
+                from autocarto.tools.system._shared.vector_attributes_impl import (
+                    _build_output_layer_ref, _publish_target,
+                )
+                requested = str(params.get(name) or "")
+                layer = value if isinstance(value, QgsVectorLayer) else QgsVectorLayer(str(value), name, "ogr")
+                if not layer.isValid():
+                    raise RuntimeError(f"算法输出图层无法读取：{name}={value}")
+                if layer.providerType() == "memory":
+                    target_name = requested.removeprefix("memory:") if requested.startswith("memory:") else ""
+                else:
+                    basename = os.path.splitext(os.path.basename(layer.source().split("|", 1)[0]))[0]
+                    target_name = basename if re.search(r"[\u3400-\u9fff]", basename) else ""
+                output_name = parameter.get("description") or name
+                if output_name in {"输出图层", "输出"}:
+                    output_name = definition.get("description") or output_name
+                # Presentation is independent of the source used to replace an output.
+                layer.setName(target_name or output_name)
+                _publish_target(layer, params, output_ref=requested)
+                reference = _build_output_layer_ref(layer)
+                data[name] = reference
+                output_layers.append(reference)
+            elif kind == "file" and self._is_output_param(name, parameter) and isinstance(value, str):
+                output_layers.append({"path": value, "auto_load": False})
+        return json.loads(json.dumps(data, default=qgis_json_default)), output_layers
+
     def _is_geometry_error(self, error_message: str) -> bool:
         normalized = str(error_message or "").lower()
         if not normalized:
@@ -449,6 +502,8 @@ class ProcessingToolExecutor:
                         return True, "algorithm_help"
                 except Exception:
                     pass
+                if ":" not in str(algorithm_id):
+                    return False, "invalid_algorithm_id"
                 provider_id = str(algorithm_id).split(":", 1)[0]
                 provider_exists = any(
                     provider.id() == provider_id for provider in registry.providers()

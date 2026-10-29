@@ -70,7 +70,7 @@ export const terminalPlan = (status: string) => ['completed', 'completed_with_is
 export function normalizePlanSnapshot(value: unknown, sessionId?: string): PlanSnapshot | null {
   const raw = record(value), plan = record(raw.plan)
   const sid = String(raw.session_id || sessionId || ''), id = String(raw.plan_id || plan.plan_id || '')
-  if (!sid || !id || plan.api_version !== 'carto-plan/v1' || !Array.isArray(plan.steps)) return null
+  if (!sid || !id || !['carto-plan/v1', 'carto-plan/v2'].includes(String(plan.api_version)) || !Array.isArray(plan.steps)) return null
   return { ...raw, session_id: sid, plan_id: id, plan_version: Number(raw.plan_version || plan.version || 1),
     plan: { ...plan, facts: plan.facts || [], assumptions: plan.assumptions || [], data: plan.data || [], deliverables: plan.deliverables || [], checks: plan.checks || [] },
     status: String(raw.status || 'draft'), needs_confirmation: Boolean(raw.needs_confirmation), execution_mode: raw.execution_mode === 'plan' ? 'plan' : 'build',

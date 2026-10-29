@@ -3,6 +3,7 @@ package flow
 import (
 	"context"
 	"fmt"
+	"github.com/autocarto/carto_agent/internal/layers"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"strings"
 )
@@ -57,6 +58,25 @@ func (s *GuideStore) ReadContext(ctx context.Context, id string, library *resour
 			fmt.Fprintf(&out, "；提示：%s", d.Message)
 		}
 		out.WriteByte('\n')
+	}
+	if len(resolved.Doc.Layers) > 0 {
+		out.WriteString("\n## 系统附加：引用的内置图层\n")
+		catalog, err := layers.NewDefaultLibrary()
+		if err != nil {
+			return "", err
+		}
+		items, err := catalog.List()
+		if err != nil {
+			return "", err
+		}
+		for _, ref := range resolved.Doc.Layers {
+			item, err := layers.ResolveName(items, ref.Name)
+			if err != nil {
+				fmt.Fprintf(&out, "- %s：%s；运行时应提示并选择其他来源。\n", ref.Name, err)
+				continue
+			}
+			fmt.Fprintf(&out, "- %s；编号：%s；类别：%s；几何：%s；覆盖区域：%s；覆盖范围：%v；标注字段：%s；默认样式：%s；状态：%s\n", ref.Name, item.ID, item.Category, item.Geometry, strings.Join(item.Coverage.Regions, "、"), item.Coverage.BBox, item.LabelField, item.DefaultStyle, item.Status)
+		}
 	}
 	return out.String(), nil
 }

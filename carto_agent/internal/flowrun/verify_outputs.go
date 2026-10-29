@@ -6,13 +6,18 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
+	"github.com/autocarto/carto_agent/internal/acquire"
+	"github.com/autocarto/carto_agent/internal/dataservice"
 	"github.com/autocarto/carto_agent/internal/flow"
 )
 
-func VerifyOutputs(ctx context.Context, step flow.StepPlan, receipt Receipt, root string, tools ToolInvoker) Verification {
+func VerifyOutputs(ctx context.Context, step flow.StepPlan, receipt Receipt, root string, tools ToolInvoker, styleTools ...ToolSummary) Verification {
+	normalizeReceiptOutputs(step, &receipt)
 	result := Verification{OK: true, Errors: []string{}}
+	result.Errors = append(result.Errors, verifySymbology(styleTools)...)
 	for _, output := range step.ExpectedOutputs {
 		value, exists := receipt.Outputs[output.Label]
 		if !exists || !provided(value) {
@@ -41,6 +46,28 @@ func verifyOutput(ctx context.Context, output flow.OutputDeclaration, value any,
 		return VerifyInitialReview(value, root)
 	case "review_final":
 		return VerifyFinalReview(value)
+	case "table":
+		path, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("需要表格文件路径")
+		}
+		rows, err := acquire.ReadTable(resolvePath(root, path))
+		if err != nil {
+			return err
+		}
+		if len(rows) < 2 {
+			return fmt.Errorf("表格没有数据行")
+		}
+		for _, field := range output.Fields {
+			found := false
+			for _, header := range rows[0] {
+				found = found || header == field
+			}
+			if !found {
+				return fmt.Errorf("表格缺少字段 %s", field)
+			}
+		}
+		return nil
 	case "file":
 		path, ok := value.(string)
 		if !ok {
@@ -53,7 +80,7 @@ func verifyOutput(ctx context.Context, output flow.OutputDeclaration, value any,
 		if !info.Mode().IsRegular() || info.Size() == 0 {
 			return fmt.Errorf("文件为空或不是普通文件")
 		}
-		if output.Format != "" && !strings.EqualFold(strings.TrimPrefix(filepath.Ext(path), "."), strings.TrimPrefix(output.Format, ".")) {
+		if output.Format != "" && flow.CanonicalOutputFormat(filepath.Ext(path)) != flow.CanonicalOutputFormat(output.Format) {
 			return fmt.Errorf("文件格式应为 %s", output.Format)
 		}
 		return nil
@@ -79,7 +106,7 @@ func verifyOutput(ctx context.Context, output flow.OutputDeclaration, value any,
 		}
 		for _, name := range names {
 			info, err := os.Stat(filepath.Join(path, name))
-			if err != nil || !info.Mode().IsRegular() {
+			if err != nil || !info.Mode().IsRegular() || info.Size() == 0 {
 				return fmt.Errorf("缺少数据集文件 %s", name)
 			}
 		}
@@ -96,13 +123,24 @@ func verifyOutput(ctx context.Context, output flow.OutputDeclaration, value any,
 		if err != nil {
 			return err
 		}
-		return checkToolSuccess(result)
+		if err := checkToolSuccess(result); err != nil {
+			return err
+		}
+		payload, err := acquire.UnwrapToolResult(result)
+		if err != nil {
+			return err
+		}
+		if warnings, ok := payload["warnings"].([]any); ok && len(warnings) > 0 {
+			return fmt.Errorf("版面警告：%v", warnings)
+		}
+		return nil
 	case "layers":
-		layers := layerOutputValues(value)
+		layers, _ := value.([]any)
 		if len(layers) == 0 {
 			return fmt.Errorf("图层产出为空")
 		}
 		var available map[string]bool
+		var names map[string][]string
 		for _, layer := range layers {
 			ref, path := "", ""
 			switch v := layer.(type) {
@@ -126,11 +164,20 @@ func verifyOutput(ctx context.Context, output flow.OutputDeclaration, value any,
 			if path != "" {
 				file := strings.SplitN(path, "|", 2)[0]
 				if info, err := os.Stat(resolvePath(root, file)); err == nil && info.Mode().IsRegular() && info.Size() > 0 {
+					if output.Geometry != "" || len(output.Fields) > 0 {
+						fields := map[string]string{}
+						for _, f := range output.Fields {
+							fields[f] = f
+						}
+						if _, err := dataservice.ValidateLocalData(ctx, resolvePath(root, path), output.Geometry, fields); err != nil {
+							return err
+						}
+					}
 					continue
 				}
 			}
 			if ref == "" {
-				return fmt.Errorf("图层未找到：%v", layer)
+				return fmt.Errorf("图层引用需要有效的 ID、名称、路径或 layer_id/id/name/path/source 字段")
 			}
 			if available == nil {
 				if tools == nil {
@@ -144,10 +191,47 @@ func verifyOutput(ctx context.Context, output flow.OutputDeclaration, value any,
 					return err
 				}
 				available = map[string]bool{}
-				collectLayerIDs(result, available)
+				names = map[string][]string{}
+				collectLayerReferences(result, available, names)
 			}
 			if !available[ref] {
-				return fmt.Errorf("图层未找到：%v", layer)
+				matches := names[ref]
+				if len(matches) == 0 {
+					return fmt.Errorf("图层未找到：%v", layer)
+				}
+				if len(matches) != 1 {
+					return fmt.Errorf("图层名称「%s」不唯一，请使用图层 ID：%s", ref, strings.Join(matches, "、"))
+				}
+				ref = matches[0]
+			}
+			if output.Geometry != "" || len(output.Fields) > 0 {
+				result, err := tools.Invoke(ctx, "layer_inspect", map[string]any{"layer_id": ref})
+				if err != nil {
+					return err
+				}
+				payload, err := acquire.UnwrapToolResult(result)
+				if err != nil {
+					return err
+				}
+				metadata, ok := payload["data"].(map[string]any)
+				if !ok {
+					return fmt.Errorf("layer_inspect 未返回图层元数据 data")
+				}
+				if output.Geometry != "" && dataservice.NormalizeGeometry(fmt.Sprint(metadata["geometry"])) != dataservice.NormalizeGeometry(output.Geometry) {
+					return fmt.Errorf("图层几何与声明不符")
+				}
+				raw, _ := json.Marshal(metadata["available_fields"])
+				var actual []string
+				_ = json.Unmarshal(raw, &actual)
+				for _, f := range output.Fields {
+					found := false
+					for _, a := range actual {
+						found = found || a == f
+					}
+					if !found {
+						return fmt.Errorf("图层缺少字段 %s", f)
+					}
+				}
 			}
 		}
 		return nil
@@ -156,20 +240,78 @@ func verifyOutput(ctx context.Context, output flow.OutputDeclaration, value any,
 	}
 }
 
-// A single layer and a list are equivalent at the handoff boundary.
+// Normalize the equivalent layer references once at the receipt boundary.
+// Object descriptors keep their metadata; a name-to-ID collection becomes IDs.
 func layerOutputValues(value any) []any {
-	raw, _ := json.Marshal(value)
-	var decoded any
-	if json.Unmarshal(raw, &decoded) != nil || decoded == nil {
+	if value == nil {
 		return nil
 	}
-	if layers, ok := decoded.([]any); ok {
+	switch v := value.(type) {
+	case []any:
+		layers := []any{}
+		for _, item := range v {
+			layers = append(layers, layerOutputValues(item)...)
+		}
+		return layers
+	case []string:
+		layers := make([]any, len(v))
+		for i, item := range v {
+			layers[i] = item
+		}
+		return layers
+	case map[string]string:
+		object := make(map[string]any, len(v))
+		for key, item := range v {
+			object[key] = item
+		}
+		value = object
+	}
+	if object, ok := value.(map[string]any); ok {
+		for _, key := range []string{"layers", "layer_ids"} {
+			if child, exists := object[key]; exists {
+				return layerOutputValues(child)
+			}
+		}
+		for _, key := range []string{"layer_id", "id", "name", "path", "source"} {
+			if _, descriptor := object[key]; descriptor {
+				return []any{object}
+			}
+		}
+		names := make([]string, 0, len(object))
+		for name, id := range object {
+			if _, ok := id.(string); !ok {
+				return []any{object} // Verification reports the invalid reference.
+			}
+			names = append(names, name)
+		}
+		sort.Strings(names)
+		layers := make([]any, len(names))
+		for i, name := range names {
+			layers[i] = object[name]
+		}
 		return layers
 	}
-	return []any{decoded}
+	return []any{value}
 }
 
 func normalizeReceiptOutputs(step flow.StepPlan, receipt *Receipt) {
+	missing, missingCount := "", 0
+	declared := map[string]bool{}
+	for _, output := range step.ExpectedOutputs {
+		declared[output.Label] = true
+		if _, exists := receipt.Outputs[output.Label]; output.Type == "layers" && !exists {
+			missing, missingCount = output.Label, missingCount+1
+		}
+	}
+	if missingCount == 1 {
+		for _, alias := range []string{"layers", "layer_ids"} {
+			if value, exists := receipt.Outputs[alias]; exists && !declared[alias] {
+				receipt.Outputs[missing] = value
+				delete(receipt.Outputs, alias)
+				break
+			}
+		}
+	}
 	for _, output := range step.ExpectedOutputs {
 		if value, ok := receipt.Outputs[output.Label]; ok && output.Type == "layers" {
 			receipt.Outputs[output.Label] = layerOutputValues(value)
@@ -199,7 +341,7 @@ func checkToolSuccess(result any) error {
 	}
 	return nil
 }
-func collectLayerIDs(value any, ids map[string]bool) {
+func collectLayerReferences(value any, ids map[string]bool, names map[string][]string) {
 	if text, ok := value.(string); ok {
 		var decoded any
 		if json.Unmarshal([]byte(text), &decoded) != nil {
@@ -221,10 +363,20 @@ func collectLayerIDs(value any, ids map[string]bool) {
 		case []any:
 			for _, child := range x {
 				if record, ok := child.(map[string]any); ok {
-					for _, key := range []string{"id", "layer_id", "name", "layer_name"} {
-						if value, ok := record[key].(string); ok && value != "" {
-							ids[value] = true
-						}
+					id, _ := record["id"].(string)
+					if id == "" {
+						id, _ = record["layer_id"].(string)
+					}
+					if id == "" {
+						continue
+					}
+					ids[id] = true
+					name, _ := record["name"].(string)
+					if name == "" {
+						name, _ = record["layer_name"].(string)
+					}
+					if name != "" {
+						names[name] = append(names[name], id)
 					}
 				}
 			}

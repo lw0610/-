@@ -5,7 +5,7 @@ it('inserts references as ordinary prose without creating a special resource sec
   expect(insertResourceReference('', {label: '四角对齐', type: 'layout'})).toContain('使用版面「四角对齐」。')
 })
 it('rejects retired resource types rather than inserting unusable references', () => {
-  for (const type of ['style_set', 'data_list', 'symbols', 'doc']) expect(() => insertResourceReference('', {label: '旧资源', type})).toThrow('请选择样式或版面')
+  for (const type of ['style_set', 'data_list', 'symbols', 'doc']) expect(() => insertResourceReference('', {label: '旧资源', type})).toThrow('请选择图层、样式或版面')
 })
 it('removes only front matter from the reading view', () => {
   expect(flowBody('---\r\n名称: 例子\r\n---\r\n# 正文\n\n---\n尾部')).toBe('# 正文\n\n---\n尾部')

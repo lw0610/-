@@ -21,7 +21,7 @@ spec:
     type: output_layer
     description: 输出图层
 execution:
-  backend_tool: raster_sample
+  backend_tool: native:rastersampling
   param_mapping:
     INPUT: '{{ INPUT }}'
     RASTERCOPY: '{{ RASTERCOPY }}'

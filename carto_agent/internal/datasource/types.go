@@ -75,6 +75,18 @@ type Derivation struct {
 	Quality string            `yaml:"quality,omitempty" json:"quality,omitempty"`
 	Note    string            `yaml:"note,omitempty" json:"note,omitempty"`
 }
+type RoutingRule struct {
+	FineFilter         string   `json:"fine_filter,omitempty" yaml:"fine_filter,omitempty"`
+	FineMaxDenominator int      `json:"fine_max_denominator,omitempty" yaml:"fine_max_denominator,omitempty"`
+	Methods            []string `json:"methods" yaml:"methods"`
+	Filter             string   `json:"filter,omitempty" yaml:"filter,omitempty"`
+	MergeBy            string   `json:"merge_by,omitempty" yaml:"merge_by,omitempty"`
+	MinLengthMM        float64  `json:"min_length_mm,omitempty" yaml:"min_length_mm,omitempty"`
+	MinAreaMM2         float64  `json:"min_area_mm2,omitempty" yaml:"min_area_mm2,omitempty"`
+	MergeDistanceM     float64  `json:"merge_distance_m,omitempty" yaml:"merge_distance_m,omitempty"`
+	Note               string   `json:"note,omitempty" yaml:"note,omitempty"`
+}
+
 type Generalization struct {
 	MaxDenominator int      `yaml:"max_denominator,omitempty" json:"max_denominator,omitempty"`
 	KeepClass      []string `yaml:"keep_class" json:"keep_class"`
@@ -84,17 +96,18 @@ type Validation struct {
 	NameFillRatio float64 `yaml:"name_fill_ratio" json:"name_fill_ratio"`
 }
 type Category struct {
-	ID          string               `yaml:"id" json:"id"`
-	Name        string               `yaml:"name" json:"name"`
-	Geometry    string               `yaml:"geometry" json:"geometry"`
-	Params      map[string]Parameter `yaml:"params,omitempty" json:"params,omitempty"`
-	Aliases     []Alias              `yaml:"aliases,omitempty" json:"aliases,omitempty"`
-	Fields      map[string]Field     `yaml:"fields,omitempty" json:"fields,omitempty"`
-	Derive      []Derivation         `yaml:"derive,omitempty" json:"derive,omitempty"`
-	Generalize  []Generalization     `yaml:"generalize,omitempty" json:"generalize,omitempty"`
-	SimplifyMM  float64              `yaml:"simplify_mm,omitempty" json:"simplify_mm,omitempty"`
-	Sensitivity string               `yaml:"sensitivity,omitempty" json:"sensitivity,omitempty"`
-	Validate    Validation           `yaml:"validate" json:"validate"`
+	Routing     map[string]RoutingRule `json:"routing,omitempty" yaml:"routing,omitempty"`
+	ID          string                 `yaml:"id" json:"id"`
+	Name        string                 `yaml:"name" json:"name"`
+	Geometry    string                 `yaml:"geometry" json:"geometry"`
+	Params      map[string]Parameter   `yaml:"params,omitempty" json:"params,omitempty"`
+	Aliases     []Alias                `yaml:"aliases,omitempty" json:"aliases,omitempty"`
+	Fields      map[string]Field       `yaml:"fields,omitempty" json:"fields,omitempty"`
+	Derive      []Derivation           `yaml:"derive,omitempty" json:"derive,omitempty"`
+	Generalize  []Generalization       `yaml:"generalize,omitempty" json:"generalize,omitempty"`
+	SimplifyMM  float64                `yaml:"simplify_mm,omitempty" json:"simplify_mm,omitempty"`
+	Sensitivity string                 `yaml:"sensitivity,omitempty" json:"sensitivity,omitempty"`
+	Validate    Validation             `yaml:"validate" json:"validate"`
 }
 type Coverage struct {
 	Regions []string  `yaml:"regions,omitempty" json:"regions,omitempty"`
@@ -128,30 +141,35 @@ type Provide struct {
 	Template string             `yaml:"template,omitempty" json:"template,omitempty"`
 }
 type Source struct {
-	Handbook    Handbook  `yaml:"handbook,omitempty" json:"handbook"`
-	APIVersion  string    `yaml:"apiVersion" json:"api_version"`
-	ID          string    `yaml:"id" json:"id"`
-	Name        string    `yaml:"name" json:"name"`
-	Kind        string    `yaml:"kind" json:"kind"`
-	Version     string    `yaml:"version,omitempty" json:"version,omitempty"`
-	Root        string    `yaml:"root,omitempty" json:"root,omitempty"`
-	Endpoints   string    `yaml:"endpoints,omitempty" json:"endpoints,omitempty"`
-	Hosts       []string  `yaml:"hosts,omitempty" json:"hosts,omitempty"`
-	Coverage    Coverage  `yaml:"coverage,omitempty" json:"coverage,omitempty"`
-	Scale       Scale     `yaml:"scale,omitempty" json:"scale,omitempty"`
-	Limits      Limits    `yaml:"limits,omitempty" json:"limits,omitempty"`
-	License     string    `yaml:"license,omitempty" json:"license,omitempty"`
-	Attribution string    `yaml:"attribution,omitempty" json:"attribution,omitempty"`
-	Compliance  string    `yaml:"compliance,omitempty" json:"compliance,omitempty"`
-	Requires    []string  `yaml:"requires,omitempty" json:"requires,omitempty"`
-	RefreshDays int       `yaml:"refresh_days,omitempty" json:"refresh_days,omitempty"`
-	Priority    int       `yaml:"priority,omitempty" json:"priority,omitempty"`
-	Provides    []Provide `yaml:"provides" json:"provides"`
-	SizeMB      float64   `yaml:"size_mb,omitempty" json:"size_mb,omitempty"`
-	Status      string    `yaml:"status,omitempty" json:"status,omitempty"`
-	Notes       []string  `yaml:"notes,omitempty" json:"notes,omitempty"`
-	Builtin     bool      `yaml:"-" json:"builtin"`
-	File        string    `yaml:"-" json:"-"`
+	RegionURLs     map[string]string `yaml:"region_urls,omitempty" json:"region_urls,omitempty"`
+	Method         string            `json:"method,omitempty" yaml:"method,omitempty"`
+	ScaleClasses   []string          `json:"scale_classes,omitempty" yaml:"scale_classes,omitempty"`
+	ChineseNames   *bool             `json:"chinese_names,omitempty" yaml:"chinese_names,omitempty"`
+	TypicalSeconds int               `json:"typical_seconds,omitempty" yaml:"typical_seconds,omitempty"`
+	Handbook       Handbook          `yaml:"handbook,omitempty" json:"handbook"`
+	APIVersion     string            `yaml:"apiVersion" json:"api_version"`
+	ID             string            `yaml:"id" json:"id"`
+	Name           string            `yaml:"name" json:"name"`
+	Kind           string            `yaml:"kind" json:"kind"`
+	Version        string            `yaml:"version,omitempty" json:"version,omitempty"`
+	Root           string            `yaml:"root,omitempty" json:"root,omitempty"`
+	Endpoints      string            `yaml:"endpoints,omitempty" json:"endpoints,omitempty"`
+	Hosts          []string          `yaml:"hosts,omitempty" json:"hosts,omitempty"`
+	Coverage       Coverage          `yaml:"coverage,omitempty" json:"coverage,omitempty"`
+	Scale          Scale             `yaml:"scale,omitempty" json:"scale,omitempty"`
+	Limits         Limits            `yaml:"limits,omitempty" json:"limits,omitempty"`
+	License        string            `yaml:"license,omitempty" json:"license,omitempty"`
+	Attribution    string            `yaml:"attribution,omitempty" json:"attribution,omitempty"`
+	Compliance     string            `yaml:"compliance,omitempty" json:"compliance,omitempty"`
+	Requires       []string          `yaml:"requires,omitempty" json:"requires,omitempty"`
+	RefreshDays    int               `yaml:"refresh_days,omitempty" json:"refresh_days,omitempty"`
+	Priority       int               `yaml:"priority,omitempty" json:"priority,omitempty"`
+	Provides       []Provide         `yaml:"provides" json:"provides"`
+	SizeMB         float64           `yaml:"size_mb,omitempty" json:"size_mb,omitempty"`
+	Status         string            `yaml:"status,omitempty" json:"status,omitempty"`
+	Notes          []string          `yaml:"notes,omitempty" json:"notes,omitempty"`
+	Builtin        bool              `yaml:"-" json:"builtin"`
+	File           string            `yaml:"-" json:"-"`
 }
 type Handbook struct {
 	GoodFor  string   `yaml:"good_for,omitempty" json:"good_for"`

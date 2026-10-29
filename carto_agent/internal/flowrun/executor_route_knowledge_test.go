@@ -10,10 +10,9 @@ import (
 	"testing"
 
 	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/knowledge"
 	"github.com/autocarto/carto_agent/internal/plan"
 	"github.com/autocarto/carto_agent/internal/planexec"
-	"github.com/autocarto/carto_agent/internal/resource"
-	"github.com/autocarto/carto_agent/internal/resource/bindings"
 )
 
 func knowledgeRunFixture() (*RunState, flow.StepPlan) {
@@ -23,13 +22,13 @@ func knowledgeRunFixture() (*RunState, flow.StepPlan) {
 }
 
 func TestRouteKnowledgePlanPassesExplicitPresetsToExecutor(t *testing.T) {
-	p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-route-presets", Version: 1, Goal: "根据史料生成路线数据",
+	p := &plan.Plan{APIVersion: plan.LegacyAPIVersion, ID: "cp-route-presets", Version: 1, Goal: "根据史料生成路线数据",
 		Data: []plan.Data{{ID: "history", Name: "史料", From: "conversation"}},
 		Steps: []plan.Step{{ID: "extract", Title: "抽取路线", Capabilities: []string{"route_knowledge"}, Uses: []string{"history"},
 			Instructions: "从原文提取路线", Parameters: map[string]string{"route_style": "用户路线预设", "symbols": "用户符号预设"},
 			Outputs: []flow.OutputDeclaration{{Label: "路线数据集", Type: "dataset"}}}},
 	}
-	executable, inputs, err := planexec.Build(p, planexec.BuildOptions{OriginalSource: "甲地出发，乙地抵达。"})
+	executable, inputs, err := planexec.Build(p, planexec.BuildOptions{OriginalSource: "甲地出发，乙地抵达。", Environment: flow.Environment{Roles: []flow.RoleSpec{{ID: "knowledge", Kind: "executor", Executor: "route_knowledge", Enabled: true}}}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -56,22 +55,9 @@ func TestRouteKnowledgePlanPassesExplicitPresetsToExecutor(t *testing.T) {
 	}
 }
 
-func TestRouteKnowledgeBuildInputReferencesSourceAndOnlyReferencedResources(t *testing.T) {
+func TestRouteKnowledgeBuildInputReferencesSourceWithoutInjectingDrawingTables(t *testing.T) {
 	run, step := knowledgeRunFixture()
-	dir := t.TempDir()
-	builtin, err := filepath.Abs("../../../autocarto/resources/system")
-	if err != nil {
-		t.Fatal(err)
-	}
-	library := resource.NewLibrary(builtin, "", bindings.New(filepath.Join(dir, "bindings.yaml")))
-	style := library.Resolve(context.Background(), resource.Ref{Type: "route_style", Location: "assets/resources/styles/路线样式-红蓝对比.csv"}, resource.Scope{FlowID: "marching-route", FlowDir: filepath.Join(builtin, "..", "..", "tools", "system", "route-cartography")})
-	symbols := library.Resolve(context.Background(), resource.Ref{Type: "symbols", Location: "assets/resources/symbols/军标"}, resource.Scope{FlowID: "marching-route", FlowDir: filepath.Join(builtin, "..", "..", "tools", "system", "route-cartography")})
-	if style.Handle() == nil || symbols.Handle() == nil {
-		t.Fatal(style.Problems, symbols.Problems)
-	}
-	stylePlan, symbolsPlan := flow.ResourcePlanFromResolved(style), flow.ResourcePlanFromResolved(symbols)
-	stylePlan.Key, symbolsPlan.Key = "style", "symbols"
-	run.Plan.Resources = []flow.ResourcePlan{symbolsPlan, stylePlan, {Key: "ignored", Type: "route_style", Entry: "/not-used"}}
+	run.Plan.Resources = []flow.ResourcePlan{{Key: "style", Type: "route_style", Entry: "/saved/style.csv"}, {Key: "symbols", Type: "symbols", Entry: "/saved/symbols"}}
 	step.Refs.Resources = []string{"symbols", "style"}
 	before, _ := json.Marshal(run)
 	adapter := NewRouteKnowledgeExecutor()
@@ -90,7 +76,7 @@ func TestRouteKnowledgeBuildInputReferencesSourceAndOnlyReferencedResources(t *t
 	if len(messages) != 1 || json.Unmarshal([]byte(messages[0].Content), &payload) != nil {
 		t.Fatal(messages)
 	}
-	if payload["source_ref"] != "current_task_input" || payload["rules"] != step.Instructions || payload["force_refresh"] != true || payload["symbols"].(map[string]any)["id"] != symbols.ID || payload["route_style"].(map[string]any)["id"] != style.ID {
+	if payload["source_ref"] != "current_task_input" || payload["rules"] != step.Instructions || payload["force_refresh"] != true || payload["symbols"] != nil || payload["route_style"] != nil {
 		t.Fatal(payload)
 	}
 	for _, key := range []string{"symbol_table", "symbol_assets_dir", "route_style_table"} {
@@ -129,8 +115,8 @@ func TestRouteKnowledgeBuildInputFallbackAndErrors(t *testing.T) {
 	}
 	run.Inputs["refresh"] = false
 	step.Refs.Resources = []string{"unknown"}
-	if _, err := adapter.BuildInput(step, run); err == nil {
-		t.Fatal("unknown resource accepted")
+	if _, err := adapter.BuildInput(step, run); err != nil {
+		t.Fatal("default drawing depends on old resource references", err)
 	}
 	if _, err := adapter.BuildInput(step, nil); err == nil {
 		t.Fatal("nil run accepted")
@@ -155,9 +141,38 @@ func TestRouteKnowledgeReceiptMapsDatasetAndPreservesMetadata(t *testing.T) {
 			t.Fatal("invalid success accepted", input)
 		}
 	}
-	failed, err := NewRouteKnowledgeExecutor().ToReceipt(step, `{"success":false,"info":"编译失败"}`)
-	if err != nil || failed.Status != "failed" || len(failed.Issues) != 1 {
+	failed, err := NewRouteKnowledgeExecutor().ToReceipt(step, `{"success":false,"info":"编译失败","knowledge_review":{"review_id":"confirmed-review","revision":2,"status":"compile_failed"}}`)
+	if err != nil || failed.Status != "failed" || len(failed.Issues) != 1 || failed.KnowledgeReview == nil || failed.KnowledgeReview.ReviewID != "confirmed-review" || failed.KnowledgeReview.Revision != 2 {
 		t.Fatal(failed, err)
+	}
+}
+
+func TestRouteKnowledgeBuildInputContinuesOnlyConfirmedCompilationFailure(t *testing.T) {
+	for _, scenario := range []string{"continue", "force_refresh", "awaiting_confirmation"} {
+		t.Run(scenario, func(t *testing.T) {
+			run, step := knowledgeRunFixture()
+			run.Inputs["refresh"] = scenario == "force_refresh"
+			review := &KnowledgeReviewReference{ReviewID: "confirmed-review", Revision: 2, Status: knowledge.ReviewCompileFailed}
+			if scenario == "awaiting_confirmation" {
+				review.Status = knowledge.ReviewAwaiting
+			}
+			run.Steps = []StepState{{ID: step.ID, Attempts: []Attempt{{Receipt: &Receipt{Status: "failed", KnowledgeReview: review}}}}}
+			messages, err := NewRouteKnowledgeExecutor().BuildInput(step, run)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var request map[string]any
+			if err := json.Unmarshal([]byte(messages[0].Content), &request); err != nil {
+				t.Fatal(err)
+			}
+			if scenario == "continue" {
+				if request["review_id"] != review.ReviewID || request["revision"] != float64(review.Revision) || request["source_ref"] != "current_task_input" {
+					t.Fatalf("lost confirmed review or current source reference: %v", request)
+				}
+			} else if request["review_id"] != nil {
+				t.Fatalf("incorrectly resumed confirmed compilation: %v", request)
+			}
+		})
 	}
 }
 

@@ -364,7 +364,7 @@ def resource_preview_handler(params):
             path=Path(params.get("resource_path","")).expanduser();output=Path(params.get("output_path",""))
             if not path.is_absolute() or not path.is_file() or path.is_symlink():raise ValueError("资源路径必须是本机普通文件")
             if not output.is_absolute() or output.suffix.lower()!=".png":raise ValueError("预览输出必须是 PNG 的绝对路径")
-            if params.get("resource_type") not in ("style","layout"):raise ValueError("只能预览样式或版面")
+            if params.get("resource_type") not in ("style","layout","layer"):raise ValueError("只能预览样式、版面或图层")
             if params.get("layer_id"):
                 if not output.parent.is_dir():
                     raise ValueError("预览请求已结束或取消，请重新预览")
@@ -372,7 +372,11 @@ def resource_preview_handler(params):
                 output.parent.mkdir(parents=True,exist_ok=True)
             if params.get("layer_id") and params["resource_type"] != "style":
                 raise ValueError("用图层预览仅适用于样式")
-            info=_style_preview(path,output,params) if params["resource_type"]=="style" else _layout_preview(path,output,params)
+            if params["resource_type"] == "layer":
+                from autocarto.tools.system._shared.builtin_layers import render_layer
+                info = render_layer(path, output, params)
+            else:
+                info=_style_preview(path,output,params) if params["resource_type"]=="style" else _layout_preview(path,output,params)
             return {"success":True,"output":str(output),"info":"资源预览已生成","data":info}
         return run_in_main_thread(render)
     except Exception as exc:

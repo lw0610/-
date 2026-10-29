@@ -105,14 +105,8 @@ func (s *GuideStore) decorate(item *StoredFlow) (*StoredGuide, error) {
 		return nil, err
 	}
 	g := &StoredGuide{Meta: item.Meta, Source: item.Source, Enabled: enabled, GuideMD: item.FlowMD, Guide: doc, Resources: item.Resources, Diagnostics: doc.Diagnostics, UpdatedAt: item.UpdatedAt, Dir: item.Dir}
-	raw, err := readBounded(filepath.Join(item.Dir, "conversion-report.json"), MaxFileBytes)
-	if err == nil {
-		var report GuideConversionReport
-		if err = json.Unmarshal(raw, &report); err != nil {
-			return nil, fmt.Errorf("转换报告损坏：%w", err)
-		}
-		g.ConversionReport = &report
-	} else if !os.IsNotExist(err) {
+	g.ConversionReport, err = readConversionReport(item.Dir)
+	if err != nil {
 		return nil, err
 	}
 	return g, nil
@@ -129,16 +123,44 @@ func (s *GuideStore) List() ([]GuideSummary, error) {
 	if err != nil {
 		return nil, err
 	}
+	s.mu.Lock()
+	settings, err := s.settings()
+	s.mu.Unlock()
+	if err != nil {
+		return nil, err
+	}
 	out := []GuideSummary{}
-	for _, item := range items {
-		g, err := s.Get(item.ID)
+	for _, summary := range items {
+		// A skill/menu listing needs metadata only. Resource diagnostics belong
+		// to reading the selected guide, not to every item in the menu.
+		item, err := s.Packages.Get(summary.ID)
 		if err != nil {
 			return nil, err
 		}
-		out = append(out, GuideSummary{ID: g.Meta.ID, Name: g.Meta.Name, Description: g.Meta.Description, Version: g.Meta.Version, Tags: g.Meta.Tags, Source: g.Source, Enabled: g.Enabled, UpdatedAt: g.UpdatedAt, ConversionReport: g.ConversionReport})
+		report, err := readConversionReport(item.Dir)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, GuideSummary{ID: item.Meta.ID, Name: item.Meta.Name, Description: item.Meta.Description, Version: item.Meta.Version, Tags: item.Meta.Tags, Source: item.Source, Enabled: !containsGuideString(settings.Disabled, item.Meta.ID), UpdatedAt: item.UpdatedAt, ConversionReport: report})
 	}
 	return out, nil
 }
+
+func readConversionReport(dir string) (*GuideConversionReport, error) {
+	raw, err := readBounded(filepath.Join(dir, "conversion-report.json"), MaxFileBytes)
+	if os.IsNotExist(err) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	var report GuideConversionReport
+	if err = json.Unmarshal(raw, &report); err != nil {
+		return nil, fmt.Errorf("转换报告损坏：%w", err)
+	}
+	return &report, nil
+}
+
 func (s *GuideStore) Create(raw, id string) (*StoredGuide, error) {
 	item, err := s.Packages.Create(raw, id)
 	if err != nil {
@@ -179,6 +201,13 @@ func (s *GuideStore) Resolve(ctx context.Context, id string, library *resource.L
 	g.Guide = ParseGuide(item.FlowMD, env)
 	g.Guide.Meta.ID = id
 	g.Diagnostics = append([]Diagnostic{}, g.Guide.Diagnostics...)
+	for _, ref := range g.Guide.Layers {
+		for _, entry := range lock.Layers {
+			if entry.Name == ref.Name && ref.ID != "" && (entry.ID != ref.ID || entry.Digest != ref.Digest) {
+				g.Diagnostics = append(g.Diagnostics, diagnostic("warning", "FLOW_LAYER_CHANGED", "", ref.Line, "内置图层已变化："+ref.Name))
+			}
+		}
+	}
 	g.ResolvedResources = linked
 	for _, r := range linked {
 		for _, d := range r.Problems {

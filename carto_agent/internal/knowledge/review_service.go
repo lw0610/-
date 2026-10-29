@@ -195,8 +195,8 @@ func (s *ReviewStore) Claim(sid, rid string, revision int64, requestID string) (
 	return r, true, nil
 }
 
-// RetryCompilation changes drawing presets for an unchanged, already-confirmed
-// revision. It preserves the user's original confirmation and extracted facts.
+// RetryCompilation replaces optional drawing selections for an unchanged,
+// already-confirmed revision. Omitted selections return to built-in drawing.
 func (s *ReviewStore) RetryCompilation(sid, rid string, revision int64, presets map[string]string) (*Review, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -211,7 +211,8 @@ func (s *ReviewStore) RetryCompilation(sid, rid string, revision int64, presets 
 		r.CompileArgs = map[string]any{}
 	}
 	for _, key := range []string{"route_style", "symbols"} {
-		if value, exists := presets[key]; exists {
+		delete(r.CompileArgs, key)
+		if value := presets[key]; value != "" {
 			r.CompileArgs[key] = value
 		}
 	}

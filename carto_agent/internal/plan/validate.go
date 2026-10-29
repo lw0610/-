@@ -23,7 +23,7 @@ type Environment struct {
 
 func Decode(raw []byte) (*Plan, error) {
 	d := json.NewDecoder(bytes.NewReader(raw))
-	d.DisallowUnknownFields()
+	// The model boundary ignores unrelated metadata; graph semantics are checked once below.
 	var p Plan
 	if err := d.Decode(&p); err != nil {
 		return nil, fmt.Errorf("PLAN_SCHEMA_INVALID: %w", err)
@@ -32,9 +32,18 @@ func Decode(raw []byte) (*Plan, error) {
 	if err := d.Decode(&extra); err != io.EOF {
 		return nil, fmt.Errorf("PLAN_SCHEMA_INVALID: 只能包含一个计划对象")
 	}
+	if p.APIVersion == "" {
+		p.APIVersion = APIVersion
+	}
+	if p.APIVersion != APIVersion {
+		return nil, fmt.Errorf("PLAN_LEGACY_READ_ONLY: 旧计划仅供查看，请按 carto-plan/v2 重新生成")
+	}
 	return &p, nil
 }
 func Validate(p *Plan, env Environment) []flow.Diagnostic {
+	if p != nil && p.APIVersion == APIVersion {
+		return ValidateV2(p)
+	}
 	ds := []flow.Diagnostic{}
 	add := func(code, step, msg string) {
 		ds = append(ds, flow.Diagnostic{Level: "error", Code: code, Step: step, Message: msg})
@@ -50,7 +59,7 @@ func Validate(p *Plan, env Environment) []flow.Diagnostic {
 	}
 	p = copy
 	ds = append(ds, NormalizeReferences(p)...)
-	if p.APIVersion != APIVersion || !Identifier.MatchString(p.ID) || p.Version < 1 || strings.TrimSpace(p.Goal) == "" || len(p.Steps) == 0 || len(p.Steps) > 100 {
+	if p.APIVersion != LegacyAPIVersion || !Identifier.MatchString(p.ID) || p.Version < 1 || strings.TrimSpace(p.Goal) == "" || len(p.Steps) == 0 || len(p.Steps) > 100 {
 		add("PLAN_SCHEMA_INVALID", "", "版本、编号、目标或步骤数量无效")
 	}
 	if p.Guide != nil && (!Identifier.MatchString(p.Guide.ID) || p.Guide.Version == "") {

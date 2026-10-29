@@ -54,7 +54,7 @@ func (m *mediaCapabilityModel) prepare(input []*schema.Message) []*schema.Messag
 			if reason != "" {
 				message.UserInputMultiContent[index] = schema.MessageInputPart{
 					Type: schema.ChatMessagePartTypeText,
-					Text: fmt.Sprintf("MODEL_MEDIA_UNSUPPORTED (%s): %s。原始文件仍保留；不要声称已看过或反复截图重试。可用 shell_execute 检查并调用本机已有的文档提取/OCR工具，再用 file_read 读取真实结果；没有可用工具时如实报告能力缺口，不更改统计年份、口径或编造数值。", m.caps.Model, reason),
+					Text: fmt.Sprintf("MODEL_MEDIA_UNSUPPORTED (%s): %s。原始文件仍保留；不要声称已看过或反复截图重试。请使用 document_extract 提取表格或执行本机 OCR，再用 file_read 读取真实结果；没有可用工具时如实报告能力缺口，不更改统计年份、口径或编造数值。", m.caps.Model, reason),
 				}
 			}
 		}

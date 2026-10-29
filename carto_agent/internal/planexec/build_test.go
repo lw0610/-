@@ -9,7 +9,7 @@ import (
 )
 
 func TestImplicitAcquisitionCannotCollideWithVisibleStep(t *testing.T) {
-	p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-collision", Version: 1, Goal: "load", Data: []plan.Data{{ID: "d1", Name: "roads", From: "acquire", FindID: "find", Choice: "auto"}}, Steps: []plan.Step{{ID: "acquire-d1", Title: "load", Capabilities: []string{"load"}, Uses: []string{"d1"}, Instructions: "load verified data", Outputs: []flow.OutputDeclaration{{Label: "done", Type: "text"}}}}}
+	p := &plan.Plan{APIVersion: plan.LegacyAPIVersion, ID: "cp-collision", Version: 1, Goal: "load", Data: []plan.Data{{ID: "d1", Name: "roads", From: "acquire", FindID: "find", Choice: "auto"}}, Steps: []plan.Step{{ID: "acquire-d1", Title: "load", Capabilities: []string{"load"}, Uses: []string{"d1"}, Instructions: "load verified data", Outputs: []flow.OutputDeclaration{{Label: "done", Type: "text"}}}}}
 	env := flow.Environment{Roles: []flow.RoleSpec{{ID: "worker", Enabled: true, ToolPackages: []string{"load"}}}, Packages: []flow.PackageSpec{{ID: "load", Enabled: true, Kind: "category"}}}
 	executable, _, err := Build(p, BuildOptions{Environment: env})
 	if err != nil {
@@ -23,8 +23,8 @@ func TestImplicitAcquisitionCannotCollideWithVisibleStep(t *testing.T) {
 func TestBuildChecksExecutorSourceBindingBeforeExecution(t *testing.T) {
 	for _, scenario := range []string{"missing", "fact-only", "unreferenced", "wrong-type", "missing-presets", "bound"} {
 		t.Run(scenario, func(t *testing.T) {
-			p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-extract", Version: 1, Goal: "从史料抽取路线",
-				Steps: []plan.Step{{ID: "extract", Title: "抽取路线", Capabilities: []string{"route_knowledge"}, Instructions: "抽取原文", Parameters: map[string]string{"route_style": "红蓝对比", "symbols": "军标"},
+			p := &plan.Plan{APIVersion: plan.LegacyAPIVersion, ID: "cp-extract", Version: 1, Goal: "从史料抽取路线",
+				Steps: []plan.Step{{ID: "extract", Title: "抽取路线", RoleHint: "route_reader", Capabilities: []string{"route_knowledge"}, Instructions: "抽取原文", Parameters: map[string]string{"route_style": "红蓝对比", "symbols": "军标"},
 					Outputs: []flow.OutputDeclaration{{Label: "路线数据集", Type: "dataset"}}}},
 			}
 			switch scenario {
@@ -42,9 +42,10 @@ func TestBuildChecksExecutorSourceBindingBeforeExecution(t *testing.T) {
 					p.Steps[0].Parameters = map[string]string{"route_style": "  "}
 				}
 			}
-			executable, inputs, err := Build(p, BuildOptions{OriginalSource: "从甲地前往乙地"})
-			if scenario == "bound" {
-				if err != nil || executable.Steps[0].Executor != "route_knowledge" || !reflect.DeepEqual(executable.Steps[0].Refs.Inputs, []string{"history"}) || inputs["history"] == nil {
+			env := flow.Environment{Roles: []flow.RoleSpec{{ID: "route_reader", Kind: "executor", Executor: "route_knowledge", Enabled: true}}}
+			executable, inputs, err := Build(p, BuildOptions{Environment: env, OriginalSource: "从甲地前往乙地"})
+			if scenario == "bound" || scenario == "missing-presets" {
+				if err != nil || executable.Steps[0].Role != "route_reader" || executable.Steps[0].Executor != "route_knowledge" || !reflect.DeepEqual(executable.Steps[0].Refs.Inputs, []string{"history"}) || inputs["history"] == nil {
 					t.Fatalf("valid source binding did not reach executor: plan=%+v inputs=%v err=%v", executable, inputs, err)
 				}
 				return
@@ -54,12 +55,6 @@ func TestBuildChecksExecutorSourceBindingBeforeExecution(t *testing.T) {
 				t.Fatalf("invalid executor input reached execution: plan=%+v err=%v", executable, err)
 			}
 			diagnostic := invalid.Diagnostics[0]
-			if scenario == "missing-presets" {
-				if diagnostic.Code != "PLAN_EXECUTOR_PARAMETER_MISSING" || diagnostic.Step != "extract" || !strings.Contains(diagnostic.Message, "route_style") || !strings.Contains(diagnostic.Message, "symbols") {
-					t.Fatalf("missing drawing presets were not identified before execution: %+v", diagnostic)
-				}
-				return
-			}
 			if diagnostic.Code != "PLAN_EXECUTOR_INPUT_MISSING" || diagnostic.Step != "extract" || !strings.Contains(diagnostic.Message, "from=conversation") || !strings.Contains(diagnostic.Message, "uses") {
 				t.Fatalf("missing correctable source diagnostic: %+v", diagnostic)
 			}
@@ -70,7 +65,7 @@ func TestBuildChecksExecutorSourceBindingBeforeExecution(t *testing.T) {
 func TestBuildUsesOutputBindingAndNormalizesUnambiguousReferences(t *testing.T) {
 	for _, form := range []string{"explicit", "legacy", "sole-output", "step-reference"} {
 		t.Run(form, func(t *testing.T) {
-			p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-output", Version: 1, Goal: "加工并导出",
+			p := &plan.Plan{APIVersion: plan.LegacyAPIVersion, ID: "cp-output", Version: 1, Goal: "加工并导出",
 				Data: []plan.Data{{ID: "derived", Name: "中文显示名", From: "step", Step: "produce", Output: "data_result"}},
 				Steps: []plan.Step{
 					{ID: "produce", Title: "生成", Capabilities: []string{"load"}, Instructions: "生成数据", Outputs: []flow.OutputDeclaration{{Label: "data_result", Type: "dataset"}}},

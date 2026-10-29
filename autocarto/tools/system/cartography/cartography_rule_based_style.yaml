@@ -7,18 +7,23 @@ metadata:
   runtime: qgis
   domain: cartography
 spec:
-  description: 设置规则样式
+  description: 按真实字段表达式设置规则样式；线图层可指定毫米线宽和纸张缩放，返回实际规则参数。未匹配任何规则的要素不会绘制。
   parameters:
   - name: layer
     type: string
     required: true
-    description: 图层名称
+    description: 图层 ID 或唯一名称
   - name: rules
     type: array
     required: true
-    description: 规则列表
+    description: 规则列表，每项为 label、expression、color，可选 width（线图层线宽，毫米）。表达式需准确区分各类别，避免短编号同时命中长编号；需要显示未归类要素时显式提供 ELSE 规则。
+  - name: scale
+    type: number
+    default: 1
+    description: 统一线宽缩放；A1尺寸用于A3时传0.5，不先缩放后再传。默认1。
 execution:
   handler: handlers.style.rule_based_style_handler
   param_mapping:
     layer: '{{ layer }}'
     rules: '{{ rules }}'
+    scale: '{{ scale }}'

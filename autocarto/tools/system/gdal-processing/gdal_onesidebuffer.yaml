@@ -28,7 +28,7 @@ spec:
     type: output_layer
     description: 输出图层
 execution:
-  backend_tool: gdal_onesidebuffer
+  backend_tool: gdal:onesidebuffer
   param_mapping:
     INPUT: '{{ INPUT }}'
     DISTANCE: '{{ DISTANCE }}'

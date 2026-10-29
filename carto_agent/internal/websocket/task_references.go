@@ -22,8 +22,23 @@ func (s *DeepServer) bindTaskReferences(ctx context.Context, sid, project string
 		Attachments []plan.Attachment     `json:"attachments"`
 		Layers      []plan.LayerReference `json:"layers"`
 		GuideID     string                `json:"guide_id"`
+		Text        string                `json:"text"`
+		Note        string                `json:"note"`
+		Decisions   map[string]struct {
+			Text string `json:"text"`
+			Note string `json:"note"`
+		} `json:"decisions"`
 	}
-	raw, e := json.Marshal(msg.Data)
+	referenceData := msg.Data
+	if msg.Type == MsgTypeInterruptResponse {
+		// A card answer is also human input. Use its entered text/attachments,
+		// never paths copied from the model's question or option descriptions.
+		referenceData, _ = msg.Data["user_data"].(map[string]any)
+		if text, ok := msg.Data["user_data"].(string); ok {
+			user.Content = text
+		}
+	}
+	raw, e := json.Marshal(referenceData)
 	if e != nil {
 		return e
 	}
@@ -41,7 +56,14 @@ func (s *DeepServer) bindTaskReferences(ctx context.Context, sid, project string
 	for _, a := range refs.Attachments {
 		seenPaths[filepath.Clean(a.Path)] = true
 	}
-	for _, path := range explicitUserPaths(user.Content, root) {
+	texts := []string{user.Content}
+	if msg.Type == MsgTypeInterruptResponse {
+		texts = append(texts, refs.Text, refs.Note)
+		for _, answer := range refs.Decisions {
+			texts = append(texts, answer.Text, answer.Note)
+		}
+	}
+	for _, path := range explicitUserPaths(strings.Join(texts, "\n"), root) {
 		if !seenPaths[path] {
 			refs.Attachments = append(refs.Attachments, plan.Attachment{Path: path})
 			seenPaths[path] = true
@@ -88,8 +110,6 @@ func (s *DeepServer) bindTaskReferences(ctx context.Context, sid, project string
 			if _, e = store.RegisterProvided(a.Path, sessionfiles.Origin{Type: "provided", Label: filepath.Base(a.Path)}); e != nil {
 				return e
 			}
-		} else if e = store.RegisterProvidedDirectory(a.Path); e != nil {
-			return e
 		}
 		// Reattaching updates the existing reference instead of growing the list.
 		attachedPath := a.Path
@@ -191,13 +211,6 @@ func (s *DeepServer) answerPendingClarification(conn *websocket.Conn, msg Messag
 	if !found {
 		return false
 	}
-	user := schema.UserMessage(msg.Content)
-	if err := s.bindTaskReferences(context.Background(), msg.SessionID, pending.ProjectPath, msg, user); err != nil {
-		s.sendSessionError(conn, msg.SessionID, err.Error())
-		return true
-	}
-	pending.Session.AddMessage(user)
-	s.persistManagedSessionState(msg.SessionID, pending.ProjectPath, executionModeBuild)
-	s.handleInterruptResponse(conn, Message{Type: MsgTypeInterruptResponse, SessionID: msg.SessionID, Data: map[string]any{"approved": true, "user_data": map[string]any{"text": msg.Content, "answer": msg.Content, "attachments": user.Extra["attachments"], "layers": user.Extra["layers"]}}})
+	s.handleInterruptResponse(conn, Message{Type: MsgTypeInterruptResponse, SessionID: msg.SessionID, Content: msg.Content, Data: map[string]any{"approved": true, "user_data": map[string]any{"text": msg.Content, "answer": msg.Content, "attachments": msg.Data["attachments"], "layers": msg.Data["layers"], "guide_id": msg.Data["guide_id"]}}})
 	return true
 }

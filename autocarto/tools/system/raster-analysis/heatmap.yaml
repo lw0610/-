@@ -25,7 +25,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: heatmap
+  backend_tool: qgis:heatmapkerneldensityestimation
   param_mapping:
     INPUT: '{{ INPUT }}'
     RADIUS: '{{ RADIUS }}'

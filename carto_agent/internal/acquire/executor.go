@@ -3,6 +3,7 @@ package acquire
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/datasource"
@@ -103,8 +104,9 @@ func (e *Engine) RunItem(ctx context.Context, item flow.AcquisitionItem, progres
 		choices = append(choices, *item.Chosen)
 	}
 	choices = append(choices, item.Alternatives...)
+	var lastErr error
 	for index, choice := range choices {
-		if index > 0 && (!cfg.FallbackEnabled() || choice.Tier > 6) {
+		if index > 0 && (!cfg.FallbackEnabled() || item.Method != "") {
 			break
 		}
 		source := e.Catalog.Source(choice.SourceID)
@@ -114,6 +116,7 @@ func (e *Engine) RunItem(ctx context.Context, item flow.AcquisitionItem, progres
 		adapter := e.Adapters[source.Kind]
 		if adapter == nil {
 			result.Error = "该来源的获取适配器尚未启用"
+			lastErr = fmt.Errorf("%s", result.Error)
 			continue
 		}
 		attempt := AttemptRecord{SourceID: source.ID, StartedAt: time.Now().UTC(), Validate: ValidationResult{Errors: []string{}, Warnings: []string{}}}
@@ -129,12 +132,18 @@ func (e *Engine) RunItem(ctx context.Context, item flow.AcquisitionItem, progres
 		releaseHost()
 		attempt.FinishedAt = time.Now().UTC()
 		if runErr != nil {
+			lastErr = runErr
 			attempt.Error = runErr.Error()
 			result.Attempts = append(result.Attempts, attempt)
 			result.Error = runErr.Error()
 			if ctx.Err() != nil {
 				result.Status = "failed"
 				return result, ctx.Err()
+			}
+			var processing *ProcessingError
+			if errors.As(runErr, &processing) {
+				result.Status = "failed"
+				return result, runErr
 			}
 			continue
 		}
@@ -164,16 +173,25 @@ func (e *Engine) RunItem(ctx context.Context, item flow.AcquisitionItem, progres
 				result.Output.Extent = floatSlice(stats["extent"])
 			}
 		}
+		if category := e.Catalog.Category(item.Category); category != nil && category.Geometry != "table" && len(result.Output.Paths) > 0 && result.Output.LayerDefinition == nil {
+			if err := e.deriveForNeed(ctx, item, category, &result); err != nil {
+				return result, err
+			}
+		}
 		return result, nil
 	}
 	if result.Error == "" {
 		result.Error = "没有可用的数据来源"
 	}
 	result.Status = "failed"
+	if lastErr != nil {
+		return result, lastErr
+	}
 	return result, fmt.Errorf("%s", result.Error)
 }
 func (e *Engine) materialize(ctx context.Context, item flow.AcquisitionItem, choice flow.SourceChoice, source datasource.Source, adapter Adapter, attempt *AttemptRecord, progress func(Progress)) (StoreRecord, bool, error) {
-	provide := choice.Provide
+	provide, _ := regionalProvide(e.Catalog, item, source, choice.Provide)
+	choice.Provide = provide
 	category := e.Catalog.Category(item.Category)
 	if category == nil {
 		return StoreRecord{}, false, fmt.Errorf("类别不存在")
@@ -188,7 +206,10 @@ func (e *Engine) materialize(ctx context.Context, item flow.AcquisitionItem, cho
 		rawDir := filepath.Join(dir, "raw")
 		fetchItem := item
 		fetchItem.Params = params
-		request := FetchRequest{Source: &source, Provide: &provide, Item: fetchItem, Extent: Extent{BBox: item.Extent.BBox, Path: item.Extent.Path}, WorkDir: rawDir, Progress: progress}
+		fetchExtent := *item.Extent
+		fetchExtent.BBox, fetchExtent.Path = spec.BBox, ""
+		fetchItem.Extent = &fetchExtent
+		request := FetchRequest{Source: &source, Provide: &provide, Item: fetchItem, Extent: Extent{BBox: spec.BBox}, WorkDir: rawDir, Progress: progress}
 		emitProgress(progress, "fetch", 0, 0)
 		var fetched FetchResult
 		cached, contains, err := e.Store.FindContaining(ctx, spec)
@@ -198,7 +219,11 @@ func (e *Engine) materialize(ctx context.Context, item flow.AcquisitionItem, cho
 			fetched.Files = cached.Raw()
 			fetched.Notes = append(fetched.Notes, "复用较大范围的已缓存原件，按本次范围重新规范化")
 		} else if err == nil {
-			fetched, err = adapter.Fetch(ctx, request)
+			if source.Kind == "http_file" {
+				fetched, err = e.fetchHTTPOriginal(ctx, adapter, request)
+			} else {
+				fetched, err = adapter.Fetch(ctx, request)
+			}
 		}
 		if err != nil {
 			return Manifest{}, err
@@ -281,18 +306,15 @@ func (e *Engine) materialize(ctx context.Context, item flow.AcquisitionItem, cho
 			}
 			fieldMap[target] = candidates
 		}
-		if len(fieldMap) > 0 {
+		{
 			for standard, candidates := range provide.Fields {
-				if _, exists := fieldMap[standard]; !exists && standard != "name" {
+				if _, exists := fieldMap[standard]; !exists {
 					fieldMap[standard] = []string(candidates)
 				}
 			}
 		}
-		clip := map[string]any{"bbox": item.Extent.BBox}
-		if item.Extent.Path != "" && item.Extent.ExpandPercent == 0 {
-			clip = map[string]any{"path": item.Extent.Path}
-		}
-		normalizeArgs := map[string]any{"input": map[string]any{"path": input, "layer": provide.Layer}, "category": item.Category, "expected_geometry": geometry, "filter": filter, "clip": clip, "fields": fieldMap, "output": normalOutput, "simplify_tolerance_m": category.SimplifyMM * float64(item.Scale) / 1000}
+		clip := map[string]any{"bbox": spec.BBox}
+		normalizeArgs := map[string]any{"input": map[string]any{"path": input, "layer": provide.Layer}, "category": item.Category, "expected_geometry": geometry, "filter": filter, "clip": clip, "fields": fieldMap, "output": normalOutput, "simplify_tolerance_m": 0, "merge_by": category.Routing[datasource.ScaleClass(item.Scale)].MergeBy}
 		emitProgress(progress, "normalize", 0, 0)
 		var stats map[string]any
 		if category.Geometry == "table" {
@@ -315,17 +337,21 @@ func (e *Engine) materialize(ctx context.Context, item flow.AcquisitionItem, cho
 			}
 		}
 		if err != nil {
-			return Manifest{}, err
+			paths := []string{}
+			if source.Kind == "http_file" {
+				paths = append(paths, fetched.Files...)
+			}
+			return Manifest{}, &ProcessingError{Stage: "normalize", Paths: paths, Err: err}
 		}
 		if choice.Derivation != nil {
 			emitProgress(progress, "derive", 0, 0)
 			value, err := e.Invoke(ctx, "data_derive", map[string]any{"input": map[string]any{"path": normalOutput}, "method": choice.Derivation.Method, "output": output, "boundary_kind": params["level"] + "界", "include_outer": false})
 			if err != nil {
-				return Manifest{}, err
+				return Manifest{}, &ProcessingError{Stage: "derive", Err: err}
 			}
 			payload, err := UnwrapToolResult(value)
 			if err != nil {
-				return Manifest{}, err
+				return Manifest{}, &ProcessingError{Stage: "derive", Err: err}
 			}
 			stats = toolData(payload)
 			if choice.Derivation.Note != "" {
@@ -347,7 +373,7 @@ func (e *Engine) materialize(ctx context.Context, item flow.AcquisitionItem, cho
 		if err != nil {
 			return Manifest{}, err
 		}
-		for _, member := range stringSlice(stats["paths"]) {
+		for _, member := range stringsFromAny(stats["paths"]) {
 			rel, err := canonicalRelative(dir, member)
 			if err != nil {
 				return Manifest{}, err
@@ -567,6 +593,28 @@ func generalizedFilter(category *datasource.Category, p datasource.Provide, scal
 		filter = "TRUE"
 	}
 	notes := []string{}
+	if len(category.Routing) > 0 {
+		rule := category.Routing[datasource.ScaleClass(scale)]
+		// Routing expressions use source OSM tags; do not apply them to unrelated schemas.
+		osm := false
+		for _, names := range p.Fields {
+			for _, name := range names {
+				if name == "name:zh" {
+					osm = true
+				}
+			}
+		}
+		if rule.FineFilter != "" && scale > 0 && scale <= rule.FineMaxDenominator {
+			rule.Filter = rule.FineFilter
+		}
+		if osm && rule.Filter != "" {
+			filter = "(" + filter + ") AND (" + rule.Filter + ")"
+		}
+		if rule.Note != "" {
+			notes = append(notes, rule.Note)
+		}
+		return filter, notes
+	}
 	if scale <= 0 || len(category.Generalize) == 0 {
 		return filter, notes
 	}
@@ -617,18 +665,35 @@ func cacheSpecification(catalog *datasource.Catalog, item flow.AcquisitionItem, 
 	if category == nil || item.Extent == nil || item.Extent.Pending || len(item.Extent.BBox) != 4 {
 		return CacheSpec{}, fmt.Errorf("获取参数尚未确定")
 	}
-	provide := choice.Provide
+	provide, coverageRegion := regionalProvide(catalog, item, source, choice.Provide)
 	params := provide.EffectiveParams(item.Params, choice.Derivation)
 	filter, _ := generalizedFilter(category, provide, item.Scale)
-	normalizeSpec := map[string]any{"fields": item.Fields, "filter": filter, "geometry": item.Geometry, "derivation": choice.Derivation, "filename": outputFilename(item), "simplify_mm": category.SimplifyMM}
+	normalizeSpec := map[string]any{"fields": item.Fields, "filter": filter, "geometry": item.Geometry, "derivation": choice.Derivation, "simplify_mm": category.SimplifyMM}
+	if revision := fieldCandidateRevision(provide); revision != "" {
+		normalizeSpec["revision"] = revision
+	}
 	query, _ := json.Marshal(provide)
-	spec := CacheSpec{SourceID: source.ID, SourceVersion: source.Version, Category: item.Category, Params: params, Query: string(query), BBox: item.Extent.BBox, ScaleBand: item.Scale, Normalize: normalizeSpec, AdapterVersion: "v4.1"}
-	if item.Extent.Path != "" {
-		if hash, _, err := fileDigest(item.Extent.Path); err == nil {
-			spec.MaskDigest = hash
+	bbox := cacheGrid(item.Extent.BBox)
+	if source.RoutingMethod() == "overpass" && source.Limits.MaxAreaKM2 > 0 {
+		area := (bbox[2] - bbox[0]) * 111.32 * math.Cos((bbox[1]+bbox[3])*math.Pi/360) * (bbox[3] - bbox[1]) * 111.32
+		if area > source.Limits.MaxAreaKM2 {
+			bbox = append([]float64{}, item.Extent.BBox...)
 		}
 	}
+	spec := CacheSpec{SourceID: source.ID, SourceVersion: source.Version, Category: item.Category, CoverageRegion: coverageRegion, Params: params, Query: string(query), BBox: bbox, ScaleClass: datasource.ScaleClass(item.Scale), Normalize: normalizeSpec, AdapterVersion: "v7"}
+
 	return spec, nil
+}
+
+// Candidate fallback now recognizes QGIS NULL values as empty. Only fields
+// with another candidate can recover values and require their cache rebuilt.
+func fieldCandidateRevision(provide datasource.Provide) string {
+	for _, candidates := range provide.Fields {
+		if len(candidates) > 1 {
+			return "field-candidates-v2"
+		}
+	}
+	return ""
 }
 
 func canonicalRelative(root, path string) (string, error) {
@@ -645,4 +710,112 @@ func canonicalRelative(root, path string) (string, error) {
 		return "", err
 	}
 	return relative, nil
+}
+
+func cacheGrid(b []float64) []float64 {
+	if len(b) != 4 {
+		return b
+	}
+	return []float64{math.Floor(b[0]*2) / 2, math.Floor(b[1]*2) / 2, math.Ceil(b[2]*2) / 2, math.Ceil(b[3]*2) / 2}
+}
+
+// Cached data covers the whole grid and retains detail. Each consumer receives
+// a derived, exactly clipped copy at its own scale; the cached original stays read-only.
+func (e *Engine) deriveForNeed(ctx context.Context, item flow.AcquisitionItem, category *datasource.Category, result *ItemResult) error {
+	if e.Invoke == nil {
+		return fmt.Errorf("数据规范化工具未配置")
+	}
+	root := filepath.Join(e.Store.Root, "derived")
+	if err := os.MkdirAll(root, 0700); err != nil {
+		return err
+	}
+	dir, err := os.MkdirTemp(root, "data-")
+	if err != nil {
+		return err
+	}
+	suffix := ".gpkg"
+	if category.Geometry == "raster" {
+		suffix = ".tif"
+	}
+	clip := map[string]any{"bbox": item.Extent.BBox}
+	if item.Extent.Path != "" && item.Extent.ExpandPercent == 0 {
+		clip = map[string]any{"path": item.Extent.Path}
+	}
+	rule := category.Routing[datasource.ScaleClass(item.Scale)]
+	value, err := e.Invoke(ctx, "data_normalize", map[string]any{"input": map[string]any{"path": result.Output.Paths[0]}, "output": filepath.Join(dir, "data"+suffix), "expected_geometry": category.Geometry, "clip": clip, "fields": map[string][]string{}, "simplify_tolerance_m": category.SimplifyMM * float64(item.Scale) / 1000, "min_length_m": rule.MinLengthMM * float64(item.Scale) / 1000, "min_area_m2": rule.MinAreaMM2 * math.Pow(float64(item.Scale)/1000, 2), "merge_distance_m": rule.MergeDistanceM, "merge_by": rule.MergeBy})
+	if err != nil {
+		os.RemoveAll(dir)
+		return &ProcessingError{Stage: "derive", Paths: append([]string(nil), result.Output.Paths...), Err: err}
+	}
+	payload, err := UnwrapToolResult(value)
+	if err != nil {
+		os.RemoveAll(dir)
+		return &ProcessingError{Stage: "derive", Paths: append([]string(nil), result.Output.Paths...), Err: err}
+	}
+	stats := toolData(payload)
+	validation := ValidateStats(category, item, stats)
+	if !validation.OK {
+		os.RemoveAll(dir)
+		return fmt.Errorf("数据取舍后未通过内容检查：%s", strings.Join(validation.Errors, "；"))
+	}
+	result.Notes = append(result.Notes, validation.Warnings...)
+	result.Output.Paths = stringsFromAny(stats["paths"])
+	if len(result.Output.Paths) == 0 {
+		if path, ok := stats["path"].(string); ok {
+			result.Output.Paths = []string{path}
+		}
+	}
+	result.Output.Count = int(number(stats["count"]))
+	result.Output.Extent = floatSlice(stats["extent_wgs84"])
+	result.Notes = append(result.Notes, "数据仓按范围覆盖复用；按本次范围裁剪和比例尺取舍")
+	if generalization, ok := stats["generalization"].(map[string]any); ok {
+		result.Notes = append(result.Notes, fmt.Sprintf("取舍：输入%.0f、合并后%.0f、移除短小要素%.0f、输出%d；按%s合并；简化%.2f米", number(generalization["input_features"]), number(generalization["after_merge"]), number(generalization["removed_small"]), result.Output.Count, rule.MergeBy, category.SimplifyMM*float64(item.Scale)/1000))
+	}
+	return nil
+}
+
+func stringsFromAny(value any) []string {
+	if v, ok := value.([]string); ok {
+		return v
+	}
+	out := []string{}
+	if v, ok := value.([]any); ok {
+		for _, p := range v {
+			if s, ok := p.(string); ok {
+				out = append(out, s)
+			}
+		}
+	}
+	return out
+}
+
+func (e *Engine) PrepareStored(ctx context.Context, item flow.AcquisitionItem, record StoreRecord) (ItemResult, error) {
+	result := ItemResult{Key: item.Key, Status: "reused", SourceID: record.Spec.SourceID, StoreKey: record.Key, Output: OutputRecord{Paths: record.Outputs()}, Notes: append([]string{}, record.Notes...)}
+	if record.Expired {
+		result.Notes = append(result.Notes, "数据仓条目已过更新期限，可刷新来源；当前副本仍保留")
+	}
+	category := e.Catalog.Category(item.Category)
+	if category == nil {
+		return result, fmt.Errorf("数据类别不存在")
+	}
+	err := e.deriveForNeed(ctx, item, category, &result)
+	return result, err
+}
+
+// Regional URLs are source metadata. Unresolved/cross-region extents retain the
+// source-wide archive rather than guessing a province from a bounding-box center.
+func regionalProvide(catalog *datasource.Catalog, item flow.AcquisitionItem, source datasource.Source, provide datasource.Provide) (datasource.Provide, string) {
+	if item.Extent == nil || len(source.RegionURLs) == 0 {
+		return provide, ""
+	}
+	region, err := catalog.ResolveRegion(item.Extent.Region)
+	if err != nil || len(region.Code) != 6 {
+		return provide, ""
+	}
+	code := region.Code[:2] + "0000"
+	if address := source.RegionURLs[code]; address != "" {
+		provide.URL = address
+		return provide, code
+	}
+	return provide, ""
 }

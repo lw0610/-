@@ -189,7 +189,7 @@ def _symbol_rows(params, dataset_dir, dataset_table):
 
 def route_points_build_handler(params):
     try:
-        if params.get("symbols") is not None:
+        if params.get("symbols"):
             params = dict(params)
             params["symbols"] = require_handle(params["symbols"], "symbols")
         resolved = resolve_route_dataset(params)

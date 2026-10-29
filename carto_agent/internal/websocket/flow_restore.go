@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/autocarto/carto_agent/internal/agentruntime"
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/autocarto/carto_agent/internal/flowrun"
@@ -145,11 +144,7 @@ func (s *DeepServer) restoreFlowPending(ctx context.Context, sessionID, projectP
 		if err != nil {
 			return nil, err
 		}
-		if request.Overlay != nil {
-			agent, err = builder.BuildRoleWithOverlay(ctx, run.Scheme, cfg, agentruntime.RoleOverlay{FlowRole: request.Overlay.FlowRole, RoleID: request.Overlay.RoleID, ExtraPackages: request.Overlay.ExtraPackages})
-		} else {
-			agent, err = builder.BuildRole(ctx, run.Scheme, cfg, request.Role.ID)
-		}
+		agent, err = builder.BuildRole(ctx, run.Scheme, cfg, request.Role.ID)
 		if err != nil {
 			return nil, err
 		}

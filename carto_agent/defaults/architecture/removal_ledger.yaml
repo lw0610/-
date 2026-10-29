@@ -84,20 +84,6 @@ compat_layers:
     governs: []
     status: diagnostic_compat
 
-  - id: basemap_legacy_preset_tools
-    path: autocarto/tools/system/_shared/basemap_presets_impl.py
-    why_temporary: '三个旧预设工具已从公开工具包隐藏；兼容包装仅使用 cartography/assets 中冻结的 QML 与 basemap-legacy-presets.json，不绕过公共资源解析。'
-    remove_in_wave: after_golden_legacy_baseline_migrated_next_version
-    evidence_required:
-      - 'autocarto/tests/golden/run_golden.py 非 compose 模式改为样式集后的下一个版本。'
-      - '所有调用方已使用 style_set_apply 或通用符号工具；冻结 QML、旧索引与三个旧工具定义可同时删除。'
-      - '资源句柄路径与黄金样例均无旧预设入口依赖。'
-    blocking_tests:
-      - python -m pytest autocarto/tests/test_style_set_qgis.py -q
-      - python -m pytest autocarto/tests/golden/test_golden_regression_qgis.py -q
-      - cd carto_agent && go test ./internal/control -run TestCompatLayerRequiresRemovalCriteria -count=1
-    governs: []
-    status: hidden_legacy_tools
 
   - id: resource_manifest_inference
     path: carto_agent/internal/resource/manifest.go
@@ -262,6 +248,12 @@ compat_layers:
     status: migration_only
 
 completed_removals:
+  - id: basemap_legacy_preset_tools
+    path: autocarto/tools/system/_shared/basemap_presets_impl.py
+    removed_in_wave: refactor_v7_d14_d50
+    evidence:
+      - '三个固定类型工具、私有冻结QML与索引已删除；公开11个样式资源保留。'
+      - '黄金样例和固定流程验收改用公开样式句柄及参数符号化；详见docs/refactor-v7/evidence/D14.md。'
   - id: flow_ensure_compiled_alias
     path: carto_agent/internal/flow/compile.go
     removed_in_wave: refactor_v5_k50

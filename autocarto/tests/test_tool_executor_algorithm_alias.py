@@ -1,9 +1,33 @@
 import unittest
+from types import SimpleNamespace
+from unittest import mock
 
 from autocarto.core.tool_engine.executor import ProcessingToolExecutor
 
 
 class ToolExecutorAlgorithmAliasTestCase(unittest.TestCase):
+    def test_unqualified_unmatched_name_is_not_a_missing_provider(self):
+        executor = ProcessingToolExecutor({})
+        registry = SimpleNamespace(
+            algorithmById=lambda _name: None,
+            providers=lambda: [SimpleNamespace(id=lambda: "gdal")],
+        )
+        qgis = SimpleNamespace(QgsApplication=SimpleNamespace(processingRegistry=lambda: registry))
+        executor._processing = SimpleNamespace(algorithmHelp=lambda _name: None)
+        with mock.patch("autocarto.core.tool_engine.executor.importlib.import_module", return_value=qgis):
+            self.assertEqual(executor._check_algorithm_availability("gdal_warp"), (False, "invalid_algorithm_id"))
+            self.assertEqual(executor._check_algorithm_availability("missing:warp"), (False, "provider_missing"))
+            self.assertEqual(executor._check_algorithm_availability("gdal:missing"), (False, "invalid_algorithm_id"))
+        result = executor._build_unavailable_result({"requested_id": "gdal_warp", "reason": "invalid_algorithm_id"})
+        self.assertNotIn("provider", result["error"])
+
+    def test_explicit_algorithm_binding_does_not_search_aliases(self):
+        executor = ProcessingToolExecutor({})
+        with mock.patch.object(executor, "_check_algorithm_availability", return_value=(True, "exact_match")) as check:
+            resolution = executor.resolve_tool_algorithm("gdal_warp", {"algorithm_id": "gdal:warpreproject"})
+        self.assertEqual(resolution["resolved_id"], "gdal:warpreproject")
+        check.assert_called_once_with("gdal:warpreproject")
+
     def test_resolve_buffer_alias_to_native_provider(self):
         executor = ProcessingToolExecutor({"buffer": {"algorithm_id": "buffer"}})
 

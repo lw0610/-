@@ -7,7 +7,7 @@ metadata:
   domain: vector-fields
   runtime: qgis
 spec:
-  description: 按最近距离连接属性
+  description: 按真实几何最近距离连接指定字段，保留未匹配要素并返回可继续使用的输出图层与匹配数量。距离使用输入图层的地图单位；需要米距离时请先使用合适的投影坐标系。
   parameters:
   - name: INPUT
     type: layer
@@ -31,7 +31,7 @@ spec:
     type: output_layer
     description: 输出图层
 execution:
-  backend_tool: join_attributes_by_nearest
+  backend_tool: native:joinbynearest
   param_mapping:
     INPUT: '{{ INPUT }}'
     INPUT_2: '{{ INPUT_2 }}'

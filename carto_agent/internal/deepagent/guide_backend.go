@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// GuideBackend is mounted only on the orchestrator. Reading it is local-only.
+// GuideBackend shares local flow instructions with the main agent and its delegates.
 type GuideBackend struct {
 	Store     *flow.GuideStore
 	Resources *resource.Library

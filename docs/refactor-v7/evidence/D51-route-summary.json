@@ -1,0 +1,236 @@
+{
+  "real_model": true,
+  "real_qgis": true,
+  "all_route_inputs_still_unchanged": true,
+  "records": [
+    {
+      "evidence_dir": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-route-owhzmzm0/replays/route-china-map-20261029-150212",
+      "status": "harness_or_runtime_error",
+      "elapsed_seconds": 11.15,
+      "inputs_unchanged": false,
+      "tool_calls": 0,
+      "tool_failures": 0,
+      "calls_by_tool": {},
+      "failures_by_tool": {},
+      "model_call_count": null
+    },
+    {
+      "evidence_dir": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-route-owhzmzm0/replays/route-china-map-20261029-150402",
+      "status": "error",
+      "elapsed_seconds": 330.92,
+      "inputs_unchanged": true,
+      "tool_calls": 40,
+      "tool_failures": 19,
+      "calls_by_tool": {
+        "get_project_info": 3,
+        "get_layers_info": 3,
+        "file_read": 12,
+        "plan_propose": 1,
+        "layer_load_builtin": 8,
+        "skill": 1,
+        "route_draw": 1,
+        "resource_get": 5,
+        "reference_read": 4,
+        "data_find": 1,
+        "output_get_info": 1
+      },
+      "failures_by_tool": {
+        "file_read": 10,
+        "route_draw": 1,
+        "resource_get": 5,
+        "reference_read": 3
+      },
+      "model_call_count": null
+    },
+    {
+      "evidence_dir": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-route2-z7_e6gdu/replays/route-china-map-20261029-151127",
+      "status": "stopped_for_diagnosis",
+      "elapsed_seconds": 381.63,
+      "inputs_unchanged": true,
+      "tool_calls": 48,
+      "tool_failures": 20,
+      "calls_by_tool": {
+        "get_project_info": 3,
+        "get_layers_info": 5,
+        "plan_propose": 2,
+        "layer_load_builtin": 8,
+        "output_get_info": 2,
+        "route_draw": 2,
+        "route_points_build": 1,
+        "resource_get": 3,
+        "reference_read": 4,
+        "skill": 2,
+        "file_read": 14,
+        "data_find": 2
+      },
+      "failures_by_tool": {
+        "plan_propose": 1,
+        "route_draw": 2,
+        "resource_get": 3,
+        "reference_read": 4,
+        "file_read": 10
+      },
+      "model_call_count": null
+    },
+    {
+      "evidence_dir": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-route2-z7_e6gdu/replays/route-china-map-resume-20261029-151912",
+      "status": "harness_or_runtime_error",
+      "elapsed_seconds": 6.08,
+      "inputs_unchanged": true,
+      "tool_calls": 0,
+      "tool_failures": 0,
+      "calls_by_tool": {},
+      "failures_by_tool": {},
+      "model_call_count": null
+    },
+    {
+      "evidence_dir": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-route2-z7_e6gdu/replays/route-china-map-resume-20261029-152658",
+      "status": "stopped_for_diagnosis",
+      "elapsed_seconds": 222.16,
+      "inputs_unchanged": true,
+      "tool_calls": 54,
+      "tool_failures": 34,
+      "calls_by_tool": {
+        "skill": 2,
+        "get_project_info": 1,
+        "route_draw": 4,
+        "route_points_build": 1,
+        "file_read": 33,
+        "reference_read": 7,
+        "resource_get": 3,
+        "get_layers_info": 1,
+        "output_get_info": 1,
+        "data_find": 1
+      },
+      "failures_by_tool": {
+        "route_draw": 4,
+        "reference_read": 7,
+        "file_read": 20,
+        "resource_get": 3
+      },
+      "model_call_count": null
+    },
+    {
+      "evidence_dir": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-route2-z7_e6gdu/replays/route-china-map-resume-20261029-153041",
+      "status": "stopped_for_diagnosis",
+      "elapsed_seconds": 155.28,
+      "inputs_unchanged": true,
+      "tool_calls": 52,
+      "tool_failures": 31,
+      "calls_by_tool": {
+        "get_project_info": 1,
+        "get_layers_info": 2,
+        "route_draw": 2,
+        "route_points_build": 1,
+        "file_read": 25,
+        "resource_get": 8,
+        "reference_read": 8,
+        "skill": 1,
+        "output_get_info": 1,
+        "data_find": 3
+      },
+      "failures_by_tool": {
+        "route_draw": 2,
+        "resource_get": 8,
+        "reference_read": 7,
+        "file_read": 14
+      },
+      "model_call_count": null
+    },
+    {
+      "evidence_dir": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-route2-z7_e6gdu/replays/route-china-map-resume-20261029-153317",
+      "status": "stopped_for_diagnosis",
+      "elapsed_seconds": 281.7,
+      "inputs_unchanged": true,
+      "tool_calls": 30,
+      "tool_failures": 6,
+      "calls_by_tool": {
+        "skill": 1,
+        "get_project_info": 4,
+        "get_layers_info": 6,
+        "route_draw": 5,
+        "file_read": 7,
+        "resource_get": 2,
+        "reference_read": 1,
+        "route_points_build": 3,
+        "output_get_info": 1
+      },
+      "failures_by_tool": {
+        "route_draw": 2,
+        "resource_get": 2,
+        "reference_read": 1,
+        "file_read": 1
+      },
+      "model_call_count": null
+    },
+    {
+      "evidence_dir": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-route2-z7_e6gdu/replays/route-china-map-resume-20261029-153759",
+      "status": "awaiting_interaction",
+      "elapsed_seconds": 257.55,
+      "inputs_unchanged": true,
+      "tool_calls": 26,
+      "tool_failures": 6,
+      "calls_by_tool": {
+        "get_layers_info": 5,
+        "plan_revise": 1,
+        "file_read": 10,
+        "route_draw": 2,
+        "route_points_build": 1,
+        "output_get_info": 2,
+        "get_project_info": 1,
+        "skill": 1,
+        "reference_read": 1,
+        "hitl_request": 2
+      },
+      "failures_by_tool": {
+        "route_draw": 2,
+        "file_read": 2,
+        "reference_read": 1,
+        "hitl_request": 1
+      },
+      "model_call_count": null
+    },
+    {
+      "evidence_dir": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-route-auto-a1lkuoxt/replays/route-auto-20261029-152523",
+      "status": "stopped_for_diagnosis",
+      "elapsed_seconds": 1548.93,
+      "inputs_unchanged": true,
+      "tool_calls": 6,
+      "tool_failures": 0,
+      "calls_by_tool": {
+        "get_project_info": 1,
+        "get_layers_info": 1,
+        "plan_propose": 1,
+        "plan_revise": 3
+      },
+      "failures_by_tool": {},
+      "model_call_count": null,
+      "progress_event_count": {
+        "河流面": 190483,
+        "河流线": 1,
+        "国道": 70468
+      },
+      "last_progress": {
+        "河流面": {
+          "bytes": 780213788,
+          "total": 1618217864,
+          "bytes_per_second": 1031034.4905705403,
+          "percent": 48.21438480918908
+        },
+        "河流线": {
+          "bytes": 0,
+          "total": 0,
+          "bytes_per_second": 0,
+          "percent": null
+        },
+        "国道": {
+          "bytes": 288632348,
+          "total": 1618217864,
+          "bytes_per_second": 1026695.0745707483,
+          "percent": 17.83643317881454
+        }
+      },
+      "events_bytes": 364188211
+    }
+  ]
+}

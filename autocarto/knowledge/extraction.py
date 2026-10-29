@@ -144,8 +144,8 @@ def extract_and_compile_task_knowledge(
     model: Any,
     output_dir: Path | str,
     *,
-    route_style: dict,
-    symbols: dict,
+    route_style: dict | str | None = None,
+    symbols: dict | str | None = None,
     overwrite: bool = False,
     instructions: str = "",
 ) -> Any:

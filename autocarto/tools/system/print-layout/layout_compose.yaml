@@ -16,11 +16,12 @@ spec:
   - {name: title, type: string, required: true, description: 标题正文；按版式字号和字重添加}
   - {name: overview_text, type: string, description: 综述正文；省略时不添加可选综述}
   - {name: overview_title, type: string, description: 可选综述标题；同框按综述标题字号显示}
-  - {name: map_layers, type: array, items: {type: string}, description: 主图图层名称或 ID，按从上到下顺序；省略时使用可见图层}
+  - {name: map_layers, type: array, items: {type: string}, description: 主图图层名称或 ID，按从上到下顺序；省略时沿用图层面板中可见图层的自然顺序，仅设置版面}
   - {name: extent_layers, type: array, items: {type: string}, description: 用于确定范围的图层，与 extent 二选一}
   - {name: extent, type: object, description: 显式范围 xmin/ymin/xmax/ymax/crs，与 extent_layers 二选一}
   - {name: padding, type: number, default: 0.03, description: 范围外扩比例，0 至 1；不改变主图框尺寸}
   - {name: legend_layers, type: array, items: {type: string}, description: 图例白名单图层；省略时使用主图图层}
+  - {name: legend_labels, type: object, description: 图层 ID 或唯一名称到图例显示名的映射；符号使用真实图层样式，不改工程图层名。同类路线选一个代表图层加入 legend_layers，再按本次主体及行动命名。}
   - {name: legend_title, type: string, default: 图例, description: 原生图例标题}
   - {name: legend_symbols, type: string, description: 额外图例使用的符号预设名称（军标、图例或用户预设）}
   - {name: legend_extra_items, type: array, items: {type: object}, description: 额外图例条目数组，每项为 label、symbol_type 或 image_path、可选 size_mm；symbol_type 从 legend_symbols 选择}
@@ -42,6 +43,7 @@ execution:
     extent: '{{ extent }}'
     padding: '{{ padding }}'
     legend_layers: '{{ legend_layers }}'
+    legend_labels: '{{ legend_labels }}'
     legend_title: '{{ legend_title }}'
     legend_extra_items: '{{ legend_extra_items }}'
     legend_symbols: '{{ legend_symbols }}'

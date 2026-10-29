@@ -4,8 +4,10 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"github.com/autocarto/carto_agent/internal/datasource"
+	"github.com/autocarto/carto_agent/internal/networkproxy"
 	"io"
 	"net/http"
 	"net/url"
@@ -19,6 +21,7 @@ import (
 type HTTPAdapter struct {
 	Client   *http.Client
 	MaxBytes int64
+	ProxyURL string
 }
 
 func (HTTPAdapter) Kind() string { return "http_file" }
@@ -63,6 +66,14 @@ func (a HTTPAdapter) Fetch(ctx context.Context, r FetchRequest) (FetchResult, er
 	client := http.Client{}
 	if a.Client != nil {
 		client = *a.Client
+	} else {
+		proxy := ""
+		if r.Source.RoutingMethod() == "osm_extract" {
+			proxy = a.ProxyURL
+		}
+		transport := networkproxy.Transport(proxy)
+		defer transport.CloseIdleConnections()
+		client.Transport = transport
 	}
 	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		if len(via) >= 5 {
@@ -85,7 +96,11 @@ func (a HTTPAdapter) Fetch(ctx context.Context, r FetchRequest) (FetchResult, er
 			if ctx.Err() != nil {
 				return FetchResult{}, ctx.Err()
 			}
-			return FetchResult{}, fmt.Errorf("无法下载 %s（网络或重定向检查失败）", RedactURL(u.String()))
+			var requestErr *url.Error
+			if errors.As(err, &requestErr) {
+				err = &url.Error{Op: requestErr.Op, URL: RedactURL(requestErr.URL), Err: requestErr.Err}
+			}
+			return FetchResult{}, fmt.Errorf("无法下载 %s：%w", RedactURL(u.String()), err)
 		}
 		if response.StatusCode != 429 && response.StatusCode != 503 {
 			break
@@ -133,6 +148,7 @@ func (a HTTPAdapter) Fetch(ctx context.Context, r FetchRequest) (FetchResult, er
 	digest := sha256.New()
 	writer := io.MultiWriter(file, digest)
 	var total int64
+	var lastProgress time.Time
 	buffer := make([]byte, 128*1024)
 	reader := io.LimitReader(response.Body, max+1)
 	for {
@@ -151,7 +167,10 @@ func (a HTTPAdapter) Fetch(ctx context.Context, r FetchRequest) (FetchResult, er
 				err = writeErr
 				break
 			}
-			emitProgress(r.Progress, "download", total, response.ContentLength)
+			if time.Since(lastProgress) >= 250*time.Millisecond {
+				emitProgress(r.Progress, "download", total, response.ContentLength)
+				lastProgress = time.Now()
+			}
 		}
 		if err != nil {
 			break
@@ -176,5 +195,6 @@ func (a HTTPAdapter) Fetch(ctx context.Context, r FetchRequest) (FetchResult, er
 	if err = os.Rename(temp, output); err != nil {
 		return FetchResult{}, err
 	}
+	emitProgress(r.Progress, "download", total, response.ContentLength)
 	return FetchResult{Files: []string{output}, Format: fileFormat(output), URLs: []string{RedactURL(response.Request.URL.String())}, RetrievedAt: time.Now().UTC(), Bytes: total, SHA256: map[string]string{output: hex.EncodeToString(digest.Sum(nil))}, Notes: []string{}}, nil
 }

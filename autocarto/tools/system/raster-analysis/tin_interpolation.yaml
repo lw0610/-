@@ -28,7 +28,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: tin_interpolation
+  backend_tool: qgis:tininterpolation
   param_mapping:
     INTERPOLATION_DATA: '{{ INTERPOLATION_DATA }}'
     METHOD: '{{ METHOD }}'

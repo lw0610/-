@@ -75,7 +75,7 @@ func (p *factoryGuideProbe) read(agent adk.Agent, name string) (string, error) {
 	return p.result, nil
 }
 
-func factoryWithRealGuides(t *testing.T) (*Runtime, *factoryGuideProbe, *flow.GuideStore) {
+func factoryWithRealGuides(t *testing.T) (*Runtime, *factoryGuideProbe, *flow.GuideStore, *Factory) {
 	t.Helper()
 	root, err := filepath.Abs(filepath.Join("..", "..", ".."))
 	if err != nil {
@@ -93,8 +93,9 @@ func factoryWithRealGuides(t *testing.T) (*Runtime, *factoryGuideProbe, *flow.Gu
 	factory, err := NewFactory(&FactoryConfig{
 		DefaultChatModel: probe,
 		GuideBackend:     &deepagent.GuideBackend{Store: guides, Resources: library},
-		BaseTools:        []tool.BaseTool{&fakeInvokableTool{name: "data_find"}, &fakeInvokableTool{name: "get_layers_info"}},
-		PluginSkillsDir:  skills, BuiltinSkillsDir: skills, UserSkillsDir: filepath.Join(home, "skills"),
+		BaseTools: []tool.BaseTool{&fakeInvokableTool{name: "data_find"}, &fakeInvokableTool{name: "get_layers_info"},
+			&fakeInvokableTool{name: "marching_route_get_extraction_contract"}, &fakeInvokableTool{name: "marching_route_compile_dataset"}},
+		PluginSkillsDir: skills, BuiltinSkillsDir: skills, UserSkillsDir: filepath.Join(home, "skills"),
 		ConfigBaseDir: filepath.Join(home, "config"), MaxIterations: 3,
 		ResolveChatModel: func(string) (model.ToolCallingChatModel, error) { return probe, nil },
 		RegistryGovernance: control.NewRegistryGovernance(control.RegistryGovernanceDeps{
@@ -111,11 +112,11 @@ func factoryWithRealGuides(t *testing.T) (*Runtime, *factoryGuideProbe, *flow.Gu
 	if runtime.BuildAgent == nil || runtime.PlanAgent == nil || len(runtime.ModeIssues) != 0 {
 		t.Fatalf("default runtime must have both modes: %+v", runtime.ModeIssues)
 	}
-	return runtime, probe, guides
+	return runtime, probe, guides, factory
 }
 
 func TestFactoryDefaultRuntimeReadsAllBuiltinGuidesAndAssignedManual(t *testing.T) {
-	runtime, probe, guides := factoryWithRealGuides(t)
+	runtime, probe, guides, _ := factoryWithRealGuides(t)
 	items, err := guides.List()
 	if err != nil || len(items) == 0 {
 		t.Fatalf("real built-in guides missing: %v", err)
@@ -147,7 +148,7 @@ func TestFactoryDefaultRuntimeReadsAllBuiltinGuidesAndAssignedManual(t *testing.
 }
 
 func TestFactoryGuideReadsReflectUserChangesWithoutRuntimeRebuild(t *testing.T) {
-	runtime, probe, guides := factoryWithRealGuides(t)
+	runtime, probe, guides, _ := factoryWithRealGuides(t)
 	const id = "new-user-guide"
 	raw := "---\n名称: 用户新增流程\n说明: 在运行时创建后读取\n---\n# 用户自由正文\n必须保留这段用户要求。\n"
 	created, err := guides.Create(raw, id)
@@ -183,7 +184,7 @@ func TestFactoryGuideReadsReflectUserChangesWithoutRuntimeRebuild(t *testing.T) 
 }
 
 func TestFactoryGuideBackendDoesNotGrantUnassignedManuals(t *testing.T) {
-	runtime, probe, _ := factoryWithRealGuides(t)
+	runtime, probe, _, _ := factoryWithRealGuides(t)
 	// This manual exists and is assigned to cartographer in the real default
 	// profile. Adding guide knowledge must not grant it to the orchestrator.
 	if _, err := os.Stat(filepath.Join("..", "..", "..", "autocarto", "skills", "system", "cartography-styling", "SKILL.md")); err != nil {
@@ -195,6 +196,26 @@ func TestFactoryGuideBackendDoesNotGrantUnassignedManuals(t *testing.T) {
 			if content, err := probe.read(agent, name); err == nil || content != "" {
 				t.Fatalf("%s exposed unauthorized or nonexistent skill %s: %v", mode, name, err)
 			}
+		}
+	}
+}
+
+func TestFactorySchemeDelegateReadsSameFullGuideAsMain(t *testing.T) {
+	_, probe, guides, factory := factoryWithRealGuides(t)
+	const id = "delegate-guide"
+	created, err := guides.Create("---\n名称: 委派流程\n说明: 完整业务要求共享\n---\n# 制图要求\n保留全部路线节点并使用用户提供的图层。\n", id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	profile := loadEmbeddedDefaultAgentConfig(t)
+	for _, role := range []string{"data_engineer", "cartographer"} {
+		agent, err := factory.BuildRole(context.Background(), "default", profile, role)
+		if err != nil {
+			t.Fatal(err)
+		}
+		content, err := probe.read(agent, deepagent.GuideSkillName(id))
+		if err != nil || !strings.Contains(content, created.GuideMD) {
+			t.Fatalf("%s cannot read the same full guide: %v", role, err)
 		}
 	}
 }

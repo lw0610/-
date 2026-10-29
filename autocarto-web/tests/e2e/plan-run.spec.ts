@@ -26,7 +26,7 @@ test('conversation plan becomes progress in place and survives session restorati
     }
     Object.defineProperty(window, 'WebSocket', { configurable: true, value: Socket })
   })
-  const plan = {api_version:'carto-plan/v1',plan_id:'plan-1',version:1,goal:'数据检查与导出',facts:[{name:'数据范围',value:'湖南',from:'用户消息'}],assumptions:[],data:[],steps:[{id:'s1',title:'检查数据',kind:'agent',capabilities:['数据加载与导出'],outputs:[]}],deliverables:[{label:'图件',type:'file',format:'pdf'}],checks:['文件存在']}
+  const plan = {api_version:'carto-plan/v2',plan_id:'plan-1',version:1,goal:'数据检查与导出',facts:[{name:'数据范围',value:'湖南',from:'用户消息'}],assumptions:[],data:[],steps:[{id:'s1',title:'检查数据',inputs:[],produces:[{id:'图件',kind:'file',format:'pdf'}]}],deliverables:['图件'],checks:['文件存在']}
   let planSnapshot = {session_id:'flow-session',plan_id:plan.plan_id,plan_version:1,plan,status:'awaiting_confirmation',needs_confirmation:true,execution_mode:'build'}
   const starts:unknown[]=[]
   const session: Record<string, unknown> = { session_id: 'flow-session', name: '流程隔离对话', project_path: '/tmp/flow-contract.qgz', execution_mode: 'build', run_intent: 'execute', created_at: '2026-10-21T00:00:00Z', updated_at: '2026-10-21T00:00:00Z', messages: [], flow_run: null }
@@ -76,7 +76,7 @@ test('conversation plan becomes progress in place and survives session restorati
   await emit(page,{type:'agent_workflow',session_id:'flow-session',run_id:'attempt-1',phase:'tool_call',content:'读取图层',data:{...toolData,tool_args:{layer:'河流'}}})
   await emit(page,{type:'agent_workflow',session_id:'flow-session',phase:'tool_result',content:'真实图层结果',data:{...toolData,result:'图层存在',status:'completed',success:true}})
   await expect(progress.getByText('图层存在',{exact:true})).toHaveCount(0)
-  await progress.getByRole('button',{name:'查看详情',exact:true}).click()
+  await progress.getByRole('button',{name:'查看详情',exact:true}).first().click()
   const taskRegion = page.getByTestId('workspace-task-region')
   const processRegion = page.getByTestId('workspace-process-region')
   await expect(taskRegion.getByText('检查数据',{exact:true})).toBeVisible()
@@ -97,7 +97,7 @@ test('conversation plan becomes progress in place and survives session restorati
   await emit(page,{type:'plan_event',session_id:'flow-session',data:{...planSnapshot,status:'running',replanning:false}})
   await flow('flow.step_completed',{step_id:'s1',outputs:{图件:'outputs/map.pdf'}})
   await flow('flow.finished',{status:'completed',summary:'图件已导出',deliverables:{图件:'outputs/map.pdf'},issues:[]})
-  await expect(progress.getByText('已完成 · 1/1',{exact:true})).toBeVisible()
+  await expect(progress.getByText(/任务已完成/)).toBeVisible()
   await progress.getByRole('button',{name:'outputs/map.pdf',exact:true}).last().click()
   await expect.poll(()=>page.evaluate(()=>(window as unknown as Harness).__opened)).toEqual(['outputs/map.pdf'])
   session.carto_plans=[{...planSnapshot,status:'completed',run:{api_version:'flow-run/v1',flow_run_id:'run-1',session_id:'flow-session',flow_id:'',carto_plan:plan,status:'completed',started_at:'2026-10-27T00:00:00Z',steps:[{id:'s1',index:1,title:'检查数据',role:'',status:'completed',attempts:[],outputs:{}}],result:{deliverables:{图件:'outputs/map.pdf'},issues:[],summary:'恢复完成记录'}}}]
@@ -105,7 +105,7 @@ test('conversation plan becomes progress in place and survives session restorati
   session.workflow_blocks = [{id:'persisted-agent',agent:'data_engineer',agentDisplayName:'数据工程智能体',summary:'检查数据',status:'completed',startedAt:restoredTime,updatedAt:restoredTime+1000,entries:[{id:'persisted-entry',type:'tool',phase:'tool_result',content:'真实图层结果',timestamp:restoredTime+1000,data:{...toolData,result:'图层存在',status:'completed',success:true},toolCard:{id:'persisted-tool',callId:'layers-1',tool:'get_layers_info',status:'completed',result:'图层存在',args:{layer:'河流'},startedAt:restoredTime,finishedAt:restoredTime+1000}}]}]
   session.messages = [{role:'system',msg_type:'tool',phase:'tool_result',content:'真实图层结果',timestamp:new Date(restoredTime+1000).toISOString(),data:{...toolData,result:'图层存在',status:'completed',success:true}}]
   await page.reload();await page.getByRole('button',{name:/流程隔离对话/}).first().click()
-  await expect(page.getByText('恢复完成记录')).toBeVisible()
+  await expect(page.getByRole('region',{name:`流程进度 ${plan.goal}`}).getByText(/任务已完成/)).toBeVisible()
   await expect(page.getByRole('button',{name:'开始',exact:true})).toHaveCount(0)
   await page.getByRole('region',{name:`流程进度 ${plan.goal}`}).getByRole('button',{name:'查看详情',exact:true}).click()
   await page.getByTestId('workspace-process-region').getByRole('button',{name:'展开全部',exact:true}).click()

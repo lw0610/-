@@ -1,0 +1,402 @@
+{
+  "home": "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v",
+  "episodes": [
+    {
+      "name": "hunan-v7-continue-20261029-191606",
+      "status": "error",
+      "elapsed_seconds": 395.85,
+      "calls": 52,
+      "failed_tools": 11,
+      "tool_names": {
+        "hitl_request": 1,
+        "get_layers_info": 3,
+        "package_layers": 1,
+        "save_vector_features_to_file": 2,
+        "shell_execute": 25,
+        "merge_vector_layers": 2,
+        "output_get_info": 2,
+        "get_project_info": 1,
+        "get_active_layer_info": 1,
+        "resource_get": 2,
+        "file_read": 1,
+        "skill": 5,
+        "data_find": 3,
+        "extract_by_expression": 1,
+        "selection_by_attribute": 2
+      }
+    },
+    {
+      "name": "hunan-v7-updated-20261029-190706",
+      "status": "awaiting_interaction",
+      "elapsed_seconds": 493.66,
+      "calls": 42,
+      "failed_tools": 2,
+      "tool_names": {
+        "get_project_info": 1,
+        "get_layers_info": 8,
+        "skill": 2,
+        "reference_read": 1,
+        "plan_propose": 1,
+        "plan_revise": 1,
+        "layer_load_builtin": 1,
+        "extract_by_attribute": 1,
+        "get_active_layer_info": 6,
+        "get_selected_features_info": 1,
+        "output_get_info": 5,
+        "data_export_vector": 4,
+        "selection_clear": 1,
+        "data_load_vector": 4,
+        "clip": 3,
+        "geodata_inspect": 1,
+        "hitl_request": 1
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hn_boundary.geojson",
+      "bytes": 38775,
+      "sha256": "e33adf2d34c0df5165e49fdf321a1c4d9f0f0f2b4b1781592075950c763bb0c7",
+      "feature_count": 1
+    },
+    {
+      "path": "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hn_boundary_reload.gpkg",
+      "bytes": 57344,
+      "sha256": "629228cc99ad8ba455b4532087cf2177f6a3860e532d5923f75469b33321fb98",
+      "integrity_check": "ok",
+      "layers": [
+        {
+          "name": "hn_boundary",
+          "geometry": "MULTIPOLYGON",
+          "srs_id": 4326,
+          "feature_count": 1
+        }
+      ]
+    },
+    {
+      "path": "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hn_railway_clip.gpkg",
+      "bytes": 368640,
+      "sha256": "566904d98326a88cf64d0d74221e1f85aa7ae6219eab650a93001dc49ac48b27",
+      "integrity_check": "ok",
+      "layers": [
+        {
+          "name": "hn_railway_clip",
+          "geometry": "MULTILINESTRING",
+          "srs_id": 4326,
+          "feature_count": 1227
+        }
+      ]
+    },
+    {
+      "path": "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hn_river_clip.gpkg",
+      "bytes": 434176,
+      "sha256": "e7123ee9d99a7c57c47e6ef472a636edea530fcc2fdd01f7614beed8c4d8c416",
+      "integrity_check": "ok",
+      "layers": [
+        {
+          "name": "hn_river_clip",
+          "geometry": "MULTILINESTRING",
+          "srs_id": 4326,
+          "feature_count": 370
+        }
+      ]
+    },
+    {
+      "path": "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hunan_gpkg.gpkg",
+      "bytes": 724992,
+      "sha256": "c73ca45392d9274ce8438922250e381371f73b791d953022ad13e24a7bdc762f",
+      "integrity_check": "ok",
+      "layers": [
+        {
+          "name": "railway",
+          "geometry": "MULTILINESTRING",
+          "srs_id": 4326,
+          "feature_count": 1227
+        },
+        {
+          "name": "river",
+          "geometry": "MULTILINESTRING",
+          "srs_id": 4326,
+          "feature_count": 370
+        }
+      ]
+    }
+  ],
+  "total_tool_calls": 93,
+  "failed_tools": [
+    {
+      "call_id": "call_00_CJADBsbIhX2vcfrkKrf38568",
+      "tool": "package_layers",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "export_gpkg",
+      "error": "[EnhancedLocalFunc] failed to invoke tool, toolName=package_layers, err=算法 package_layers 不可用：缺少 provider 'unknown'"
+    },
+    {
+      "call_id": "call_00_yXqRQPX5FSVt5a9JRb223240",
+      "tool": "save_vector_features_to_file",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "export_gpkg",
+      "error": "[EnhancedLocalFunc] failed to invoke tool, toolName=save_vector_features_to_file, err=未知工具: native:savefeatures"
+    },
+    {
+      "call_id": "call_01_VGUuWjpLWx1MxeH5OQnB8493",
+      "tool": "save_vector_features_to_file",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "export_gpkg",
+      "error": "[EnhancedLocalFunc] failed to invoke tool, toolName=save_vector_features_to_file, err=未知工具: native:savefeatures"
+    },
+    {
+      "call_id": "call_00_NMtCx7saxMSqpz1c8wwe6390",
+      "tool": "shell_execute",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "export_gpkg",
+      "error": "exit status 1"
+    },
+    {
+      "call_id": "call_00_szk5fHM3C9I7HXVHXALy1646",
+      "tool": "merge_vector_layers",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "export_gpkg",
+      "error": "[EnhancedLocalFunc] failed to invoke tool, toolName=merge_vector_layers, err=Unable to execute algorithm\nIncorrect parameter value for LAYERS"
+    },
+    {
+      "call_id": "call_00_J2bIDrDCs4gq8Dd0BcKJ9740",
+      "tool": "shell_execute",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "export_gpkg",
+      "error": "exit status 1"
+    },
+    {
+      "call_id": "call_00_uQWtyAjutjUNtcg6FopH0247",
+      "tool": "extract_by_expression",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "draw_map",
+      "error": "[EnhancedLocalFunc] failed to invoke tool, toolName=extract_by_expression, err=错误：未找到图层 '/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hn_boundary.geojson'"
+    },
+    {
+      "call_id": "call_00_A3t7BEcQNiZjJPp6EtFp9925",
+      "tool": "selection_by_attribute",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "draw_map",
+      "error": "[EnhancedLocalFunc] failed to invoke tool, toolName=selection_by_attribute, err=错误：未找到图层 'hn_boundary_f828b103_3aab_44df_862d_17354ad93f04'"
+    },
+    {
+      "call_id": "call_00_dkGfiN6wxD7wqRqUbPDp0589",
+      "tool": "shell_execute",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "draw_map",
+      "error": "exit status 1"
+    },
+    {
+      "call_id": "call_00_fRanpld2RzGhHrUsKubf3000",
+      "tool": "shell_execute",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "draw_map",
+      "error": "exit status 1"
+    },
+    {
+      "call_id": "call_00_Nl74BElHg4XnB0Cyjf2U9412",
+      "tool": "shell_execute",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "draw_map",
+      "error": "exit status 1"
+    },
+    {
+      "call_id": "call_00_hGUGtIqAugCft0gklrcp9339",
+      "tool": "get_active_layer_info",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "clip_railway",
+      "error": "[EnhancedLocalFunc] failed to invoke tool, toolName=get_active_layer_info, err=当前没有选中的图层"
+    },
+    {
+      "call_id": "call_00_2CMnlKq7BY2S1ioY9A9K7399",
+      "tool": "data_export_vector",
+      "phase": "tool_result",
+      "status": "failed",
+      "success": false,
+      "step_id": "clip_railway",
+      "error": "[EnhancedLocalFunc] failed to invoke tool, toolName=data_export_vector, err=错误：未找到图层 'hn_railway_clip'"
+    }
+  ],
+  "run": {
+    "path": "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/flows/fr-20261029-190746-1181beca563f/run.json",
+    "status": "interrupted",
+    "cursor": 4,
+    "steps": [
+      {
+        "id": "filter_province",
+        "status": "completed",
+        "outputs": {
+          "hn_boundary": [
+            "hn_boundary_f828b103_3aab_44df_862d_17354ad93f04"
+          ],
+          "hn_boundary_file": "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hn_boundary.geojson"
+        },
+        "failure": null
+      },
+      {
+        "id": "clip_railway",
+        "status": "completed",
+        "outputs": {
+          "hn_railway_clip": [
+            "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hn_railway_clip.gpkg"
+          ],
+          "hn_railway_clip_layer": "hn_railway_clip_f3173ec5_d8ed_446b_a2c1_0c2213405d05"
+        },
+        "failure": null
+      },
+      {
+        "id": "clip_river",
+        "status": "completed",
+        "outputs": {
+          "hn_river_clip": [
+            "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hn_river_clip.gpkg"
+          ],
+          "hn_river_clip_layer": "hn_river_clip_51ed3da6_981a_40d6_9399_9ca5269f3f79"
+        },
+        "failure": null
+      },
+      {
+        "id": "export_gpkg",
+        "status": "completed",
+        "outputs": {
+          "hunan_gpkg": "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/exports/hunan_gpkg.gpkg"
+        },
+        "failure": null
+      },
+      {
+        "id": "draw_map",
+        "status": "interrupted",
+        "outputs": {},
+        "failure": "[NodeRunError] error, status code: 402, status: 402 Payment Required, message: Insufficient Balance (request_id: 55344723-56d5-4578-8266-0e1d345cb09e)\n------------------------\nnode path: [node_1, ChatModel]"
+      }
+    ],
+    "data_preparation": [
+      {
+        "data_id": "hn_province",
+        "name": "湖南省域面",
+        "status": "completed",
+        "ledger": [],
+        "budget": {
+          "near_limit": false,
+          "limit_seconds": 900,
+          "max_tool_calls": 80,
+          "elapsed_seconds": 0,
+          "tool_calls": 0
+        }
+      },
+      {
+        "data_id": "hn_railway",
+        "name": "湖南省铁路线",
+        "status": "completed",
+        "ledger": [
+          {
+            "params": {
+              "extent": {
+                "bbox": [
+                  108.50956235000001,
+                  24.359747000000002,
+                  114.52765464999999,
+                  30.402684999999998
+                ],
+                "pending": false,
+                "region": "湖南省",
+                "source": "湖南省"
+              },
+              "source": "source.osm.geofabrik-china"
+            },
+            "method": "osm_extract",
+            "action": "",
+            "result": "completed",
+            "started_at": "2026-10-29T11:08:02.549427Z",
+            "finished_at": "2026-10-29T11:13:52.59725Z",
+            "paths": [
+              "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/output/acquired/湖南省铁路线/湖南省铁路线.gpkg"
+            ]
+          }
+        ],
+        "budget": {
+          "near_limit": false,
+          "limit_seconds": 900,
+          "max_tool_calls": 80,
+          "elapsed_seconds": 350,
+          "tool_calls": 0
+        }
+      },
+      {
+        "data_id": "hn_river",
+        "name": "湖南省河流线",
+        "status": "completed",
+        "ledger": [
+          {
+            "params": {
+              "extent": {
+                "bbox": [
+                  108.50956235000001,
+                  24.359747000000002,
+                  114.52765464999999,
+                  30.402684999999998
+                ],
+                "pending": false,
+                "region": "湖南省",
+                "source": "湖南省"
+              },
+              "source": "source.osm.geofabrik-china"
+            },
+            "method": "osm_extract",
+            "action": "",
+            "result": "completed",
+            "started_at": "2026-10-29T11:14:28.899118Z",
+            "finished_at": "2026-10-29T11:14:53.500333Z",
+            "paths": [
+              "/private/tmp/autocarto-v7-d51-hunan-update-g82gtg_v/data/sessions/project-58a8573b94ecb2c5/c88fcf36-900c-4673-83fc-0850796b7db5/output/acquired/湖南省河流线/湖南省河流线.gpkg"
+            ]
+          }
+        ],
+        "budget": {
+          "near_limit": false,
+          "limit_seconds": 900,
+          "max_tool_calls": 80,
+          "elapsed_seconds": 24,
+          "tool_calls": 0
+        }
+      }
+    ]
+  },
+  "seed_source_files_unchanged": true,
+  "total_elapsed_seconds": 889.51,
+  "configured_model_names": [
+    "claude-sonnet-4-0",
+    "deepseek-v4-pro",
+    "qwen3.7-plus",
+    "qwen3:4b"
+  ],
+  "binary": {
+    "path": "/tmp/enio2-v7-update-agent",
+    "sha256": "9d1435e43509268bba454c72efaa17019d6e1683cb79f234384c238cc049152e"
+  }
+}

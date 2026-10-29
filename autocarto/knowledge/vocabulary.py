@@ -50,6 +50,112 @@ SYMBOL_TYPES = {
 
 
 
+SYMBOL_PRESETS: Dict[str, Dict[str, Any]] = {
+    "waypoint": {
+        "svg_path": "symbols/waypoint.svg",
+        "size": 2.8,
+        "priority": 10,
+        "anchor_x": 0,
+        "anchor_y": 0,
+    },
+    "start_flag": {
+        "svg_path": "symbols/start_flag.svg",
+        "size": 6.5,
+        "priority": 100,
+        "anchor_x": 0,
+        "anchor_y": 0,
+    },
+    "battle": {
+        "svg_path": "symbols/battle.svg",
+        "size": 5.5,
+        "priority": 90,
+        "anchor_x": 0,
+        "anchor_y": 0,
+    },
+    "meeting": {
+        "svg_path": "symbols/meeting.svg",
+        "size": 5.2,
+        "priority": 80,
+        "anchor_x": 0,
+        "anchor_y": 0,
+    },
+    "rendezvous": {
+        "svg_path": "symbols/rendezvous.svg",
+        "size": 5.2,
+        "priority": 100,
+        "anchor_x": 0,
+        "anchor_y": 0,
+    },
+}
+
+
+EVENT_SYMBOLS = {
+    "departure": "start_flag",
+    "battle": "battle",
+    "meeting": "meeting",
+    "rendezvous": "rendezvous",
+}
+
+
+ROUTE_STYLE_PRESETS: Dict[str, Dict[str, Any]] = {
+    "friendly_main_red": {
+        "topology": "standard",
+        "side": "friendly",
+        "route_type": "main",
+        "draw_type": "bezier_arrow",
+        "style_id": "bezier_red_gradient",
+    },
+    "enemy_main_blue": {
+        "topology": "standard",
+        "side": "enemy",
+        "route_type": "enemy",
+        "draw_type": "bezier_arrow",
+        "style_id": "bezier_blue_gradient",
+    },
+    "friendly_branch_red": {
+        "topology": "branch",
+        "side": "friendly",
+        "route_type": "branch",
+        "draw_type": "branch_bezier",
+        "style_id": "branch_bezier_red_gradient",
+    },
+    "enemy_branch_blue": {
+        "topology": "branch",
+        "side": "enemy",
+        "route_type": "branch",
+        "draw_type": "branch_bezier",
+        "style_id": "branch_bezier_blue_gradient",
+    },
+    "friendly_multi_start_red": {
+        "topology": "multi_start",
+        "side": "friendly",
+        "route_type": "main",
+        "draw_type": "multi_start_bezier",
+        "style_id": "multi_start_bezier_red_gradient",
+    },
+    "enemy_multi_start_blue": {
+        "topology": "multi_start",
+        "side": "enemy",
+        "route_type": "enemy",
+        "draw_type": "multi_start_bezier",
+        "style_id": "multi_start_bezier_blue_gradient",
+    },
+}
+
+
+DEFAULT_ROUTE_STYLE = {
+    ("standard", "friendly"): "friendly_main_red",
+    ("standard", "neutral"): "friendly_main_red",
+    ("standard", "enemy"): "enemy_main_blue",
+    ("branch", "friendly"): "friendly_branch_red",
+    ("branch", "neutral"): "friendly_branch_red",
+    ("branch", "enemy"): "enemy_branch_blue",
+    ("multi_start", "friendly"): "friendly_multi_start_red",
+    ("multi_start", "neutral"): "friendly_multi_start_red",
+    ("multi_start", "enemy"): "enemy_multi_start_blue",
+}
+
+
 CSV_HEADERS = {
     "places.csv": [
         "place_id",

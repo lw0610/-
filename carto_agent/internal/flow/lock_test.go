@@ -293,8 +293,11 @@ func TestFlowBundledFolderAndLegacyPortability(t *testing.T) {
 	t.Setenv("AUTOCARTO_HOME", root)
 	library := resource.NewLibrary(filepath.Join(project, "autocarto/resources/system"), filepath.Join(root, "resources"), nil)
 	store := NewStore(filepath.Join(project, "autocarto/flows/system"), filepath.Join(root, "flows"), nil)
-	archive := filepath.Join(root, "traffic.zip")
-	if _, err := store.ExportWithOptions("traffic-route", archive, ExportOptions{IncludeLibraryDeps: true, Library: library}); err != nil {
+	if _, err := store.Create("---\n名称: 视觉资源打包测试\n版本: 6.0.0\n---\n使用样式「铁路」与版面「四角对齐版式」。\n", "visual-portability"); err != nil {
+		t.Fatal(err)
+	}
+	archive := filepath.Join(root, "visual-portability.zip")
+	if _, err := store.ExportWithOptions("visual-portability", archive, ExportOptions{IncludeLibraryDeps: true, Library: library}); err != nil {
 		t.Fatal(err)
 	}
 	empty := lockLibrary(t, t.TempDir())
@@ -302,15 +305,15 @@ func TestFlowBundledFolderAndLegacyPortability(t *testing.T) {
 	if _, err := dest.Import(archive, ImportOptions{}, empty); err != nil {
 		t.Fatal(err)
 	}
-	_, _, lock, rs, err := dest.ResolveResources(context.Background(), "traffic-route", empty)
+	_, _, lock, rs, err := dest.ResolveResources(context.Background(), "visual-portability", empty)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(lock.Resources) != 7 {
+	if len(lock.Resources) != 2 {
 		t.Fatal(lock)
 	}
-	if len(rs) != 7 {
-		t.Fatalf("expected only seven visual dependencies: %+v", rs)
+	if len(rs) != 2 {
+		t.Fatalf("expected only railway style and layout dependencies: %+v", rs)
 	}
 	for _, r := range rs {
 		if resource.HasErrors(r.Problems) || r.Owner != "bundled" || (r.Type != "style" && r.Type != "layout") {

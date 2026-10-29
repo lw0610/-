@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestFlowOnlyRolesAreAbsentFromDelegationPrompts(t *testing.T) {
+func TestConfiguredRolesRemainInDelegationPrompts(t *testing.T) {
 	cfg := &RuntimeSkillConfig{Agents: map[string]RuntimeSkillAgentConfig{
 		"orchestrator":  {IsMain: true, Enabled: true},
 		"worker":        {Enabled: true, DisplayName: "普通角色"},
@@ -17,7 +17,7 @@ func TestFlowOnlyRolesAreAbsentFromDelegationPrompts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if strings.Contains(prompt, "flow_executor") || strings.Contains(prompt, "流程专用角色") || !strings.Contains(prompt, "worker") {
-		t.Fatal("prompt advertised unavailable delegation")
+	if !strings.Contains(prompt, "flow_executor") || !strings.Contains(prompt, "流程专用角色") || !strings.Contains(prompt, "worker") {
+		t.Fatal("prompt omitted a configured delegate")
 	}
 }

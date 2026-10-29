@@ -2,7 +2,6 @@ package sessionfiles
 
 import (
 	"encoding/json"
-	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -26,7 +25,7 @@ func TestRecoverOnlyThisSessionsToolArtifacts(t *testing.T) {
 	put(t, filepath.Join(home, "data", "boundaries", "unrelated.geojson"), "other session")
 	input := put(t, filepath.Join(filepath.Dir(project), "input.geojson"), "input")
 	oldFailedOutput := put(t, filepath.Join(filepath.Dir(project), "failed-export.pdf"), "old output")
-	outside := put(t, filepath.Join(home, "config", "private.json"), "not an artifact")
+	outside := put(t, filepath.Join(t.TempDir(), "external.pdf"), "external export")
 	png := put(t, filepath.Join(store.Dir, "output", "layout.png"), "png")
 	pdf := put(t, filepath.Join(filepath.Dir(project), "layout.pdf"), "pdf")
 	svg := put(t, filepath.Join(store.Dir, "exports", "layout.svg"), "svg")
@@ -45,11 +44,11 @@ func TestRecoverOnlyThisSessionsToolArtifacts(t *testing.T) {
 	}
 	session := map[string]any{"workflow_blocks": []any{map[string]any{"agent": "data_engineer", "entries": entries}}, "messages": []any{map[string]any{"role": "user", "content": `{"output":` + quoted(input) + `}`}}}
 	failures := store.RecoverToolArtifacts(session)
-	if len(failures) != 1 || !errors.Is(failures[0], ErrOutsideRoot) {
-		t.Fatalf("outside artifact must be reported: %v", failures)
+	if len(failures) != 0 {
+		t.Fatalf("local artifact recovery failed: %v", failures)
 	}
 	items, err := store.List(false)
-	if err != nil || len(items) != 4 {
+	if err != nil || len(items) != 5 {
 		t.Fatalf("missing artifacts or unrelated inputs exposed: %+v %v", items, err)
 	}
 	for _, item := range items {
@@ -75,14 +74,65 @@ func TestRecoverOnlyThisSessionsToolArtifacts(t *testing.T) {
 	if err != nil || got.Origin.Label != "replacement" || !got.RegisteredAt.Equal(updated.RegisteredAt) {
 		t.Fatalf("history overwrote newer registration: %+v %v", got, err)
 	}
-	if _, err := store.Register(outside, Origin{}); !errors.Is(err, ErrOutsideRoot) {
-		t.Fatalf("config root unexpectedly allowed: %v", err)
+	if _, err := store.Register(outside, Origin{}); err != nil {
+		t.Fatalf("external output registration failed: %v", err)
 	}
 	link := filepath.Join(home, "data", "boundaries", "escape.geojson")
 	if err := os.Symlink(outside, link); err == nil {
-		if _, err := store.Register(link, Origin{}); !errors.Is(err, ErrOutsideRoot) {
-			t.Fatalf("boundary symlink escaped: %v", err)
+		if _, err := store.Register(link, Origin{}); err != nil {
+			t.Fatalf("local output symlink registration failed: %v", err)
 		}
+	}
+}
+
+func TestRecoverCommandOutputIsNotAnArtifact(t *testing.T) {
+	store, err := NewAt("command-output", t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	input := put(t, filepath.Join(t.TempDir(), "source.geojson"), "input")
+	artifact := put(t, filepath.Join(store.Dir, "output", "result.geojson"), "output")
+	entries := []any{}
+	for _, output := range []string{input, input + "\n" + artifact + "\n2 files found"} {
+		raw, _ := json.Marshal(map[string]any{"success": true, "exit_code": 0, "output": output})
+		entries = append(entries, toolEntry("shell", string(raw), nil))
+	}
+	raw, _ := json.Marshal(map[string]any{"success": true, "exit_code": 0, "output": "created output", "artifact_paths": []string{artifact}})
+	entries = append(entries, toolEntry("shell", string(raw), nil))
+	if failures := store.RecoverToolArtifacts(map[string]any{"workflow_blocks": []any{map[string]any{"entries": entries}}}); len(failures) != 0 {
+		t.Fatalf("command stdout caused artifact warnings: %v", failures)
+	}
+	items, err := store.List(true)
+	if err != nil || len(items) != 1 || items[0].Name != "result.geojson" {
+		t.Fatalf("only explicit command artifacts should be recovered: %+v %v", items, err)
+	}
+}
+
+func TestRecoverBusinessNameOnlyFromMatchingReceipt(t *testing.T) {
+	store, _ := NewAt("legacy-name", t.TempDir())
+	path := put(t, filepath.Join(store.Dir, "output", "boundary_county_420100.geojson"), "fixture")
+	before, err := store.Register(path, Origin{Type: "tool", Tool: "admin_boundary_extract", CallID: "call-admin_boundary_extract", Label: "提取行政区边界"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := json.Marshal(map[string]any{"success": true, "output": path, "data": map[string]any{"source": path, "layer_name": "武汉市区县边界"}})
+	session := map[string]any{"workflow_blocks": []any{map[string]any{"entries": []any{toolEntry("admin_boundary_extract", string(raw), nil)}}}}
+	if failures := store.RecoverToolArtifacts(session); len(failures) != 0 {
+		t.Fatal(failures)
+	}
+	got, err := store.Get(before.ID)
+	if err != nil || got.Name != "武汉市区县边界.geojson" || got.Path != before.Path || got.Origin.Label != before.Origin.Label || !got.RegisteredAt.Equal(before.RegisteredAt) {
+		t.Fatalf("name recovery changed identity or provenance: %+v %v", got, err)
+	}
+	// A later replacement's name and provenance belong to that new call.
+	replacement, err := store.Register(path, Origin{Type: "tool", Tool: "replace", CallID: "call-replacement", Name: "用户修订区界"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	store.RecoverToolArtifacts(session)
+	got, err = store.Get(replacement.ID)
+	if err != nil || got.Name != replacement.Name || got.Origin != replacement.Origin || !got.RegisteredAt.Equal(replacement.RegisteredAt) {
+		t.Fatalf("historical receipt overwrote replacement: %+v %v", got, err)
 	}
 }
 
@@ -131,7 +181,7 @@ func TestResultPathsRejectFailedEnvelopesButKeepSuccessfulPartial(t *testing.T) 
 
 func TestRecoverSkipsDataFindCandidateInputs(t *testing.T) {
 	project := t.TempDir()
-	store, err := NewWithRoots("preview-inputs", t.TempDir(), project)
+	store, err := NewAt("preview-inputs", t.TempDir())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -151,7 +201,7 @@ func TestRecoverSkipsDataFindCandidateInputs(t *testing.T) {
 
 func TestRecoverSkipsFileReadAndDirectoryInputs(t *testing.T) {
 	project := t.TempDir()
-	store, err := NewWithRoots("file-read-inputs", t.TempDir(), project)
+	store, err := NewAt("file-read-inputs", t.TempDir())
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -21,7 +21,7 @@ spec:
     type: output_layer
     description: 输出图层
 execution:
-  backend_tool: gdal_offsetcurve
+  backend_tool: gdal:offsetcurve
   param_mapping:
     INPUT: '{{ INPUT }}'
     DISTANCE: '{{ DISTANCE }}'

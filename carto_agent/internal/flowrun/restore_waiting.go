@@ -50,25 +50,48 @@ func (c *Controller) RestoreWaiting(ctx context.Context, request ResumeRequest) 
 
 func (c *Controller) restoreStepRequest(state *RunState, source string, attempt Attempt) (StepRequest, error) {
 	step := state.Plan.Steps[state.Cursor]
-	if attempt.Mode != "acquire" {
+	if attempt.Mode != "acquire" && attempt.Mode != "prepare" {
 		return c.buildRequest(step, state, source, attempt.Mode)
 	}
 	// The ADK checkpoint owns the expert's messages and tool state. Reconstruct
 	// only its trusted identity; DataGet here could fetch again or return a
 	// completed registration instead of the interrupted expert's preparation.
 	active := state.Steps[state.Cursor]
+	roleID := attempt.Role
+	if roleID == "" {
+		if attempt.Mode == "prepare" {
+			return StepRequest{}, fmt.Errorf("旧取数断点未记录实际执行角色，不能用消费步骤角色替代恢复；请修订当前计划后继续，已登记的数据仍可复用")
+		}
+		roleID = active.Role
+	}
 	matched := false
-	for _, id := range step.DataIDs {
+	dataIDs := step.DataIDs
+	query := state.Selections[attempt.DataID]
+	if attempt.Mode == "prepare" {
+		// Preparation also includes an input's upstream extent dependencies.
+		// Its persisted attempt and frozen need identify that handoff directly.
+		matched = true
+		query = state.DataNeeds[attempt.DataID]
+	}
+	for _, id := range dataIDs {
 		matched = matched || id == attempt.DataID
 	}
 	_, exists := state.CartoPlan.DataByID(attempt.DataID)
-	selection := state.Selections[attempt.DataID]
-	if step.Kind != "acquire" || !matched || !exists || active.Role == "" || !json.Valid(selection) {
+	if (attempt.Mode == "acquire" && step.Kind != "acquire") || !matched || !exists || roleID == "" || !json.Valid(query) {
 		return StepRequest{}, fmt.Errorf("数据获取断点缺少匹配的执行者、数据或冻结查询")
 	}
 	result := newStepRequest(step, state, source, attempt.Mode)
-	result.Role = flow.RoleSpec{ID: active.Role, DisplayName: "数据获取智能体", Kind: "agent", Enabled: true}
-	result.Step.Role = active.Role
-	result.Acquisition = &DataPreparation{DataID: attempt.DataID, Selection: append(json.RawMessage{}, selection...), Role: result.Role}
+	role, err := SelectRole(flow.StepPlan{Role: roleID}, state.Plan.Roles)
+	if err != nil {
+		return StepRequest{}, fmt.Errorf("取数断点角色不在方案快照中，不能替换执行者恢复旧断点，请修订当前计划后继续：%w", err)
+	}
+	result.Role = role
+	result.Step.Role = roleID
+	result.Acquisition = &DataPreparation{DataID: attempt.DataID, Role: result.Role}
+	if attempt.Mode == "prepare" {
+		result.Acquisition.Need = append(json.RawMessage{}, query...)
+	} else {
+		result.Acquisition.Selection = append(json.RawMessage{}, query...)
+	}
 	return result, nil
 }

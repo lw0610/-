@@ -7,7 +7,7 @@ const emit = (page: Page, message: Record<string, unknown>) => page.evaluate(mes
 // Offline browser contract playback. Real local matching, plan validation and
 // ADK model/tool boundaries are covered by the Go L30 tests; this does not claim
 // a real model, network acquisition, QGIS execution or native file access.
-test('v6 one message shows each data origin and style then becomes a completed result', async ({ page }) => {
+test('historical v6 plan preserves its sources and styles but is readonly', async ({ page }) => {
   await mockDesktopRuntime(page, { port: 50132 })
   await page.addInitScript(() => {
     const runtime = window as unknown as Harness
@@ -91,19 +91,11 @@ test('v6 one message shows each data origin and style then becomes a completed r
   await expect(card.getByText('请确认', { exact: true })).toBeVisible()
   await expect(card.getByText('样式「河流线」')).toBeVisible()
   await expect(card.getByRole('img', { name: '河流线预览' })).toBeVisible()
-  await page.screenshot({ path: '../docs/refactor-v6/evidence/L31-plan-sources.png', fullPage: true })
-  await card.getByRole('button', { name: '开始', exact: true }).click()
-  await expect.poll(() => starts).toEqual([{ version: 1 }])
-  const flow = (event: string, payload: Record<string, unknown>) => emit(page, { type: 'flow_event', session_id: session.session_id, data: { event, session_id: session.session_id, flow_run_id: 'v6-run', payload: { plan_id: plan.plan_id, plan_version: 1, ...payload } } })
-  await flow('flow.started', { name: plan.goal, steps: plan.steps, carto_plan: plan })
-  for (const step of plan.steps) {
-    await flow('flow.step_started', { step_id: step.id, run_id: `attempt-${step.id}`, attempt: 1 })
-    await flow('flow.step_completed', { step_id: step.id, outputs: step.id === 'map' ? { 图件: 'output/湖南专题图.pdf' } : {} })
-  }
-  await flow('flow.finished', { status: 'completed', summary: '原有数据直接使用，缺少的铁路已获取并导出图件', deliverables: { 图件: 'output/湖南专题图.pdf' }, issues: [] })
-  const progress = page.getByRole('region', { name: `流程进度 ${plan.goal}` })
-  await expect(progress.getByText('已完成 · 3/3', { exact: true })).toBeVisible()
-  await expect(progress.getByRole('button', { name: 'output/湖南专题图.pdf', exact: true }).last()).toBeVisible()
-  await expect(card).toHaveCount(0)
+  await expect(card.getByText('旧版计划（只读）')).toBeVisible()
+  await expect(card.getByRole('button', {name:'开始', exact:true})).toHaveCount(0)
+  await expect(card.getByText('修改来源', {exact:true})).toHaveCount(0)
+  await expect(card.getByRole('button', {name:'按新格式重新生成'})).toBeVisible()
+  await page.screenshot({path:'../docs/refactor-v7/evidence/D32-v1-readonly.png',fullPage:true})
+  expect(starts).toEqual([])
   expect(errors).toEqual([])
 })

@@ -1,11 +1,9 @@
-"""样式条目匹配、QML 工具检查与兼容预设索引。"""
+"""样式条目匹配与 QML 工具检查。"""
 
-import json
 import ntpath
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-from autocarto.tools.system._shared.tool_assets import tool_asset_path
 
 
 class StyleSetError(ValueError):
@@ -13,23 +11,6 @@ class StyleSetError(ValueError):
         super().__init__(message)
         self.code = code
         self.details = details or {}
-
-
-def preset_catalog():
-    path = tool_asset_path("cartography", "basemap-legacy-presets.json")
-    value = json.loads(path.read_text(encoding="utf-8"))
-    if value.get("schema_version") != "basemap-presets/v1" or not isinstance(value.get("entries"), list):
-        raise StyleSetError("style_set_invalid", "内置预设索引格式无效")
-    return value
-
-
-def legacy_preset(kind, value):
-    normalized = str(value or "").strip().lower()
-    for entry in preset_catalog()["entries"]:
-        values = entry.get("legacy_aliases") or [entry["legacy_type"]]
-        if entry["legacy_handler"] == kind and normalized in [str(item).lower() for item in values]:
-            return entry
-    return None
 
 
 def style_file_path(root, raw):

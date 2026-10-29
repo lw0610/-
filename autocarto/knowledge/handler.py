@@ -201,15 +201,20 @@ def compile_marching_route_dataset_handler(
             review = verify_review_context(
                 params["review_context"], graph, source_text
             )
-        route_style = require_handle(params.get("route_style"), "route_style")
-        symbols = require_handle(params.get("symbols"), "symbols")
-        presets = load_route_styles(route_style)[0]
-        load_symbol_styles(symbols)
-        resources = {"route_style": handle_summary(route_style), "symbols": handle_summary(symbols)}
+        selected, resources = {}, {}
+        for key in ("route_style", "symbols"):
+            value = params.get(key)
+            if value is None or (isinstance(value, str) and not value.strip()):
+                continue
+            selected[key] = require_handle(value, key)
+            resources[key] = handle_summary(selected[key])
+        route_style, symbols = selected.get("route_style"), selected.get("symbols")
         if _to_bool(params.get("validate_only", False)):
             # A validation request never allocates or replaces an output directory.
             # Invalid fields are a successful validation response, not a runtime
             # failure: the editor needs their exact paths while keeping its draft.
+            presets = load_route_styles(route_style)[0]
+            load_symbol_styles(symbols)
             report = validate_task_knowledge_for_compile(
                 graph, source_text=source_text, review=review, route_presets=presets
             )
@@ -281,8 +286,8 @@ def compile_marching_route_dataset_handler(
             "artifact_id": artifact_id,
             "dataset_dir": payload["dataset_dir"],
             "plan_data": {
-                "from": "session",
-                "path": payload["dataset_dir"],
+                "source": "user",
+                "ref": payload["dataset_dir"],
                 "kind": "dataset",
             },
             "task_id": task_id,

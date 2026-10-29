@@ -50,4 +50,4 @@ runtime:
       tool_packages: [pyqgis-scripting, point-cloud, gps-data, gee-remote-sensing, admin-boundaries, browser-data-acquisition, mesh-analysis]
       prompts: {}
 flows:
-  enabled: [marching-route, statistical-choropleth, traffic-route, data-to-map]
+  enabled: [marching-route, statistical-choropleth]

@@ -1,0 +1,14 @@
+apiVersion: tool/v1
+kind: Tool
+metadata: {name: layer_inspect, display_name: 读取内置图层元数据, domain: data-loading, runtime: qgis}
+spec:
+  description: 只读探测本机数据的坐标系、覆盖范围和建议比例尺，不修改工程。
+  parameters:
+    - {name: path, type: string, description: 本机数据路径，与 layer_id 二选一}
+    - {name: layer_id, type: string, description: 读取当前工程图层，包含内存图层；不会修改原层}
+    - {name: sublayer, type: string, description: 子图层名}
+    - {name: crs, type: string, description: 用户确认的实际坐标系}
+policy: {visibility: hidden}
+execution:
+  handler: handlers.builtin.layer_inspect_handler
+  param_mapping: {path: '{{ path }}', layer_id: '{{ layer_id }}', sublayer: '{{ sublayer }}', crs: '{{ crs }}'}

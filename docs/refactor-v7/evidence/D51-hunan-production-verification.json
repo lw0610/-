@@ -1,0 +1,96 @@
+{
+  "method": "production flowrun.VerifyOutputs(context.Background(), original step, original receipt, original project root, nil)",
+  "network_requests": 0,
+  "model_requests": 0,
+  "run_modified": false,
+  "original_run_status": "needs_replan",
+  "verifications": [
+    {
+      "attempt": 1,
+      "original_run_status": "needs_replan",
+      "receipt_outputs": {
+        "gpkg_out": "/private/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-hunan-final-acjt19jm/data/sessions/project-88c5daf7547c962e/f664bd9a-67b6-4861-a6e7-299d433bddb5/exports/湖南省河流线铁路线.gpkg",
+        "layers": [
+          {
+            "feature_count": 74,
+            "geometry_type": "MultiLineString",
+            "layer_name": "湖南省河流线"
+          },
+          {
+            "feature_count": 35,
+            "geometry_type": "MultiLineString",
+            "layer_name": "湖南省铁路线"
+          }
+        ]
+      },
+      "verification": {
+        "ok": true,
+        "errors": []
+      }
+    },
+    {
+      "attempt": 2,
+      "original_run_status": "needs_replan",
+      "receipt_outputs": {
+        "gpkg_out": "/private/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-hunan-final-acjt19jm/data/sessions/project-88c5daf7547c962e/f664bd9a-67b6-4861-a6e7-299d433bddb5/exports/湖南省河流线铁路线.gpkg",
+        "layers": [
+          {
+            "feature_count": 74,
+            "geometry_type": "MultiLineString",
+            "layer_name": "湖南省河流线"
+          },
+          {
+            "feature_count": 35,
+            "geometry_type": "MultiLineString",
+            "layer_name": "湖南省铁路线"
+          }
+        ]
+      },
+      "verification": {
+        "ok": true,
+        "errors": []
+      }
+    },
+    {
+      "attempt": 3,
+      "original_run_status": "needs_replan",
+      "receipt_outputs": {
+        "gpkg_out": "/private/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-hunan-final-acjt19jm/data/sessions/project-88c5daf7547c962e/f664bd9a-67b6-4861-a6e7-299d433bddb5/exports/湖南省河流线铁路线.gpkg",
+        "layers": [
+          {
+            "feature_count": 74,
+            "geometry_type": "MultiLineString",
+            "layer_name": "湖南省河流线"
+          },
+          {
+            "feature_count": 35,
+            "geometry_type": "MultiLineString",
+            "layer_name": "湖南省铁路线"
+          }
+        ]
+      },
+      "verification": {
+        "ok": true,
+        "errors": []
+      }
+    }
+  ],
+  "file": {
+    "path": "/private/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-hunan-final-acjt19jm/data/sessions/project-88c5daf7547c962e/f664bd9a-67b6-4861-a6e7-299d433bddb5/exports/湖南省河流线铁路线.gpkg",
+    "bytes": 262144,
+    "sha256": "88b4fd7ee60178f729f236990949041af2656a4b883ed734e19aefdce7f465d1",
+    "integrity_check": "ok",
+    "layers": [
+      {
+        "name": "湖南省河流线",
+        "count": 74,
+        "srs_id": 4326
+      },
+      {
+        "name": "湖南省铁路线",
+        "count": 35,
+        "srs_id": 4326
+      }
+    ]
+  }
+}

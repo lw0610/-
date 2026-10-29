@@ -124,9 +124,12 @@ def test_disabled_simple_and_rule_labels_leave_mapping_field_empty(project, tmp_
 
 
 def test_layer_listing_uses_tree_visibility_including_hidden_parent_groups(project):
-    from autocarto.tools.system._shared.project_state_impl import get_layers_info
+    from qgis.core import QgsVectorLayer
+    from autocarto.tools.system._shared.project_state_impl import get_layers_info, get_project_info
     shown = _layer(project, "显示")
     hidden = _layer(project, "父组隐藏")
+    background = QgsVectorLayer("Point?crs=EPSG:4326", "分析中间结果", "memory")
+    project.addMapLayer(background, False)
     root = project.layerTreeRoot()
     node = root.findLayer(hidden.id())
     group = root.addGroup("隐藏组")
@@ -135,6 +138,8 @@ def test_layer_listing_uses_tree_visibility_including_hidden_parent_groups(proje
     group.setItemVisibilityChecked(False)
     result = get_layers_info({})
     assert result["success"], result
+    assert [row["id"] for row in result["info"]["layers"]] == [shown.id(), hidden.id()]
+    assert get_project_info({})["info"]["layer_count"]["total"] == 2
     rows = {row["id"]: row for row in result["info"]["layers"]}
     assert rows[shown.id()]["visible"] is True
     assert rows[hidden.id()]["visible"] is False

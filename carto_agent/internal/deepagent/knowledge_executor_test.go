@@ -206,6 +206,11 @@ func TestKnowledgeExecutorInputValidatesRulesAndVisualPaths(t *testing.T) {
 			t.Fatal("untyped executor input accepted")
 		}
 	}
+	for _, value := range []string{`{"source_text":"原文"}`, `{"source_text":"原文","route_style":null,"symbols":null}`, `{"review_id":"saved","revision":1}`, `{"review_id":"saved","revision":1,"route_style":null,"symbols":null}`} {
+		if _, _, err := resolveKnowledgeInput(&adk.AgentInput{Messages: []*schema.Message{schema.UserMessage(value)}}); err != nil {
+			t.Fatal("built-in drawing requires no table selections", err)
+		}
+	}
 }
 
 func knowledgeLinkedResourceFixture(t *testing.T, root string) resource.Scope {

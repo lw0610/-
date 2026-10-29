@@ -1,7 +1,7 @@
 """AutoCarto AI 极简 QGIS 插件（反向连接模式）"""
 
 import os
-from qgis.PyQt.QtCore import Qt, QTimer
+from qgis.PyQt.QtCore import Qt, QTimer, QCoreApplication
 from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtGui import QIcon, QPixmap, QPainter, QColor
 from qgis.core import QgsProject
@@ -170,13 +170,19 @@ class AutoCartoPlugin:
         logger.info("AutoCarto AI 极简插件已卸载")
 
     def _build_instance_id(self) -> str:
-        """构建实例 ID：machine_id + pid + start_time"""
+        """实例属于 QGIS 进程，重载插件时保留会话绑定。"""
+        app = QCoreApplication.instance()
+        existing = app.property("autocartoInstanceId")
+        if existing:
+            return existing
         import socket
         import time
         import uuid
 
         machine_id = f"{socket.gethostname()}_{uuid.getnode():x}"
-        return f"qgis_{machine_id}_{os.getpid()}_{int(time.time())}"
+        instance_id = f"qgis_{machine_id}_{os.getpid()}_{int(time.time())}"
+        app.setProperty("autocartoInstanceId", instance_id)
+        return instance_id
 
     def _get_qgis_version(self) -> str:
         """获取 QGIS 版本"""

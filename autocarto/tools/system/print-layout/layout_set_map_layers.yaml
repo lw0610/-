@@ -20,7 +20,7 @@ spec:
   - name: layers
     type: array
     required: true
-    description: 图层ID或唯一名称数组，按指定顺序锁定地图框显示图层；同名图层必须使用ID
+    description: 图层ID或唯一名称数组，按从上到下顺序锁定本地图框显示图层，不改变画布和图层面板；同名图层必须使用ID
 execution:
   handler: handlers.layout_advanced.set_map_layers_handler
   param_mapping:

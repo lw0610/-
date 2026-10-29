@@ -87,7 +87,7 @@ type planTestController struct {
 }
 
 func (c *planTestController) Start(ctx context.Context, request StartRequest) (*RunState, error) {
-	request.CartoPlan = &plan.Plan{APIVersion: plan.APIVersion, ID: "test-plan", Version: 1, Goal: "测试计划"}
+	request.CartoPlan = &plan.Plan{APIVersion: plan.LegacyAPIVersion, ID: "test-plan", Version: 1, Goal: "测试计划"}
 	for _, s := range c.plan.Steps {
 		request.CartoPlan.Steps = append(request.CartoPlan.Steps, plan.Step{ID: s.ID, Instructions: s.Instructions})
 	}
@@ -216,7 +216,11 @@ func TestReceiptFailureAndPaymentFailureDoNotRepeatStep(t *testing.T) {
 				})
 			})
 			run, err := c.Start(context.Background(), request)
-			if err != nil || run.Status != "failed" || calls != 1 || repairs > 1 || (serviceError && repairs != 0) {
+			wantStatus := "failed"
+			if serviceError {
+				wantStatus = "interrupted"
+			}
+			if err != nil || run.Status != wantStatus || calls != 1 || repairs > 1 || (serviceError && repairs != 0) {
 				t.Fatalf("run=%+v error=%v executions=%d receipt_repairs=%d", run, err, calls, repairs)
 			}
 		})

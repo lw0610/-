@@ -3,6 +3,7 @@ package dataservice
 import (
 	"context"
 	"github.com/autocarto/carto_agent/internal/datasource"
+	"github.com/autocarto/carto_agent/internal/layers"
 	"github.com/autocarto/carto_agent/internal/sessionfiles"
 	"os"
 	"path/filepath"
@@ -126,7 +127,7 @@ func (s *Service) candidates(ctx context.Context, request FindRequest, rowName s
 		addBinding(b, "user", 1, "用户提供")
 	}
 	if s.options.SessionDir != "" && s.options.SessionID != "" {
-		if store, err := sessionfiles.NewWithRoots(s.options.SessionID, s.options.SessionDir); err == nil {
+		if store, err := sessionfiles.NewAt(s.options.SessionID, s.options.SessionDir); err == nil {
 			if files, err := store.List(false); err == nil {
 				for _, file := range files {
 					if RequiresRegistration(file.Origin.Tool) && !IsRegistered(s.options.SessionDir, file.Path) {
@@ -156,6 +157,44 @@ func (s *Service) candidates(ctx context.Context, request FindRequest, rowName s
 		}
 	} else {
 		row.Excluded = append(row.Excluded, Exclusion{Reason: "未连接 QGIS，跳过工程图层"})
+	}
+	if request.Need.Method == "" || request.Need.Method == "builtin" {
+		library, err := layers.NewDefaultLibrary()
+		if err == nil {
+			required := []string{}
+			for field := range item.Fields {
+				required = append(required, field)
+			}
+			var extent []float64
+			if item.Extent != nil {
+				extent = item.Extent.BBox
+			}
+			matches, matchErr := library.Match(layers.Requirement{Name: request.Need.Name, Category: item.Category, Params: item.Params, Geometry: item.Geometry, Fields: required, Extent: extent, Scale: item.Scale})
+			if matchErr != nil {
+				row.Excluded = append(row.Excluded, Exclusion{Reason: "内置图层库读取失败：" + matchErr.Error()})
+			}
+			for _, match := range matches {
+				layer := match.Layer
+				row.Candidates = append(row.Candidates, Candidate{ID: candidateID(rowName, "builtin_layer", layer.ID), Kind: "builtin_layer", Method: "builtin", Name: layer.Name, SourceID: layer.ID, Available: true, Tier: 4, Path: layer.Path(), Sublayer: layer.Sublayer, Geometry: layer.Geometry, Reasons: match.Reasons, RequiresConfirmation: match.NeedsConfirmation})
+			}
+		}
+	}
+	if request.Need.Method == "" && s.options.Engine != nil && s.options.Engine.Store != nil && item.Extent != nil && !item.Extent.Pending {
+		regionCode := ""
+		if region, err := s.options.Engine.Catalog.ResolveRegion(item.Extent.Region); err == nil {
+			regionCode = region.Code
+		}
+		cached, err := s.options.Engine.Store.FindSemantic(ctx, item.Category, item.Params, datasource.ScaleClass(item.Scale), item.Extent.BBox, regionCode)
+		if err != nil {
+			row.Excluded = append(row.Excluded, Exclusion{Reason: "数据仓读取失败：" + err.Error()})
+		}
+		for _, record := range cached {
+			notes := append([]string{}, record.Notes...)
+			if record.Expired {
+				notes = append(notes, "已过更新期限，可刷新来源")
+			}
+			row.Candidates = append(row.Candidates, Candidate{ID: candidateID(rowName, "data_store", record.Key), Kind: "data_store", Method: "store", Name: request.Need.Name, SourceID: record.Spec.SourceID, StoreKey: record.Key, Available: true, Tier: 5, Reasons: []string{"同类别、参数、比例尺档的数据仓覆盖本次范围"}, Notes: notes})
+		}
 	}
 	preferred := map[string]bool{}
 	if s.options.Memory != nil {
@@ -219,7 +258,7 @@ func (s *Service) candidates(ctx context.Context, request FindRequest, rowName s
 			notes = append(notes, "范围待定，执行前须补齐")
 		}
 		copy := choice
-		row.Candidates = append(row.Candidates, Candidate{ID: candidateID(rowName, kind, source.ID+digest(choice.Provide)), Kind: kind, Name: source.Name, SourceID: source.ID, Available: available, Reasons: reasons, Notes: notes, Tier: tier, Network: network, Choice: &copy, Handbook: source.Handbook.Summary()})
+		row.Candidates = append(row.Candidates, Candidate{ID: candidateID(rowName, kind, source.ID+digest(choice.Provide)), Kind: kind, Method: source.RoutingMethod(), Name: source.Name, SourceID: source.ID, Available: available, Reasons: reasons, Notes: notes, Tier: tier, Network: network, Choice: &copy, Handbook: source.Handbook.Summary()})
 	}
 	for _, ex := range item.Excluded {
 		row.Excluded = append(row.Excluded, Exclusion{SourceID: ex.SourceID, Reason: strings.Join(ex.Reasons, "；")})
@@ -248,15 +287,15 @@ func sourceKind(source datasource.Source, cached bool) (string, int, bool) {
 	}
 	switch source.Kind {
 	case "local_folder":
-		return "local_source", 6, false
+		return "local_source", 4, false
 	case "offline_asset":
-		return "builtin_offline", 7, false
+		return "builtin_offline", 4, false
 	case "tianditu", "ogc_wfs", "arcgis_rest":
 		return "official_api", 8, true
 	case "http_file":
-		return "open_download", 9, true
+		return "open_download", 8, true
 	case "overpass", "gee":
-		return "online_query", 10, true
+		return "online_query", 8, true
 	case "portal":
 		return "portal", 11, true
 	default:
@@ -319,9 +358,9 @@ func (s *Service) fallbackCandidates(item datasource.AcquisitionItem, row string
 			}
 		}
 		if available {
-			reasons = append(reasons, "没有可用的确定性来源，可由数据获取智能体探索并登记真实数据")
+			reasons = append(reasons, "没有可用的确定性来源，可由方案中的数据角色探索并登记真实数据")
 		}
-		out = append(out, Candidate{ID: candidateID(row, kind, source.ID), Kind: kind, Name: source.Name, SourceID: source.ID, Available: available, Reasons: reasons, Notes: append([]string{}, source.Notes...), Tier: tier, Network: true, Handbook: source.Handbook.Summary()})
+		out = append(out, Candidate{ID: candidateID(row, kind, source.ID), Kind: kind, Method: source.RoutingMethod(), Name: source.Name, SourceID: source.ID, Available: available, Reasons: reasons, Notes: append([]string{}, source.Notes...), Tier: tier, Network: true, Handbook: source.Handbook.Summary()})
 	}
 	if s.options.Environment.Integrations["osm"] && category.Geometry != "table" && category.Geometry != "raster" && category.Geometry != "tiles" {
 		out = append(out, Candidate{ID: candidateID(row, "custom_osm", item.Category), Kind: "custom_osm", Name: "自定义 OSM 查询", Available: true, Reasons: []string{"目录无可用来源，可按已知标签查询后登记"}, Notes: []string{"必须符合 OSM 服务限制并标注署名"}, Tier: 11, Network: true})

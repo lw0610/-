@@ -3,7 +3,6 @@ package flowrun
 import (
 	"path/filepath"
 
-	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/sessionfiles"
 )
 
@@ -41,13 +40,5 @@ func (c *Controller) registerFlowOutputs(run *RunState, stepID string, outputs m
 // SessionDir is the trusted location saved by startup. ProjectRoot is an
 // application input-resolution root and must never select a session index.
 func runSessionFileStore(run *RunState) (*sessionfiles.Store, error) {
-	home, err := config.ResolveAutoCartoHome()
-	if err != nil {
-		return nil, err
-	}
-	roots := []string{filepath.Join(home, "data", "acquired")}
-	if filepath.IsAbs(run.ProjectPath) {
-		roots = append(roots, filepath.Dir(run.ProjectPath))
-	}
-	return sessionfiles.NewWithRoots(run.SessionID, run.SessionDir, roots...)
+	return sessionfiles.NewAt(run.SessionID, run.SessionDir)
 }

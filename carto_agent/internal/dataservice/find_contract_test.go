@@ -105,6 +105,12 @@ func TestFindDiagnosticAgreesWithActualAcquisitionState(t *testing.T) {
 			} else if len(result.Diagnostics) != 1 || result.Diagnostics[0].Code != tc.code {
 				t.Fatalf("state and diagnostic conflict: %+v", result)
 			}
+			if result.State == "needs_input" {
+				if result.FindID != "" {
+					t.Fatal("invalid need received a query ID", result.FindID)
+				}
+				return
+			}
 			cached, err := s.FindResult(context.Background(), result.FindID)
 			if err != nil || cached.State != result.State || !reflect.DeepEqual(cached.Diagnostics, result.Diagnostics) {
 				t.Fatalf("cached plan lookup has different diagnostics: %+v %v", cached, err)

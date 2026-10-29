@@ -43,12 +43,10 @@ spec:
     description: 服务端签名的人工核对凭据；由核对流程注入，模型不得自行构造
   - name: route_style
     type: string
-    required: true
-    description: 路线预设名称（单色、红蓝对比或用户预设）；按拓扑与阵营选择绘制方式和样式编号
+    description: 仅用户明确指定使用路线样式表时填写其预设名称；省略时按原版内置规则生成路线样式编号，不读取样式表。仅提出红蓝配色不代表选用样式表。
   - name: symbols
     type: string
-    required: true
-    description: 符号预设名称（军标、图例或用户预设）；包含符号大小、说明和事件映射
+    description: 仅用户明确指定使用符号表时填写其预设名称；省略时使用原版内置符号与事件映射，生成数据集的 symbol_mapping.csv。
 execution:
   handler: handlers.knowledge.compile_marching_route_dataset_handler
   param_mapping:

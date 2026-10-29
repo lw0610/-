@@ -121,6 +121,9 @@ def _run_case(case, output):
         return result["data"], manager.layoutByName("模板测试")
 
     if case == "texts_layers_and_extent":
+        root = project.layerTreeRoot()
+        root.findLayer(project.mapLayersByName("地理图层")[0].id()).setItemVisibilityChecked(False)
+        before = [(node.layerId(), node.isVisible()) for node in root.findLayers()]
         result = _execute_manifest(path, {"texts": {"标题": "A < B & C", "综述": "调用者编写的综述\n第二行"},
                                           "map_layers": ["地理图层", "投影图层"], "extent_layers": ["地理图层"],
                                           "legend_layers": ["投影图层"], "padding": 0.05})
@@ -139,6 +142,8 @@ def _run_case(case, output):
         assert len(data["warnings"]) == 1 and "{{数据来源}}" in data["warnings"][0]
         main = layout.itemById("main_map")
         assert [layer.name() for layer in main.layers()] == ["地理图层", "投影图层"]
+        assert not root.hasCustomLayerOrder()
+        assert [(node.layerId(), node.isVisible()) for node in root.findLayers()] == before
         layer = project.mapLayersByName("地理图层")[0]
         extent = QgsCoordinateTransform(layer.crs(), main.crs(), project).transformBoundingBox(layer.extent())
         extent.scale(1.1)
@@ -153,6 +158,7 @@ def _run_case(case, output):
         settings.dpi = 80
         assert QgsLayoutExporter(layout).exportToImage(str(output/"preview.png"), settings) == QgsLayoutExporter.Success
     elif case == "explicit_extent":
+        before = [layer.id() for layer in project.layerTreeRoot().layerOrder()]
         data, layout = invoke(map_item_id="custom_map", map_layers=["投影图层"],
                               extent={"xmin": 110, "ymin": 30, "xmax": 111, "ymax": 31, "crs": "EPSG:4326"}, padding=0)
         main = layout.itemById("custom_map")
@@ -161,6 +167,8 @@ def _run_case(case, output):
         assert main.extent().center().x() == pytest.approx(extent.center().x())
         assert main.crs().authid() == "EPSG:3857"
         assert data["rects_mm"]["custom_map"]["width"] == 120
+        assert [layer.id() for layer in project.layerTreeRoot().layerOrder()] == before
+        assert not project.layerTreeRoot().hasCustomLayerOrder()
     elif case == "relative_resources_snapshot":
         os.environ["AUTOCARTO_PROJECT_ROOT"] = str(output)
         elsewhere = output/"other-cwd"
@@ -182,6 +190,7 @@ def _run_case(case, output):
         assert data["page_count"] == 1
         assert data["rects_mm"]["main_map"] == pytest.approx({"x": 20, "y": 30, "width": 120, "height": 60})
         assert [layer.name() for layer in layout.itemById("main_map").layers()] == ["投影图层"]
+        assert not project.layerTreeRoot().hasCustomLayerOrder()
     elif case == "missing_main_map":
         # The resource contract rejects a label-only QPT before any QGIS mutation.
         with pytest.raises(ValueError, match="main_map"):

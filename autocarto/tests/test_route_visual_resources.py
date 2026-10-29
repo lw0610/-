@@ -14,9 +14,11 @@ from autocarto.knowledge.visual_presets import load_route_styles, load_symbol_st
 FIXTURE = Path(__file__).parent / "fixtures/route_compiler"
 
 
-def test_route_compile_six_tables_match_real_pre_refactor_baseline(tmp_path):
+def test_route_compile_six_tables_match_real_pre_refactor_baseline(tmp_path, monkeypatch):
+    from autocarto.knowledge import visual_presets
+    monkeypatch.setattr(visual_presets, "require_handle", lambda *_: pytest.fail("默认制图不能解析外部样式或符号表"))
     graph = json.loads((FIXTURE / "graph.json").read_text())
-    result = compile_task_knowledge(graph, tmp_path / "compiled", route_style=load_handle("red-blue"), symbols=load_handle("military"))
+    result = compile_task_knowledge(graph, tmp_path / "compiled")
     assert result.success
     for source in FIXTURE.glob("*.csv"):
         assert_baseline(source, Path(result.dataset_dir) / source.name)
@@ -49,7 +51,7 @@ def test_route_compile_accepts_custom_visual_tables_without_changing_global_defa
         symbol = next(csv.DictReader(stream))
     assert float(symbol["size"]) == 9
     assert (Path(result.dataset_dir) / symbol["svg_path"]).read_bytes() == sources[symbol["symbol_type"]].read_bytes()
-    original = compile_task_knowledge(json.loads((FIXTURE / "graph.json").read_text()), tmp_path / "default", route_style=load_handle("red-blue"), symbols=load_handle("military"))
+    original = compile_task_knowledge(json.loads((FIXTURE / "graph.json").read_text()), tmp_path / "default")
     for source in FIXTURE.glob("*.csv"):
         assert_baseline(source, Path(original.dataset_dir) / source.name)
 

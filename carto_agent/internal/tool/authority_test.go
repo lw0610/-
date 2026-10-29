@@ -1,9 +1,27 @@
 package tool
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"testing"
 )
+
+func TestExecutionManifestPreservesExplicitAutoLoad(t *testing.T) {
+	for _, enabled := range []bool{false, true} {
+		definition := ToolDefinition{Execution: ToolExecution{Output: &ToolOutput{AutoLoad: enabled}}}
+		raw, err := json.Marshal(definition.ExecutionManifestEntry())
+		if err != nil {
+			t.Fatal(err)
+		}
+		var payload map[string]any
+		if err := json.Unmarshal(raw, &payload); err != nil {
+			t.Fatal(err)
+		}
+		if payload["auto_load"] != enabled {
+			t.Fatalf("output loading policy lost in manifest: %s", raw)
+		}
+	}
+}
 
 func TestExecutionManifestEntryDerivesHandlerFileAndFunction(t *testing.T) {
 	t.Parallel()

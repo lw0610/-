@@ -62,6 +62,11 @@ export function applyFlowEvent(current: FlowRunState | undefined, event: FlowEve
     return run
   }
   if (terminalFlow(run.status)) return current || run
+  if (event.event === 'flow.data_preparation') {
+    const item = payload as unknown as import('./types').DataPreparation
+    run.data_preparation = [...(run.data_preparation || []).filter(previous => previous.data_id !== item.data_id), item]
+    return run
+  }
   if (event.event === 'flow.acquisition_progress') {
     const key = String(payload.row || '')
     if (!key) return run
@@ -113,9 +118,10 @@ export function applyFlowEvent(current: FlowRunState | undefined, event: FlowEve
     run.status = 'running'
     step.condition = { ...step.condition, reason: String(payload.reason || '') }
   } else if (event.event === 'flow.step_waiting_user') {
-    step.status = 'waiting_user'
+    step.status = payload.status === 'interrupted' ? 'interrupted' : 'waiting_user'
     step.awaiting_choice = payload.kind === 'failure_choice'
-    run.status = 'waiting_user'
+    if (payload.reason) step.last_failure = String(payload.reason)
+    run.status = step.status
   } else if (event.event === 'flow.step_failed') {
     const errors = Array.isArray(payload.errors) ? payload.errors.map(String) : []
     step.last_failure = errors.join('；')

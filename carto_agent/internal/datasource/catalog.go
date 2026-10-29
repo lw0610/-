@@ -192,6 +192,12 @@ func (c *Catalog) ParseSource(raw []byte, builtin bool) (Source, []Diagnostic) {
 			add("DS_LOCAL_ROOT_MISSING", "warning", "本机数据源目录不存在")
 		}
 	}
+	for _, address := range s.RegionURLs {
+		u, err := url.Parse(address)
+		if err != nil || u.Host == "" || (u.Scheme != "http" && u.Scheme != "https") || !HostAllowed(u, s.Hosts) {
+			add("DS_SCHEMA_INVALID", "error", "分区域下载地址必须属于来源的主机白名单")
+		}
+	}
 	valid := []Provide{}
 	for _, p := range s.Provides {
 		if c.Category(p.Category) == nil {

@@ -20,7 +20,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: gdal_translate
+  backend_tool: gdal:translate
   param_mapping:
     INPUT: '{{ INPUT }}'
     TARGET_CRS: '{{ TARGET_CRS }}'

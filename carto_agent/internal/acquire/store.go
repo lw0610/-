@@ -15,9 +15,12 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/autocarto/carto_agent/internal/datasource"
 )
 
 type CacheSpec struct {
+	CoverageRegion string            `json:"coverage_region,omitempty"`
 	SourceID       string            `json:"source_id"`
 	SourceVersion  string            `json:"source_version"`
 	Category       string            `json:"category"`
@@ -27,6 +30,7 @@ type CacheSpec struct {
 	MaskDigest     string            `json:"mask_digest,omitempty"`
 	ScaleBand      int               `json:"scale_band"`
 	Normalize      any               `json:"normalize"`
+	ScaleClass     string            `json:"scale_class,omitempty"`
 	AdapterVersion string            `json:"adapter_version"`
 }
 
@@ -43,7 +47,6 @@ func (s CacheSpec) Key() string {
 }
 func (s CacheSpec) baseKey() string {
 	s.BBox = nil
-	s.ScaleBand = 0
 	s.Normalize = nil
 	return s.Key()
 }
@@ -212,7 +215,7 @@ func (s *Store) FindContaining(ctx context.Context, spec CacheSpec) (StoreRecord
 	}
 	sort.Slice(records, func(i, j int) bool { return area(records[i].Spec.BBox) < area(records[j].Spec.BBox) })
 	for _, r := range records {
-		if r.Valid && !r.Expired && r.Spec.baseKey() == spec.baseKey() && containsBBox(r.Spec.BBox, spec.BBox) && len(r.RawFiles) > 0 {
+		if r.Valid && !r.Expired && r.Spec.AdapterVersion == "v7" && r.Spec.baseKey() == spec.baseKey() && containsBBox(r.Spec.BBox, spec.BBox) && len(r.RawFiles) > 0 {
 			verified, ok, err := s.Lookup(ctx, r.Key)
 			if err != nil {
 				return verified, false, err
@@ -456,4 +459,48 @@ func area(b []float64) float64 {
 }
 func containsBBox(outer, inner []float64) bool {
 	return len(outer) == 4 && len(inner) == 4 && outer[0] <= inner[0] && outer[1] <= inner[1] && outer[2] >= inner[2] && outer[3] >= inner[3]
+}
+
+// FindSemantic discovers verified acquisitions without requiring the old
+// dynamically created source ID or the model's output filename.
+func (s *Store) FindSemantic(ctx context.Context, category string, params map[string]string, scaleClass string, bbox []float64, regionCode string) ([]StoreRecord, error) {
+	records, err := s.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+	out := []StoreRecord{}
+	for _, r := range records {
+		if r.Spec.CoverageRegion != "" && (len(regionCode) != 6 || !strings.HasPrefix(regionCode, strings.TrimSuffix(r.Spec.CoverageRegion, "0000"))) {
+			continue
+		}
+		if r.Metadata["layer_definition"] != nil || !r.Valid || r.Spec.AdapterVersion != "v7" || r.Spec.Category != category || r.Spec.ScaleClass != scaleClass || !containsBBox(r.Spec.BBox, bbox) {
+			continue
+		}
+		var provide datasource.Provide
+		if r.Spec.Query != "" && json.Unmarshal([]byte(r.Spec.Query), &provide) != nil {
+			continue
+		}
+		if revision := fieldCandidateRevision(provide); revision != "" {
+			normalize, _ := r.Spec.Normalize.(map[string]any)
+			if normalize["revision"] != revision {
+				continue
+			}
+		}
+		match := true
+		for k, v := range params {
+			if r.Spec.Params[k] != v {
+				match = false
+			}
+		}
+		if match {
+			out = append(out, r)
+		}
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		if out[i].Expired != out[j].Expired {
+			return !out[i].Expired
+		}
+		return area(out[i].Spec.BBox) < area(out[j].Spec.BBox)
+	})
+	return out, nil
 }

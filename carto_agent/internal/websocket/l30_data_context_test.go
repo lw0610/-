@@ -59,18 +59,28 @@ func TestL30WeakFolderMatchRequiresConfirmationAndRetainsSource(t *testing.T) {
 	if !c.RequiresConfirmation {
 		t.Fatal(c)
 	}
-	p.Data = []plan.Data{{ID: "river", Name: "河流", From: "user", Path: file, Geometry: "line", LayerName: "河流线", FindID: found.FindID, Choice: c.ID}}
-	p.Steps[0].Uses = []string{"river"}
+	p.Data = []plan.Data{{ID: "river", Name: "河流", Source: "user", Ref: dir, Kind: "layer", Geometry: "line", Need: &plan.Need{Category: "hydro.river_line"}, LayerName: "河流线"}}
+	p.Steps[0].Inputs = []string{"river"}
+	p.Steps[0].Outputs = nil
+	p.Steps[0].Produces = []plan.Product{{ID: "result", Kind: "file", Format: "json"}}
 	prepared, e := s.prepareCartographicPlan(context.Background(), run, p, nil)
 	if e != nil {
 		t.Fatal(e)
 	}
-	if prepared.Snapshot.Status != "awaiting_confirmation" || len(prepared.Snapshot.FindResults) != 1 || prepared.Snapshot.Plan.Data[0].Path != file {
+	canonicalFile, err := filepath.EvalSymlinks(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if prepared.Snapshot.Status != "awaiting_confirmation" || len(prepared.Snapshot.Precheck) != 1 || prepared.Snapshot.Precheck[0].Status != "confirm" || prepared.Snapshot.Plan.Data[0].Ref != canonicalFile {
 		t.Fatal(prepared.Snapshot)
 	}
 	p.Data[0].Geometry = "polygon"
-	if _, e = s.prepareCartographicPlan(context.Background(), run, p, nil); e == nil {
-		t.Fatal("wrong geometry accepted")
+	invalid, e := s.prepareCartographicPlan(context.Background(), run, p, nil)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if invalid.Snapshot.Status != "needs_data" {
+		t.Fatal("wrong geometry accepted", invalid.Snapshot)
 	}
 }
 
@@ -122,7 +132,7 @@ func TestL30SelectedGuideFullTextAndActualSkillArgument(t *testing.T) {
 	s, _, run, _ := cartoRuntimeFixture(t)
 	u := schema.UserMessage("按选择的流程制图")
 	u.Extra = map[string]any{"guide_id": "statistical-choropleth"}
-	input, err := s.injectCartographicRules(context.Background(), []*schema.Message{u}, run.Scheme, run.SessionID)
+	input, err := s.injectTaskContext(context.Background(), []*schema.Message{u}, run.Scheme, run.SessionID, executionModePlan)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -177,8 +187,10 @@ func TestL30ExplicitUserAndProjectPlanDoesNotAcquire(t *testing.T) {
 		}
 		return map[string]any{"layers": []map[string]any{{"id": "existing-river", "name": "河流", "geometry_type": "LineString"}}}, nil
 	}
-	p.Data = []plan.Data{{ID: "provided", Name: "用户河流", From: "user", Path: file, Geometry: "line"}, {ID: "project", Name: "工程河流", From: "project", Layer: "existing-river", Geometry: "line"}}
-	p.Steps[0].Uses = []string{"provided", "project"}
+	p.Data = []plan.Data{{ID: "provided", Name: "用户河流", Source: "user", Ref: file, Kind: "layer", Geometry: "line"}, {ID: "project", Name: "工程河流", Source: "project", Ref: "existing-river", Kind: "layer", Geometry: "line"}}
+	p.Steps[0].Inputs = []string{"provided", "project"}
+	p.Steps[0].Outputs = nil
+	p.Steps[0].Produces = []plan.Product{{ID: "result", Kind: "file", Format: "json"}}
 	prepared, e := s.prepareCartographicPlan(context.Background(), run, p, nil)
 	if e != nil {
 		t.Fatal(e)
@@ -188,7 +200,11 @@ func TestL30ExplicitUserAndProjectPlanDoesNotAcquire(t *testing.T) {
 			t.Fatal("existing data scheduled acquisition")
 		}
 	}
-	if len(calls) != 1 || calls[0] != "get_layers_info" || prepared.Snapshot.Plan.Data[0].Path != file || prepared.Snapshot.Plan.Data[1].Layer != "existing-river" {
+	canonicalFile, err := filepath.EvalSymlinks(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(calls) != 1 || calls[0] != "get_layers_info" || prepared.Snapshot.Plan.Data[0].Ref != canonicalFile || prepared.Snapshot.Plan.Data[1].Ref != "existing-river" {
 		t.Fatal(prepared.Snapshot, calls)
 	}
 }

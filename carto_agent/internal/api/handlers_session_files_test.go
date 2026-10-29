@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/autocarto/carto_agent/internal/sessionfiles"
 	"github.com/gorilla/mux"
@@ -155,5 +156,65 @@ func TestSessionFileQGISRequiresBoundInstance(t *testing.T) {
 	}
 	if got := sessionFileInstance(map[string]any{"active_instance_id": "other"}); got != "" {
 		t.Fatal(got)
+	}
+}
+
+func TestSessionFileLoadKeepsBusinessNameAndExplicitOverride(t *testing.T) {
+	registry, provider, conn, cleanup := setupInstanceActionBridge(t, "bound-only", []map[string]any{
+		{"name": "data_load_vector", "inputSchema": map[string]any{"type": "object"}},
+		{"name": "data_load_raster", "inputSchema": map[string]any{"type": "object"}},
+	})
+	defer cleanup()
+	project := filepath.Join(t.TempDir(), "map.qgz")
+	svc := newInMemorySessionService()
+	if err := svc.SaveSession(map[string]any{"session_id": "files-test", "bound_instance_id": "bound-only"}, project); err != nil {
+		t.Fatal(err)
+	}
+	a := &API{sessionService: svc, localBridgeProvider: provider, instanceRegistry: registry}
+	router := mux.NewRouter()
+	a.SetupRoutes(router)
+	store, err := sessionfiles.New(project, "files-test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		file, requestName, wantName, tool string
+		origin                            sessionfiles.Origin
+	}{
+		{"data.gpkg", "", "武汉地铁站点", "data_load_vector", sessionfiles.Origin{Type: "data_service", Label: "武汉地铁站点"}},
+		{"data.tif", "", "武汉人口格网", "data_load_raster", sessionfiles.Origin{Type: "data_service", Label: "武汉人口格网.tif"}},
+		{"boundary_county_420100.geojson", "", "武汉市区县边界", "data_load_vector", sessionfiles.Origin{Type: "tool", Name: "武汉市区县边界"}},
+		{"roads.geojson", "", "", "data_load_vector", sessionfiles.Origin{Type: "tool", Label: "导出矢量图层"}},
+		{"data.gpkg", "自定义站点", "自定义站点", "data_load_vector", sessionfiles.Origin{Type: "data_service", Label: "武汉地铁站点"}},
+	} {
+		item := fileFixture(t, store, tc.file, []byte("fixture"))
+		item, err = store.Register(item.Path, tc.origin)
+		if err != nil {
+			t.Fatal(err)
+		}
+		body, _ := json.Marshal(map[string]string{"layer_name": tc.requestName})
+		response := make(chan *httptest.ResponseRecorder, 1)
+		go func() {
+			rr := httptest.NewRecorder()
+			router.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/sessions/files-test/files/"+item.ID+"/load?project_path="+url.QueryEscape(project), bytes.NewReader(body)))
+			response <- rr
+		}()
+		message := readInstanceActionWSMessage(t, conn)
+		params := message.Data["params"].(map[string]any)
+		gotName, _ := params["layer_name"].(string)
+		if message.Data["tool_name"] != tc.tool || params["path"] != item.Path || gotName != tc.wantName || params["show"] != true {
+			t.Fatalf("load lost name or real source: tool=%v params=%v want=%q", message.Data["tool_name"], params, tc.wantName)
+		}
+		sendInstanceActionWSMessage(t, conn, instanceActionWSMessage{Type: "tool_result", Data: map[string]any{
+			"request_id": message.Data["request_id"], "success": true, "output": map[string]any{"success": true},
+		}})
+		select {
+		case rr := <-response:
+			if rr.Code != http.StatusOK {
+				t.Fatalf("load: %d %s", rr.Code, rr.Body.String())
+			}
+		case <-time.After(3 * time.Second):
+			t.Fatal("load response timed out")
+		}
 	}
 }

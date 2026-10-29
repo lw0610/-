@@ -32,8 +32,9 @@ func TestDefaultV2ProfileMatchesDeclaredRolesAndToolPackages(t *testing.T) {
 	}
 	want := map[string][]string{
 		"orchestrator":         {"data-service"},
+		"knowledge_engineer":   {"marching-route-knowledge-tools"},
 		"data_engineer":        {"data-loading", "data-conversion", "file-operations", "crs-projection", "geocoding", "gps-data", "statistical-data-tools", "vector-fields"},
-		"spatial_analyst":      {"vector-geometry", "vector-creation", "raster-analysis", "gdal-processing", "grass-analysis", "spatial-analysis", "network-analysis", "visibility-analysis", "mesh-analysis", "gee-remote-sensing"},
+		"spatial_analyst":      {"vector-geometry", "vector-creation", "crs-projection", "raster-analysis", "gdal-processing", "grass-analysis", "spatial-analysis", "network-analysis", "visibility-analysis", "mesh-analysis", "gee-remote-sensing"},
 		"cartographer":         {"cartography-styling", "route-cartography", "print-layout", "canvas-navigation", "charts"},
 		"quality_feedback":     {"quality-feedback"},
 		"scripting_specialist": {"pyqgis-scripting", "point-cloud", "gps-data", "mesh-analysis"},
@@ -46,8 +47,15 @@ func TestDefaultV2ProfileMatchesDeclaredRolesAndToolPackages(t *testing.T) {
 		if !reflect.DeepEqual(role.ToolPackages, packages) || !role.Enabled {
 			t.Errorf("%s packages=%v enabled=%v", name, role.ToolPackages, role.Enabled)
 		}
-		if role.Kind != "agent" || role.Executor != "" || role.FlowOnly {
-			t.Fatalf("editable role has system executor semantics: %s", name)
+		if name == "knowledge_engineer" {
+			if role.Kind != "executor" || role.Executor != "route_knowledge" || role.LLM.Provider != "" || strings.TrimSpace(role.Prompts["static_instructions"]) == "" {
+				t.Fatal("knowledge role lost its executor, inherited model or business rules")
+			}
+		} else if role.Kind != "agent" || role.Executor != "" {
+			t.Fatalf("unexpected role executor: %s", name)
+		}
+		if role.FlowOnly {
+			t.Fatalf("default role is hidden from delegation: %s", name)
 		}
 	}
 	if !cfg.Runtime.Agents["orchestrator"].IsMain || cfg.Runtime.Agents["cartographer"].DisplayName != "制图布局专家" || cfg.Runtime.Agents["quality_feedback"].LLM.Provider != "qwen" {
@@ -88,10 +96,11 @@ func TestDefaultV2ProjectionUsesActualPackageOwnershipAndAutoMounts(t *testing.T
 		}
 	}
 	for role, tools := range map[string][]string{
-		"orchestrator":    {"plan_propose", "plan_revise", "data_find", "reference_read", "get_layers_info"},
-		"data_engineer":   {"data_load_list", "data_prepare_statistical"},
-		"spatial_analyst": {"buffer", "merge_vector_layers"},
-		"cartographer":    {"layer_load_style", "layer_load_styles", "route_draw", "route_points_build", "layout_compose", "layout_add_callouts", "import_layout_template", "bar_chart"},
+		"orchestrator":       {"plan_propose", "plan_revise", "data_find", "reference_read", "get_layers_info"},
+		"knowledge_engineer": {"marching_route_get_extraction_contract", "marching_route_compile_dataset"},
+		"data_engineer":      {"data_load_list", "data_prepare_statistical"},
+		"spatial_analyst":    {"buffer", "merge_vector_layers", "reproject_layer", "crs_reproject_vector"},
+		"cartographer":       {"layer_load_style", "layer_load_styles", "route_draw", "route_points_build", "layout_compose", "layout_add_callouts", "import_layout_template", "bar_chart"},
 	} {
 		allowed := runtime.GetAgentAllowedTools(role)
 		for _, name := range tools {

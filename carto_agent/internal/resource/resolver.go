@@ -213,7 +213,7 @@ func (l *Library) resolve(ctx context.Context, ref Ref, scope Scope) *ResolvedRe
 			if locked != nil {
 				code = "FLOW_RESOURCE_LOCK_MISSING"
 			}
-			empty.problem("error", code, 0, "模板与样式库中未找到可用资源“"+ref.Name+ref.ID+"”。数据在任务运行时选择；路线与符号使用工具预设名称。", "choose_resource")
+				empty.problem("error", code, 0, "模板与样式库中未找到可用资源“"+ref.Name+ref.ID+"”。史料、附件与制图数据不通过此库读取；未指定样式表时使用工具内置画法。", "choose_resource")
 			choices := []map[string]any{}
 			for _, item := range items {
 				if item.Type == expected && !HasErrors(item.Problems) && item.OverriddenBy == "" {

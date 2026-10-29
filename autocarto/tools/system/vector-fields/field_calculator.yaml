@@ -43,7 +43,7 @@ spec:
     description: 表达式
   - name: OUTPUT
     type: output_layer
-    description: 输出图层
+    description: 工作结果目标；字段治理沿用输入业务名称并替换其工程显示，保留原始文件，后续使用返回的 layer_id
     default: 'memory:'
 execution:
   handler: handlers.attributes.field_calculator_handler

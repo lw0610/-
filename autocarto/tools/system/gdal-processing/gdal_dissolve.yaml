@@ -20,7 +20,7 @@ spec:
     type: output_layer
     description: 输出图层
 execution:
-  backend_tool: gdal_dissolve
+  backend_tool: gdal:dissolve
   param_mapping:
     INPUT: '{{ INPUT }}'
     FIELD: '{{ FIELD }}'

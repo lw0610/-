@@ -6,7 +6,7 @@ metadata:
   domain: data-service
   runtime: internal
 spec:
-  description: 仅数据获取智能体或计划执行器可调用。使用当前会话data_find查询与真实候选绑定需求；确定性来源直接获取并核验，只有兜底途径时返回exploration_required和preparation并绑定同次查询，随后按可用途径获取且data_register。已有执行器冻结Selection时无需再次调用。
+  description: 方案中的数据角色使用当前会话 data_find 查询与真实候选获取数据。确定性来源直接获取并核验；需要继续探索时返回 exploration_required 和 preparation，由同一角色沿用 find_id 和 preparation，使用已分配工具获取原件并以 data_register 登记。计划执行器已绑定来源时无需再次调用。
   parameters:
     - name: find_id
       type: string

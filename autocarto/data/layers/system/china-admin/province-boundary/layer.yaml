@@ -1,0 +1,73 @@
+apiVersion: layer/v1
+id: layer.system.china-admin.province-boundary
+name: 省界
+aliases:
+- 地区界线
+- 线状省界
+pack: 全国行政区（系统自带）
+category: admin.boundary_line
+params:
+  level: 省
+geometry: line
+file: data.gpkg
+sublayer: boundary
+declared_crs: EPSG:4326
+crs: EPSG:4326
+coverage:
+  bbox:
+  - 73.498962
+  - 3.832541
+  - 135.087387
+  - 53.558498
+  regions:
+  - 河南省
+  - 浙江省
+  - 海南省
+  - 台湾省
+  - 甘肃省
+  - 湖北省
+  - 天津市
+  - 内蒙古自治区
+  - 广西壮族自治区
+  - 江苏省
+  - 山东省
+  - 北京市
+  - 西藏自治区
+  - 青海省
+  - 重庆市
+  - 澳门特别行政区
+  - 吉林省
+  - 福建省
+  - 广东省
+  - 上海市
+  - 江西省
+  - 香港特别行政区
+  - 黑龙江省
+  - 山西省
+  - 云南省
+  - 四川省
+  - 安徽省
+  - 宁夏回族自治区
+  - 辽宁省
+  - 湖南省
+  - 陕西省
+  - 河北省
+  - 新疆维吾尔自治区
+  - 贵州省
+scale: {}
+fields:
+  name: name
+  code: adcode
+label_field: ''
+default_style: 省界
+feature_count: 34
+source:
+  title: GeoCode 中国行政区边界
+  license: 上游数据许可待核实
+  attribution: 上游声明来自天地图
+  url: https://github.com/zzhonglei/GeoCode-Release
+  version: 6e3534f7af3675b19bd3c5d54c94022959dccdd2
+compliance: 南海诸岛、钓鱼岛等岛屿完整性未核实；行政区外围线不代表国界。
+digest: sha256:ab76ab566e48542723bdded30d03ff2ac81b9bea9425b810568931a9e7efabf9
+preview: preview.png
+created_at: '2026-10-29T09:27:50.540205+00:00'

@@ -45,6 +45,8 @@ type Config struct {
 
 	// SkipSubAgents 为 true 时不加载子智能体。
 	SkipSubAgents bool
+	// PlanningOnly limits the main agent to proposing a plan, without execution.
+	PlanningOnly bool
 
 	// AgentLLMs 子智能体独立 LLM 配置。
 	AgentLLMs map[string]config.AgentLLMConfig
@@ -136,11 +138,6 @@ func New(ctx context.Context, cfg *Config) (adk.ResumableAgent, error) {
 		if err != nil {
 			return nil, err
 		}
-		experts, err := createSystemExperts(ctx, cfg)
-		if err != nil {
-			return nil, err
-		}
-		subAgentList = append(subAgentList, experts...)
 	}
 
 	// 配置工具
@@ -153,23 +150,17 @@ func New(ctx context.Context, cfg *Config) (adk.ResumableAgent, error) {
 		// delegation and the specialist workflow's skill allowlist entirely.
 		toolsConfig.Tools = subagents.CreateRuntimeSkillToolFilter("orchestrator", cfg.SkillRuntimeConfig).Filter(ctx, cfg.Tools)
 	}
-	toolsConfig.Tools = filterAcquisitionTools(ctx, cfg, toolsConfig.Tools, true)
 	toolsConfig.Tools = subagents.WithAttachmentReadTool(ctx, toolsConfig.Tools, cfg.Tools)
-	for _, candidate := range cfg.Tools {
+	// Build delegates through task; only Plan may submit a controller plan.
+	modeTools := make([]tool.BaseTool, 0, len(toolsConfig.Tools))
+	for _, candidate := range toolsConfig.Tools {
 		info, err := candidate.Info(ctx)
-		if err == nil && info != nil && info.Name == "data_find" {
-			found := false
-			for _, existing := range toolsConfig.Tools {
-				ei, _ := existing.Info(ctx)
-				if ei != nil && ei.Name == info.Name {
-					found = true
-				}
-			}
-			if !found {
-				toolsConfig.Tools = append(toolsConfig.Tools, candidate)
-			}
+		if !cfg.PlanningOnly && err == nil && info != nil && (info.Name == "plan_propose" || info.Name == "plan_revise") {
+			continue
 		}
+		modeTools = append(modeTools, candidate)
 	}
+	toolsConfig.Tools = modeTools
 	toolsConfig.UnknownToolsHandler = subagents.NewUnknownToolsHandler(ctx, toolsConfig.Tools)
 	// 启用子智能体内部事件发送，使得 task 工具调用子智能体时能获取中间过程
 	toolsConfig.EmitInternalEvents = true
@@ -210,12 +201,17 @@ func New(ctx context.Context, cfg *Config) (adk.ResumableAgent, error) {
 		return nil, err
 	}
 	orchestratorHandlers = append(orchestratorHandlers, cfg.Handlers...)
+	orchestratorHandlers = append(orchestratorHandlers, newToolContextMiddleware(ctx, cfg, cfg.DefaultProviderCfg, toolsConfig.Tools, skillDirs))
 
+	chatModel := cfg.ChatModel
+	if cfg.PlanningOnly {
+		chatModel = runtimecontrol.WithPlanSubmissionBoundary(chatModel)
+	}
 	// 创建 DeepAgent
 	return deep.New(ctx, &deep.Config{
 		Name:                   cfg.Name,
 		Description:            description,
-		ChatModel:              runtimecontrol.WithPlanSubmissionBoundary(cfg.ChatModel),
+		ChatModel:              chatModel,
 		Instruction:            instruction,
 		SubAgents:              subAgentList,
 		ToolsConfig:            toolsConfig,
@@ -267,7 +263,7 @@ func createSubAgents(ctx context.Context, cfg *Config, engine *subagents.Templat
 	}
 	names := make([]string, 0, len(cfg.SkillRuntimeConfig.Agents))
 	for name, role := range cfg.SkillRuntimeConfig.Agents {
-		if role.IsMain || name == "orchestrator" || !role.Enabled || role.FlowOnly {
+		if role.IsMain || name == "orchestrator" || !role.Enabled {
 			continue
 		}
 		names = append(names, name)

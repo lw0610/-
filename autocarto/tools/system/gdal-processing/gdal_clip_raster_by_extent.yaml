@@ -16,12 +16,12 @@ spec:
   - name: PROJWIN
     type: extent
     required: true
-    description: 裁剪范围
+    description: 裁剪范围，格式为 xmin,xmax,ymin,ymax，可附 [EPSG:编号]；也可使用图层范围
   - name: OUTPUT
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: gdal_clip_raster_by_extent
+  backend_tool: gdal:cliprasterbyextent
   param_mapping:
     INPUT: '{{ INPUT }}'
     PROJWIN: '{{ PROJWIN }}'

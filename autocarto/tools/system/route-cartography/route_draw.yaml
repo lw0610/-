@@ -31,8 +31,7 @@ spec:
     description: 可选任务编号断言，必须与数据集元数据一致
   - name: route_style
     type: string
-    default: 单色
-    description: 路线样式资源的名称、编号或路径；数据集中非空样式编号仍优先
+    description: 仅用户明确指定使用路线样式表时填写其预设名称，不填文件路径；省略时使用数据集已有 style_id 与原版内置渲染规则，不读取样式表。
   - name: renderer_plugin_dir
     type: string
     description: 可选渲染插件目录；省略时在当前 QGIS profile 按配置的插件名查找

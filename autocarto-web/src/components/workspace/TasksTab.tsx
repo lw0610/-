@@ -2,9 +2,6 @@
 import type { InterruptRequestData, TodoItem } from '@/types/message'
 import TaskListPanel from '@/components/chat/TaskListPanel'
 import Chip from '@/components/common/Chip'
-import AcquisitionProgress from '@/features/plan/AcquisitionProgress'
-import type { FlowRunState } from '@/features/plan/types'
-import { terminalFlow } from '@/features/plan/model'
 function parseInterruptPreview(interrupt: InterruptRequestData) {
   const checkpointId = String(interrupt.checkpoint_id || '').trim()
   const contexts = Array.isArray(interrupt.interrupt_contexts)
@@ -76,12 +73,10 @@ function SectionHeader({
 export default function TasksTab({
   tasks,
   pendingInterrupts,
-  run,
   embedded = false,
 }: {
   tasks: TodoItem[]
   pendingInterrupts: InterruptRequestData[]
-  run?: FlowRunState
   embedded?: boolean
 }) {
   const safeTasks = Array.isArray(tasks) ? tasks.filter(Boolean) : []
@@ -94,7 +89,6 @@ export default function TasksTab({
       className={embedded ? 'p-3' : 'h-full overflow-y-auto p-3 scrollbar-thin'}
     >
       <TaskListPanel tasks={safeTasks} />
-      {run?.acquisition && <AcquisitionProgress state={run.acquisition} finished={terminalFlow(run.status)} />}
 
       {safeInterrupts.length > 0 && (
         <div className="mt-2.5">

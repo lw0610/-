@@ -64,7 +64,7 @@ func (binding flowRuntimeBinding) acquisitionEngine(ctx context.Context, run *fl
 		ctx = binding.server.withOSMProgress(ctx, nil, run.SessionID, modeStatePhaseBuilding)
 		return osmdata.Invoke(ctx, name, args, options)
 	}
-	adapters := []acquire.Adapter{acquire.LocalAdapter{}, acquire.OfflineAdapter{Invoke: invoke}, acquire.HTTPAdapter{MaxBytes: int64(cfg.MaxDownloadMB) * 1024 * 1024}, acquire.OverpassAdapter{Options: options, Catalog: catalog, Invoke: osmInvoke}, acquire.TiandituAdapter{Invoke: invoke, ConfigDir: filepath.Join(home, "config")}, acquire.GEEAdapter{Invoke: invoke, AssetsRoot: assets}}
+	adapters := []acquire.Adapter{acquire.LocalAdapter{}, acquire.OfflineAdapter{Invoke: invoke}, acquire.HTTPAdapter{MaxBytes: int64(cfg.MaxDownloadMB) * 1024 * 1024, ProxyURL: integrations.OSM.ProxyURL}, acquire.OverpassAdapter{Options: options, Catalog: catalog, Invoke: osmInvoke}, acquire.TiandituAdapter{Invoke: invoke, ConfigDir: filepath.Join(home, "config")}, acquire.GEEAdapter{Invoke: invoke, AssetsRoot: assets}}
 	engine := &acquire.Engine{Catalog: catalog, Store: acquire.NewStore(filepath.Join(home, "data", "acquired"), int64(cfg.StoreMaxGB*1024*1024*1024)), Invoke: invoke, Config: cfg, Adapters: map[string]acquire.Adapter{}}
 	for _, adapter := range adapters {
 		engine.Adapters[adapter.Kind()] = adapter

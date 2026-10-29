@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 import pytest
 
 from autocarto.tests.golden.qgis_bootstrap import isolated_qgis, qgis_available
-from autocarto.tools.system._shared.style_set_support import preset_catalog
+from autocarto.tools.system._shared.style_set_support import qml_geometry_type
 from autocarto.tests.support.resource_handles import load_handle, resolve_handle
 
 
@@ -18,7 +18,9 @@ def builtin_style_dir():
     return Path(load_handle("gb-basemap")["root"])
 
 
-PRESETS = preset_catalog()["entries"]
+PRESETS = [dict(entry, style_file=Path(entry["style_path"]).name,
+                geometry={0: "Point", 1: "LineString", 2: "Polygon"}[qml_geometry_type(entry["style_path"])])
+           for entry in load_handle("gb-basemap")["entries"]]
 
 
 @pytest.fixture(scope="module")
@@ -72,21 +74,6 @@ def test_style_set_xlsx_mapping_with_instruction_sheet_is_applied(style_project,
     assert result["data"]["applied"][0]["style_file"] == str(tmp_path / "selected.qml")
     assert layer.labelsEnabled()
     assert layer.labeling().settings().fieldName == "custom"
-
-
-def test_legacy_preset_does_not_resolve_the_public_style_directory(style_project, monkeypatch):
-    from autocarto.tools.system._shared import basemap_presets_impl, style_set_support
-    assert not hasattr(style_set_support, "builtin_style_dir")
-    monkeypatch.setattr(style_set_support, "matching_style", lambda *args: pytest.fail("兼容工具不应旁路解析公共资源"))
-    prototype = basemap_presets_impl._preset_layer(PRESETS[0])
-    assert prototype.isValid() and prototype.renderer() is not None
-
-
-def _dispatch(module, entry, layer, params=None):
-    handler = getattr(module, "set_" + entry["legacy_handler"] + "_symbol_handler")
-    result = handler(dict(entry["params"] if params is None else params, layer=layer.name()))
-    assert result["success"], result
-    return result
 
 
 def _canonical_xml(element):
@@ -145,114 +132,24 @@ def _render(layer):
     return image
 
 
-@pytest.mark.parametrize("entry", PRESETS, ids=[entry["style_file"] for entry in PRESETS])
-def test_style_legacy_wrappers_match_frozen_old_constructor_and_pixels(style_project, entry):
-    from autocarto.tools.system._shared import basemap_presets_impl as current
-    from scripts.resources import export_basemap_styles as legacy
-    reference = _layer(entry["geometry"], "reference")
-    wrapped = _layer(entry["geometry"], "wrapped")
-    old_result = _dispatch(legacy, entry, reference)
-    new_result = _dispatch(current, entry, wrapped)
-    assert old_result["info"] == new_result["info"]
-    assert _state(reference) == _state(wrapped)
-    assert _render(reference) == _render(wrapped)
-
-
-@pytest.mark.parametrize("entry", PRESETS, ids=lambda entry: entry["style_file"])
-def test_style_legacy_wrappers_preserve_existing_label_settings_selectively(style_project, entry):
-    from qgis.PyQt.QtGui import QColor, QFont
-    from qgis.core import QgsPalLayerSettings, QgsProperty, QgsTextBufferSettings, QgsTextFormat, QgsVectorLayerSimpleLabeling
-    from autocarto.tools.system._shared import basemap_presets_impl as current
-    from scripts.resources import export_basemap_styles as legacy
-    reference = _layer(entry["geometry"], "reference")
-    wrapped = _layer(entry["geometry"], "wrapped")
-    for layer in (reference, wrapped):
-        settings = QgsPalLayerSettings()
-        settings.fieldName = "custom"
-        settings.dist = 7.5
-        settings.priority = 3
-        format = QgsTextFormat()
-        font = QFont("monospace")
-        font.setItalic(True)
-        format.setFont(font)
-        format.setSize(9)
-        format.setColor(QColor("#347821"))
-        buffer = QgsTextBufferSettings()
-        buffer.setEnabled(True)
-        buffer.setSize(0.3)
-        format.setBuffer(buffer)
-        settings.setFormat(format)
-        properties = settings.dataDefinedProperties()
-        properties.setProperty(QgsPalLayerSettings.Property.Size, QgsProperty.fromExpression("12"))
-        settings.setDataDefinedProperties(properties)
-        layer.setLabeling(QgsVectorLayerSimpleLabeling(settings))
-        layer.setLabelsEnabled(True)
-        layer.setOpacity(0.42)
-    _dispatch(legacy, entry, reference)
-    _dispatch(current, entry, wrapped)
-    assert _state(reference) == _state(wrapped)
-    if entry["legacy_handler"] != "marker":
-        params = dict(entry["params"])
-        params.pop("label_field", None)
-        _dispatch(legacy, entry, reference, params)
-        _dispatch(current, entry, wrapped, params)
-        assert _state(reference) == _state(wrapped)
-
-
-def test_style_legacy_parameter_errors_remain_identical(style_project):
-    from autocarto.tools.system._shared import basemap_presets_impl as current
-    from scripts.resources import export_basemap_styles as legacy
-    point, line, fill = _layer("Point", "point"), _layer("LineString", "line"), _layer("Polygon", "fill")
-    cases = [("marker", {}), ("line", {}), ("fill", {}),
-             ("marker", {"layer": "fill", "layer_type": "city", "label_field": "name"}),
-             ("line", {"layer": "point", "line_type": "铁路"}),
-             ("fill", {"layer": "line", "layer_type": "省"}),
-             ("marker", {"layer": "point", "layer_type": "bad", "label_field": "name"}),
-             ("line", {"layer": "line", "line_type": "bad"}),
-             ("fill", {"layer": "fill", "layer_type": "bad"}),
-             ("marker", {"layer": "point", "layer_type": "city"}),
-             ("marker", {"layer": "point", "layer_type": "city", "label_field": "missing"}),
-             ("line", {"layer": "line", "line_type": "河流", "label_field": "missing"}),
-             ("fill", {"layer": "fill", "layer_type": "省", "label_field": "missing"})]
-    for kind, params in cases:
-        assert getattr(legacy, "set_" + kind + "_symbol_handler")(params) == getattr(current, "set_" + kind + "_symbol_handler")(params)
-
-
-def test_basemap_line_helpers_build_equivalent_symbols(style_project):
-    from qgis.core import QgsReadWriteContext, QgsSingleSymbolRenderer
-    from qgis.PyQt.QtXml import QDomDocument
-    from autocarto.tools.system._shared import basemap_presets_impl as current
-    from scripts.resources import export_basemap_styles as legacy
-    symbols = []
-    for module in (legacy, current):
-        layers = [module._gb_line_layer("#123456", 0.3, offset_mm=0.2),
-                  module._gb_line_layer("#234567", 0.5, dash_pattern=[2, 1])]
-        symbols.append(QgsSingleSymbolRenderer(module._gb_line_symbol(layers)))
-    document = QDomDocument()
-    assert _canonical_xml(symbols[0].save(document, QgsReadWriteContext())) == _canonical_xml(symbols[1].save(document, QgsReadWriteContext()))
-
-
-def test_style_set_eleven_resources_match_old_default_labels_and_repeat(style_project):
-    from scripts.resources import export_basemap_styles as legacy
+def test_style_set_eleven_resources_match_qml_symbols_and_repeat(style_project):
     from autocarto.tests.support.legacy_style_set import apply_style_set_handler
+    from autocarto.tools.system._shared.symbology import read_symbology
     expected, actual = {}, {}
     for index, entry in enumerate(PRESETS):
         reference = _layer(entry["geometry"], "reference_" + str(index))
-        target = _layer(entry["geometry"], entry["layer"])
-        params = dict(entry["params"])
-        if entry["label_field"] == "无":
-            params.pop("label_field", None)
-        _dispatch(legacy, entry, reference, params)
-        expected[entry["layer"]] = reference
-        actual[entry["layer"]] = target
+        assert reference.loadNamedStyle(entry["style_path"])[1]
+        expected[entry["layer"]] = read_symbology(reference)["symbol"]
+        actual[entry["layer"]] = _layer(entry["geometry"], entry["layer"])
     first = apply_style_set_handler({"style_set": load_handle("gb-basemap"), "layers": list(actual), "strict": True})
     assert first["success"], first
     assert len(first["data"]["applied"]) == 11
     assert not first["data"]["unmatched_layers"] and not first["data"]["unused_styles"]
     states = {name: _state(layer) for name, layer in actual.items()}
-    for name, layer in actual.items():
-        assert _state(expected[name]) == states[name], name
-        assert _render(expected[name]) == _render(layer), name
+    for entry in PRESETS:
+        layer = actual[entry["layer"]]
+        assert read_symbology(layer)["symbol"] == expected[entry["layer"]]
+        assert layer.labelsEnabled() == (entry["label_mode"] != "off")
     second = apply_style_set_handler({"style_set": load_handle("gb-basemap"), "layers": [layer.id() for layer in actual.values()], "strict": True})
     assert second["success"], second
     assert {name: _state(layer) for name, layer in actual.items()} == states
@@ -353,7 +250,9 @@ def test_style_set_authority_binding_and_individual_qml_tools(style_project):
     result = execute_tool("style_set_apply", {"style_set": load_handle("gb-basemap"), "layers": [layer.id() for layer in layers], "strict": True}, engine=engine)
     assert result["success"], result
     assert [item["layer_id"] for item in result["output"]["data"]["applied"]] == [layer.id() for layer in layers]
+    from autocarto.tools.system._shared.style_labeling import restore_qml_font_families
     for index, layer in enumerate(layers):
+        restore_qml_font_families(layer)
         output = root / ("saved_" + str(index) + ".qml")
         assert save_style_handler({"layer": layer.name(), "path": str(output)})["success"]
         expected = _state(layer)

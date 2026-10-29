@@ -12,26 +12,11 @@ import (
 )
 
 // BuildRoleAgent constructs the same authorized role for delegation or a flow step.
-// FlowOnly roles are intentionally allowed here and filtered only from delegation.
 func BuildRoleAgent(ctx context.Context, cfg *Config, roleName string) (adk.Agent, error) {
 	if cfg == nil || cfg.SkillRuntimeConfig == nil {
 		return nil, fmt.Errorf("角色运行配置未提供")
 	}
 	agentName := strings.TrimSpace(roleName)
-	if agentName == DataAcquisitionExpertName {
-		// A planned acquisition uses the same system-owned expert as ordinary
-		// delegation. Never synthesize a user role or bypass its guarded tools.
-		experts, err := createSystemExperts(ctx, cfg)
-		if err != nil {
-			return nil, fmt.Errorf("创建系统角色 %s: %w", agentName, err)
-		}
-		for _, expert := range experts {
-			if expert.Name(ctx) == agentName {
-				return expert, nil
-			}
-		}
-		return nil, fmt.Errorf("系统角色 %s 不可用：需要执行模式及已注册的数据服务工具", agentName)
-	}
 	agentConfig, exists := cfg.SkillRuntimeConfig.Agents[agentName]
 	if !exists || agentName == "" {
 		return nil, fmt.Errorf("角色不存在: %s", roleName)
@@ -63,7 +48,6 @@ func BuildRoleAgent(ctx context.Context, cfg *Config, roleName string) (adk.Agen
 
 	// 过滤工具
 	agentTools := filter.Filter(ctx, cfg.Tools)
-	agentTools = filterAcquisitionTools(ctx, cfg, agentTools, false)
 
 	chatModel := cfg.ChatModel
 	providerCfg := cloneProviderConfig(cfg.DefaultProviderCfg)
@@ -93,7 +77,7 @@ func BuildRoleAgent(ctx context.Context, cfg *Config, roleName string) (adk.Agen
 			return nil, fmt.Errorf("角色 %s 的执行器类型未注册: %s", agentName, agentConfig.Executor)
 		}
 		instructions := strings.TrimSpace(agentConfig.Prompts.StaticInstructions)
-		knowledgeAgent := createKnowledgeSubAgent(agentName, agentConfig.Description, chatModel, providerCfg, agentTools)
+		knowledgeAgent := createKnowledgeSubAgent(agentName, strings.TrimSpace(agentConfig.Description), chatModel, providerCfg, agentTools)
 		if knowledgeAgent == nil {
 			return nil, fmt.Errorf("知识执行器需要模型、抽取契约与编译工具，请检查角色授权包")
 		}
@@ -114,8 +98,8 @@ func BuildRoleAgent(ctx context.Context, cfg *Config, roleName string) (adk.Agen
 	if err != nil {
 		return nil, fmt.Errorf("resolve middleware packages for %s: %w", agentName, err)
 	}
-	if len(middlewareSkillDirs) > 0 {
-		skillMw, err := subagents.LoadSkillMiddleware(ctx, agentName, middlewareSkillDirs, skillDirs, cfg.SkillRuntimeConfig)
+	if len(middlewareSkillDirs) > 0 || cfg.GuideBackend != nil {
+		skillMw, err := subagents.LoadSkillMiddleware(ctx, agentName, middlewareSkillDirs, skillDirs, cfg.SkillRuntimeConfig, cfg.GuideBackend)
 		if err != nil {
 			return nil, fmt.Errorf("load skill middleware for %s: %w", agentName, err)
 		}
@@ -132,6 +116,7 @@ func BuildRoleAgent(ctx context.Context, cfg *Config, roleName string) (adk.Agen
 		return nil, fmt.Errorf("Runtime 智能体 %s 运行时 handlers 失败: %w", agentName, err)
 	}
 	handlers = append(handlers, cfg.Handlers...)
+	handlers = append(handlers, newToolContextMiddleware(ctx, cfg, providerCfg, agentTools, skillDirs))
 
 	// 使用通用工厂创建智能体
 	agent, err := subagents.NewGenericAgent(ctx, &subagents.GenericAgentConfig{

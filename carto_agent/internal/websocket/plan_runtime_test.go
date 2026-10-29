@@ -65,16 +65,12 @@ func (f *runtimeFlowFactory) InvokeFlowTool(ctx context.Context, name string, ar
 	if f.invoke != nil {
 		return f.invoke(ctx, name, args)
 	}
+	if name == "get_layers_info" {
+		return map[string]any{"success": true, "data": map[string]any{"layers": []any{}}}, nil
+	}
 	return nil, fmt.Errorf("unexpected verification")
 }
 
-func (f *runtimeFlowFactory) BuildRoleWithOverlay(ctx context.Context, scheme string, cfg *config.AgentConfigFile, overlay agentruntime.RoleOverlay) (adk.Agent, error) {
-	id := overlay.RoleID
-	if overlay.FlowRole != nil {
-		id = overlay.FlowRole.ID
-	}
-	return f.BuildRole(ctx, scheme, cfg, id)
-}
 func cartoRuntimeFixture(t *testing.T) (*DeepServer, *runtimeFlowFactory, flowSessionContext, *plan.Plan) {
 	t.Helper()
 	home := t.TempDir()
@@ -107,13 +103,19 @@ func cartoRuntimeFixture(t *testing.T) (*DeepServer, *runtimeFlowFactory, flowSe
 	sess.AddMessage(schema.UserMessage("保留完整原文"))
 	run := flowSessionContext{Session: sess, SessionID: id, ProjectPath: project, Scheme: "test", Mode: executionModeBuild, OriginalSource: "保留完整原文"}
 	s.setFlowContext(run)
-	p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-test", Version: 1, Goal: "测试制图", Steps: []plan.Step{{ID: "work", Title: "处理", Capabilities: []string{"read"}, Instructions: "读取并返回真实结果", Outputs: []flow.OutputDeclaration{{Label: "结果", Type: "text"}}}}}
+	output := filepath.Join(home, "result.txt")
+	if err = os.WriteFile(output, []byte("保留的结果"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	encoded, _ := json.Marshal(map[string]any{"status": "completed", "summary": "完成", "outputs": map[string]any{"result": output}, "issues": []string{}})
+	factory.agent = flowReceiptAgent{receipt: string(encoded)}
+	p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-test", Version: 1, Goal: "测试制图", Steps: []plan.Step{{ID: "work", Title: "处理", Capabilities: []string{"read"}, Instructions: "读取并返回真实结果", Produces: []plan.Product{{ID: "result", Kind: "file", Format: "txt"}}}}}
 	return s, factory, run, p
 }
 func TestCartographicProposalExecutesAndRestoresPlanCard(t *testing.T) {
 	s, f, run, p := cartoRuntimeFixture(t)
 	source := ""
-	f.agent = flowReceiptAgent{source: &source}
+	f.agent = flowReceiptAgent{source: &source, receipt: f.agent.(flowReceiptAgent).receipt}
 	raw, _ := json.Marshal(p)
 	answer, err := (sessionPlanService{server: s, run: run}).ProposePlan(context.Background(), raw)
 	if err != nil || answer["status"] != "ready" {
@@ -165,17 +167,17 @@ func TestCartographicEditIsDeterministicAndVersioned(t *testing.T) {
 	if err := s.bindTaskReferences(context.Background(), run.SessionID, run.ProjectPath, Message{}, schema.UserMessage("使用 `"+path+"`")); err != nil {
 		t.Fatal(err)
 	}
-	p.Data = []plan.Data{{ID: "route", Name: "路线", From: "user", Path: path}}
-	p.Steps[0].Uses = []string{"route"}
+	p.Data = []plan.Data{{ID: "route", Name: "路线", Source: "user", Ref: path}}
+	p.Steps[0].Inputs = []string{"route"}
 	raw, _ := json.Marshal(p)
 	if _, err := (sessionPlanService{server: s, run: run}).ProposePlan(context.Background(), raw); err != nil {
 		t.Fatal(err)
 	}
-	updated, err := s.EditPlan(context.Background(), run.SessionID, run.ProjectPath, p.ID, plan.EditRequest{Version: 1, DataID: "route", From: "user", Path: path})
+	updated, err := s.EditPlan(context.Background(), run.SessionID, run.ProjectPath, p.ID, plan.EditRequest{Version: 1, DataID: "route", Source: "user", Ref: path})
 	if err != nil || updated.Plan.Version != 2 || s.hasPendingCartographicPlan(run.SessionID) {
 		t.Fatal(updated, err)
 	}
-	if _, err = s.EditPlan(context.Background(), run.SessionID, run.ProjectPath, p.ID, plan.EditRequest{Version: 1, DataID: "route", From: "user", Path: path}); err == nil {
+	if _, err = s.EditPlan(context.Background(), run.SessionID, run.ProjectPath, p.ID, plan.EditRequest{Version: 1, DataID: "route", Source: "user", Ref: path}); err == nil {
 		t.Fatal("stale edit accepted")
 	}
 }
@@ -200,8 +202,13 @@ func TestCartographicAttachmentRegistersExactFileOnly(t *testing.T) {
 	if _, _, err = store.ValidatePath(file); err != nil {
 		t.Fatal(err)
 	}
-	if _, _, err = store.ValidatePath(sibling); err == nil {
-		t.Fatal("sibling authorized by one attachment")
+	if _, _, err = store.ValidatePath(sibling); err != nil {
+		t.Fatalf("existing local file must not require attachment authorization: %v", err)
+	}
+	items, err := store.List(false)
+	canonicalFile, _, pathErr := store.ValidatePath(file)
+	if err != nil || pathErr != nil || len(items) != 1 || items[0].Path != canonicalFile {
+		t.Fatalf("attaching one file should index only that material: %v, %v", items, err)
 	}
 }
 

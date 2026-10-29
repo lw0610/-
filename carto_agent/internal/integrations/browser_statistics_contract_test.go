@@ -12,7 +12,6 @@ import (
 	"testing"
 
 	"github.com/autocarto/carto_agent/internal/config"
-	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
 	"github.com/autocarto/carto_agent/internal/runtimecontrol"
 	"github.com/autocarto/carto_agent/internal/skill"
@@ -41,22 +40,22 @@ func TestChinaStatisticsMethodReachableThroughAssignedBrowserPackage(t *testing.
 	if err := yaml.Unmarshal(raw, &profile); err != nil {
 		t.Fatal(err)
 	}
-	runtimeConfig := deepagent.DataAcquisitionSkillConfig(config.ConvertToRuntimeSkillConfig(&profile, skillsRoot, "", t.TempDir(), "default"))
-	readable := runtimeConfig.GetAgentMiddlewareSkills(deepagent.DataAcquisitionExpertName)
+	runtimeConfig := config.ConvertToRuntimeSkillConfig(&profile, skillsRoot, "", t.TempDir(), "default")
+	readable := runtimeConfig.GetAgentMiddlewareSkills("data_engineer")
 	if !slices.Contains(readable, "browser-data-acquisition") {
-		t.Fatal("system acquisition expert cannot discover its browser package methods")
+		t.Fatal("configured data engineer cannot discover its browser package methods")
 	}
 	if slices.Contains(readable, "china-statistics-data") {
 		t.Fatal("statistics reference must not require an additional role assignment")
 	}
 	for _, name := range []string{"reference_read", "web_search", "browser_list_tools", "browser_call_tool", "file_read", "file_write", "shell_execute"} {
-		if !slices.Contains(runtimeConfig.GetAgentAllowedTools(deepagent.DataAcquisitionExpertName), name) {
-			t.Fatalf("system acquisition expert cannot complete statistics acquisition: missing %s", name)
+		if !slices.Contains(runtimeConfig.GetAgentAllowedTools("data_engineer"), name) {
+			t.Fatalf("configured data engineer cannot complete statistics acquisition: missing %s", name)
 		}
 	}
 
 	ctx := runtimecontrol.WithReferencePackageDirs(context.Background(), []string{skillsRoot})
-	mw, err := subagents.LoadSkillMiddleware(ctx, deepagent.DataAcquisitionExpertName, []string{skillsRoot}, nil, runtimeConfig)
+	mw, err := subagents.LoadSkillMiddleware(ctx, "data_engineer", []string{skillsRoot}, nil, runtimeConfig)
 	if err != nil || mw == nil {
 		t.Fatalf("actual skill middleware unavailable: %v", err)
 	}

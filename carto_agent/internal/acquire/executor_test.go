@@ -2,6 +2,7 @@ package acquire
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/datasource"
@@ -60,11 +61,26 @@ func TestPipelineFallbackCacheAndRawContainment(t *testing.T) {
 	item.Extent = &flow.ExtentPlan{BBox: []float64{110, 30, 111, 31}}
 	item.Scale = 250000
 	smaller, err := engine.RunItem(context.Background(), item, nil)
-	if err != nil || smaller.Status != "completed" || downloads.Load() != 1 || normalizes != 2 {
+	if err != nil || smaller.Status != "completed" || downloads.Load() != 1 || normalizes != 5 {
 		t.Fatalf("%+v %v downloads=%d normalize=%d", smaller, err, downloads.Load(), normalizes)
 	}
 	if filepath.Dir(smaller.Output.Paths[0]) == filepath.Dir(result.Output.Paths[0]) {
 		t.Fatal("new normalization overwrote previous")
+	}
+	conversionFailure := fmt.Errorf("fixture conversion failure")
+	engine.Invoke = func(context.Context, string, map[string]any) (any, error) { return nil, conversionFailure }
+	item.Params = map[string]string{"variant": "new-processing"}
+	item.Alternatives = []flow.SourceChoice{{SourceID: "source.fail", Provide: datasource.Provide{URL: server.URL + "/fail"}}}
+	failed, err := engine.RunItem(context.Background(), item, nil)
+	var processing *ProcessingError
+	if !errors.As(err, &processing) || !errors.Is(err, conversionFailure) || len(failed.Attempts) != 1 || downloads.Load() != 1 {
+		t.Fatalf("local conversion triggered another download/source: %+v %v downloads=%d", failed, err, downloads.Load())
+	}
+	if len(processing.Paths) != 1 {
+		t.Fatalf("original path missing: %+v", processing)
+	}
+	if _, err := os.Stat(processing.Paths[0]); err != nil {
+		t.Fatalf("original was not retained: %v", err)
 	}
 }
 func TestValidateStatsDoesNotAcceptEmptyOrWrongFields(t *testing.T) {

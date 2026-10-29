@@ -40,12 +40,12 @@ spec:
   - name: FORMULA
     type: string
     required: true
-    description: 计算公式
+    description: Python 代码，将结果赋给 value；字段使用 <字段名> 引用，例如 value = <name>。不是 feature 对象或直接字段变量。
   - name: OUTPUT
     type: output_layer
-    description: 输出图层
+    description: 工作结果目标；沿用输入业务名称并替换原工程层，原文件不变，后续使用返回的新 layer_id
 execution:
-  backend_tool: advanced_python_field_calculator
+  handler: handlers.attributes.advanced_python_field_calculator_handler
   param_mapping:
     INPUT: '{{ INPUT }}'
     FIELD_NAME: '{{ FIELD_NAME }}'

@@ -35,6 +35,8 @@ declare -a CHECK_HEADLESS_E2E_SPECS=(
     "tests/e2e/services-page.spec.ts"
     "tests/e2e/guide-center.spec.ts"
     "tests/e2e/plan-run.spec.ts"
+    "tests/e2e/layer-library.spec.ts"
+    "tests/e2e/plan-data-v7.spec.ts"
     "tests/e2e/session-workspace.spec.ts"
     "tests/e2e/agent-profile-v2.spec.ts"
 )
@@ -223,7 +225,7 @@ with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
             if parts & exclude_dirs:
                 continue
             plugin_rel = path.relative_to(base)
-            if plugin_rel.parts[0] == 'data':
+            if plugin_rel.parts[0] == 'data' and plugin_rel.parts[:2] != ('data', 'layers'):
                 continue
             if path.name in {'.master_key', 'secrets.enc', '.port'}:
                 continue
@@ -813,7 +815,7 @@ deploy_plugin() {
     fi
 
     info "同步 autocarto 插件�?$QGIS_PLUGINS_DIR/autocarto"
-    rsync -a --delete --exclude='/data/' --exclude='.master_key' --exclude='secrets.enc' --exclude='.port' --exclude='/config/plugin_config.yaml' --exclude='*.db' --exclude='*.db-wal' --exclude='*.db-shm' --exclude='*.sqlite' --exclude='logs' --exclude='.session' --exclude='__pycache__' "$PLUGIN_DIR/" "$QGIS_PLUGINS_DIR/autocarto/"
+    rsync -a --delete --include='/data/' --include='/data/layers/***' --exclude='/data/*' --exclude='.master_key' --exclude='secrets.enc' --exclude='.port' --exclude='/config/plugin_config.yaml' --exclude='*.db' --exclude='*.db-wal' --exclude='*.db-shm' --exclude='*.sqlite' --exclude='logs' --exclude='.session' --exclude='__pycache__' "$PLUGIN_DIR/" "$QGIS_PLUGINS_DIR/autocarto/"
 
     ok "QGIS 插件部署完成�?QGIS_PLUGINS_DIR"
 }
@@ -1196,6 +1198,9 @@ print_check_summary() {
 }
 
 run_check_pipeline() {
+    if ! command -v tesseract >/dev/null 2>&1 && ! "${PYTHON_BIN:-python3}" -c "import rapidocr_onnxruntime" >/dev/null 2>&1; then
+        warn "可选 OCR：未找到 RapidOCR/Tesseract；可在文档Python环境安装 autocarto/tools/system/file-operations/requirements.txt。缺失不影响构建，设置页会报告读图能力。"
+    fi
     run_check_step "Go 编译检查" "carto_agent 编译通过" run_go_build_gate || return $?
     run_check_step "Go 静态分析" "carto_agent vet 通过" run_go_vet_gate || return $?
     run_check_step "Go 单元测试" "carto_agent 测试通过" run_go_test_gate || return $?

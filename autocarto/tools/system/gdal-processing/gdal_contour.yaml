@@ -25,7 +25,7 @@ spec:
     type: output_layer
     description: 输出矢量
 execution:
-  backend_tool: gdal_contour
+  backend_tool: gdal:contour
   param_mapping:
     INPUT: '{{ INPUT }}'
     BAND: '{{ BAND }}'

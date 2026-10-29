@@ -35,13 +35,14 @@ func writeReference(t *testing.T, path, text string) {
 	}
 }
 
-func TestReferenceReadAllowedRootsAndWholePackageTexts(t *testing.T) {
+func TestReferenceReadLocalFilesAndWholePackageTexts(t *testing.T) {
 	assets, home := referenceFixture(t)
 	packageDir := filepath.Join(assets, "skills", "system", "geometry")
 	writeReference(t, filepath.Join(packageDir, "SKILL.md"), "# 真实工具包")
 	writeReference(t, filepath.Join(packageDir, "config.yaml"), "enabled: true")
+	writeReference(t, filepath.Join(packageDir, "templates", "population.py"), `raise RuntimeError("reference text must not execute")`)
 	writeReference(t, filepath.Join(packageDir, "references", "方法.md"), "通用方法")
-	paths := []string{"geometry/references/方法.md", "geometry/SKILL.md", "geometry/config.yaml"}
+	paths := []string{"geometry/references/方法.md", "geometry/SKILL.md", "geometry/config.yaml", "geometry/templates/population.py"}
 	for _, item := range []struct{ root, name string }{
 		{filepath.Join(assets, "skills", "user"), "user-method"},
 		{filepath.Join(home, "config", "skills", "global"), "global-method"},
@@ -73,7 +74,7 @@ func TestReferenceReadAllowedRootsAndWholePackageTexts(t *testing.T) {
 	}
 }
 
-func TestReferenceReadRejectsEscapeLinksAndUnsupportedFiles(t *testing.T) {
+func TestReferenceReadAbsoluteFilesAndRelativePackageBoundaries(t *testing.T) {
 	assets, home := referenceFixture(t)
 	pkg := filepath.Join(assets, "skills", "system", "geometry")
 	writeReference(t, filepath.Join(pkg, "SKILL.md"), "工具包")
@@ -97,17 +98,33 @@ func TestReferenceReadRejectsEscapeLinksAndUnsupportedFiles(t *testing.T) {
 	if err := os.Symlink(filepath.Dir(outside), intermediate); err != nil {
 		t.Fatal(err)
 	}
+	for _, path := range []string{outside, fileLink, filepath.Join(dirLink, "outside.md"), filepath.Join(intermediate, "outside.md")} {
+		result, err := readReference(context.Background(), path)
+		if err != nil || result["text"] != "outside" {
+			t.Fatalf("local text required a session grant: %s: %v", path, err)
+		}
+	}
 	for _, path := range []string{
-		outside, filepath.Join(assets, "skills", "system-other", "outside.md"),
-		"geometry/../geometry/SKILL.md", "geometry/references/a.py", "geometry/references/a.pdf",
-		fileLink, filepath.Join(dirLink, "outside.md"), filepath.Join(intermediate, "outside.md"),
 		filepath.Join(home, "config", "config.yaml"),
 		filepath.Join(assets, "flows", "system", "demo", "FLOW.md"),
 		filepath.Join(assets, "flows", "system", "demo", "resources", "data", "notes.md"),
 	} {
+		writeReference(t, path, "本地参考资料")
+		if result, err := readReference(context.Background(), path); err != nil || result["text"] != "本地参考资料" {
+			t.Fatalf("absolute local text was rejected: %s: %v", path, err)
+		}
+	}
+	for _, path := range []string{
+		"geometry/../geometry/SKILL.md", "geometry/references/a.pdf",
+		"geometry/references/linked.md", "geometry/alias/outside.md",
+	} {
 		if _, err := Invoke(context.Background(), ToolReferenceRead, map[string]any{"path": path}); err == nil {
 			t.Errorf("accepted forbidden path %q", path)
 		}
+	}
+	missing := filepath.Join(t.TempDir(), "missing.md")
+	if _, err := readReference(context.Background(), missing); !os.IsNotExist(err) {
+		t.Fatalf("missing file should retain its filesystem error: %v", err)
 	}
 }
 

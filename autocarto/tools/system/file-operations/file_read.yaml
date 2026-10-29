@@ -3,11 +3,11 @@ kind: Tool
 metadata:
   name: file_read
   display_name: 读取文件
-  keywords: [文件读取, 文本, 图片, PDF, DOCX, XLSX, 目录]
+  keywords: [文件读取, 文本, 图片, PDF文档, DOCX文档, XLSX表格, 目录]
   domain: file-operations
   runtime: internal
 spec:
-  description: "读取当前会话、已授权工程或用户明确提供的文件/目录；用户提供目录可列举并读取子文件，不能读取目录外的文件。UTF-8文本、DOCX正文与XLSX单元格可按行分页，每次最多64 KiB；XLSX包含工作表名与实际行号，不计算公式。图片(PNG/JPEG/GIF/WebP)与PDF默认返回真实媒体附件，最多50 MiB，需当前模型支持；PDF指定as_text=true时使用本机pdftotext提取正文，不支持扫描件OCR。解析失败应报告，不能把路径或任务要求当正文。相对路径以当前会话output为基准。"
+  description: "读取本机现有文件或目录，不需要额外的会话授权；目录可列举并按需读取子文件，文件访问遵循本机操作系统权限。UTF-8文本、DOCX正文与XLSX单元格可按行分页，每次最多64 KiB；XLSX包含工作表名与实际行号，不计算公式。图片(PNG/JPEG/GIF/WebP)与PDF默认返回真实媒体附件，最多50 MiB，需当前模型支持；PDF指定as_text=true时使用本机pdftotext提取正文，不支持扫描件OCR。解析失败应报告，不能把路径或任务要求当正文。相对路径以当前会话output为基准。"
   parameters:
     - name: path
       type: string

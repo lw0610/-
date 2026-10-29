@@ -18,7 +18,7 @@ spec:
     description: "波段号（从 1 开始的波段序号）"
     default: 1
 execution:
-  backend_tool: raster_statistics
+  backend_tool: native:rasterlayerstatistics
   param_mapping:
     INPUT: '{{ INPUT }}'
     BAND: '{{ BAND }}'

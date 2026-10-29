@@ -66,6 +66,26 @@ func TestWrapToolWithErrorHandlerObservesSuccessfulEnhancedTool(t *testing.T) {
 	}
 }
 
+func TestWrapToolWithErrorHandlerDoesNotLimitToolCallCount(t *testing.T) {
+	calls := 0
+	wrapped := wrapToolWithErrorHandler(&fakeEnhancedTool{
+		info: &schema.ToolInfo{Name: "local_fixture"},
+		runFn: func(context.Context, *schema.ToolArgument, ...tool.Option) (*schema.ToolResult, error) {
+			calls++
+			return &schema.ToolResult{Parts: []schema.ToolOutputPart{{Type: schema.ToolPartTypeText, Text: "ok"}}}, nil
+		},
+	}, nil).(tool.EnhancedInvokableTool)
+	ctx := context.Background()
+	for i := 0; i < 81; i++ {
+		if _, err := wrapped.InvokableRun(ctx, &schema.ToolArgument{Text: `{}`}); err != nil {
+			t.Fatalf("call %d was rejected: %v", i+1, err)
+		}
+	}
+	if calls != 81 {
+		t.Fatalf("expected all local calls, got %d", calls)
+	}
+}
+
 func TestWrapToolWithErrorHandlerMapsRegularErrorToStructuredToolResult(t *testing.T) {
 	observer := &recordingObserver{}
 	wrapped := wrapToolWithErrorHandler(&fakeEnhancedTool{

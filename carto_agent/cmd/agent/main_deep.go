@@ -814,6 +814,7 @@ func toolInvokeErrorFromComputeResponse(resp *compute.InvokeResponse) error {
 		Message:             message,
 		Retryable:           retryable,
 		ProviderDiagnostics: cloneMap(resp.ProviderDiagnostics),
+		Output:              resp.Output,
 	}
 }
 

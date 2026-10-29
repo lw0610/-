@@ -6,7 +6,7 @@ metadata:
   domain: data-service
   runtime: internal
 spec:
-  description: 只读本地查询数据来源，按用户提供、会话、工程、记忆、数据仓、本机、离线、官方、开放下载、在线查询排序；不联网不调用模型。只在没有可用来源且允许时提出兜底建议。
+  description: 只读本地查询数据来源，按用户提供、会话、工程、记忆、数据仓、本机、离线、官方、开放下载、在线查询排序；不联网不调用模型。只在没有可用来源且允许时提出兜底建议。state=needs_input 时按 diagnostics 更正需求，此时不返回可用 find_id；不能用失败查询继续 data_get/data_register。
   parameters:
   - name: need
     type: object
@@ -43,10 +43,10 @@ spec:
           - table
         extent:
           type: string
-          description: 区域、bbox南西北东、已知文件或图层；尚未确定可省略
+          description: 研究区边界文件绝对路径、实际图层编号、区域或 bbox:南,西,北,东；已知边界时直接传真实文件路径，不把未绑定的自拟图层名称当范围。尚未确定可省略。
         scale:
           type: string
-          description: auto或比例尺
+          description: 地图比例尺，例如 auto 或 1:500000；不是栅格像元分辨率，不能填100米。分辨率按类别支持的need.params字段表达。
         fields:
           type: object
           additionalProperties:
@@ -67,7 +67,7 @@ spec:
   - name: include_fallback
     type: boolean
     required: false
-    description: 建议设为true，在没有确定性来源时列出实际可用的探索途径；可沿用本次find_id写入计划，无须先下载或重复查询。
+    description: 建议设为true，在没有确定性来源时列出实际可用的探索途径；仅用于查看候选或独立工具请求；v2计划只声明需求，不包含查询编号，无须先下载或重复查询。
   - name: provided
     type: array
     description: 用户明确给出的文件或文件夹路径；读取本机头部匹配，不联网，不写入原目录。

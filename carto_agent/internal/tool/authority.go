@@ -59,6 +59,10 @@ func (d ToolDefinition) EffectiveAccessPolicy() AccessPolicy {
 
 func (d ToolDefinition) ExecutionManifestEntry() toolcontract.ExecutionManifestEntry {
 	d.normalize()
+	var autoLoad *bool
+	if d.Execution.Output != nil {
+		autoLoad = &d.Execution.Output.AutoLoad
+	}
 	handlerFile := strings.TrimSpace(d.Execution.HandlerFile)
 	handlerFunc := strings.TrimSpace(d.Execution.HandlerFunc)
 	if handlerFile == "" || handlerFunc == "" {
@@ -85,6 +89,7 @@ func (d ToolDefinition) ExecutionManifestEntry() toolcontract.ExecutionManifestE
 		Visibility:          toolcontract.Visibility(d.EffectiveVisibility()),
 		AuthorizationScopes: d.EffectiveAuthorizationScopes(),
 		SourcePath:          strings.TrimSpace(d.SourcePath),
+		AutoLoad:            autoLoad,
 	}
 }
 

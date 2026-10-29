@@ -1,0 +1,11 @@
+apiVersion: layer-import-mapping/v1
+name: 1:100 万公众版
+note: 编码与级别字段以实际下载包为准；多级数据需确认或先按级别拆分，不自动假定行政级别。
+entries:
+  - {codes: [BOUA], category: admin.division, suggestions: [省域面, 市域面, 县域面]}
+  - {codes: [BOUL], category: admin.boundary_line, suggestions: [省界, 市界, 县界]}
+  - {codes: [HYDA], category: hydro.water_polygon, suggestions: [河流面]}
+  - {codes: [HYDL], category: hydro.river_line, suggestions: [河流线]}
+  - {codes: [LRRL], category: transport.railway, suggestions: [铁路]}
+  - {codes: [LRDL], category: transport.road.major, suggestions: [高速公路, 国道, 公路]}
+  - {codes: [RESP, AGNP], category: settlement.county_seat, suggestions: [县级城市驻地, 地级城市驻地]}

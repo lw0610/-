@@ -76,7 +76,7 @@
     ]
   },
   "scale": {
-    "min_denominator": 5000000
+    "min_denominator": 3000001
   },
   "license": "Public Domain",
   "attribution": "Made with Natural Earth",
@@ -97,5 +97,11 @@
     "examples": [
       "世界河流概览"
     ]
-  }
+  },
+  "method": "ne",
+  "scale_classes": [
+    "overview"
+  ],
+  "chinese_names": false,
+  "typical_seconds": 60
 }

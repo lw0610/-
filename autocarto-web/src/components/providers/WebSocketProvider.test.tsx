@@ -435,6 +435,28 @@ describe('WebSocketProvider session attach recovery', () => {
     expect(cards[1]).toMatchObject({callId: 'b', args: {name: '统计专题图指南'}, result: '统计专题图指南未找到'})
   })
 
+  it('keeps flow-tagged agent thinking and full tool details without requiring a plan step', async () => {
+    await act(async () => { render(<WebSocketProvider><div>agent timeline</div></WebSocketProvider>) })
+    const fullResult = `已读取正文：${'完整返回内容'.repeat(80)}`
+    await act(async () => {
+      websocketHarness.emitConnection(true)
+      const emit = (phase: string, content: string, data: Record<string, unknown> = {}) => websocketHarness.emitMessage({
+        type: 'agent_workflow', session_id: 'sid-reconnect', agent: 'system_data_acquisition', agent_display_name: '数据获取智能体',
+        phase, content, data: {flow_run_id: 'preparing-flow', ...data},
+      })
+      emit('thinking', '先读取用户上传文件，再确认所需字段。')
+      emit('tool_call', '调用文件读取', {tool: 'read_file', call_id: 'read-1', tool_args: {path: '/tmp/上传材料.txt'}})
+      emit('tool_result', '文件读取完成', {tool: 'read_file', call_id: 'read-1', status: 'completed', success: true, result: fullResult})
+    })
+    const state = useChatStore.getState()
+    expect(state.sessionMessages['sid-reconnect'] || []).toEqual([])
+    expect(state.workflowBlocks).toHaveLength(1)
+    expect(state.workflowBlocks[0]).toMatchObject({agent: 'system_data_acquisition', agentDisplayName: '数据获取智能体'})
+    expect(state.workflowBlocks[0].entries).toHaveLength(2)
+    expect(state.workflowBlocks[0].entries[0].content).toBe('先读取用户上传文件，再确认所需字段。')
+    expect(state.workflowBlocks[0].entries[1].toolCard).toMatchObject({callId: 'read-1', args: {path: '/tmp/上传材料.txt'}, result: fullResult, status: 'completed'})
+  })
+
   it('shows explicit request status after tool activity and replaces its heartbeats', async () => {
     await act(async () => { render(<WebSocketProvider><div>progress</div></WebSocketProvider>) })
     await act(async () => {
@@ -923,7 +945,7 @@ describe('WebSocketProvider session attach recovery', () => {
     })
   })
 
-  it('restores flow-only snapshots, skips covered replay and folds tagged process messages', async () => {
+  it('restores flow snapshots, skips covered replay and puts process replay in the original agent timeline', async () => {
     render(<WebSocketProvider><AttachStateProbe /></WebSocketProvider>)
     await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
     const snapshot = { api_version: 'flow-run/v1', flow_run_id: 'flow-r', session_id: 'sid-reconnect', flow_id: 'demo', status: 'waiting_user', started_at: '2026-10-21T00:00:00Z', steps: [{ id: 's1', index: 1, title: '检查', role: '数据角色', status: 'waiting_user', attempts: [], outputs: {} }], result: { deliverables: {}, issues: [], summary: '' } }
@@ -933,13 +955,23 @@ describe('WebSocketProvider session attach recovery', () => {
     })
     expect(useFlowRunStore.getState().runs['sid-reconnect'][0].steps[0].status).toBe('waiting_user')
     act(() => websocketHarness.emitMessage({ type: 'run_event', content: '', session_id: 'sid-reconnect', data: { seq: 13, replayed: true, source_type: 'agent_workflow', payload: { content: '真实能力回执', session_id: 'sid-reconnect', flow_run_id: 'flow-r', step_id: 's1', phase: 'tool_result', tool: 'get_layers_info', result: '图层存在' } } }))
-    expect(useChatStore.getState().messages.at(-1)).toMatchObject({ type: 'tool', content: '真实能力回执', data: { flow_run_id: 'flow-r', step_id: 's1' } })
-    expect(useChatStore.getState().workflowBlocks).toEqual([])
+    expect(useChatStore.getState().messages).toEqual([])
+    expect(useChatStore.getState().workflowBlocks[0].entries[0]).toMatchObject({ type: 'tool', content: '真实能力回执', data: { flow_run_id: 'flow-r', step_id: 's1' }, toolCard: {tool: 'get_layers_info', result: '图层存在'} })
     expect(useFlowRunStore.getState().runs['sid-reconnect'][0].steps[0].status).toBe('waiting_user')
     act(() => websocketHarness.emitMessage({ type: 'flow_event', content: '', session_id: 'other-session', data: { event: 'flow.started', session_id: 'other-session', flow_run_id: 'other-r', payload: { flow_id: 'demo', steps: [] } } }))
     expect(useFlowRunStore.getState().runs['other-session'][0].flow_run_id).toBe('other-r')
     expect(useChatStore.getState().sessionId).toBe('sid-reconnect')
     await act(async () => {})
+  })
+
+  it('restores original workflow blocks from a run_event session snapshot without regrouping them', async () => {
+    render(<WebSocketProvider><div>history</div></WebSocketProvider>)
+    await waitFor(() => expect(websocketHarness.connectMock).toHaveBeenCalledTimes(1))
+    const original = {id: 'persisted-agent-block', agent: 'cartographer', agentDisplayName: '制图智能体', summary: '原始过程', status: 'completed', startedAt: 1000, updatedAt: 2000,
+      entries: [{id: 'thinking-entry', type: 'thinking', phase: 'thinking', content: '使用已确认的路线数据。', timestamp: 1000, data: {flow_run_id: 'history-flow'}}]}
+    act(() => websocketHarness.emitMessage({type: 'run_event', session_id: 'sid-reconnect', content: '', data: {source_type: 'session_state', payload: {session_id: 'sid-reconnect', workflow_blocks: [original], runtime_status: 'completed'}}}))
+    expect(useChatStore.getState().sessionWorkflowBlocks['sid-reconnect']).toEqual([original])
+    expect(useChatStore.getState().sessionMessages['sid-reconnect'] || []).toEqual([])
   })
 
 

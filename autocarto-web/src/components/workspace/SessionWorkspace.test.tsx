@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SessionWorkspace, { workspaceUsesDrawer } from './SessionWorkspace'
 import { useUIStore } from '@/stores/uiStore'
+import { useFlowRunStore } from '@/features/plan/store'
 import type { TodoItem, WorkflowBlock, WSMessage } from '@/types/message'
 const { listeners, refresh } = vi.hoisted(() => ({
   listeners: new Set<(message: WSMessage) => void>(),
@@ -82,6 +83,7 @@ beforeEach(() => {
     filesViewedAt: {},
     sessionPanelCollapsed: false,
   })
+  useFlowRunStore.setState({runs: {}, plans: {}})
 })
 describe('会话工作区', () => {
   it('图标栏常驻，选择页签有高亮，再次点击收起', () => {
@@ -132,6 +134,18 @@ describe('会话工作区', () => {
     render(<SessionWorkspace {...props} workflowBlocks={[{ ...blocks[0], status: 'completed' }]} focusedWorkflowBlockId="wf-1" />)
     expect(screen.getByText('tasks:1')).toBeVisible()
     expect(screen.getByText('规划角色:展开')).toBeVisible()
+  })
+  it('流程任务仍显示原始智能体块，不把步骤回执重新拼成过程', () => {
+    useUIStore.getState().openWorkspace('process')
+    useFlowRunStore.setState({runs: {sid: [{api_version: 'flow-run/v1', flow_run_id: 'run', session_id: 'sid', flow_id: '', status: 'completed', started_at: '2026-10-29T00:00:00Z',
+      steps: [{id: 'step', index: 1, title: '步骤标题', role: 'data_engineer', status: 'completed', outputs: {}, attempts: [{run_id: 'attempt', started_at: '2026-10-29T00:00:00Z', receipt: {status: 'completed', summary: '额外步骤回执', outputs: {}, issues: []}}]}],
+      result: {summary: '', deliverables: {}, issues: []}}]}})
+    const original = {...blocks[0], status: 'completed' as const, entries: [{id: 'entry', type: 'thinking' as const, content: '原始思考内容', timestamp: Date.parse('2026-10-29T00:00:01Z'), data: {flow_run_id: 'run', step_id: 'step', run_id: 'attempt'}}]}
+    render(<SessionWorkspace {...props} workflowBlocks={[original]} focusedWorkflowBlockId={original.id}/>)
+    // The original id remains the focus target; a step-derived replacement
+    // would lose this selection and collapse the completed block.
+    expect(screen.getByText('规划角色:展开')).toBeVisible()
+    expect(screen.queryByText('数据工程智能体:收起')).not.toBeInTheDocument()
   })
   it('待确认只读内容仍展示且没有确认操作', () => {
     useUIStore.getState().openWorkspace('tasks')

@@ -1,6 +1,8 @@
 package flow
 
 import (
+	"errors"
+	"github.com/autocarto/carto_agent/internal/layers"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -8,7 +10,7 @@ import (
 	"github.com/autocarto/carto_agent/internal/resource"
 )
 
-var visualReference = regexp.MustCompile(`(样式|版面|版式)?[ \t]*「([^」\n]+)」`)
+var visualReference = regexp.MustCompile(`(内置图层|图层|样式|版面|版式)?[ \t]*「([^」\n]+)」`)
 var flowLocalPath = regexp.MustCompile("(?:^|[\\s（(：:，,`\"'])((?:[A-Za-z]:[\\\\/]|/[^/])[^\\s「」<>\"'`，；。]+)")
 
 // ParseGuide only reads metadata and style/layout references. It never turns
@@ -43,6 +45,29 @@ func ParseGuide(raw string, environments ...GuideEnvironment) *GuideDoc {
 			case "版面", "版式":
 				typ = "layout"
 			}
+		}
+		if match[2] >= 0 && (body[match[2]:match[3]] == "图层" || body[match[2]:match[3]] == "内置图层") {
+			if seen["layer\x00"+name] {
+				continue
+			}
+			seen["layer\x00"+name] = true
+			ref := LayerReference{Name: name, Line: offset + lineNumber(body, match[0])}
+			if env.Layers != nil {
+				item, err := layers.ResolveName(env.Layers, name)
+				if err == nil {
+					ref.ID = item.ID
+					ref.Digest = item.Digest
+					if item.Status != "ready" {
+						add("FLOW_LAYER_CHANGED", ref.Line, "引用的内置图层需要重新确认："+name)
+					}
+				} else if errors.Is(err, layers.ErrAmbiguous) {
+					add("FLOW_LAYER_AMBIGUOUS", ref.Line, "内置图层别名有歧义："+name)
+				} else {
+					add("FLOW_LAYER_NOT_FOUND", ref.Line, "需要导入的内置图层："+name)
+				}
+			}
+			g.Layers = append(g.Layers, ref)
+			continue
 		}
 		candidates := []resource.LibraryItem{}
 		for _, r := range env.Resources {
@@ -96,5 +121,5 @@ func resourceDocument(raw string, libraries ...*resource.Library) *FlowDoc {
 		env, _ = GuideEnvironmentFromLibrary(libraries[0])
 	}
 	g := ParseGuide(raw, env)
-	return &FlowDoc{Meta: g.Meta, Resources: g.Resources, Diagnostics: g.Diagnostics}
+	return &FlowDoc{Meta: g.Meta, Resources: g.Resources, Layers: g.Layers, Diagnostics: g.Diagnostics}
 }

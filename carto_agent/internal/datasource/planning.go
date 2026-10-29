@@ -24,6 +24,7 @@ type ExtentPlan struct {
 	ExpandPercent    float64   `json:"expand_percent,omitempty"`
 }
 type AcquisitionItem struct {
+	Method             string            `json:"method,omitempty"`
 	Key                string            `json:"key"`
 	Requirement        string            `json:"requirement"`
 	Entry              string            `json:"entry,omitempty"`
@@ -170,6 +171,13 @@ func (e PlanningEnvironment) Rank(item AcquisitionItem) AcquisitionItem {
 		if a.Tier != b.Tier {
 			return a.Tier < b.Tier
 		}
+		if len(category.Routing) > 0 {
+			order := category.Routing[ScaleClass(item.Scale)].Methods
+			ar, br := preference(order, sa.RoutingMethod()), preference(order, sb.RoutingMethod())
+			if ar != br {
+				return ar < br
+			}
+		}
 		if (a.Derived == "") != (b.Derived == "") {
 			return a.Derived == ""
 		}
@@ -208,6 +216,27 @@ func (e PlanningEnvironment) sourceReasons(s Source, c *Category, item Acquisiti
 }
 func (e PlanningEnvironment) sourceReasonsForCache(s Source, c *Category, item AcquisitionItem, cached bool) []string {
 	reasons := []string{}
+	method := s.RoutingMethod()
+	if item.Method != "" && method != item.Method && s.ID != item.Method {
+		reasons = append(reasons, "用户指定检索方式："+item.Method)
+	}
+	if s.Kind != "local_folder" && s.Kind != "offline_asset" && c != nil && len(c.Routing) > 0 {
+		rule := c.Routing[ScaleClass(item.Scale)]
+		if !contains(rule.Methods, method) && !(e.portalExploration && (method == "portal" || method == "search") && contains(rule.Methods, "agent")) {
+			reasons = append(reasons, "此类别在当前比例尺档不使用"+method)
+		}
+	}
+	if len(s.ScaleClasses) > 0 && item.Scale > 0 && !contains(s.ScaleClasses, ScaleClass(item.Scale)) {
+		reasons = append(reasons, "来源不适用当前比例尺档")
+	}
+	if s.ChineseNames != nil && !*s.ChineseNames && (item.Extent == nil || len(item.Extent.BBox) != 4 || Intersects(item.Extent.BBox, []float64{73, 3, 136, 54})) {
+		for field, standard := range item.Fields {
+			if field == "name" || standard == "name" {
+				reasons = append(reasons, "需要中文名称，此来源不提供中文名")
+				break
+			}
+		}
+	}
 	if s.Status == "experimental" && !(e.portalExploration && s.Kind == "portal") {
 		reasons = append(reasons, "该来源尚未完成验证")
 	}
@@ -283,26 +312,34 @@ func (e PlanningEnvironment) sourceReasonsForCache(s Source, c *Category, item A
 	}
 	return reasons
 }
-func sourceTier(s Source) int {
-	switch s.Kind {
-	case "local_folder":
-		return 2
-	case "offline_asset":
-		return 3
-	case "tianditu":
-		if s.Compliance == "cn_official" {
-			return 4
-		}
-		return 6
-	case "http_file":
-		return 5
-	case "overpass", "ogc_wfs", "arcgis_rest", "gee":
-		return 6
-	case "portal":
-		return 7
-	default:
-		return 8
+
+// ScaleClass is shared by routing, normalization and semantic cache keys.
+func ScaleClass(denominator int) string {
+	if denominator <= 500000 {
+		return "detailed"
 	}
+	if denominator <= 3000000 {
+		return "regional"
+	}
+	return "overview"
+}
+func (s Source) RoutingMethod() string {
+	if s.Method != "" {
+		return s.Method
+	}
+	switch s.Kind {
+	case "web_search":
+		return "search"
+	case "offline_asset", "local_folder":
+		return "builtin"
+	}
+	return s.Kind
+}
+func sourceTier(s Source) int {
+	if s.Kind == "local_folder" || s.Kind == "offline_asset" {
+		return 0
+	}
+	return 2
 }
 func preference(values []string, id string) int {
 	for i, v := range values {

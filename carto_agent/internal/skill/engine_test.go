@@ -108,7 +108,7 @@ execution:
 	if computeInvoker.lastReq.ProjectID != "project-123" {
 		t.Fatalf("unexpected project id: %s", computeInvoker.lastReq.ProjectID)
 	}
-	if computeInvoker.lastReq.Tool != "buffer" {
+	if computeInvoker.lastReq.Tool != "buffer_analysis" {
 		t.Fatalf("unexpected backend tool: %s", computeInvoker.lastReq.Tool)
 	}
 	wantParams := map[string]any{

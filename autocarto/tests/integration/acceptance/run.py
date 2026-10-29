@@ -23,12 +23,11 @@ def expand(value, variables):
 
 
 
-def input_hashes():
+def input_hashes(layer_dir=None):
     result = {}
     roots = [ROOT/"autocarto/tests/golden/fixtures", ROOT/"docs/refactor/acceptance-flows"]
-    basemap = os.environ.get("AUTOCARTO_GOLDEN_BASEMAP_DIR")
-    if basemap:
-        roots.append(Path(basemap))
+    if layer_dir:
+        roots.append(Path(layer_dir))
     for root in roots:
         for path in root.rglob("*"):
             if path.is_file() and not path.is_symlink() and "__pycache__" not in path.parts:
@@ -41,6 +40,7 @@ def main():
     parser.add_argument("recipes", nargs="+", type=Path)
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--python", default=sys.executable)
+    parser.add_argument("--layers", type=Path, help="导入为内置图层的 China_map 夹具目录；不向步骤传递原始目录")
     parser.add_argument("--examples", type=Path, default=Path(__file__).with_name("guides"))
     args = parser.parse_args()
     args.out = args.out.resolve()
@@ -56,18 +56,22 @@ def main():
         output = args.out/scenario["id"]
         output.mkdir()
         variables = {"root": ROOT, "assets": ROOT/"autocarto", "fixture": ROOT/"autocarto/tests/golden/fixtures",
-                     "out": output, "package": path.parent, "basemap": os.environ.get("AUTOCARTO_GOLDEN_BASEMAP_DIR", ""),
+                     "out": output, "package": path.parent,
                      "renderer": os.environ.get("AUTOCARTO_ROUTE_RENDERER_DIR", "")}
         scenario = expand(scenario, variables)
+        if scenario.get("builtin_layers"):
+            if not args.layers:
+                parser.error("该场景需要 --layers 指定待导入的图层夹具目录")
+            scenario["layer_import_dir"] = str(args.layers.resolve())
         scenario.update(root=str(ROOT), out=str(output), python=args.python, examples=str(args.examples.resolve()))
         scenario["variables"].update({key: str(value) for key, value in variables.items()})
         config = output/"scenario.json"
         config.write_text(json.dumps(scenario, ensure_ascii=False, indent=2)+"\n")
-        before = input_hashes()
+        before = input_hashes(args.layers)
         (output/"input-hashes-before.json").write_text(json.dumps(before, ensure_ascii=False, indent=2)+"\n")
         process = subprocess.run([str(executable), str(config)], cwd=ROOT/"carto_agent", env=environment, text=True, capture_output=True)
         (output/"controller.log").write_text(process.stdout+process.stderr)
-        after = input_hashes()
+        after = input_hashes(args.layers)
         (output/"input-hashes-after.json").write_text(json.dumps(after, ensure_ascii=False, indent=2)+"\n")
         if before != after:
             raise AssertionError("验收输入数据被修改，拒绝记录通过")

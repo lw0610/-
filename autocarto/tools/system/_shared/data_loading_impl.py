@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from typing import Any, Dict
@@ -69,7 +70,8 @@ def _resolve_loading_source(raw_path, kind):
 def _layer_data(layer, reused):
     geometry_type = QgsWkbTypes.geometryDisplayString(layer.geometryType()) if isinstance(layer, QgsVectorLayer) else "Raster"
     return {"layer_id": layer.id(), "layer_name": layer.name(), "source": redact_sensitive_text(layer.source()),
-            "crs": _crs_label(layer.crs()), "geometry_type": geometry_type, "reused": reused}
+            "crs": _crs_label(layer.crs()), "geometry_type": geometry_type, "reused": reused,
+            "shown": QgsProject.instance().layerTreeRoot().findLayer(layer.id()) is not None}
 
 
 def _find_existing_source(source, kind):
@@ -79,8 +81,16 @@ def _find_existing_source(source, kind):
         if not isinstance(layer, expected_class) or not layer.isValid():
             continue
         try:
-            if normalized_data_source(layer.source()) == identity:
+            existing = normalized_data_source(layer.source())
+            if existing == identity:
                 return layer
+            if kind == "vector" and existing[0] == identity[0] and (not existing[1] or not identity[1]):
+                from qgis.core import QgsProviderRegistry
+                sublayers = QgsProviderRegistry.instance().querySublayers(identity[0])
+                if sublayers:
+                    default_name = sublayers[0].name()
+                    if (existing[1] or default_name) == (identity[1] or default_name):
+                        return layer
         except (DataLoadingError, ValueError, OSError):
             continue
     return None
@@ -88,29 +98,53 @@ def _find_existing_source(source, kind):
 
 def _load_data_layer(params, kind):
     try:
+        project = QgsProject.instance()
+        show = boolean_parameter(params.get("show"), True)
         raw_path = params.get("path")
-        if not raw_path:
-            raise DataLoadingError("invalid_arguments", "错误：缺少文件路径参数")
-        reuse = boolean_parameter(params.get("reuse_existing"), True)
-        source, resolution = _resolve_loading_source(raw_path, kind)
-        existing = _find_existing_source(source, kind) if reuse else None
-        if existing is not None:
-            return {"success": True, "output": existing.name(), "info": "复用已加载图层: " + existing.name(),
-                    "data": _layer_data(existing, True)}
-        filename, _ = split_data_source(source)
-        layer_name = params.get("layer_name") or os.path.splitext(os.path.basename(filename))[0]
-        layer = QgsVectorLayer(source, layer_name, "ogr") if kind == "vector" else QgsRasterLayer(source, layer_name)
-        if not layer.isValid():
-            raise DataLoadingError("data_layer_invalid", "错误：无法加载图层，文件格式可能不支持或文件损坏")
-        QgsProject.instance().addMapLayer(layer)
-        refresh_canvas()
+        layer_id = params.get("layer_id")
+        if layer_id:
+            layer = project.mapLayer(layer_id)
+            expected = QgsVectorLayer if kind == "vector" else QgsRasterLayer
+            if not isinstance(layer, expected) or not layer.isValid():
+                raise DataLoadingError("input_missing", "已准备的图层不在当前工程中或类型不匹配: " + str(layer_id))
+        elif raw_path:
+            source, _ = _resolve_loading_source(raw_path, kind)
+            layer = _find_existing_source(source, kind)
+            if layer is not None:
+                # A file may have been updated by an external processing script.
+                layer.dataProvider().reloadData()
+                if kind == "vector":
+                    layer.updateFields()
+                    layer.updateExtents(True)
+                layer.triggerRepaint()
+        else:
+            raise DataLoadingError("invalid_arguments", "请提供文件路径 path 或已准备的 layer_id")
+        reused = layer is not None
+        if not reused:
+            filename, _ = split_data_source(source)
+            layer_name = params.get("layer_name") or os.path.splitext(os.path.basename(filename))[0]
+            layer = QgsVectorLayer(source, layer_name, "ogr") if kind == "vector" else QgsRasterLayer(source, layer_name)
+            if not layer.isValid():
+                raise DataLoadingError("data_layer_invalid", "错误：无法加载图层，文件格式可能不支持或文件损坏")
+            owner = params.get("_autocarto_output_owner") or {}
+            if owner.get("session_id"):
+                layer.setCustomProperty("autocarto/output_owner", json.dumps([owner["session_id"], owner.get("flow_run_id", ""), owner.get("step_id", "")]))
+            project.addMapLayer(layer, False)
+        if params.get("layer_name"):
+            layer.setName(params["layer_name"])
+        if show:
+            root = project.layerTreeRoot()
+            root.setHasCustomLayerOrder(False)
+            node = root.findLayer(layer.id()) or root.insertLayer(0, layer)
+            node.setItemVisibilityChecked(True)
+            refresh_canvas()
         if kind == "vector":
             details = f"要素数: {layer.featureCount()}, 几何类型: {QgsWkbTypes.geometryDisplayString(layer.geometryType())}, 字段数: {len(layer.fields())}"
         else:
             details = f"宽度: {layer.width()}, 高度: {layer.height()}, 波段数: {layer.bandCount()}"
         return {"success": True, "output": layer.name(),
-                "info": f"图层加载成功。{details}, 坐标系: {_crs_label(layer.crs())}, resolved_from: {resolution.get('source', 'unknown')}",
-                "data": _layer_data(layer, False)}
+                "info": f"图层{'已显示' if show else '已准备，可用 layer_id 继续处理'}。{details}, 坐标系: {_crs_label(layer.crs())}",
+                "data": _layer_data(layer, reused)}
     except DataLoadingError as exc:
         return {"success": False, "output": "", "info": str(exc), "message": str(exc),
                 "error_type": exc.code, "data": exc.details}
@@ -212,7 +246,7 @@ def export_vector_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         if not output_format:
             output_format = "GeoJSON"
         ext = ext_map.get(output_format, ".shp")
-        default_filename = f"{layer_name}_export{ext}"
+        default_filename = f"{layers[0].name()}{ext}"
         output_path = resolve_output_path(output_path, default_filename, "exports")
 
         write_result = QgsVectorFileWriter.writeAsVectorFormat(
@@ -235,11 +269,28 @@ def export_vector_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": f"导出矢量图层失败: {error_message or error_code}",
             }
 
-        return {
+        result = {
             "success": True,
             "output": output_path,
             "info": f"矢量图层导出成功: {output_path}",
         }
+        layer = layers[0]
+        owner = json.loads(layer.customProperty("autocarto/output_owner", "[]"))
+        session_id = str(params.get("session_id") or (params.get("_autocarto_output_owner") or {}).get("session_id") or getattr(session, "session_id", "") or "")
+        if layer.customProperty("autocarto/field_working", False) or (layer.providerType() == "memory" and owner and owner[0] == session_id):
+            from qgis.core import QgsMapLayerStyle
+            from autocarto.tools.system._shared.vector_attributes_impl import _build_output_layer_ref
+            style = QgsMapLayerStyle()
+            style.readFromLayer(layer)
+            layer.setDataSource(output_path, layer.name(), "ogr", False)
+            style.writeToLayer(layer)
+            layer.updateFields()
+            layer.updateExtents()
+            result["data"] = _layer_data(layer, True)
+            result["output_layers"] = [_build_output_layer_ref(layer)]
+            result["info"] += "；已保存当前工作图层，继续使用返回的 layer_id，无需再次加载"
+            refresh_canvas()
+        return result
 
     except DataLoadingError as e:
         return {"success": False, "output": "", "info": str(e), "error_type": e.code, "data": e.details}
@@ -256,7 +307,7 @@ def _place_layer_in_group(layer, name):
     group = root.findGroup(name) or root.addGroup(name)
     node = root.findLayer(layer.id())
     if node is not None and node.parent() != group:
-        group.addChildNode(node.clone())
+        group.insertChildNode(0, node.clone())
         node.parent().removeChildNode(node)
 
 
@@ -265,19 +316,22 @@ def load_list_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     try:
         items = params.get("items")
         if not isinstance(items, list) or not items or len(items) > 10000:
-            raise DataLoadingError("invalid_arguments", "items 必须是非空数据列表，每项为 name、path")
+            raise DataLoadingError("invalid_arguments", "items 必须是非空数据列表，每项提供 name 及 path 或 layer_id")
         rows = []
         seen = set()
         for item in items:
-            if not isinstance(item, dict) or not isinstance(item.get("name"), str) or not item["name"].strip() or not isinstance(item.get("path"), str) or not item["path"].strip():
-                raise DataLoadingError("invalid_arguments", "每项数据必须提供名称与文件路径")
+            if not isinstance(item, dict) or not isinstance(item.get("name"), str) or not item["name"].strip():
+                raise DataLoadingError("invalid_arguments", "每项数据必须提供名称")
+            if not item.get("layer_id") and (not isinstance(item.get("path"), str) or not item["path"].strip()):
+                raise DataLoadingError("invalid_arguments", "每项数据必须提供文件路径 path 或已准备的 layer_id")
             if item["name"] in seen: raise DataLoadingError("invalid_arguments", "数据名称重复：" + item["name"])
             seen.add(item["name"])
-            filename, options = split_data_source(item["path"])
-            path = resolve_project_path(filename)
-            kind = item.get("kind") or ("raster" if path.suffix.lower() in (".tif", ".tiff", ".img", ".vrt", ".asc", ".nc", ".jp2") else "vector")
+            existing = QgsProject.instance().mapLayer(item["layer_id"]) if item.get("layer_id") else None
+            filename, options = split_data_source(item["path"]) if item.get("path") else ("", [])
+            path = resolve_project_path(filename) if filename else None
+            kind = item.get("kind") or ("raster" if isinstance(existing, QgsRasterLayer) or (path and path.suffix.lower() in (".tif", ".tiff", ".img", ".vrt", ".asc", ".nc", ".jp2")) else "vector")
             if kind not in ("vector", "raster"): raise DataLoadingError("invalid_arguments", "kind 只能是 vector 或 raster")
-            rows.append({"name": item["name"], "path": str(path) + ("|" + "|".join(options) if options else ""), "kind": kind, "required": boolean_parameter(item.get("required"), True), "exists": path.is_file(), "layer_id": item.get("layer_id")})
+            rows.append({"name": item["name"], "path": (str(path) + ("|" + "|".join(options) if options else "")) if path else "", "kind": kind, "required": boolean_parameter(item.get("required"), True), "exists": path is not None and path.is_file(), "layer_id": item.get("layer_id")})
         names = params.get("names")
         if names is not None and (not isinstance(names, list) or any(not isinstance(name, str) or not name.strip() for name in names)):
             raise DataLoadingError("invalid_arguments", "names 须为非空名称组成的数组")
@@ -286,7 +340,7 @@ def load_list_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         if unknown:
             raise DataLoadingError("data_list_names_not_found", "数据列表没有指定名称", {"unmatched_names": unknown})
         strict = boolean_parameter(params.get("strict"), True)
-        reuse = boolean_parameter(params.get("reuse_existing"), True)
+        show = boolean_parameter(params.get("show"), True)
         group = params.get("group")
         if group is not None and not isinstance(group, str):
             raise DataLoadingError("invalid_arguments", "group 须为图层分组名称字符串")
@@ -324,15 +378,16 @@ def load_list_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                     "error_type": "data_list_required_missing", "warnings": [], "data": {"entries": entries, "crs_summary": {}, "loaded_count": 0, "reused_count": 0}}
         summary = {}
         for entry, source, kind, existing in plans:
-            result = ({"success": True, "data": _layer_data(existing, True), "info": "复用系统已准备的图层"}
-                      if existing is not None else _load_data_layer({"path": source, "layer_name": entry["name"], "reuse_existing": reuse}, kind))
+            result = _load_data_layer({"path": source, "layer_id": existing.id() if existing is not None else None,
+                                       "layer_name": entry["name"], "show": show,
+                                       "_autocarto_output_owner": params.get("_autocarto_output_owner")}, kind)
             if result.get("success"):
                 data = result["data"]
                 entry.update(status="reused" if data["reused"] else "loaded", layer_id=data["layer_id"],
                              crs=data["crs"], geometry_type=data["geometry_type"], message=result["info"],
                              layer_name=data["layer_name"])
                 summary.setdefault(data["crs"], []).append({"layer_id": data["layer_id"], "layer_name": data["layer_name"]})
-                if group and group.strip():
+                if show and group and group.strip():
                     _place_layer_in_group(QgsProject.instance().mapLayer(data["layer_id"]), group.strip())
             else:
                 entry.update(status="failed", message=result.get("info", "加载失败"))

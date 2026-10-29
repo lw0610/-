@@ -40,7 +40,7 @@ type knowledgeCompileFailure struct {
 func (f *knowledgeCompileFailure) result() map[string]any {
 	return map[string]any{
 		"success": false, "error": f.Error(), "info": f.Error(), "knowledge_review": KnowledgeReviewInfo(f.review),
-		"next_action": "修正制图参数后，以 review_id、revision、route_style、symbols 再次委派本专家。复用已确认结果，不重新抽取、不重复要求用户确认；同一错误不要重复重试。",
+		"next_action": "以 review_id、revision 再次委派本专家，复用已确认结果，不重新抽取或重复确认。未明确指定样式或符号表时省略 route_style、symbols，清除旧选择并使用内置绘制规则；只有明确指定表时才传对应参数。",
 	}
 }
 
@@ -95,8 +95,13 @@ func knowledgeToolInvokable(t tool.BaseTool) bool {
 	return ok
 }
 
-func (a *knowledgeSubAgent) Name(context.Context) string        { return a.name }
-func (a *knowledgeSubAgent) Description(context.Context) string { return a.description }
+func (a *knowledgeSubAgent) Name(context.Context) string { return a.name }
+func (a *knowledgeSubAgent) Description(context.Context) string {
+	return a.description + `
+调用 task 委派本专家时，description 使用 JSON 字符串。处理当前材料的最小输入是 {"source_ref":"current_task_input"}：优先读取当前提供的附件，没有附件时读取当前用户消息正文。选定附件使用 source_ref（附件编号或文件路径），多份原文使用 source_refs 数组；current_user_message 只读取用户消息正文，不读取附件。也可用 source_text 传完整原文，rules 补充本次任务要求。
+程序读取完整原文、抽取并等待用户核对，确认后生成路线数据集。返回 compile_failed 和 knowledge_review.review_id/revision 时，以这两个值再次委派，接续已确认结果，不重新抽取或重复确认。只有用户明确要求重新抽取时才传 force_refresh:true。
+默认使用内置绘制规则；只有用户明确指定使用样式表、符号表时才传 route_style、symbols，不把一般配色或符号要求改成表名。接续时省略 route_style、symbols 会清除旧表选择并使用内置绘制规则。`
+}
 
 func (a *knowledgeSubAgent) Run(ctx context.Context, input *adk.AgentInput, _ ...adk.AgentRunOption) *adk.AsyncIterator[*adk.AgentEvent] {
 	iter, gen := adk.NewAsyncIteratorPair[*adk.AgentEvent]()
@@ -165,20 +170,19 @@ func resolveKnowledgeInputWithContext(ctx context.Context, input *adk.AgentInput
 		}
 		var fields map[string]json.RawMessage
 		if json.Unmarshal([]byte(message.Content), &fields) == nil {
+			options := map[string]any{}
 			if _, retry := fields["review_id"]; retry {
 				var request struct {
-					ReviewID   string `json:"review_id"`
-					Revision   int64  `json:"revision"`
-					RouteStyle string `json:"route_style"`
-					Symbols    string `json:"symbols"`
+					ReviewID string `json:"review_id"`
+					Revision int64  `json:"revision"`
 				}
 				if err := json.Unmarshal([]byte(message.Content), &request); err != nil {
-					return "", nil, fmt.Errorf("续编译需要 review_id、revision 和制图预设名称: %w", err)
+					return "", nil, fmt.Errorf("续编译参数格式错误: %w", err)
 				}
-				if strings.TrimSpace(request.ReviewID) == "" || request.Revision < 1 || strings.TrimSpace(request.RouteStyle) == "" || strings.TrimSpace(request.Symbols) == "" {
-					return "", nil, fmt.Errorf("续编译须提供 review_id、revision 及 route_style、symbols 预设名称")
+				if strings.TrimSpace(request.ReviewID) == "" || request.Revision < 1 {
+					return "", nil, fmt.Errorf("续编译须提供 review_id、revision")
 				}
-				return "", map[string]any{"review_id": request.ReviewID, "revision": request.Revision, "route_style": strings.TrimSpace(request.RouteStyle), "symbols": strings.TrimSpace(request.Symbols)}, nil
+				options["review_id"], options["revision"] = request.ReviewID, request.Revision
 			}
 			ref, hasRef := fields["source_ref"]
 			refs, hasRefs := fields["source_refs"]
@@ -193,7 +197,7 @@ func resolveKnowledgeInputWithContext(ctx context.Context, input *adk.AgentInput
 				if hasRef {
 					var name string
 					if json.Unmarshal(ref, &name) != nil || strings.TrimSpace(name) == "" {
-						return "", nil, fmt.Errorf("source_ref 必须是附件编号、文件路径或 current_user_message")
+						return "", nil, fmt.Errorf("source_ref 必须是附件编号、文件路径、current_task_input 或 current_user_message")
 					}
 					names = []string{name}
 				} else if json.Unmarshal(refs, &names) != nil || len(names) == 0 {
@@ -205,12 +209,14 @@ func resolveKnowledgeInputWithContext(ctx context.Context, input *adk.AgentInput
 				}
 				fields["source_text"], _ = json.Marshal(source)
 			}
-			if raw, exists := fields["source_text"]; exists {
+			raw, hasSource := fields["source_text"]
+			if _, retry := options["review_id"]; hasSource || retry {
 				var source string
-				if err := json.Unmarshal(raw, &source); err != nil || strings.TrimSpace(source) == "" {
-					return "", nil, fmt.Errorf("source_text 必须是非空字符串")
+				if hasSource {
+					if err := json.Unmarshal(raw, &source); err != nil || strings.TrimSpace(source) == "" {
+						return "", nil, fmt.Errorf("source_text 必须是非空字符串")
+					}
 				}
-				options := map[string]any{}
 				if value, exists := fields["force_refresh"]; exists {
 					// This is extraction control, not original text or a compiler option.
 					if string(value) != "true" && string(value) != "false" {
@@ -234,6 +240,19 @@ func resolveKnowledgeInputWithContext(ctx context.Context, input *adk.AgentInput
 						var selection any
 						if json.Unmarshal(value, &selection) != nil {
 							return "", nil, fmt.Errorf("%s 资源输入无效", key)
+						}
+						if selection == nil || selection == "" {
+							continue
+						}
+						if retry {
+							name, ok := selection.(string)
+							if !ok {
+								return "", nil, fmt.Errorf("续编译的 %s 必须是资源名称、编号或路径", key)
+							}
+							if name = strings.TrimSpace(name); name != "" {
+								options[key] = name
+							}
+							continue
 						}
 						if raw, ok := selection.(map[string]any); ok {
 							scope, present := resource.ScopeFromContext(ctx)
@@ -314,33 +333,38 @@ func (a *knowledgeSubAgent) extractAndCompile(ctx context.Context, input *adk.Ag
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
+	forceRefresh, _ := compileArgs["force_refresh"].(bool)
+	delete(compileArgs, "force_refresh")
 	if reviewID, retry := compileArgs["review_id"].(string); retry {
 		store := knowledgeReviewStore(ctx)
 		if store == nil {
 			return nil, &knowledgeRequestError{fmt.Errorf("续编译需要当前会话的已确认知识结果")}
 		}
-		review, err := store.RetryCompilation(toolsession.SessionIDFromContext(ctx), reviewID, compileArgs["revision"].(int64), map[string]string{
-			"route_style": compileArgs["route_style"].(string), "symbols": compileArgs["symbols"].(string),
-		})
+		review, err := store.Get(toolsession.SessionIDFromContext(ctx), reviewID)
+		if err == nil && !forceRefresh && (source == "" || source == review.SourceText) {
+			routeStyle, _ := compileArgs["route_style"].(string)
+			symbols, _ := compileArgs["symbols"].(string)
+			review, err = store.RetryCompilation(review.SessionID, reviewID, compileArgs["revision"].(int64), map[string]string{
+				"route_style": routeStyle, "symbols": symbols,
+			})
+			if err == nil {
+				return a.compileConfirmedKnowledge(ctx, store, review)
+			}
+		}
 		if err != nil {
 			if errors.Is(err, knowledge.ErrReviewConflict) || errors.Is(err, knowledge.ErrReviewNotFound) {
 				return nil, &knowledgeRequestError{err}
 			}
 			return nil, err
 		}
-		return a.compileConfirmedKnowledge(ctx, store, review)
-	}
-	missing := []string{}
-	for _, key := range []string{"route_style", "symbols"} {
-		if _, exists := compileArgs[key]; !exists {
-			missing = append(missing, key)
+		// Revised instructions do not discard confirmed facts. A changed source
+		// or an explicit refresh starts a new extraction with this request's rules.
+		if source == "" {
+			source = review.SourceText
 		}
+		delete(compileArgs, "review_id")
+		delete(compileArgs, "revision")
 	}
-	if len(missing) > 0 {
-		return nil, &knowledgeRequestError{fmt.Errorf("尚未开始抽取：缺少制图预设 %s。按本次指南或用户要求选择预设名称，与 source_ref/source_refs 一同传入；不要让用户填写内部参数", strings.Join(missing, "、"))}
-	}
-	forceRefresh, _ := compileArgs["force_refresh"].(bool)
-	delete(compileArgs, "force_refresh")
 	rules, _ := compileArgs["rules"].(string)
 	delete(compileArgs, "rules")
 	contractResult, err := invokeRuntimeTool(ctx, a.tools[knowledgeContractTool], knowledgeContractTool, map[string]any{"source_text": source, "compact": true})
@@ -361,10 +385,11 @@ func (a *knowledgeSubAgent) extractAndCompile(ctx context.Context, input *adk.Ag
 	}
 	// Apply the actual configured extraction rules before checking caches or
 	// creating the editable result.
-	if strings.TrimSpace(rules) != "" {
-		contract.Instructions = rules
-	} else if a.instructions != "" {
+	if a.instructions != "" {
 		contract.Instructions = a.instructions
+	}
+	if rules = strings.TrimSpace(rules); rules != "" {
+		contract.Instructions += "\n\n本次任务要求：\n" + rules
 	}
 	sourceHash := sha256.Sum256([]byte(source))
 	if contract.ContractID == "" || contract.Instructions == "" || len(contract.JSONSchema) == 0 || contract.SourceSHA256 != hex.EncodeToString(sourceHash[:]) {

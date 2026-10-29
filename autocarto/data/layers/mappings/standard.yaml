@@ -1,0 +1,16 @@
+entries:
+  - {names: [省域, 省域面, 省级行政区], category: admin.division, params: {level: 省}, style: 省域面, labels: [NAME, name]}
+  - {names: [市域, 市域面, 地级行政区], category: admin.division, params: {level: 市}, style: 市域面, labels: [NAME, name]}
+  - {names: [县域, 县域面, 县级行政区], category: admin.division, params: {level: 县}, style: 县域面, labels: [NAME, name]}
+  - {names: [地区界线, 省界, 线状省界], category: admin.boundary_line, params: {level: 省}, style: 省界}
+  - {names: [市界, 地级界线], category: admin.boundary_line, params: {level: 市}, style: 省界}
+  - {names: [县界, 县级界线], category: admin.boundary_line, params: {level: 县}, style: 省界}
+  - {names: [河流线, 线状河流, 水系线], category: hydro.river_line, style: 河流线, labels: [NAME, name]}
+  - {names: [河流面, 面状河流, 水域面, 湖泊水库], category: hydro.water_polygon, style: 河流面}
+  - {names: [铁路, 铁路线], category: transport.railway, style: 铁路}
+  - {names: [高速公路, 高速], category: transport.road.expressway, style: 高速公路}
+  - {names: [国道, 普通国道], category: transport.road.national, style: 国道}
+  - {names: [公路, 主要公路, 干线公路], category: transport.road.major, style: 高速公路}
+  - {names: [地级城市驻地, 城市驻地, 地级驻地, 市级驻地], category: settlement.prefecture_seat, style: 地级城市驻地, labels: [name, NAME]}
+  - {names: [县级城市驻地, 县城驻地, 县级驻地], category: settlement.county_seat, style: 县级城市驻地, labels: [name, NAME]}
+  - {names: [海岸线, 海岸], category: hydro.coastline}

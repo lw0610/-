@@ -102,6 +102,54 @@ def _run_case(case, output):
         assert layout.itemById("title").textFormat().font().bold()
         default, visible = compose()
         assert [layer.name() for layer in visible.itemById("main_map").layers()] == ["主图层"]
+    elif case == "natural_loaded_order":
+        from qgis.core import QgsApplication
+        from qgis.gui import QgsLayerTreeMapCanvasBridge
+        import qgis.utils
+        from autocarto.tools.system._shared.print_layout_advanced_impl import set_map_layers_handler
+        root = project.layerTreeRoot()
+        bottom = project.mapLayersByName("主图层")[0]
+        hidden = project.mapLayersByName("地理图层")[0]
+        top = bottom.clone()
+        top.setName("最后加载的上层")
+        project.addMapLayer(top)
+        background = bottom.clone()
+        background.setName("后台计算结果")
+        project.addMapLayer(background, False)
+        group = root.addGroup("隐藏分组")
+        node = root.findLayer(hidden.id())
+        group.addChildNode(node.clone())
+        node.parent().removeChildNode(node)
+        group.setItemVisibilityChecked(False)
+        canvas = qgis.utils.iface.mapCanvas()
+        bridge = QgsLayerTreeMapCanvasBridge(root, canvas)
+        bridge.setCanvasLayers()
+        before = [(node.layerId(), node.isVisible()) for node in root.findLayers()]
+        expected = [top.id(), bottom.id()]
+        assert [layer.id() for layer in canvas.layers()] == expected
+        result, layout = compose()
+        QgsApplication.processEvents()
+        assert result["map_layer_ids"] == expected
+        assert [layer.id() for layer in layout.itemById("main_map").layers()] == expected
+        assert [layer.id() for layer in canvas.layers()] == expected
+        assert [(node.layerId(), node.isVisible()) for node in root.findLayers()] == before
+        assert not root.hasCustomLayerOrder()
+        assert root.findLayer(background.id()) is None
+
+        # An independent map frame can use different layers without publishing them.
+        result, layout = compose(map_layers=[bottom.id(), background.id()], extent_layers=[bottom.id()])
+        assert result["map_layer_ids"] == [bottom.id(), background.id()]
+        changed = set_map_layers_handler({"layout": common["layout"], "item_id": "main_map",
+                                          "layers": [hidden.id()]})
+        assert changed["success"], changed
+        QgsApplication.processEvents()
+        assert changed["data"]["layer_ids"] == [hidden.id()]
+        assert [layer.id() for layer in canvas.layers()] == expected
+        assert [(node.layerId(), node.isVisible()) for node in root.findLayers()] == before
+        assert not root.hasCustomLayerOrder()
+        assert root.findLayer(background.id()) is None
+        assert len(project.mapLayers()) == 4
+        del bridge
     elif case == "extra_legend_and_rollback":
         image_path = output/"symbol.png"
         image = QImage(10, 10, QImage.Format_ARGB32)
@@ -119,21 +167,86 @@ def _run_case(case, output):
         assert project.layoutManager().layoutByName(common["layout"]).itemById("legend") is legend
         result, replaced = compose(map_layers=["主图层"], elements={"grid": False})
         assert len(project.mapLayers()) == 2  # 替换完成后只移除该版面的旧图例占位层。
+    elif case == "legend_labels_and_anchor":
+        from qgis.PyQt.QtCore import Qt
+        from qgis.core import QgsLayoutPoint
+        from autocarto.tools.system._shared.print_layout_advanced_impl import set_legend_style_handler, _item_rect
+        primary = project.mapLayersByName("主图层")[0]
+        secondary = project.mapLayersByName("地理图层")[0]
+        branch = secondary.clone()
+        branch.setName("internal_branch")
+        project.addMapLayer(branch)
+        selected = [primary, secondary, branch]
+        original_names = [layer.name() for layer in selected]
+        _, layout = compose(map_layers=[layer.id() for layer in selected],
+                            legend_labels={primary.id(): "运输路线", secondary.name(): "巡检路线", branch.id(): "巡检支线"})
+        legend = layout.itemById("legend")
+        main = layout.itemById("main_map")
+        main_rect, initial = _item_rect(main), _item_rect(legend)
+        bottom = main_rect["y"] + main_rect["height"]
+        assert initial["x"] == pytest.approx(main_rect["x"])
+        assert initial["y"] + initial["height"] == pytest.approx(bottom)
+        assert [node.name() for node in legend.model().rootGroup().findLayers()] == ["运输路线", "巡检路线", "巡检支线"]
+
+        result = set_legend_style_handler({"layout": common["layout"], "item_id": "legend",
+                    "legend_layers": [primary.id(), secondary.id()],
+                    "legend_labels": {primary.id(): "运输路线", secondary.id(): "巡检路线"}})
+        assert result["success"], result
+        smaller = _item_rect(legend)
+        assert smaller["height"] < initial["height"]
+        assert smaller["x"] == pytest.approx(main_rect["x"])
+        assert smaller["y"] + smaller["height"] == pytest.approx(bottom)
+        nodes = legend.model().rootGroup().findLayers()
+        assert [node.name() for node in nodes] == ["运输路线", "巡检路线"]
+        for node in nodes:
+            assert [entry.data(Qt.DisplayRole) for entry in legend.model().layerLegendNodes(node)] == [node.name()]
+        assert [layer.name() for layer in selected] == original_names
+        assert [layer.id() for layer in main.layers()] == [layer.id() for layer in selected]
+
+        result = set_legend_style_handler({"layout": common["layout"], "item_id": "legend", "unlock_font": True, "body_font_size": 3})
+        assert result["success"], result
+        resized = _item_rect(legend)
+        assert resized["y"] + resized["height"] == pytest.approx(bottom)
+        assert [node.name() for node in legend.model().rootGroup().findLayers()] == ["运输路线", "巡检路线"]
+        legend.attemptMove(QgsLayoutPoint(resized["x"]+7, resized["y"]-11))
+        result = set_legend_style_handler({"layout": common["layout"], "item_id": "legend", "legend_layers": [primary.id()]})
+        assert result["success"], result
+        moved = _item_rect(legend)
+        assert moved["x"] == pytest.approx(main_rect["x"]+7)
+        assert moved["y"] + moved["height"] == pytest.approx(bottom-11)
+        result = set_legend_style_handler({"layout": common["layout"], "item_id": "legend", "legend_labels": {}})
+        assert result["success"], result
+        assert legend.model().rootGroup().findLayers()[0].name() == primary.name()
     elif case == "warnings":
         import yaml
-        from autocarto.tools.system._shared.layout_compose_impl import _read_spec
+        from autocarto.tools.system._shared.layout_compose_impl import _read_spec, _rect, _move
+        from autocarto.tools.system._shared.print_layout_impl import get_layout_info_handler
+        # Main map/background, decorative border, and foreground placement are
+        # intentional in the normal template and must not trigger intersections.
+        result, _ = compose()
+        normal = get_layout_info_handler({"name": common["layout"]})
+        assert normal["success"] and normal["warnings"] == [], normal
+        result, layout = compose(spec=load_handle("statistical"), overview_text="来源")
+        original = {role: _rect(layout.itemById(role)) for role in ("title", "north_arrow")}
+        assert get_layout_info_handler({"name": common["layout"]})["warnings"] == []
         spec = _read_spec(load_handle("statistical"))
         spec["elements"]["title"]["anchor"]["offset_mm"] = {"x": -20, "y": -5}
         spec["elements"]["north_arrow"]["anchor"]["offset_mm"] = {"x": 223, "y": 55}
         path = output/"重叠.layout.yaml"
         path.write_text(yaml.safe_dump(spec, allow_unicode=True))
-        result, _ = compose(spec=resolve_handle(path, "layout"), overview_text="来源")
+        result, layout = compose(spec=resolve_handle(path, "layout"), overview_text="来源")
         assert any("title 超出页面" in warning for warning in result["warnings"])
         assert any("legend 与 north_arrow 相交" in warning for warning in result["warnings"])
+        queried = get_layout_info_handler({"name": common["layout"]})
+        assert queried["success"] and set(queried["warnings"]) == set(result["warnings"]), queried
+        for role, rect in original.items():
+            _move(layout.itemById(role), rect["x"], rect["y"])
+        repaired = get_layout_info_handler({"name": common["layout"]})
+        assert repaired["success"] and repaired["warnings"] == [], repaired
     return {"success": True, "case": case}
 
 
-@pytest.mark.parametrize("case", ["replace_and_optional", "grid_extent_and_metadata", "extra_legend_and_rollback", "warnings", "point_layer_projected_extent"])
+@pytest.mark.parametrize("case", ["replace_and_optional", "grid_extent_and_metadata", "natural_loaded_order", "extra_legend_and_rollback", "legend_labels_and_anchor", "warnings", "point_layer_projected_extent"])
 def test_layout_compose_qgis(case, tmp_path):
     if not qgis_available():
         pytest.skip("需要独立 QGIS Python 环境")

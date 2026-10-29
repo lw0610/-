@@ -26,6 +26,10 @@ func EstimateScale(extent *flow.ExtentPlan, inputs map[string]any) int {
 	}
 	b := extent.BBox
 	widthMeters := (b[2] - b[0]) * 111320 * math.Cos((b[1]+b[3])*math.Pi/360)
+	// The caller supplies the selected layout's actual main frame width.
+	if frame, ok := inputs["map_frame_width_mm"].(float64); ok && frame > 0 {
+		return int(math.Round(widthMeters / (frame / 1000)))
+	}
 	paper, ok := inputs["纸张"].(string)
 	if ok {
 		widths := map[string]float64{"A0": 1189, "A1": 841, "A2": 594, "A3": 420, "A4": 297}
@@ -39,7 +43,7 @@ func EstimateScale(extent *flow.ExtentPlan, inputs map[string]any) int {
 		}
 	}
 	if extent.Region == "全国" || widthMeters > 2000000 {
-		return 4000000
+		return 14000000
 	}
 	if widthMeters > 300000 {
 		return 1000000
@@ -87,7 +91,8 @@ func prepareExtent(extent *flow.ExtentPlan) error {
 	}
 	if extent.ExpandPercent > 0 {
 		extent.BBox = expandBBox(extent.BBox, extent.ExpandPercent)
-		extent.Path = "" // An unexpanded polygon would cut off the requested margin.
+		extent.ExpandPercent = 0 // The concrete bbox now includes this margin.
+		extent.Path = ""         // An unexpanded polygon would cut off the requested margin.
 	}
 	return nil
 }

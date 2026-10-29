@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/autocarto/carto_agent/internal/config"
-	"github.com/autocarto/carto_agent/internal/dataservice"
+	"github.com/autocarto/carto_agent/internal/deepagent/subagents"
 	"github.com/autocarto/carto_agent/internal/toolresult"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/model"
@@ -16,8 +16,7 @@ import (
 	"github.com/cloudwego/eino/schema"
 )
 
-// Exercise Eino's actual enhanced tool dispatch through the system expert.
-// A direct test of the media envelope would miss a guard flattening the result.
+// Exercise Eino's enhanced dispatch through a configured role and its model.
 type acquisitionMediaModel struct {
 	tools map[string]bool
 	seen  map[string]string
@@ -59,7 +58,7 @@ func (m *acquisitionMediaModel) Stream(ctx context.Context, messages []*schema.M
 	return schema.StreamReaderFromArray([]*schema.Message{result}), nil
 }
 
-func TestSystemDataExpertPreservesEnhancedMediaThroughGuardAndADK(t *testing.T) {
+func TestConfiguredRolePreservesEnhancedMediaAndIndependentModel(t *testing.T) {
 	t.Setenv("AUTOCARTO_HOME", t.TempDir())
 	png, pdf := []byte("\x89PNG\r\n\x1a\nfixture"), []byte("%PDF-1.7\nfixture")
 	calls := 0
@@ -69,24 +68,37 @@ func TestSystemDataExpertPreservesEnhancedMediaThroughGuardAndADK(t *testing.T) 
 		return toolresult.AppendFileData(result, pdf, "application/pdf", nil), nil
 	})
 	tools := []tool.BaseTool{mediaTool}
-	for _, name := range []string{"data_find", "data_get", "file_read", "file_write", "shell_execute"} {
+	for _, name := range []string{"data_find", "data_get", "data_register", "file_read", "file_write", "shell_execute", "document_extract", "gee_run_script"} {
 		tools = append(tools, utils.NewTool(&schema.ToolInfo{Name: name, Desc: name}, func(context.Context, map[string]any) (string, error) {
 			return "", fmt.Errorf("unexpected fixture tool execution")
 		}))
 	}
 	capture := &acquisitionMediaModel{tools: map[string]bool{}, seen: map[string]string{}}
-	ctx := dataservice.WithService(context.Background(), dataservice.New(dataservice.Options{
-		SessionDir: t.TempDir(), Config: config.AcquisitionConfig{NetworkPolicy: "allow", FallbackPolicy: "allow"},
-	}))
-	ctx = dataservice.WithAcquisitionSelection(ctx, dataservice.Selection{
-		FindID: "df-fixture", Rows: []dataservice.SelectedRow{{Row: "population", Route: dataservice.RouteExplore}},
-		Fallback: []dataservice.Candidate{{Kind: "portal", Available: true}},
-	})
-	agents, err := createSystemExperts(ctx, &Config{ChatModel: capture, Tools: tools, MaxIteration: 3})
-	if err != nil || len(agents) != 1 {
-		t.Fatalf("system expert: %v %v", agents, err)
+	ctx := context.Background()
+	allowed := []string{"browser_call_tool", "data_find", "data_get", "data_register", "file_read", "file_write", "document_extract", "gee_run_script"}
+	cfg := &Config{
+		ChatModel: &fakeToolCallingChatModel{}, Tools: tools, MaxIteration: 3,
+		DefaultProviderCfg: &config.LLMProviderConfig{Vision: false},
+		AgentLLMs:          map[string]config.AgentLLMConfig{"source_reader": {Provider: "visual"}},
+		ResolveAgentChatModel: func(provider string) (model.ToolCallingChatModel, error) {
+			if provider != "visual" {
+				t.Fatalf("unexpected provider %s", provider)
+			}
+			return capture, nil
+		},
+		ResolveProviderCfg: func(provider string) *config.LLMProviderConfig {
+			return &config.LLMProviderConfig{Provider: provider, Vision: true}
+		},
+		SkillRuntimeConfig: &subagents.RuntimeSkillConfig{
+			Global: subagents.RuntimeSkillGlobalConfig{PackageTools: map[string][]string{"assigned": allowed}},
+			Agents: map[string]subagents.RuntimeSkillAgentConfig{"source_reader": {Enabled: true, Kind: "agent", ToolPackages: []string{"assigned"}}},
+		},
 	}
-	iter := agents[0].Run(ctx, &adk.AgentInput{Messages: []*schema.Message{schema.UserMessage("读取真实来源")}})
+	agent, err := BuildRoleAgent(ctx, cfg, "source_reader")
+	if err != nil {
+		t.Fatal(err)
+	}
+	iter := agent.Run(ctx, &adk.AgentInput{Messages: []*schema.Message{schema.UserMessage("读取真实来源")}})
 	for {
 		event, ok := iter.Next()
 		if !ok {
@@ -104,14 +116,17 @@ func TestSystemDataExpertPreservesEnhancedMediaThroughGuardAndADK(t *testing.T) 
 			t.Fatalf("%s lost before model: %v", mime, capture.seen)
 		}
 	}
-	for _, name := range []string{"file_read", "file_write", "shell_execute"} {
+	for _, name := range []string{"file_read", "file_write", "document_extract"} {
 		if !capture.tools[name] {
 			t.Errorf("expert lacks actual tool %s", name)
 		}
 	}
-	// Keeping enhanced results must not remove the query authorization boundary.
-	guard := wrapAcquisitionGuard(&acquisitionGuard{BaseTool: mediaTool, name: "browser_call_tool"}).(tool.EnhancedInvokableTool)
-	if _, err := guard.InvokableRun(context.Background(), &schema.ToolArgument{Text: `{}`}); err == nil || calls != 1 {
-		t.Fatal("unscoped browser call bypassed the guard")
+	for _, name := range allowed {
+		if !capture.tools[name] {
+			t.Errorf("assigned tool %s missing from role", name)
+		}
+	}
+	if capture.tools["shell_execute"] {
+		t.Error("unassigned shell tool was granted")
 	}
 }

@@ -1,0 +1,40 @@
+apiVersion: layer/v1
+id: layer.system.china-admin.city-area
+name: 市域面
+aliases:
+- 市域
+- 地级行政区
+pack: 全国行政区（系统自带）
+category: admin.division
+params:
+  level: 市
+geometry: polygon
+file: ../../../../../tools/system/admin-boundaries/assets/中国行政区边界/data/china_city.geojson
+sublayer: ''
+declared_crs: EPSG:4326
+crs: EPSG:4326
+coverage:
+  bbox:
+  - 73.498962
+  - 3.832541
+  - 135.087387
+  - 53.558498
+  regions:
+  - 中国
+scale: {}
+fields:
+  name: name
+  code: adcode
+label_field: name
+default_style: 市域面
+feature_count: 375
+source:
+  title: GeoCode 中国行政区边界
+  license: 上游数据许可待核实
+  attribution: 上游声明来自天地图
+  url: https://github.com/zzhonglei/GeoCode-Release
+  version: 6e3534f7af3675b19bd3c5d54c94022959dccdd2
+compliance: 南海诸岛、钓鱼岛等岛屿完整性未核实；行政区外围线不代表国界。
+digest: sha256:7ca1f18e8cde846b314d5c204438ca0d186a4ac66a12d6971f1a12afcbfca922
+preview: preview.png
+created_at: '2026-10-29T05:47:09.200529+00:00'

@@ -27,12 +27,13 @@ class RasterFixture:
         self.crs = "EPSG:32650"
         self.transform = [10, 0, 250000, 0, -10, 3300000]
         self.prepare_calls, self.export_calls, self.download_calls = [], [], []
+        self.clip_calls = []
         self.failure = None
         self.omit_last = False
         self.invalid_dataset = None
         self.original_tiler = type("FakeTiler", (), {"map_tiles": self.map_tiles})
         self.module = types.SimpleNamespace(Tiler=self.original_tiler)
-        self.image = types.SimpleNamespace(gd=self, prepare_for_export=self.prepare_for_export)
+        self.image = types.SimpleNamespace(gd=self, prepare_for_export=self.prepare_for_export, clip=self.clip)
         self.rio = types.SimpleNamespace(open=self.open, Affine=lambda *args: tuple(args), crs=types.SimpleNamespace(CRS=types.SimpleNamespace(from_user_input=lambda value: value)))
 
     @property
@@ -48,6 +49,14 @@ class RasterFixture:
     def prepare_for_export(self, params):
         self.export_calls.append(params)
         return self.image, {}
+
+    def clip(self, region):
+        self.clip_calls.append(region)
+        image = types.SimpleNamespace(gd=self, prepare_for_export=self.prepare_for_export)
+        if hasattr(self.image, "serialize"):
+            source = json.loads(self.image.serialize())
+            image.serialize = lambda: json.dumps({"clip": region, "image": source})
+        return image
 
     def map_tiles(self, func, masked=False):
         # Each array is a complete written tile; total exceeds the former 32 MiB
@@ -215,6 +224,7 @@ class WorkerTests(unittest.TestCase):
             self.assertEqual(fixture.export_calls[-1], {"dimensions": dimensions})
             self.assertEqual(fixture.prepare_calls[-1], {"dtype": "float32", "scale_offset": False})
         self.assertEqual(fixture.dtype, "float32")
+        self.assertEqual(fixture.clip_calls, [])
         for kwargs in ({"dimensions": 10001}, {"dimensions": True}, {"scale": 0}, {"scale": float("nan")}, {"max_requests": 0}, {"max_cpus": 5}, {"max_tile_size": 33}, {"dtype": "uint4"}):
             with self.subTest(kwargs=kwargs), self.assertRaises(worker.RuntimeFailure) as caught:
                 download(fixture.image, "invalid.tif", **kwargs)
@@ -256,6 +266,24 @@ class WorkerTests(unittest.TestCase):
         expression["mask"] = "unmasked"
         self.cached_helper("run-mask", [])(fixture.image, "image.tif", scale=10)
         self.assertEqual(len(fixture.download_calls), 5)
+
+    def test_region_mask_reaches_export_and_does_not_reuse_old_rectangle(self):
+        fixture = self.mock_raster()
+        fixture.image.serialize = lambda: '{"image":"population","mask":"source-mask"}'
+        region = {"type": "Polygon", "coordinates": [[[0, 0], [1, 0], [0, 1], [0, 0]]]}
+        # A previous download applied only export bounds, leaving outside pixels valid.
+        with patch.object(fixture.image, "clip", return_value=fixture.image):
+            old = self.cached_helper("run-unmasked", [])(fixture.image, "city.tif", region=region, scale=100)
+        with patch.object(worker, "download_raster", wraps=worker.download_raster) as export:
+            current = self.cached_helper("run-masked", [])(fixture.image, "city.tif", region=region, scale=100)
+        self.assertNotEqual(current, old)
+        self.assertEqual(len(fixture.download_calls), 2)
+        self.assertEqual(fixture.clip_calls, [region])
+        exported_image = export.call_args.args[0]
+        self.assertIsNot(exported_image, fixture.image)
+        self.assertEqual(json.loads(exported_image.serialize()), {
+            "clip": region, "image": {"image": "population", "mask": "source-mask"},
+        })
 
     def test_missing_changed_or_explicitly_refreshed_file_is_not_reused(self):
         fixture = self.mock_raster()

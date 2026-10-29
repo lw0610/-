@@ -138,6 +138,22 @@ class ThematicStyleQgisTestCase(unittest.TestCase):
         self.assertTrue(data["warnings"])
         self.assertTrue(all(math.isfinite(item[side]) for item in data["ranges"] for side in ["lower", "upper"]))
 
+    def test_rule_line_width_uses_mm_and_one_paper_scale(self):
+        from qgis.core import Qgis
+        layer = QgsVectorLayer("LineString?crs=EPSG:3857&field=route:string", "线路宽度", "memory")
+        QgsProject.instance().addMapLayer(layer, False)
+        result = self.handlers.rule_based_style_handler({
+            "layer": layer.id(), "scale": 0.5,
+            "rules": [{"label": "一号线", "expression": '"route" = \'1\'', "color": "#0067A4", "width": 0.8},
+                      {"label": "未归类", "expression": "ELSE", "color": "#707070", "width": 0.4}],
+        })
+        self.assertTrue(result["success"], result)
+        self.assertIsNone(QgsProject.instance().layerTreeRoot().findLayer(layer.id()))
+        self.assertEqual([rule["width_mm"] for rule in result["data"]["rules"]], [0.4, 0.2])
+        for rule, expected in zip(layer.renderer().rootRule().children(), [0.4, 0.2]):
+            self.assertEqual(rule.symbol().outputUnit(), Qgis.RenderUnit.Millimeters)
+            self.assertEqual(rule.symbol().width(), expected)
+
     def test_invalid_inputs_and_monochrome_ramp_preserve_original_style(self):
         layer = self.make_layer(range(18))
         original_color = layer.renderer().symbol().color().name()

@@ -17,7 +17,7 @@ const (
 func describeFindState(r *FindResult) {
 	r.State, r.NextAction = "unavailable", "provide_data"
 	for _, d := range r.Diagnostics {
-		if d.Code == "DATA_NEED_PARAMS_INVALID" || d.Code == "DATA_NEED_UNRECOGNIZED" || d.Code == "DATA_PROVIDED_INVALID" {
+		if d.Code == "DATA_NEED_PARAMS_INVALID" || d.Code == "DATA_NEED_UNRECOGNIZED" || d.Code == "DATA_PROVIDED_INVALID" || d.Code == "DATA_EXTENT_UNRESOLVED" {
 			r.State, r.NextAction = "needs_input", "correct_need"
 			return
 		}

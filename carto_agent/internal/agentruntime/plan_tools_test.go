@@ -83,12 +83,12 @@ func TestSelectPlanToolsFromDefaultProfile(t *testing.T) {
 	}
 	selected := selectCartographicPlanTools(context.Background(), tools)
 	actual := strings.Join(mustToolNames(t, selected), ",")
-	for _, required := range []string{"hitl_request", "query_build_capabilities", "data_find", "plan_propose"} {
+	for _, required := range []string{"hitl_request", "query_build_capabilities", "plan_propose"} {
 		if !strings.Contains(actual, required) {
 			t.Fatal("missing readonly capability", required)
 		}
 	}
-	if len(selected) != 4 {
+	if len(selected) != 3 {
 		t.Fatalf("execution or network tools leaked: %s", actual)
 	}
 }
@@ -178,7 +178,7 @@ func TestPlanFactoryKeepsMainPromptWithoutRestoringExecutionToolsOrDelegates(t *
 			t.Fatalf("Plan regained execution: %s %+v", forbidden, bound)
 		}
 	}
-	if !bound["data_find"] || !bound["plan_propose"] {
+	if bound["data_find"] || !bound["plan_propose"] {
 		t.Fatal("missing plan tools", bound)
 	}
 	found := false

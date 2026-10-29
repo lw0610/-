@@ -239,3 +239,22 @@ func TestProjectedGeoJSONMayResolveWGS84BBoxWithoutUsingOriginalMask(t *testing.
 	}
 	assertExtentBBox(t, extent.BBox, []float64{1, 1, 2, 2})
 }
+
+func TestPrepareExtentAppliesMarginOnlyOnceAcrossServiceHandoff(t *testing.T) {
+	extent := &flow.ExtentPlan{BBox: []float64{110, 30, 116, 36}, ExpandPercent: 5}
+	if err := PrepareExtent(extent); err != nil {
+		t.Fatal(err)
+	}
+	first := append([]float64{}, extent.BBox...)
+	if err := PrepareExtent(extent); err != nil {
+		t.Fatal(err)
+	}
+	for i, want := range first {
+		if extent.BBox[i] != want {
+			t.Fatalf("margin applied twice: %v -> %v", first, extent.BBox)
+		}
+	}
+	if extent.ExpandPercent != 0 {
+		t.Fatal("already applied margin remained pending")
+	}
+}

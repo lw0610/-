@@ -218,3 +218,6 @@ func inspectTableRecords(records [][]string, fields map[string]string) (map[stri
 	}
 	return map[string]any{"count": len(records) - 1, "fields": ratios}, nil
 }
+
+// ReadTable exposes the shared CSV/TSV/XLSX parser; callers own domain validation.
+func ReadTable(path string) ([][]string, error) { return readProvidedTable(path) }

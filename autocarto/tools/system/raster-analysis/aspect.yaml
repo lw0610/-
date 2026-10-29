@@ -21,7 +21,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: aspect
+  backend_tool: native:aspect
   param_mapping:
     INPUT: '{{ INPUT }}'
     Z_FACTOR: '{{ Z_FACTOR }}'

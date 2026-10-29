@@ -40,6 +40,10 @@ EXCLUDED_ROOTS = (PurePosixPath("autocarto/flows"),)
 
 
 def excluded_source(relative):
+    # Provider URLs and region coverage belong to declarative source metadata.
+    # Geographic names here are data, not branching logic in the execution code.
+    if relative.is_relative_to("autocarto/tools/system/data-acquisition/assets/sources") and relative.suffix in {".yaml", ".yml"}:
+        return True
     if any(relative.is_relative_to(root) for root in EXCLUDED_ROOTS):
         return True
     if any(part in {"__pycache__", "testdata", "tests", "docs"} for part in relative.parts):
@@ -150,6 +154,7 @@ class SceneWordGuardTestCase(unittest.TestCase):
             "autocarto/core/tests/test_example.py",
             "autocarto/core/README.md",
             "autocarto/flows/example/FLOW.md",
+            "autocarto/tools/system/data-acquisition/assets/sources/source.provider.yaml",
         )
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

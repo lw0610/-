@@ -1,19 +1,24 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"math"
 	"net/url"
 	"os"
+	"os/exec"
 	"sort"
 	"strings"
+	"time"
 )
 
 type AcquisitionConfig struct {
+	OCREngine        string  `yaml:"ocr_engine" json:"ocr_engine"`
+	OCRPath          string  `yaml:"ocr_path" json:"ocr_path"`
+	OCRLanguages     string  `yaml:"ocr_languages" json:"ocr_languages"`
+	DocumentPython   string  `yaml:"document_python" json:"document_python"`
 	NetworkPolicy    string  `yaml:"network_policy" json:"network_policy"`
 	FallbackPolicy   string  `yaml:"fallback_policy" json:"fallback_policy"`
-	ExclusiveAgent   *bool   `yaml:"exclusive_agent" json:"exclusive_agent"`
-	AgentModel       string  `yaml:"agent_model" json:"agent_model"`
 	MaxDownloadMB    int     `yaml:"max_download_mb" json:"max_download_mb"`
 	StoreMaxGB       float64 `yaml:"store_max_gb" json:"store_max_gb"`
 	Concurrency      int     `yaml:"concurrency" json:"concurrency"`
@@ -24,15 +29,20 @@ type AcquisitionConfig struct {
 }
 
 func (c AcquisitionConfig) WithDefaults() AcquisitionConfig {
+	if c.OCREngine == "" {
+		c.OCREngine = "rapidocr"
+	}
+	if c.OCRLanguages == "" {
+		c.OCRLanguages = "chi_sim+eng"
+	}
+	if c.DocumentPython == "" {
+		c.DocumentPython = "python3"
+	}
 	if c.NetworkPolicy == "" {
 		c.NetworkPolicy = "direct"
 	}
 	if c.FallbackPolicy == "" {
 		c.FallbackPolicy = "ask"
-	}
-	if c.ExclusiveAgent == nil {
-		enabled := true
-		c.ExclusiveAgent = &enabled
 	}
 	if c.MaxDownloadMB <= 0 {
 		c.MaxDownloadMB = 2048
@@ -53,9 +63,11 @@ func (c AcquisitionConfig) WithDefaults() AcquisitionConfig {
 	return c
 }
 func (c AcquisitionConfig) FallbackEnabled() bool { return c.AutoFallback == nil || *c.AutoFallback }
-func (c AcquisitionConfig) Exclusive() bool       { return c.ExclusiveAgent == nil || *c.ExclusiveAgent }
 func (c AcquisitionConfig) Validate() error {
 	d := c.WithDefaults()
+	if d.OCREngine != "tesseract" && d.OCREngine != "rapidocr" {
+		return fmt.Errorf("OCR引擎只支持 tesseract 或 rapidocr")
+	}
 	if d.NetworkPolicy != "direct" && d.NetworkPolicy != "confirm" && d.NetworkPolicy != "deny" {
 		return fmt.Errorf("联网获取策略无效")
 	}
@@ -94,4 +106,59 @@ func (cs *ConfigService) ConfiguredSecretNames() []string {
 	}
 	sort.Strings(names)
 	return names
+}
+
+type ReadingStatus struct {
+	Mode      string `json:"mode"`
+	Model     string `json:"model"`
+	Engine    string `json:"engine"`
+	Available bool   `json:"available"`
+	Message   string `json:"message"`
+}
+
+// Local OCR readiness is independent of the model selected for each scheme role.
+func (cs *ConfigService) LocalDocumentReadingStatus() ReadingStatus {
+	return DocumentReadingStatus(cs.GetAcquisitionConfig(), "", false)
+}
+func DocumentReadingStatus(cfg AcquisitionConfig, model string, vision bool) ReadingStatus {
+	cfg = cfg.WithDefaults()
+	result := ReadingStatus{Mode: "unavailable", Model: model, Engine: cfg.OCREngine, Message: "未找到本机 OCR；可配置视觉模型或安装 OCR 依赖"}
+	if vision {
+		result.Mode = "vision"
+		result.Available = true
+		result.Message = "当前角色模型支持图片输入"
+		return result
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	if cfg.OCREngine == "rapidocr" {
+		if exec.CommandContext(ctx, cfg.DocumentPython, "-c", "import rapidocr_onnxruntime").Run() == nil {
+			result.Mode = "ocr"
+			result.Available = true
+			result.Message = "使用本机 RapidOCR"
+		}
+	} else {
+		program := cfg.OCRPath
+		if program == "" {
+			program = "tesseract"
+		}
+		raw, err := exec.CommandContext(ctx, program, "--list-langs").Output()
+		if err == nil {
+			installed := string(raw)
+			ready := true
+			for _, language := range strings.Split(cfg.OCRLanguages, "+") {
+				if !strings.Contains("\n"+installed, "\n"+language+"\n") {
+					ready = false
+				}
+			}
+			if ready {
+				result.Mode = "ocr"
+				result.Available = true
+				result.Message = "使用本机 Tesseract OCR"
+			} else {
+				result.Message = "Tesseract缺少语言模型：" + cfg.OCRLanguages
+			}
+		}
+	}
+	return result
 }

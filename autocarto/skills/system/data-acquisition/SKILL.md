@@ -7,6 +7,8 @@ domain: 系统
 hidden: true
 system: false
 tools:
+  - layer_inspect
+  - layer_remove_created
   - archive_extract
   - data_normalize
   - data_derive

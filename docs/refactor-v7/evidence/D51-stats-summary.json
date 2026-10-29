@@ -1,0 +1,388 @@
+{
+  "date": "2026-10-29",
+  "real_model": true,
+  "real_qgis": true,
+  "runtime_home": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz",
+  "final_session_id": "6e9afb4f-5372-4318-96ea-aa8c94ded601",
+  "final_plan_id": "cp-20261029-161729-7669f4c5a6df",
+  "final_run_id": "fr-20261029-161734-91c95b044801",
+  "final_run_status": "completed",
+  "cache_reuse": {
+    "geometry": "",
+    "kind": "table",
+    "label_field": "",
+    "name": "河南省2023年常住人口统计表",
+    "paths": [
+      "/private/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/data/stats/1b566a5cf2c2205752a0a848612b1930afaa38f74e73296e5fa4bed7fb621e6f.csv"
+    ],
+    "provenance": [
+      "统计库复用",
+      "河南统计年鉴2024 表3-3 各市常住人口数",
+      "表3-3 各市常住人口数",
+      "河南省2023年常住人口统计表：https://oss.henan.gov.cn/sbgt-wztipt/attachment/hntjj/hntj/lib/tjnj/2024nj/zk/html/0303.jpg；；2026-10-29"
+    ],
+    "source": "retrieve",
+    "style": ""
+  },
+  "cache_csv_unchanged": true,
+  "cache_dataset_count": 1,
+  "cache_observation_count": 18,
+  "cache_hashes": {
+    "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/data/stats/1b566a5cf2c2205752a0a848612b1930afaa38f74e73296e5fa4bed7fb621e6f.csv": "6800a93e4f98a48937eff6123ecac69c729b8c2cab9b77845705edd3681197cd"
+  },
+  "inspection": {
+    "project": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/work/stats-reuse-blank.qgz",
+    "layers": [
+      {
+        "id": "__2023_______9756222b_b377_487f_8893_c738b0635f52",
+        "name": "河南2023常住人口专题",
+        "valid": true,
+        "provider": "ogr",
+        "feature_count": 18,
+        "source": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/data/sessions/stats-reuse-blank-c8ead2e109904c9a/6e9afb4f-5372-4318-96ea-aa8c94ded601/intermediate/statistical/statistics-2023-slabf2xc/statistical_polygons.geojson",
+        "fields": [
+          "name",
+          "adcode",
+          "gb",
+          "level",
+          "stat_region",
+          "stat_year",
+          "stat_value",
+          "data_status",
+          "stat_indicator",
+          "stat_unit",
+          "stat_source",
+          "stat_database"
+        ],
+        "population_sum": 9817.0,
+        "population_min": 73.0,
+        "population_max": 1301.0,
+        "renderer": "graduatedSymbol",
+        "class_count": 5
+      }
+    ],
+    "layouts": [
+      {
+        "name": "河南2023常住人口专题图",
+        "map_layers": [
+          {
+            "map": "main_map",
+            "layers": [
+              {
+                "id": "__2023_______9756222b_b377_487f_8893_c738b0635f52",
+                "name": "河南2023常住人口专题",
+                "feature_count": 18
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/data/sessions/stats-reuse-blank-c8ead2e109904c9a/6e9afb4f-5372-4318-96ea-aa8c94ded601/exports/河南2023常住人口专题图.pdf",
+      "bytes": 259266,
+      "sha256": "0ff674e71cf7d6d45f197f67b5872592bdbe13566748b9bc72919b3588ac4b76",
+      "valid_header_and_trailer": true
+    },
+    {
+      "path": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/data/sessions/stats-reuse-blank-c8ead2e109904c9a/6e9afb4f-5372-4318-96ea-aa8c94ded601/exports/河南2023常住人口专题图.png",
+      "bytes": 614615,
+      "sha256": "5608ba3d9f3b5f8ec01256587dea5a53ef8b3ff6e515ae46b6a5df1dc1e82c34",
+      "pixels": [
+        3507,
+        2480
+      ]
+    }
+  ],
+  "quality_issues": [
+    "底部来源说明被页面裁切",
+    "比例尺与河南南部轮廓重叠"
+  ],
+  "step_completion_approvals": {
+    "submitted": 2,
+    "valid_confirmed_true": 1,
+    "invalid_test_payload_option_continue": 1,
+    "note": "均为原第2步的纯继续；首次测试驱动误用单选payload，真实confirm契约为confirmed=true。未批准跳过、改数值或接受失败。"
+  },
+  "attempts": [
+    {
+      "name": "henan-population-cache-confirm-20261029-162124",
+      "session_id": "6e9afb4f-5372-4318-96ea-aa8c94ded601",
+      "status": "stopped_for_diagnosis",
+      "elapsed_seconds": 115.9,
+      "model_tool_calls": 0,
+      "failed_tool_receipts": 0,
+      "tools": {},
+      "model_http_requests": null,
+      "step_confirmations": [],
+      "evidence": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/replays/henan-population-cache-confirm-20261029-162124"
+    },
+    {
+      "name": "henan-population-cache-continue-20261029-162320",
+      "session_id": "6e9afb4f-5372-4318-96ea-aa8c94ded601",
+      "status": "awaiting_interaction",
+      "elapsed_seconds": 53.74,
+      "model_tool_calls": 1,
+      "failed_tool_receipts": 0,
+      "tools": {
+        "hitl_request": 1
+      },
+      "model_http_requests": null,
+      "step_confirmations": [
+        {
+          "checkpoint_id": "flow-fr-20261029-161734-91c95b044801-s02-v1-a1",
+          "info": {
+            "description": "已完成河南省18个地级市（含济源）2023年常住人口统计值关联与核验，全部精确匹配，无缺测/未匹配/排除。",
+            "options": [
+              {
+                "label": "继续下一步",
+                "value": "continue"
+              }
+            ],
+            "select_mode": "confirm",
+            "title": "第2步完成确认",
+            "type": "plan_confirmation"
+          },
+          "selected": "continue"
+        }
+      ],
+      "evidence": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/replays/henan-population-cache-continue-20261029-162320"
+    },
+    {
+      "name": "henan-population-cache-export-20261029-162551",
+      "session_id": "6e9afb4f-5372-4318-96ea-aa8c94ded601",
+      "status": "completed",
+      "elapsed_seconds": 88.93,
+      "model_tool_calls": 23,
+      "failed_tool_receipts": 0,
+      "tools": {
+        "get_layers_info": 2,
+        "cartography_graduated_style": 1,
+        "cartography_add_labels": 1,
+        "layer_get_style_info": 2,
+        "layer_set_color_ramp": 1,
+        "output_get_info": 7,
+        "get_project_info": 1,
+        "layout_compose": 1,
+        "layout_add_label": 1,
+        "layout_get_items_properties": 1,
+        "layout_resize_item": 1,
+        "layout_move_item": 1,
+        "layout_set_label_style": 1,
+        "layout_export_image": 1,
+        "export_layout_pdf": 1
+      },
+      "model_http_requests": null,
+      "step_confirmations": [
+        {
+          "checkpoint_id": "flow-fr-20261029-161734-91c95b044801-s02-v1-a1",
+          "info": {
+            "description": "第2步（关联统计值并核验）已完成，请确认后继续。",
+            "options": [
+              {
+                "label": "继续",
+                "value": "continue"
+              }
+            ],
+            "select_mode": "confirm",
+            "title": "确认",
+            "type": "plan_confirmation"
+          },
+          "selected": "continue"
+        }
+      ],
+      "evidence": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/replays/henan-population-cache-export-20261029-162551"
+    },
+    {
+      "name": "henan-population-cache-final-20261029-161708",
+      "session_id": "6e9afb4f-5372-4318-96ea-aa8c94ded601",
+      "status": "awaiting_interaction",
+      "elapsed_seconds": 99.88,
+      "model_tool_calls": 30,
+      "failed_tool_receipts": 1,
+      "tools": {
+        "get_project_info": 3,
+        "get_layers_info": 4,
+        "plan_propose": 1,
+        "layer_load_builtin": 1,
+        "get_active_layer_info": 4,
+        "selection_by_expression": 2,
+        "extract_selected_features": 1,
+        "get_selected_features_info": 1,
+        "selection_clear": 1,
+        "data_export_vector": 1,
+        "output_get_info": 3,
+        "file_read": 2,
+        "geodata_inspect": 1,
+        "skill": 1,
+        "data_prepare_statistical": 2,
+        "data_load_vector": 1,
+        "hitl_request": 1
+      },
+      "model_http_requests": null,
+      "step_confirmations": [],
+      "evidence": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/replays/henan-population-cache-final-20261029-161708"
+    },
+    {
+      "name": "henan-population-empty-20261029-150454",
+      "session_id": "5d27e248-074a-4fc9-b45c-6fe6e80730b3",
+      "status": "stopped_for_diagnosis",
+      "elapsed_seconds": 505.14,
+      "model_tool_calls": 43,
+      "failed_tool_receipts": 3,
+      "tools": {
+        "get_project_info": 2,
+        "get_layers_info": 2,
+        "plan_propose": 1,
+        "skill": 2,
+        "reference_read": 2,
+        "web_search": 2,
+        "web_read_page": 4,
+        "browser_check_environment": 1,
+        "browser_list_tools": 1,
+        "browser_call_tool": 2,
+        "web_download_file": 1,
+        "document_extract": 1,
+        "file_read": 2,
+        "file_write": 2,
+        "data_register": 2,
+        "browser_close": 1,
+        "geodata_inspect": 1,
+        "layer_load_builtin": 1,
+        "extract_by_expression": 2,
+        "get_active_layer_info": 2,
+        "shell_execute": 2,
+        "data_load_vector": 1,
+        "join_attributes_by_field_value": 1,
+        "field_calculator": 1,
+        "retain_fields": 1,
+        "save_vector_features_to_file": 1,
+        "data_export_vector": 1,
+        "output_get_info": 1
+      },
+      "model_http_requests": null,
+      "step_confirmations": [],
+      "evidence": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/replays/henan-population-empty-20261029-150454"
+    },
+    {
+      "name": "henan-population-resume-final-20261029-160400",
+      "session_id": "5d27e248-074a-4fc9-b45c-6fe6e80730b3",
+      "status": "stopped_for_diagnosis",
+      "elapsed_seconds": 194.44,
+      "model_tool_calls": 23,
+      "failed_tool_receipts": 2,
+      "tools": {
+        "get_project_info": 2,
+        "get_layers_info": 2,
+        "file_read": 3,
+        "geodata_inspect": 1,
+        "shell_execute": 8,
+        "output_get_info": 1,
+        "get_active_layer_info": 1,
+        "resource_get": 2,
+        "reference_read": 2,
+        "skill": 1
+      },
+      "model_http_requests": null,
+      "step_confirmations": [],
+      "evidence": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/replays/henan-population-resume-final-20261029-160400"
+    },
+    {
+      "name": "henan-population-reuse-20261029-151547",
+      "session_id": "458a2bf9-b8cc-43d5-9e99-06ae6fbdfe43",
+      "status": "awaiting_interaction",
+      "elapsed_seconds": 257.11,
+      "model_tool_calls": 63,
+      "failed_tool_receipts": 12,
+      "tools": {
+        "get_project_info": 5,
+        "get_layers_info": 5,
+        "get_active_layer_info": 6,
+        "file_read": 5,
+        "task": 2,
+        "skill": 6,
+        "reference_read": 2,
+        "data_find": 4,
+        "extract_by_expression": 3,
+        "join_attributes_by_field_value": 1,
+        "field_calculator": 1,
+        "retain_fields": 1,
+        "data_export_vector": 1,
+        "cartography_graduated_style": 1,
+        "cartography_add_labels": 1,
+        "layer_get_style_info": 1,
+        "layout_list": 1,
+        "layout_compose": 3,
+        "canvas_zoom_to_layer": 1,
+        "canvas_zoom_to_extent": 2,
+        "layout_create": 1,
+        "layout_add_map": 1,
+        "layout_set_map_layers": 1,
+        "layout_set_map_extent": 2,
+        "get_map_extent": 1,
+        "layout_set_map_scale": 1,
+        "open_project": 1,
+        "get_selected_features_info": 1,
+        "output_get_info": 1,
+        "hitl_request": 1
+      },
+      "model_http_requests": null,
+      "step_confirmations": [],
+      "evidence": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/replays/henan-population-reuse-20261029-151547"
+    },
+    {
+      "name": "henan-population-reuse-capabilities-20261029-161142",
+      "session_id": "1e09cadd-3a67-4bd9-93d9-637ef238a800",
+      "status": "awaiting_interaction",
+      "elapsed_seconds": 102.88,
+      "model_tool_calls": 25,
+      "failed_tool_receipts": 2,
+      "tools": {
+        "get_project_info": 2,
+        "get_layers_info": 2,
+        "file_read": 2,
+        "get_active_layer_info": 5,
+        "plan_propose": 1,
+        "plan_revise": 1,
+        "extract_by_expression": 1,
+        "join_attributes_by_field_value": 1,
+        "text_to_float": 1,
+        "field_calculator": 1,
+        "retain_fields": 1,
+        "selection_by_expression": 1,
+        "get_selected_features_info": 1,
+        "selection_clear": 1,
+        "output_get_info": 1,
+        "save_vector_features_to_file": 1,
+        "data_export_vector": 1,
+        "hitl_request": 1
+      },
+      "model_http_requests": null,
+      "step_confirmations": [],
+      "evidence": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/replays/henan-population-reuse-capabilities-20261029-161142"
+    },
+    {
+      "name": "henan-population-reuse-final-20261029-160739",
+      "session_id": "b52befae-69fd-4db8-9056-982e40b71988",
+      "status": "stopped_for_diagnosis",
+      "elapsed_seconds": 34.63,
+      "model_tool_calls": 5,
+      "failed_tool_receipts": 0,
+      "tools": {
+        "get_project_info": 1,
+        "get_layers_info": 1,
+        "get_active_layer_info": 2,
+        "file_read": 1
+      },
+      "model_http_requests": null,
+      "step_confirmations": [],
+      "evidence": "/var/folders/3r/dc4g4r6d7fs7gndt3vgk_4p80000gn/T/autocarto-v7-d51-stats-9km0ylcz/replays/henan-population-reuse-final-20261029-160739"
+    }
+  ],
+  "system_source_current_sha256": {
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/tools/system/admin-boundaries/assets/中国行政区边界/data/china_city.geojson": "a3038b09823597c5b03ea2563455cebcc90559e83764f5d49d38a1403ad8683a"
+  },
+  "system_source_integrity_note": "系统层按只读接口加载；本次统计回放没有采集该原始行政区文件的启动前SHA，不能以当前SHA冒称回放前后比对。原统计缓存CSV有回放前后SHA比对且不变。"
+}

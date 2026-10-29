@@ -21,7 +21,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: gdal_aspect
+  backend_tool: gdal:aspect
   param_mapping:
     INPUT: '{{ INPUT }}'
     BAND: '{{ BAND }}'

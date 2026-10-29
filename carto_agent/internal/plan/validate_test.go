@@ -11,7 +11,7 @@ import (
 )
 
 func fixture() *Plan {
-	return &Plan{APIVersion: APIVersion, ID: "cp-test", Version: 1, Goal: "成图", Data: []Data{{ID: "d1", Name: "原文", From: "conversation"}, {ID: "d2", Name: "数据集", From: "step", Step: "s1"}}, Steps: []Step{{ID: "s1", Title: "抽取", Capabilities: []string{"路线知识抽取"}, Uses: []string{"d1"}, Instructions: "抽取真实信息", Outputs: []flow.OutputDeclaration{{Label: "数据集", Type: "dataset", Format: "route_dataset"}}}, {ID: "s2", Title: "导出", Capabilities: []string{"export"}, Uses: []string{"d2"}, DependsOn: []string{"s1"}, Instructions: "导出成果", Outputs: []flow.OutputDeclaration{{Label: "PDF", Type: "file", Format: "pdf"}}}}, Deliverables: []flow.OutputDeclaration{{Label: "PDF", Type: "file", Format: "pdf"}}}
+	return &Plan{APIVersion: LegacyAPIVersion, ID: "cp-test", Version: 1, Goal: "成图", Data: []Data{{ID: "d1", Name: "原文", From: "conversation"}, {ID: "d2", Name: "数据集", From: "step", Step: "s1"}}, Steps: []Step{{ID: "s1", Title: "抽取", Capabilities: []string{"路线知识抽取"}, Uses: []string{"d1"}, Instructions: "抽取真实信息", Outputs: []flow.OutputDeclaration{{Label: "数据集", Type: "dataset", Format: "route_dataset"}}}, {ID: "s2", Title: "导出", Capabilities: []string{"export"}, Uses: []string{"d2"}, DependsOn: []string{"s1"}, Instructions: "导出成果", Outputs: []flow.OutputDeclaration{{Label: "PDF", Type: "file", Format: "pdf"}}}}, Deliverables: []flow.OutputDeclaration{{Label: "PDF", Type: "file", Format: "pdf"}}}
 }
 func environment() Environment {
 	return Environment{Capabilities: map[string]bool{"路线知识抽取": true, "export": true}}

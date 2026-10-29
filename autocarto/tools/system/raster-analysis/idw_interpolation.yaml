@@ -25,7 +25,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: idw_interpolation
+  backend_tool: qgis:idwinterpolation
   param_mapping:
     INTERPOLATION_DATA: '{{ INTERPOLATION_DATA }}'
     DISTANCE_COEFFICIENT: '{{ DISTANCE_COEFFICIENT }}'

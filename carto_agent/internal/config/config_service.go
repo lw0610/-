@@ -644,8 +644,6 @@ func applyConfigMutation(cfg *Config, path string, value any) error {
 		next := cfg.Acquisition.WithDefaults()
 		fallback := *next.AutoFallback
 		next.AutoFallback = &fallback
-		exclusive := *next.ExclusiveAgent
-		next.ExclusiveAgent = &exclusive
 		decoder := yaml.NewDecoder(strings.NewReader(string(raw)))
 		decoder.KnownFields(true)
 		if err := decoder.Decode(&next); err != nil {

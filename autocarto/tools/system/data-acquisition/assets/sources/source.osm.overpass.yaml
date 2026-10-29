@@ -98,20 +98,27 @@
       "category": "transport.metro",
       "tags": [
         "railway=subway",
-        "railway=light_rail"
+        "railway=light_rail",
+        "route=subway"
       ],
-      "types": "way",
+      "types": "way,relation",
       "fields": {
         "name": [
           "name:zh",
           "name"
+        ],
+        "color": [
+          "colour",
+          "color"
         ]
       }
     },
     {
       "category": "hydro.river_line",
       "tags": [
-        "waterway=river"
+        "waterway=river",
+        "waterway=canal",
+        "waterway=stream"
       ],
       "types": "way,relation",
       "fields": {
@@ -153,6 +160,20 @@
           "usage"
         ]
       }
+    },
+    {
+      "category": "transport.metro_station",
+      "tags": [
+        "station=subway",
+        "[\"public_transport\"=\"station\"][\"subway\"=\"yes\"]"
+      ],
+      "types": "node,way,relation",
+      "fields": {
+        "name": [
+          "name:zh",
+          "name"
+        ]
+      }
     }
   ],
   "endpoints": "osmdata",
@@ -180,7 +201,7 @@
     "max_extents": 12,
     "timeout_seconds": 120,
     "max_mb": 200,
-    "max_area_km2": 1000000
+    "max_area_km2": 20000
   },
   "license": "ODbL-1.0",
   "attribution": "© OpenStreetMap contributors",
@@ -199,5 +220,11 @@
       "湖南省主要河流",
       "武汉市铁路"
     ]
-  }
+  },
+  "scale_classes": [
+    "detailed"
+  ],
+  "typical_seconds": 120,
+  "chinese_names": true,
+  "method": "overpass"
 }

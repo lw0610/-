@@ -27,6 +27,7 @@ from qgis.core import (
     QgsMarkerLineSymbolLayer,
     QgsLayoutPoint,
     QgsLegendStyle,
+    QgsMapLayerLegendUtils,
     QgsMarkerSymbol,
     QgsProject,
     QgsRasterMarkerSymbolLayer,
@@ -520,6 +521,36 @@ def _is_extra_legend_layer(layer):
                           or layer.customProperty("autocarto/compose_legend_layout", "")))
 
 
+def _resolve_legend_labels(value, project):
+    if not isinstance(value, dict):
+        raise ValueError("legend_labels 必须为图层 ID 或唯一名称到图例显示名的对象")
+    labels = {}
+    for ref, label in value.items():
+        if not isinstance(label, str) or not label.strip():
+            raise ValueError("图例显示名必须是非空文字")
+        layer = project.mapLayer(str(ref))
+        if layer is None:
+            matches = project.mapLayersByName(str(ref))
+            if len(matches) != 1:
+                raise ValueError(f"图层“{ref}”不存在或名称不唯一，请使用图层 ID")
+            layer = matches[0]
+        labels[layer.id()] = label.strip()
+    return labels
+
+
+def _apply_legend_labels(legend, labels):
+    for node in legend.model().rootGroup().findLayers():
+        label = labels.get(node.layerId())
+        if label is None:
+            continue
+        node.setUseLayerName(False)
+        node.setName(label)
+        if isinstance(node.layer().renderer(), QgsSingleSymbolRenderer):
+            QgsMapLayerLegendUtils.setLegendNodeUserLabel(node, 0, label)
+        legend.model().refreshLayerLegend(node)
+    legend.setCustomProperty("autocarto/legend_labels", json.dumps(labels, ensure_ascii=False))
+
+
 def _prepare_legend_extras(params, current_layers, project):
     from autocarto.tools.system._shared.resource_handle import legend_extra_spec
     explicit = params.get("legend_extra_items") is not None
@@ -565,6 +596,9 @@ def set_legend_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     if error:
         return error
     legend = item
+    previous_rect = _item_rect(legend)
+    raw_anchor = legend.customProperty("autocarto/anchor", "")
+    anchor = json.loads(raw_anchor) if raw_anchor else None
     locked = _font_lock_error(legend, params, ("title_font_size", "body_font_size"))
     if locked:
         return locked
@@ -594,15 +628,19 @@ def set_legend_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             if layer not in selected:
                 selected.append(layer)
     try:
+        labels = (_resolve_legend_labels(params["legend_labels"], project)
+                  if params.get("legend_labels") is not None
+                  else json.loads(legend.customProperty("autocarto/legend_labels", "{}")))
         extras = _prepare_legend_extras(params, current, project)
     except (TypeError, ValueError) as exc:
         return _result(False, "", f"错误：{exc}")
-    if params.get("legend_layers") is not None or params.get("legend_extra_items") is not None or extras or any(_is_extra_legend_layer(layer) for layer in current):
+    if params.get("legend_layers") is not None or params.get("legend_labels") is not None or params.get("legend_extra_items") is not None or extras or any(_is_extra_legend_layer(layer) for layer in current):
         legend.setAutoUpdateModel(False)
         root = legend.model().rootGroup()
         root.removeAllChildren()
         for layer in dict.fromkeys(selected+extras):
             root.addLayer(layer)
+    _apply_legend_labels(legend, labels)
 
     if _has_value(params, "title"):
         legend.setTitle(str(params["title"]))
@@ -642,6 +680,16 @@ def set_legend_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     QgsApplication.processEvents()
     if legend.resizeToContents():
         legend.adjustBoxSize()
+    if anchor:
+        from autocarto.tools.system._shared.layout_compose_impl import anchor_position
+        # 仅补偿尺寸变化产生的锚点位移，保留用户此前明确移动的位置。
+        before_x, before_y = anchor_position(previous_rect, previous_rect, anchor)
+        after_x, after_y = anchor_position(previous_rect, _item_rect(legend), anchor)
+        legend.attemptMove(QgsLayoutPoint(
+            previous_rect["x"] + after_x - before_x,
+            previous_rect["y"] + after_y - before_y,
+            QgsUnitTypes.LayoutMillimeters,
+        ))
     refresh_canvas()
     return _result(True, legend.id(), "图例样式已更新", _item_properties(legend))
 
@@ -975,8 +1023,9 @@ def set_map_layers_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         return _result(False, "", f"错误：图层不存在或名称不唯一 {missing}，请使用图层 ID")
     item.setKeepLayerSet(True)
     item.setLayers(layers)
+    data = _item_properties(item)
     refresh_canvas()
-    return _result(True, item.id(), "地图框图层列表已更新", _item_properties(item))
+    return _result(True, item.id(), "地图框图层列表已更新", data)
 
 
 def export_image_handler(params: Dict[str, Any]) -> Dict[str, Any]:

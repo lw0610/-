@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/autocarto/carto_agent/internal/acquire"
 	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/layers"
 	"github.com/autocarto/carto_agent/internal/resource/bindings"
 	"github.com/autocarto/carto_agent/internal/sessionfiles"
 	"github.com/cloudwego/eino/adk"
@@ -23,11 +24,17 @@ var provenanceLocks sync.Map
 const onlineTilesUnsupported = "当前统一数据服务尚不支持安全加载此类在线瓦片：加载前须单独确认密钥写入 QGIS 工程。请使用已加载的工程图层或已下载的栅格文件；图层定义 JSON 不是已取得的数据。"
 
 func (s *Service) Get(ctx context.Context, request GetRequest) (GetResult, error) {
-	if pinned, ok := AcquisitionSelection(ctx); ok {
+	// A controller delegates one frozen query. The Build orchestrator instead
+	// selects each data_get explicitly and may obtain several datasets in a run.
+	if pinned, ok := ctx.Value(acquisitionSelectionKey{}).(Selection); ok {
 		if request.FindID != pinned.FindID {
 			return GetResult{}, failure("DATA_QUERY_SCOPE_MISMATCH", "当前获取任务只能使用已绑定的查询："+pinned.FindID)
 		}
 		return s.GetSelection(ctx, pinned, request)
+	}
+	previous, hasPrevious := AcquisitionSelection(ctx)
+	if hasPrevious && request.FindID == previous.FindID {
+		return s.GetSelection(ctx, previous, request)
 	}
 	selection, err := s.ValidateChoice(ctx, request.FindID, request.Choice)
 	if err != nil {
@@ -39,10 +46,14 @@ func (s *Service) Get(ctx context.Context, request GetRequest) (GetResult, error
 		if err != nil {
 			return GetResult{}, err
 		}
+	}
+	if selection.RequiresDiscovery() || hasPrevious {
 		raw, _ := json.Marshal(selection)
 		if err := adk.SetRunLocalValue(ctx, "data-service.selection", string(raw)); err != nil {
-			return GetResult{}, failure("DATA_QUERY_SCOPE_REQUIRED", "探索获取需要计划获取步骤或系统数据获取智能体")
+			return GetResult{}, failure("DATA_QUERY_SCOPE_REQUIRED", "数据获取需要在当前智能体任务中执行")
 		}
+	}
+	if selection.RequiresDiscovery() {
 		return GetResult{FindID: selection.FindID, Status: "exploration_required", Preparation: &selection, Rows: []GetRow{}}, nil
 	}
 	return s.GetSelection(ctx, selection, request)
@@ -92,15 +103,48 @@ func (s *Service) GetSelection(ctx context.Context, selection Selection, request
 			}
 		}
 		var got acquire.ItemResult
+		var builtin *layers.Item
 		var err error
 		if candidate.LayerID != "" {
 			got, err = s.validateLayer(ctx, item, candidate)
+		} else if candidate.StoreKey != "" {
+			record, _, lookupErr := s.options.Engine.Store.Lookup(ctx, candidate.StoreKey)
+			if lookupErr != nil {
+				err = lookupErr
+			} else if !record.Valid {
+				err = fmt.Errorf("数据仓条目不存在或内容已改变")
+			} else {
+				got, err = s.options.Engine.PrepareStored(ctx, item, record)
+			}
 		} else if candidate.Path != "" {
 			localPath := candidate.Path
 			if candidate.Sublayer != "" {
 				localPath += "|layername=" + candidate.Sublayer
 			}
-			_, err = ValidateLocalData(ctx, localPath, item.Geometry, item.Fields)
+			fields := item.Fields
+			if candidate.Kind == "builtin_layer" {
+				library, libraryErr := layers.NewDefaultLibrary()
+				if libraryErr != nil {
+					return result, libraryErr
+				}
+				layer, layerErr := library.ResolveName(candidate.SourceID)
+				if layerErr != nil {
+					return result, layerErr
+				}
+				builtin = &layer
+				fields = map[string]string{}
+				for target, standard := range item.Fields {
+					actual := layer.Fields[target]
+					if actual == "" {
+						actual = layer.Fields[standard]
+					}
+					if actual == "" {
+						actual = target
+					}
+					fields[actual] = actual
+				}
+			}
+			_, err = ValidateLocalData(ctx, localPath, item.Geometry, fields)
 			got = acquire.ItemResult{Status: "user_provided", Output: acquire.OutputRecord{Paths: []string{localPath}}, Notes: []string{"用户提供；本地核验几何与字段，原文件保持只读"}}
 		} else if candidate.Choice != nil {
 			item.Chosen = candidate.Choice
@@ -123,7 +167,7 @@ func (s *Service) GetSelection(ctx context.Context, selection Selection, request
 				}
 			})
 		} else {
-			err = failure("DATA_CHOICE_INVALID", "此候选需要数据获取智能体兜底并登记")
+			err = failure("DATA_CHOICE_INVALID", "此候选需要方案中的数据角色兜底并登记")
 		}
 		if err != nil {
 			result.Status = "failed"
@@ -149,6 +193,12 @@ func (s *Service) GetSelection(ctx context.Context, selection Selection, request
 			row.License = source.License
 			row.Attribution = source.Attribution
 		}
+		if builtin != nil {
+			row.License = builtin.Source.License
+			row.Attribution = builtin.Source.Attribution
+			row.Notes = []string{"内置图层「" + builtin.Name + "」；原件只读", builtin.Source.Title}
+		}
+
 		if candidate.Choice != nil {
 			for i, path := range row.Paths {
 				base := filepath.Base(path)
@@ -287,7 +337,7 @@ func fileSHA(path string) (string, error) {
 }
 func (s *Service) recordRow(result *GetResult, row GetRow) error {
 	row.FindID = result.FindID
-	store, err := sessionfiles.NewWithRoots(s.options.SessionID, s.options.SessionDir, s.options.Engine.Store.Root)
+	store, err := sessionfiles.NewAt(s.options.SessionID, s.options.SessionDir)
 	if err != nil {
 		return err
 	}
@@ -295,12 +345,7 @@ func (s *Service) recordRow(result *GetResult, row GetRow) error {
 		path = strings.Split(path, "|layername=")[0]
 		origin := sessionfiles.Origin{Type: "data_service", Tool: "data_get", Label: row.Row, SourceID: row.SourceID, License: row.License}
 		if _, err = store.Register(path, origin, sessionfiles.WithGroup("data")); err != nil {
-			if row.Kind == "user" || row.Kind == "user_memory" || row.Kind == "session" {
-				_, err = store.RegisterProvided(path, origin, sessionfiles.WithGroup("data"))
-			}
-			if err != nil {
-				return err
-			}
+			return err
 		}
 	}
 	result.Rows = append(result.Rows, row)

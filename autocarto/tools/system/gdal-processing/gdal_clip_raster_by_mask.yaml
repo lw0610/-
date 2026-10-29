@@ -21,7 +21,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: gdal_clip_raster_by_mask
+  backend_tool: gdal:cliprasterbymasklayer
   param_mapping:
     INPUT: '{{ INPUT }}'
     MASK: '{{ MASK }}'

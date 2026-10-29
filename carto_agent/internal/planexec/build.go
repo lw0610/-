@@ -25,6 +25,9 @@ func Build(p *plan.Plan, options BuildOptions) (*flow.FlowPlan, map[string]any, 
 	if p == nil {
 		return nil, nil, fmt.Errorf("计划为空")
 	}
+	if p.APIVersion == plan.APIVersion {
+		return buildV2(p, options)
+	}
 	normalized, err := plan.Clone(p)
 	if err != nil {
 		return nil, nil, err
@@ -190,16 +193,7 @@ func Build(p *plan.Plan, options BuildOptions) (*flow.FlowPlan, map[string]any, 
 				out.Diagnostics = append(out.Diagnostics, flow.Diagnostic{Level: "error", Code: "PLAN_EXECUTOR_INPUT_MISSING", Step: step.ID, Message: message})
 			}
 		}
-		missingParameters := []string{}
-		for _, name := range spec.RequiredParameters {
-			if strings.TrimSpace(step.Parameters[name]) == "" {
-				missingParameters = append(missingParameters, name)
-			}
-		}
-		if len(missingParameters) > 0 {
-			out.Diagnostics = append(out.Diagnostics, flow.Diagnostic{Level: "error", Code: "PLAN_EXECUTOR_PARAMETER_MISSING", Step: step.ID,
-				Message: fmt.Sprintf("步骤「%s」须在 parameters 中提供 %s；按本次指南或用户要求选择预设名称，不能只写在 instructions 中。", step.Title, strings.Join(missingParameters, "、"))})
-		}
+
 	}
 	if out.HasErrors() {
 		return nil, nil, &plan.ValidationError{Diagnostics: out.Diagnostics}

@@ -28,7 +28,7 @@ func testWorkspace(t *testing.T) workspace {
 	if err := os.MkdirAll(output, 0755); err != nil {
 		t.Fatal(err)
 	}
-	return workspace{root: root, output: output, readRoots: []string{root}}
+	return workspace{root: root, output: output}
 }
 func writeFixture(t *testing.T, path, content string) {
 	t.Helper()
@@ -96,17 +96,16 @@ func TestFileReadMediaEnvelopeAndBinaryRejection(t *testing.T) {
 	}
 }
 
-func TestFileWorkspaceScopeAndSymlinks(t *testing.T) {
+func TestFileReadsLocalPathsAndKeepsWritesInOutput(t *testing.T) {
 	w := testWorkspace(t)
 	outside := t.TempDir()
 	p := filepath.Join(outside, "data.csv")
 	writeFixture(t, p, "real")
-	if _, err := w.read(context.Background(), map[string]any{"path": p}); err == nil {
-		t.Fatal("read escaped roots")
-	}
-	w.readRoots = append(w.readRoots, outside)
 	if _, err := w.read(context.Background(), map[string]any{"path": p}); err != nil {
-		t.Fatalf("authorized project denied: %v", err)
+		t.Fatalf("local file could not be read: %v", err)
+	}
+	if _, err := w.read(context.Background(), map[string]any{"path": outside}); err != nil {
+		t.Fatalf("local directory could not be read: %v", err)
 	}
 	if _, err := w.write(context.Background(), map[string]any{"path": p, "content": "changed"}); err == nil {
 		t.Fatal("write escaped output")
@@ -116,11 +115,14 @@ func TestFileWorkspaceScopeAndSymlinks(t *testing.T) {
 	}
 	secret := filepath.Join(outside, ".env")
 	writeFixture(t, secret, "test fixture only")
-	if _, err := w.read(context.Background(), map[string]any{"path": secret}); err == nil {
-		t.Fatal("credential file read")
+	if _, err := w.read(context.Background(), map[string]any{"path": secret}); err != nil {
+		t.Fatalf("local text file could not be read: %v", err)
 	}
 	if err := os.Symlink(outside, filepath.Join(w.output, "link")); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
+	}
+	if _, err := w.read(context.Background(), map[string]any{"path": filepath.Join(w.output, "link", "data.csv")}); err != nil {
+		t.Fatalf("local file symlink could not be read: %v", err)
 	}
 	if _, err := w.write(context.Background(), map[string]any{"path": "link/new/deeper.csv", "content": "bad"}); err == nil {
 		t.Fatal("symlink write escaped")
@@ -159,7 +161,7 @@ func TestFileToolsUseTrustedSessionNotArguments(t *testing.T) {
 	}
 }
 
-func TestFileReadUsesExactCurrentSessionDataRegistration(t *testing.T) {
+func TestFileReadAllowsSharedDatastoreReadOnly(t *testing.T) {
 	home := t.TempDir()
 	t.Setenv("AUTOCARTO_HOME", home)
 	project := filepath.Join(t.TempDir(), "project.qgz")
@@ -180,12 +182,12 @@ func TestFileReadUsesExactCurrentSessionDataRegistration(t *testing.T) {
 	if err != nil || !strings.Contains(result.(map[string]any)["content"].(string), "甲,42") {
 		t.Fatalf("registered acquired input denied: %v", err)
 	}
-	if _, err = Invoke(ctx, ToolReadFile, map[string]any{"path": other}); err == nil {
-		t.Fatal("registration granted access to unrelated file in same directory")
+	if _, err = Invoke(ctx, ToolReadFile, map[string]any{"path": other}); err != nil {
+		t.Fatal("datastore should be readable", err)
 	}
 	otherCtx := toolsession.WithContext(context.Background(), "other-session", project, "")
-	if _, err = Invoke(otherCtx, ToolReadFile, map[string]any{"path": registered}); err == nil {
-		t.Fatal("registration leaked to another session")
+	if _, err = Invoke(otherCtx, ToolReadFile, map[string]any{"path": registered}); err != nil {
+		t.Fatal("verified datastore is shared across sessions", err)
 	}
 	if _, err = Invoke(ctx, ToolWriteFile, map[string]any{"path": registered, "content": "changed"}); err == nil {
 		t.Fatal("read registration granted write access")
@@ -201,11 +203,13 @@ func TestFileReadUsesExactCurrentSessionDataRegistration(t *testing.T) {
 	if err = os.Remove(registered); err != nil {
 		t.Fatal(err)
 	}
-	if err = os.Symlink(other, registered); err != nil {
+	outside := filepath.Join(t.TempDir(), "outside.csv")
+	writeFixture(t, outside, "local source")
+	if err = os.Symlink(outside, registered); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
 	}
-	if _, err = Invoke(ctx, ToolReadFile, map[string]any{"path": registered}); err == nil {
-		t.Fatal("replacement symlink gained access to unregistered target")
+	if _, err = Invoke(ctx, ToolReadFile, map[string]any{"path": registered}); err != nil {
+		t.Fatalf("local file symlink could not be read: %v", err)
 	}
 }
 

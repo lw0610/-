@@ -47,6 +47,21 @@ type FetchResult struct {
 }
 type ToolCaller func(context.Context, string, map[string]any) (any, error)
 
+// ProcessingError separates a failed local conversion from a failed download.
+// Paths contains already published inputs that a repaired run can reuse.
+type ProcessingError struct {
+	Stage string
+	Paths []string
+	Err   error
+}
+
+func (e *ProcessingError) Error() string {
+	return fmt.Sprintf("数据处理失败（%s）：%v", e.Stage, e.Err)
+}
+func (e *ProcessingError) Unwrap() error         { return e.Err }
+func (e *ProcessingError) ToolErrorCode() string { return "DATA_PROCESSING_FAILED" }
+func (e *ProcessingError) ToolRetryable() bool   { return false }
+
 func UnwrapToolResult(value any) (map[string]any, error) {
 	if text, ok := value.(string); ok {
 		if err := json.Unmarshal([]byte(text), &value); err != nil {

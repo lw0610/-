@@ -215,7 +215,10 @@ func (a *API) handleAcquisitionConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodGet {
-		Success(w, a.configService.GetAcquisitionConfig())
+		Success(w, struct {
+			config.AcquisitionConfig
+			ReadingStatus config.ReadingStatus `json:"reading_status"`
+		}{a.configService.GetAcquisitionConfig(), a.configService.LocalDocumentReadingStatus()})
 		return
 	}
 	var body config.AcquisitionConfig

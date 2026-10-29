@@ -8,6 +8,9 @@ class PluginUIMigrationTestCase(unittest.TestCase):
         # the rendering and geometry regression modules collected afterwards.
         core = MagicMock()
         core.Qt.RightDockWidgetArea = 2
+        self.app_properties = {}
+        core.QCoreApplication.instance.return_value.property.side_effect = self.app_properties.get
+        core.QCoreApplication.instance.return_value.setProperty.side_effect = self.app_properties.__setitem__
         modules = {name: MagicMock() for name in (
             "qgis", "qgis.PyQt", "qgis.PyQt.QtWidgets", "qgis.PyQt.QtGui",
             "qgis.core", "qgis.gui",
@@ -35,6 +38,14 @@ class PluginUIMigrationTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.patcher.stop()
+
+    def test_plugin_reload_keeps_qgis_instance_identity(self):
+        self.app_properties.clear()
+        with patch("time.time", side_effect=[100, 200]):
+            first = self.plugin._build_instance_id()
+            self.assertEqual(self.plugin_type(self.mock_iface)._instance_id, first)
+            self.app_properties.clear()
+            self.assertNotEqual(self.plugin._build_instance_id(), first)
 
     def test_update_status_tooltip_connected(self):
         ws_mock = MagicMock()

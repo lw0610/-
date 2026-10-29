@@ -1,24 +1,6 @@
 document_format: flow/v6
 apiVersion: flow-lock/v1
 resources:
-    - type: style
-      name: 省域面
-      id: style.basemap-90a7082089
-      version: 1.0.0
-      digest: sha256:443c101f4acb25197fd32526093c4b0ab48b053eda0cfb46ba9348fa1b1577e1
-      source: library_builtin
-    - type: style
-      name: 市域面
-      id: style.basemap-1a51d33883
-      version: 1.0.0
-      digest: sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730
-      source: library_builtin
-    - type: style
-      name: 县域面
-      id: style.basemap-fbe4b96472
-      version: 1.0.0
-      digest: sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f
-      source: library_builtin
     - type: layout
       name: 统计专题版式
       id: layout.statistical

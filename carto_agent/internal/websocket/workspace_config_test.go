@@ -109,7 +109,8 @@ func TestGetSessionsBaseDirProjectIsolation(t *testing.T) {
 	}
 }
 
-func TestGetSessionsBaseDirMigratesLegacyProjectFileDir(t *testing.T) {
+func TestSessionReadsDoNotMigrateLegacyProjectFileDir(t *testing.T) {
+	t.Setenv("AUTOCARTO_HOME", t.TempDir())
 	server := &DeepServer{}
 	projectRoot := t.TempDir()
 	projectPath := filepath.Join(projectRoot, "demo.qgz")
@@ -135,11 +136,17 @@ func TestGetSessionsBaseDirMigratesLegacyProjectFileDir(t *testing.T) {
 		t.Fatalf("expected runtime-owned absolute session dir, got=%s", baseDir)
 	}
 	canonicalSessionFile := filepath.Join(baseDir, "sid-001", "session.json")
-	if _, err := os.Stat(canonicalSessionFile); err != nil {
-		t.Fatalf("canonical session.json missing after migration: %v", err)
+	if sessions, err := server.listSessions(projectPath); err != nil || len(sessions) != 0 {
+		t.Fatalf("listing an uninitialized session root failed: %v %v", sessions, err)
 	}
-	if _, err := os.Stat(legacySessionFile); !os.IsNotExist(err) {
-		t.Fatalf("legacy session.json should be migrated away, err=%v", err)
+	if _, err := os.Stat(canonicalSessionFile); !os.IsNotExist(err) {
+		t.Fatalf("a read migrated legacy session.json: %v", err)
+	}
+	if _, err := os.Stat(baseDir); !os.IsNotExist(err) {
+		t.Fatalf("a read created the session root: %v", err)
+	}
+	if got, err := os.ReadFile(legacySessionFile); err != nil || string(got) != `{"session_id":"sid-001"}` {
+		t.Fatalf("a read changed legacy session.json: %q (%v)", got, err)
 	}
 }
 

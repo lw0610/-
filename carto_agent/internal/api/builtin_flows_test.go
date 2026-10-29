@@ -4,13 +4,28 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/layers"
 	"github.com/gorilla/mux"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
 func TestBuiltinGuidesParseAndResolve(t *testing.T) {
 	a, _, _, _ := realFlowAPI(t)
+	catalog, err := layers.NewDefaultLibrary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range []struct{ name, geometry, category, level string }{{"省域", "polygon", "admin.division", "省"}, {"地区界线", "line", "admin.boundary_line", "省"}, {"河流线", "line", "hydro.river_line", ""}, {"河流面", "polygon", "hydro.water_polygon", ""}, {"公路", "line", "transport.road.major", ""}, {"国道", "line", "transport.road.national", ""}, {"铁路", "line", "transport.railway", ""}, {"县级城市驻地", "point", "settlement.county_seat", ""}} {
+		file := filepath.Join(t.TempDir(), entry.name+".geojson")
+		os.WriteFile(file, []byte(`{"type":"FeatureCollection","features":[]}`), 0600)
+		_, err = catalog.Save(layers.Manifest{APIVersion: "layer/v1", Name: entry.name, Pack: "China_map 测试夹具", Category: entry.category, Params: map[string]string{"level": entry.level}, Geometry: entry.geometry, File: file, CRS: "EPSG:4326"})
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
 	library, err := a.resourceStore()
 	if err != nil {
 		t.Fatal(err)
@@ -23,7 +38,7 @@ func TestBuiltinGuidesParseAndResolve(t *testing.T) {
 	router := mux.NewRouter()
 	a.SetupRoutes(router)
 	results := []map[string]any{}
-	for _, id := range []string{"marching-route", "statistical-choropleth", "traffic-route", "data-to-map"} {
+	for _, id := range []string{"marching-route", "statistical-choropleth"} {
 		snapshot, err := store.Resolve(context.Background(), id, library)
 		if err != nil {
 			t.Fatal(err)

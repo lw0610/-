@@ -2,7 +2,6 @@ package websocket
 
 import (
 	"encoding/json"
-	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -38,7 +37,11 @@ func TestRegisterToolArtifactsBoundaryAndLayoutOutputs(t *testing.T) {
 		{"export_layout_svg", filepath.Join(store.Dir, "exports", "layout.svg")},
 	} {
 		path := write(tc.path)
-		raw, _ := json.Marshal(map[string]any{"success": true, "output": path, "data": map[string]any{"artifact_paths": []string{path}}})
+		data := map[string]any{"artifact_paths": []string{path}}
+		if tc.tool == "admin_boundary_extract" {
+			data["layer_name"], data["source"] = "武汉市边界", path
+		}
+		raw, _ := json.Marshal(map[string]any{"success": true, "output": path, "data": data})
 		parts, _ := json.Marshal([]map[string]any{{"type": "text", "text": string(raw)}, {"type": "file_url", "file": map[string]any{"url": "file://" + path, "extra": map[string]any{"path": path}}}})
 		message := &schema.Message{ToolCallID: "call-" + tc.tool, Content: string(raw) + "\n[文件] " + filepath.Base(path)}
 		if err := json.Unmarshal(parts, &message.UserInputMultiContent); err != nil {
@@ -53,7 +56,10 @@ func TestRegisterToolArtifactsBoundaryAndLayoutOutputs(t *testing.T) {
 		t.Fatalf("boundary/layout not registered: %+v %v", items, err)
 	}
 	for _, item := range items {
-		if item.Name != "city.geojson" && item.Group != "deliverable" {
+		if filepath.Base(item.Path) == "city.geojson" && item.Name != "武汉市边界.geojson" {
+			t.Fatalf("boundary business name lost: %+v", item)
+		}
+		if item.Name != "武汉市边界.geojson" && item.Group != "deliverable" {
 			t.Fatalf("layout hidden: %+v", item)
 		}
 	}
@@ -71,8 +77,11 @@ func TestRegisterToolArtifactsBoundaryAndLayoutOutputs(t *testing.T) {
 	outside := write(filepath.Join(t.TempDir(), "outside.pdf"))
 	raw, _ = json.Marshal(map[string]any{"output": outside})
 	failures := registerToolArtifacts(store, tooldefinition.ToolDefinition{}, "export_layout_pdf", "cartographer", &schema.Message{Content: string(raw)}, consumeEventsOptions{})
-	if len(failures) != 1 || !errors.Is(failures[0], sessionfiles.ErrOutsideRoot) {
-		t.Fatalf("registration failure was swallowed: %v", failures)
+	if len(failures) != 0 {
+		t.Fatalf("existing local output was rejected by session location: %v", failures)
+	}
+	if _, err := store.GetPath(outside); err != nil {
+		t.Fatalf("local output was not indexed: %v", err)
 	}
 }
 

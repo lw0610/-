@@ -9,7 +9,6 @@ import (
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/control"
-	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/tool"
@@ -17,11 +16,12 @@ import (
 )
 
 type systemRoleProbe struct {
-	tools  map[string]bool
-	target string
-	args   string
-	result string
-	calls  int
+	tools           map[string]bool
+	taskDescription string
+	target          string
+	args            string
+	result          string
+	calls           int
 }
 
 func (p *systemRoleProbe) WithTools(infos []*schema.ToolInfo) (model.ToolCallingChatModel, error) {
@@ -31,6 +31,14 @@ func (p *systemRoleProbe) WithTools(infos []*schema.ToolInfo) (model.ToolCalling
 func (p *systemRoleProbe) capture(infos []*schema.ToolInfo) {
 	for _, info := range infos {
 		p.tools[info.Name] = true
+		if info.Name == "task" {
+			p.taskDescription = info.Desc
+			if info.ParamsOneOf != nil {
+				schema, _ := info.ParamsOneOf.ToJSONSchema()
+				raw, _ := json.Marshal(schema)
+				p.taskDescription += string(raw)
+			}
+		}
 	}
 }
 func (p *systemRoleProbe) Generate(_ context.Context, messages []*schema.Message, options ...model.Option) (*schema.Message, error) {
@@ -66,7 +74,7 @@ func systemRoleFactory(t *testing.T, probe *systemRoleProbe) (*Factory, *config.
 	t.Setenv("AUTOCARTO_ASSETS_ROOT", assets)
 	t.Setenv("AUTOCARTO_HOME", home)
 	tools := []tool.BaseTool{}
-	for _, name := range []string{"data_find", "data_get", "data_register", "web_search", "reference_read", "get_layers_info", "unassigned"} {
+	for _, name := range []string{"data_find", "data_get", "data_register", "web_search", "reference_read", "get_layers_info", "plan_propose", "plan_revise", "marching_route_get_extraction_contract", "marching_route_compile_dataset", "unassigned"} {
 		tools = append(tools, &fakeInvokableTool{name: name})
 	}
 	factory, err := NewFactory(&FactoryConfig{
@@ -94,38 +102,38 @@ func runSystemRoleProbe(agent adk.Agent) error {
 	}
 }
 
-func TestFactoryBuildRoleConstructsRealSystemDataExpert(t *testing.T) {
+func TestFactoryBuildRoleUsesConfiguredDataEngineer(t *testing.T) {
 	probe := &systemRoleProbe{tools: map[string]bool{}, target: "skill", args: `{"skill":"browser-data-acquisition"}`}
 	factory, profile := systemRoleFactory(t, probe)
 	before, _ := json.Marshal(profile)
-	if _, exists := profile.Runtime.Agents[deepagent.DataAcquisitionExpertName]; exists {
-		t.Fatal("test must start without a user-owned system expert role")
+	if _, exists := profile.Runtime.Agents["system_data_acquisition"]; exists {
+		t.Fatal("profile contains obsolete hidden acquisition role")
 	}
-	agent, err := factory.BuildRole(context.Background(), "default", profile, deepagent.DataAcquisitionExpertName)
-	if err != nil || agent.Name(context.Background()) != deepagent.DataAcquisitionExpertName {
-		t.Fatalf("system expert was not built through the production factory: %v", err)
+	agent, err := factory.BuildRole(context.Background(), "default", profile, "data_engineer")
+	if err != nil || agent.Name(context.Background()) != "data_engineer" {
+		t.Fatalf("configured data engineer was not built through the production factory: %v", err)
 	}
 	if err := runSystemRoleProbe(agent); err != nil {
 		t.Fatal(err)
 	}
 	for _, required := range []string{"data_find", "data_get", "data_register", "web_search", "reference_read", "skill"} {
 		if !probe.tools[required] {
-			t.Fatalf("system expert lost authorized tool %s: %+v", required, probe.tools)
+			t.Fatalf("configured role lost authorized tool %s: %+v", required, probe.tools)
 		}
 	}
 	if probe.tools["unassigned"] || !strings.Contains(probe.result, "中国统计数据") {
-		t.Fatal("system expert permissions or real manual loading changed", probe.tools)
+		t.Fatal("configured role permissions or real manual loading changed", probe.tools)
 	}
 	after, _ := json.Marshal(profile)
 	if string(before) != string(after) {
-		t.Fatal("system expert creation mutated the user's profile")
+		t.Fatal("role creation mutated the user's profile")
 	}
-	if _, err := factory.BuildRole(context.Background(), "default", profile, "system_unknown"); err == nil {
-		t.Fatal("unknown system name accepted")
+	if _, err := factory.BuildRole(context.Background(), "default", profile, "system_data_acquisition"); err == nil {
+		t.Fatal("implicit acquisition role accepted")
 	}
 }
 
-func TestFactorySystemRoleDoesNotGrantAcquisitionToolsToOrdinaryMain(t *testing.T) {
+func TestFactoryMainKeepsOnlyItsAssignedPackages(t *testing.T) {
 	probe := &systemRoleProbe{tools: map[string]bool{}}
 	factory, profile := systemRoleFactory(t, probe)
 	agent, err := factory.BuildRole(context.Background(), "default", profile, "orchestrator")
@@ -135,24 +143,89 @@ func TestFactorySystemRoleDoesNotGrantAcquisitionToolsToOrdinaryMain(t *testing.
 	if err := runSystemRoleProbe(agent); err != nil {
 		t.Fatal(err)
 	}
-	if !probe.tools["data_find"] {
-		t.Fatal("ordinary main lost discovery tool")
+	for _, assigned := range []string{"data_find", "data_get", "data_register"} {
+		if !probe.tools[assigned] {
+			t.Fatalf("main lost assigned data-service tool %s", assigned)
+		}
 	}
-	for _, forbidden := range []string{"data_get", "data_register", "web_search", "unassigned"} {
+	for _, forbidden := range []string{"web_search", "unassigned"} {
 		if probe.tools[forbidden] {
 			t.Fatalf("ordinary main received system capability %s", forbidden)
 		}
 	}
 }
 
-func TestFactorySystemRoleRetainsFallbackAuthorization(t *testing.T) {
+func TestFactoryConfiguredRoleExecutesAssignedAcquisitionTool(t *testing.T) {
 	probe := &systemRoleProbe{tools: map[string]bool{}, target: "web_search", args: `{"query":"fixture"}`}
 	factory, profile := systemRoleFactory(t, probe)
-	agent, err := factory.BuildRole(context.Background(), "default", profile, deepagent.DataAcquisitionExpertName)
+	agent, err := factory.BuildRole(context.Background(), "default", profile, "data_engineer")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := runSystemRoleProbe(agent); err == nil || !strings.Contains(err.Error(), "数据服务") {
-		t.Fatalf("planned system role bypassed ordinary acquisition guard: %v", err)
+	if err := runSystemRoleProbe(agent); err != nil {
+		t.Fatalf("configured acquisition tool was blocked: %v", err)
+	}
+	if probe.calls != 2 || probe.result == "" {
+		t.Fatal("assigned web_search was not executed", probe.calls, probe.result)
+	}
+}
+
+func TestFactoryBuildMainDelegatesWithDataServiceWithoutPlanTools(t *testing.T) {
+	probe := &systemRoleProbe{tools: map[string]bool{}}
+	factory, profile := systemRoleFactory(t, probe)
+	agent, err := factory.buildDeepAgent(context.Background(), "default", profile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	probe.tools = map[string]bool{}
+	if err := runSystemRoleProbe(agent); err != nil {
+		t.Fatal(err)
+	}
+	if probe.taskDescription == "" {
+		t.Fatal("ordinary task delegation disappeared")
+	}
+	for _, name := range []string{"cartographer", "knowledge_engineer", "data_engineer"} {
+		if !strings.Contains(probe.taskDescription, name) {
+			t.Fatalf("Build task lost delegate %s: %s", name, probe.taskDescription)
+		}
+	}
+	if strings.Contains(probe.taskDescription, "system_data_acquisition") {
+		t.Fatal("hidden role remained in task delegation")
+	}
+	for _, name := range []string{"data_find", "data_get", "data_register"} {
+		if !probe.tools[name] {
+			t.Fatalf("Build main lost %s", name)
+		}
+	}
+	for _, name := range []string{"plan_propose", "plan_revise", "web_search"} {
+		if probe.tools[name] {
+			t.Fatalf("Build main received %s instead of its task handoff", name)
+		}
+	}
+}
+
+func TestFactoryPlanMainKeepsPlanToolsWithoutExecution(t *testing.T) {
+	probe := &systemRoleProbe{tools: map[string]bool{}}
+	factory, profile := systemRoleFactory(t, probe)
+	agent, err := factory.buildPlanComponents(context.Background(), "default", profile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	probe.tools = map[string]bool{}
+	if err := runSystemRoleProbe(agent); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"plan_propose", "plan_revise"} {
+		if !probe.tools[name] {
+			t.Fatalf("Plan lost %s", name)
+		}
+	}
+	for _, name := range []string{"data_get", "data_register", "web_search"} {
+		if probe.tools[name] {
+			t.Fatalf("Plan received execution tool %s", name)
+		}
+	}
+	if strings.Contains(probe.taskDescription, "cartographer") || strings.Contains(probe.taskDescription, "data_engineer") {
+		t.Fatal("Plan exposes execution delegates", probe.taskDescription)
 	}
 }

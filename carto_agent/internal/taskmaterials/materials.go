@@ -126,11 +126,7 @@ func Prepare(ctx context.Context) (context.Context, error) {
 		}
 		if info.IsDir() {
 			r.Kind = "folder"
-			// provided.json is written only by the trusted user-input handler.
-			// This also upgrades directories attached before directory reads existed.
-			if err := s.store.RegisterProvidedDirectory(path); err != nil {
-				r.Status, r.Error = "unavailable", err.Error()
-			} else if r.Current && remainingEntries > 0 {
+			if r.Current && remainingEntries > 0 {
 				result, readErr := fileops.Invoke(ctx, fileops.ToolReadFile, map[string]any{"path": path, "limit": remainingEntries})
 				if readErr != nil {
 					r.Status, r.Error = "unavailable", readErr.Error()
@@ -245,6 +241,7 @@ func (s *snapshot) read(ctx context.Context, path string) (string, error) {
 }
 
 func (s *snapshot) resolve(ctx context.Context, ref string) (string, error) {
+	ref = strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(ref), "附件:"))
 	var matches []string
 	var visit func(Reference)
 	visit = func(r Reference) {
@@ -271,9 +268,12 @@ func (s *snapshot) resolve(ctx context.Context, ref string) (string, error) {
 		}
 		return unique[0], nil
 	}
+	if s.store != nil && strings.HasPrefix(ref, "f_") {
+		item, err := s.store.Get(ref)
+		return item.Path, err
+	}
 	if filepath.IsAbs(ref) {
-		// ReadText enforces file authorization, including generated documents in
-		// the current workspace and explicit directory children.
+		// ReadText reads the local file; attachment registration is metadata only.
 		return ref, nil
 	}
 	// Child IDs are derived from paths, so a directory does not need a second
@@ -317,6 +317,32 @@ func (s *snapshot) resolve(ctx context.Context, ref string) (string, error) {
 	return "", fmt.Errorf("没有找到已提供的材料 %q，请从附件清单选择实际文件", ref)
 }
 
+// ResolveReference is the shared file identity boundary for planning and reading.
+// It returns file metadata. Downstream plans persist the resolved path,
+// so execution and restored sessions do not have to reinterpret attachment names.
+func ResolveReference(ctx context.Context, ref string) (Reference, error) {
+	ctx, s, err := fromContext(ctx)
+	if err != nil {
+		return Reference{}, err
+	}
+	path, err := s.resolve(ctx, ref)
+	if err != nil {
+		return Reference{}, err
+	}
+	if s.store == nil {
+		return Reference{}, fmt.Errorf("材料引用需要当前会话")
+	}
+	path, info, err := s.store.ValidatePath(path)
+	if err != nil {
+		return Reference{}, fmt.Errorf("材料 %q 不可用：%w", ref, err)
+	}
+	r := reference(path, false)
+	if info.IsDir() {
+		r.Kind = "folder"
+	}
+	return r, nil
+}
+
 // ResolveSource reads exact sources, rather than a model-generated transcription.
 func ResolveSource(ctx context.Context, refs []string) (string, error) {
 	ctx, s, err := fromContext(ctx)
@@ -356,15 +382,16 @@ func ResolveSource(ctx context.Context, refs []string) (string, error) {
 	return strings.TrimPrefix(out.String(), "\n\n"), nil
 }
 
-// DefaultSource uses only the current explicit documents. A directory or an
-// unsupported attachment cannot turn a delegation description into source text.
-func DefaultSource(ctx context.Context) (string, bool, error) {
-	ctx, s, err := fromContext(ctx)
+// DefaultReferences selects the current explicit documents for both plans and
+// direct delegation. A folder requires selecting its documents, not treating the
+// directory name or the task description as source text.
+func DefaultReferences(ctx context.Context) ([]string, bool, error) {
+	_, s, err := fromContext(ctx)
 	if err != nil {
-		return "", true, err
+		return nil, true, err
 	}
 	if len(s.references) == 0 {
-		return "", false, nil
+		return nil, false, nil
 	}
 	var refs []string
 	for _, r := range s.references {
@@ -373,7 +400,20 @@ func DefaultSource(ctx context.Context) (string, bool, error) {
 		}
 	}
 	if len(refs) == 0 {
-		return "", true, fmt.Errorf("已收到附件，但尚未选定可读取的原始文档。请先查看附件或文件夹清单，使用 source_refs 指定文档；不能把任务描述当作原文")
+		return nil, true, fmt.Errorf("已收到附件，但尚未选定可读取的原始文档。请先查看附件或文件夹清单，使用材料编号指定文档；不能把任务描述当作原文")
+	}
+	return refs, true, nil
+}
+
+// DefaultSource uses the same current-material selection as plan inputs.
+func DefaultSource(ctx context.Context) (string, bool, error) {
+	ctx, err := Prepare(ctx)
+	if err != nil {
+		return "", true, err
+	}
+	refs, present, err := DefaultReferences(ctx)
+	if err != nil || !present {
+		return "", present, err
 	}
 	text, err := ResolveSource(ctx, refs)
 	return text, true, err

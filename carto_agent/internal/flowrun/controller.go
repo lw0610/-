@@ -13,6 +13,7 @@ import (
 
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/llm"
+	"github.com/autocarto/carto_agent/internal/plan"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/cloudwego/eino/schema"
 )
@@ -202,11 +203,19 @@ func (c *Controller) advance(ctx context.Context, e *execution) error {
 			return c.finish(ctx, e, "cancelled", ctx.Err().Error())
 		}
 		step := run.Plan.Steps[run.Cursor]
+		if run.CartoPlan != nil && run.CartoPlan.APIVersion == plan.APIVersion {
+			if err := c.prepareStepInputs(ctx, e, step); err != nil {
+				return err
+			}
+			if run.Status == "interrupted" || run.Status == "waiting_user" || run.Status == "needs_replan" || IsTerminal(run.Status) {
+				return nil
+			}
+		}
 		if step.Kind == "acquire" {
 			if err := c.advancePlanData(ctx, e, step); err != nil {
 				return err
 			}
-			if run.Status == "waiting_user" || run.Status == "needs_replan" || IsTerminal(run.Status) {
+			if run.Status == "interrupted" || run.Status == "waiting_user" || run.Status == "needs_replan" || IsTerminal(run.Status) {
 				return nil
 			}
 			continue
@@ -227,12 +236,12 @@ func (c *Controller) advance(ctx context.Context, e *execution) error {
 			return c.finish(ctx, e, "failed", err.Error())
 		}
 		if err := c.beginStep(ctx, e, request); err != nil {
-			return err
+			return c.pausePlan(ctx, e, err.Error())
 		}
 		if err := c.runStepRequest(ctx, e, request); err != nil {
 			return err
 		}
-		if run.Status == "waiting_user" || IsTerminal(run.Status) || run.Status == "needs_replan" {
+		if run.Status == "waiting_user" || run.Status == "interrupted" || IsTerminal(run.Status) || run.Status == "needs_replan" {
 			return nil
 		}
 	}
@@ -258,7 +267,27 @@ func (c *Controller) beginStep(ctx context.Context, e *execution, request StepRe
 	state := &run.Steps[run.Cursor]
 	manual := state.PendingManual
 	state.PendingManual = false
-	state.Attempts = append(state.Attempts, Attempt{RunID: request.RunID, Mode: request.Mode, StartedAt: c.options.Now(), UserInitiated: manual, Verification: Verification{Errors: []string{}}})
+	state.Attempts = append(state.Attempts, Attempt{RunID: request.RunID, Mode: request.Mode, Role: request.Role.ID, StartedAt: c.options.Now(), UserInitiated: manual, Verification: Verification{Errors: []string{}}})
+	if run.CartoPlan != nil && run.CartoPlan.APIVersion == plan.APIVersion && c.options.Tools != nil && request.Mode == "step" {
+		var capabilities []string
+		for _, planned := range run.CartoPlan.Steps {
+			if planned.ID == request.Step.ID {
+				capabilities = planned.Capabilities
+				break
+			}
+		}
+		if stepUsesQGIS(request.Step, capabilities) {
+			observed, err := c.projectLayers(ctx)
+			if err != nil {
+				return err
+			}
+			attempt := &state.Attempts[len(state.Attempts)-1]
+			attempt.LayersTracked = true
+			for _, layer := range observed {
+				attempt.BeforeLayers = append(attempt.BeforeLayers, layer.ID)
+			}
+		}
+	}
 	state.Status = "running"
 	run.Status = "running"
 	if err := c.save(ctx, e); err != nil {
@@ -273,6 +302,7 @@ func (c *Controller) runStepRequest(ctx context.Context, e *execution, request S
 	state := &run.Steps[run.Cursor]
 	stepCtx := resource.WithScope(ctx, resource.Scope{FlowID: request.FlowID, FlowDir: request.FlowDir, Lock: request.Lock, Linked: request.Resources})
 	result, runErr := c.options.Runner.Run(stepCtx, request)
+
 	if ctx.Err() != nil {
 		return c.finish(ctx, e, "cancelled", ctx.Err().Error())
 	}
@@ -301,7 +331,7 @@ func newStepRequest(step flow.StepPlan, run *RunState, source, mode string) Step
 	if run.CartoPlan != nil {
 		version = run.CartoPlan.Version
 	}
-	request := StepRequest{FlowID: run.FlowID, FlowDir: run.Plan.FlowDir, Lock: run.Plan.Lock, SessionID: run.SessionID, SessionDir: run.SessionDir, FlowRunID: run.ID, RunID: fmt.Sprintf("flow-%s-s%02d-v%d-a%d", run.ID, step.Index, version, len(state.Attempts)+1), Step: step, OriginalSource: source, Mode: mode}
+	request := StepRequest{PlanVersion: version, Repair: state.UserGuidance, FlowID: run.FlowID, FlowDir: run.Plan.FlowDir, Lock: run.Plan.Lock, SessionID: run.SessionID, SessionDir: run.SessionDir, FlowRunID: run.ID, RunID: fmt.Sprintf("flow-%s-s%02d-v%d-a%d", run.ID, step.Index, version, len(state.Attempts)+1), Step: step, OriginalSource: source, Mode: mode}
 	for _, resolved := range run.Plan.Resources {
 		request.Resources = append(request.Resources, resolved.ResolvedResource())
 	}
@@ -319,22 +349,9 @@ func (c *Controller) buildRequest(step flow.StepPlan, run *RunState, source, mod
 	if step.Unresolved != "" {
 		return request, fmt.Errorf("%s：步骤负责角色不可用", step.Unresolved)
 	}
-	roles := append([]flow.RoleSpec{}, run.Plan.Roles...)
-	for i := range run.Plan.FlowRoles {
-		r := &run.Plan.FlowRoles[i]
-		if r.ID == step.Role {
-			roles = append(roles, r.RoleSpec())
-			copy := *r
-			request.Overlay = &RoleOverlaySpec{FlowRole: &copy, ExtraPackages: append([]string{}, step.GrantedPackages...)}
-			break
-		}
-	}
-	role, err := SelectRole(step, roles)
+	role, err := SelectRole(step, run.Plan.Roles)
 	if err != nil {
 		return request, err
-	}
-	if request.Overlay == nil && len(step.GrantedPackages) > 0 {
-		request.Overlay = &RoleOverlaySpec{RoleID: role.ID, ExtraPackages: append([]string{}, step.GrantedPackages...)}
 	}
 	request.Role = role
 	request.Step.Role = role.ID
@@ -365,10 +382,7 @@ func SelectRole(step flow.StepPlan, roles []flow.RoleSpec) (flow.RoleSpec, error
 	var selected *flow.RoleSpec
 	best := -1
 	for _, role := range roles {
-		if !role.Enabled || role.Kind == "executor" || role.FlowOnly {
-			continue
-		}
-		if len(step.SuggestedTools) == 0 && role.IsMain {
+		if !role.Enabled || role.IsMain || role.Kind == "executor" {
 			continue
 		}
 		score := 0
@@ -397,6 +411,9 @@ func (c *Controller) handleResult(ctx context.Context, e *execution, result Step
 	state := &run.Steps[run.Cursor]
 	step := run.Plan.Steps[run.Cursor]
 	attempt := &state.Attempts[len(state.Attempts)-1]
+	if attempt.Mode == "prepare" {
+		return c.finishPreparationV2(ctx, e, result, runErr)
+	}
 	if attempt.Mode == "acquire" {
 		return c.finishDataPreparation(ctx, e, result, runErr)
 	}
@@ -439,10 +456,12 @@ func (c *Controller) handleResult(ctx context.Context, e *execution, result Step
 		attempt.ReceiptRepaired = repair != nil && err == nil
 	}
 	if err == nil {
-		normalizeReceiptOutputs(step, &receipt)
 		attempt.Receipt = &receipt
-		attempt.Verification = VerifyOutputs(ctx, step, receipt, run.ProjectRoot, c.options.Tools)
+		attempt.Verification = VerifyOutputs(ctx, step, receipt, run.ProjectRoot, c.options.Tools, result.StyleTools...)
 		if receipt.Status == "completed" && attempt.Verification.OK {
+			if err := c.cleanupAttemptLayers(ctx, attempt, step, &receipt); err != nil {
+				return c.pausePlan(ctx, e, err.Error())
+			}
 			c.registerFlowOutputs(run, step.ID, receipt.Outputs)
 			state.Outputs = receipt.Outputs
 			state.Status = "completed"
@@ -473,15 +492,31 @@ func (c *Controller) handleResult(ctx context.Context, e *execution, result Step
 	}
 	state.Status = "failed"
 	if llm.IsNonRecoverableServiceError(err) {
-		return c.finish(ctx, e, "failed", state.LastFailure)
+		return c.pausePlan(ctx, e, state.LastFailure)
+	}
+	if err := c.cleanupAttemptLayers(ctx, attempt, step, nil); err != nil {
+		return c.pausePlan(ctx, e, err.Error())
 	}
 	if receiptFailed {
 		return c.finish(ctx, e, "failed", "本步结果未能整理为回执，已保留工具执行结果，未重新执行本步："+state.LastFailure)
 	}
 	state.AutomaticFailures++
-	if state.AutomaticFailures >= 2 {
+	limit := 2
+	if run.CartoPlan != nil && run.CartoPlan.APIVersion == plan.APIVersion {
+		limit = 3
+		if runErr != nil && !TransientFailure(runErr) {
+			return c.needsReplan(ctx, e, state.LastFailure)
+		}
+		if step.Kind == "executor" {
+			// Dedicated executors own their extraction/compilation retries. Feeding
+			// the same fixed arguments back cannot repair a rejected request.
+			return c.needsReplan(ctx, e, state.LastFailure)
+		}
+	}
+	if state.AutomaticFailures >= limit {
 		return c.needsReplan(ctx, e, state.LastFailure)
 	}
+	state.UserGuidance = "上次执行已有结果，仅修正以下核验问题，不重复整个步骤：" + state.LastFailure
 	state.Status = "pending"
 	c.emit(ctx, run.SessionID, run.ID, "flow.step_failed", map[string]any{"flow_run_id": run.ID, "step_id": step.ID, "attempt": len(state.Attempts), "errors": strings.Split(state.LastFailure, "；"), "next": "retry"})
 	return c.save(ctx, e)
@@ -552,6 +587,9 @@ func (c *Controller) Snapshot(sessionID string) (*RunState, error) {
 func (c *Controller) Cancel(ctx context.Context, sessionID string) (*RunState, error) {
 	c.mu.Lock()
 	e := c.runs[c.sessions[sessionID]]
+	if e == nil {
+		e = c.runs[c.latest[sessionID]]
+	}
 	if e != nil && e.cancel != nil {
 		e.cancel()
 	}
@@ -593,6 +631,7 @@ func (c *Controller) Resume(ctx context.Context, request ResumeRequest) (*RunSta
 	defer e.mu.Unlock()
 	state.Status = "running"
 	state.Steps[state.Cursor].Status = "pending"
+	state.Steps[state.Cursor].PendingManual = true
 	if err = c.advance(processCtx, e); err != nil {
 		return nil, err
 	}

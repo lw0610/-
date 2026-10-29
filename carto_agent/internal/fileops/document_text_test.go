@@ -9,40 +9,30 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/autocarto/carto_agent/internal/sessionfiles"
 	"github.com/autocarto/carto_agent/internal/toolsession"
 )
 
-func TestReadTextProvidedDirectoryAndCompleteSource(t *testing.T) {
+func TestReadTextLocalDirectoryAndCompleteSource(t *testing.T) {
 	t.Setenv("AUTOCARTO_HOME", t.TempDir())
 	project := filepath.Join(t.TempDir(), "project.qgz")
 	writeFixture(t, project, "fixture")
 	ctx := toolsession.WithContext(context.Background(), "document-input", project, "")
-	store, err := sessionfiles.New(project, "document-input")
-	if err != nil {
-		t.Fatal(err)
-	}
 	parent := t.TempDir()
 	dir := filepath.Join(parent, "selected")
 	path := filepath.Join(dir, "nested", "史料.txt")
 	body := strings.Repeat("真实原文，保留全部内容。\r\n", 4000) + "最后一行"
 	writeFixture(t, path, body)
 	neighbor := filepath.Join(parent, "other.txt")
-	writeFixture(t, neighbor, "unselected")
-	if _, err = ReadText(ctx, path); err == nil {
-		t.Fatal("unselected text readable")
-	}
-	if err = store.RegisterProvidedDirectory(dir); err != nil {
-		t.Fatal(err)
-	}
+	writeFixture(t, neighbor, "local text")
 	text, err := ReadText(ctx, path)
 	if err != nil || text != body {
 		t.Fatalf("full source lost: bytes=%d expected=%d err=%v", len(text), len(body), err)
 	}
-	for _, forbidden := range []string{parent, neighbor} {
-		if _, err = ReadText(ctx, forbidden); err == nil {
-			t.Fatalf("unauthorized input read: %s", forbidden)
-		}
+	if _, err = ReadText(ctx, parent); err == nil {
+		t.Fatal("directory read as source text")
+	}
+	if text, err = ReadText(ctx, neighbor); err != nil || text != "local text" {
+		t.Fatalf("local source read failed: %q %v", text, err)
 	}
 	listing, err := Invoke(ctx, ToolReadFile, map[string]any{"path": dir})
 	if err != nil || listing.(map[string]any)["kind"] != "directory" {
@@ -53,11 +43,11 @@ func TestReadTextProvidedDirectoryAndCompleteSource(t *testing.T) {
 		t.Fatalf("cannot read child page: %v", err)
 	}
 	if _, err = Invoke(ctx, ToolWriteFile, map[string]any{"path": path, "content": "changed"}); err == nil {
-		t.Fatal("read grant authorized a write")
+		t.Fatal("file write escaped output directory")
 	}
 	if err = os.Symlink(neighbor, filepath.Join(dir, "escape.txt")); err == nil {
-		if _, err = ReadText(ctx, filepath.Join(dir, "escape.txt")); err == nil {
-			t.Fatal("symlink escaped selected directory")
+		if text, err = ReadText(ctx, filepath.Join(dir, "escape.txt")); err != nil || text != "local text" {
+			t.Fatalf("local symlink source read failed: %q %v", text, err)
 		}
 	}
 }

@@ -12,7 +12,6 @@ import (
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/dataservice"
-	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/flowrun"
 	"github.com/autocarto/carto_agent/internal/plan"
@@ -26,7 +25,7 @@ type derivedExtentCheckpointAgent struct {
 }
 
 func (*derivedExtentCheckpointAgent) Name(context.Context) string {
-	return deepagent.DataAcquisitionExpertName
+	return "source_researcher"
 }
 func (*derivedExtentCheckpointAgent) Description(context.Context) string {
 	return "derived extent checkpoint contract"
@@ -56,9 +55,10 @@ func (a *derivedExtentCheckpointAgent) Resume(ctx context.Context, _ *adk.Resume
 	return iter
 }
 
-func TestDerivedAcquisitionExtentPersistsAcrossHITLRestartAndRegistration(t *testing.T) {
+func TestLegacyDerivedAcquisitionExtentPersistsAcrossHITLRestartAndRegistration(t *testing.T) {
 	ctx := context.Background()
 	s, base, session, p := cartoRuntimeFixture(t)
+	configureAcquisitionTestRole(t, s)
 	session.Mode = executionModePlan
 	s.setFlowContext(session)
 	cfg := &config.Config{Acquisition: config.AcquisitionConfig{FallbackPolicy: "allow", WebSearchEnabled: true}, Integrations: config.IntegrationsConfig{Web: config.WebDataConfig{Enabled: true}}}
@@ -83,11 +83,22 @@ func TestDerivedAcquisitionExtentPersistsAcrossHITLRestartAndRegistration(t *tes
 	if choice == "" {
 		t.Fatal("missing available fallback")
 	}
+	// A saved v1 run remains resumable; new proposals are always v2.
+	p.APIVersion = plan.LegacyAPIVersion
+	p.Steps[0].Inputs, p.Steps[0].Produces = nil, nil
+	p.Steps[0].Outputs = []flow.OutputDeclaration{{Label: "结果", Type: "text"}}
 	p.Data = []plan.Data{{ID: "population", Name: request.Need.Name, From: "acquire", FindID: found.FindID, Choice: choice, Geometry: "table"}, {ID: "boundary", Name: "派生范围", From: "step", Step: "derive", Output: "boundary_result", Geometry: "polygon"}}
 	p.Steps[0].Uses = []string{"population", "boundary"}
 	p.Steps = append([]plan.Step{{ID: "derive", Title: "生成派生范围", Capabilities: []string{"read"}, Instructions: "生成派生范围", Outputs: []flow.OutputDeclaration{{Label: "boundary_result", Type: "file", Format: "geojson"}}}}, p.Steps...)
-	raw, _ := json.Marshal(p)
-	if _, err = (sessionPlanService{server: s, run: session}).ProposePlan(ctx, raw); err != nil {
+	legacy, err := s.prepareLegacyPlan(ctx, session, p, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	store, err := planStore(session)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = store.Save(legacy.Snapshot, 0); err != nil {
 		t.Fatal(err)
 	}
 	cards, err := s.ListPlans(ctx, session.SessionID, session.ProjectPath)
@@ -122,7 +133,7 @@ func TestDerivedAcquisitionExtentPersistsAcrossHITLRestartAndRegistration(t *tes
 		return nil
 	}
 	factory.build = func(role string) adk.Agent {
-		if role == deepagent.DataAcquisitionExpertName {
+		if role == "source_researcher" {
 			return &derivedExtentCheckpointAgent{check: func(callCtx context.Context) error { expertRuns++; return checkScope(callCtx) }, register: func(callCtx context.Context) error {
 				resumes++
 				if err := checkScope(callCtx); err != nil {

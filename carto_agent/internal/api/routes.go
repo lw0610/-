@@ -25,6 +25,7 @@ func (a *API) SetupRoutes(router *mux.Router) {
 	a.setupPlanRoutes(sub)
 	a.setupDataServiceRoutes(sub)
 	a.setupResourceRoutes(sub)
+	a.setupLayerRoutes(sub)
 	sub.HandleFunc("/runtime/snapshot", a.handleRuntimeSnapshot).Methods("GET", "OPTIONS")
 	sub.HandleFunc("/runtime/services", a.handleRuntimeServices).Methods("GET", "OPTIONS")
 	sub.HandleFunc("/runtime/descriptor", a.handleRuntimeDescriptor).Methods("GET", "OPTIONS")

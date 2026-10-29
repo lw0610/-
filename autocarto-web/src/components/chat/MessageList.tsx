@@ -217,7 +217,7 @@ export default function MessageList({
   }, [messages, pendingInterrupts, workflowBlocks])
 
   const runIds = new Set([...flowRuns.map(run => run.flow_run_id), ...plans.flatMap(plan => plan.run ? [plan.run.flow_run_id] : [])])
-  const belongsToFlow = (message: Message) => message.type !== 'user' && runIds.has(String(message.data?.flow_run_id || ''))
+  const belongsToFlow = (message: Message) => message.type !== 'user' && !message.workflowBlockId && runIds.has(String(message.data?.flow_run_id || ''))
   const process: Message[] = [...new Map([...messages, ...visibleMessages].filter(belongsToFlow).filter(message => !message.workflowBlockId).map(message => [message.type === 'interrupt' ? extractCheckpointId(message) || message.id : message.id, message])).values()]
   const timeline = [
     ...visibleMessages.filter(message => !belongsToFlow(message)).map(message => ({ id: message.id, timestamp: message.timestamp, message, run: undefined as FlowRunState | undefined, plan: undefined as PlanSnapshot | undefined })),
@@ -288,9 +288,9 @@ export default function MessageList({
 
       {flowBlocked && <section role="alert" className="mb-3 rounded border border-red-300 bg-surface-raised p-3 text-xs"><h2 className="font-medium">流程暂时无法启动：{flowBlocked.flow_id}</h2>{flowBlocked.reasons.map((reason, index) => <p key={index} className="mt-1">{reason.message}</p>)}</section>}
       {timeline.map(item => item.plan
-        ? item.run ? <PlanProgress onOpenDetails={() => onOpenWorkflowBlock(activeExecutionBlockId(item.run!))} key={item.id} snapshot={item.plan} run={item.run} messages={process.filter(message => message.data?.flow_run_id === item.run?.flow_run_id)} renderMessage={renderMessage} executionMode={executionMode} /> : <PlanCard key={item.id} snapshot={item.plan} executionMode={executionMode} />
+        ? item.run ? <PlanProgress onOpenDetails={() => onOpenWorkflowBlock(activeExecutionBlockId(item.run!, workflowBlocks))} key={item.id} snapshot={item.plan} run={item.run} messages={process.filter(message => message.data?.flow_run_id === item.run?.flow_run_id)} renderMessage={renderMessage} executionMode={executionMode} /> : <PlanCard key={item.id} snapshot={item.plan} executionMode={executionMode} />
         : item.run
-        ? <FlowProgressCard onOpenDetails={() => onOpenWorkflowBlock(activeExecutionBlockId(item.run!))} key={item.id} run={item.run} messages={process.filter(message => message.data?.flow_run_id === item.run?.flow_run_id)} renderMessage={renderMessage} onResume={item.run.carto_plan ? onResumeFlow : undefined}/>
+        ? <FlowProgressCard onOpenDetails={() => onOpenWorkflowBlock(activeExecutionBlockId(item.run!, workflowBlocks))} key={item.id} run={item.run} messages={process.filter(message => message.data?.flow_run_id === item.run?.flow_run_id)} renderMessage={renderMessage} onResume={item.run.carto_plan ? onResumeFlow : undefined}/>
         : item.message && renderMessage(item.message))}
       <div ref={bottomRef} />
     </div>

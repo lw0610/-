@@ -127,13 +127,18 @@ def _tags(feature, fields):
     values = {field.name(): feature[field.name()] for field in fields}
     raw = values.get("other_tags")
     if isinstance(raw, str):
-        for key, value in re.findall(r'"((?:[^"\\]|\\.)*)"\s*=>\s*"((?:[^"\\]|\\.)*)"', raw):
-            values.setdefault(json.loads('"' + key + '"'), json.loads('"' + value + '"'))
+        for key, value in re.findall(r'"((?:[^"\\]|\\.)*)"\s*=>\s*"((?:[^"\\]|\\.)*)"', raw, flags=re.S):
+            # OGR's other_tags is PostgreSQL hstore, not JSON: literal newlines
+            # are allowed and backslashes escape the following character.
+            key = re.sub(r"\\(.)", r"\1", key, flags=re.S)
+            value = re.sub(r"\\(.)", r"\1", value, flags=re.S)
+            values.setdefault(key, value)
     return values
 
 
 def _present(value):
-    return value is not None and type(value).__name__ != "QPyNullVariant" and str(value).strip() != ""
+    from qgis.core import QgsVariantUtils
+    return not QgsVariantUtils.isNull(value) and str(value).strip() != ""
 
 
 def _shapefile_fields(fields):
@@ -188,7 +193,7 @@ def _write_vector(layer, output, fields, features, geometry_type):
 
 
 def _write_vector_inner(layer, output, fields, features, geometry_type):
-    from qgis.core import QgsVectorFileWriter, QgsProject, QgsFeature, QgsGeometry, QgsWkbTypes
+    from qgis.core import QgsVectorFileWriter, QgsProject, QgsFeature, QgsGeometry, QgsWkbTypes, QgsFields, QgsField
     drivers = {".shp": "ESRI Shapefile", ".gpkg": "GPKG", ".geojson": "GeoJSON"}
     if output.suffix.lower() not in drivers:
         raise ValueError("规范化矢量仅支持 Shapefile、GeoPackage、GeoJSON")
@@ -198,8 +203,28 @@ def _write_vector_inner(layer, output, fields, features, geometry_type):
     options.driverName = drivers[output.suffix.lower()]
     options.fileEncoding = "UTF-8"
     options.layerName = output.stem
+    source_fields = {field.name(): field.name() for field in fields}
+    field_renames = {}
     if output.suffix.lower() == ".shp":
         options.layerOptions = ["ENCODING=UTF-8"]
+    elif output.suffix.lower() == ".gpkg" and fields.indexFromName("fid") >= 0:
+        # A split can repeat the source ID. QGIS processing also treats a field
+        # named fid as the output primary key, so preserve it under a source name
+        # and let GeoPackage allocate fresh, unique feature IDs.
+        source_name, index = "source_fid", 2
+        while fields.indexFromName(source_name) >= 0:
+            source_name = "source_fid_" + str(index)
+            index += 1
+        renamed_fields = QgsFields()
+        for field in fields:
+            copy = QgsField(field)
+            if field.name() == "fid":
+                copy.setName(source_name)
+            renamed_fields.append(copy)
+        fields = renamed_fields
+        source_fields.pop("fid")
+        source_fields[source_name] = "fid"
+        field_renames["fid"] = source_name
     writer = QgsVectorFileWriter.create(str(output), fields, geometry_type, layer.crs(), QgsProject.instance().transformContext(), options)
     if writer.hasError() != QgsVectorFileWriter.NoError:
         raise ValueError(writer.errorMessage())
@@ -212,12 +237,12 @@ def _write_vector_inner(layer, output, fields, features, geometry_type):
                 geometry.convertToMultiType()
             item = QgsFeature(fields)
             item.setGeometry(geometry)
-            item.setAttributes([values.get(f.name()) for f in fields])
+            item.setAttributes([values.get(source_fields[f.name()]) for f in fields])
             if not writer.addFeature(item):
                 raise ValueError(writer.lastError())
             count += 1
             for key in filled:
-                filled[key] += int(_present(values.get(key)))
+                filled[key] += int(_present(values.get(source_fields[key])))
             if extent is None:
                 extent = geometry.boundingBox()
             else:
@@ -229,20 +254,24 @@ def _write_vector_inner(layer, output, fields, features, geometry_type):
             "crs": layer.crs().authid() or layer.crs().toWkt(), "extent": [] if extent is None else [extent.xMinimum(), extent.yMinimum(), extent.xMaximum(), extent.yMaximum()],
             "extent_wgs84": _wgs84_extent(extent,layer.crs()),
             "fields": {key: (value / count if count else 0) for key, value in filled.items()},
-            "sha256": {p: hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in paths}, "warnings": []}
+            "sha256": {p: hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in paths}, "warnings": [], "field_renames": field_renames}
 
 
 def normalize_handler(params):
     try:
-        from qgis.core import QgsExpression, QgsExpressionContext, QgsFields, QgsField, QgsFeature, QgsWkbTypes, QgsGeometry, QgsUnitTypes
+        from qgis.core import QgsExpression, QgsExpressionContext, QgsFields, QgsField, QgsFeature, QgsWkbTypes, QgsGeometry, QgsUnitTypes, QgsDistanceArea, QgsProject
         from qgis.PyQt.QtCore import QVariant
         path, layer = _source(params)
         output = _output(params)
+        expected = str(params.get("expected_geometry") or "").lower()
         if not layer.isValid():
+            if expected in ("point", "line", "polygon", "vector"):
+                from osgeo import gdal
+                diagnostic = layer.error().summary() or gdal.GetLastErrorMsg()
+                raise ValueError("无法打开原始矢量数据：" + str(path) + ("；" + diagnostic if diagnostic else ""))
             return _normalize_raster(path, output, params)
         if not layer.crs().isValid():
             raise ValueError("原始数据坐标系未定义")
-        expected = str(params.get("expected_geometry") or "").lower()
         actual = {QgsWkbTypes.PointGeometry: "point", QgsWkbTypes.LineGeometry: "line", QgsWkbTypes.PolygonGeometry: "polygon"}.get(layer.geometryType(), "unknown")
         if expected and expected not in (actual, "vector"):
             raise ValueError("原始数据几何类型不符合要求：" + actual)
@@ -279,8 +308,18 @@ def normalize_handler(params):
         else:
             tolerance /= QgsUnitTypes.fromUnitToUnitFactor(layer.crs().mapUnits(), QgsUnitTypes.DistanceMeters)
 
+        counts = {"input_features": 0, "filtered_features": 0, "before_merge": 0, "after_merge": 0, "removed_small": 0}
+        measure = QgsDistanceArea()
+        measure.setSourceCrs(layer.crs(), QgsProject.instance().transformContext())
+        measure.setEllipsoid("WGS84")
+        merge_by = str(params.get("merge_by") or "")
+        min_length = float(params.get("min_length_m") or 0)
+        min_area = float(params.get("min_area_m2") or 0)
+        merge_distance = float(params.get("merge_distance_m") or 0)
+
         def rows():
             for feature in layer.getFeatures():
+                counts["input_features"] += 1
                 values = _tags(feature, layer.fields())
                 probe = QgsFeature(eval_fields)
                 probe.setAttributes([values.get(f.name()) for f in eval_fields])
@@ -290,6 +329,7 @@ def normalize_handler(params):
                 if expression.hasEvalError():
                     raise ValueError("筛选表达式执行失败：" + expression.evalErrorString())
                 if not _present(keep) or not bool(keep):
+                    counts["filtered_features"] += 1
                     continue
                 geometry = QgsGeometry(feature.geometry())
                 if clip is not None:
@@ -328,14 +368,45 @@ def normalize_handler(params):
                         mapped[field.name()] = values.get(source_names.get(field.name(), field.name()))
                 yield geometry, mapped
 
-        data = _write_vector(layer, output, fields, rows(), QgsWkbTypes.multiType(layer.wkbType()))
+        def generalized_rows():
+            groups = {}
+            for geometry, attrs in rows():
+                counts["before_merge"] += 1
+                key = str(attrs.get(merge_by) or "").strip() if merge_by else ""
+                if not key:
+                    groups[("single", counts["before_merge"])] = [(geometry, attrs)]
+                else:
+                    groups.setdefault(("named", key), []).append((geometry, attrs))
+            for members in groups.values():
+                geometries = [(g, a) for g, a in members]
+                if len(members) > 1 and layer.geometryType() == QgsWkbTypes.LineGeometry:
+                    merged = QgsGeometry.unaryUnion([g for g, _ in members]).mergeLines()
+                    _checked_geometry(merged, "同名线合并")
+                    geometries = [(g, members[0][1]) for g in merged.asGeometryCollection()] if merged.isMultipart() else [(merged, members[0][1])]
+                elif len(members) > 1 and layer.geometryType() == QgsWkbTypes.PointGeometry and merge_distance:
+                    geometries = []
+                    for geometry, attrs in members:
+                        point = geometry.centroid().asPoint()
+                        if not any(measure.measureLine(point, existing.centroid().asPoint()) <= merge_distance for existing, _ in geometries):
+                            geometries.append((geometry, attrs))
+                for geometry, attrs in geometries:
+                    counts["after_merge"] += 1
+                    if ((min_length and layer.geometryType() == QgsWkbTypes.LineGeometry and measure.measureLength(geometry) < min_length)
+                            or (min_area and layer.geometryType() == QgsWkbTypes.PolygonGeometry and measure.measureArea(geometry) < min_area)):
+                        counts["removed_small"] += 1
+                        continue
+                    yield geometry, attrs
+
+        data = _write_vector(layer, output, fields, generalized_rows(), QgsWkbTypes.multiType(layer.wkbType()))
+        data["generalization"] = dict(counts, merge_by=merge_by, min_length_m=min_length, min_area_m2=min_area,
+                                      simplify_tolerance_m=float(params.get("simplify_tolerance_m") or 0))
         clip_info["clip_applied"] = clip is not None
         if clip is not None:
             clip_info.update(clip_counts, clip_output_features=data["count"])
         data.update(clip_info)
         renamed = {original: target for target, original in source_names.items() if target != original}
         if renamed:
-            data["field_renames"] = renamed
+            data.setdefault("field_renames", {}).update(renamed)
             data["warnings"].append("Shapefile字段名已按10字节限制兼容重命名，原字段值保留；对应关系见field_renames")
         return {"success": True, "output": str(output), "info": "数据规范化完成", "data": data}
     except Exception as exc:

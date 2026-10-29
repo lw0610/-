@@ -269,6 +269,11 @@ func BuildSkillSchemaMap(def SkillDefinition) map[string]any {
 		if _, defined := property["type"]; !defined {
 			property["type"] = skillParameterJSONSchemaType(param.Type, param.Values)
 		}
+		if strings.EqualFold(strings.TrimSpace(param.Type), "multi_layer") {
+			if _, defined := property["items"]; !defined {
+				property["items"] = map[string]any{"type": "string"}
+			}
+		}
 		if description := strings.TrimSpace(param.Description); description != "" {
 			property["description"] = description
 		}
@@ -330,7 +335,7 @@ func skillParameterJSONSchemaType(rawType string, values []any) string {
 		return "boolean"
 	case "enum":
 		return inferEnumJSONSchemaType(values)
-	case "array", "list":
+	case "array", "list", "multi_layer":
 		return "array"
 	case "object", "map", "dict":
 		return "object"

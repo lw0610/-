@@ -3,7 +3,7 @@
   "id": "source.osm.geofabrik-china",
   "name": "OpenStreetMap 中国区域提取包",
   "kind": "http_file",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "compliance": "open",
   "priority": 50,
   "provides": [
@@ -110,7 +110,7 @@
       },
       "url": "https://download.geofabrik.de/asia/china-latest.osm.pbf",
       "layer": "lines",
-      "filter": "waterway = 'river'"
+      "filter": "waterway IN ('river','canal','stream')"
     },
     {
       "category": "hydro.water_polygon",
@@ -153,8 +153,7 @@
   },
   "size_mb": 1536,
   "limits": {
-    "max_mb": 2048,
-    "min_area_km2": 1000000
+    "max_mb": 2048
   },
   "license": "ODbL-1.0",
   "attribution": "© OpenStreetMap contributors, Geofabrik",
@@ -163,7 +162,8 @@
   ],
   "refresh_days": 30,
   "notes": [
-    "2026-10-25 官方目录约 1.5 GB；最新全国 Shapefile 包不可用，使用 PBF；实际体量以响应为准"
+    "2026-10-25 官方目录约 1.5 GB；最新全国 Shapefile 包不可用，使用 PBF；实际体量以响应为准",
+    "来源已提供省级提取包；精确省/市/县需求按行政区代码选择对应省包，跨省或未知范围使用中国包。各类别复用同一下载原件。"
   ],
   "handbook": {
     "good_for": "中国较大范围的道路、铁路、水系、地名",
@@ -175,5 +175,47 @@
     "examples": [
       "中国铁路基础数据"
     ]
+  },
+  "scale_classes": [
+    "detailed",
+    "regional"
+  ],
+  "typical_seconds": 900,
+  "chinese_names": true,
+  "method": "osm_extract",
+  "region_urls": {
+    "110000": "https://download.geofabrik.de/asia/china/beijing-latest.osm.pbf",
+    "120000": "https://download.geofabrik.de/asia/china/tianjin-latest.osm.pbf",
+    "130000": "https://download.geofabrik.de/asia/china/hebei-latest.osm.pbf",
+    "140000": "https://download.geofabrik.de/asia/china/shanxi-latest.osm.pbf",
+    "150000": "https://download.geofabrik.de/asia/china/inner-mongolia-latest.osm.pbf",
+    "210000": "https://download.geofabrik.de/asia/china/liaoning-latest.osm.pbf",
+    "220000": "https://download.geofabrik.de/asia/china/jilin-latest.osm.pbf",
+    "230000": "https://download.geofabrik.de/asia/china/heilongjiang-latest.osm.pbf",
+    "310000": "https://download.geofabrik.de/asia/china/shanghai-latest.osm.pbf",
+    "320000": "https://download.geofabrik.de/asia/china/jiangsu-latest.osm.pbf",
+    "330000": "https://download.geofabrik.de/asia/china/zhejiang-latest.osm.pbf",
+    "340000": "https://download.geofabrik.de/asia/china/anhui-latest.osm.pbf",
+    "350000": "https://download.geofabrik.de/asia/china/fujian-latest.osm.pbf",
+    "360000": "https://download.geofabrik.de/asia/china/jiangxi-latest.osm.pbf",
+    "370000": "https://download.geofabrik.de/asia/china/shandong-latest.osm.pbf",
+    "410000": "https://download.geofabrik.de/asia/china/henan-latest.osm.pbf",
+    "420000": "https://download.geofabrik.de/asia/china/hubei-latest.osm.pbf",
+    "430000": "https://download.geofabrik.de/asia/china/hunan-latest.osm.pbf",
+    "440000": "https://download.geofabrik.de/asia/china/guangdong-latest.osm.pbf",
+    "450000": "https://download.geofabrik.de/asia/china/guangxi-latest.osm.pbf",
+    "460000": "https://download.geofabrik.de/asia/china/hainan-latest.osm.pbf",
+    "500000": "https://download.geofabrik.de/asia/china/chongqing-latest.osm.pbf",
+    "510000": "https://download.geofabrik.de/asia/china/sichuan-latest.osm.pbf",
+    "520000": "https://download.geofabrik.de/asia/china/guizhou-latest.osm.pbf",
+    "530000": "https://download.geofabrik.de/asia/china/yunnan-latest.osm.pbf",
+    "540000": "https://download.geofabrik.de/asia/china/tibet-latest.osm.pbf",
+    "610000": "https://download.geofabrik.de/asia/china/shaanxi-latest.osm.pbf",
+    "620000": "https://download.geofabrik.de/asia/china/gansu-latest.osm.pbf",
+    "630000": "https://download.geofabrik.de/asia/china/qinghai-latest.osm.pbf",
+    "640000": "https://download.geofabrik.de/asia/china/ningxia-latest.osm.pbf",
+    "650000": "https://download.geofabrik.de/asia/china/xinjiang-latest.osm.pbf",
+    "810000": "https://download.geofabrik.de/asia/china/hong-kong-latest.osm.pbf",
+    "820000": "https://download.geofabrik.de/asia/china/macau-latest.osm.pbf"
   }
 }

@@ -124,8 +124,8 @@ def _read_spec(value):
 
 def _resolve_layers(refs, project, *, visible=False):
     if refs is None:
-        layers = list(project.layerTreeRoot().layerOrder())
-        return [layer for layer in layers if not visible or (project.layerTreeRoot().findLayer(layer.id()) is not None and project.layerTreeRoot().findLayer(layer.id()).isVisible())]
+        return [node.layer() for node in project.layerTreeRoot().findLayers()
+                if not visible or node.isVisible()]
     if not isinstance(refs, list) or not refs:
         raise ValueError("图层参数必须是非空名称或 ID 数组")
     layers = []
@@ -201,6 +201,35 @@ def _properties(item, role, spec, anchor):
     item.setCustomProperty("autocarto/anchor", json.dumps(anchor, ensure_ascii=False, sort_keys=True))
     item.setCustomProperty("autocarto/font_locked", True)
     item.setCustomProperty("autocarto/compose_spec", spec["name"])
+
+
+def layout_geometry_warnings(layout):
+    """Read current geometry using compose's page and foreground-role rules."""
+    from qgis.core import QgsLayoutItem, QgsLayoutItemPage
+    from autocarto.tools.system._shared.print_layout_advanced_impl import _decorative_border_outer_rect
+    pages = [_rect(page) for page in layout.pageCollection().pages()]
+    warnings, foreground = [], []
+    for item in layout.items():
+        if not isinstance(item, QgsLayoutItem) or isinstance(item, QgsLayoutItemPage) or not item.isVisible():
+            continue
+        role = str(item.customProperty("autocarto/compose_role", "")
+                   or item.customProperty("autocarto/item_role", "") or item.id() or item.uuid())
+        rect = _rect(item)
+        boundary = _decorative_border_outer_rect(item, rect) or rect
+        if not any(boundary["x"] >= page["x"]-0.001 and boundary["y"] >= page["y"]-0.001
+                   and boundary["x"]+boundary["width"] <= page["x"]+page["width"]+0.001
+                   and boundary["y"]+boundary["height"] <= page["y"]+page["height"]+0.001 for page in pages):
+            warnings.append(f"{role} 超出页面边界。")
+        # A map, its grid/border, and foreground items intentionally overlap.
+        # Retain the existing check only between the five foreground roles.
+        if role in TEXT_ROLES:
+            foreground.append((role, rect))
+    foreground.sort(key=lambda entry: TEXT_ROLES.index(entry[0]))
+    for i, (left, a) in enumerate(foreground):
+        for right, b in foreground[i+1:]:
+            if min(a["x"]+a["width"], b["x"]+b["width"])-max(a["x"], b["x"]) > 0.01 and min(a["y"]+a["height"], b["y"]+b["height"])-max(a["y"], b["y"]) > 0.01:
+                warnings.append(f"{left} 与 {right} 相交，请核对内容与版式。")
+    return warnings
 
 
 def _svg(relative):
@@ -281,7 +310,8 @@ def _label(layout, role, text, font, config, width=None, heading=None, heading_f
 def _legend(layout, main, layers, params, fonts, config, project, created_layers):
     from qgis.core import QgsLayoutItemLegend, QgsLegendStyle, QgsVectorLayer, QgsRasterMarkerSymbolLayer, QgsSvgMarkerSymbolLayer, QgsMarkerSymbol, QgsSingleSymbolRenderer, QgsUnitTypes, QgsLayoutExporter, QgsApplication
     from qgis.PyQt.QtCore import Qt
-    from autocarto.tools.system._shared.print_layout_advanced_impl import _build_mm_text_format, _apply_legend_text_format
+    from autocarto.tools.system._shared.print_layout_advanced_impl import _build_mm_text_format, _apply_legend_text_format, _resolve_legend_labels, _apply_legend_labels
+    labels = _resolve_legend_labels(params.get("legend_labels") or {}, project)
     legend = QgsLayoutItemLegend(layout)
     legend.setId("legend")
     legend.setLinkedMap(main)
@@ -310,6 +340,7 @@ def _legend(layout, main, layers, params, fonts, config, project, created_layers
         project.addMapLayer(placeholder, False)
         created_layers.append(placeholder.id())
         root.addLayer(placeholder)
+    _apply_legend_labels(legend, labels)
     family = config.get("font_family", "Arial")
     _apply_legend_text_format(legend, [QgsLegendStyle.Title], _build_mm_text_format(family, fonts["legend_title"]))
     _apply_legend_text_format(legend, [QgsLegendStyle.Group, QgsLegendStyle.Subgroup, QgsLegendStyle.SymbolLabel], _build_mm_text_format(family, fonts["legend_body"]))
@@ -484,19 +515,7 @@ def _compose(params):
                 continue
             rect = _rect(item)
             result_rects[item.id()] = rect
-            boundary = rects["border"] if role == "border" else rect
-            if boundary["x"] < -0.001 or boundary["y"] < -0.001 or boundary["x"]+boundary["width"] > page["width"]+0.001 or boundary["y"]+boundary["height"] > page["height"]+0.001:
-                warnings.append(f"{role} 超出页面边界。")
-        for i, left in enumerate(TEXT_ROLES):
-            if left not in objects:
-                continue
-            a = _rect(objects[left])
-            for right in TEXT_ROLES[i+1:]:
-                if right not in objects:
-                    continue
-                b = _rect(objects[right])
-                if min(a["x"]+a["width"], b["x"]+b["width"])-max(a["x"], b["x"]) > 0.01 and min(a["y"]+a["height"], b["y"]+b["height"])-max(a["y"], b["y"]) > 0.01:
-                    warnings.append(f"{left} 与 {right} 相交，请核对内容与版式。")
+        warnings.extend(layout_geometry_warnings(layout))
         if existing is not None:
             existing.setName("__compose_old_"+uuid4().hex)
         try:
@@ -513,7 +532,8 @@ def _compose(params):
         item_ids = {role: item.id() for role, item in objects.items()}
         return {"success": True, "output": name, "info": "版面已按版式生成，请检查布局警告。" if warnings else "版面已按版式生成。",
                 "resource": handle_summary(params["spec"]),
-                "data": {"layout": name, "page_size_mm": page, "item_ids": item_ids, "rects_mm": result_rects, "warnings": warnings}}
+                "data": {"layout": name, "page_size_mm": page, "item_ids": item_ids, "rects_mm": result_rects, "warnings": warnings,
+                         "map_layer_ids": [layer.id() for layer in layers], "map_layers": [layer.name() for layer in layers]}}
     except Exception:
         for layer_id in created_layers:
             project.removeMapLayer(layer_id)

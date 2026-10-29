@@ -173,6 +173,7 @@ type ExecutionManifestEntry struct {
 	Visibility          Visibility           `json:"visibility,omitempty"`
 	AuthorizationScopes []string             `json:"authorization_scopes,omitempty"`
 	SourcePath          string               `json:"source_path,omitempty"`
+	AutoLoad            *bool                `json:"auto_load,omitempty"`
 }
 
 func (c *Contract) normalize() {
@@ -304,6 +305,10 @@ func (m MaterializedTool) PublicCatalogEntry(state RuntimeState) (CatalogEntry, 
 }
 
 func (m MaterializedTool) ExecutionManifestEntry() ExecutionManifestEntry {
+	var autoLoad *bool
+	if m.Execution.Output != nil {
+		autoLoad = &m.Execution.Output.AutoLoad
+	}
 	return ExecutionManifestEntry{
 		Name:                m.Name,
 		Description:         m.Description,
@@ -319,6 +324,7 @@ func (m MaterializedTool) ExecutionManifestEntry() ExecutionManifestEntry {
 		Visibility:          m.Visibility,
 		AuthorizationScopes: append([]string(nil), m.AuthorizationScopes...),
 		SourcePath:          m.SourcePath,
+		AutoLoad:            autoLoad,
 	}
 }
 

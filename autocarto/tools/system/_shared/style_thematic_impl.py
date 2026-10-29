@@ -7,6 +7,7 @@ from typing import (
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtGui import QColor
 from qgis.core import (
+    Qgis,
     QgsClassificationEqualInterval,
     QgsClassificationJenks,
     QgsClassificationQuantile,
@@ -17,6 +18,7 @@ from qgis.core import (
     QgsGradientStop,
     QgsGraduatedSymbolRenderer,
     QgsMarkerSymbol,
+    QgsLineSymbol,
     QgsProject,
     QgsRendererRange,
     QgsSingleSymbolRenderer,
@@ -192,15 +194,12 @@ def rule_based_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(rules, list) or len(rules) == 0:
             return {"success": False, "output": "", "info": "错误：rules 需为非空数组"}
 
-        layers = QgsProject.instance().mapLayersByName(layer_name)
-        if not layers:
-            return {
-                "success": False,
-                "output": "",
-                "info": f"错误：未找到图层 '{layer_name}'",
-            }
-
-        layer = layers[0]
+        layer, error = _get_layer(layer_name)
+        if error:
+            return error
+        scale = float(params.get("scale", 1))
+        if not math.isfinite(scale) or scale <= 0:
+            raise ValueError("scale 必须为正数")
         symbol = QgsSymbol.defaultSymbol(layer.geometryType())
         renderer = QgsRuleBasedRenderer(symbol)
         root_rule = renderer.rootRule()
@@ -217,6 +216,14 @@ def rule_based_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             rule.setFilterExpression(rule_def.get("expression", ""))
             if "color" in rule_def:
                 rule.symbol().setColor(QColor(rule_def["color"]))
+            if "width" in rule_def:
+                if not isinstance(rule.symbol(), QgsLineSymbol):
+                    raise ValueError("width 仅适用于线图层，单位为毫米")
+                width = float(rule_def["width"]) * scale
+                if not math.isfinite(width) or width <= 0:
+                    raise ValueError("规则线宽必须为正数")
+                rule.symbol().setWidthUnit(Qgis.RenderUnit.Millimeters)
+                rule.symbol().setWidth(width)
             root_rule.appendChild(rule)
 
         if root_rule.children():
@@ -228,6 +235,12 @@ def rule_based_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             "success": True,
             "output": layer_name,
             "info": f"规则样式设置完成，共 {len(rules)} 条规则",
+            "data": {"rules": [
+                {"label": rule.label(), "expression": rule.filterExpression(),
+                 "color": rule.symbol().color().name(),
+                 **({"width_mm": rule.symbol().width()} if isinstance(rule.symbol(), QgsLineSymbol) else {})}
+                for rule in layer.renderer().rootRule().children()
+            ]},
         }
 
     except Exception as e:

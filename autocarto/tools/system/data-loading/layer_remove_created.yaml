@@ -1,0 +1,12 @@
+apiVersion: tool/v1
+kind: Tool
+metadata: {name: layer_remove_created, display_name: 清理本次创建的图层, domain: data-loading, runtime: qgis}
+spec:
+  description: 系统运行时传入本次尝试新增的准确图层 ID，只移除这些工程图层，不删除文件。
+  parameters:
+    - {name: layer_ids, type: array, required: true, items: {type: string}, description: 本次尝试新增且需要清理的准确图层 ID}
+    - {name: keep_layouts, type: array, required: false, items: {type: string}, description: 成功产出的版面名称，保留这些版面地图与图例引用的图层}
+policy: {visibility: hidden}
+execution:
+  handler: handlers.builtin.layer_remove_created_handler
+  param_mapping: {layer_ids: '{{ layer_ids }}', keep_layouts: '{{ keep_layouts }}'}

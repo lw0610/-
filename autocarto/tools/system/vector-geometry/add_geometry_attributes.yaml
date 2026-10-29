@@ -15,7 +15,7 @@ spec:
     description: 输入图层
   - name: CALC_METHOD
     type: enum
-    description: 计算方法
+    description: 计算方法（0=图层坐标系，1=工程坐标系，2=椭球）
     default: 0
     values:
     - 0
@@ -25,10 +25,10 @@ spec:
     type: output_layer
     description: 输出图层
 execution:
-  backend_tool: add_geometry_attributes
+  backend_tool: native:exportaddgeometrycolumns
   param_mapping:
     INPUT: '{{ INPUT }}'
-    CALC_METHOD: '{{ CALC_METHOD }}'
+    METHOD: '{{ CALC_METHOD }}'
     OUTPUT: '{{ OUTPUT }}'
   output:
     auto_load: true

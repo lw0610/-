@@ -8,11 +8,11 @@ func TestRestrictedPackagesNeverEnterPlanRoleGrants(t *testing.T) {
 			env := Environment{MainProvider: "fixture", Packages: []PackageSpec{{ID: "data", Enabled: true, Kind: "category"}, blocked}, Roles: []RoleSpec{{ID: "worker", Kind: "agent", Enabled: true, ToolPackages: []string{"data"}}}}
 			plan := &FlowPlan{Roles: env.Roles}
 			step := StepPlan{ID: "s1"}
-			if err := AssignPlanRole(plan, &step, []string{blocked.ID}, "worker", env); err == nil {
-				t.Fatal("restricted capability accepted")
+			if err := AssignPlanRole(plan, &step, []string{blocked.ID}, "worker", env); err != nil {
+				t.Fatal(err)
 			}
-			if len(step.GrantedPackages) > 0 || len(plan.FlowRoles) > 0 || len(env.Roles[0].ToolPackages) != 1 {
-				t.Fatal("restricted grant mutated roles")
+			if step.Role != "worker" || len(step.RequiredPackages) != 1 || step.RequiredPackages[0] != "data" || len(step.GrantedPackages) > 0 || len(plan.FlowRoles) > 0 || len(env.Roles[0].ToolPackages) != 1 {
+				t.Fatal("capability declaration changed scheme authorization")
 			}
 		})
 	}

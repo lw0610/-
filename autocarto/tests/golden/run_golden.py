@@ -131,7 +131,6 @@ def run_legacy_statistical(output_dir, canvas, *, compose=False):
 def run_legacy_route(output_dir, canvas, basemap, renderer, *, compose=False):
     from qgis.core import QgsCoordinateReferenceSystem, QgsProject
     from autocarto.tools.system._shared import data_loading_impl as data
-    from autocarto.tools.system._shared import basemap_presets_impl as style
     layout, items, advanced = _layout_handlers()
     specifications = [
         ("省域.shp", "省域", "fill", {"layer_type": "省", "label_field": "NAME"}),
@@ -143,20 +142,21 @@ def run_legacy_route(output_dir, canvas, basemap, renderer, *, compose=False):
         ("地区界线.shp", "地区界线", "line", {"line_type": "省界"}),
         ("县级城市驻地.shp", "县级城市驻地", "marker", {"layer_type": "county", "label_field": "name"}),
     ]
-    dispatch = {"fill": style.set_fill_symbol_handler, "line": style.set_line_symbol_handler, "marker": style.set_marker_symbol_handler}
-    for filename, layer_name, kind, params in specifications:
+    from autocarto.tools.system._shared.symbology import set_symbology_handler
+    from autocarto.tools.system._shared.style_basic_impl import load_style_handler
+    cases = json.loads((HERE.parent / "fixtures/basemap_symbology.json").read_text())
+    mapping = {"省域": "省域面", "公路": "高速公路", "地区界线": "省界"}
+    style_specs = {name: spec for name, _, spec in cases}
+    for filename, layer_name, _, _ in specifications:
         path = basemap / filename
         if not path.is_file():
             raise GoldenUnavailable(f"底图缺少 {filename}")
         checked(data.load_vector_handler, path=str(path), layer_name=layer_name)
-        if not compose:
-            checked(dispatch[kind], layer=layer_name, **params)
-    if compose:
-        from autocarto.tools.system._shared.style_basic_impl import load_styles_handler
-        from autocarto.tests.support.resource_handles import resolve_handle
-        mapping = {"省域":"省域面", "公路":"高速公路", "地区界线":"省界"}
-        styles = repository_root() / "autocarto/resources/system/styles"
-        checked(load_styles_handler, items=[{"layer": spec[1], "style": resolve_handle(styles / mapping.get(spec[1],spec[1]), "style"), "label_field": spec[3].get("label_field","无")} for spec in specifications])
+        if layer_name == "铁路":
+            checked(load_style_handler, layer=layer_name,
+                    style=resolve_handle(repository_root() / "autocarto/resources/system/styles/铁路", "style"), label_field="无")
+        else:
+            checked(set_symbology_handler, items=[dict(style_specs[mapping.get(layer_name, layer_name)], layer=layer_name)])
     project = QgsProject.instance()
     project.setCrs(project.mapLayersByName("省域")[0].crs())
     canvas.setDestinationCrs(project.crs())

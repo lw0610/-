@@ -25,7 +25,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: create_random_raster_uniform
+  backend_tool: native:createrandomuniformrasterlayer
   param_mapping:
     EXTENT: '{{ EXTENT }}'
     TARGET_CRS: '{{ TARGET_CRS }}'

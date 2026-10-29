@@ -81,10 +81,11 @@ func (f *Factory) CallFlowJSON(ctx context.Context, activeConfig *config.AgentCo
 	return content, nil
 }
 
-// InvokeFlowTool performs only the two read-only observations used by flow context.
+// InvokeFlowTool exposes the controller observations and exact-attempt layer cleanup.
+// These system calls are not granted to a model through this channel.
 func (f *Factory) InvokeFlowTool(ctx context.Context, name string, args map[string]any) (any, error) {
 	name = normalizeToolName(name)
-	if name != "get_layers_info" && name != "layout_info" {
+	if name != "get_layers_info" && name != "layout_info" && name != "layer_inspect" && name != "layer_remove_created" {
 		return nil, fmt.Errorf("流程上下文不允许调用工具: %s", name)
 	}
 	return f.invokeSystemFlowTool(ctx, name, args)
@@ -187,6 +188,12 @@ func (f *Factory) invokeSystemFlowTool(ctx context.Context, name string, args ma
 						message = text
 						break
 					}
+				}
+				code, _ := envelope["code"].(string)
+				retryable, _ := envelope["retryable"].(bool)
+				diagnostics, _ := envelope["provider_diagnostics"].(map[string]any)
+				if code != "" {
+					return nil, &bridgepkg.ToolInvokeError{Code: code, Message: message, Retryable: retryable, ProviderDiagnostics: diagnostics}
 				}
 				return nil, fmt.Errorf("流程工具 %s: %s", name, message)
 			}

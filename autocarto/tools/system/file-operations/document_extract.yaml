@@ -1,0 +1,37 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: document_extract
+  display_name: 读取文档表格
+  keywords: [表格提取, 年鉴, 图文识别, PDF文档, 图片, 网页表格]
+  domain: file-operations
+  runtime: internal
+spec:
+  description: "从真实 HTML、PDF、图片中提取表格。网页支持合并单元格；PDF先读文字表格，扫描页渲染为图片。支持视觉的模型接收真实图片，否则自动调用设置中的本机OCR。输出CSV、识别格及置信度、不确定格和原件摘要；识别结果必须核对，不猜测缺失值。"
+  parameters:
+    - name: path
+      type: string
+      required: true
+      description: 已下载或用户提供的原件路径，或HTTP(S)网址；网址通过已授权的在线下载工具读取
+    - name: pages
+      type: string
+      required: false
+      description: PDF页码，从1开始；例如1-3,5；留空读取全部页
+    - name: table_hint
+      type: string
+      required: false
+      description: 表格标题或提示，用于标记可能匹配的表格；不会丢弃其他表格
+    - name: output_dir
+      type: string
+      required: false
+      description: 保存CSV和页面图片的目录，位于本会话output下；默认自动创建
+policy:
+  visibility: public
+  authorization_scopes: [tool.invoke]
+execution:
+  backend_tool: document_extract
+  param_mapping:
+    path: '{{ path }}'
+    output_dir: '{{ output_dir }}'
+    pages: '{{ pages }}'
+    table_hint: '{{ table_hint }}'

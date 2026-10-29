@@ -5,19 +5,33 @@ import (
 	"github.com/autocarto/carto_agent/internal/flow"
 )
 
-// Planning needs package identifiers and category constraints, not the full
-// tool schemas of every execution role. Those are loaded by the selected role.
+// The main agent delegates to configured subagents. Their full tool schemas
+// and prompts stay with the selected role, rather than being rebuilt in a plan.
 func planningCatalog(env flow.Environment, guides []flow.GuideSummary) map[string]any {
-	packages := []map[string]string{}
-	for _, pkg := range env.Packages {
-		if flow.FlowPackageGrantable(pkg.ID, env.Packages) {
-			packages = append(packages, map[string]string{"id": pkg.ID, "name": pkg.DisplayName})
-		}
-	}
+	roles := []map[string]any{}
 	executors := []map[string]any{}
-	for _, spec := range flow.ExecutorSpecs() {
-		packages = append(packages, map[string]string{"id": spec.Type, "name": spec.DisplayName})
-		executors = append(executors, map[string]any{"capability": spec.Type, "required_input_types": spec.RequiredInputTypes, "required_parameters": spec.RequiredParameters})
+	for _, role := range env.Roles {
+		if !role.Enabled || role.IsMain {
+			continue
+		}
+		entry := map[string]any{"id": role.ID, "name": role.DisplayName, "description": role.Description, "kind": role.Kind, "tool_packages": role.ToolPackages}
+		if role.Executor != "" {
+			entry["executor"] = role.Executor
+			if _, ok := flow.FindExecutorSpec(role.Executor); ok {
+				executors = append(executors, map[string]any{"role": role.ID, "executor": role.Executor})
+			}
+		}
+		provider := role.Provider
+		if provider == "" {
+			provider = env.MainProvider
+		}
+		for _, visionProvider := range env.VisionProviders {
+			if provider == visionProvider {
+				entry["supports_images"] = true
+				break
+			}
+		}
+		roles = append(roles, entry)
 	}
 	categories := []map[string]any{}
 	if env.DataSources != nil {
@@ -32,5 +46,5 @@ func planningCatalog(env flow.Environment, guides []flow.GuideSummary) map[strin
 			categories = append(categories, entry)
 		}
 	}
-	return map[string]any{"guides": guides, "capabilities": packages, "executors": executors, "data_categories": categories}
+	return map[string]any{"guides": guides, "roles": roles, "executors": executors, "data_categories": categories}
 }

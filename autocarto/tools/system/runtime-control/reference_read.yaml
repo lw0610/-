@@ -7,12 +7,12 @@ metadata:
   runtime: internal
   keywords: [参考资料, 方法说明, 文档读取, 对照表]
 spec:
-  description: 读取工具包参考资料、流程资源文档或资源库文本，返回 UTF-8 内容及截断提示。
+  description: 读取本地绝对路径的文本资料，不需要额外会话授权；也可按工具包相对路径读取参考资料。返回 UTF-8 内容及截断提示，支持 .md/.txt/.csv/.json/.yaml/.py；脚本模板仅读取，不执行。
   parameters:
     - name: path
       type: string
       required: true
-      description: 工具包相对路径“包编号/references/文件”，或允许资源目录内的绝对文件路径；支持 md、txt、csv、json、yaml，最多返回200 KiB。
+      description: 工具包相对路径“包编号/references/文件”，或本地绝对文件路径；支持 md、txt、csv、json、yaml、py，最多返回200 KiB。
 execution:
   backend_tool: reference_read
   param_mapping:

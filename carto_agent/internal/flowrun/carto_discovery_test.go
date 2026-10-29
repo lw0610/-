@@ -16,6 +16,7 @@ import (
 func discoveryFixture(t *testing.T, ids ...string) (*flow.FlowPlan, StartRequest) {
 	t.Helper()
 	p, executable, request := cartoFixture(t, 1)
+	executable.Roles = append(executable.Roles, flow.RoleSpec{ID: "source_researcher", DisplayName: "数据研究员", Kind: "agent", Enabled: true, Tools: []string{"data_register"}})
 	for _, id := range ids {
 		p.Data = append(p.Data, plan.Data{ID: id, Name: id, From: "acquire", FindID: "find-" + id})
 		executable.Inputs = append(executable.Inputs, flow.InputPlan{Key: id, Label: id})
@@ -31,7 +32,7 @@ func discoveryFixture(t *testing.T, ids ...string) (*flow.FlowPlan, StartRequest
 func discoveryPreparation(d plan.Data) DataResult {
 	return DataResult{Preparation: &DataPreparation{
 		DataID: d.ID, Selection: json.RawMessage(fmt.Sprintf(`{"find_id":%q}`, d.FindID)),
-		Role:     flow.RoleSpec{ID: "system_data_acquisition", DisplayName: "数据获取智能体", Kind: "agent", Enabled: true},
+		Role:     flow.RoleSpec{ID: "source_researcher", DisplayName: "数据获取智能体", Kind: "agent", Enabled: true},
 		Messages: []*schema.Message{schema.UserMessage("冻结查询 " + d.FindID)},
 	}}
 }
@@ -50,7 +51,7 @@ func TestDiscoveryUsesSharedInterruptLifecycleAndRegisteredResults(t *testing.T)
 	}, Runner: cartoRunner(func(_ context.Context, r StepRequest) (StepResult, error) {
 		if r.Acquisition != nil {
 			expertCalls++
-			if r.Mode != "acquire" || r.Role.ID != "system_data_acquisition" || !strings.Contains(r.Messages[0].Content, "find-"+r.Acquisition.DataID) {
+			if r.Mode != "acquire" || r.Role.ID != "source_researcher" || !strings.Contains(r.Messages[0].Content, "find-"+r.Acquisition.DataID) {
 				t.Fatalf("lost structured handoff: %+v", r)
 			}
 			if r.Acquisition.DataID == "first" {
@@ -150,13 +151,13 @@ func TestDiscoveryServiceFailureStopsWithoutRetryOrReplan(t *testing.T) {
 				return cartoReceipt(r), nil
 			})})
 			run, err := controller.StartFromPlan(context.Background(), request, executable)
-			if err != nil || run.Status != "failed" || gets != 1 || consumers != 0 || len(run.Steps[0].Attempts) != 1 {
+			if err != nil || run.Status != "interrupted" || gets != 1 || consumers != 0 || len(run.Steps[0].Attempts) != 1 {
 				t.Fatalf("service failure retried/replanned: state=%+v err=%v gets=%d experts=%d consumers=%d", run, err, gets, experts, consumers)
 			}
 			if (!tc.direct && experts != 1) || (tc.direct && experts != 0) {
 				t.Fatalf("unexpected expert calls: %d", experts)
 			}
-			if run.Steps[0].LastFailure != tc.message || !strings.Contains(run.Result.Summary, tc.message) || run.Steps[0].Attempts[0].Verification.Errors[0] != tc.message {
+			if run.Steps[0].LastFailure != tc.message || run.FinishedAt != nil || run.Steps[0].Attempts[0].Verification.Errors[0] != tc.message {
 				t.Fatal("original provider reason was lost")
 			}
 		})

@@ -73,7 +73,7 @@ func assertNoTileDataPublished(t *testing.T, s *Service, result GetResult) {
 	if _, err := os.Stat(filepath.Join(s.options.SessionDir, "output")); !os.IsNotExist(err) {
 		t.Fatalf("unloaded definition published session output: %v", err)
 	}
-	index, err := sessionfiles.NewWithRoots(s.options.SessionID, s.options.SessionDir)
+	index, err := sessionfiles.NewAt(s.options.SessionID, s.options.SessionDir)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -21,7 +21,7 @@ func builtinCatalog(t *testing.T) *Catalog {
 }
 func TestBuiltinCatalogAndAlias(t *testing.T) {
 	c := builtinCatalog(t)
-	if len(c.Categories) != 23 || len(c.Sources) != 9 {
+	if len(c.Categories) != 24 || len(c.Sources) != 9 {
 		t.Fatalf("catalog counts %d/%d", len(c.Categories), len(c.Sources))
 	}
 	category, params, err := c.ResolveCategory("省域", nil)

@@ -57,7 +57,25 @@
           ],
           "required": true
         }
-      }
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "builtin"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "builtin"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "builtin"
+          ]
+        }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "admin.boundary_line",
@@ -99,7 +117,25 @@
           "method": "polygon_to_boundary_lines",
           "note": "不能区分国界与海岸线；外围界线不能标为国界"
         }
-      ]
+      ],
+      "routing": {
+        "detailed": {
+          "methods": [
+            "builtin"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "builtin"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "builtin"
+          ]
+        }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "admin.maritime_line",
@@ -122,7 +158,25 @@
         "min_features": 1,
         "name_fill_ratio": 0
       },
-      "sensitivity": "cn_territory"
+      "sensitivity": "cn_territory",
+      "routing": {
+        "detailed": {
+          "methods": [
+            "builtin"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "builtin"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "builtin"
+          ]
+        }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "hydro.coastline",
@@ -137,7 +191,8 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
-      }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "settlement.prefecture_seat",
@@ -171,7 +226,26 @@
           "quality": "approximate",
           "note": "代表点不是驻地实际位置"
         }
-      ]
+      ],
+      "routing": {
+        "detailed": {
+          "methods": [
+            "tianditu",
+            "builtin"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "tianditu",
+            "builtin"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "builtin"
+          ]
+        }
+      }
     },
     {
       "id": "settlement.county_seat",
@@ -205,7 +279,26 @@
           "quality": "approximate",
           "note": "代表点不是驻地实际位置"
         }
-      ]
+      ],
+      "routing": {
+        "detailed": {
+          "methods": [
+            "tianditu",
+            "builtin"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "tianditu",
+            "builtin"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "builtin"
+          ]
+        }
+      }
     },
     {
       "id": "settlement.place",
@@ -231,6 +324,36 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0.95
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "tianditu",
+            "overpass"
+          ],
+          "filter": "place IN ('city','town','village','hamlet')",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "regional": {
+          "methods": [
+            "osm_extract"
+          ],
+          "filter": "place IN ('city','town')",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "overview": {
+          "methods": [
+            "ne"
+          ],
+          "filter": "",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        }
       }
     },
     {
@@ -256,7 +379,38 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
-      }
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "overpass",
+            "osm_extract"
+          ],
+          "filter": "railway = 'rail' AND coalesce(service,'') = ''",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "regional": {
+          "methods": [
+            "osm_extract"
+          ],
+          "filter": "railway = 'rail' AND coalesce(service,'') = '' AND coalesce(usage,'main') IN ('main','branch')",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "overview": {
+          "methods": [
+            "ne"
+          ],
+          "filter": "",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "transport.road.expressway",
@@ -278,7 +432,38 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
-      }
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "overpass",
+            "osm_extract"
+          ],
+          "filter": "highway = 'motorway'",
+          "merge_by": "ref",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "regional": {
+          "methods": [
+            "osm_extract"
+          ],
+          "filter": "highway = 'motorway'",
+          "merge_by": "ref",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "overview": {
+          "methods": [
+            "ne"
+          ],
+          "filter": "",
+          "merge_by": "ref",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "transport.road.major",
@@ -332,7 +517,37 @@
           ]
         }
       ],
-      "simplify_mm": 0.2
+      "simplify_mm": 0.2,
+      "routing": {
+        "detailed": {
+          "methods": [
+            "overpass",
+            "osm_extract"
+          ],
+          "filter": "highway IN ('motorway','trunk','primary','secondary')",
+          "merge_by": "ref",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "regional": {
+          "methods": [
+            "osm_extract"
+          ],
+          "filter": "highway IN ('motorway','trunk','primary')",
+          "merge_by": "ref",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "overview": {
+          "methods": [
+            "ne"
+          ],
+          "filter": "",
+          "merge_by": "ref",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        }
+      }
     },
     {
       "id": "transport.road.national",
@@ -354,7 +569,38 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
-      }
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "overpass",
+            "osm_extract"
+          ],
+          "filter": "highway IN ('trunk','primary') AND regexp_match(ref, '^G[0-9]{3}')",
+          "merge_by": "ref",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "regional": {
+          "methods": [
+            "osm_extract"
+          ],
+          "filter": "highway IN ('trunk','primary') AND regexp_match(ref, '^G[0-9]{3}')",
+          "merge_by": "ref",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "overview": {
+          "methods": [
+            "ne"
+          ],
+          "filter": "",
+          "merge_by": "ref",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "transport.station",
@@ -379,6 +625,36 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "overpass",
+            "osm_extract"
+          ],
+          "filter": "railway = 'station' OR public_transport = 'station'",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "regional": {
+          "methods": [
+            "osm_extract"
+          ],
+          "filter": "railway = 'station' OR public_transport = 'station'",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        },
+        "overview": {
+          "methods": [
+            "ne"
+          ],
+          "filter": "",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        }
       }
     },
     {
@@ -401,7 +677,36 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
-      }
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "overpass"
+          ],
+          "filter": "railway IN ('subway','light_rail') OR route = 'subway'",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0,
+          "note": "详细图保留地铁线路名称与颜色；概览不提供"
+        },
+        "regional": {
+          "methods": [],
+          "filter": "railway IN ('subway','light_rail') OR route = 'subway'",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0,
+          "note": "详细图保留地铁线路名称与颜色；概览不提供"
+        },
+        "overview": {
+          "methods": [],
+          "filter": "",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0,
+          "note": "详细图保留地铁线路名称与颜色；概览不提供"
+        }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "hydro.river_line",
@@ -426,7 +731,42 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
-      }
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "overpass",
+            "osm_extract"
+          ],
+          "filter": "coalesce(waterway,'') IN ('river','canal')",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0,
+          "note": "河流与运河；1:10万及更详细时可纳入溪流",
+          "fine_filter": "waterway IN ('river','canal','stream')",
+          "fine_max_denominator": 100000
+        },
+        "regional": {
+          "methods": [
+            "osm_extract",
+            "gee"
+          ],
+          "filter": "waterway = 'river' AND coalesce(\"name:zh\",name,'') <> ''",
+          "merge_by": "name",
+          "min_length_mm": 5,
+          "min_area_mm2": 0
+        },
+        "overview": {
+          "methods": [
+            "ne"
+          ],
+          "filter": "",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 0
+        }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "hydro.water_polygon",
@@ -454,7 +794,38 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
-      }
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "overpass",
+            "osm_extract"
+          ],
+          "filter": "(natural = 'water' AND coalesce(water,'lake') IN ('river','lake','reservoir','canal')) OR waterway = 'riverbank'",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 4
+        },
+        "regional": {
+          "methods": [
+            "osm_extract"
+          ],
+          "filter": "(natural = 'water' AND coalesce(water,'lake') IN ('river','lake','reservoir','canal')) OR waterway = 'riverbank'",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 4
+        },
+        "overview": {
+          "methods": [
+            "ne"
+          ],
+          "filter": "",
+          "merge_by": "name",
+          "min_length_mm": 0,
+          "min_area_mm2": 4
+        }
+      },
+      "simplify_mm": 0.2
     },
     {
       "id": "terrain.dem",
@@ -475,6 +846,23 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "gee"
+          ]
+        }
       }
     },
     {
@@ -496,7 +884,24 @@
           "from": "terrain.dem",
           "method": "hillshade"
         }
-      ]
+      ],
+      "routing": {
+        "detailed": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "gee"
+          ]
+        }
+      }
     },
     {
       "id": "imagery.optical",
@@ -514,6 +919,21 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "overview": {
+          "methods": []
+        }
       }
     },
     {
@@ -529,6 +949,23 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "gee"
+          ]
+        }
       }
     },
     {
@@ -544,6 +981,23 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "gee"
+          ]
+        }
       }
     },
     {
@@ -559,6 +1013,23 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "gee"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "gee"
+          ]
+        }
       }
     },
     {
@@ -593,6 +1064,23 @@
       "validate": {
         "min_features": 1,
         "name_fill_ratio": 0
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "agent"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "agent"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "agent"
+          ]
+        }
       }
     },
     {
@@ -609,7 +1097,62 @@
         "min_features": 1,
         "name_fill_ratio": 0
       },
-      "sensitivity": "cn_territory"
+      "sensitivity": "cn_territory",
+      "routing": {
+        "detailed": {
+          "methods": [
+            "builtin"
+          ]
+        },
+        "regional": {
+          "methods": [
+            "builtin"
+          ]
+        },
+        "overview": {
+          "methods": [
+            "builtin"
+          ]
+        }
+      }
+    },
+    {
+      "id": "transport.metro_station",
+      "name": "地铁站点",
+      "geometry": "point",
+      "aliases": [
+        {
+          "name": "地铁站"
+        },
+        {
+          "name": "轨道交通站点"
+        }
+      ],
+      "fields": {
+        "name": {
+          "meaning": "站名",
+          "required": true
+        }
+      },
+      "routing": {
+        "detailed": {
+          "methods": [
+            "overpass"
+          ],
+          "merge_by": "name",
+          "merge_distance_m": 300,
+          "note": "同名站点300米内合并"
+        },
+        "regional": {
+          "methods": []
+        },
+        "overview": {
+          "methods": []
+        }
+      },
+      "validate": {
+        "min_features": 1
+      }
     }
   ]
 }

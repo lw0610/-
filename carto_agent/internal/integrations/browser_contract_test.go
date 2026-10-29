@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/autocarto/carto_agent/internal/config"
-	"github.com/autocarto/carto_agent/internal/deepagent"
 	"github.com/autocarto/carto_agent/internal/skill"
 	toolpkg "github.com/autocarto/carto_agent/internal/tool"
 	"gopkg.in/yaml.v3"
@@ -36,15 +35,15 @@ func TestBrowserDispatchGuidanceReachesActualModelToolInfo(t *testing.T) {
 	if err := yaml.Unmarshal(raw, &profile); err != nil {
 		t.Fatal(err)
 	}
-	runtimeConfig := deepagent.DataAcquisitionSkillConfig(config.ConvertToRuntimeSkillConfig(&profile, skillsRoot, "", t.TempDir(), "default"))
-	if !slices.Contains(runtimeConfig.GetAgentMiddlewareSkills(deepagent.DataAcquisitionExpertName), "browser-data-acquisition") {
+	runtimeConfig := config.ConvertToRuntimeSkillConfig(&profile, skillsRoot, "", t.TempDir(), "default")
+	if !slices.Contains(runtimeConfig.GetAgentMiddlewareSkills("data_engineer"), "browser-data-acquisition") {
 		t.Fatal("assigned browser tool package methods must be readable")
 	}
 	// Tool descriptions must preserve dispatch guidance through the real
 	// YAML -> registry -> model-facing adapter path, as well as package methods.
 	for _, name := range []string{"browser_list_tools", "browser_call_tool"} {
-		if !slices.Contains(runtimeConfig.GetAgentAllowedTools(deepagent.DataAcquisitionExpertName), name) {
-			t.Fatalf("system acquisition expert lacks %s", name)
+		if !slices.Contains(runtimeConfig.GetAgentAllowedTools("data_engineer"), name) {
+			t.Fatalf("configured data engineer lacks %s", name)
 		}
 		definition, ok := skills.GetTool(name)
 		if !ok {
@@ -61,7 +60,7 @@ func TestBrowserDispatchGuidanceReachesActualModelToolInfo(t *testing.T) {
 		}
 	}
 	for _, internalName := range []string{"browser_navigate", "browser_snapshot", "browser_click"} {
-		if _, ok := registry.Get(internalName); ok || slices.Contains(runtimeConfig.GetAgentAllowedTools(deepagent.DataAcquisitionExpertName), internalName) {
+		if _, ok := registry.Get(internalName); ok || slices.Contains(runtimeConfig.GetAgentAllowedTools("data_engineer"), internalName) {
 			t.Errorf("internal MCP operation %s must be routed through browser_call_tool", internalName)
 		}
 	}

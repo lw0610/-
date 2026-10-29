@@ -7,32 +7,32 @@ metadata:
   domain: data-loading
   runtime: qgis
 spec:
-  description: 按内联文件列表加载矢量和栅格，默认复用已加载数据源，不转换坐标系、不写入原始数据目录。严格模式中必需文件缺失则不加载任何图层。
+  description: 按 items 从底到顶的原顺序逐个加载矢量和栅格，默认每加载一层就显示一层。仅供计算的输入传 show=false 留在后台；不重新排序已有图层。严格模式中必需数据缺失则不加载任何图层。
   parameters:
     - name: items
       type: array
       required: true
-      description: 每项必须有name与path，可带kind（vector/raster）和required（默认true）。
+      description: 每项必须有 name，提供 path 或已准备的 layer_id，可带 kind（vector/raster）和 required（默认true）；show=true 时按底到顶填写。
       schema:
         type: array
         minItems: 1
         maxItems: 10000
         items:
           type: object
-          required: [name, path]
+          required: [name]
           properties:
             name: {type: string}
             path: {type: string}
-            layer_id: {type: string, description: 数据服务已加载图层的 ID，提供时只复用该有效图层}
+            layer_id: {type: string, description: 已准备的图层 ID，提供时无需 path，支持内存成果}
             kind: {type: string, enum: [vector, raster]}
             required: {type: boolean, default: true}
-    - {name: reuse_existing, type: boolean, default: true, description: 复用相同数据源}
     - {name: group, type: string, description: 可选图层分组}
     - {name: strict, type: boolean, default: true, description: 必需文件缺失时不加载任何图层}
+    - {name: show, type: boolean, default: true, description: 默认依次显示到图层面板与画布；false 仅在后台准备供计算}
 execution:
   handler: handlers.loader.load_list_handler
   param_mapping:
     items: '{{ items }}'
-    reuse_existing: '{{ reuse_existing }}'
     group: '{{ group }}'
     strict: '{{ strict }}'
+    show: '{{ show }}'

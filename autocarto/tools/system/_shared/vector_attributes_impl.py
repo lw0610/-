@@ -39,16 +39,13 @@ def _find_vector_layer(layer_ref: Any) -> QgsVectorLayer | None:
     return layer
 
 
-def _resolve_target_layer(source: QgsVectorLayer, output_ref: Any) -> QgsVectorLayer:
+def _resolve_target_layer(source: QgsVectorLayer, output_ref: Any, replace_input: bool = True) -> QgsVectorLayer:
     output_text = str(output_ref or "").strip()
-    if not output_text or output_text == "memory:":
-        if source.isEditable():
-            raise RuntimeError("图层已有未提交的编辑，请先完成编辑或指定新的输出图层")
-        return source
-
-    layer_name = output_text
+    layer_name = output_text or source.name()
     if output_text.startswith("memory:"):
         layer_name = output_text.split(":", 1)[1].strip() or source.name()
+    if replace_input:
+        layer_name = source.name()
 
     crs_auth = source.crs().authid() if source.crs().isValid() else ""
     uri = QgsWkbTypes.displayString(source.wkbType())
@@ -58,6 +55,8 @@ def _resolve_target_layer(source: QgsVectorLayer, output_ref: Any) -> QgsVectorL
     target = QgsVectorLayer(uri, layer_name, "memory")
     if not target.isValid():
         raise RuntimeError("创建内存图层失败")
+    if replace_input:
+        target.setCustomProperty("autocarto/field_input", source.id())
 
     provider = target.dataProvider()
     if not provider.addAttributes(list(source.fields())):
@@ -75,8 +74,10 @@ def _resolve_target_layer(source: QgsVectorLayer, output_ref: Any) -> QgsVectorL
     return target
 
 
-def _publish_target(target: QgsVectorLayer, params: Dict[str, Any]) -> None:
-    """Publish only completed results, replacing this step's own named output."""
+def _publish_target(
+    target: QgsVectorLayer, params: Dict[str, Any], output_ref: Optional[str] = None
+) -> None:
+    """Keep working results addressable without adding them to the map."""
     project = QgsProject.instance()
     if project.mapLayer(target.id()) is not None:
         refresh_canvas()
@@ -89,14 +90,44 @@ def _publish_target(target: QgsVectorLayer, params: Dict[str, Any]) -> None:
                             str(context.get("step_id") or "")], ensure_ascii=False)
     previous = []
     if owner:
-        previous = [layer.id() for layer in project.mapLayersByName(target.name())
-                    if layer.customProperty("autocarto/output_owner", "") == owner]
         target.setCustomProperty("autocarto/output_owner", owner)
-    if project.addMapLayer(target) is None:
+        if target.providerType() != "memory":
+            # The provider URI includes the actual file and, for containers,
+            # the sublayer. Two files with the same basename remain distinct.
+            previous = [layer.id() for layer in project.mapLayers().values()
+                        if layer.customProperty("autocarto/output_owner", "") == owner
+                        and layer.providerType() == target.providerType()
+                        and layer.source() == target.source()]
+        else:
+            requested = str((params.get("OUTPUT") if output_ref is None else output_ref) or "").strip()
+            if requested and requested not in {"memory:", "TEMPORARY_OUTPUT"}:
+                target.setCustomProperty("autocarto/output_target", requested)
+                previous = [layer.id() for layer in project.mapLayers().values()
+                            if layer.customProperty("autocarto/output_owner", "") == owner
+                            and layer.providerType() == "memory"
+                            and layer.customProperty("autocarto/output_target", "") == requested]
+    # Field preparation changes the same business layer, not the map contents.
+    # Keep its tree position and original file; the returned ID replaces the input ID.
+    field_input = project.mapLayer(str(target.customProperty("autocarto/field_input", "")))
+    root = project.layerTreeRoot()
+    input_node = root.findLayer(field_input.id()) if field_input is not None else None
+    if project.addMapLayer(target, False) is None:
         raise RuntimeError("无法将输出图层加入当前工程")
+    if field_input is not None:
+        from qgis.core import QgsMapLayerStyle
+        style = QgsMapLayerStyle()
+        style.readFromLayer(field_input)
+        style.writeToLayer(target)
+        target.setCustomProperty("autocarto/field_working", True)
+        if input_node is not None:
+            parent = input_node.parent()
+            node = parent.insertLayer(parent.children().index(input_node), target)
+            node.setItemVisibilityChecked(input_node.itemVisibilityChecked())
+            parent.removeChildNode(input_node)
+        previous.append(field_input.id())
     # A matching display name alone never authorizes removing a user layer.
     if previous:
-        project.removeMapLayers(previous)
+        project.removeMapLayers(list(set(previous)))
     refresh_canvas()
 
 
@@ -209,6 +240,27 @@ def _build_typed_memory_layer(
     return target
 
 
+def advanced_python_field_calculator_handler(params: Dict[str, Any]) -> Dict[str, Any]:
+    try:
+        source = _find_vector_layer(params.get("INPUT"))
+        if source is None:
+            return {"success": False, "output": "", "info": "错误：未找到输入图层"}
+        arguments = {key: params[key] for key in ("FIELD_NAME", "FIELD_TYPE", "FIELD_LENGTH",
+                     "FIELD_PRECISION", "GLOBAL", "FORMULA") if key in params}
+        arguments.update(INPUT=source, OUTPUT=params.get("OUTPUT") or "memory:")
+        result = processing.run("qgis:advancedpythonfieldcalculator", arguments)
+        output = result["OUTPUT"]
+        target = output if isinstance(output, QgsVectorLayer) else QgsVectorLayer(str(output), source.name(), "ogr")
+        target.setName(source.name())
+        target.setCustomProperty("autocarto/field_input", source.id())
+        _publish_target(target, params)
+        reference = _build_output_layer_ref(target)
+        return {"success": True, "output": reference, "output_layers": [reference],
+                "info": f"字段计算完成: {target.name()}；后续使用返回的 layer_id"}
+    except Exception as exc:
+        return {"success": False, "output": "", "info": f"Python 字段计算失败: {str(exc)}"}
+
+
 def field_calculator_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     target = None
     try:
@@ -302,6 +354,8 @@ def text_to_float_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             _clone_fields_with_float_override(source, field_name),
             source.name(),
         )
+        target.setName(source.name())
+        target.setCustomProperty("autocarto/field_input", source.id())
 
         target_fields = target.fields()
         features = []
@@ -372,7 +426,7 @@ def join_attributes_by_field_value_handler(params: Dict[str, Any]) -> Dict[str, 
             target_name = f"memory:{source.name()}_joined"
         elif not target_name.startswith("memory:"):
             target_name = f"memory:{target_name}"
-        target = _resolve_target_layer(source, target_name)
+        target = _resolve_target_layer(source, target_name, replace_input=False)
         if not target.isEditable() and not target.startEditing():
             raise RuntimeError("图层不可编辑，无法执行字段连接")
 

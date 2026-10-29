@@ -131,14 +131,14 @@ func newCorrectionRuntime(t *testing.T, m *correctionModel, service *validatingP
 }
 
 func planAction(name string, valid bool) schema.FunctionCall {
-	capability := "invented_tool_name"
-	if valid {
-		capability = "local-export"
+	var inputs []string
+	if !valid {
+		inputs = []string{"missing_input"} // A semantic reference error that v2 cannot normalize.
 	}
 	p := plan.Plan{APIVersion: plan.APIVersion, ID: "cp-budget", Version: 1, Goal: "导出项目",
-		Steps: []plan.Step{{ID: "export", Title: "导出", Capabilities: []string{capability}, Instructions: "导出当前项目",
-			Outputs: []flow.OutputDeclaration{{Label: "PDF", Type: "file", Format: "pdf"}}}},
-		Deliverables: []flow.OutputDeclaration{{Label: "PDF", Type: "file", Format: "pdf"}},
+		Steps: []plan.Step{{ID: "export", Title: "导出", Capabilities: []string{"local-export"}, Inputs: inputs, Instructions: "导出当前项目",
+			Produces: []plan.Product{{ID: "export_pdf", Kind: "file", Format: "pdf"}}}},
+		Deliverables: []flow.OutputDeclaration{{Label: "export_pdf"}},
 	}
 	args, _ := json.Marshal(map[string]any{"plan": p})
 	return schema.FunctionCall{Name: name, Arguments: string(args)}

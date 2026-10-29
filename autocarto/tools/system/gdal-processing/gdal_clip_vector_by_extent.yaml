@@ -21,7 +21,7 @@ spec:
     type: output_layer
     description: 输出图层
 execution:
-  backend_tool: gdal_clip_vector_by_extent
+  backend_tool: gdal:clipvectorbyextent
   param_mapping:
     INPUT: '{{ INPUT }}'
     EXTENT: '{{ EXTENT }}'

@@ -56,6 +56,14 @@ class ToolEngineImportSmokeTestCase(unittest.TestCase):
 
         self.assertFalse(hasattr(loader, "definitions_dir"))
 
+    def test_definition_loader_keeps_explicit_output_loading_policy(self):
+        entries = [{"name": "diagnostic", "auto_load": False},
+                   {"name": "map_result", "auto_load": True}, {"name": "legacy"}]
+        definitions = ToolDefinitionLoader(entries).load_all()
+        self.assertIs(definitions["diagnostic"]["auto_load"], False)
+        self.assertIs(definitions["map_result"]["auto_load"], True)
+        self.assertNotIn("auto_load", definitions["legacy"])
+
     def test_init_does_not_fetch_runtime_descriptor_manifest(self):
         with (
             mock.patch(

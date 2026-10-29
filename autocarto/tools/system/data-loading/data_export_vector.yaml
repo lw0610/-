@@ -7,7 +7,7 @@ metadata:
   domain: data-loading
   runtime: qgis
 spec:
-  description: 导出矢量图层；修正本会话生成的 GeoJSON 时，用 replace_source 指定旧文件，验证后原路径替换并刷新已加载图层，避免另存出重复结果。
+  description: 导出矢量图层；本会话创建的内存工作图层（包括筛选和字段结果）保存后沿用同一 layer_id，继续使用回执中的图层，无需再次加载。修正本会话生成的 GeoJSON 时，用 replace_source 指定旧文件，验证后原路径替换并刷新已加载图层，避免另存出重复结果。
   parameters:
     - name: layer
       type: string

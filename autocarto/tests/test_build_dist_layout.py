@@ -30,8 +30,7 @@ class BuildDistLayoutTestCase(unittest.TestCase):
         from autocarto.tools.system._shared.tool_assets import tool_asset_path
         required = [tool_asset_path("admin-boundaries", "中国行政区边界", "LICENSE"),
                     tool_asset_path("admin-boundaries", "中国行政区边界", "data", "china_province.geojson"),
-                    tool_asset_path("route-cartography", "renderer-defaults.json"),
-                    tool_asset_path("cartography", "basemap-legacy-presets.json")]
+                    tool_asset_path("route-cartography", "renderer-defaults.json")]
         self.assertTrue(all(path.is_file() for path in required))
         config = json.loads((REPO_ROOT / "autocarto-web/src-tauri/tauri.conf.json").read_text())
         self.assertEqual(config["bundle"]["resources"]["../../autocarto/tools/"], "autocarto/tools/")
@@ -95,6 +94,40 @@ class BuildDistLayoutTestCase(unittest.TestCase):
         for group in ("styles", "layouts"):
             self.assertTrue((REPO_ROOT / "autocarto/resources/system" / group).is_dir())
 
+    def test_desktop_layer_catalog_references_real_bundled_files(self):
+        import posixpath
+        import yaml
+
+        config_dir = REPO_ROOT / "autocarto-web/src-tauri"
+        config = json.loads((config_dir / "tauri.conf.json").read_text())
+        resources = config["bundle"]["resources"]
+        self.assertEqual(resources["../../autocarto/data/layers/"], "autocarto/data/layers/")
+        roots = [((config_dir / source).resolve(), target) for source, target in resources.items()]
+
+        def bundled_path(path):
+            for source, target in roots:
+                if path.is_relative_to(source):
+                    return posixpath.join(target, path.relative_to(source).as_posix())
+            self.fail(f"layer dependency is not included in desktop resources: {path}")
+
+        layer_root = (config_dir / "../../autocarto/data/layers").resolve()
+        manifests = sorted((layer_root / "system").rglob("layer.yaml"))
+        self.assertTrue(manifests, "desktop layer catalog is empty")
+        for manifest_path in manifests:
+            manifest = yaml.safe_load(manifest_path.read_text())
+            with self.subTest(layer=manifest["id"]):
+                installed_dir = posixpath.dirname(bundled_path(manifest_path))
+                for field in ("file", "preview"):
+                    dependency = (manifest_path.parent / manifest[field]).resolve()
+                    self.assertTrue(dependency.is_file(), f"missing {field}: {dependency}")
+                    self.assertGreater(dependency.stat().st_size, 0)
+                    self.assertEqual(
+                        posixpath.normpath(posixpath.join(installed_dir, manifest[field])),
+                        bundled_path(dependency),
+                        f"{field} reference will not resolve after packaging",
+                    )
+        self.assertTrue(any((layer_root / "mappings").glob("*.yaml")))
+
     def test_build_scripts_require_flow_and_resource_assets(self):
         shell = (REPO_ROOT / "build.sh").read_text()
         windows = (REPO_ROOT / "build.bat").read_text()
@@ -140,6 +173,11 @@ class BuildDistLayoutTestCase(unittest.TestCase):
         self.assertTrue(
             any((root / "autocarto/flows/system").is_dir() or _has_marker(root, "autocarto/flows/system/**/FLOW.md") for root in bundle_roots),
             "desktop bundle is missing flow package assets",
+        )
+        self.assertTrue(
+            any(_has_marker(root, "autocarto/data/layers/system/**/layer.yaml")
+                for root in bundle_roots),
+            "desktop bundle is missing builtin layer catalog assets",
         )
         self.assertTrue(
             any(_has_marker(root, "autocarto/resources/system/README.md")

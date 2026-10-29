@@ -91,7 +91,8 @@ autocarto_data/config/secrets.enc
 *.db
 *.sqlite
 autocarto/config/autocarto.db
-autocarto/data/
+autocarto/data/*
+!autocarto/data/layers/
 autocarto_data/data/
 
 # =========================
@@ -169,3 +170,7 @@ secrets.enc
 /autocarto_data/**/*.db
 /autocarto_data/**/*.db-wal
 /autocarto_data/**/*.db-shm
+
+# Local map outputs generated while testing
+/autocarto-web/src-tauri/城市地铁线路.gpkg
+/autocarto-web/src-tauri/武汉市地铁站点.gpkg

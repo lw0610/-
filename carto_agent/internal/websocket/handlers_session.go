@@ -20,11 +20,6 @@ import (
 	"github.com/autocarto/carto_agent/internal/logger"
 )
 
-type pathReplacement struct {
-	old string
-	new string
-}
-
 var sessionSubdirs = []string{"logs", "intermediate", "output", "temp", "snapshots", "exports"}
 
 const (
@@ -426,26 +421,6 @@ func parseSessionSaveOperation(raw any) sessionSaveOperation {
 	return op
 }
 
-func isSessionSubdir(name string) bool {
-	for _, sub := range sessionSubdirs {
-		if sub == name {
-			return true
-		}
-	}
-	return false
-}
-
-func normalizeSessionSubdirName(raw string) (string, bool) {
-	candidate := strings.ToLower(strings.TrimSpace(raw))
-	if candidate == "" {
-		return "", false
-	}
-	if isSessionSubdir(candidate) {
-		return candidate, true
-	}
-	return "", false
-}
-
 func validateSessionID(raw string) (string, error) {
 	return config.ValidateSessionID(raw)
 }
@@ -480,92 +455,8 @@ func (s *DeepServer) removeSessionFileLock(key string) {
 	delete(s.sessionFileLocks, key)
 }
 
-func sessionProjectDirName(projectPath string) string {
-	return config.SessionProjectDirName(projectPath)
-}
-
 func resolveCanonicalSessionsBaseDir(projectPath string) (string, error) {
 	return config.ResolveSessionsBaseDir(projectPath)
-}
-
-func legacyProjectLocalSessionsBaseDir(projectPath string) string {
-	projectDir := filepath.Dir(projectPath)
-	projectName := sessionProjectDirName(projectPath)
-	return filepath.Join(projectDir, "autoc", projectName, "sessions")
-}
-
-func legacySessionsBaseDir(projectPath string) string {
-	projectDir := filepath.Dir(projectPath)
-	projectFileName := filepath.Base(projectPath)
-	return filepath.Join(projectDir, "autoc", "sessions", projectFileName)
-}
-
-func mergeLegacySessionEntry(srcPath, dstPath string) error {
-	info, err := os.Stat(srcPath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
-		}
-		return err
-	}
-
-	if _, err := os.Stat(dstPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(filepath.Dir(dstPath), 0o755); err != nil {
-			return err
-		}
-		return movePathWithCrossDeviceFallback(srcPath, dstPath)
-	} else if err != nil {
-		return err
-	}
-
-	if !info.IsDir() {
-		return nil
-	}
-
-	entries, err := os.ReadDir(srcPath)
-	if err != nil {
-		return err
-	}
-	for _, entry := range entries {
-		if err := mergeLegacySessionEntry(filepath.Join(srcPath, entry.Name()), filepath.Join(dstPath, entry.Name())); err != nil {
-			return err
-		}
-	}
-
-	return os.Remove(srcPath)
-}
-
-func migrateLegacySessionsBaseDir(legacyBaseDir, canonicalBaseDir string) error {
-	if legacyBaseDir == canonicalBaseDir {
-		return nil
-	}
-	if _, err := os.Stat(legacyBaseDir); err != nil {
-		if os.IsNotExist(err) {
-			return nil
-		}
-		return err
-	}
-
-	if _, err := os.Stat(canonicalBaseDir); os.IsNotExist(err) {
-		if err := os.MkdirAll(filepath.Dir(canonicalBaseDir), 0o755); err != nil {
-			return err
-		}
-		return movePathWithCrossDeviceFallback(legacyBaseDir, canonicalBaseDir)
-	} else if err != nil {
-		return err
-	}
-
-	entries, err := os.ReadDir(legacyBaseDir)
-	if err != nil {
-		return err
-	}
-	for _, entry := range entries {
-		if err := mergeLegacySessionEntry(filepath.Join(legacyBaseDir, entry.Name()), filepath.Join(canonicalBaseDir, entry.Name())); err != nil {
-			return err
-		}
-	}
-
-	return os.Remove(legacyBaseDir)
 }
 
 func (s *DeepServer) getSessionsBaseDir(projectPath string) (string, error) {
@@ -577,29 +468,9 @@ func (s *DeepServer) getSessionsBaseDir(projectPath string) (string, error) {
 		return "", fmt.Errorf("project_path 不能为空")
 	}
 
-	projectDir := filepath.Dir(normalizedProjectPath)
-	projectFileName := filepath.Base(normalizedProjectPath)
 	sessionsDir, err := resolveCanonicalSessionsBaseDir(normalizedProjectPath)
 	if err != nil {
 		return "", err
-	}
-	legacyDirs := []string{
-		legacyProjectLocalSessionsBaseDir(normalizedProjectPath),
-		legacySessionsBaseDir(normalizedProjectPath),
-	}
-	for _, legacyDir := range legacyDirs {
-		if err := migrateLegacySessionsBaseDir(legacyDir, sessionsDir); err != nil {
-			logger.Warn("迁移旧会话目录失败: legacy=%s canonical=%s err=%v", legacyDir, sessionsDir, err)
-		}
-	}
-	if err := os.MkdirAll(sessionsDir, 0755); err != nil {
-		return "", fmt.Errorf("创建会话目录失败: %w", err)
-	}
-	if err := s.registerProjectPath(normalizedProjectPath); err != nil {
-		logger.Warn("记录项目索引失败: project_path=%s, err=%v", normalizedProjectPath, err)
-	}
-	if err := registerProjectInWorkspace(projectDir, projectFileName); err != nil {
-		logger.Warn("注册工程到 workspace.yaml 失败: project_dir=%s, file=%s, err=%v", projectDir, projectFileName, err)
 	}
 	s.trackSessionBaseDir(sessionsDir)
 	return sessionsDir, nil
@@ -653,9 +524,12 @@ func (s *DeepServer) initSessionDirUnlocked(projectPath, sessionID string) (map[
 		dirs[sub] = subPath
 	}
 
-	// 目录已就绪后，尝试修复历史错误输出路径（幂等执行）
-	if err := s.repairSessionOutputLayout(sessionDir); err != nil {
-		logger.Warn("修复会话输出目录结构失败 %s: %v", sessionDir, err)
+	if err := s.registerProjectPath(projectPath); err != nil {
+		logger.Warn("记录项目索引失败: project_path=%s, err=%v", projectPath, err)
+	}
+	projectDir, projectFileName := filepath.Dir(projectPath), filepath.Base(projectPath)
+	if err := registerProjectInWorkspace(projectDir, projectFileName); err != nil {
+		logger.Warn("注册工程到 workspace.yaml 失败: project_dir=%s, file=%s, err=%v", projectDir, projectFileName, err)
 	}
 
 	logger.Debug("会话目录已初始化: %s", sessionDir)
@@ -1308,9 +1182,6 @@ func (s *DeepServer) loadSessionFromFileUnlocked(sessionID, projectPath string) 
 
 func (s *DeepServer) loadSessionFromBaseDirUnlocked(baseDir, sessionID string) (map[string]any, error) {
 	sessionDir := filepath.Join(baseDir, sessionID)
-	if err := s.repairSessionOutputLayout(sessionDir); err != nil {
-		logger.Warn("加载会话前修复输出目录失败 %s: %v", sessionDir, err)
-	}
 	return loadSessionDataFromDirWithFallback(sessionDir)
 }
 
@@ -1321,6 +1192,9 @@ func (s *DeepServer) listSessions(projectPath string) ([]map[string]any, error) 
 	}
 
 	entries, err := os.ReadDir(baseDir)
+	if os.IsNotExist(err) {
+		return []map[string]any{}, nil
+	}
 	if err != nil {
 		return nil, fmt.Errorf("读取会话目录失败: %w", err)
 	}
@@ -1337,9 +1211,6 @@ func (s *DeepServer) listSessions(projectPath string) ([]map[string]any, error) 
 			continue
 		}
 		sessionDir := filepath.Join(baseDir, entry.Name())
-		if err := s.repairSessionOutputLayout(sessionDir); err != nil {
-			logger.Warn("修复会话输出目录结构失败 %s: %v", sessionDir, err)
-		}
 		sessionData, err := loadSessionDataFromDirWithFallback(sessionDir)
 		lock.Unlock()
 		if err != nil {
@@ -2114,422 +1985,6 @@ func cleanSessionTempFiles(sessionDir string, maxAge time.Duration) error {
 		}
 	}
 
-	return nil
-}
-
-func normalizePathParts(path string) []string {
-	cleaned := filepath.ToSlash(filepath.Clean(path))
-	if cleaned == "." || cleaned == "/" {
-		return nil
-	}
-	parts := strings.Split(cleaned, "/")
-	out := make([]string, 0, len(parts))
-	for _, part := range parts {
-		if part == "" || part == "." {
-			continue
-		}
-		out = append(out, part)
-	}
-	return out
-}
-
-func canonicalSessionOutputRelPath(relPath string) (string, bool) {
-	parts := normalizePathParts(relPath)
-	if len(parts) == 0 {
-		return "", false
-	}
-
-	// 历史错误模式：exports/temp/** -> temp/**
-	if len(parts) >= 2 && parts[0] == "exports" && parts[1] == "temp" {
-		targetParts := append([]string{"temp"}, parts[2:]...)
-		if len(targetParts) == 0 {
-			return "", false
-		}
-		target := filepath.Join(targetParts...)
-		return target, filepath.Clean(relPath) != target
-	}
-
-	// 显式 autoc/<known_subdir>/**
-	if len(parts) >= 2 && parts[0] == "autoc" {
-		normalizedSubdir, ok := normalizeSessionSubdirName(parts[1])
-		if !ok {
-			// 兼容 autoc/sessions/<id>/<subdir>/**
-			if len(parts) >= 4 && parts[1] == "sessions" {
-				normalizedSubdir, ok = normalizeSessionSubdirName(parts[3])
-				if ok {
-					targetParts := append([]string{normalizedSubdir}, parts[4:]...)
-					if len(targetParts) == 0 {
-						return "", false
-					}
-					target := filepath.Join(targetParts...)
-					return target, filepath.Clean(relPath) != target
-				}
-			}
-		} else {
-			targetParts := append([]string{normalizedSubdir}, parts[2:]...)
-			if len(targetParts) == 0 {
-				return "", false
-			}
-			target := filepath.Join(targetParts...)
-			return target, filepath.Clean(relPath) != target
-		}
-	}
-
-	// 通用模式：*/autoc/<known_subdir>/**
-	for i := 0; i+1 < len(parts); i++ {
-		if parts[i] != "autoc" {
-			continue
-		}
-		normalizedSubdir, ok := normalizeSessionSubdirName(parts[i+1])
-		if !ok {
-			continue
-		}
-		targetParts := append([]string{normalizedSubdir}, parts[i+2:]...)
-		if len(targetParts) == 0 {
-			return "", false
-		}
-		target := filepath.Join(targetParts...)
-		return target, filepath.Clean(relPath) != target
-	}
-
-	// 通用模式：*/sessions/<id>/<known_subdir>/**
-	for i := 0; i+2 < len(parts); i++ {
-		if parts[i] != "sessions" {
-			continue
-		}
-		normalizedSubdir, ok := normalizeSessionSubdirName(parts[i+2])
-		if !ok {
-			continue
-		}
-		targetParts := append([]string{normalizedSubdir}, parts[i+3:]...)
-		if len(targetParts) == 0 {
-			return "", false
-		}
-		target := filepath.Join(targetParts...)
-		return target, filepath.Clean(relPath) != target
-	}
-
-	return "", false
-}
-
-func ensureUniqueMigratedPath(targetPath string) (string, error) {
-	candidate := targetPath
-	if _, err := os.Stat(candidate); os.IsNotExist(err) {
-		return candidate, nil
-	}
-
-	dir := filepath.Dir(targetPath)
-	base := filepath.Base(targetPath)
-	ext := filepath.Ext(base)
-	stem := strings.TrimSuffix(base, ext)
-
-	for i := 1; i < 10000; i++ {
-		candidate = filepath.Join(dir, fmt.Sprintf("%s_migrated_%d%s", stem, i, ext))
-		if _, err := os.Stat(candidate); os.IsNotExist(err) {
-			return candidate, nil
-		}
-	}
-
-	return "", fmt.Errorf("无法为迁移生成唯一目标路径: %s", targetPath)
-}
-
-func moveFileWithFallback(src, dst string) error {
-	if err := os.Rename(src, dst); err == nil {
-		return nil
-	}
-
-	in, err := os.Open(src)
-	if err != nil {
-		return fmt.Errorf("打开源文件失败: %w", err)
-	}
-	defer in.Close()
-
-	out, err := os.Create(dst)
-	if err != nil {
-		return fmt.Errorf("创建目标文件失败: %w", err)
-	}
-
-	if _, err := io.Copy(out, in); err != nil {
-		out.Close()
-		_ = os.Remove(dst)
-		return fmt.Errorf("复制文件失败: %w", err)
-	}
-	if err := out.Close(); err != nil {
-		_ = os.Remove(dst)
-		return fmt.Errorf("关闭目标文件失败: %w", err)
-	}
-
-	if err := os.Remove(src); err != nil {
-		return fmt.Errorf("删除源文件失败: %w", err)
-	}
-	return nil
-}
-
-func applyPathReplacementsRecursive(value any, replacements []pathReplacement) (any, int) {
-	switch typed := value.(type) {
-	case map[string]any:
-		changed := 0
-		cloned := make(map[string]any, len(typed))
-		for k, v := range typed {
-			replaced, count := applyPathReplacementsRecursive(v, replacements)
-			cloned[k] = replaced
-			changed += count
-		}
-		return cloned, changed
-	case []any:
-		changed := 0
-		cloned := make([]any, len(typed))
-		for i, item := range typed {
-			replaced, count := applyPathReplacementsRecursive(item, replacements)
-			cloned[i] = replaced
-			changed += count
-		}
-		return cloned, changed
-	case string:
-		updated := typed
-		for _, rep := range replacements {
-			if rep.old == rep.new {
-				continue
-			}
-			if strings.Contains(updated, rep.old) {
-				updated = strings.ReplaceAll(updated, rep.old, rep.new)
-			}
-		}
-		if updated != typed {
-			return updated, 1
-		}
-		return typed, 0
-	default:
-		return value, 0
-	}
-}
-
-func (s *DeepServer) replaceSessionJSONPaths(sessionPath string, fileReplacements map[string]string) (int, error) {
-	if len(fileReplacements) == 0 {
-		return 0, nil
-	}
-
-	raw, err := os.ReadFile(sessionPath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return 0, nil
-		}
-		return 0, err
-	}
-
-	var payload any
-	if err := json.Unmarshal(raw, &payload); err != nil {
-		return 0, err
-	}
-
-	normalized := make(map[string]string, len(fileReplacements)*2)
-	for oldPath, newPath := range fileReplacements {
-		oldClean := filepath.Clean(oldPath)
-		newClean := filepath.Clean(newPath)
-		if oldClean == newClean {
-			continue
-		}
-		normalized[oldClean] = newClean
-		oldSlash := filepath.ToSlash(oldClean)
-		newSlash := filepath.ToSlash(newClean)
-		normalized[oldSlash] = newSlash
-	}
-
-	replacements := make([]pathReplacement, 0, len(normalized))
-	for oldPath, newPath := range normalized {
-		replacements = append(replacements, pathReplacement{old: oldPath, new: newPath})
-	}
-	sort.Slice(replacements, func(i, j int) bool {
-		return len(replacements[i].old) > len(replacements[j].old)
-	})
-
-	replacedPayload, changedCount := applyPathReplacementsRecursive(payload, replacements)
-	if changedCount == 0 {
-		return 0, nil
-	}
-
-	encoded, err := json.MarshalIndent(replacedPayload, "", "  ")
-	if err != nil {
-		return 0, err
-	}
-
-	if err := atomicWriteFile(sessionPath, encoded, 0644); err != nil {
-		return 0, err
-	}
-	return changedCount, nil
-}
-
-// Integration runtimes own this subtree, including empty working directories
-// held by running child processes. Session reads must not remove those directories
-// or interpret files beneath them as legacy session-layout artifacts.
-func isIntegrationWorkspaceRoot(sessionDir, path string) bool {
-	return filepath.Clean(path) == filepath.Join(filepath.Clean(sessionDir), "output", "integrations")
-}
-
-func cleanupEmptySessionDirs(sessionDir string) error {
-	rootClean := filepath.Clean(sessionDir)
-	keepDirs := map[string]bool{
-		rootClean: true,
-	}
-	for _, sub := range sessionSubdirs {
-		keepDirs[filepath.Clean(filepath.Join(rootClean, sub))] = true
-	}
-
-	dirs := make([]string, 0, 32)
-	if err := filepath.Walk(rootClean, func(path string, info os.FileInfo, walkErr error) error {
-		if walkErr != nil {
-			return nil
-		}
-		if info != nil && info.IsDir() && isIntegrationWorkspaceRoot(rootClean, path) {
-			return filepath.SkipDir
-		}
-		if info != nil && info.IsDir() {
-			dirs = append(dirs, path)
-		}
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	sort.Slice(dirs, func(i, j int) bool {
-		return len(dirs[i]) > len(dirs[j])
-	})
-
-	for _, dir := range dirs {
-		cleaned := filepath.Clean(dir)
-		if keepDirs[cleaned] {
-			continue
-		}
-		entries, err := os.ReadDir(cleaned)
-		if err != nil {
-			continue
-		}
-		if len(entries) == 0 {
-			if err := os.Remove(cleaned); err != nil && !os.IsNotExist(err) {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (s *DeepServer) repairSessionOutputLayout(sessionDir string) error {
-	if sessionDir == "" {
-		return nil
-	}
-
-	info, err := os.Stat(sessionDir)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
-		}
-		return err
-	}
-	if !info.IsDir() {
-		return nil
-	}
-
-	// 确保标准子目录存在
-	for _, sub := range sessionSubdirs {
-		if err := os.MkdirAll(filepath.Join(sessionDir, sub), 0755); err != nil {
-			return err
-		}
-	}
-
-	type movePlan struct {
-		src string
-		dst string
-	}
-
-	plans := make([]movePlan, 0, 16)
-	if err := filepath.Walk(sessionDir, func(path string, info os.FileInfo, walkErr error) error {
-		if walkErr != nil {
-			return nil
-		}
-		if info != nil && info.IsDir() && isIntegrationWorkspaceRoot(sessionDir, path) {
-			return filepath.SkipDir
-		}
-		if info == nil || info.IsDir() {
-			return nil
-		}
-		if filepath.Base(path) == "session.json" {
-			return nil
-		}
-
-		relPath, err := filepath.Rel(sessionDir, path)
-		if err != nil {
-			return nil
-		}
-		targetRel, shouldMove := canonicalSessionOutputRelPath(relPath)
-		if !shouldMove || targetRel == "" {
-			return nil
-		}
-
-		dstPath := filepath.Join(sessionDir, targetRel)
-		if filepath.Clean(path) == filepath.Clean(dstPath) {
-			return nil
-		}
-		plans = append(plans, movePlan{src: path, dst: dstPath})
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	if len(plans) == 0 {
-		return cleanupEmptySessionDirs(sessionDir)
-	}
-
-	sort.Slice(plans, func(i, j int) bool {
-		return len(plans[i].src) > len(plans[j].src)
-	})
-
-	fileReplacements := make(map[string]string, len(plans))
-	movedCount := 0
-	for _, plan := range plans {
-		if _, err := os.Stat(plan.src); err != nil {
-			if os.IsNotExist(err) {
-				continue
-			}
-			return err
-		}
-
-		finalDst, err := ensureUniqueMigratedPath(plan.dst)
-		if err != nil {
-			return err
-		}
-		if err := os.MkdirAll(filepath.Dir(finalDst), 0755); err != nil {
-			return err
-		}
-
-		if err := moveFileWithFallback(plan.src, finalDst); err != nil {
-			return err
-		}
-
-		srcClean := filepath.Clean(plan.src)
-		dstClean := filepath.Clean(finalDst)
-		fileReplacements[srcClean] = dstClean
-		if relSrc, relErr := filepath.Rel(sessionDir, srcClean); relErr == nil {
-			if relDst, dstErr := filepath.Rel(sessionDir, dstClean); dstErr == nil {
-				fileReplacements[filepath.Clean(relSrc)] = filepath.Clean(relDst)
-			}
-		}
-		movedCount++
-		logger.Info("迁移会话输出文件: %s -> %s", srcClean, dstClean)
-	}
-
-	rewrittenCount, err := s.replaceSessionJSONPaths(filepath.Join(sessionDir, "session.json"), fileReplacements)
-	if err != nil {
-		return err
-	}
-
-	if err := cleanupEmptySessionDirs(sessionDir); err != nil {
-		return err
-	}
-
-	if movedCount > 0 || rewrittenCount > 0 {
-		logger.Info("会话输出目录修复完成: session_dir=%s, moved=%d, rewritten=%d", sessionDir, movedCount, rewrittenCount)
-	}
 	return nil
 }
 

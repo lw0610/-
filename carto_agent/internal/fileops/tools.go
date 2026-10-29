@@ -11,13 +11,14 @@ import (
 const (
 	ToolCreateDirectory = "create_directory"
 	ToolReadFile        = "file_read"
+	ToolExtractDocument = "document_extract"
 	ToolWriteFile       = "file_write"
 	ToolRunCommand      = "shell_execute"
 )
 
 func Handles(toolName string) bool {
 	switch strings.TrimSpace(toolName) {
-	case ToolCreateDirectory, ToolReadFile, ToolWriteFile, ToolRunCommand:
+	case ToolCreateDirectory, ToolReadFile, ToolWriteFile, ToolRunCommand, ToolExtractDocument:
 		return true
 	}
 	return false
@@ -27,12 +28,14 @@ func Invoke(ctx context.Context, toolName string, args map[string]any) (any, err
 	switch strings.TrimSpace(toolName) {
 	case ToolCreateDirectory:
 		return createDirectory(args)
-	case ToolReadFile, ToolWriteFile, ToolRunCommand:
+	case ToolReadFile, ToolWriteFile, ToolRunCommand, ToolExtractDocument:
 		workspace, err := sessionWorkspace(ctx)
 		if err != nil {
 			return nil, err
 		}
 		switch strings.TrimSpace(toolName) {
+		case ToolExtractDocument:
+			return workspace.extract(ctx, args)
 		case ToolReadFile:
 			return workspace.read(ctx, args)
 		case ToolWriteFile:

@@ -38,6 +38,10 @@ func TestLoadFSExportsPublicCatalogAndExecutionManifest(t *testing.T) {
 	}
 
 	openProject := byName["open_project"]
+	openProject.Execution.Output = &Output{AutoLoad: false}
+	if policy := openProject.ExecutionManifestEntry().AutoLoad; policy == nil || *policy {
+		t.Fatal("explicit disabled output loading was lost")
+	}
 	if openProject.Visibility != VisibilityPublic {
 		t.Fatalf("expected open_project visibility=%q, got %q", VisibilityPublic, openProject.Visibility)
 	}

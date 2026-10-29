@@ -102,7 +102,6 @@ type Builder interface {
 
 // FlowBuilder is optional; ordinary task builders need not implement flow support.
 type FlowBuilder interface {
-	BuildRoleWithOverlay(context.Context, string, *config.AgentConfigFile, RoleOverlay) (adk.Agent, error)
 	BuildRole(ctx context.Context, activeConfigName string, activeConfig *config.AgentConfigFile, roleName string) (adk.Agent, error)
 	CallFlowJSON(ctx context.Context, activeConfig *config.AgentConfigFile, prompt string) (string, error)
 	InvokeFlowTool(ctx context.Context, name string, args map[string]any) (any, error)

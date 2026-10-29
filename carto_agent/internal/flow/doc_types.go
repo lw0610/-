@@ -3,6 +3,7 @@ package flow
 import (
 	"github.com/autocarto/carto_agent/internal/flow/legacy"
 	shareddiagnostic "github.com/autocarto/carto_agent/internal/shared/diagnostic"
+	"strings"
 )
 
 // FlowMetadata 是 FLOW.md 头部声明；编号的目录回退和生成由存储层负责。
@@ -20,6 +21,7 @@ type Diagnostic = shareddiagnostic.Diagnostic
 
 // FlowDoc 只记录确定性解析结果，不包含方案、模型或运行时绑定。
 type FlowDoc struct {
+	Layers        []LayerReference `json:"layers"`
 	RoleSlots     []RoleSlotDoc    `json:"role_slots"`
 	Requirements  []RequirementDoc `json:"requirements"`
 	Meta          FlowMetadata     `json:"meta"`
@@ -82,11 +84,13 @@ type ConditionDoc struct {
 type ConditionRule = legacy.ConditionRule
 
 type OutputDeclaration struct {
-	Label       string `json:"label"`
-	Type        string `json:"type"`
-	Format      string `json:"format,omitempty"`
-	Required    bool   `json:"required"`
-	Description string `json:"description,omitempty"`
+	Geometry    string   `json:"geometry,omitempty"`
+	Fields      []string `json:"fields,omitempty"`
+	Label       string   `json:"label"`
+	Type        string   `json:"type"`
+	Format      string   `json:"format,omitempty"`
+	Required    bool     `json:"required"`
+	Description string   `json:"description,omitempty"`
 }
 
 type OutputRef struct {
@@ -110,3 +114,13 @@ type DocSection struct {
 // Legacy declarations remain readable for conversion, never execution.
 type RoleSlotDoc = legacy.RoleSlotDoc
 type RequirementDoc = legacy.RequirementDoc
+
+// CanonicalOutputFormat is shared by new plan normalization and verification of
+// persisted plans, whose format may still be a driver name such as GeoPackage.
+func CanonicalOutputFormat(format string) string {
+	format = strings.TrimPrefix(strings.ToLower(strings.TrimSpace(format)), ".")
+	if format == "geopackage" {
+		return "gpkg"
+	}
+	return format
+}

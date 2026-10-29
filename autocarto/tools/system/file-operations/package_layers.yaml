@@ -15,9 +15,9 @@ spec:
     description: 输入图层列表
   - name: OUTPUT
     type: file
-    description: 输出GeoPackage文件（可选，默认输出到autoc/exports目录）
+    description: 输出GeoPackage文件（可选，默认输出到当前会话的导出目录）
 execution:
-  backend_tool: package_layers
+  backend_tool: native:package
   param_mapping:
     LAYERS: '{{ LAYERS }}'
     OUTPUT: '{{ OUTPUT }}'

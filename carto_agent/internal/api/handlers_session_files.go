@@ -79,7 +79,7 @@ func (a *API) handleListSessionFiles(w http.ResponseWriter, r *http.Request) {
 func indexedSessionFile(w http.ResponseWriter, r *http.Request, store *sessionfiles.Store) (sessionfiles.Item, bool) {
 	item, err := store.Get(mux.Vars(r)["file_id"])
 	if err != nil {
-		Error(w, 404, "文件不存在或已不在会话允许目录中")
+		Error(w, 404, "文件不存在或无法读取")
 		return item, false
 	}
 	return item, true
@@ -280,7 +280,10 @@ func (a *API) handleSessionFileAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	key := fmt.Sprintf("%s:%s:%s:%d:%d", instance, item.Path, action, item.ModifiedAt.UnixNano(), item.Size)
-	params := map[string]any{"instance_id": instance, "path": item.Path, "reuse_existing": true, "sample_limit": 5}
+	params := map[string]any{"instance_id": instance, "path": item.Path, "sample_limit": 5}
+	if action == "load" {
+		params["show"] = true
+	}
 	var request struct {
 		LayerName string `json:"layer_name"`
 	}
@@ -290,6 +293,9 @@ func (a *API) handleSessionFileAction(w http.ResponseWriter, r *http.Request) {
 			Error(w, 400, "文件操作参数无效")
 			return
 		}
+	}
+	if action == "load" && request.LayerName == "" && (strings.TrimSpace(item.Origin.Name) != "" || item.Origin.Type == "data_service" && strings.TrimSpace(item.Origin.Label) != "") {
+		request.LayerName = strings.TrimSuffix(item.Name, filepath.Ext(item.Name))
 	}
 	if request.LayerName != "" {
 		params["layer_name"] = request.LayerName

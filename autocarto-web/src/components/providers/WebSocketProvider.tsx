@@ -893,26 +893,25 @@ export default function WebSocketProvider({
           useFlowRunStore.getState().applyPlan({ ...asRecord(payload.data), ...payload }, normalizeSessionId(payload.session_id || msg.session_id));
           return;
         }
-        if (source === "session_state" && Array.isArray(payload.carto_plans)) {
-          useFlowRunStore.getState().restorePlans(normalizeSessionId(payload.session_id || msg.session_id), payload.carto_plans);
-        }
-        if (source === "session_state" && Object.prototype.hasOwnProperty.call(payload, "flow_run")) {
-          const sid = normalizeSessionId(payload.session_id || msg.session_id);
-          if (sid) useFlowRunStore.getState().restore(sid, payload.flow_run, Number(payload.flow_run_event_seq || asRecord(payload.flow_run).event_seq || 0));
+        if (source === "session_state") {
+          msg = { ...msg, type: source, session_id: replaySessionId || msg.session_id, data: payload };
         }
         if (source === "flow_event") {
           const sid = normalizeSessionId(payload.session_id || msg.session_id);
           if (sid) {
             useFlowRunStore.getState().applyEvent({ ...payload, session_id: sid } as unknown as FlowEvent, replaySeq, Boolean(eventData.replayed));
             const run = useFlowRunStore.getState().runs[sid]?.find(run => run.flow_run_id === payload.flow_run_id);
-            if (run) { setSessionRunning(sid, !terminalFlow(run.status)); setSessionThinking(sid, run.status === "running"); }
+            if (run) {
+              setSessionRunning(sid, !terminalFlow(run.status)); setSessionThinking(sid, run.status === "running");
+              if (terminalFlow(run.status)) completeSessionWorkflowBlock(sid, run.status === "failed" ? "error" : "completed");
+            }
           }
           return;
         }
-        // Live legacy frames are still consumed once. Only replayed, tagged
-        // process frames are unpacked for the flow's collapsed step details.
+        // Live frames are consumed once through their original message type.
+        // Replayed process frames use the same agent timeline reducer.
         if (eventData.replayed && payload.flow_run_id && ["agent_workflow", "thinking", "response", "status", "error", "interrupt_request", "tool"].includes(source)) {
-          msg = { ...msg, type: source, content: String(payload.content || ""), phase: String(payload.phase || ""), agent: String(payload.agent || ""), agent_display_name: String(payload.agent_display_name || ""), data: payload };
+          msg = { ...msg, type: source, session_id: replaySessionId || msg.session_id, content: String(payload.content || ""), phase: String(payload.phase || ""), agent: String(payload.agent || ""), agent_display_name: String(payload.agent_display_name || ""), data: payload };
         }
       }
 
@@ -1092,14 +1091,24 @@ export default function WebSocketProvider({
         useFlowRunStore.getState().applyEvent({ ...event, session_id: sid } as unknown as FlowEvent);
         const run = useFlowRunStore.getState().runs[sid]?.find(run => run.flow_run_id === event.flow_run_id);
         if (String(event.event) === "flow.blocked") { setSessionRunning(sid, false); setSessionThinking(sid, false); }
-        else if (run) { setSessionRunning(sid, !terminalFlow(run.status)); setSessionThinking(sid, run.status === "running"); }
+        else if (run) {
+          setSessionRunning(sid, !terminalFlow(run.status)); setSessionThinking(sid, run.status === "running");
+          if (terminalFlow(run.status)) completeSessionWorkflowBlock(sid, run.status === "failed" ? "error" : "completed");
+        }
         return;
       }
 
       const processData = asRecord(msg.data);
       if (processData.flow_run_id && ["agent_workflow", "thinking", "response", "status", "error", "tool", "agent"].includes(msg.type)) {
-        const type = msg.phase === "tool_call" || msg.phase === "tool_result" || msg.type === "tool" ? "tool" : msg.type === "thinking" || msg.phase === "thinking" ? "thinking" : msg.type === "response" ? "assistant" : msg.type === "error" ? "error" : "status";
-        appendSessionAwareMessage(sessionId, activeMessage, { type, content: msg.content || "", phase: msg.phase, agent: msg.agent, agentDisplayName: msg.agent_display_name, data: { ...processData, ...(msg.run_id ? { run_id: msg.run_id } : {}) } });
+        appendWorkflowEvent(sessionId, {
+          ...msg,
+          type: "agent_workflow",
+          phase: msg.phase || (msg.type === "thinking" ? "thinking" : "status"),
+          data: { ...processData, ...(msg.run_id ? { run_id: msg.run_id } : {}) },
+        });
+        if (msg.type === "response" || msg.type === "error") {
+          completeSessionWorkflowBlock(sessionId, msg.type === "error" ? "error" : "completed");
+        }
         return;
       }
 

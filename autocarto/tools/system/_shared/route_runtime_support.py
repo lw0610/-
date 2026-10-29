@@ -21,12 +21,18 @@ def renderer_directory(params):
         path = resolve_project_path(str(supplied))
     else:
         from qgis.core import QgsApplication
+        from qgis.utils import plugin_paths
         from autocarto.core.config_manager import ConfigProxy
         config = ConfigProxy(get_plugin_root() / "config")
         name = str(config.get("route_renderer.plugin_name") or renderer_defaults()["renderer_plugin_name"])
         if Path(name).name != name:
             raise ValueError("route_renderer.plugin_name 须为插件目录名")
         path = Path(QgsApplication.qgisSettingsDirPath()) / "python/plugins" / name
+        for directory in [path.parent, *map(Path, plugin_paths)]:
+            candidate = directory / name
+            if (candidate / "services/combined_plot_service.py").is_file():
+                path = candidate
+                break
     if not (path / "services/combined_plot_service.py").is_file():
         raise ValueError("未找到路线渲染服务: " + str(path))
     return str(path)

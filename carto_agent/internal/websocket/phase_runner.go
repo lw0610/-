@@ -64,6 +64,7 @@ func (s *DeepServer) runAgentPhase(
 		CheckPointStore: s.checkpointStore,
 	})
 
+	options.traceAgent = agent.Name(taskCtx)
 	iter := runner.Run(taskCtx, input, adk.WithCheckPointID(checkpointID))
 	return s.consumeEvents(taskCtx, conn, iter, runner, checkpointID, sessionID, projectPath, sess, options)
 }

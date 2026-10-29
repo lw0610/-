@@ -688,8 +688,8 @@ def compile_task_knowledge(
     template_dataset_dir: Optional[Path | str] = None,
     overwrite: bool = False,
     review: Optional[VerifiedReview] = None,
-    route_style: dict,
-    symbols: dict,
+    route_style: dict | str | None = None,
+    symbols: dict | str | None = None,
 ) -> CompilationResult:
     """校验并原子生成六表、符号资产、原文和任务图谱。"""
 

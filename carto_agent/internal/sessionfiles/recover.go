@@ -33,7 +33,10 @@ func (s *Store) RecoverToolArtifacts(session map[string]any) []error {
 			}
 			callID, _ := data["call_id"].(string)
 			origin := Origin{Type: "tool", Tool: name, Label: name, Agent: agent, CallID: callID}
-			for _, path := range ResultPaths(result, objectList(data["result_parts"])) {
+			parts := objectList(data["result_parts"])
+			names := ResultNames(result, parts)
+			for _, path := range ResultPaths(result, parts) {
+				origin.Name = names[path]
 				candidates[path] = candidate{path, origin}
 			}
 		}

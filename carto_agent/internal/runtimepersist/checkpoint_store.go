@@ -3,6 +3,7 @@ package runtimepersist
 import (
 	"context"
 	"database/sql"
+	"encoding/gob"
 	"errors"
 	"fmt"
 	"os"
@@ -16,6 +17,11 @@ import (
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/cloudwego/eino/adk"
 )
+
+func init() {
+	// Eino v0.8 stores this map in State's interface-valued internal fields.
+	gob.Register(map[string]*adk.AgentAction{})
+}
 
 const checkpointStoreSchema = `
 CREATE TABLE IF NOT EXISTS runtime_checkpoints (

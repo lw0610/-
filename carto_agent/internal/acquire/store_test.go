@@ -11,7 +11,7 @@ import (
 )
 
 func fixtureSpec() CacheSpec {
-	return CacheSpec{SourceID: "source.fixture", SourceVersion: "1", Category: "transport.railway", BBox: []float64{100, 20, 120, 40}, Params: map[string]string{"year": "2024"}, AdapterVersion: "1"}
+	return CacheSpec{SourceID: "source.fixture", SourceVersion: "1", Category: "transport.railway", BBox: []float64{100, 20, 120, 40}, Params: map[string]string{"year": "2024"}, AdapterVersion: "v7"}
 }
 func fixtureBuild(t *testing.T, contents string) func(string) (Manifest, error) {
 	t.Helper()

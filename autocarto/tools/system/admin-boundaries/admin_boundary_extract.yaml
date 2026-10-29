@@ -8,7 +8,7 @@ metadata:
   runtime: qgis
 spec:
   description: >-
-    按省、市、县级别和精确名称或六位代码，从已校验的内置离线资源提取原始行政区面并加载到工程。
+    按省、市、县级别和精确名称或六位代码，从已校验的内置离线资源提取目标行政区面，默认加载并显示到地图。
     重名返回候选，不取第一条；保留原坐标与属性，输出 GeoJSON 和来源记录，相同调用复用结果。
   parameters:
     - name: level
@@ -28,7 +28,8 @@ spec:
     - name: load
       type: boolean
       default: true
-      description: 是否加载到 QGIS 工程；系统获取时为 false，仅写出文件。
+      description: 是否加载提取结果，默认加载并显示；false 仅写出文件。
+    - {name: show, type: boolean, default: true, description: load=true 时默认显示到地图；仅作计算输入时明确传 false 留在后台}
     - name: output
       type: string
       description: 可选 .geojson 输出文件路径，相对路径按项目根解析；默认项目运行数据目录的 data/boundaries，已有不同内容不会覆盖
@@ -41,3 +42,4 @@ execution:
     output: '{{ output }}'
     within: '{{ within }}'
     load: '{{ load }}'
+    show: '{{ show }}'

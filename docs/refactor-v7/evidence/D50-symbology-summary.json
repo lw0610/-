@@ -1,0 +1,186 @@
+[
+  {
+    "scenario": "route-no-review",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_and_cli_tool_calls": 49,
+    "controller_seconds": 13.775,
+    "output": "/tmp/autocarto-v7-d14-acceptance-routes-20261029/route-no-review",
+    "plan_api_version": "carto-plan/v2",
+    "page_mm": {
+      "height": 594.0,
+      "width": 841.0
+    },
+    "inputs_unchanged": true,
+    "golden_success": true,
+    "differences": [],
+    "v6_differences": [
+      {
+        "path": "main_map/layers",
+        "expected": [
+          "RouteBezier_route_blue_reference",
+          "RouteBezier_route_red_reference",
+          "points",
+          "国军路线名称",
+          "县级城市驻地",
+          "地区界线",
+          "铁路",
+          "国道",
+          "公路",
+          "河流线",
+          "河流面",
+          "省域"
+        ],
+        "actual": [
+          "RouteBezier_route_blue_reference",
+          "RouteBezier_route_red_reference",
+          "points",
+          "国军路线名称",
+          "县级城市驻地",
+          "铁路",
+          "国道",
+          "公路",
+          "河流线",
+          "河流面",
+          "地区界线",
+          "省域"
+        ]
+      }
+    ],
+    "preview_comparison": {
+      "algorithm": "dhash64",
+      "distance": 3,
+      "diagnostic_only": true
+    },
+    "symbology_layers": 8,
+    "symbology_differences": 0,
+    "scale": 1,
+    "font": "PingFang SC"
+  },
+  {
+    "scenario": "route-with-review",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_and_cli_tool_calls": 60,
+    "controller_seconds": 17.695,
+    "output": "/tmp/autocarto-v7-d14-acceptance-routes-20261029/route-with-review",
+    "plan_api_version": "carto-plan/v2",
+    "page_mm": {
+      "height": 594.0,
+      "width": 841.0
+    },
+    "inputs_unchanged": true,
+    "golden_success": true,
+    "differences": [],
+    "v6_differences": [
+      {
+        "path": "main_map/layers",
+        "expected": [
+          "RouteBezier_route_blue_reference",
+          "RouteBezier_route_red_reference",
+          "points",
+          "国军路线名称",
+          "县级城市驻地",
+          "地区界线",
+          "铁路",
+          "国道",
+          "公路",
+          "河流线",
+          "河流面",
+          "省域"
+        ],
+        "actual": [
+          "RouteBezier_route_blue_reference",
+          "RouteBezier_route_red_reference",
+          "points",
+          "国军路线名称",
+          "县级城市驻地",
+          "铁路",
+          "国道",
+          "公路",
+          "河流线",
+          "河流面",
+          "地区界线",
+          "省域"
+        ]
+      }
+    ],
+    "preview_comparison": {
+      "algorithm": "dhash64",
+      "distance": 3,
+      "diagnostic_only": true
+    },
+    "symbology_layers": 8,
+    "symbology_differences": 0,
+    "scale": 1,
+    "font": "PingFang SC"
+  },
+  {
+    "scenario": "statistical",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_and_cli_tool_calls": 17,
+    "controller_seconds": 0.385,
+    "output": "/tmp/autocarto-v7-d14-acceptance-five-20261029/statistical",
+    "plan_api_version": "carto-plan/v2",
+    "page_mm": {
+      "height": 210.0,
+      "width": 297.0
+    },
+    "inputs_unchanged": true,
+    "golden_success": true,
+    "differences": [],
+    "v6_differences": [],
+    "preview_comparison": {
+      "algorithm": "dhash64",
+      "distance": 0,
+      "diagnostic_only": true
+    }
+  },
+  {
+    "scenario": "province-density",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_and_cli_tool_calls": 21,
+    "controller_seconds": 0.638,
+    "output": "/tmp/autocarto-v7-d14-acceptance-five-20261029/province-density",
+    "plan_api_version": "carto-plan/v2",
+    "page_mm": {
+      "height": 210.0,
+      "width": 297.0
+    },
+    "inputs_unchanged": true
+  },
+  {
+    "scenario": "survey-route",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_and_cli_tool_calls": 19,
+    "controller_seconds": 1.288,
+    "output": "/tmp/autocarto-v7-d14-acceptance-five-20261029/survey-route",
+    "plan_api_version": "carto-plan/v2",
+    "page_mm": {
+      "height": 210.0,
+      "width": 297.0
+    },
+    "inputs_unchanged": true
+  },
+  {
+    "scenario": "route-no-review-a4",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_and_cli_tool_calls": 49,
+    "controller_seconds": 11.897,
+    "output": "/tmp/autocarto-v7-d14-acceptance-a4-20261029/route-no-review-a4",
+    "plan_api_version": "carto-plan/v2",
+    "page_mm": {
+      "height": 210.0,
+      "width": 297.0
+    },
+    "inputs_unchanged": true,
+    "symbology_layers": 8,
+    "symbology_differences": 0,
+    "scale": 0.35,
+    "font": "PingFang SC"
+  }
+]

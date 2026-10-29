@@ -12,6 +12,7 @@ import (
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/model"
 	einotool "github.com/cloudwego/eino/components/tool"
+	toolutils "github.com/cloudwego/eino/components/tool/utils"
 	"github.com/cloudwego/eino/schema"
 )
 
@@ -21,9 +22,16 @@ func TestHitlRequestInterruptAndResume(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create hitl tool failed: %v", err)
 	}
+	actionTool, err := toolutils.InferTool("record_action", "record local test action", func(ctx context.Context, _ struct{}) (string, error) {
+		return "recorded", adk.SendToolGenAction(ctx, "record_action", &adk.AgentAction{CustomizedAction: "local test action"})
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	chatModel := &sequenceModel{
 		messages: []*schema.Message{
+			schema.AssistantMessage("", []schema.ToolCall{{ID: "action", Function: schema.FunctionCall{Name: "record_action", Arguments: `{}`}}}),
 			schema.AssistantMessage("", []schema.ToolCall{
 				{
 					ID: "1",
@@ -36,7 +44,7 @@ func TestHitlRequestInterruptAndResume(t *testing.T) {
 			schema.AssistantMessage("完成", nil),
 		},
 		validator: func(round int, input []*schema.Message) error {
-			if round != 1 {
+			if round != 2 {
 				return nil
 			}
 			for _, msg := range input {
@@ -54,7 +62,7 @@ func TestHitlRequestInterruptAndResume(t *testing.T) {
 		Model:       chatModel,
 		ToolsConfig: func() adk.ToolsConfig {
 			cfg := adk.ToolsConfig{}
-			cfg.Tools = []einotool.BaseTool{hitlTool}
+			cfg.Tools = []einotool.BaseTool{actionTool, hitlTool}
 			return cfg
 		}(),
 	})

@@ -1,0 +1,540 @@
+{
+  "acceptance": "not_determined",
+  "predefined_pixel_threshold": null,
+  "reason": "Existing golden comparator explicitly treats pixel/dHash differences as diagnostic only; no prior pixel threshold exists.",
+  "method": "All visible RGB channels, over white, at original resolution; no resize/registration/mask of full map.",
+  "full_a1_maps": [
+    {
+      "scenario": "route-no-review",
+      "reference": "/tmp/enio2-v6-acceptance-routes-20261028/route-no-review/preview.png",
+      "candidate": "/tmp/autocarto-v7-d14-acceptance-routes-20261029/route-no-review/preview.png",
+      "reference_sha256": "9f4a798a98dbcbf8b3bd3a7ac9f94426c59c91919077e109072b061dde26f6f9",
+      "candidate_sha256": "07025b650c3b15ce620d32f6867d00a4c85c339e2a0174d2a4e5dd0dc955683f",
+      "dhash64_distance": 2,
+      "pixels": {
+        "comparable": true,
+        "width": 2383,
+        "height": 1683,
+        "total_pixels": 4010589,
+        "changed_pixels": 152286,
+        "changed_fraction": 0.03797098131970142,
+        "rgb_mae_0_255": 1.8743969194217276,
+        "rgb_rmse_0_255": 13.289232556223485,
+        "max_channel_difference": 255,
+        "nonwhite_union_pixels": 550601,
+        "changed_fraction_of_nonwhite_union": 0.27658140831564054,
+        "difference_bbox_xyxy": [
+          179,
+          166,
+          2203,
+          1516
+        ]
+      },
+      "checked_in_golden_vs_v6": {
+        "comparable": true,
+        "width": 2383,
+        "height": 1683,
+        "total_pixels": 4010589,
+        "changed_pixels": 7252,
+        "changed_fraction": 0.0018082132075862175,
+        "rgb_mae_0_255": 0.13818435812462126,
+        "rgb_rmse_0_255": 4.210524139095024,
+        "max_channel_difference": 255,
+        "nonwhite_union_pixels": 527552,
+        "changed_fraction_of_nonwhite_union": 0.013746512192163048,
+        "difference_bbox_xyxy": [
+          190,
+          112,
+          2202,
+          1523
+        ]
+      }
+    },
+    {
+      "scenario": "route-with-review",
+      "reference": "/tmp/enio2-v6-acceptance-routes-20261028/route-with-review/preview.png",
+      "candidate": "/tmp/autocarto-v7-d14-acceptance-routes-20261029/route-with-review/preview.png",
+      "reference_sha256": "e08d277bb76dd3468afb5576c673869a220974f73ba416404466bffd71a5b156",
+      "candidate_sha256": "a428594315c4537b78c005f978c850eb8774f378ea88208a2a7f933e28ce6e32",
+      "dhash64_distance": 2,
+      "pixels": {
+        "comparable": true,
+        "width": 2383,
+        "height": 1683,
+        "total_pixels": 4010589,
+        "changed_pixels": 152286,
+        "changed_fraction": 0.03797098131970142,
+        "rgb_mae_0_255": 1.8743969194217276,
+        "rgb_rmse_0_255": 13.289232556223485,
+        "max_channel_difference": 255,
+        "nonwhite_union_pixels": 550601,
+        "changed_fraction_of_nonwhite_union": 0.27658140831564054,
+        "difference_bbox_xyxy": [
+          179,
+          166,
+          2203,
+          1516
+        ]
+      },
+      "checked_in_golden_vs_v6": {
+        "comparable": true,
+        "width": 2383,
+        "height": 1683,
+        "total_pixels": 4010589,
+        "changed_pixels": 7252,
+        "changed_fraction": 0.0018082132075862175,
+        "rgb_mae_0_255": 0.13818435812462126,
+        "rgb_rmse_0_255": 4.210524139095024,
+        "max_channel_difference": 255,
+        "nonwhite_union_pixels": 527552,
+        "changed_fraction_of_nonwhite_union": 0.013746512192163048,
+        "difference_bbox_xyxy": [
+          190,
+          112,
+          2202,
+          1523
+        ]
+      }
+    }
+  ],
+  "controlled_layer_comparison": [
+    {
+      "name": "省域面",
+      "unmodified_qml_vs_parameter_a1": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 846,
+        "changed_fraction": 0.0017625,
+        "rgb_mae_0_255": 0.18795833333333334,
+        "rgb_rmse_0_255": 5.356695187644462,
+        "max_channel_difference": 219,
+        "nonwhite_union_pixels": 3846,
+        "changed_fraction_of_nonwhite_union": 0.21996879875195008,
+        "difference_bbox_xyxy": [
+          370,
+          291,
+          428,
+          310
+        ]
+      },
+      "same_font_and_label_policy": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 749,
+        "changed_fraction": 0.0015604166666666668,
+        "rgb_mae_0_255": 0.06687083333333334,
+        "rgb_rmse_0_255": 1.9570981920520323,
+        "max_channel_difference": 124,
+        "nonwhite_union_pixels": 3786,
+        "changed_fraction_of_nonwhite_union": 0.19783412572636028,
+        "difference_bbox_xyxy": [
+          370,
+          292,
+          428,
+          310
+        ]
+      },
+      "symbols_only": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 2992,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "repeat_current_render": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 2992,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      }
+    },
+    {
+      "name": "省界",
+      "unmodified_qml_vs_parameter_a1": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 2764,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "same_font_and_label_policy": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 2764,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "symbols_only": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 2764,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "repeat_current_render": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 2764,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      }
+    },
+    {
+      "name": "河流面",
+      "unmodified_qml_vs_parameter_a1": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 222,
+        "changed_fraction": 0.0004625,
+        "rgb_mae_0_255": 0.031426388888888886,
+        "rgb_rmse_0_255": 1.7938626077700477,
+        "max_channel_difference": 191,
+        "nonwhite_union_pixels": 174480,
+        "changed_fraction_of_nonwhite_union": 0.0012723521320495185,
+        "difference_bbox_xyxy": [
+          385,
+          295,
+          414,
+          304
+        ]
+      },
+      "same_font_and_label_policy": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 174480,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "symbols_only": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 174480,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "repeat_current_render": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 174480,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      }
+    },
+    {
+      "name": "河流线",
+      "unmodified_qml_vs_parameter_a1": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 373,
+        "changed_fraction": 0.0007770833333333333,
+        "rgb_mae_0_255": 0.009477083333333334,
+        "rgb_rmse_0_255": 0.48510666066569547,
+        "max_channel_difference": 84,
+        "nonwhite_union_pixels": 2302,
+        "changed_fraction_of_nonwhite_union": 0.16203301476976542,
+        "difference_bbox_xyxy": [
+          376,
+          278,
+          412,
+          308
+        ]
+      },
+      "same_font_and_label_policy": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 2255,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "symbols_only": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1922,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "repeat_current_render": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1922,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      }
+    },
+    {
+      "name": "高速公路",
+      "unmodified_qml_vs_parameter_a1": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1682,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "same_font_and_label_policy": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1682,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "symbols_only": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1682,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "repeat_current_render": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1682,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      }
+    },
+    {
+      "name": "国道",
+      "unmodified_qml_vs_parameter_a1": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1442,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "same_font_and_label_policy": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1442,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "symbols_only": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1442,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "repeat_current_render": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 1442,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      }
+    },
+    {
+      "name": "县级城市驻地",
+      "unmodified_qml_vs_parameter_a1": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 558,
+        "changed_fraction": 0.0011625,
+        "rgb_mae_0_255": 0.06909583333333333,
+        "rgb_rmse_0_255": 2.4541037060401503,
+        "max_channel_difference": 221,
+        "nonwhite_union_pixels": 606,
+        "changed_fraction_of_nonwhite_union": 0.9207920792079208,
+        "difference_bbox_xyxy": [
+          400,
+          288,
+          466,
+          298
+        ]
+      },
+      "same_font_and_label_policy": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 536,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "symbols_only": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 51,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      },
+      "repeat_current_render": {
+        "comparable": true,
+        "width": 800,
+        "height": 600,
+        "total_pixels": 480000,
+        "changed_pixels": 0,
+        "changed_fraction": 0.0,
+        "rgb_mae_0_255": 0.0,
+        "rgb_rmse_0_255": 0.0,
+        "max_channel_difference": 0,
+        "nonwhite_union_pixels": 51,
+        "changed_fraction_of_nonwhite_union": 0.0,
+        "difference_bbox_xyxy": null
+      }
+    }
+  ]
+}

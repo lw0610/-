@@ -534,7 +534,9 @@ def make_helpers(ee, root, tasks, downloads=None, *, download_root=None):
     def download_image(image, filename, region=None, scale=None, crs=None, dimensions=None, *, dtype=None, max_requests=4, max_cpus=1, max_tile_size=16, reuse=True):
         """Download one complete local GeoTIFF with geedim 2.0.0's tiled writer.
 
-        Scale and source precision are preserved unless dtype is explicitly given.
+        Region masks pixels outside the requested geometry; source masks and zero
+        values are preserved. Scale and source precision are preserved unless
+        dtype is explicitly given.
         dimensions keeps the legacy <=10000-per-dimension contract; use region and
         scale for larger rasters. Failures remain recorded even if scripts catch
         their exceptions. No Drive export or automatic installation is attempted.
@@ -552,6 +554,8 @@ def make_helpers(ee, root, tasks, downloads=None, *, download_root=None):
                     raise RuntimeFailure("invalid_arguments", "reuse must be a boolean")
                 progress.emit("preparing")
                 journal_download(root, record)
+                if region is not None:
+                    image = image.clip(region)
                 key = download_fingerprint(image, region, scale, crs, dimensions, dtype) if download_root else None
                 cache = download_root / ".gee-downloads" if key else None
                 with progress.heartbeat(), completed_download_lock(cache, key) if key else contextlib.nullcontext():

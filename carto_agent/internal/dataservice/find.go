@@ -90,11 +90,6 @@ func (s *Service) Find(ctx context.Context, request FindRequest) (result FindRes
 	now := s.options.Now().UTC()
 	result = FindResult{CreatedAt: now, ExpiresAt: now.Add(queryTTL), Rows: []FindRow{}, ProvidedMatches: []Candidate{}, ProvidedUnmatched: []Exclusion{}, Fallback: []Candidate{}, Diagnostics: []Diagnostic{}}
 	defer func() { describeFindState(&result) }()
-	var id [16]byte
-	if _, err := rand.Read(id[:]); err != nil {
-		return result, err
-	}
-	result.FindID = "df-" + hex.EncodeToString(id[:])
 	if err := ctx.Err(); err != nil {
 		return result, err
 	}
@@ -108,6 +103,14 @@ func (s *Service) Find(ctx context.Context, request FindRequest) (result FindRes
 		}
 	}
 	extent, extentErr := s.extent(ctx, request.Need.Extent, nil)
+	if request.Need.ExtentPlan != nil {
+		copy := *request.Need.ExtentPlan
+		extent = &copy
+		extentErr = nil
+		if !extent.Pending {
+			extentErr = acquire.PrepareExtent(extent)
+		}
+	}
 	if extentErr != nil {
 		result.Diagnostics = append(result.Diagnostics, Diagnostic{Code: "DATA_EXTENT_UNRESOLVED", Message: extentErr.Error()})
 		extent = &datasource.ExtentPlan{Pending: true, Source: request.Need.Extent}
@@ -121,7 +124,7 @@ func (s *Service) Find(ctx context.Context, request FindRequest) (result FindRes
 		return result, failure("DATA_NEED_UNRECOGNIZED", scaleErr.Error())
 	}
 	if scale == 0 {
-		scale = acquire.EstimateScale(extent, nil)
+		scale = acquire.EstimateScale(extent, map[string]any{"纸张": request.Need.Paper, "map_frame_width_mm": request.Need.MapFrameWidthMM})
 	}
 	result.Resolved = Resolved{Extent: extent, ScaleDenominator: scale}
 	items := []datasource.AcquisitionItem{}
@@ -161,6 +164,7 @@ func (s *Service) Find(ctx context.Context, request FindRequest) (result FindRes
 		item.Scale = scale
 		item.ScaleExpression = request.Need.Scale
 		item.Mode = "auto"
+		item.Method = request.Need.Method
 		if item.Params == nil {
 			item.Params = map[string]string{}
 		}
@@ -225,7 +229,7 @@ func (s *Service) Find(ctx context.Context, request FindRequest) (result FindRes
 				for _, candidate := range fallback {
 					if candidate.Available {
 						diagnostic.Code = "DATA_EXPLORATION_REQUIRED"
-						diagnostic.Message = "暂无确定性来源，但有可用探索途径；沿用本次 find_id 安排 acquire 步骤，由数据获取智能体探索并登记真实数据"
+						diagnostic.Message = "暂无确定性来源，但有可用探索途径；沿用本次 find_id 安排 acquire 步骤，由方案中的数据角色探索并登记真实数据"
 						for i := range row.Excluded {
 							if candidate.SourceID != "" && row.Excluded[i].SourceID == candidate.SourceID {
 								row.Excluded[i].Reason = "确定性获取路径被排除：" + row.Excluded[i].Reason + "；该来源仍可通过探索获取，见 fallback 中的可用途径"
@@ -241,10 +245,19 @@ func (s *Service) Find(ctx context.Context, request FindRequest) (result FindRes
 		result.Rows = append(result.Rows, row)
 	}
 	describeFindState(&result)
+	if result.State == "needs_input" {
+		return result, nil
+	}
+	var id [16]byte
+	if _, err := rand.Read(id[:]); err != nil {
+		return result, err
+	}
 	q.Result = result
+	q.Result.FindID = "df-" + hex.EncodeToString(id[:])
 	if err := s.saveQuery(q); err != nil {
 		return result, err
 	}
+	result.FindID = q.Result.FindID
 	return result, nil
 }
 

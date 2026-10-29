@@ -23,7 +23,13 @@ spec:
             layer: {type: string, description: 图层名称或 ID}
             style: {type: string, x-resource-type: style, description: 样式资源名称或编号}
             label_field: {type: string, description: 实际标注字段，填“无”关闭标注}
+    - name: scale
+      type: number
+      required: false
+      default: 1
+      description: 纸张尺寸比例；A1=1，A4=0.35；保留符号结构并缩放线宽、点大小、偏移、虚线、标注及描边，字号最低1.8毫米、线宽最低0.1毫米
 execution:
   handler: handlers.style.load_styles_handler
   param_mapping:
     items: '{{ items }}'
+    scale: '{{ scale }}'

@@ -32,9 +32,10 @@ type PlanRuntimeOptions struct {
 	LoadEnvironment func(context.Context, string) (flow.Environment, error)
 }
 type cartographicRuntime struct {
-	options PlanRuntimeOptions
-	mu      sync.Mutex
-	pending map[string]*preparedCartographicPlan
+	options           PlanRuntimeOptions
+	mu                sync.Mutex
+	pending           map[string]*preparedCartographicPlan
+	stepConversations map[string]*stepConversation
 }
 type preparedCartographicPlan struct {
 	Snapshot   *plan.Snapshot
@@ -55,13 +56,13 @@ func (s *DeepServer) SetPlanRuntime(options PlanRuntimeOptions) error {
 	if s.flowLifecycle == nil {
 		s.flowLifecycle = context.Background()
 	}
-	s.cartoRuntime = &cartographicRuntime{options: options, pending: map[string]*preparedCartographicPlan{}}
+	s.cartoRuntime = &cartographicRuntime{options: options, pending: map[string]*preparedCartographicPlan{}, stepConversations: map[string]*stepConversation{}}
 	registry := flowrun.NewExecutorRegistry()
 	if err := registry.Register(flowrun.NewRouteKnowledgeExecutor()); err != nil {
 		return err
 	}
 	binding := flowRuntimeBinding{server: s}
-	controller, err := flowrun.NewController(flowrun.Options{Lifecycle: s.flowLifecycle, Runner: binding, Tools: binding, Model: binding, Events: binding, Store: flowrun.FileRunStore{}, Executors: registry, DataGet: s.getPlanData, FinalChecks: s.checkCartographicResult, ValidatePlanResume: s.validateCartographicResume})
+	controller, err := flowrun.NewController(flowrun.Options{Lifecycle: s.flowLifecycle, Runner: binding, Tools: binding, Model: binding, Events: binding, Store: flowrun.FileRunStore{}, Executors: registry, DataGet: s.getPlanData, AcquisitionConfig: s.runtimeAcquisitionConfig, FinalChecks: s.checkCartographicResult, ValidatePlanResume: s.validateCartographicResume})
 	if err != nil {
 		return err
 	}
@@ -116,18 +117,13 @@ func (service sessionPlanService) ProposePlan(ctx context.Context, raw json.RawM
 	if err != nil {
 		return nil, err
 	}
-	if p.ID == "" {
+	if !plan.Identifier.MatchString(p.ID) {
 		p.ID, err = plan.NewID()
 		if err != nil {
 			return nil, err
 		}
 	}
-	if p.Version == 0 {
-		p.Version = 1
-	}
-	if p.Version != 1 {
-		return nil, fmt.Errorf("PLAN_VERSION_CONFLICT: 新计划版本必须为1")
-	}
+	p.Version = 1
 	prepared, err := service.server.prepareCartographicPlan(ctx, service.run, p, nil)
 	if err != nil {
 		return nil, err
@@ -144,7 +140,7 @@ func (service sessionPlanService) ProposePlan(ctx context.Context, raw json.RawM
 	if prepared.Snapshot.Status == "ready" {
 		service.server.queueCartographicPlan(service.run.SessionID, prepared)
 	}
-	return map[string]any{"accepted": true, "plan_id": p.ID, "version": p.Version, "status": prepared.Snapshot.Status, "needs_confirmation": prepared.Snapshot.NeedsConfirmation, "diagnostics": prepared.Snapshot.Diagnostics}, nil
+	return map[string]any{"accepted": true, "plan_id": p.ID, "version": p.Version, "status": prepared.Snapshot.Status, "needs_confirmation": prepared.Snapshot.NeedsConfirmation, "diagnostics": prepared.Snapshot.Diagnostics, "precheck": prepared.Snapshot.Precheck, "notes": prepared.Snapshot.Notes}, nil
 }
 func (service sessionPlanService) RevisePlan(ctx context.Context, raw json.RawMessage) (map[string]any, error) {
 	p, err := plan.Decode(raw)
@@ -155,12 +151,32 @@ func (service sessionPlanService) RevisePlan(ctx context.Context, raw json.RawMe
 	if err != nil {
 		return nil, err
 	}
+	if p.ID == "" {
+		items, e := store.List()
+		if e != nil {
+			return nil, e
+		}
+		for i := len(items) - 1; i >= 0; i-- {
+			if items[i].Plan.APIVersion == plan.APIVersion && !flowrun.IsTerminal(items[i].Status) {
+				p.ID = items[i].Plan.ID
+				break
+			}
+		}
+	}
 	prior, err := store.Load(p.ID)
 	if err != nil {
 		return nil, err
 	}
-	if prior.Plan.Version+1 != p.Version {
-		return nil, plan.ErrVersionConflict
+	if prior.Plan.APIVersion != plan.APIVersion {
+		return nil, fmt.Errorf("旧计划只读，请重新提出 v2 计划")
+	}
+	p.Version = prior.Plan.Version + 1
+	if prior.RunID != "" {
+		state, e := service.server.planRunSnapshot(service.run, prior.RunID)
+		if e != nil {
+			return nil, e
+		}
+		flowrun.PreserveCompleted(state, p)
 	}
 	prepared, err := service.server.prepareCartographicPlan(ctx, service.run, p, prior)
 	if err != nil {
@@ -187,9 +203,16 @@ func (service sessionPlanService) RevisePlan(ctx context.Context, raw json.RawMe
 	if prepared.Snapshot.Status == "ready" {
 		service.server.queueCartographicPlan(service.run.SessionID, prepared)
 	}
-	return map[string]any{"accepted": true, "plan_id": p.ID, "version": p.Version, "status": prepared.Snapshot.Status, "diagnostics": prepared.Snapshot.Diagnostics}, nil
+	return map[string]any{"accepted": true, "plan_id": p.ID, "version": p.Version, "status": prepared.Snapshot.Status, "diagnostics": prepared.Snapshot.Diagnostics, "precheck": prepared.Snapshot.Precheck, "notes": prepared.Snapshot.Notes}, nil
 }
 func (s *DeepServer) prepareCartographicPlan(ctx context.Context, run flowSessionContext, p *plan.Plan, prior *plan.Snapshot) (*preparedCartographicPlan, error) {
+	if p.APIVersion == plan.APIVersion {
+		return s.preparePlanV2(ctx, run, p, prior)
+	}
+	return s.prepareLegacyPlan(ctx, run, p, prior)
+}
+
+func (s *DeepServer) prepareLegacyPlan(ctx context.Context, run flowSessionContext, p *plan.Plan, prior *plan.Snapshot) (*preparedCartographicPlan, error) {
 	ctx = withToolSessionContext(ctx, run.SessionID, run.ProjectPath, run.InstanceID)
 	if s.cartoRuntime == nil {
 		return nil, fmt.Errorf("计划服务未就绪")
@@ -229,9 +252,11 @@ func (s *DeepServer) prepareCartographicPlan(ctx context.Context, run flowSessio
 	bindings := map[string]any{}
 	resolvedSessionData := map[string]plan.Data{}
 	capabilities := map[string]bool{"route_knowledge": true}
-	for _, pkg := range env.Packages {
-		if flow.FlowPackageGrantable(pkg.ID, env.Packages) {
-			capabilities[pkg.ID] = true
+	for _, role := range env.Roles {
+		if role.Enabled && !role.IsMain {
+			for _, id := range role.ToolPackages {
+				capabilities[id] = true
+			}
 		}
 	}
 	// Normalize supported display-name aliases once. Execution, validation and
@@ -733,170 +758,12 @@ func (s *DeepServer) EditPlan(ctx context.Context, sid, project, id string, edit
 	if err != nil {
 		return nil, err
 	}
-	if prior.Plan.Version != edit.Version {
-		return nil, plan.ErrVersionConflict
+	if prior.Plan.APIVersion == plan.APIVersion {
+		return s.editPlanV2(ctx, run, prior, edit)
 	}
-	if prior.Status == "running" || flowrun.IsTerminal(prior.Status) {
-		return nil, fmt.Errorf("当前计划不能修改")
-	}
-	if edit.From == "user" && !filepath.IsAbs(edit.Path) {
-		root, e := config.ResolveProjectRoot()
-		if e != nil {
-			return nil, e
-		}
-		edit.Path = filepath.Join(root, edit.Path)
-	}
-	next, err := plan.Clone(prior.Plan)
-	if err != nil {
-		return nil, err
-	}
-	found := false
-	effectiveFrom := edit.From
-	selectedLocal := false
-	for i := range next.Data {
-		d := &next.Data[i]
-		if d.ID != edit.DataID {
-			continue
-		}
-		found = true
-		switch edit.From {
-		case "acquire":
-			if d.FindID == "" {
-				return nil, fmt.Errorf("没有可选择的来源，请先查询数据")
-			}
-			d.From = "acquire"
-			d.Choice = edit.Choice
-			d.Path = ""
-			d.Layer = ""
-			d.FileID = ""
-			d.Step = ""
-			svc, e := s.dataService(ctx, sid)
-			if e != nil {
-				return nil, e
-			}
-			choice, e := dataservice.NormalizeChoice(edit.Choice)
-			if e != nil {
-				return nil, e
-			}
-			selected, e := svc.ValidateChoice(ctx, d.FindID, choice)
-			if e != nil {
-				return nil, e
-			}
-			if len(selected.Rows) == 1 {
-				c := selected.Rows[0].Candidate
-				if c.LayerID != "" {
-					d.From = "project"
-					d.Layer = c.LayerID
-					effectiveFrom = "project"
-				} else if c.Path != "" {
-					d.From = "user"
-					d.Path = c.Path
-					if c.Sublayer != "" {
-						d.Path += "|layername=" + c.Sublayer
-					}
-					effectiveFrom = "user"
-					edit.Path = d.Path
-					selectedLocal = true
-				}
-			}
-		case "user", "project", "session":
-			d.From = edit.From
-			d.Path = edit.Path
-			d.Layer = edit.Layer
-			d.FileID = edit.FileID
-			d.Step = ""
-			d.FindID = ""
-			d.Choice = nil
-		default:
-			return nil, fmt.Errorf("数据修改方式无效")
-		}
-	}
-	if !found {
-		return nil, fmt.Errorf("计划数据不存在")
-	}
-	if effectiveFrom == "user" {
-		// This is an explicit human plan-card selection, not an LLM-proposed path.
-		physical := strings.Split(edit.Path, "|layername=")[0]
-		info, e := os.Stat(physical)
-		if e != nil || (!info.Mode().IsRegular() && !info.IsDir()) {
-			return nil, fmt.Errorf("用户指定的数据路径不可读取")
-		}
-		dir, e := config.ResolveSessionDir(run.ProjectPath, run.SessionID)
-		if e != nil {
-			return nil, e
-		}
-		supplied, e := dataservice.LoadBindings(dir)
-		if e != nil {
-			return nil, e
-		}
-		supplied = append(supplied, dataservice.Binding{Name: filepath.Base(physical), Path: physical, Explicit: true})
-		if e = dataservice.SaveBindings(dir, supplied); e != nil {
-			return nil, e
-		}
-		for i := range next.Data {
-			if next.Data[i].ID == edit.DataID && !selectedLocal {
-				next.Data[i].FindID = ""
-				next.Data[i].Choice = nil
-			}
-		}
-	}
-	next.Version++
-	// Binding data replaces its acquire operation. Keep other rows/steps intact.
-	if effectiveFrom != "acquire" {
-		steps := []plan.Step{}
-		removed := map[string]bool{}
-		for _, st := range next.Steps {
-			if st.Kind == "acquire" {
-				ids := []string{}
-				for _, d := range st.Data {
-					if d != edit.DataID {
-						ids = append(ids, d)
-					}
-				}
-				st.Data = ids
-				if len(ids) == 0 {
-					removed[st.ID] = true
-					continue
-				}
-			}
-			steps = append(steps, st)
-		}
-		for i := range steps {
-			deps := []string{}
-			for _, dep := range steps[i].DependsOn {
-				if !removed[dep] {
-					deps = append(deps, dep)
-				}
-			}
-			steps[i].DependsOn = deps
-		}
-		next.Steps = steps
-	}
-	prepared, err := s.prepareCartographicPlan(ctx, run, next, prior)
-	if err != nil {
-		return nil, err
-	}
-	if prior.RunID != "" {
-		state, e := s.planRunSnapshot(run, prior.RunID)
-		if e != nil {
-			return nil, e
-		}
-		if e = flowrun.CheckRevision(state, next, prepared.Executable); e != nil {
-			return nil, e
-		}
-		prepared.Snapshot.Status = "awaiting_confirmation"
-		prepared.Snapshot.NeedsConfirmation = true
-	}
-	if run.Mode == executionModeBuild {
-		prepared.Snapshot.Status = "awaiting_confirmation"
-		prepared.Snapshot.NeedsConfirmation = true
-	}
-	if err = store.Save(prepared.Snapshot, prior.Plan.Version); err != nil {
-		return nil, err
-	}
-	s.publishPlan(prepared.Snapshot)
-	return prepared.Snapshot, nil
+	return nil, fmt.Errorf("旧计划只读，请按新格式重新生成")
 }
+
 func (s *DeepServer) ActOnPlan(ctx context.Context, sid, project, id string, action plan.ActionRequest) (*plan.Snapshot, error) {
 	run, err := s.planContext(sid, project)
 	if err != nil {
@@ -919,7 +786,24 @@ func (s *DeepServer) ActOnPlan(ctx context.Context, sid, project, id string, act
 		s.cancelSessionTask(run.Conn, sid)
 		_, controller := s.flowDependencies()
 		if prior.RunID != "" && controller != nil {
-			_, _ = controller.Cancel(context.WithoutCancel(ctx), sid)
+			current, e := controller.Snapshot(sid)
+			if e != nil {
+				return nil, e
+			}
+			if current == nil {
+				saved, e := s.planRunSnapshot(run, prior.RunID)
+				if e != nil {
+					return nil, e
+				}
+				if !flowrun.IsTerminal(saved.Status) {
+					if e = controller.AttachPaused(ctx, saved, prior.OriginalSource); e != nil {
+						return nil, e
+					}
+				}
+			}
+			if _, e = controller.Cancel(context.WithoutCancel(ctx), sid); e != nil {
+				return nil, e
+			}
 		}
 		updated, err := store.UpdateStatus(id, action.Version, func(v *plan.Snapshot) error { v.Status = "cancelled"; return nil })
 		if err == nil {
@@ -928,13 +812,27 @@ func (s *DeepServer) ActOnPlan(ctx context.Context, sid, project, id string, act
 		return updated, err
 	case "provide_data":
 		if action.Path != "" && action.DataID != "" {
-			return s.EditPlan(ctx, sid, project, id, plan.EditRequest{Version: action.Version, DataID: action.DataID, From: "user", Path: action.Path})
+			return s.EditPlan(ctx, sid, project, id, plan.EditRequest{Version: action.Version, DataID: action.DataID, Source: "user", Ref: action.Path})
 		}
 		return prior, nil
 	case "start":
+		if prior.Plan.APIVersion != plan.APIVersion && prior.RunID == "" {
+			return nil, fmt.Errorf("旧计划仅供查看，请按新格式重新生成")
+		}
 		if run.Mode != executionModeBuild {
 			return nil, fmt.Errorf("请切换到 Build 后执行同一计划")
 		}
+		var savedRun *flowrun.RunState
+		if prior.RunID != "" {
+			savedRun, err = s.planRunSnapshot(run, prior.RunID)
+			if err != nil {
+				return nil, err
+			}
+			// On restart the controller record is marked interrupted. The
+			// plan card is a projection and may still contain its last status.
+			prior.Status = savedRun.Status
+		}
+
 		if prior.Status == "running" || flowrun.IsTerminal(prior.Status) {
 			return nil, fmt.Errorf("计划已启动或结束")
 		}
@@ -944,20 +842,18 @@ func (s *DeepServer) ActOnPlan(ctx context.Context, sid, project, id string, act
 		if working {
 			return nil, fmt.Errorf("编排仍在处理中，请稍后开始")
 		}
-		if prior.RunID != "" {
-			state, e := s.planRunSnapshot(run, prior.RunID)
-			if e != nil {
-				return nil, e
-			}
-			if state.CartoPlan != nil && state.CartoPlan.Version == prior.Plan.Version {
-				return s.resumeCartographicPlan(ctx, run, prior, state, action)
-			}
+		if savedRun != nil && savedRun.CartoPlan != nil && savedRun.CartoPlan.Version == prior.Plan.Version {
+			return s.resumeCartographicPlan(ctx, run, prior, savedRun, action)
 		}
 		prepared, err := s.prepareCartographicPlan(ctx, run, mustClonePlan(prior.Plan), prior)
 		if err != nil {
 			return nil, err
 		}
-		if prepared.Snapshot.Plan.Guide != nil && prior.Plan.Guide != nil && prepared.Snapshot.Plan.Guide.Fingerprint != prior.Plan.Guide.Fingerprint {
+		if prepared.Snapshot.Status == "needs_data" {
+			s.publishPlan(prepared.Snapshot)
+			return prepared.Snapshot, fmt.Errorf("计划仍有不可用数据，请按预检建议处理")
+		}
+		if prepared.Snapshot.Plan.Guide != nil && prior.Plan.Guide != nil && prior.Plan.Guide.Fingerprint != "" && prepared.Snapshot.Plan.Guide.Fingerprint != prior.Plan.Guide.Fingerprint {
 			return nil, fmt.Errorf("指南已更新，请重新生成计划")
 		}
 		updated, err := store.UpdateStatus(id, action.Version, func(v *plan.Snapshot) error {
@@ -1051,16 +947,129 @@ func (s *DeepServer) replanCartographic(ctx context.Context, run flowSessionCont
 		set(true)
 		defer set(false)
 	}
-	raw, _ := json.Marshal(state)
-	message := schema.SystemMessage("计划执行失败，系统已自动重试一次。请依据以下真实回执和产出核验修订尚未完成部分，调用plan_revise或hitl_request请用户决定。已完成步骤与产出不得改写。最多三次修订。\n" + string(raw))
-	input := append(append([]*schema.Message{}, run.Session.GetMessages()...), message)
-	input, err := s.injectCartographicRules(ctx, input, run.Scheme, run.SessionID)
+	input, err := cartographicReplanInput(run, state)
 	if err != nil {
 		return err
 	}
-	agent := s.getModeAgentWithWarning(run.Conn, run.SessionID, executionModeBuild)
-	result := s.runAgentPhase(ctx, run.Conn, run.SessionID, run.ProjectPath, run.InstanceID, run.Session, agent, input, consumeEventsOptions{runID: "replan-" + state.ID + fmt.Sprint(state.Revisions), emitFinalResponse: true, persistAssistant: true, modePhase: modeStatePhaseBuilding, executionMode: executionModeBuild, originalSource: &run.OriginalSource})
-	return result.Err
+	input, err = s.injectTaskContext(ctx, input, run.Scheme, run.SessionID, executionModePlan)
+	if err != nil {
+		return err
+	}
+	// Replanning must use the planning tool set. A Build delegate would execute
+	// outside the controller and leave its completed work absent from run.Steps.
+	agent, fallback := s.getAgentWithFallback(executionModePlan)
+	if agent == nil || fallback {
+		return fmt.Errorf("计划修订智能体未就绪，已保留当前步骤和成果")
+	}
+	options := consumeEventsOptions{runID: "replan-" + state.ID + fmt.Sprint(state.Revisions), replanPlanID: state.CartoPlan.ID, replanPlanVersion: state.CartoPlan.Version, modePhase: modeStatePhaseBuilding, executionMode: executionModeBuild, originalSource: &run.OriginalSource}
+	result := s.runAgentPhase(ctx, run.Conn, run.SessionID, run.ProjectPath, run.InstanceID, run.Session, agent, input, options)
+	return s.finishCartographicReplan(run.SessionID, run.ProjectPath, options, result)
+}
+
+// Project verified state once; old assistant claims and attempts are not facts for
+// the next revision. User messages retain attachment/guide metadata for injection.
+func cartographicReplanInput(run flowSessionContext, state *flowrun.RunState) ([]*schema.Message, error) {
+	current, err := plan.Clone(state.CartoPlan)
+	if err != nil {
+		return nil, err
+	}
+	completed := []map[string]any{}
+	completedIDs := map[string]bool{}
+	for _, step := range state.Steps {
+		if step.Status != "completed" {
+			continue
+		}
+		completedIDs[step.ID] = true
+		definition, _ := current.StepByID(step.ID)
+		outputs := []map[string]any{}
+		for _, product := range definition.Produces {
+			if value, ok := step.Outputs[product.ID]; ok {
+				outputs = append(outputs, map[string]any{"product": product, "value": value})
+			}
+		}
+		completed = append(completed, map[string]any{"step_id": step.ID, "outputs": outputs})
+	}
+	remaining := make([]plan.Step, 0, len(current.Steps))
+	for _, step := range current.Steps {
+		if !completedIDs[step.ID] {
+			remaining = append(remaining, step)
+		}
+	}
+	current.Steps = remaining
+	var failure map[string]any
+	if state.Cursor >= 0 && state.Cursor < len(state.Steps) {
+		step := state.Steps[state.Cursor]
+		failure = map[string]any{"step_id": step.ID, "status": step.Status, "last_failure": step.LastFailure, "user_guidance": step.UserGuidance}
+		if len(step.Attempts) > 0 {
+			latest := step.Attempts[len(step.Attempts)-1]
+			failure["latest_receipt"], failure["verification_errors"] = latest.Receipt, latest.Verification.Errors
+		}
+	}
+	raw, err := json.Marshal(map[string]any{
+		"current_plan": current, "failed_step": failure, "completed_steps": completed,
+		"inputs": state.Inputs, "acquired_inputs": state.AcquiredInputs, "input_details": state.InputDetails,
+		"data_preparation": state.DataPreparation, "data_selections": state.Selections, "source_notes": state.SourceNotes,
+		"revisions_used": state.Revisions, "revisions_remaining": plan.MaxRevisions - state.Revisions,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("准备计划修订上下文失败: %w", err)
+	}
+	input := []*schema.Message{}
+	originalIncluded := false
+	for _, message := range run.Session.GetMessages() {
+		if message != nil && message.Role == schema.User {
+			copy := *message
+			copy.Extra = cloneMap(message.Extra)
+			input = append(input, &copy)
+			originalIncluded = originalIncluded || message.Content == run.OriginalSource
+		}
+	}
+	if !originalIncluded && run.OriginalSource != "" {
+		input = append([]*schema.Message{schema.UserMessage(run.OriginalSource)}, input...)
+	}
+	if len(input) > 0 && current.Guide != nil {
+		last := input[len(input)-1]
+		if last.Extra == nil {
+			last.Extra = map[string]any{}
+		}
+		last.Extra["guide_id"] = current.Guide.ID
+	}
+	message := schema.SystemMessage("当前计划需要调整。请依据以下真实回执、取数台账和已完成产出，仅修订尚未完成部分，调用 plan_revise；确需用户决定时调用 hitl_request。已完成步骤和产出由系统保留，不必照抄。此阶段只改计划，不执行抽取、下载或制图；执行器会在修订通过后继续。已有可用数据作为输入引用，不再声明重复生产步骤。只有实际提交修订或发起用户交互才算完成本轮，文字说明 ready 不能代替这些动作。\n" + string(raw))
+	return append(input, message), nil
+}
+
+func (s *DeepServer) finishCartographicReplan(sid, projectPath string, options consumeEventsOptions, result consumeEventsResult) error {
+	if result.Err != nil {
+		return result.Err
+	}
+	if s.cartoRuntime != nil {
+		s.cartoRuntime.mu.Lock()
+		pending := s.cartoRuntime.pending[sid]
+		accepted := pending != nil && pending.Snapshot.Plan.ID == options.replanPlanID && pending.Snapshot.Plan.Version > options.replanPlanVersion
+		s.cartoRuntime.mu.Unlock()
+		if accepted {
+			return nil
+		}
+	}
+	if result.Interrupted {
+		pending, ok := s.getPendingInterrupt(sid)
+		if ok && pending.Runner != nil && pending.CheckpointID != "" && len(pending.Contexts) > 0 && pending.FlowOptions.runID == options.runID && pending.FlowOptions.replanPlanID == options.replanPlanID && pending.FlowOptions.replanPlanVersion == options.replanPlanVersion {
+			return nil
+		}
+	}
+	// Accepted revisions can wait for confirmation or missing data without being
+	// queued. Their persisted plan cards are real outcomes, not planner prose.
+	if store, err := planStore(flowSessionContext{SessionID: sid, ProjectPath: projectPath}); err == nil {
+		if snapshot, err := store.Load(options.replanPlanID); err == nil && snapshot.Plan.Version > options.replanPlanVersion && (snapshot.Status == "needs_data" || snapshot.Status == "awaiting_confirmation" && snapshot.NeedsConfirmation) {
+			s.markSessionRuntimeInterrupted(sid, "")
+			s.persistManagedSessionState(sid, projectPath, options.executionMode)
+			return nil
+		}
+	}
+	err := fmt.Errorf("未提交修订，已保留成果；请重新调整计划或补充要求后继续")
+	s.markSessionRuntimeFinished(sid, sessionRuntimeStatusFailed, err.Error())
+	s.persistManagedSessionState(sid, projectPath, options.executionMode)
+	return err
 }
 
 func (s *DeepServer) planTaskActive(sid string) bool {
@@ -1070,6 +1079,9 @@ func (s *DeepServer) planTaskActive(sid string) bool {
 	return active
 }
 func (s *DeepServer) checkCartographicResult(ctx context.Context, run *flowrun.RunState) flowrun.Verification {
+	if run.CartoPlan != nil && run.CartoPlan.APIVersion == plan.APIVersion {
+		return flowrun.Verification{OK: true}
+	}
 	outputs := map[string]any{}
 	for _, step := range run.Steps {
 		if step.Status == "completed" {
@@ -1088,21 +1100,27 @@ func (s *DeepServer) validateCartographicResume(ctx context.Context, run *flowru
 	if run.CartoPlan == nil {
 		return fmt.Errorf("旧流程记录只读")
 	}
-	env, err := s.cartoRuntime.options.LoadEnvironment(ctx, run.Scheme)
-	if err != nil {
-		return err
-	}
-	for _, role := range run.Plan.FlowRoles {
-		for _, id := range role.ToolPackages {
-			if !flow.FlowPackageGrantable(id, env.Packages) {
-				return fmt.Errorf("临时能力已不可用：%s", id)
-			}
-		}
-	}
-	for _, step := range run.Plan.Steps {
-		for _, id := range step.GrantedPackages {
-			if !flow.FlowPackageGrantable(id, env.Packages) {
-				return fmt.Errorf("临时能力已不可用：%s", id)
+	if run.Status == "waiting_user" && run.Cursor >= 0 && run.Cursor < len(run.Steps) {
+		step := run.Steps[run.Cursor]
+		if len(step.Attempts) > 0 {
+			attempt := step.Attempts[len(step.Attempts)-1]
+			mode := attempt.Mode
+			if mode == "acquire" || mode == "prepare" {
+				roleID := attempt.Role
+				if roleID == "" {
+					if mode == "prepare" {
+						return fmt.Errorf("旧取数断点未记录实际执行角色，不能用消费步骤角色替代恢复；请修订当前计划后继续，已登记的数据仍可复用")
+					}
+					roleID = step.Role
+				}
+				env, err := s.cartoRuntime.options.LoadEnvironment(ctx, run.Scheme)
+				if err != nil {
+					return err
+				}
+				role, err := flowrun.SelectRole(flow.StepPlan{Role: roleID}, env.Roles)
+				if err != nil || !canAcquirePlanData(role) {
+					return fmt.Errorf("取数断点绑定的角色 %s 已不属于当前方案的可用取数角色，不能用其他角色恢复旧断点；请修订当前计划后继续，已登记的数据仍可复用", roleID)
+				}
 			}
 		}
 	}
@@ -1113,7 +1131,7 @@ func planDataChoiceKey(findID string, choice any) string {
 	encoded, _ := json.Marshal(choice)
 	return findID + "\n" + string(encoded)
 }
-func (s *DeepServer) injectCartographicRules(ctx context.Context, input []*schema.Message, scheme, sid string) ([]*schema.Message, error) {
+func (s *DeepServer) injectTaskContext(ctx context.Context, input []*schema.Message, scheme, sid string, mode executionMode) ([]*schema.Message, error) {
 	input = appendTaskReferenceContext(input)
 	if s.cartoRuntime != nil {
 		for i := len(input) - 1; i >= 0; i-- {
@@ -1132,7 +1150,9 @@ func (s *DeepServer) injectCartographicRules(ctx context.Context, input []*schem
 			break
 		}
 	}
-	if s.cartoRuntime == nil {
+	// Build keeps the main agent's task/delegate conversation alive. Only Plan
+	// needs the declarative plan contract and controller state below.
+	if s.cartoRuntime == nil || mode == executionModeBuild {
 		return input, nil
 	}
 	guides, err := s.cartoRuntime.options.Guides.List()
@@ -1152,20 +1172,19 @@ func (s *DeepServer) injectCartographicRules(ctx context.Context, input []*schem
 	if strings.TrimSpace(env.PlanningInstructions) == "" {
 		return nil, fmt.Errorf("规划能力手册 flow-control 缺失或未启用，无法准备本轮规划契约")
 	}
-	raw, _ := json.Marshal(planningCatalog(env, enabled))
-	rule := "【制图计划契约，已由系统读取，无需再次读取 flow-control】\n" + env.PlanningInstructions + "\n当前指南、可用工具包 ID 与数据类别参数：\n" + string(raw)
+	var active map[string]any
 	if run, ok := s.flowContext(sid); ok {
 		if plans, e := s.ListPlans(ctx, sid, run.ProjectPath); e == nil {
 			for i := len(plans) - 1; i >= 0; i-- {
 				p := plans[i]
-				if !flowrun.IsTerminal(p.Status) {
-					raw, _ := json.Marshal(map[string]any{"plan": p.Plan, "status": p.Status})
-					rule += "\n当前可修改计划：" + string(raw) + "\n用户要求修改当前计划时用 plan_revise，保留 plan_id 并将 version 加一；不要另建重复计划。"
+				if p.Plan.APIVersion == plan.APIVersion && !flowrun.IsTerminal(p.Status) {
+					active = map[string]any{"plan_id": p.Plan.ID, "version": p.Plan.Version, "goal": p.Plan.Goal, "status": p.Status}
 					break
 				}
 			}
 		}
 	}
+	rule := boundedPlanningContext(env, enabled, active)
 	return append(append([]*schema.Message{}, input...), schema.SystemMessage(rule)), nil
 }
 

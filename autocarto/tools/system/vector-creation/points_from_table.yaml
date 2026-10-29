@@ -28,7 +28,7 @@ spec:
     type: output_layer
     description: 输出图层
 execution:
-  backend_tool: points_from_table
+  backend_tool: native:createpointslayerfromtable
   param_mapping:
     INPUT: '{{ INPUT }}'
     XFIELD: '{{ XFIELD }}'

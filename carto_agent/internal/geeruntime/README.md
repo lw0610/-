@@ -61,6 +61,10 @@ an unbounded image collection. There is no fixed satellite/date default.
 `download_image(image, filename, region=None, scale=None, crs=None,
 dimensions=None, *, dtype=None, max_requests=4, max_cpus=1, max_tile_size=16, reuse=True)`
 uses pinned geedim 2.0.0 to download and assemble a complete local GeoTIFF.
+When `region` is supplied, the helper clips the image to that geometry before
+export and cache lookup. The GeoTIFF still has a rectangular pixel grid, but
+pixels outside the geometry are NoData; existing source masks and valid zero
+values are preserved. A region-less request keeps the image's existing mask.
 The 32 MiB EE request limit applies to individual tiles, not the whole file.
 Source precision is preserved unless explicitly converted. New files inside `output_dir` are published after all tiles and metadata checks
 succeed. Within one session, an exact serialized request can reuse an unchanged

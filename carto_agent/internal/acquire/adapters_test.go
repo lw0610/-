@@ -2,6 +2,7 @@ package acquire
 
 import (
 	"context"
+	"errors"
 	"github.com/autocarto/carto_agent/internal/datasource"
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/osmdata"
@@ -12,7 +13,32 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
+
+func TestHTTPDownloadProgressIsThrottledAndFinishesAtTotal(t *testing.T) {
+	content := strings.Repeat("x", 2*1024*1024)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(content))
+	}))
+	defer server.Close()
+	parsed, _ := url.Parse(server.URL)
+	var progress []Progress
+	started := time.Now()
+	_, err := (HTTPAdapter{Client: server.Client()}).Fetch(context.Background(), FetchRequest{
+		Source: &datasource.Source{Hosts: []string{parsed.Host}}, Provide: &datasource.Provide{URL: server.URL + "/data.pbf"},
+		WorkDir: t.TempDir(), Progress: func(value Progress) { progress = append(progress, value) },
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(progress) > int(time.Since(started)/(250*time.Millisecond))+2 {
+		t.Fatalf("progress sent per chunk: %d", len(progress))
+	}
+	if len(progress) == 0 || progress[len(progress)-1].Bytes != int64(len(content)) {
+		t.Fatalf("final progress missing: %+v", progress)
+	}
+}
 
 func TestHTTPAdapterWhitelistLimitAndRedaction(t *testing.T) {
 	outside := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { t.Error("redirect escaped whitelist") }))
@@ -50,6 +76,13 @@ func TestHTTPAdapterWhitelistLimitAndRedaction(t *testing.T) {
 		if len(files) > 0 {
 			t.Fatal("partial file leaked", files)
 		}
+	}
+	server.Close()
+	request.Provide = &datasource.Provide{URL: server.URL + "/sample.csv?token=secret-test"}
+	_, networkErr := adapter.Fetch(context.Background(), request)
+	var cause *url.Error
+	if networkErr == nil || !errors.As(networkErr, &cause) || !strings.Contains(networkErr.Error(), "connect") || strings.Contains(networkErr.Error(), "secret-test") {
+		t.Fatalf("download cause lost or secret leaked: %v", networkErr)
 	}
 	request.Provide = &datasource.Provide{URL: outside.URL}
 	if _, err := adapter.Fetch(context.Background(), request); err == nil {

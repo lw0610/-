@@ -8,6 +8,7 @@ tags:
 - cartography
 - styling
 tools:
+- layer_set_symbology
 - layer_load_styles
 - cartography_set_style
 - cartography_graduated_style
@@ -33,7 +34,18 @@ auto_mount: ''
 
 # 符号与标注使用说明
 
-单层套用使用 layer_load_style（style 为样式名称），多层使用 layer_load_styles，items 每项为 layer、style、可选 label_field。字段采用数据的真实名称，不为匹配样式改动用户数据。检查逐项返回的 label_field 与 warnings。保存样式使用 layer_save_style；资源库“从当前工程保存”可把多个图层分别保存为单个样式。
+用户或流程明确了颜色、线宽、线型和标注时，用 `layer_set_symbology` 翻译为参数执行；只描述表达效果时，结合几何类型、地图范围和纸张选取参数。复杂标准符号按选定样式加载；没有规定画法时可用图层登记的默认样式或简洁表达。不要把已经分级的专题层再次改成统一填充。
+
+## 按流程参数设置底图
+
+`layer_set_symbology` 接收 `items` 和统一 `scale`。每项含 `layer`、`symbol:{type,layers}`、`labels`：
+- `type` 为 `fill`、`line`、`marker`，符号层按自下而上列出。面写填充、边线；线写颜色、宽度、线型、虚线、偏移、端点；点写形状、大小、填充和描边。公路的黑边灰芯用两层线，驻地的同心空心圆用两层点。
+- `labels:null` 明确关闭标注。需要标注时写 `field:auto`、`font:auto`，由图层登记的标注字段和实际字段确定名称，字体使用可用中文黑体。写明 `size`、`unit:mm|pt`、颜色和 `placement:horizontal|line|around_point`；需要合并相接河段并避免重复标注时设置 `merge_lines:true` 和 `repeat:0`，明确要求所有要素显示标注时才用 `display_all:true`。文字描边用 `buffer:{size,color}`（单位毫米），无描边则省略或传 `null`。`bold` 控制粗体（默认 `false`）；`obstacle` 控制该图层要素是否参与其他标注避让（默认 `true`），按本次表达需要设置。
+- 流程以 A1 为基准时，`scale` 为 A1=1、A0=1.41、A2=0.71、A3=0.5、A4=0.35；不要先自行缩小参数后再传同一缩放，避免缩两次。字号统一换算后不小于 1.8 毫米，线宽不小于 0.1 毫米。
+
+返回 `data.items` 中 `request` 是输入，`requested` 是缩放与自动字段/字体解析后的期望，`actual` 是 QGIS 读回值；逐项看 `warnings` 与 `differences`。颜色应一致，线宽允许 0.01 毫米误差，标注字段、开关和放置方式应一致；不一致依据具体差异在原步骤修正，不重新取数据。字段不存在或字体回退如实说明。
+
+单层套样式使用 `layer_load_style`（`style` 为资源名），多层用 `layer_load_styles`，每项为 `layer`、`style`、可选 `label_field`，单层和批量调用的顶层 `scale` 使用同一纸张比例。按用户或流程选择的样式应用到对应图层，检查真实字段、字体和警告，依本次纸张处理尺寸。不要为匹配样式改写原始数据。保存外观使用 `layer_save_style`；资源库可以逐层保存。
 
 ## 1. 确认制图数据
 
@@ -52,6 +64,8 @@ auto_mount: ''
 工具拒绝不存在或非数值字段、少于两个不同有限值、无效分类方法、未知或单色颜色带。空值和非有限值不参与分类，不等于零；将返回的数量与警告纳入数据说明。
 
 QML 样式用于复用底图符号，不能替代按字段分级，且会覆盖已有渲染器。分类、规则、热力图等其他表达方式需要其对应的真实工具或专门脚本能力。
+
+`cartography_rule_based_style` 的每项规则为 `label`、`expression`、`color`，线图层可加 `width`（毫米）；顶层 `scale` 按纸张一次缩放，例如 A1 的 0.8 毫米线宽用于 A3 时传 `width:0.8, scale:0.5`，返回 `data.rules[].width_mm` 为实际值。表达式需精确区分真实类别，不能用“1号”模糊匹配同时套到“11号”。未匹配任何规则的要素不会绘制；需要保留未归类要素时显式提供 ELSE 规则，不依据缺失名称编造类别。
 
 ## 3. 标注与结果核验
 

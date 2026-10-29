@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/autocarto/carto_agent/internal/acquire"
 	"github.com/autocarto/carto_agent/internal/datasource"
+	"github.com/autocarto/carto_agent/internal/flow"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -40,6 +41,53 @@ func IsRegistered(sessionDir, path string) bool {
 }
 
 func (s *Service) Register(ctx context.Context, request RegisterRequest) (GetResult, error) {
+	if need, ok := AcquisitionNeedFromContext(ctx); ok {
+		return s.registerNeed(ctx, need, request)
+	}
+	_, bound := AcquisitionSelection(ctx)
+	if !bound && request.FindID == "" && request.Need != nil {
+		need := *request.Need
+		if strings.TrimSpace(need.Name) == "" {
+			return GetResult{}, failure("DATA_NEED_UNRECOGNIZED", "直接登记需要 need.name，说明这份文件用于什么数据需求")
+		}
+		category, params, err := s.resolveNeed(FindRequest{Need: need})
+		if err != nil || category == nil {
+			diagnostic := s.needDiagnostic(category, err)
+			return GetResult{}, failure(diagnostic.Code, diagnostic.Message+"；请更正 need.what 或 need.params，不要编造 find_id")
+		}
+		if geometry := NormalizeGeometry(need.Geometry); geometry != "" && geometry != NormalizeGeometry(category.Geometry) {
+			return GetResult{}, failure("DATA_GEOMETRY_MISMATCH", "需求几何与类别不符："+need.Geometry+" / "+category.Geometry)
+		}
+		if strings.TrimSpace(need.Extent) == "" {
+			return GetResult{}, failure("DATA_EXTENT_UNRESOLVED", "直接登记需要 need.extent；填写实际研究区边界文件、图层编号或 bbox:南,西,北,东")
+		}
+		extent, err := s.extent(ctx, need.Extent, nil)
+		if err != nil {
+			return GetResult{}, failure("DATA_EXTENT_UNRESOLVED", "need.extent 无法解析："+err.Error())
+		}
+		if extent.Pending {
+			return GetResult{}, failure("DATA_EXTENT_UNRESOLVED", "need.extent 尚未确定，请提供实际研究区边界文件、图层编号或 bbox:南,西,北,东")
+		}
+		scaleText := need.Scale
+		if scaleText == "auto" {
+			scaleText = "自动"
+		}
+		scale, err := flow.ParseScale(scaleText)
+		if err != nil {
+			return GetResult{}, failure("DATA_NEED_UNRECOGNIZED", "need.scale 是地图比例尺，不是像元分辨率："+err.Error())
+		}
+		item := datasource.AcquisitionItem{Key: need.Name, Entry: need.Name, Requirement: need.Name, Category: category.ID, Geometry: category.Geometry, Params: params, Fields: need.Fields, Extent: extent, ExtentExpression: need.Extent, Scale: scale, Method: request.Method, Required: true}
+		return s.registerNeed(ctx, AcquisitionNeed{ID: "direct/" + digest(need), Need: need, Item: item}, request)
+	}
+	missing := []string{}
+	for name, value := range map[string]string{"find_id": request.FindID, "row": request.Row, "kind": request.Kind} {
+		if strings.TrimSpace(value) == "" {
+			missing = append(missing, name)
+		}
+	}
+	if len(missing) > 0 {
+		return GetResult{}, failure("DATA_REGISTRATION_REQUIRED", "按查询登记缺少 "+strings.Join(missing, "、")+"；沿用 data_get 返回的 preparation。Build 中直接取得的文件可改为填写 need、path 和来源信息，无需重下文件或猜查询编号")
+	}
 	result := GetResult{FindID: request.FindID, Status: "failed", Rows: []GetRow{}}
 	q, err := s.acquisitionQuery(ctx, request.FindID)
 	if err != nil {

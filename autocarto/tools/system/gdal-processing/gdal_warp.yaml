@@ -7,7 +7,7 @@ metadata:
   domain: gdal-processing
   runtime: qgis
 spec:
-  description: 重投影栅格数据
+  description: 重投影栅格数据。仅用于栅格；点、线、面图层使用 reproject_layer。
   parameters:
   - name: INPUT
     type: raster_layer
@@ -32,7 +32,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: gdal_warp
+  backend_tool: gdal:warpreproject
   param_mapping:
     INPUT: '{{ INPUT }}'
     TARGET_CRS: '{{ TARGET_CRS }}'

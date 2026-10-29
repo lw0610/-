@@ -25,7 +25,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: raster_reclassify
+  backend_tool: native:reclassifybytable
   param_mapping:
     INPUT_RASTER: '{{ INPUT_RASTER }}'
     RASTER_BAND: '{{ RASTER_BAND }}'

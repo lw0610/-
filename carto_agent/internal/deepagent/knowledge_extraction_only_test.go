@@ -65,6 +65,9 @@ func TestExtractionOnlyReachesEditableResultCompilesAndCachesWithoutReviewModel(
 	compiles := 0
 	compiler := resultTool(knowledgeCompileTool, func(args map[string]any) map[string]any {
 		compiles++
+		if args["route_style"] != nil || args["symbols"] != nil {
+			t.Fatal("default extraction injected drawing tables")
+		}
 		if args["review_context"] == nil || args["knowledge_json"] == nil {
 			t.Fatal("missing accepted graph or confirmation context")
 		}
@@ -73,7 +76,8 @@ func TestExtractionOnlyReachesEditableResultCompilesAndCachesWithoutReviewModel(
 	cm := &extractionOnceModel{t: t}
 	coordinateCalls := 0
 	agent := &knowledgeSubAgent{
-		chatModel: cm, modelIdentity: &knowledgeModelIdentity{Provider: "test", Model: "extract-once"}, config: knowledge.DefaultConfig(),
+		instructions: "保留不同主体之间的区别。",
+		chatModel:    cm, modelIdentity: &knowledgeModelIdentity{Provider: "test", Model: "extract-once"}, config: knowledge.DefaultConfig(),
 		tools: map[string]tool.BaseTool{knowledgeContractTool: contractTool, knowledgeCompileTool: compiler},
 		resolveCoordinates: func(_ context.Context, graph map[string]any, text string) error {
 			coordinateCalls++
@@ -89,7 +93,7 @@ func TestExtractionOnlyReachesEditableResultCompilesAndCachesWithoutReviewModel(
 	}
 	store := knowledge.NewReviewStore(filepath.Join(root, "reviews"))
 	ctx := WithKnowledgeReview(toolsession.WithContext(context.Background(), "session", filepath.Join(root, "project.qgz"), ""), store)
-	request, _ := json.Marshal(map[string]any{"source_text": source, "route_style": "红蓝对比", "symbols": "军标"})
+	request, _ := json.Marshal(map[string]any{"source_text": source, "rules": "本次只抽取已发生行动。"})
 	_, err := agent.extractAndCompile(ctx, &adk.AgentInput{Messages: []*schema.Message{schema.UserMessage(string(request))}}, func(p knowledge.Progress) {
 		if p.Stage == "semantic_review" {
 			t.Fatal("semantic review progress emitted")
@@ -100,6 +104,9 @@ func TestExtractionOnlyReachesEditableResultCompilesAndCachesWithoutReviewModel(
 		t.Fatalf("no editable result: %v", err)
 	}
 	r := paused.review
+	if !strings.Contains(r.Contract.Instructions, agent.instructions) || !strings.Contains(r.Contract.Instructions, "本次只抽取已发生行动。") {
+		t.Fatal("task rules replaced the configured knowledge role instructions")
+	}
 	if cm.calls != 1 || coordinateCalls != 1 || compiles != 0 || r.Status != knowledge.ReviewAwaiting {
 		t.Fatalf("unexpected workflow: model=%d coordinates=%d compile=%d status=%s", cm.calls, coordinateCalls, compiles, r.Status)
 	}
@@ -119,7 +126,7 @@ func TestExtractionOnlyReachesEditableResultCompilesAndCachesWithoutReviewModel(
 	if compiles != 1 || cm.calls != 1 {
 		t.Fatal("confirmation reran extraction/review")
 	}
-	cache, _ := newKnowledgeCache(agent.modelIdentity, agent.config, contract)
+	cache, _ := newKnowledgeCache(agent.modelIdentity, agent.config, r.Contract)
 	if cache == nil {
 		t.Fatal("cache unavailable")
 	}

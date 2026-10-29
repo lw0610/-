@@ -14,6 +14,9 @@ import (
 // Callers that persist/execute a plan normalize it before validation. Validate
 // itself works on a copy and never changes the caller's plan.
 func NormalizeReferences(p *Plan) []flow.Diagnostic {
+	if p != nil && p.APIVersion == APIVersion {
+		return nil
+	}
 	if p == nil {
 		return nil
 	}

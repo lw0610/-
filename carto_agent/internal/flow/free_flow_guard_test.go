@@ -16,7 +16,7 @@ func TestFlowRuntimeHasNoStructuredExecutionContract(t *testing.T) {
 	for i := 0; i < typ.NumField(); i++ {
 		fields = append(fields, typ.Field(i).Name)
 	}
-	if !reflect.DeepEqual(fields, []string{"Meta", "Body", "Resources", "Diagnostics"}) {
+	if !reflect.DeepEqual(fields, []string{"Layers", "Meta", "Body", "Resources", "Diagnostics"}) {
 		t.Fatalf("flow document acquired execution fields: %v", fields)
 	}
 	for _, file := range []string{"guide_parse.go", "guide_context.go", "guide_environment.go", "guide_store.go", "lock.go", "link.go", "repair.go", "export.go"} {

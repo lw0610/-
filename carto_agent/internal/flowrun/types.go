@@ -3,6 +3,7 @@ package flowrun
 import (
 	"context"
 	"encoding/json"
+	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/plan"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"time"
@@ -32,6 +33,7 @@ type RunStore interface {
 }
 
 type Options struct {
+	AcquisitionConfig  func() config.AcquisitionConfig
 	DataGet            func(context.Context, *RunState, plan.Data) (DataResult, error)
 	ValidatePlanResume func(context.Context, *RunState) error
 	FinalChecks        func(context.Context, *RunState) Verification
@@ -71,8 +73,9 @@ type ResumeRequest struct {
 }
 
 type StepRequest struct {
+	PlanVersion    int
+	Repair         string
 	Acquisition    *DataPreparation
-	Overlay        *RoleOverlaySpec
 	FlowID         string
 	FlowDir        string
 	Lock           *resource.Lock
@@ -91,21 +94,24 @@ type StepRequest struct {
 }
 
 type ToolSummary struct {
-	Name   string `json:"name"`
-	Result string `json:"result"`
+	Name      string          `json:"name"`
+	Arguments json.RawMessage `json:"arguments,omitempty"`
+	Result    string          `json:"result"`
 }
 type StepResult struct {
 	Err             error
 	LastContent     string
 	Interrupted     bool
 	SuccessfulTools []ToolSummary
+	StyleTools      []ToolSummary
 }
 
 type Receipt struct {
-	Status  string         `json:"status"`
-	Summary string         `json:"summary"`
-	Outputs map[string]any `json:"outputs"`
-	Issues  []string       `json:"issues"`
+	Status          string                    `json:"status"`
+	Summary         string                    `json:"summary"`
+	Outputs         map[string]any            `json:"outputs"`
+	Issues          []string                  `json:"issues"`
+	KnowledgeReview *KnowledgeReviewReference `json:"knowledge_review,omitempty"`
 }
 type Verification struct {
 	OK     bool     `json:"ok"`
@@ -127,7 +133,10 @@ type ReceiptRepair struct {
 	Error  string `json:"error,omitempty"`
 }
 type Attempt struct {
+	LayersTracked   bool           `json:"layers_tracked,omitempty"`
+	BeforeLayers    []string       `json:"before_layers,omitempty"`
 	DataID          string         `json:"data_id,omitempty"`
+	Role            string         `json:"role,omitempty"`
 	UserInitiated   bool           `json:"user_initiated,omitempty"`
 	RunID           string         `json:"run_id"`
 	Mode            string         `json:"mode"`
@@ -166,6 +175,9 @@ type AcquisitionState struct {
 	Items []acquire.ItemResult `json:"items"`
 }
 type RunState struct {
+	DataPreparation     []DataPreparationState       `json:"data_preparation,omitempty"`
+	DataNeeds           map[string]json.RawMessage   `json:"data_needs,omitempty"`
+	InputDetails        map[string]map[string]any    `json:"input_details,omitempty"`
 	CartoPlan           *plan.Plan                   `json:"carto_plan,omitempty"`
 	PlanHistory         []*plan.Plan                 `json:"plan_history,omitempty"`
 	Guide               *flow.GuideDoc               `json:"guide,omitempty"`
@@ -220,6 +232,8 @@ func IsTerminal(status string) bool {
 
 // DataResult comes from the unified service after normalization and verification.
 type DataResult struct {
+	Ledger         []PreparationAttempt
+	Details        map[string]any
 	Preparation    *DataPreparation
 	Value          any
 	EntryOverrides map[string]string
@@ -232,6 +246,7 @@ type DataResult struct {
 // The controller runs it through the same step runner and interrupt lifecycle
 // as ordinary steps, then asks DataGet to verify the registered result.
 type DataPreparation struct {
+	Need      json.RawMessage
 	DataID    string
 	Selection json.RawMessage
 	Role      flow.RoleSpec

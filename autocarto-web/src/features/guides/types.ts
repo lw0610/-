@@ -127,3 +127,20 @@ export interface GuideDoc {
   diagnostics: Diagnostic[]
 }
 export interface GuideDetail { meta: {id: string; name: string; description?: string; version: string}; source: 'builtin' | 'user'; enabled: boolean; guide_md: string; guide: GuideDoc; resources: {path: string; type: string; size: number; exists: boolean}[]; resolved_resources?: ResolvedResource[]; diagnostics: Diagnostic[]; conversion_report?: ConversionReport; updated_at: string }
+
+export interface LayerManifest {
+  api_version: string; id: string; name: string; aliases?: string[]; pack: string; category: string
+  params?: Record<string, string>; geometry: string; file: string; sublayer?: string
+  declared_crs?: string; crs?: string; coverage?: {bbox?: number[]; regions?: string[]}
+  scale?: {best_from?: number; best_to?: number}; fields?: Record<string, string>; label_field?: string; default_style?: string
+  feature_count?: number; source?: {title?: string; license?: string; attribution?: string; url?: string; version?: string; retrieved_at?: string}
+  compliance?: string; digest?: string; preview?: string; created_at?: string
+}
+export interface LayerItem extends LayerManifest {scope: 'system' | 'user'; status: string; issues?: string[]; preview_url?: string}
+export interface LayerCatalog {
+  items: LayerItem[]; categories: {id: string; name: string; geometry?: string}[]
+  migration_suggestions?: {path: string; pack: string; source: string; message: string}[]
+}
+export interface LayerScan {
+  path: string; pack: string; entries: {manifest: LayerManifest; available_fields: string[]; suggested_crs?: string; needs_confirmation: boolean; messages?: string[]}[]; messages?: string[]
+}

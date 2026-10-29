@@ -14,7 +14,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 FLOWS = ROOT / "autocarto" / "flows" / "system"
-EXPECTED_GUIDES = {"marching-route", "statistical-choropleth", "traffic-route", "data-to-map"}
+EXPECTED_GUIDES = {"marching-route", "statistical-choropleth"}
 
 
 @pytest.fixture(scope="module")
@@ -48,14 +48,14 @@ def test_builtin_guides_use_real_parser_resources_and_http(backend_results):
         assert not [d for d in result["diagnostics"] if d["level"] in {"error", "warning"}]
 
 
-def test_exactly_four_builtin_flows_have_portable_business_instructions():
+def test_builtin_flows_have_portable_business_instructions():
     assert {path.parent.name for path in FLOWS.glob("*/FLOW.md")} == set(EXPECTED_GUIDES)
     for flow_id in EXPECTED_GUIDES:
         raw = (FLOWS / flow_id / "FLOW.md").read_text(encoding="utf-8")
         front = yaml.safe_load(raw.split("---", 2)[1])
         assert front.get("编号", flow_id) == flow_id
         assert front["名称"]
-        assert front["版本"] == "5.0.0"
+        assert front["版本"] == "6.0.0"
         assert front["说明"]
         assert "## 参与角色" not in raw
         assert not re.search(r"(?m)^- 负责：", raw)
@@ -89,7 +89,7 @@ def test_flow_packages_contain_only_document_and_visual_dependency_lock():
 
 def test_route_basemap_needs_are_explained_in_free_document():
     raw = (FLOWS / "marching-route" / "FLOW.md").read_text()
-    for name in {"省域", "县级城市驻地", "铁路", "公路", "国道", "地区界线", "河流线", "河流面"}:
+    for name in {"省域", "市级驻地", "铁路", "公路", "国道", "地区界线", "河流线", "河流面", "地形晕渲", "鄂豫皖革命根据地", "鄂豫陕革命根据地", "陕甘宁革命根据地"}:
         assert name in raw
     assert "resources/data/" not in raw
     assert "清单「" not in raw

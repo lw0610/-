@@ -83,7 +83,7 @@ func TestFactoryBuildRoleReusesProjectionProviderAndMiddleware(t *testing.T) {
 		t.Fatal(err)
 	}
 	active := &config.AgentConfigFile{Version: "2.0", Runtime: &config.RuntimeConfig{Agents: map[string]config.AgentDefData{
-		"worker": {Kind: "agent", FlowOnly: true, Enabled: true, Description: "核对图层", DisplayName: "图层核对", ToolPackages: []string{"observation"}, LLM: config.AgentLLMConfig{Provider: "selected"}, Prompts: map[string]string{"static_instructions": "保留步骤角色规则"}},
+		"worker": {Kind: "agent", Enabled: true, Description: "核对图层", DisplayName: "图层核对", ToolPackages: []string{"observation"}, LLM: config.AgentLLMConfig{Provider: "selected"}, Prompts: map[string]string{"static_instructions": "保留步骤角色规则"}},
 	}}}
 	before, _ := json.Marshal(active)
 	projection, err := factory.deepAgentConfig("project-profile", active)
@@ -268,5 +268,108 @@ func TestFactoryInvokeFlowToolRejectsMissingDuplicateMalformedAndFailedResults(t
 	factory, _ := NewFactory(&FactoryConfig{DefaultChatModel: newFlowProbe(), BaseTools: []tool.BaseTool{failing}})
 	if _, err := factory.InvokeFlowTool(ctx, "layout_info", nil); err == nil || !strings.Contains(err.Error(), "bridge unavailable") {
 		t.Fatal("wrapped tool transport error accepted", err)
+	}
+}
+
+func TestFactoryFlowControllerCanInspectAndCleanTrackedLayers(t *testing.T) {
+	for _, name := range []string{"layer_inspect", "layer_remove_created"} {
+		target := &flowInvokable{name: name, result: `{"success":true,"data":{}}`}
+		factory, err := NewFactory(&FactoryConfig{DefaultChatModel: newFlowProbe(), BaseTools: []tool.BaseTool{target}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err = factory.InvokeFlowTool(context.Background(), name, map[string]any{"layer_ids": []string{"created-by-attempt"}}); err != nil || target.calls != 1 {
+			t.Fatal(name, err, target.calls)
+		}
+	}
+}
+
+func TestFactoryBuildsConfiguredRoleWithSharedAndAutomaticTools(t *testing.T) {
+	root := t.TempDir()
+	for _, name := range []string{"declared", "shared", "foundation"} {
+		dir := filepath.Join(root, name)
+		if err := os.MkdirAll(dir, 0700); err != nil {
+			t.Fatal(err)
+		}
+		raw := "---\nname: " + name + "\ndescription: fixture\nkind: category\ntools: [" + name + "_tool]\n"
+		if name == "foundation" {
+			raw += "system: true\n"
+		}
+		raw += "---\n# fixture\nFixture instructions.\n"
+		if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(raw), 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	probe := newFlowProbe()
+	factory, err := NewFactory(&FactoryConfig{DefaultChatModel: probe, DefaultProviderCfg: &config.LLMProviderConfig{Model: "fixture"}, BaseTools: []tool.BaseTool{&fakeInvokableTool{name: "declared_tool"}, &fakeInvokableTool{name: "shared_tool"}, &fakeInvokableTool{name: "foundation_tool"}, &fakeInvokableTool{name: "unassigned"}}, PluginSkillsDir: root, BuiltinSkillsDir: t.TempDir(), UserSkillsDir: t.TempDir(), ConfigBaseDir: t.TempDir(), RegistryGovernance: control.NewRegistryGovernance(control.RegistryGovernanceDeps{ResolveSkillDirs: func() []string { return []string{root} }})})
+	if err != nil {
+		t.Fatal(err)
+	}
+	active := &config.AgentConfigFile{Runtime: &config.RuntimeConfig{SharedToolPackages: []string{"shared"}, Agents: map[string]config.AgentDefData{
+		"main":   {Kind: "agent", Enabled: true, IsMain: true},
+		"worker": {Kind: "agent", Enabled: true, DisplayName: "处理", ToolPackages: []string{"declared"}, Prompts: map[string]string{"static_instructions": "按方案完成任务"}},
+	}}}
+	agent, err := factory.BuildRole(context.Background(), "fixture", active, "worker")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if probe.capture.calls != 0 {
+		t.Fatal("construction called model")
+	}
+	runner := adk.NewRunner(context.Background(), adk.RunnerConfig{Agent: agent})
+	iter := runner.Run(context.Background(), []*schema.Message{schema.UserMessage("执行测试")})
+	for {
+		event, ok := iter.Next()
+		if !ok {
+			break
+		}
+		if event.Err != nil {
+			t.Fatal(event.Err)
+		}
+	}
+	names := map[string]bool{}
+	for _, binding := range probe.capture.bindings {
+		for _, info := range binding {
+			names[info.Name] = true
+		}
+	}
+	for _, info := range probe.capture.options.Tools {
+		names[info.Name] = true
+	}
+	for _, name := range []string{"declared_tool", "shared_tool", "foundation_tool"} {
+		if !names[name] {
+			t.Fatalf("missing %s in %+v", name, names)
+		}
+	}
+	if names["unassigned"] || len(active.Runtime.Agents) != 2 || probe.capture.calls != 1 {
+		t.Fatal("execution changed profile or unexpected model count", names)
+	}
+}
+
+func TestFactoryBuildsConfiguredKnowledgeExecutor(t *testing.T) {
+	root := t.TempDir()
+	dir := filepath.Join(root, "knowledge")
+	if err := os.MkdirAll(dir, 0700); err != nil {
+		t.Fatal(err)
+	}
+	raw := "---\nname: knowledge\ndescription: fixture\nkind: category\nhidden: true\nauto_mount: executor:route_knowledge\ntools: [marching_route_get_extraction_contract,marching_route_compile_dataset]\n---\n# fixture\nExtraction instructions.\n"
+	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(raw), 0600); err != nil {
+		t.Fatal(err)
+	}
+	probe := newFlowProbe()
+	factory, err := NewFactory(&FactoryConfig{DefaultChatModel: probe, DefaultProviderCfg: &config.LLMProviderConfig{Model: "fixture"}, BaseTools: []tool.BaseTool{&fakeInvokableTool{name: "marching_route_get_extraction_contract"}, &fakeInvokableTool{name: "marching_route_compile_dataset"}}, PluginSkillsDir: root, BuiltinSkillsDir: t.TempDir(), UserSkillsDir: t.TempDir(), ConfigBaseDir: t.TempDir()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	active := &config.AgentConfigFile{Runtime: &config.RuntimeConfig{Agents: map[string]config.AgentDefData{
+		"main":         {Kind: "agent", Enabled: true, IsMain: true},
+		"route_reader": {Kind: "executor", Executor: "route_knowledge", Enabled: true, DisplayName: "抽取", Prompts: map[string]string{"static_instructions": "根据原文抽取路线"}},
+	}}}
+	agent, err := factory.BuildRole(context.Background(), "fixture", active, "route_reader")
+	if err != nil || agent == nil {
+		t.Fatal(agent, err)
+	}
+	if agent.Name(context.Background()) != "route_reader" || probe.capture.calls != 0 {
+		t.Fatal("unexpected executor construction")
 	}
 }

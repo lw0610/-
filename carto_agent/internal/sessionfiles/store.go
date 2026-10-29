@@ -22,6 +22,7 @@ type Origin struct {
 	Type     string `json:"type"`
 	Tool     string `json:"tool,omitempty"`
 	Label    string `json:"label,omitempty"`
+	Name     string `json:"name,omitempty"`
 	CallID   string `json:"call_id,omitempty"`
 	Agent    string `json:"agent,omitempty"`
 	SourceID string `json:"source_id,omitempty"`
@@ -69,27 +70,21 @@ var locks sync.Map
 
 type Store struct {
 	SessionID, Dir string
-	Roots          []string
 	lock           *sessionLock
 }
 
 var ErrNotIndexed = errors.New("文件不在本会话文件索引中")
-var ErrOutsideRoot = errors.New("文件路径超出本会话允许的目录")
 
 func New(projectPath, sessionID string) (*Store, error) {
 	dir, err := config.ResolveSessionDir(projectPath, sessionID)
 	if err != nil {
 		return nil, err
 	}
-	home, err := config.ResolveAutoCartoHome()
-	if err != nil {
-		return nil, err
-	}
-	return NewWithRoots(sessionID, dir, filepath.Dir(projectPath), filepath.Join(home, "data", "acquired"), filepath.Join(home, "data", "boundaries"))
+	return NewAt(sessionID, dir)
 }
 
-// NewWithRoots accepts only trusted application-owned roots, never raw request paths.
-func NewWithRoots(sessionID, dir string, roots ...string) (*Store, error) {
+// NewAt opens the artifact index for a session directory.
+func NewAt(sessionID, dir string) (*Store, error) {
 	if _, err := config.ValidateSessionID(sessionID); err != nil {
 		return nil, err
 	}
@@ -97,20 +92,8 @@ func NewWithRoots(sessionID, dir string, roots ...string) (*Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	rootList := []string{absolute}
-	for _, root := range roots {
-		if root != "" {
-			p, e := filepath.Abs(root)
-			if e != nil {
-				return nil, e
-			}
-			if filepath.Dir(p) != p {
-				rootList = append(rootList, p)
-			}
-		}
-	}
 	value, _ := locks.LoadOrStore(absolute, &sessionLock{})
-	return &Store{SessionID: sessionID, Dir: absolute, Roots: rootList, lock: value.(*sessionLock)}, nil
+	return &Store{SessionID: sessionID, Dir: absolute, lock: value.(*sessionLock)}, nil
 }
 func (s *Store) OnChange(fn func(Change)) { s.lock.Lock(); defer s.lock.Unlock(); s.lock.notify = fn }
 func (s *Store) changed(added, updated int) {
@@ -141,25 +124,11 @@ func within(root, path string) bool {
 }
 func (s *Store) ValidatePath(path string) (string, fs.FileInfo, error) {
 	if !filepath.IsAbs(path) {
-		return "", nil, ErrOutsideRoot
+		return "", nil, fmt.Errorf("文件路径必须为绝对路径")
 	}
 	target, err := filepath.EvalSymlinks(filepath.Clean(path))
 	if err != nil {
 		return "", nil, err
-	}
-	allowed := false
-	for _, root := range s.Roots {
-		canonical, e := filepath.EvalSymlinks(root)
-		if e == nil && within(canonical, target) {
-			allowed = true
-			break
-		}
-	}
-	if !allowed {
-		allowed = s.providedPathAllowed(filepath.Clean(path), target)
-		if !allowed {
-			return "", nil, ErrOutsideRoot
-		}
 	}
 	info, err := os.Stat(target)
 	if err != nil {
@@ -206,10 +175,10 @@ func (s *Store) write(data index) error {
 	if err := os.MkdirAll(s.Dir, 0700); err != nil {
 		return err
 	}
-	// Refuse an index symlink even if its target is within an allowed project root.
+	// The index is application metadata, stored directly in the session directory.
 	filename := filepath.Join(s.Dir, "files.index.json")
 	if info, e := os.Lstat(filename); e == nil && info.Mode()&os.ModeSymlink != 0 {
-		return ErrOutsideRoot
+		return fmt.Errorf("会话文件索引不能是符号链接")
 	}
 	raw, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
@@ -236,7 +205,24 @@ func (s *Store) makeItem(path string, origin Origin) (Item, error) {
 		return Item{}, err
 	}
 	kind, group := s.classifyPath(canonical, info.IsDir())
-	return Item{ID: pathID(canonical), Path: canonical, Name: info.Name(), Kind: kind, Group: group, Members: []string{}, Origin: origin, RegisteredAt: info.ModTime().UTC(), ModifiedAt: info.ModTime().UTC(), Size: info.Size(), Exists: true}, nil
+	return Item{ID: pathID(canonical), Path: canonical, Name: displayName(info.Name(), origin), Kind: kind, Group: group, Members: []string{}, Origin: origin, RegisteredAt: info.ModTime().UTC(), ModifiedAt: info.ModTime().UTC(), Size: info.Size(), Exists: true}, nil
+}
+
+// Tool labels describe actions; only an explicit artifact name or a data-service
+// row names the file's contents. Keep the real path and extension unchanged.
+func displayName(filename string, origin Origin) string {
+	name := strings.TrimSpace(origin.Name)
+	if name == "" && origin.Type == "data_service" {
+		name = strings.TrimSpace(origin.Label)
+	}
+	if name == "" {
+		return filename
+	}
+	ext := filepath.Ext(filename)
+	if !strings.EqualFold(filepath.Ext(name), ext) {
+		name += ext
+	}
+	return name
 }
 func (s *Store) classifyPath(path string, directory bool) (string, string) {
 	root := s.Dir
@@ -277,6 +263,17 @@ func (s *Store) register(path string, origin Origin, missingOnly bool, options .
 	for i, prior := range data.Items {
 		if prior.ID == item.ID {
 			if missingOnly {
+				// Fill an old registration's missing business name from its own
+				// receipt, without reverting a later replacement's provenance.
+				if prior.Origin.Name == "" && item.Origin.Name != "" && prior.Origin.CallID == item.Origin.CallID && prior.Origin.Tool == item.Origin.Tool {
+					prior.Origin.Name = item.Origin.Name
+					prior.Name = displayName(filepath.Base(prior.Path), prior.Origin)
+					data.Items[i] = prior
+					if err := s.write(data); err != nil {
+						return prior, err
+					}
+					s.changed(0, 1)
+				}
 				return prior, nil
 			}
 			data.Items[i] = item
@@ -381,9 +378,10 @@ func (s *Store) Get(id string) (Item, error) {
 			return Item{}, e
 		}
 		if pathID(path) != id {
-			return Item{}, ErrOutsideRoot
+			return Item{}, fmt.Errorf("文件引用已变化，请刷新文件列表")
 		}
 		item.Path = path
+		item.Name = displayName(info.Name(), item.Origin)
 		item.Size = info.Size()
 		item.ModifiedAt = info.ModTime()
 		item.Exists = true
@@ -394,8 +392,7 @@ func (s *Store) Get(id string) (Item, error) {
 	return Item{}, ErrNotIndexed
 }
 
-// GetPath resolves an exact indexed file without registering it or granting
-// access to its parent directory. Canonical identities reject replaced symlinks.
+// GetPath resolves an exact indexed file without registering it.
 func (s *Store) GetPath(path string) (Item, error) {
 	canonical, _, err := s.ValidatePath(path)
 	if err != nil {

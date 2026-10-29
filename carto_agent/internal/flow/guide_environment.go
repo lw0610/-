@@ -1,6 +1,7 @@
 package flow
 
 import (
+	"github.com/autocarto/carto_agent/internal/layers"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"path/filepath"
 )
@@ -14,13 +15,24 @@ func LoadGuideEnvironment(assets string) (GuideEnvironment, error) {
 	return GuideEnvironmentFromLibrary(resource.NewAssetLibrary(absolute))
 }
 func GuideEnvironmentFromLibrary(library *resource.Library) (GuideEnvironment, error) {
-	env := GuideEnvironment{Resources: []resource.LibraryItem{}}
-	if library == nil {
-		return env, nil
+	env := GuideEnvironment{Resources: []resource.LibraryItem{}, Layers: []layers.Item{}}
+	var items []resource.LibraryItem
+	if library != nil {
+		var err error
+		items, err = library.List("all")
+		if err != nil {
+			return env, err
+		}
 	}
-	items, err := library.List("all")
-	if err != nil {
-		return env, err
+	if catalog, err := layers.NewDefaultLibrary(); err == nil {
+		if library == nil || filepath.Clean(library.BuiltinDir) != resource.NewAssetLibrary(catalog.AssetsRoot).BuiltinDir {
+			env.Layers, err = catalog.List()
+		} else {
+			env.Layers, err = catalog.ListWithResources(items)
+		}
+		if err != nil {
+			return env, err
+		}
 	}
 	for _, item := range items {
 		if item.Type == "style" || item.Type == "layout" {
@@ -51,5 +63,5 @@ func guideEnvironmentWithLock(env GuideEnvironment, lock *resource.Lock) GuideEn
 func resourceDocumentWithLock(raw string, library *resource.Library, lock *resource.Lock) *FlowDoc {
 	env, _ := GuideEnvironmentFromLibrary(library)
 	g := ParseGuide(raw, guideEnvironmentWithLock(env, lock))
-	return &FlowDoc{Meta: g.Meta, Resources: g.Resources, Diagnostics: g.Diagnostics}
+	return &FlowDoc{Meta: g.Meta, Resources: g.Resources, Layers: g.Layers, Diagnostics: g.Diagnostics}
 }

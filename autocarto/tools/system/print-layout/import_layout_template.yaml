@@ -28,7 +28,7 @@ spec:
     required: false
   - name: map_layers
     type: multi_layer
-    description: 主图显示的图层名称或 ID 数组，顺序为上下顺序；请求主图设置但未传本项时使用工程可见图层
+    description: 主图显示的图层名称或 ID 数组，按从上到下顺序；请求主图设置但未传本项时沿用图层面板中可见图层的自然顺序，仅设置版面
     required: false
   - name: extent_layers
     type: multi_layer

@@ -25,7 +25,7 @@ spec:
     type: output_raster
     description: 输出VRT
 execution:
-  backend_tool: gdal_buildvrt
+  backend_tool: gdal:buildvirtualraster
   param_mapping:
     INPUT: '{{ INPUT }}'
     RESOLUTION: '{{ RESOLUTION }}'

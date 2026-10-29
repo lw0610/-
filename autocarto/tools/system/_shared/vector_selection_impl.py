@@ -1,9 +1,12 @@
+import os
+import re
 from typing import Any, Dict
-from autocarto.utils.redaction import redact_sensitive_text
 
-from qgis.core import QgsExpression, QgsFeature, QgsProject, QgsVectorLayer, QgsWkbTypes
+from qgis.core import QgsExpression, QgsFeature, QgsProject, QgsVectorFileWriter, QgsVectorLayer, QgsWkbTypes
 
 from autocarto.tools.system._shared.canvas_refresh import refresh_canvas
+from autocarto.tools.system._shared.output_manager import resolve_output_path, sync_session_context_from_params
+from autocarto.tools.system._shared.vector_attributes_impl import _build_output_layer_ref, _publish_target
 
 ALLOWED_OPERATORS = {"=", "<>", ">", "<", ">=", "<=", "LIKE", "ILIKE"}
 
@@ -12,24 +15,33 @@ def _find_vector_layer(layer_name: Any):
     name = str(layer_name or "").strip()
     if not name:
         return None
-    layers = QgsProject.instance().mapLayersByName(name)
-    if not layers:
-        return None
-    layer = layers[0]
+    project = QgsProject.instance()
+    layer = project.mapLayer(name)
+    if layer is None:
+        layers = project.mapLayersByName(name)
+        layer = layers[0] if layers else None
     if not isinstance(layer, QgsVectorLayer):
         return None
     return layer
 
 
-def _clone_selected_features(layer: QgsVectorLayer, output_ref: Any) -> QgsVectorLayer:
-    output_text = str(output_ref or "").strip()
+def _clone_selected_features(layer: QgsVectorLayer, params: Dict[str, Any]) -> QgsVectorLayer:
+    output_text = str(params.get("OUTPUT") or "").strip()
+    extension = os.path.splitext(output_text)[1].lstrip(".")
+    file_output = not output_text.startswith("memory:") and (
+        os.path.isabs(output_text) or "/" in output_text or "\\" in output_text
+        or bool(QgsVectorFileWriter.driverForExtension(extension))
+    )
     layer_name = (
         output_text.split(":", 1)[1].strip()
         if output_text.startswith("memory:")
         else output_text
     )
-    if not layer_name:
-        layer_name = f"{layer.name()}_selected"
+    if file_output:
+        basename = os.path.splitext(os.path.basename(output_text))[0]
+        layer_name = basename if re.search(r"[\u3400-\u9fff]", basename) else ""
+    if not layer_name or layer_name == "TEMPORARY_OUTPUT":
+        layer_name = f"{layer.name()}_提取结果"
 
     crs_auth = layer.crs().authid() if layer.crs() and layer.crs().isValid() else ""
     uri = QgsWkbTypes.displayString(layer.wkbType())
@@ -55,22 +67,22 @@ def _clone_selected_features(layer: QgsVectorLayer, output_ref: Any) -> QgsVecto
         features.append(cloned)
     if features:
         provider.addFeatures(features)
-    QgsProject.instance().addMapLayer(target)
-    refresh_canvas()
+    if file_output:
+        sync_session_context_from_params(params)
+        path = resolve_output_path(output_text, "提取结果.gpkg", "output")
+        options = QgsVectorFileWriter.SaveVectorOptions()
+        options.driverName = QgsVectorFileWriter.driverForExtension(extension) or "GPKG"
+        options.fileEncoding = "UTF-8"
+        result = QgsVectorFileWriter.writeAsVectorFormatV3(
+            target, path, QgsProject.instance().transformContext(), options
+        )
+        if result[0] != QgsVectorFileWriter.NoError:
+            raise RuntimeError(f"保存提取结果失败: {result[1]}")
+        target = QgsVectorLayer(result[2] or path, layer_name, "ogr")
+        if not target.isValid():
+            raise RuntimeError(f"无法读取已保存的提取结果: {path}")
+    _publish_target(target, params)
     return target
-
-
-def _build_output_layer_ref(layer: QgsVectorLayer) -> Dict[str, Any]:
-    return {
-        "name": layer.name(),
-        "source": redact_sensitive_text(layer.source()).strip(),
-        "feature_count": int(layer.featureCount()),
-        "geometry_type": QgsWkbTypes.displayString(layer.wkbType()),
-        "fields": [field.name() for field in layer.fields()],
-        "provider": layer.providerType(),
-        "reference_type": "project_layer",
-        "auto_load": False,
-    }
 
 
 def _field_preview(layer: QgsVectorLayer, limit: int = 6) -> str:
@@ -211,7 +223,6 @@ def extract_by_expression_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     try:
         layer = _find_vector_layer(params.get("INPUT"))
         expression = params.get("EXPRESSION")
-        output_ref = params.get("OUTPUT")
 
         if layer is None:
             return {
@@ -231,10 +242,10 @@ def extract_by_expression_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             }
 
         layer.selectByExpression(expression)
-        target = _clone_selected_features(layer, output_ref)
+        target = _clone_selected_features(layer, params)
         return {
             "success": True,
-            "output": target.name(),
+            "output": _build_output_layer_ref(target),
             "info": f"按表达式提取完成，输出图层 {target.name()}；字段: {_field_preview(target)}",
             "output_layers": [_build_output_layer_ref(target)],
         }
@@ -245,7 +256,6 @@ def extract_by_expression_handler(params: Dict[str, Any]) -> Dict[str, Any]:
 def extract_selected_features_handler(params: Dict[str, Any]) -> Dict[str, Any]:
     try:
         layer = _find_vector_layer(params.get("INPUT"))
-        output_ref = params.get("OUTPUT")
 
         if layer is None:
             return {
@@ -256,10 +266,10 @@ def extract_selected_features_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         if layer.selectedFeatureCount() <= 0:
             return {"success": False, "output": "", "info": "错误：当前没有选中的要素"}
 
-        target = _clone_selected_features(layer, output_ref)
+        target = _clone_selected_features(layer, params)
         return {
             "success": True,
-            "output": target.name(),
+            "output": _build_output_layer_ref(target),
             "info": f"已提取选中要素到图层 {target.name()}；字段: {_field_preview(target)}",
             "output_layers": [_build_output_layer_ref(target)],
         }
@@ -273,7 +283,6 @@ def extract_by_attribute_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         field = params.get("FIELD")
         value = params.get("VALUE")
         operator_code = int(params.get("OPERATOR", 0) or 0)
-        output_ref = params.get("OUTPUT")
 
         if layer is None:
             return {
@@ -308,10 +317,10 @@ def extract_by_attribute_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             expression = f'"{field}" {operator} {value}'
 
         layer.selectByExpression(expression)
-        target = _clone_selected_features(layer, output_ref)
+        target = _clone_selected_features(layer, params)
         return {
             "success": True,
-            "output": target.name(),
+            "output": _build_output_layer_ref(target),
             "info": f"按属性提取完成，输出图层 {target.name()}；字段: {_field_preview(target)}",
             "output_layers": [_build_output_layer_ref(target)],
         }

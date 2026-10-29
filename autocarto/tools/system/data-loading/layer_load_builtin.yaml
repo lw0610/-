@@ -1,0 +1,19 @@
+apiVersion: tool/v1
+kind: Tool
+metadata:
+  name: layer_load_builtin
+  display_name: 加载内置图层
+  domain: data-loading
+  runtime: qgis
+spec:
+  description: 按资源库名称加载并立即显示本机内置图层，使用清单中的实际坐标系、默认样式与标注字段；原件只读。仅作为计算输入时传 show=false 留在后台。
+  parameters:
+    - {name: name, type: string, required: true, description: 内置图层的名称或唯一别名}
+    - {name: layer_name, type: string, description: 可选的工程图层名称}
+    - {name: style, type: resource, resource_type: style, description: 可选的资源库样式名称}
+    - {name: extent, type: array, description: EPSG4326 的西南东北边界，裁剪时必填, items: {type: number}}
+    - {name: clip, type: boolean, default: false, description: 是否裁剪为会话派生副本}
+    - {name: show, type: boolean, default: true, description: 默认立即显示；false 仅在后台准备供计算。首次显示插到顶部}
+execution:
+  handler: handlers.builtin.layer_load_builtin_handler
+  param_mapping: {name: '{{ name }}', layer_name: '{{ layer_name }}', style: '{{ style }}', extent: '{{ extent }}', clip: '{{ clip }}', show: '{{ show }}'}

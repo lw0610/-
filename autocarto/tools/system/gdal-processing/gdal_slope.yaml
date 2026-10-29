@@ -25,7 +25,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: gdal_slope
+  backend_tool: gdal:slope
   param_mapping:
     INPUT: '{{ INPUT }}'
     BAND: '{{ BAND }}'

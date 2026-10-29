@@ -441,7 +441,9 @@ func (r *Registry) lookupReferencedToolUnlocked(name string) (SkillDefinition, b
 
 func convertToolDefinition(def toolpkg.ToolDefinition) SkillDefinition {
 	backendTool := strings.TrimSpace(def.Execution.BackendTool)
-	if backendTool == "" && hasToolHandlerBinding(def.Execution) {
+	// QGIS resolves its algorithm/handler from the authority manifest by public
+	// tool name. Backend algorithm IDs are not remote tool registry keys.
+	if def.EffectiveRuntime() == toolpkg.RuntimeIDQGIS || backendTool == "" && hasToolHandlerBinding(def.Execution) {
 		backendTool = strings.TrimSpace(def.Metadata.Name)
 	}
 	return SkillDefinition{

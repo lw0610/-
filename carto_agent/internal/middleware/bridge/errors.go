@@ -13,6 +13,15 @@ type ToolInvokeError struct {
 	Message             string
 	Retryable           bool
 	ProviderDiagnostics map[string]any
+	Output              any
+}
+
+// ToolOutput retains a handler's structured partial result on execution failure.
+func (e *ToolInvokeError) ToolOutput() any {
+	if e == nil {
+		return nil
+	}
+	return e.Output
 }
 
 func (e *ToolInvokeError) Error() string {

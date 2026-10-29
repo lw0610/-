@@ -43,9 +43,8 @@ func TestCartographicPlanReusesRegisteredDataset(t *testing.T) {
 		name string
 		data plan.Data
 	}{
-		{"tool path", plan.Data{Path: directory, Kind: "dataset"}},
-		{"file index ID", plan.Data{FileID: item.ID, Kind: "dataset"}},
-		{"legacy directory without kind", plan.Data{FileID: item.ID}},
+		{"tool path", plan.Data{Ref: directory, Kind: "dataset"}},
+		{"file index ID", plan.Data{Ref: item.ID, Kind: "dataset"}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			p, cloneErr := plan.Clone(base)
@@ -53,18 +52,19 @@ func TestCartographicPlanReusesRegisteredDataset(t *testing.T) {
 				t.Fatal(cloneErr)
 			}
 			d := tc.data
-			d.ID, d.Name, d.From = "route_dataset", "路线数据集（六表）", "session"
+			d.ID, d.Name, d.Source = "route_dataset", "路线数据集（六表）", "user"
 			p.Data = []plan.Data{d}
-			p.Steps[0].Uses = []string{d.ID}
+			p.Steps[0].Inputs = []string{d.ID}
 			prepared, prepareErr := s.prepareCartographicPlan(context.Background(), run, p, nil)
 			if prepareErr != nil {
 				t.Fatal(prepareErr)
 			}
 			resolved := prepared.Snapshot.Plan.Data[0]
-			if resolved.Path != item.Path || resolved.FileID != item.ID || resolved.Kind != "dataset" || resolved.Name != d.Name {
+			canonical, pathErr := filepath.EvalSymlinks(resolved.Ref)
+			if pathErr != nil || canonical != item.Path || resolved.Kind != "dataset" || resolved.Name != d.Name {
 				t.Fatalf("snapshot lost the exact artifact identity: %+v", resolved)
 			}
-			if prepared.Inputs[d.ID] != item.Path || len(prepared.Executable.Steps) != 1 {
+			if prepared.Inputs[d.ID] != resolved.Ref || len(prepared.Executable.Steps) != 1 {
 				t.Fatalf("existing dataset must bind directly without another producer: inputs=%+v steps=%+v", prepared.Inputs, prepared.Executable.Steps)
 			}
 		})

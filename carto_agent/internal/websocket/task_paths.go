@@ -8,7 +8,7 @@ import (
 )
 
 var quotedUserPath = regexp.MustCompile("[`\"'“‘]([^`\"'”’]+)[`\"'”’]")
-var unquotedUserPath = regexp.MustCompile(`(?:^|[\s（(:：])((?:/|\./|[A-Za-z]:[/\\])[^\s，,；;。！？!?\)）\]】<>]+)`)
+var unquotedUserPath = regexp.MustCompile(`(?:^|[\s（(:：\p{Han}])((?:/|\./|[A-Za-z]:[/\\])[^\s，,；;。！？!?\)）\]】<>]+)`)
 
 // Only literal paths in a human message grant access. Never scan assistant text,
 // never infer a parent folder from a basename, and never expand a home wildcard.

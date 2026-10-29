@@ -18,4 +18,4 @@ auto_mount: ''
 
 依据已校验的数据表绘制路线、点符号与图文标注。
 
-新流程依次调用 route_draw 和 route_points_build。先确认数据集与行数断言；route_draw 的 route_style 选择路线样式资源名称、编号或路径，省略时使用工具声明的默认资源，数据集已有的非空 style_id 仍优先。route_points_build 的 symbols 可选择符号资源名称、编号或目录，省略时使用数据集中的 symbol_mapping.csv。符号图例说明来自资源的 description，缺省显示符号类型。调用后检查实际图层、资源摘要与失败项。图文标注交由版面编排的 layout_add_callouts。
+依次调用 route_draw 和 route_points_build，使用本次确认后的数据集。route_draw 默认采用数据集已有 style_id 与原版内置渲染规则；route_points_build 默认采用数据集生成的 symbol_mapping.csv。仅用户明确指定使用外部路线样式表或符号表时，才填写可选的 route_style 或 symbols 预设名称，不填写资源路径，也不因要求红蓝配色自动选表。显式选择的表不可用时说明具体原因。符号图例说明来自 symbol_mapping.csv 的 description，缺省显示符号类型。调用后检查实际图层与失败项。图文标注交由版面编排的 layout_add_callouts。

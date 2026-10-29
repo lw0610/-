@@ -5,11 +5,13 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"github.com/autocarto/carto_agent/internal/datasource"
 	"github.com/autocarto/carto_agent/internal/resource/bindings"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -56,16 +58,28 @@ func atomicJSON(path string, value any) error {
 }
 func (s *Service) load(id string) (query, error) {
 	var q query
-	if !findPattern.MatchString(id) || s.options.SessionDir == "" {
-		return q, failure("DATA_FIND_EXPIRED", "数据来源查询不存在，请重新查询")
+	if strings.TrimSpace(id) == "" {
+		return q, failure("DATA_QUERY_REQUIRED", "缺少 find_id；请使用 data_find 成功返回的编号。已取得文件可用 data_register 的 need 明确登记需求")
+	}
+	if !findPattern.MatchString(id) {
+		return q, failure("DATA_QUERY_INVALID", "find_id 格式无效；只能使用 data_find 成功返回的编号，不要自行构造")
+	}
+	if s.options.SessionDir == "" {
+		return q, fmt.Errorf("数据服务缺少当前会话目录")
 	}
 	path := filepath.Join(s.options.SessionDir, "data", "finds", id+".json")
 	if err := bindings.RejectSymlinks(path); err != nil {
 		return q, err
 	}
 	raw, err := os.ReadFile(path)
-	if err != nil || len(raw) > 16<<20 {
-		return q, failure("DATA_FIND_EXPIRED", "数据来源查询不存在，请重新查询")
+	if os.IsNotExist(err) {
+		return q, failure("DATA_QUERY_NOT_FOUND", "当前会话中没有此查询；data_find 提示 correct_need 时须先更正需求，不能使用未完成查询的编号")
+	}
+	if err != nil {
+		return q, err
+	}
+	if len(raw) > 16<<20 {
+		return q, failure("DATA_QUERY_INVALID", "数据来源查询文件过大")
 	}
 	if err = json.Unmarshal(raw, &q); err != nil {
 		return q, err

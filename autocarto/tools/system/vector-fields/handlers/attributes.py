@@ -1,4 +1,5 @@
 from autocarto.tools.system._shared.vector_attributes_impl import (
+    advanced_python_field_calculator_handler,
     field_calculator_handler,
     join_attributes_by_field_value_handler,
     refactor_fields_handler,
@@ -8,6 +9,7 @@ from autocarto.tools.system._shared.vector_attributes_impl import (
 )
 
 __all__ = [
+    "advanced_python_field_calculator_handler",
     "field_calculator_handler",
     "join_attributes_by_field_value_handler",
     "rename_table_field_handler",

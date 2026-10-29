@@ -16,7 +16,6 @@ import (
 	"github.com/autocarto/carto_agent/internal/toolsession"
 	"github.com/cloudwego/eino/adk"
 	"github.com/cloudwego/eino/components/model"
-	"github.com/cloudwego/eino/components/tool"
 	"github.com/cloudwego/eino/components/tool/utils"
 	"github.com/cloudwego/eino/schema"
 )
@@ -158,8 +157,8 @@ func TestRootDelegationSharesAttachmentsWithoutCopyingSourceIntoTask(t *testing.
 	}
 }
 
-func TestStandaloneFlowAndAcquisitionRolesReceiveMaterials(t *testing.T) {
-	for _, kind := range []string{"flow_role", "acquisition"} {
+func TestStandaloneConfiguredRolesReceiveMaterials(t *testing.T) {
+	for _, kind := range []string{"flow_role", "reader"} {
 		t.Run(kind, func(t *testing.T) {
 			ctx, cfg, state := materialFixture(t)
 			var agent adk.Agent
@@ -170,13 +169,9 @@ func TestStandaloneFlowAndAcquisitionRolesReceiveMaterials(t *testing.T) {
 				cfg.SkillRuntimeConfig.Agents["reader"] = role
 				agent, err = BuildRoleAgent(ctx, cfg, "reader")
 			} else {
-				// Only the read adapter is supplied here; material handling must
-				// not manufacture write/shell tools for the system expert.
-				cfg.Tools = []tool.BaseTool{cfg.Tools[0]}
-				for _, name := range []string{"data_find", "data_get"} {
-					cfg.Tools = append(cfg.Tools, utils.NewTool(&schema.ToolInfo{Name: name, Desc: name}, func(context.Context, map[string]any) (string, error) { return "", nil }))
-				}
-				agent, err = BuildRoleAgent(ctx, cfg, DataAcquisitionExpertName)
+				// A plain configured reader keeps attachment access without receiving
+				// write or shell tools from the catalog.
+				agent, err = BuildRoleAgent(ctx, cfg, "reader")
 			}
 			if err != nil {
 				t.Fatal(err)

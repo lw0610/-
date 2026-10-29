@@ -3,63 +3,67 @@
   "layout": "路线黄金样例",
   "golden": "route",
   "title_geometry": "route",
-  "basemap": "${basemap}",
   "renderer": "${renderer}",
   "external_inputs": [
-    "basemap",
     "renderer"
   ],
-  "project_crs": "source:${basemap}/省域.shp",
+  "project_crs": "EPSG:4004",
   "inputs": {
     "路线数据集": "${fixture}/route_dataset",
     "质量审查": false,
-    "地图标题": "固定路线数据回归样例",
-    "底图数据": "${basemap}"
+    "地图标题": "固定路线数据回归样例"
   },
   "variables": {},
   "steps": {
     "s2": {
       "actions": [
         {
-          "tool": "data_load_list",
+          "tool": "layer_load_builtin",
           "params": {
-            "strict": true,
-            "items": [
-              {
-                "name": "省域",
-                "path": "${basemap}/省域.shp"
-              },
-              {
-                "name": "河流面",
-                "path": "${basemap}/河流面.shp"
-              },
-              {
-                "name": "河流线",
-                "path": "${basemap}/河流线.shp"
-              },
-              {
-                "name": "公路",
-                "path": "${basemap}/公路.shp"
-              },
-              {
-                "name": "国道",
-                "path": "${basemap}/国道.shp"
-              },
-              {
-                "name": "铁路",
-                "path": "${basemap}/铁路.shp"
-              },
-              {
-                "name": "地区界线",
-                "path": "${basemap}/地区界线.shp"
-              },
-              {
-                "name": "县级城市驻地",
-                "path": "${basemap}/县级城市驻地.shp"
-              }
-            ]
-          },
-          "save": "loaded"
+            "name": "省域"
+          }
+        },
+        {
+          "tool": "layer_load_builtin",
+          "params": {
+            "name": "河流面"
+          }
+        },
+        {
+          "tool": "layer_load_builtin",
+          "params": {
+            "name": "河流线"
+          }
+        },
+        {
+          "tool": "layer_load_builtin",
+          "params": {
+            "name": "公路"
+          }
+        },
+        {
+          "tool": "layer_load_builtin",
+          "params": {
+            "name": "国道"
+          }
+        },
+        {
+          "tool": "layer_load_builtin",
+          "params": {
+            "name": "铁路"
+          }
+        },
+        {
+          "tool": "layer_load_builtin",
+          "params": {
+            "name": "地区界线"
+          }
+        },
+        {
+          "tool": "layer_load_builtin",
+          "params": {
+            "name": "县级城市驻地"
+          }
         },
         {
           "op": "layers",
@@ -89,52 +93,166 @@
     "s3": {
       "actions": [
         {
-          "tool": "layer_load_styles",
+          "tool": "layer_set_symbology",
           "params": {
             "items": [
               {
                 "layer": "省域",
-                "style": "省域面",
-                "label_field": "NAME"
-              },
-              {
-                "layer": "河流面",
-                "style": "河流面",
-                "label_field": "无"
-              },
-              {
-                "layer": "河流线",
-                "style": "河流线",
-                "label_field": "NAME"
-              },
-              {
-                "layer": "公路",
-                "style": "高速公路",
-                "label_field": "无"
-              },
-              {
-                "layer": "国道",
-                "style": "国道",
-                "label_field": "无"
-              },
-              {
-                "layer": "铁路",
-                "style": "铁路",
-                "label_field": "无"
+                "symbol": {
+                  "type": "fill",
+                  "layers": [
+                    {
+                      "fill": "#FFFFFF",
+                      "outline": "#707070",
+                      "outline_width": 0.5,
+                      "outline_style": "dash_dot"
+                    }
+                  ]
+                },
+                "labels": {
+                  "field": "auto",
+                  "font": "auto",
+                  "size": 5.2,
+                  "unit": "mm",
+                  "color": "#242424",
+                  "placement": "horizontal",
+                  "display_all": true,
+                  "bold": true,
+                  "obstacle": false,
+                  "buffer": {
+                    "size": 0.7,
+                    "color": "#FFFFFF"
+                  }
+                }
               },
               {
                 "layer": "地区界线",
-                "style": "省界",
-                "label_field": "无"
+                "symbol": {
+                  "type": "line",
+                  "layers": [
+                    {
+                      "color": "#2399E9",
+                      "width": 0.5
+                    },
+                    {
+                      "color": "#A6CEE3",
+                      "width": 0.5,
+                      "offset": 0.4
+                    }
+                  ]
+                },
+                "labels": null
+              },
+              {
+                "layer": "河流面",
+                "symbol": {
+                  "type": "fill",
+                  "layers": [
+                    {
+                      "fill": "#A6CEE3",
+                      "outline": "#A6CEE3",
+                      "outline_width": 0.26
+                    }
+                  ]
+                },
+                "labels": null
+              },
+              {
+                "layer": "河流线",
+                "symbol": {
+                  "type": "line",
+                  "layers": [
+                    {
+                      "color": "#A6CEE3",
+                      "width": 0.46
+                    }
+                  ]
+                },
+                "labels": {
+                  "field": "auto",
+                  "font": "auto",
+                  "size": 10,
+                  "unit": "pt",
+                  "color": "#A6CEE3",
+                  "placement": "line",
+                  "merge_lines": true,
+                  "repeat": 0
+                }
+              },
+              {
+                "layer": "公路",
+                "symbol": {
+                  "type": "line",
+                  "layers": [
+                    {
+                      "color": "#000000",
+                      "width": 0.4
+                    },
+                    {
+                      "color": "#C0C0C0",
+                      "width": 0.3
+                    }
+                  ]
+                },
+                "labels": null
+              },
+              {
+                "layer": "国道",
+                "symbol": {
+                  "type": "line",
+                  "layers": [
+                    {
+                      "color": "#FFB957",
+                      "width": 0.3
+                    }
+                  ]
+                },
+                "labels": null
               },
               {
                 "layer": "县级城市驻地",
-                "style": "县级城市驻地",
-                "label_field": "name"
+                "symbol": {
+                  "type": "marker",
+                  "layers": [
+                    {
+                      "shape": "circle",
+                      "size": 1.8,
+                      "fill": null,
+                      "outline": "#000000",
+                      "outline_width": 0.1
+                    },
+                    {
+                      "shape": "circle",
+                      "size": 0.8,
+                      "fill": null,
+                      "outline": "#000000",
+                      "outline_width": 0.1
+                    }
+                  ]
+                },
+                "labels": {
+                  "field": "auto",
+                  "font": "auto",
+                  "size": 3,
+                  "unit": "mm",
+                  "color": "#000000",
+                  "placement": "around_point"
+                }
               }
-            ]
+            ],
+            "scale": 1
           },
           "save": "styled"
+        },
+        {
+          "tool": "layer_load_style",
+          "params": {
+            "layer": "铁路",
+            "style": "铁路",
+            "label_field": "无",
+            "scale": 1
+          },
+          "save": "railway_style"
         }
       ],
       "outputs": {
@@ -181,12 +299,12 @@
           "op": "map_order",
           "base_names": [
             "省域",
+            "地区界线",
             "河流面",
             "河流线",
             "公路",
             "国道",
             "铁路",
-            "地区界线",
             "县级城市驻地"
           ],
           "save": "map_order"
@@ -421,5 +539,19 @@
       "$ref": "annotations.data.created_count"
     }
   },
-  "id": "route-no-review"
+  "id": "route-no-review",
+  "builtin_layers": [
+    "省域",
+    "河流面",
+    "河流线",
+    "公路",
+    "国道",
+    "铁路",
+    "地区界线",
+    "县级城市驻地"
+  ],
+  "expected_map_order": {
+    "$ref": "map_order"
+  },
+  "symbology_scale": 1
 }

@@ -41,6 +41,43 @@ def test_osm_filter_clip_fields_and_readonly(tmp_path):
     assert not normalize(dict(input=str(output),output=str(output)))['success']
 
 
+def test_nullable_chinese_name_uses_first_nonnull_candidate(tmp_path):
+    from qgis.core import QgsVectorLayer, QgsVariantUtils, NULL
+    module = importlib.import_module('autocarto.tools.system.data-acquisition.handlers.normalize')
+    assert module._present(0) and module._present(False)
+    assert not module._present(NULL) and not module._present(None)
+    source = tmp_path / 'nullable-names.geojson'
+    rows = [{'name:zh': '中文优先', 'name': 'English'},
+            {'name:zh': None, 'name': '医学院'}, {'name:zh': None, 'name': None}]
+    source.write_text(json.dumps({'type': 'FeatureCollection', 'features': [
+        {'type': 'Feature', 'properties': dict(row, case=i),
+         'geometry': {'type': 'Point', 'coordinates': [113.5 + i / 10, 34.7]}}
+        for i, row in enumerate(rows)]}, ensure_ascii=False))
+    result = normalize({'input': str(source), 'output': str(tmp_path / 'names.gpkg'),
+                        'fields': {'name': ['name:zh', 'name'], 'case': ['case']}})
+    assert result['success'], result
+    layer = QgsVectorLayer(result['output'], 'names', 'ogr')
+    actual = {int(f['case']): f['name'] for f in layer.getFeatures()}
+    assert actual[0] == '中文优先' and actual[1] == '医学院'
+    assert QgsVariantUtils.isNull(actual[2])
+
+
+def test_real_metro_raw_keeps_all_239_available_station_names(tmp_path):
+    from qgis.core import QgsVectorLayer, QgsVariantUtils
+    source = Path(__file__).parent / 'fixtures/metro-stations-osm.geojson'
+    before = source.read_bytes()
+    result = normalize({'input': str(source), 'output': str(tmp_path / 'metro.gpkg'),
+                        'fields': {'name': ['name:zh', 'name']}, 'expected_geometry': 'point'})
+    assert result['success'], result
+    layer = QgsVectorLayer(result['output'], 'metro', 'ogr')
+    names = [f['name'] for f in layer.getFeatures()]
+    assert len(names) == 240
+    assert sum(not QgsVariantUtils.isNull(name) for name in names) == 239
+    assert '医学院' in names and '博学路' in names
+    assert result['data']['fields']['name'] == pytest.approx(239 / 240)
+    assert source.read_bytes() == before
+
+
 def test_polygon_derivatives(tmp_path):
     from qgis.core import QgsVectorLayer
     path=tmp_path/'areas.geojson'

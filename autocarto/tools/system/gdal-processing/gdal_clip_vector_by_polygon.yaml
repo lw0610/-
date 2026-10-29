@@ -21,7 +21,7 @@ spec:
     type: output_layer
     description: 输出图层
 execution:
-  backend_tool: gdal_clip_vector_by_polygon
+  backend_tool: gdal:clipvectorbypolygon
   param_mapping:
     INPUT: '{{ INPUT }}'
     MASK: '{{ MASK }}'

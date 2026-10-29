@@ -11,6 +11,7 @@ import (
 	"github.com/autocarto/carto_agent/internal/control"
 	"github.com/autocarto/carto_agent/internal/discovery"
 	"github.com/autocarto/carto_agent/internal/flow"
+	"github.com/autocarto/carto_agent/internal/layers"
 	bridgeprovider "github.com/autocarto/carto_agent/internal/middleware/bridge"
 	"github.com/autocarto/carto_agent/internal/resource"
 	"github.com/autocarto/carto_agent/internal/settings"
@@ -44,6 +45,7 @@ type SkillService interface {
 
 // API REST API 处理器。
 type API struct {
+	layerLibrary            *layers.Library
 	planService             PlanService
 	guidePackages           *flow.GuideStore
 	flowPackages            *flow.Store

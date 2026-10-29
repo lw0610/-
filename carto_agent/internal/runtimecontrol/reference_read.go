@@ -10,12 +10,11 @@ import (
 	"unicode/utf8"
 
 	"github.com/autocarto/carto_agent/internal/config"
-	"github.com/autocarto/carto_agent/internal/resource"
 )
 
 const maxReferenceBytes = 200 << 10
 
-type referenceRoot struct{ path, kind, anchor string }
+type referenceRoot struct{ path, anchor string }
 
 type referencePackageDirsKey struct{}
 
@@ -38,23 +37,15 @@ func referenceRoots(ctx context.Context) ([]referenceRoot, error) {
 	if err != nil {
 		return nil, err
 	}
-	libraryRoot, err := resource.BuiltinDirectory()
-	if err != nil {
-		return nil, err
-	}
 	roots := []referenceRoot{
-		{filepath.Join(assets, "skills", "system"), "package", assets},
-		{filepath.Join(assets, "skills", "user"), "package", assets},
-		{config.ResolveGlobalSkillsDir(configDir), "package", home},
-		{filepath.Join(assets, "flows", "system"), "flow", assets},
-		{filepath.Join(home, "flows"), "flow", home},
-		{libraryRoot, "library", assets},
-		{filepath.Join(home, "resources"), "library", home},
+		{filepath.Join(assets, "skills", "system"), assets},
+		{filepath.Join(assets, "skills", "user"), assets},
+		{config.ResolveGlobalSkillsDir(configDir), home},
 	}
 	if dirs, supplied := ctx.Value(referencePackageDirsKey{}).([]string); supplied {
 		// The runtime provides roots, never the model's arguments. Replace the
 		// default package roots so inactive exclusive packages cannot win.
-		roots = roots[3:]
+		roots = nil
 		for _, dir := range dirs {
 			if strings.TrimSpace(dir) == "" {
 				continue
@@ -70,7 +61,7 @@ func referenceRoots(ctx context.Context) ([]referenceRoot, error) {
 			if rel, err := filepath.Rel(home, absolute); err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
 				anchor = home
 			}
-			roots = append(roots, referenceRoot{absolute, "package", anchor})
+			roots = append(roots, referenceRoot{absolute, anchor})
 		}
 	}
 	return roots, nil
@@ -82,26 +73,11 @@ func referenceRelative(root referenceRoot, path string) (string, bool) {
 		return "", false
 	}
 	parts := strings.Split(filepath.ToSlash(rel), "/")
-	switch root.kind {
-	case "package":
-		if len(parts) < 2 {
-			return "", false
-		}
-		marker, err := os.Lstat(filepath.Join(root.path, parts[0], "SKILL.md"))
-		return rel, err == nil && marker.Mode().IsRegular()
-	case "flow":
-		if len(parts) < 3 || parts[1] != "resources" {
-			return "", false
-		}
-		if parts[2] == "docs" && len(parts) >= 4 {
-			return rel, true
-		}
-		ext := strings.ToLower(filepath.Ext(path))
-		return rel, ext == ".csv" || ext == ".json" || ext == ".yaml"
-	case "library":
-		return rel, true
+	if len(parts) < 2 {
+		return "", false
 	}
-	return "", false
+	marker, err := os.Lstat(filepath.Join(root.path, parts[0], "SKILL.md"))
+	return rel, err == nil && marker.Mode().IsRegular()
 }
 
 func rejectReferenceLinks(root, relative string) error {
@@ -131,67 +107,46 @@ func readReference(ctx context.Context, rawPath string) (map[string]any, error) 
 	if path == "" || strings.ContainsRune(path, '\x00') {
 		return nil, fmt.Errorf("参考资料路径为空或无效")
 	}
-	for _, part := range strings.Split(strings.ReplaceAll(filepath.ToSlash(path), `\`, "/"), "/") {
-		if part == ".." {
-			return nil, fmt.Errorf("参考资料路径不允许越界")
-		}
-	}
 	switch strings.ToLower(filepath.Ext(path)) {
-	case ".md", ".txt", ".csv", ".json", ".yaml":
+	case ".md", ".txt", ".csv", ".json", ".yaml", ".py":
 	default:
-		return nil, fmt.Errorf("参考资料仅支持 .md、.txt、.csv、.json、.yaml")
+		return nil, fmt.Errorf("参考资料仅支持 .md、.txt、.csv、.json、.yaml、.py")
 	}
-	roots, err := referenceRoots(ctx)
-	if err != nil {
-		return nil, err
-	}
-	var selected, selectedRoot, relative string
-	if !filepath.IsAbs(path) {
+	selected := filepath.Clean(path)
+	if !filepath.IsAbs(selected) {
+		for _, part := range strings.Split(strings.ReplaceAll(filepath.ToSlash(path), `\`, "/"), "/") {
+			if part == ".." {
+				return nil, fmt.Errorf("参考资料相对路径不允许越出工具包；本地文件请使用绝对路径")
+			}
+		}
+		roots, err := referenceRoots(ctx)
+		if err != nil {
+			return nil, err
+		}
+		selected = ""
 		// Choose the whole highest-priority package first. A missing reference
 		// in that package must not silently fall back to stale bundled content.
 		for i := len(roots) - 1; i >= 0; i-- {
 			root := roots[i]
-			if root.kind != "package" {
-				continue
-			}
 			candidate := filepath.Join(root.path, filepath.FromSlash(path))
-			if _, allowed := referenceRelative(root, candidate); allowed {
-				roots = []referenceRoot{root}
-				break
-			}
-		}
-	}
-	for _, root := range roots {
-		candidate := path
-		if !filepath.IsAbs(path) {
-			if root.kind != "package" {
+			if _, allowed := referenceRelative(root, candidate); !allowed {
 				continue
 			}
-			candidate = filepath.Join(root.path, filepath.FromSlash(path))
-		}
-		_, allowed := referenceRelative(root, candidate)
-		if !allowed {
-			continue
-		}
-		rel, relErr := filepath.Rel(root.anchor, candidate)
-		if relErr != nil {
-			return nil, relErr
-		}
-		if err := rejectReferenceLinks(root.anchor, rel); err != nil {
-			if os.IsNotExist(err) && !filepath.IsAbs(path) {
-				continue
+			rel, err := filepath.Rel(root.anchor, candidate)
+			if err != nil {
+				return nil, err
 			}
-			return nil, err
+			if err := rejectReferenceLinks(root.anchor, rel); err != nil {
+				return nil, err
+			}
+			selected = candidate
+			break
 		}
-		selected, selectedRoot, relative = candidate, root.anchor, rel
+		if selected == "" {
+			return nil, fmt.Errorf("未找到参考资料对应的工具包：%s；本地文件请使用绝对路径", path)
+		}
 	}
-	if selected == "" {
-		return nil, fmt.Errorf("参考资料不在允许目录内或文件不存在")
-	}
-	if err := rejectReferenceLinks(selectedRoot, relative); err != nil {
-		return nil, err
-	}
-	info, err := os.Lstat(selected)
+	info, err := os.Stat(selected)
 	if err != nil {
 		return nil, err
 	}

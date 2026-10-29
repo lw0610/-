@@ -2,7 +2,6 @@ package agentruntime
 
 import (
 	"context"
-	"errors"
 	"strings"
 	"time"
 
@@ -43,11 +42,6 @@ func (w *invokableErrorWrapper) InvokableRun(ctx context.Context, argumentsInJSO
 		w.controlPlane.Observer.OnToolEnd(ctx, newToolObservation(w.toolName, start, true, nil, false))
 		return result, nil
 	}
-	var terminal interface{ FatalToolError() bool }
-	if errors.As(err, &terminal) && terminal.FatalToolError() {
-		w.controlPlane.Observer.OnToolEnd(ctx, newToolObservation(w.toolName, start, false, err, false))
-		return result, err
-	}
 	if ctx.Err() != nil {
 		w.controlPlane.Observer.OnToolEnd(ctx, newToolObservation(w.toolName, start, false, err, true))
 		return result, err
@@ -82,11 +76,6 @@ func (w *enhancedErrorWrapper) InvokableRun(ctx context.Context, toolArgument *s
 	if err == nil {
 		w.controlPlane.Observer.OnToolEnd(ctx, newToolObservation(w.toolName, start, true, nil, false))
 		return result, nil
-	}
-	var terminal interface{ FatalToolError() bool }
-	if errors.As(err, &terminal) && terminal.FatalToolError() {
-		w.controlPlane.Observer.OnToolEnd(ctx, newToolObservation(w.toolName, start, false, err, false))
-		return result, err
 	}
 	if ctx.Err() != nil {
 		w.controlPlane.Observer.OnToolEnd(ctx, newToolObservation(w.toolName, start, false, err, true))

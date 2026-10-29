@@ -278,6 +278,7 @@ def get_layout_info_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         # Keep the human summary and expose actual items for deterministic plan
         # checks. A textual count cannot prove a title, north arrow or source note.
         from autocarto.tools.system._shared.print_layout_advanced_impl import _item_properties
+        from autocarto.tools.system._shared.layout_compose_impl import layout_geometry_warnings
         structured_items = []
         for item in items:
             if not isinstance(item, QgsLayoutItem):
@@ -294,6 +295,7 @@ def get_layout_info_handler(params: Dict[str, Any]) -> Dict[str, Any]:
             "output": "\n".join(info_lines),
             "info": "布局信息获取成功",
             "layout": {"name": layout.name(), "items": structured_items},
+            "warnings": layout_geometry_warnings(layout),
         }
 
     except Exception as e:

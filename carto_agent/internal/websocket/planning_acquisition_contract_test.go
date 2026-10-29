@@ -13,7 +13,7 @@ import (
 
 	"github.com/autocarto/carto_agent/internal/config"
 	"github.com/autocarto/carto_agent/internal/dataservice"
-	"github.com/autocarto/carto_agent/internal/deepagent"
+	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/flowrun"
 	"github.com/autocarto/carto_agent/internal/plan"
 	"github.com/cloudwego/eino/adk"
@@ -82,11 +82,12 @@ func (a contractAcquisitionAgent) Run(ctx context.Context, input *adk.AgentInput
 	return iter
 }
 
-func TestPlanningAcquisitionProductionContract(t *testing.T) {
+func TestLegacyPlanningAcquisitionProductionContract(t *testing.T) {
 	for _, outcome := range []string{"registered", "unregistered", "changed", "deleted"} {
 		t.Run(outcome, func(t *testing.T) {
 			ctx := context.Background()
 			s, base, session, p := cartoRuntimeFixture(t)
+			configureAcquisitionTestRole(t, s)
 			session.Mode = executionModePlan
 			s.setFlowContext(session)
 			cfg := &config.Config{Acquisition: config.AcquisitionConfig{NetworkPolicy: "direct", FallbackPolicy: "allow", WebSearchEnabled: true}, Integrations: config.IntegrationsConfig{Web: config.WebDataConfig{Enabled: true}}}
@@ -111,13 +112,26 @@ func TestPlanningAcquisitionProductionContract(t *testing.T) {
 			if choice == "" {
 				t.Fatal("test catalog must expose a real available fallback")
 			}
+			// Exercise persisted v1 acquisition snapshots, never submit a new v1 plan.
+			p.APIVersion = plan.LegacyAPIVersion
+			p.Steps[0].Inputs, p.Steps[0].Produces = nil, nil
+			p.Steps[0].Outputs = []flow.OutputDeclaration{{Label: "结果", Type: "text"}}
 			p.Data = []plan.Data{{ID: "population", Name: need.Need.Name, From: "acquire", Geometry: "table", FindID: found.FindID, Choice: choice}}
 			p.Facts = []plan.Fact{{Name: "统计年份", Value: "2025", From: "用户要求"}}
 			p.Steps[0].Uses = []string{"population"}
-			raw, _ := json.Marshal(p)
-			answer, err := (sessionPlanService{server: s, run: session}).ProposePlan(ctx, raw)
-			if err != nil || answer["status"] != "preview" || s.hasPendingCartographicPlan(session.SessionID) || factory.normalizations != 0 || len(factory.roles) != 0 {
-				t.Fatalf("planning did execution work or rejected real fallback: %+v %v", answer, err)
+			legacy, err := s.prepareLegacyPlan(ctx, session, p, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			store, err := planStore(session)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err = store.Save(legacy.Snapshot, 0); err != nil {
+				t.Fatal(err)
+			}
+			if factory.normalizations != 0 || len(factory.roles) != 0 {
+				t.Fatal("restoring legacy plan metadata must not execute an acquisition")
 			}
 			cards, err := s.ListPlans(ctx, session.SessionID, session.ProjectPath)
 			if err != nil || len(cards) != 1 {
@@ -134,7 +148,7 @@ func TestPlanningAcquisitionProductionContract(t *testing.T) {
 			}
 			stateForGet := &flowrun.RunState{SessionID: session.SessionID, SessionDir: dir, CartoPlan: snapshot.Plan, Selections: snapshot.Selections}
 			initial, err := s.getPlanData(ctx, stateForGet, snapshot.Plan.Data[0])
-			if err != nil || initial.Preparation == nil || initial.Value != nil || initial.Preparation.Role.ID != deepagent.DataAcquisitionExpertName {
+			if err != nil || initial.Preparation == nil || initial.Value != nil || initial.Preparation.Role.ID != "source_researcher" {
 				t.Fatalf("validated fallback did not become an acquisition handoff: %+v %v", initial, err)
 			}
 			var handedOff dataservice.Selection
@@ -145,7 +159,7 @@ func TestPlanningAcquisitionProductionContract(t *testing.T) {
 			registeredPath := ""
 			factory.build = func(role string) adk.Agent {
 				return contractAcquisitionAgent{name: role, run: func(callCtx context.Context, input *adk.AgentInput) (string, error) {
-					if role != deepagent.DataAcquisitionExpertName {
+					if role != "source_researcher" {
 						consumers++
 						if outcome != "registered" || registeredPath == "" || len(input.Messages) == 0 || !strings.Contains(input.Messages[0].Content, registeredPath) {
 							return "", fmt.Errorf("consumer ran without the verified registered path")

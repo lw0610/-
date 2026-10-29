@@ -1,0 +1,134 @@
+[
+  {
+    "name": "unambiguous-layers-alias",
+    "receipt": {
+      "status": "completed",
+      "summary": "已加载八个内置底图图层（省域、地区界线、河流面、河流线、公路、国道、铁路、县级城市驻地），图层名与内置一致，上下顺序正确，坐标系仅报告未转换。",
+      "outputs": {
+        "layers": [
+          {
+            "layer_id": "___da0fe7f5_3813_4758_b51f_56547fa19584",
+            "layer_name": "省域"
+          },
+          {
+            "layer_id": "_____6b805017_3c2f_4cc5_9e68_d776eb08ab3b",
+            "layer_name": "地区界线"
+          },
+          {
+            "layer_id": "____1ee1c320_9905_48ef_a3db_5a672821dced",
+            "layer_name": "河流面"
+          },
+          {
+            "layer_id": "____16e69a51_e298_4a51_a8f0_50a60731b78d",
+            "layer_name": "河流线"
+          },
+          {
+            "layer_id": "___b606a046_a1f5_4fcb_acfd_a8cfc9c12485",
+            "layer_name": "公路"
+          },
+          {
+            "layer_id": "___00f85e0f_2717_4d68_8b8c_99b3c7f2dcda",
+            "layer_name": "国道"
+          },
+          {
+            "layer_id": "___96ad8d13_7aee_4071_8ff0_b19e7e80d6e0",
+            "layer_name": "铁路"
+          },
+          {
+            "layer_id": "_______e48a33f8_2085_42d0_833b_a6ad96e40c77",
+            "layer_name": "县级城市驻地"
+          }
+        ]
+      },
+      "issues": []
+    },
+    "observed_layers": [
+      {
+        "id": "___00f85e0f_2717_4d68_8b8c_99b3c7f2dcda",
+        "name": "国道"
+      },
+      {
+        "id": "___96ad8d13_7aee_4071_8ff0_b19e7e80d6e0",
+        "name": "铁路"
+      },
+      {
+        "id": "____16e69a51_e298_4a51_a8f0_50a60731b78d",
+        "name": "河流线"
+      },
+      {
+        "id": "____1ee1c320_9905_48ef_a3db_5a672821dced",
+        "name": "河流面"
+      },
+      {
+        "id": "_____6b805017_3c2f_4cc5_9e68_d776eb08ab3b",
+        "name": "地区界线"
+      },
+      {
+        "id": "_______e48a33f8_2085_42d0_833b_a6ad96e40c77",
+        "name": "县级城市驻地"
+      },
+      {
+        "id": "___b606a046_a1f5_4fcb_acfd_a8cfc9c12485",
+        "name": "公路"
+      },
+      {
+        "id": "___da0fe7f5_3813_4758_b51f_56547fa19584",
+        "name": "省域"
+      }
+    ]
+  },
+  {
+    "name": "name-to-id-collection",
+    "receipt": {
+      "status": "completed",
+      "summary": "已加载八个内置底图图层（省域、地区界线、河流面、河流线、公路、国道、铁路、县级城市驻地），图层名与内置一致，坐标系仅报告未转换。",
+      "outputs": {
+        "basemap_loaded": {
+          "公路": "___5fabc853_9156_465c_9165_b555c3b986f3",
+          "县级城市驻地": "_______876d354b_d06e_4464_b8a6_cb94205cb894",
+          "国道": "___ca387568_2d0d_4a92_b00e_d78510d365a5",
+          "地区界线": "_____5bf3c846_3d70_4132_9955_d95c27452a63",
+          "河流线": "____46cdd0b7_2aee_48df_85a7_3cceb31c02f4",
+          "河流面": "____09feb5e6_816d_4dae_8233_a8d60f48e87d",
+          "省域": "___de4636e7_516e_413a_acb2_0207f1f78340",
+          "铁路": "___ee3a3b12_2eb2_47a5_9ce4_06dd0a29c71e"
+        }
+      },
+      "issues": []
+    },
+    "observed_layers": [
+      {
+        "id": "___5fabc853_9156_465c_9165_b555c3b986f3",
+        "name": "公路"
+      },
+      {
+        "id": "____09feb5e6_816d_4dae_8233_a8d60f48e87d",
+        "name": "河流面"
+      },
+      {
+        "id": "____46cdd0b7_2aee_48df_85a7_3cceb31c02f4",
+        "name": "河流线"
+      },
+      {
+        "id": "_____5bf3c846_3d70_4132_9955_d95c27452a63",
+        "name": "地区界线"
+      },
+      {
+        "id": "_______876d354b_d06e_4464_b8a6_cb94205cb894",
+        "name": "县级城市驻地"
+      },
+      {
+        "id": "___ca387568_2d0d_4a92_b00e_d78510d365a5",
+        "name": "国道"
+      },
+      {
+        "id": "___de4636e7_516e_413a_acb2_0207f1f78340",
+        "name": "省域"
+      },
+      {
+        "id": "___ee3a3b12_2eb2_47a5_9ce4_06dd0a29c71e",
+        "name": "铁路"
+      }
+    ]
+  }
+]

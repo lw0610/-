@@ -11,10 +11,16 @@ import (
 
 const LockAPIVersion = "flow-lock/v1"
 
+type LayerLockEntry struct {
+	ID     string `json:"id" yaml:"id"`
+	Name   string `json:"name" yaml:"name"`
+	Digest string `json:"digest" yaml:"digest"`
+}
 type Lock struct {
-	DocumentFormat string      `json:"document_format,omitempty" yaml:"document_format,omitempty"`
-	APIVersion     string      `json:"api_version" yaml:"apiVersion"`
-	Resources      []LockEntry `json:"resources" yaml:"resources"`
+	Layers         []LayerLockEntry `json:"layers,omitempty" yaml:"layers,omitempty"`
+	DocumentFormat string           `json:"document_format,omitempty" yaml:"document_format,omitempty"`
+	APIVersion     string           `json:"api_version" yaml:"apiVersion"`
+	Resources      []LockEntry      `json:"resources" yaml:"resources"`
 }
 type LockEntry struct {
 	Type    string `json:"type" yaml:"type"`
@@ -42,6 +48,16 @@ func (l *Lock) Validate() error {
 		return fmt.Errorf("flow.lock apiVersion 必须是 %s", LockAPIVersion)
 	}
 	seen := map[string]bool{}
+	for _, e := range l.Layers {
+		if !strings.HasPrefix(e.ID, "layer.") || !validDisplayName(e.Name) || !strings.HasPrefix(e.Digest, "sha256:") || len(e.Digest) != 71 {
+			return fmt.Errorf("flow.lock 图层引用无效：%s", e.Name)
+		}
+		if seen[e.Name] {
+			return fmt.Errorf("flow.lock 图层重复：%s", e.Name)
+		}
+		seen[e.Name] = true
+	}
+	seen = map[string]bool{}
 	for _, e := range l.Resources {
 		key := e.Type + "\x00" + e.Name
 		if _, ok := TypeInfo(e.Type); !ok || !validDisplayName(e.Name) || bindings.ValidateKey("library:"+e.ID) != nil {

@@ -25,7 +25,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: gdal_merge
+  backend_tool: gdal:merge
   param_mapping:
     INPUT: '{{ INPUT }}'
     PCT: '{{ PCT }}'

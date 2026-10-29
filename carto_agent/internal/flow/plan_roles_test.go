@@ -13,15 +13,15 @@ func TestPlanReviewRequiresVisionAndUsesConfiguredProvider(t *testing.T) {
 		t.Fatal("non-vision review accepted", err)
 	}
 	env.VisionProviders = []string{"vision"}
-	if err := AssignPlanRole(p, s, []string{"quality-feedback"}, "text-reviewer", env); err != nil {
-		t.Fatal(err)
-	}
-	if s.Role == "text-reviewer" || len(p.FlowRoles) != 1 || p.FlowRoles[0].Provider != "vision" {
-		t.Fatal(s, p.FlowRoles)
+	if err := AssignPlanRole(p, s, []string{"quality-feedback"}, "text-reviewer", env); err == nil || !strings.Contains(err.Error(), "读图") {
+		t.Fatal("unrelated vision provider replaced the selected role's model", err)
 	}
 	env.Roles = append(env.Roles, RoleSpec{ID: "vision-reviewer", Enabled: true, Kind: "agent", Provider: "vision", ToolPackages: []string{"quality-feedback"}})
-	if err := AssignPlanRole(p, s, []string{"quality-feedback"}, "", env); err != nil || s.Role != "vision-reviewer" {
+	if err := AssignPlanRole(p, s, []string{"quality-feedback"}, "vision-reviewer", env); err != nil || s.Role != "vision-reviewer" || len(p.FlowRoles) != 0 {
 		t.Fatal(s, err)
+	}
+	if err := AssignPlanRole(p, &StepPlan{ID: "ambiguous", Title: "审图"}, []string{"quality-feedback"}, "", env); err == nil || !strings.Contains(err.Error(), "多个") {
+		t.Fatal("ambiguous role selection accepted", err)
 	}
 }
 func TestPlanRestrictedPackagesAreNotImplicitlyGranted(t *testing.T) {

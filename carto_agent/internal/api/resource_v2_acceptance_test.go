@@ -62,7 +62,7 @@ func resourceV2Plan(t *testing.T, raw json.RawMessage) *flow.FlowPlan {
 	}
 	return plan
 }
-func TestResourceV6FlowPackageIsolatedVisualDependencies(t *testing.T) {
+func TestResourceV7FlowPackageIsolatedVisualDependencies(t *testing.T) {
 	source, _, _, sourceHome := realFlowAPI(t)
 	router := mux.NewRouter()
 	source.SetupRoutes(router)
@@ -81,8 +81,8 @@ func TestResourceV6FlowPackageIsolatedVisualDependencies(t *testing.T) {
 	if err := json.Unmarshal(resourceV2Call(t, targetRouter, "GET", "/api/guides/marching-route", nil, 200), &before); err != nil {
 		t.Fatal(err)
 	}
-	if len(before.ResolvedResources) != 9 {
-		t.Fatalf("expected eight styles and one layout: %+v", before.ResolvedResources)
+	if len(before.ResolvedResources) != 2 {
+		t.Fatalf("expected railway style and one layout: %+v", before.ResolvedResources)
 	}
 	for _, r := range before.ResolvedResources {
 		if resource.HasErrors(r.Problems) || r.Owner != "bundled" || (r.Type != "style" && r.Type != "layout") {
@@ -135,7 +135,7 @@ func TestResourceV2FourCornerOverrideProtectedDeleteAndRestore(t *testing.T) {
 	resourceV2GuideStore(a, store, library, env, filepath.Join(home, "cache"))
 	router := mux.NewRouter()
 	a.SetupRoutes(router)
-	flowItem, err := store.Get("traffic-route")
+	flowItem, err := store.Get("marching-route")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -151,7 +151,7 @@ func TestResourceV2FourCornerOverrideProtectedDeleteAndRestore(t *testing.T) {
 	if override.ID == "layout.four-corner" || override.Overrides != "layout.four-corner" || override.Owner != "library_user" {
 		t.Fatal(override)
 	}
-	plan := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/guides/traffic-route?scheme=resource-v2", nil, 200))
+	plan := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/guides/marching-route?scheme=resource-v2", nil, 200))
 	if plan.HasErrors() {
 		t.Fatal(plan.Diagnostics)
 	}
@@ -177,7 +177,7 @@ func TestResourceV2FourCornerOverrideProtectedDeleteAndRestore(t *testing.T) {
 	}
 	affected := false
 	for _, ref := range refs {
-		if ref.FlowID == "traffic-route" && ref.Source == "builtin" && ref.Via == "lock" {
+		if ref.FlowID == "marching-route" && ref.Source == "builtin" && ref.Via == "lock" {
 			affected = true
 		}
 	}
@@ -185,12 +185,12 @@ func TestResourceV2FourCornerOverrideProtectedDeleteAndRestore(t *testing.T) {
 		t.Fatalf("missing affected builtin flow: %+v", refs)
 	}
 	details := resourceV2Call(t, router, "DELETE", "/api/resources/"+override.ID, nil, 409)
-	if !bytes.Contains(details, []byte("traffic-route")) {
+	if !bytes.Contains(details, []byte("marching-route")) {
 		t.Fatalf("deletion omitted references: %s", details)
 	}
 	resourceV2Call(t, router, "GET", "/api/resources/by-id/"+override.ID, nil, 200)
 	resourceV2Call(t, router, "DELETE", "/api/resources/"+override.ID+"?force=true", nil, 200)
-	restored := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/guides/traffic-route?scheme=resource-v2", nil, 200))
+	restored := resourceV2Plan(t, resourceV2Call(t, router, "GET", "/api/guides/marching-route?scheme=resource-v2", nil, 200))
 	if restored.HasErrors() {
 		t.Fatal(restored.Diagnostics)
 	}

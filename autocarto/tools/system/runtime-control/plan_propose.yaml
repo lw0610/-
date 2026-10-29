@@ -5,256 +5,138 @@ metadata:
   display_name: 提出制图计划
   domain: runtime-control
   runtime: internal
-  keywords:
-  - 制图
-  - 计划
-  - 指南
+  keywords: [制图, 计划, 指南]
 spec:
-  description: '提交本次制图计划，先作本地确定性校验，通过后显示计划卡。按运行时策略等待确认或本轮结束后执行；Plan模式仅预览。
-
-    plan结构：api_version="carto-plan/v1", plan_id(首次可空由系统生成), version(首次1), goal, guide(可选id/version),
-    facts[{name,value,from}], assumptions[{text,impact:low|high}], data[{id,name,from:conversation|user|project|session|step|acquire,kind?:file|dataset,path?,layer?(工程ID),layer_name?,style?,geometry?,file_id?,step?,output?,find_id?,choice?}],
-    steps[{id,title,kind?:acquire|confirm,capabilities?,parameters?,uses?,data?,depends_on?,layers?,instructions?,outputs?[{label,type,format?}],optional?}],
-    deliverables[{label,type,format?}], checks[string]。
-
-    普通步骤必须声明当前能力目录中的工具包 ID（不是具体工具名）、做法与可核验产出。acquire 数据保留 data_find 返回的 find_id，choice 为 auto、真实候选编号或按行映射；目录返回的 fallback 可作为探索获取途径，由执行器先取数并核验登记，不能假装是已取得的文件，也不必提前取齐再重写计划。
-
-    已生成的成果用 from=session 引用工具返回的精确绝对 path 或文件索引中的 file_id；name 仅作显示。整体数据集目录用 kind=dataset，不填 geometry；单文件用 kind=file，可声明 geometry。新计划安排剩余工作，不为引用已有成果增加重复抽取步骤。确定性执行器的必需输入在 uses 中引用，必需预设在 parameters 中填写，具体要求见能力目录。
-
-    uses 使用 data[].id，depends_on 使用前序步骤 ID。from=step 用 step 指定生产步骤、output 指定其 outputs[].label；name 仅作显示，可以与 label 不同。省略 output 时兼容旧 name 匹配或唯一产出。uses 若填写前序 acquire 步骤 ID，系统展开其 data ID；前序普通步骤只有一个产出时可确定性绑定，多产出必须明确声明数据引用与 output，不猜测。显式 data ID 优先。
-
-    deliverables 的 label、type、format 必须匹配某一步 outputs 中的同一产出。不能引用当前或后续步骤。按结构化诊断的 valid_data_ids、valid_outputs 修正引用，不原样重试；提交成功后结束本轮，由执行器推进。Plan 模式只读，不取数。
-
-    '
+  description: |
+    提交 carto-plan/v2 计划。系统自动生成编号和版本、对齐引用、预检数据、在消费前准备数据。
+    source 四选一 user/project/builtin/retrieve；用户ref为路径、附件:名称、消息原文或会话文件ID。
+    retrieve 的need写category、params、fields、description；统计表写region、level、year、indicator、caliber、unit；用户排除的行政单元写exclude。
+    extent写region、bbox[西南东北]或from:前序数据/产出ID与expand:0.2。method仅用户明确指定。
+    步骤role_hint从当前方案roles目录选择实际子智能体ID；按其职责安排工作，使用该角色已有的模型、提示词和工具，不创建临时角色或填写工具包清单。
+    步骤inputs引用data.id或前序produces.id；每步必须声明至少一个produces，无须在data中重复声明步骤产出。
+    produces.kind=layout 表示工程中的版面，产出值是版面名称，不填写format；导出PDF或QPT文件则使用kind=file和对应format。
+    图片质量初审与终审分别用produces.kind=review_initial/review_final；导出PNG/PDF文件仍用file，不自动要求审图。
+    文字报告用produces.kind=text；用户确认结果用confirmation。没有待处理项时省略无操作步骤，或用text如实报告零项，不声明不存在的图层或文件。
+    不写find_id/choice/from/uses/outputs，不创建acquire步骤。已完成成果直接引用，不重复生产。
+    修订时提交完整计划，系统保留已完成步骤；plan_id可填当前计划ID，版本由系统增加。
+    示例（假定当前方案有 cartographer 子智能体）：{"goal":"根据本地数据制作专题图并导出PDF","data":[{"id":"src","name":"专题数据","kind":"layer","source":"user","ref":"附件:专题数据.geojson"}],"steps":[{"id":"draw","title":"制图并导出","role_hint":"cartographer","inputs":["src"],"instructions":"按用户指定的指标设置颜色、标注和版面并导出PDF","produces":[{"id":"map_pdf","kind":"file","format":"pdf"}]}],"deliverables":["map_pdf"],"checks":["来源与图例正确"]}
   parameters:
   - name: plan
     type: object
     required: true
-    description: 完整的 carto-plan/v1 对象。
+    description: 目标、数据需求与委派给当前方案子智能体的执行步骤。编号由系统补齐。
     schema:
       type: object
+      required: [goal, steps]
       properties:
-        api_version:
-          type: string
-          enum:
-          - carto-plan/v1
-        plan_id:
-          type: string
-        version:
-          type: integer
-        goal:
-          type: string
-        guide:
-          type: object
-          properties:
-            id:
-              type: string
-            version:
-              type: string
-          additionalProperties: false
-          required:
-          - id
+        goal: {type: string}
+        guide: {type: string}
+        plan_id: {type: string}
         facts:
           type: array
           items:
             type: object
             properties:
-              name:
-                type: string
+              name: {type: string}
               value: {}
-              from:
-                type: string
-            additionalProperties: false
-            required:
-            - name
-            - value
-            - from
+              from: {type: string}
         assumptions:
           type: array
           items:
             type: object
             properties:
-              text:
-                type: string
-              impact:
-                type: string
-                enum:
-                - low
-                - high
-            additionalProperties: false
-            required:
-            - text
-            - impact
+              text: {type: string}
+              impact: {type: string, enum: [low, high]}
         data:
           type: array
+          description: '每项id/name/kind(layer|table|dataset|file)/source/ref/need/extent/method/style/label_field。'
           items:
             type: object
             properties:
-              id:
+              id: {type: string}
+              name: {type: string}
+              kind: {type: string, enum: [layer, table, dataset, file]}
+              source: {type: string, enum: [user, project, builtin, retrieve]}
+              ref:
                 type: string
-              name:
+                description: 用户数据路径、附件:名称、消息原文、会话文件ID，或工程图层ID、内置图层名。
+              geometry: {type: string, enum: [point, line, polygon, raster, table]}
+              style: {type: string}
+              label_field: {type: string}
+              method:
                 type: string
-                description: 数据显示名称，不用于选择生产步骤的产出。
-              from:
-                type: string
-                enum:
-                - conversation
-                - user
-                - project
-                - session
-                - step
-                - acquire
-              kind:
-                type: string
-                enum:
-                - file
-                - dataset
-                description: 单文件或多文件数据集目录。from=session 省略时按已登记产物类型确定。
-              path:
-                type: string
-                description: 用户提供的路径；from=session 可用工具返回的精确绝对路径引用本会话已登记成果。
-              layer:
-                type: string
-                description: 现有工程图层ID
-              layer_name:
-                type: string
-                description: 显示用图层名称
-              style:
-                type: string
-                description: 资源库中样式名称
-              geometry:
-                type: string
-                description: 单文件或图层的类型；整体数据集目录不填写。
-                enum:
-                - point
-                - line
-                - polygon
-                - raster
-                - table
-              file_id:
-                type: string
-                description: 本会话文件索引中的产物 ID；from=session 与 path 任选其一。
-              step:
-                type: string
-                description: from=step 时的生产步骤 ID，必须早于消费步骤。
-              output:
-                type: string
-                description: from=step 时选择的 outputs[].label；显式值必须匹配。省略时兼容旧 name 匹配，或由唯一产出确定；多产出不可猜测。
-              find_id:
-                type: string
-                description: 复用 data_find 返回的真实查询编号，包括返回 fallback 的查询。
-              choice:
-                description: auto、该查询的真实候选或 fallback 编号，或按行名映射。由执行器按来源状态获取并核验，不编造路径或来源。
-                oneOf:
-                - type: string
-                - type: object
-                  additionalProperties:
+                description: 仅用户明确指定获取方式时填写。
+              need:
+                type: object
+                properties:
+                  category: {type: string}
+                  params: {type: object}
+                  fields: {type: array, items: {type: string}}
+                  description: {type: string}
+                  region: {type: string}
+                  level: {type: string}
+                  year: {type: integer}
+                  indicator: {type: string}
+                  caliber: {type: string}
+                  unit: {type: string}
+                  exclude:
+                    type: array
+                    description: 用户明确排除的行政单元代码或完整名称。
+                    items: {type: string}
+              extent:
+                type: object
+                properties:
+                  region: {type: string}
+                  bbox:
+                    type: array
+                    description: 西、南、东、北四个经纬度数值。
+                    items: {type: number}
+                  from:
                     type: string
-            additionalProperties: false
-            required:
-            - id
-            - name
-            - from
+                    description: 前序数据或步骤产出ID。
+                  expand: {type: number}
         steps:
           type: array
+          description: '每项id/title/role_hint/inputs/instructions/parameters/produces[{id,kind,format}]/optional；role_hint与produces必填，produces至少一项。'
           items:
             type: object
+            required: [role_hint, produces]
             properties:
-              id:
-                type: string
-              title:
-                type: string
-              kind:
-                type: string
-                enum:
-                - step
-                - acquire
-                - confirm
-              capabilities:
-                type: array
-                description: 当前能力目录中的工具包 ID，不是具体工具函数名。仅选择当前提供的能力；未知值诊断的 allowed_capabilities 给出实际可选项。
-                items:
-                  type: string
-              parameters:
-                type: object
-                description: 执行器要求的明确参数；route_knowledge 需要用户选定的 route_style 与 symbols 预设名称。
-                additionalProperties:
-                  type: string
+              id: {type: string}
+              title: {type: string}
               role_hint:
                 type: string
-              uses:
+                description: 当前方案roles目录中的子智能体ID，按职责选择，不填写主智能体或临时角色。
+              inputs:
                 type: array
-                description: 消费的数据 ID。前序 acquire 步骤 ID 可展开为其 data ID，前序单产出步骤 ID 可绑定唯一产出；多产出须用 from=step、step、output 声明数据后引用其 ID。
+                description: 引用data.id或前序步骤的produces.id。
+                items: {type: string}
+              instructions: {type: string}
+              parameters:
+                type: object
+                description: '可选。仅用户明确指定使用路线样式表或符号表时，才填写 route_style 或 symbols 的预设名称；否则省略，使用原版内置绘制规则。配色要求不等于选用样式表。'
+                additionalProperties: {type: string}
+              produces:
+                type: array
+                minItems: 1
                 items:
-                  type: string
-              data:
-                type: array
-                description: acquire 步骤要获取的 data[].id 列表。
-                items:
-                  type: string
-              depends_on:
-                type: array
-                description: 前序步骤 ID 列表，表示顺序依赖；具体消费的数据在 uses 声明。
-                items:
-                  type: string
-              layers:
-                type: array
-                items:
-                  type: string
-              instructions:
-                type: string
-              outputs:
-                type: array
-                description: 可核验的步骤产出；label 非空且本步骤内唯一。后续 from=step 数据用 output 引用 label，name 是独立显示名称。
-                items: &id001
                   type: object
                   properties:
-                    label:
-                      type: string
-                    type:
-                      type: string
-                      enum:
-                      - file
-                      - layers
-                      - layout
-                      - text
-                      - dataset
-                      - review_initial
-                      - review_final
-                      - confirmation
+                    id: {type: string}
+                    name: {type: string}
+                    kind: {type: string, enum: [layer, table, dataset, file, layout, review_initial, review_final, text, confirmation]}
                     format:
                       type: string
-                    required:
-                      type: boolean
-                  additionalProperties: false
-                  required:
-                  - label
-                  - type
-              optional:
-                type: boolean
-            additionalProperties: false
-            required:
-            - id
-            - title
+                      description: '文件格式如pdf/qpt，数据集格式如route_dataset；layout是工程版面，不填写format。'
+                    geometry: {type: string, enum: [point, line, polygon, raster, table]}
+                    fields: {type: array, items: {type: string}}
+              optional: {type: boolean}
         deliverables:
           type: array
-          description: 最终交付项的 label、type、format 必须匹配某一步 outputs 中的同一产出。
-          items: *id001
+          items: {type: string}
         checks:
           type: array
-          items:
-            type: string
-      additionalProperties: false
-      required:
-      - api_version
-      - version
-      - goal
-      - facts
-      - assumptions
-      - data
-      - steps
-      - deliverables
-      - checks
+          items: {type: string}
 execution:
   backend_tool: plan_propose
   param_mapping:

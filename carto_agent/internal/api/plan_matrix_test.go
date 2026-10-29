@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/autocarto/carto_agent/defaults"
 	"github.com/autocarto/carto_agent/internal/config"
-	"github.com/autocarto/carto_agent/internal/dataservice"
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/flowrun"
 	"github.com/autocarto/carto_agent/internal/plan"
@@ -24,7 +23,11 @@ type matrixRuntime struct{}
 func (matrixRuntime) Run(_ context.Context, r flowrun.StepRequest) (flowrun.StepResult, error) {
 	outputs := map[string]any{}
 	for _, o := range r.Step.ExpectedOutputs {
-		outputs[o.Label] = "fixture verified result"
+		path := filepath.Join(r.SessionDir, r.Step.ID+"-"+o.Label+".csv")
+		if err := os.WriteFile(path, []byte("name,value\nfixture,1\n"), 0600); err != nil {
+			return flowrun.StepResult{}, err
+		}
+		outputs[o.Label] = path
 	}
 	b, _ := json.Marshal(map[string]any{"status": "completed", "summary": "fixed receipt", "outputs": outputs, "issues": []string{}})
 	return flowrun.StepResult{LastContent: string(b)}, nil
@@ -65,7 +68,7 @@ func TestGuidePlanMatrixAcrossThreeSchemes(t *testing.T) {
 			}
 			env.MainProvider = "fixture"
 			env.VisionProviders = []string{"fixture"}
-			caps := map[string]bool{"路线知识抽取": true}
+			caps := map[string]bool{"route_knowledge": true}
 			for _, p := range env.Packages {
 				caps[p.ID] = true
 				caps[p.DisplayName] = true
@@ -73,54 +76,86 @@ func TestGuidePlanMatrixAcrossThreeSchemes(t *testing.T) {
 					caps[p.DisplayName[:i]] = true
 				}
 			}
-			for _, id := range []string{"marching-route", "statistical-choropleth", "traffic-route", "data-to-map"} {
+			probe := &flow.StepPlan{ID: "knowledge", Title: "路线知识"}
+			knowledgeRole := ""
+			if scheme == "default" {
+				knowledgeRole = "knowledge_engineer"
+			}
+			err = flow.AssignPlanRole(&flow.FlowPlan{}, probe, []string{"route_knowledge"}, knowledgeRole, env)
+			if knowledgeRole == "" {
+				if err == nil {
+					t.Fatalf("scheme without knowledge role received an invented executor: %+v", probe)
+				}
+			} else if err != nil || probe.Role != knowledgeRole || probe.RoleSource != "scheme" || probe.Executor != "route_knowledge" {
+				t.Fatal(probe, err)
+			}
+			for _, id := range []string{"marching-route", "statistical-choropleth"} {
 				t.Run(id, func(t *testing.T) {
 					guide, err := guides.Resolve(context.Background(), id, library)
 					if err != nil {
 						t.Fatal(err)
 					}
-					if len(guide.Doc.Diagnostics) > 0 {
+					if flow.HasErrors(guide.Doc.Diagnostics) {
 						t.Fatal(guide.Doc.Diagnostics)
 					}
-					for _, source := range []string{"user", "acquire"} {
+					for _, source := range []string{"user", "retrieve"} {
 						t.Run(source, func(t *testing.T) {
 							p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-" + id, Version: 1, Goal: guide.Doc.Meta.Name, Guide: &plan.GuideRef{ID: id, Version: guide.Doc.Meta.Version}}
 							// Model-authored steps are independent of guide headings/tables.
-							for i, capability := range []string{"data-loading", "print-layout"} {
-								step := plan.Step{ID: fmt.Sprintf("s%d", i), Title: "执行制图任务", Capabilities: []string{capability}, Instructions: guide.Doc.Body, Outputs: []flow.OutputDeclaration{{Label: fmt.Sprintf("result%d", i), Type: "text"}}}
+							for i, role := range []string{"data_engineer", "cartographer"} {
+								step := plan.Step{ID: fmt.Sprintf("s%d", i), Title: "执行制图任务", RoleHint: role, Instructions: guide.Doc.Body, Produces: []plan.Product{{ID: fmt.Sprintf("result%d", i), Kind: "table", Fields: []string{"name", "value"}}}}
 								if len(p.Steps) > 0 {
-									step.DependsOn = []string{p.Steps[len(p.Steps)-1].ID}
+									step.Inputs = []string{fmt.Sprintf("result%d", i-1)}
 								}
 								p.Steps = append(p.Steps, step)
 							}
-							p.Data = []plan.Data{{ID: "d1", Name: "matrix fixture", From: source, Path: t.TempDir(), FindID: "fixture-find", Choice: "auto"}}
-							p.Steps[0].Uses = []string{"d1"}
-							validation := plan.Environment{ProjectRoot: root, Capabilities: caps, ValidateSource: func(id string, _ any) error {
-								if id != "fixture-find" {
-									return fmt.Errorf("bad find")
-								}
-								return nil
-							}}
+							input := filepath.Join(t.TempDir(), "input.csv")
+							if err := os.WriteFile(input, []byte("name,value\nfixture,1\n"), 0600); err != nil {
+								t.Fatal(err)
+							}
+							p.Data = []plan.Data{{ID: "d1", Name: "matrix fixture", Source: source, Kind: "table"}}
+							bindings := map[string]any{}
+							if source == "user" {
+								p.Data[0].Ref = input
+								bindings["d1"] = input
+							} else {
+								p.Data[0].Need = &plan.Need{Category: "stats.table"}
+								p.Data[0].Extent = &plan.Extent{BBox: []float64{110, 25, 116, 30}}
+							}
+							p.Steps[0].Inputs = []string{"d1"}
+							p.Deliverables = []flow.OutputDeclaration{{Label: "result1"}}
+							plan.NormalizeV2(p, caps)
+							validation := plan.Environment{ProjectRoot: root, Capabilities: caps}
 							if err = plan.RequireValid(p, validation); err != nil {
 								t.Fatal(err)
 							}
-							executable, inputs, err := planexec.Build(p, planexec.BuildOptions{Environment: env, Guide: guide.Doc})
+							executable, inputs, err := planexec.Build(p, planexec.BuildOptions{Environment: env, Guide: guide.Doc, Bindings: bindings})
+							if scheme == "minimal" {
+								if err == nil {
+									t.Fatalf("main-only scheme received execution roles: %+v", executable)
+								}
+								return
+							}
 							if err != nil {
 								t.Fatal(err)
 							}
 							c, err := flowrun.NewController(flowrun.Options{Runner: matrixRuntime{}, Store: flowrun.FileRunStore{}, DataGet: func(context.Context, *flowrun.RunState, plan.Data) (flowrun.DataResult, error) {
-								return flowrun.DataResult{Value: "fixture data"}, nil
+								return flowrun.DataResult{Value: input}, nil
 							}})
 							if err != nil {
 								t.Fatal(err)
 							}
 							state, err := c.StartFromPlan(context.Background(), flowrun.StartRequest{SessionID: "matrix", SessionDir: t.TempDir(), CartoPlan: p, Guide: guide.Doc, Inputs: inputs}, executable)
-							if err != nil || state.Status != "completed" {
+							if err != nil || state == nil || state.Status != "completed" {
 								t.Fatalf("status=%+v error=%v", state, err)
 							}
-							probe := &flow.StepPlan{ID: "knowledge", Title: "路线知识"}
-							if err = flow.AssignPlanRole(executable, probe, []string{"路线知识抽取"}, "", env); err != nil || probe.Executor != "route_knowledge" {
-								t.Fatal(probe, err)
+							if len(executable.Steps) != 2 || len(p.Data) != 1 || len(executable.Steps[1].Refs.Outputs) != 1 || executable.Steps[1].Refs.Outputs[0].Label != "result0" {
+								t.Fatalf("v2 inserted acquisition/duplicate output data: %+v", executable.Steps)
+							}
+							for i, step := range executable.Steps {
+								if step.Role != p.Steps[i].RoleHint || step.RoleSource != "scheme" {
+									t.Fatalf("configured child was replaced: %+v", step)
+								}
 							}
 						})
 					}
@@ -152,7 +187,7 @@ func TestDocumentedMarchingPlanUsesRealGuideAndCatalog(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	raw, err := os.ReadFile(filepath.Join(root, "docs/refactor-v5/07-行军路线图指南示例.md"))
+	raw, err := os.ReadFile(filepath.Join(root, "docs/refactor-v7/03-计划与执行规范.md"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -161,39 +196,50 @@ func TestDocumentedMarchingPlanUsesRealGuideAndCatalog(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	caps := map[string]bool{"路线知识抽取": true}
+	// Bind the older example to this fixture's real scheme roles and add its abbreviated export.
+	p.Steps[0].RoleHint = "reader-renamed"
+	p.Steps[1].RoleHint = "map-renamed"
+	p.Steps = append(p.Steps, plan.Step{ID: "export", Title: "导出 PDF", RoleHint: "map-renamed", Inputs: []string{"basemap_layers"}, Produces: []plan.Product{{ID: "export.pdf", Kind: "file", Format: "pdf"}}})
+	caps := map[string]bool{"route_knowledge": true}
 	for _, pkg := range env.Packages {
 		caps[pkg.ID] = true
-		caps[pkg.DisplayName] = true
-		if at := strings.Index(pkg.DisplayName, "（"); at > 0 {
-			caps[pkg.DisplayName[:at]] = true
-		}
 	}
-	validation := plan.Environment{Capabilities: caps, ValidateSource: func(id string, c any) error {
-		if id != "df-7c21" || c != "auto" {
-			return fmt.Errorf("fixture find mismatch")
-		}
-		return nil
-	}}
-	if ds := plan.Validate(p, validation); flow.HasErrors(ds) {
-		t.Fatal(ds)
+	plan.NormalizeV2(p, caps)
+	if err := plan.RequireValid(p, plan.Environment{Capabilities: caps}); err != nil {
+		t.Fatal(err)
 	}
 	executable, _, err := planexec.Build(p, planexec.BuildOptions{Environment: env, Guide: guide.Doc, Scope: guide.Scope, OriginalSource: "验证史料"})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(executable.Steps) != 7 || executable.Steps[0].Executor != "route_knowledge" || executable.Steps[1].Kind != "acquire" {
-		t.Fatal(executable.Steps)
+	if len(executable.Steps) != 3 || executable.Steps[0].Executor != "route_knowledge" || len(executable.Steps[2].Refs.Outputs) != 1 {
+		t.Fatalf("unexpected v2 execution: %+v", executable.Steps)
+	}
+	for _, step := range executable.Steps {
+		if step.Kind == "acquire" {
+			t.Fatal("data preparation became a planned step")
+		}
+		if step.RoleSource != "scheme" {
+			t.Fatalf("documented plan created a temporary role: %+v", step)
+		}
+	}
+	if _, exists := p.DataByID("route"); exists {
+		t.Fatal("step output was duplicated in data")
 	}
 }
 
-func TestPlanRejectsFolderWhereVerifiedGeometryIsRequired(t *testing.T) {
-	p := &plan.Plan{APIVersion: plan.APIVersion, ID: "cp-incomplete", Version: 1, Goal: "load", Data: []plan.Data{{ID: "base", Name: "河流", From: "user", Path: t.TempDir(), Geometry: "line"}}, Steps: []plan.Step{{ID: "load", Title: "加载", Capabilities: []string{"data-loading"}, Uses: []string{"base"}, Instructions: "load", Outputs: []flow.OutputDeclaration{{Label: "layers", Type: "layers"}}}}}
-	env := plan.Environment{Capabilities: map[string]bool{"data-loading": true}, ValidateData: func(d plan.Data) error {
-		_, err := dataservice.ValidateLocalData(context.Background(), d.Path, d.Geometry, nil)
-		return err
+func TestV2PlanRejectsForwardProductReferenceBeforeBuilding(t *testing.T) {
+	p := &plan.Plan{APIVersion: plan.APIVersion, Goal: "检查依赖", Steps: []plan.Step{
+		{ID: "consume", Title: "提前使用", Inputs: []string{"later"}},
+		{ID: "produce", Title: "稍后产生", Produces: []plan.Product{{ID: "later", Kind: "file"}}},
 	}}
-	if !flow.HasErrors(plan.Validate(p, env)) {
-		t.Fatal("accepted directory as a verified line dataset")
+	plan.NormalizeV2(p, nil)
+	diagnostics := plan.ValidateV2(p)
+	found := false
+	for _, diagnostic := range diagnostics {
+		found = found || diagnostic.Code == "PLAN_REF_INVALID"
+	}
+	if !found {
+		t.Fatalf("accepted forward reference: %+v", diagnostics)
 	}
 }

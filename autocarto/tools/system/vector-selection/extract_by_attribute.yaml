@@ -27,7 +27,7 @@ spec:
       description: 比较值
     - name: OUTPUT
       type: output_layer
-      description: 输出图层
+      description: 输出文件路径（如 .gpkg、.shp），或 memory:名称 创建内存图层；返回真实 layer_id/source 供后续操作使用
       default: 'memory:'
 execution:
   handler: handlers.selection.extract_by_attribute_handler

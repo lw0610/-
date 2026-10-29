@@ -17,6 +17,7 @@ func (f *Factory) buildPlanComponents(ctx context.Context, name string, profile 
 		return nil, err
 	}
 	cfg.SkipSubAgents = true
+	cfg.PlanningOnly = true
 	cfg.Tools = selectCartographicPlanTools(ctx, cfg.Tools)
 	return deepagent.New(ctx, cfg)
 }
@@ -35,7 +36,7 @@ func selectCartographicPlanTools(ctx context.Context, all []tool.BaseTool) []too
 // containing "get", and must not accidentally become a planning operation.
 func CartographicPlanToolAllowed(name string) bool {
 	switch name {
-	case "plan_propose", "plan_revise", "data_find", "hitl_request", "query_build_capabilities",
+	case "plan_propose", "plan_revise", "hitl_request", "query_build_capabilities",
 		"get_layers_info", "get_project_info", "layout_info", "layout_list", "geodata_inspect",
 		"resource_get", "reference_read", "output_get_info", "raster_info", "raster_statistics",
 		"file_read", "file_list", "pyqgis_get_context", "pyqgis_get_task_status":

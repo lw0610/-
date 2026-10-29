@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/autocarto/carto_agent/internal/layers"
 	"github.com/autocarto/carto_agent/internal/resource"
 )
 
@@ -23,6 +24,22 @@ func (e *Engine) expandResourceArgs(ctx context.Context, definition SkillDefinit
 	e.mu.RUnlock()
 	if ctx == nil {
 		ctx = context.Background()
+	}
+	// The layer manifest chooses a default name; public style resolution still
+	// crosses the same scoped resolver as every other resource parameter.
+	if definition.Metadata.Name == "layer_load_builtin" && (args["style"] == nil || args["style"] == "") {
+		catalog, err := layers.NewDefaultLibrary()
+		if err != nil {
+			return err
+		}
+		name, _ := args["name"].(string)
+		item, err := catalog.ResolveName(name)
+		if err != nil {
+			return err
+		}
+		if item.DefaultStyle != "" {
+			args["style"] = item.DefaultStyle
+		}
 	}
 	scope, _ := resource.ScopeFromContext(ctx)
 	for _, parameter := range definition.Spec.Parameters {

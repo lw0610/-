@@ -282,8 +282,12 @@ tools:
 	if buffer.Metadata.Backend != RuntimeIDQGIS {
 		t.Fatalf("expected override backend, got %s", buffer.Metadata.Backend)
 	}
-	if buffer.Execution.BackendTool != "qgis_buffer" {
+	if buffer.Execution.BackendTool != "buffer_analysis" {
 		t.Fatalf("expected override backend tool, got %s", buffer.Execution.BackendTool)
+	}
+	manifestTool, _ := toolReg.Get("buffer_analysis")
+	if manifestTool.ExecutionManifestEntry().BackendTool != "qgis_buffer" {
+		t.Fatal("authority manifest lost the native binding")
 	}
 	if !strings.HasPrefix(buffer.SourcePath, toolRoot) {
 		t.Fatalf("expected override source path, got %s", buffer.SourcePath)
@@ -575,8 +579,12 @@ tools:
 	if definitions[0].Metadata.Category != "vector-geometry" {
 		t.Fatalf("unexpected tool category: %s", definitions[0].Metadata.Category)
 	}
-	if definitions[0].Execution.BackendTool != "native:buffer" {
+	if definitions[0].Execution.BackendTool != "buffer" {
 		t.Fatalf("unexpected backend tool: %s", definitions[0].Execution.BackendTool)
+	}
+	toolDefinition, _ := toolReg.Get("buffer")
+	if toolDefinition.ExecutionManifestEntry().BackendTool != "native:buffer" {
+		t.Fatal("QGIS manifest must retain the actual native algorithm binding")
 	}
 }
 

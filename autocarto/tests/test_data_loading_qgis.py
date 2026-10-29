@@ -65,7 +65,7 @@ def _raster(path):
     return path
 
 
-def test_data_load_vector_reuses_real_source_and_can_request_independent_layer(data_load_project, monkeypatch):
+def test_data_load_vector_reuses_real_source_and_applies_requested_name(data_load_project, monkeypatch):
     project, root, path, loader = data_load_project
     other = root / "unrelated-cwd"
     other.mkdir()
@@ -79,12 +79,103 @@ def test_data_load_vector_reuses_real_source_and_can_request_independent_layer(d
     assert second["success"], second
     assert second["data"]["reused"] is True
     assert second["data"]["layer_id"] == first["data"]["layer_id"]
-    assert second["output"] == "输入点"
+    assert second["output"] == "请求的另一名称"
     independent = loader.load_vector_handler({"path": str(path), "layer_name": "独立点", "reuse_existing": False})
     assert independent["success"], independent
-    assert independent["data"]["reused"] is False
-    assert independent["data"]["layer_id"] != first["data"]["layer_id"]
+    assert independent["data"]["reused"] is True
+    assert independent["data"]["layer_id"] == first["data"]["layer_id"]
+    assert independent["data"]["layer_name"] == "独立点"
+    assert len(project.mapLayers()) == 1
+    assert first["data"]["shown"] is True
+    assert [node.layerId() for node in project.layerTreeRoot().findLayers()] == [first["data"]["layer_id"]]
+
+
+def test_prepared_results_only_enter_tree_when_shown_in_sequence(data_load_project):
+    from qgis.core import QgsApplication, QgsCoordinateTransform, QgsRectangle, QgsVectorLayer
+    from qgis.gui import QgsLayerTreeMapCanvasBridge
+    import qgis.utils
+    project, root, path, loader = data_load_project
+    canvas = qgis.utils.iface.mapCanvas()
+    canvas.setLayers([])
+    canvas.setDestinationCrs(project.crs())
+    canvas.setExtent(QgsRectangle())
+    bridge = QgsLayerTreeMapCanvasBridge(project.layerTreeRoot(), canvas)
+    base = loader.load_raster_handler({"path": str(_raster(root / "sources/base.tif")), "show": False})
+    boundary = loader.load_vector_handler({"path": str(path), "show": False})
+    memory = QgsVectorLayer("Point?crs=EPSG:4326", "分析成果", "memory")
+    project.addMapLayer(memory, False)
+    assert base["success"] and boundary["success"]
+    QgsApplication.processEvents()
+    assert not project.layerTreeRoot().findLayers()
+    assert canvas.layers() == []
+    ids = [base["data"]["layer_id"], boundary["data"]["layer_id"], memory.id()]
+    items = [{"name": name, "layer_id": layer_id} for name, layer_id in zip(("背景", "边界", "站点"), ids)]
+    project.layerTreeRoot().setHasCustomLayerOrder(True)
+    for index, item in enumerate(items):
+        result = loader.load_list_handler({"items": [item]})
+        assert result["success"], result
+        QgsApplication.processEvents()
+        assert [layer.id() for layer in canvas.layers()] == list(reversed(ids[:index + 1]))
+        if index == 0:
+            layer = project.mapLayer(ids[0])
+            extent = QgsCoordinateTransform(layer.crs(), canvas.mapSettings().destinationCrs(), project).transformBoundingBox(layer.extent())
+            assert not canvas.extent().isEmpty()
+            assert canvas.extent().contains(extent.center())
+    assert [node.layerId() for node in project.layerTreeRoot().findLayers()] == list(reversed(ids))
+    assert not project.layerTreeRoot().hasCustomLayerOrder()
+    assert len(project.mapLayers()) == 3
+    # Retrying a displayed layer neither reorders it nor hides it for analysis.
+    assert loader.load_raster_handler({"layer_id": ids[0], "show": True})["success"]
+    assert loader.load_vector_handler({"layer_id": ids[1], "show": False})["success"]
+    assert [node.layerId() for node in project.layerTreeRoot().findLayers()] == list(reversed(ids))
+
+
+def test_reloading_same_source_reads_external_file_changes(data_load_project):
+    project, _, path, loader = data_load_project
+    first = loader.load_vector_handler({"path": str(path), "show": True})
+    layer = project.mapLayer(first["data"]["layer_id"])
+    assert layer.featureCount() == 1
+    content = json.loads(path.read_text(encoding="utf-8"))
+    content["features"].append({"type": "Feature", "properties": {"name": "新增点", "count": 2},
+                                "geometry": {"type": "Point", "coordinates": [115, 35]}})
+    path.write_text(json.dumps(content), encoding="utf-8")
+    refreshed = loader.load_vector_handler({"path": str(path)})
+    assert refreshed["success"], refreshed
+    assert refreshed["data"]["layer_id"] == layer.id()
+    assert layer.featureCount() == 2
+    assert "count" in layer.fields().names()
+    assert layer.extent().xMaximum() == 115
+    assert len(project.mapLayers()) == 1
+    assert project.layerTreeRoot().findLayer(layer.id()) is not None
+
+
+def test_owned_selection_export_reuses_layer_and_loading_preserves_ownership(data_load_project):
+    from autocarto.tools.system._shared.vector_selection_impl import extract_by_attribute_handler
+    project, root, path, loader = data_load_project
+    before = path.read_bytes()
+    original = loader.load_vector_handler({"path": str(path), "layer_name": "原始材料"})
+    original_id = original["data"]["layer_id"]
+    context = {"session_id": "test", "session_dir": str(root), "_autocarto_output_owner": {"session_id": "test", "step_id": "prepare"}}
+    reused = loader.load_vector_handler({"path": str(path), **context})
+    assert reused["data"]["layer_id"] == original_id
+    assert not project.mapLayer(original_id).customProperty("autocarto/output_owner", "")
+    selected = extract_by_attribute_handler({"INPUT": original_id, "FIELD": "name", "OPERATOR": 0, "VALUE": "示例点", "OUTPUT": "memory:选取结果", **context})
+    assert selected["success"], selected
+    selected_id = selected["output"]["layer_id"]
+    destination = root / "exports" / "选取结果.geojson"
+    saved = loader.export_vector_handler({"layer": selected_id, "output": str(destination), **context})
+    assert saved["success"], saved
+    assert saved["data"]["layer_id"] == selected_id
+    assert project.mapLayer(selected_id).providerType() == "ogr"
+    loaded = loader.load_vector_handler({"path": str(destination), **context})
+    assert loaded["success"] and loaded["data"]["layer_id"] == selected_id
     assert len(project.mapLayers()) == 2
+    assert path.read_bytes() == before
+    assert json.loads(project.mapLayer(selected_id).customProperty("autocarto/output_owner"))[0] == "test"
+    project.removeMapLayer(selected_id)
+    fresh = loader.load_vector_handler({"path": str(destination), **context})
+    assert fresh["success"] and not fresh["data"]["reused"]
+    assert json.loads(project.mapLayer(fresh["data"]["layer_id"]).customProperty("autocarto/output_owner"))[0] == "test"
 
 
 def test_data_load_geopackage_sub_layers_have_distinct_identity(data_load_project):
@@ -126,6 +217,7 @@ def test_data_load_raster_returns_real_metadata_and_reuses_layer(data_load_proje
     assert second["data"]["reused"] is True
     assert second["data"]["layer_id"] == first["data"]["layer_id"]
     assert len(project.mapLayers()) == 1
+    assert first["data"]["shown"] is True
 
 
 def test_data_load_list_missing_required_prevents_all_loading_and_group_creation(data_load_project):
@@ -152,8 +244,8 @@ def test_data_load_list_mixed_crs_optional_missing_and_repeated_group_are_truthf
     raster = _raster(root / "sources/image.tif")
     manifest = root / "sources/list.csv"
     _write_list(manifest, [["点", "points.geojson", "矢量", "是"], ["影像", raster.name, "栅格", "是"], ["可选", "absent.geojson", "", "否"]])
-    first = loader.load_list_handler({"items": resolve_handle(manifest, "data_list")["entries"], "group": "输入数据"})
-    second = loader.load_list_handler({"items": resolve_handle(manifest, "data_list")["entries"], "group": "输入数据"})
+    first = loader.load_list_handler({"items": resolve_handle(manifest, "data_list")["entries"], "group": "输入数据", "show": True})
+    second = loader.load_list_handler({"items": resolve_handle(manifest, "data_list")["entries"], "group": "输入数据", "show": True})
     assert first["success"] and second["success"], (first, second)
     assert [entry["status"] for entry in first["data"]["entries"]] == ["loaded", "loaded", "missing"]
     assert [entry["status"] for entry in second["data"]["entries"]] == ["reused", "reused", "missing"]
@@ -189,7 +281,6 @@ def test_data_load_list_selection_non_strict_missing_and_missing_columns(data_lo
 def test_data_load_invalid_arguments_do_not_add_layers(data_load_project):
     project, _, path, loader = data_load_project
     for handler, params in ((loader.load_vector_handler, {}), (loader.load_raster_handler, {}),
-                            (loader.load_vector_handler, {"path": str(path), "reuse_existing": "maybe"}),
                             (loader.load_list_handler, {})):
         result = handler(params)
         assert result["success"] is False, result
@@ -202,6 +293,7 @@ def test_admin_boundary_real_polygon_output_and_repeat_are_unchanged(data_load_p
     params = {"level": "省", "code": "420000", "name": "湖北省", "output": "outputs/region.geojson"}
     first = boundary.extract_boundary_handler(params)
     assert first["success"], first
+    assert first["data"]["layer_name"] == "湖北省边界"
     output = root / "outputs/region.geojson"
     before = output.read_bytes()
     stamp = output.stat().st_mtime_ns
@@ -217,6 +309,38 @@ def test_admin_boundary_real_polygon_output_and_repeat_are_unchanged(data_load_p
     assert first["data"]["geometry"]["valid"] is True
     assert first["data"]["geometry"]["vertices"] > 100
     assert len(project.mapLayers()) == 1
+    assert first["data"]["shown"] is True
+    assert [node.layerId() for node in project.layerTreeRoot().findLayers()] == [first["data"]["layer_id"]]
+
+
+def test_admin_boundary_city_and_counties_have_distinct_names_and_explicit_loading(data_load_project):
+    from autocarto.tools.system._shared import admin_boundary_impl as boundary
+    project, _, _, loader = data_load_project
+    city = boundary.extract_boundary_handler({"level": "市", "name": "武汉市", "show": None})
+    counties = boundary.extract_boundary_handler({"level": "县", "within": "武汉市", "load": False})
+    assert city["success"] and counties["success"], (city, counties)
+    assert city["data"]["layer_name"] == "武汉市边界"
+    assert counties["data"]["layer_name"] == "武汉市区县边界"
+    assert counties["data"]["feature_count"] == 13
+    assert "layer_id" not in counties["data"]
+    assert len(project.mapLayers()) == 1
+    assert city["data"]["shown"] is True
+    assert [node.layerId() for node in project.layerTreeRoot().findLayers()] == [city["data"]["layer_id"]]
+
+    prepared = boundary.extract_boundary_handler({"level": "县", "within": "武汉市", "show": False})
+    assert prepared["success"] and prepared["data"]["shown"] is False, prepared
+    assert project.layerTreeRoot().findLayer(prepared["data"]["layer_id"]) is None
+
+    loaded = loader.load_vector_handler({"path": counties["data"]["source"], "layer_name": counties["data"]["layer_name"]})
+    assert loaded["success"], loaded
+    assert loaded["data"]["layer_id"] == prepared["data"]["layer_id"]
+    repeated = boundary.extract_boundary_handler({"level": "县", "within": "武汉市"})
+    assert repeated["success"] and repeated["data"]["reused"], repeated
+    assert repeated["data"]["layer_id"] == loaded["data"]["layer_id"]
+    assert {layer.name() for layer in project.mapLayers().values()} == {"武汉市边界", "武汉市区县边界"}
+    assert project.mapLayer(city["data"]["layer_id"]).featureCount() == 1
+    assert project.mapLayer(loaded["data"]["layer_id"]).featureCount() == 13
+    assert [node.layerId() for node in project.layerTreeRoot().findLayers()] == [loaded["data"]["layer_id"], city["data"]["layer_id"]]
 
 
 def test_admin_boundary_default_output_stays_in_runtime_and_existing_data_is_preserved(data_load_project):

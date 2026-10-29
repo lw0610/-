@@ -17,13 +17,17 @@ type What struct {
 	Description string `json:"description,omitempty"`
 }
 type Need struct {
-	Geometry string            `json:"geometry,omitempty"`
-	Name     string            `json:"name"`
-	What     What              `json:"what"`
-	Extent   string            `json:"extent,omitempty"`
-	Scale    string            `json:"scale,omitempty"`
-	Fields   map[string]string `json:"fields,omitempty"`
-	Params   map[string]string `json:"params,omitempty"`
+	Method          string                 `json:"method,omitempty"`
+	ExtentPlan      *datasource.ExtentPlan `json:"extent_plan,omitempty"`
+	MapFrameWidthMM float64                `json:"map_frame_width_mm,omitempty"`
+	Paper           string                 `json:"paper,omitempty"`
+	Geometry        string                 `json:"geometry,omitempty"`
+	Name            string                 `json:"name"`
+	What            What                   `json:"what"`
+	Extent          string                 `json:"extent,omitempty"`
+	Scale           string                 `json:"scale,omitempty"`
+	Fields          map[string]string      `json:"fields,omitempty"`
+	Params          map[string]string      `json:"params,omitempty"`
 }
 type FindRequest struct {
 	Provided        []string `json:"provided,omitempty"`
@@ -64,6 +68,8 @@ type Binding struct {
 	Fields   []string `json:"fields,omitempty"`
 }
 type Candidate struct {
+	StoreKey             string                   `json:"store_key,omitempty"`
+	Method               string                   `json:"method,omitempty"`
 	Geometry             string                   `json:"geometry,omitempty"`
 	Confidence           string                   `json:"confidence,omitempty"`
 	RequiresConfirmation bool                     `json:"requires_confirmation,omitempty"`
@@ -105,7 +111,7 @@ type FindResult struct {
 	NextAction        string       `json:"next_action"`
 	ProvidedMatches   []Candidate  `json:"provided_matches"`
 	ProvidedUnmatched []Exclusion  `json:"provided_unmatched"`
-	FindID            string       `json:"find_id"`
+	FindID            string       `json:"find_id,omitempty"`
 	CreatedAt         time.Time    `json:"created_at"`
 	ExpiresAt         time.Time    `json:"expires_at"`
 	Resolved          Resolved     `json:"resolved"`
@@ -161,14 +167,20 @@ type GetResult struct {
 	ProvenancePath string     `json:"provenance_path"`
 }
 type RegisterRequest struct {
-	FindID      string   `json:"find_id"`
-	Row         string   `json:"row"`
-	Path        string   `json:"path"`
-	Kind        string   `json:"kind"`
-	URL         string   `json:"url"`
-	License     string   `json:"license"`
-	Attribution string   `json:"attribution"`
-	Notes       []string `json:"notes,omitempty"`
+	Need         *Need    `json:"need,omitempty"`
+	NeedID       string   `json:"need_id,omitempty"`
+	SourceTitle  string   `json:"source_title,omitempty"`
+	TableRef     string   `json:"table_ref,omitempty"`
+	Method       string   `json:"method,omitempty"`
+	OriginalPath string   `json:"original_path,omitempty"`
+	FindID       string   `json:"find_id"`
+	Row          string   `json:"row"`
+	Path         string   `json:"path"`
+	Kind         string   `json:"kind"`
+	URL          string   `json:"url"`
+	License      string   `json:"license"`
+	Attribution  string   `json:"attribution"`
+	Notes        []string `json:"notes,omitempty"`
 }
 type Options struct {
 	SessionID, SessionDir string

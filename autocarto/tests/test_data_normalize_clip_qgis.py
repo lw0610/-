@@ -63,6 +63,48 @@ class NormalizeClipQGISTest(unittest.TestCase):
             "type": "LineString", "coordinates": [[-1, 2], [9, 2]],
         }, {"name:zh": "跨界线", "osm_id": 123456789012345, "ref": "G123"})])
 
+    def test_invalid_vector_reports_vector_open_error(self):
+        source = self.root / "broken.osm.pbf"
+        source.write_bytes(b"invalid pbf")
+        result = self.run_normalize(source, expected_geometry="line")
+        self.assertFalse(result["success"], result)
+        self.assertIn("无法打开原始矢量数据", result["message"])
+        self.assertNotIn("栅格", result["message"])
+
+    def test_osm_hstore_preserves_newlines_and_escaped_characters(self):
+        from qgis.core import QgsVectorLayer
+        source = self.write("hstore.geojson", [feature({"type": "LineString", "coordinates": [[0, 0], [1, 1]]}, {
+            "other_tags": '"name:zh"=>"沅江", "note"=>"第一行\n第二行", "ref"=>"A\\\\B\\\"C"',
+        })])
+        result = self.run_normalize(source, expected_geometry="line", fields={"name": ["name:zh"], "note": ["note"], "ref": ["ref"]})
+        self.assertTrue(result["success"], result)
+        row = next(QgsVectorLayer(result["output"], "result", "ogr").getFeatures())
+        self.assertEqual(row["name"], "沅江")
+        self.assertEqual(row["note"], "第一行\n第二行")
+        self.assertEqual(row["ref"], 'A\\B"C')
+
+    def test_geopackage_split_features_get_new_primary_keys(self):
+        from qgis.core import QgsVectorLayer
+        source = self.write("fid.geojson", [
+            feature({"type": "LineString", "coordinates": [[0, 0], [1, 1]]}, {"fid": 11, "name": "同名线路"}),
+            feature({"type": "LineString", "coordinates": [[3, 3], [4, 4]]}, {"fid": 12, "name": "同名线路"}),
+        ])
+        base = self.root / "base.gpkg"
+        result = self.run_normalize(source, expected_geometry="line", output=str(base))
+        self.assertTrue(result["success"], result)
+        result = self.run_normalize(base, expected_geometry="line", merge_by="name", output=str(self.root / "derived.gpkg"))
+        self.assertTrue(result["success"], result)
+        layer = QgsVectorLayer(result["output"], "derived", "ogr")
+        rows = list(layer.getFeatures())
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(len({row.id() for row in rows}), 2)
+        self.assertEqual([row["source_fid"] for row in rows], [11, 11])
+        # A result must remain usable by subsequent real QGIS algorithms, which
+        # conventionally use the fid column as their GeoPackage primary key.
+        import processing
+        saved = processing.run("native:savefeatures", {"INPUT": layer, "OUTPUT": str(self.root / "saved.gpkg")})
+        self.assertEqual(QgsVectorLayer(saved["OUTPUT"], "saved", "ogr").featureCount(), 2)
+
     def run_normalize(self, source, boundary=None, **kwargs):
         params = {
             "input": {"path": str(source)}, "output": str(self.root / "result.geojson"),
@@ -295,6 +337,22 @@ class NormalizeClipQGISTest(unittest.TestCase):
         result = self.run_normalize(source, self.boundary(), output=str(source))
         self.assertFalse(result["success"], result)
         self.assertEqual(source.read_bytes(), before)
+
+    def test_scale_rules_merge_connected_same_ref_and_remove_short_line(self):
+        source = self.write("segments.geojson", [feature({"type": "LineString", "coordinates": [[110+i*.01, 30], [110+(i+1)*.01, 30]]}, {"ref": "G4", "name:zh": "高速", "highway": "motorway"}) for i in range(50)] + [feature({"type": "LineString", "coordinates": [[111, 30], [111.00001, 30]]}, {"ref": "G5", "name:zh": "短段", "highway": "motorway"})])
+        result = self.run_normalize(source, fields={"name": ["name:zh", "name"], "ref": ["ref"]}, merge_by="ref", min_length_m=100)
+        self.assertTrue(result["success"], result)
+        stats = result["data"]["generalization"]
+        self.assertEqual(stats["input_features"], 51)
+        self.assertEqual(stats["after_merge"], 2)
+        self.assertEqual(stats["removed_small"], 1)
+        self.assertEqual(result["data"]["count"], 1)
+
+    def test_same_name_stations_merge_only_within_distance(self):
+        source = self.write("stations.geojson", [feature({"type": "Point", "coordinates": [x,30]}, {"name": "测试站"}) for x in [110,110.001,110.01]])
+        result = self.run_normalize(source, merge_by="name", merge_distance_m=300)
+        self.assertTrue(result["success"], result)
+        self.assertEqual(result["data"]["count"], 2)
 
 
 if __name__ == "__main__":

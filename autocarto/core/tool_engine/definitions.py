@@ -77,6 +77,12 @@ class ToolDefinitionLoader:
             "parameters": self._normalize_parameters(entry.get("parameters")),
         }
 
+        output = execution_data.get("output")
+        if "auto_load" in entry:
+            tool["auto_load"] = entry["auto_load"]
+        elif isinstance(output, Mapping) and "auto_load" in output:
+            tool["auto_load"] = output["auto_load"]
+
         input_schema = entry.get("inputSchema") or entry.get("input_schema")
         if isinstance(input_schema, Mapping):
             tool["inputSchema"] = dict(input_schema)

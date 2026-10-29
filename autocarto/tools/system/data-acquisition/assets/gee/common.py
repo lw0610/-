@@ -19,7 +19,7 @@ def available(collection):
 
 
 def save_image(image, reference):
-    image = image.setDefaultProjection(reference.select([0]).projection()).clip(roi)
+    image = image.setDefaultProjection(reference.select([0]).projection())
     projection = reference.select([0]).projection().crs().getInfo()
     path = download_image(image, "acquired.tif", region=roi, scale=params["scale"], crs=projection)
     print("已导出获取结果: " + path, flush=True)

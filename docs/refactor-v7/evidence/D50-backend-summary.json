@@ -1,0 +1,184 @@
+[
+  {
+    "scenario": "route-no-review",
+    "directory": "/tmp/autocarto-v7-acceptance-routes-lock-final-20261029/route-no-review",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_tool_calls": 48,
+    "execution_seconds": 37.757281,
+    "data_preparations": 9,
+    "inputs_unchanged": true,
+    "golden_comparison": {
+      "success": true,
+      "differences": [],
+      "preview": {
+        "algorithm": "dhash64",
+        "distance": 1,
+        "diagnostic_only": true
+      }
+    },
+    "layer_lock": [
+      {
+        "id": "layer.user.18e2ec013e44ee50",
+        "name": "省域",
+        "digest": "sha256:7c43702ccd554e322488b9fdfa331058f310bb696675ef8968c5e273962a0ac5"
+      },
+      {
+        "id": "layer.user.18e2ec00bcf308f0",
+        "name": "地区界线",
+        "digest": "sha256:4d57caff5b41b6d95d82c041aa0352847f2b831e534c78205682c67619154267"
+      },
+      {
+        "id": "layer.user.18e2ec013364c820",
+        "name": "河流面",
+        "digest": "sha256:0c3d5cff82f08719aef3de1438ae7db66bf48ab5ea78c94ce36bd95663d53910"
+      },
+      {
+        "id": "layer.user.18e2ec00d03c4a70",
+        "name": "河流线",
+        "digest": "sha256:76db3304faadacb700ded488ff7b066b5f36aabcffd02a3bdbc17739299d28a8"
+      },
+      {
+        "id": "layer.user.18e2ec009d292428",
+        "name": "公路",
+        "digest": "sha256:99048aa3eed9ef49cda940a54058d7245b6a82c5d1dfdb132b10024fef770907"
+      },
+      {
+        "id": "layer.user.18e2ec00b709e990",
+        "name": "国道",
+        "digest": "sha256:f1347c63ecd34debaede7ff1197b4834d6430edc55f59a6e2ac29b1cd80d4acc"
+      },
+      {
+        "id": "layer.user.18e2ec015301b918",
+        "name": "铁路",
+        "digest": "sha256:82be1de62a66b488f20fcf8d5f25f3cbe344536bf426a961bacaccfeae789537"
+      },
+      {
+        "id": "layer.user.18e2ec00a510cad8",
+        "name": "县级城市驻地",
+        "digest": "sha256:6ac4b23cdc838922308b4c4722bbfc5add33ab0e196d1fb92b3397a604d6d443"
+      }
+    ]
+  },
+  {
+    "scenario": "route-with-review",
+    "directory": "/tmp/autocarto-v7-acceptance-routes-lock-final-20261029/route-with-review",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_tool_calls": 59,
+    "execution_seconds": 36.4512,
+    "data_preparations": 9,
+    "inputs_unchanged": true,
+    "golden_comparison": {
+      "success": true,
+      "differences": [],
+      "preview": {
+        "algorithm": "dhash64",
+        "distance": 1,
+        "diagnostic_only": true
+      }
+    },
+    "layer_lock": [
+      {
+        "id": "layer.user.18e2ec0fd43aa748",
+        "name": "省域",
+        "digest": "sha256:7c43702ccd554e322488b9fdfa331058f310bb696675ef8968c5e273962a0ac5"
+      },
+      {
+        "id": "layer.user.18e2ec0f77fc9bf8",
+        "name": "地区界线",
+        "digest": "sha256:4d57caff5b41b6d95d82c041aa0352847f2b831e534c78205682c67619154267"
+      },
+      {
+        "id": "layer.user.18e2ec0fca9edc40",
+        "name": "河流面",
+        "digest": "sha256:0c3d5cff82f08719aef3de1438ae7db66bf48ab5ea78c94ce36bd95663d53910"
+      },
+      {
+        "id": "layer.user.18e2ec0f83d2ce70",
+        "name": "河流线",
+        "digest": "sha256:76db3304faadacb700ded488ff7b066b5f36aabcffd02a3bdbc17739299d28a8"
+      },
+      {
+        "id": "layer.user.18e2ec0f57ddd0d0",
+        "name": "公路",
+        "digest": "sha256:99048aa3eed9ef49cda940a54058d7245b6a82c5d1dfdb132b10024fef770907"
+      },
+      {
+        "id": "layer.user.18e2ec0f70ae5ad0",
+        "name": "国道",
+        "digest": "sha256:f1347c63ecd34debaede7ff1197b4834d6430edc55f59a6e2ac29b1cd80d4acc"
+      },
+      {
+        "id": "layer.user.18e2ec0fe54e3090",
+        "name": "铁路",
+        "digest": "sha256:82be1de62a66b488f20fcf8d5f25f3cbe344536bf426a961bacaccfeae789537"
+      },
+      {
+        "id": "layer.user.18e2ec0f5f037b58",
+        "name": "县级城市驻地",
+        "digest": "sha256:6ac4b23cdc838922308b4c4722bbfc5add33ab0e196d1fb92b3397a604d6d443"
+      }
+    ]
+  },
+  {
+    "scenario": "statistical",
+    "directory": "/tmp/autocarto-v7-acceptance-five-final-20261029/statistical",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_tool_calls": 19,
+    "execution_seconds": 0.380876,
+    "data_preparations": 2,
+    "inputs_unchanged": true,
+    "golden_comparison": {
+      "success": true,
+      "differences": [],
+      "preview": {
+        "algorithm": "dhash64",
+        "distance": 0,
+        "diagnostic_only": true
+      }
+    },
+    "layer_lock": [
+      {
+        "id": "layer.system.china-admin.province-area",
+        "name": "省域面",
+        "digest": "sha256:bb0f216a8ecf528215dccb1acdf8e5ac28485692bdcf5f934e6aea461665de8e"
+      },
+      {
+        "id": "layer.system.china-admin.city-area",
+        "name": "市域面",
+        "digest": "sha256:7ca1f18e8cde846b314d5c204438ca0d186a4ac66a12d6971f1a12afcbfca922"
+      },
+      {
+        "id": "layer.system.china-admin.county-area",
+        "name": "县域面",
+        "digest": "sha256:eb738db7a43c8a52652a35a8e1b8583be0d36bec078a44f8b5c15a034e14f0df"
+      }
+    ]
+  },
+  {
+    "scenario": "province-density",
+    "directory": "/tmp/autocarto-v7-acceptance-five-final-20261029/province-density",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_tool_calls": 23,
+    "execution_seconds": 0.566993,
+    "data_preparations": 0,
+    "inputs_unchanged": true,
+    "golden_comparison": null,
+    "layer_lock": []
+  },
+  {
+    "scenario": "survey-route",
+    "directory": "/tmp/autocarto-v7-acceptance-five-final-20261029/survey-route",
+    "status": "completed",
+    "model_calls": 0,
+    "qgis_tool_calls": 19,
+    "execution_seconds": 1.038815,
+    "data_preparations": 1,
+    "inputs_unchanged": true,
+    "golden_comparison": null,
+    "layer_lock": []
+  }
+]

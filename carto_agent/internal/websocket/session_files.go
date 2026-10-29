@@ -23,6 +23,7 @@ func registerToolArtifacts(store *sessionfiles.Store, definition tooldefinition.
 	}
 	paths := map[string]string{}
 	parts := messageInputPartsPayload(message.UserInputMultiContent)
+	names := sessionfiles.ResultNames(message.Content, parts)
 	if len(definition.Spec.Artifacts) > 0 {
 		for _, declaration := range definition.Spec.Artifacts {
 			for _, path := range sessionfiles.ResultPaths(message.Content, parts, declaration.Field) {
@@ -36,6 +37,7 @@ func registerToolArtifacts(store *sessionfiles.Store, definition tooldefinition.
 	}
 	var failures []error
 	for path, role := range paths {
+		origin.Name = names[path]
 		opts := []sessionfiles.RegistrationOption{sessionfiles.WithFlow(options.flowRunID, options.flowStepID)}
 		if role != "" {
 			opts = append(opts, sessionfiles.WithGroup(role))

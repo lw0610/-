@@ -49,11 +49,10 @@ func (e *ValidationError) ToolProviderDiagnostics() map[string]any {
 		"next_action":          "correct_plan",
 		"allowed_capabilities": append([]string{}, e.AllowedCapabilities...),
 		"constraints": map[string]any{
-			"capabilities": "steps[].capabilities 使用当前工具包 ID；具体工具调用由执行智能体决定。",
-			"session_data": "已有会话成果使用 from=session，并提供 file_id 或工具返回的精确绝对 path；name/layer_name 仅作显示，不参与查找。整体数据集目录用 kind=dataset、不填 geometry；单文件用 kind=file，geometry 可为 table/point/line/polygon/raster。from=step 引用同一计划内的前序步骤产出；新计划引用已有成果时，不要增加重复生产步骤。",
-			"output_types": append([]string{}, outputTypes...),
-			"uses":         "steps[].uses 使用 data[].id，不使用显示名；前序 acquire 步骤 ID 可展开为其 data ID，前序单产出步骤 ID 可绑定唯一产出。多产出必须声明 from=step、step 和 output 后使用该 data.id，不能猜测。depends_on 使用前序步骤 ID。",
-			"outputs":      "每个步骤的 outputs[].label 非空且在本步骤内唯一。from=step 数据用 step 指定生产步骤、output 选择其产出 label，name 仅作显示。省略 output 时兼容旧 name 匹配或唯一产出；显式 output 必须正确。deliverables 的 label/type/format 对应同一已声明步骤产出。",
+			"inputs":  "引用 data.id 或前序步骤 produces.id；输入写步骤编号时会展开其产出。",
+			"sources": "user(ref为附件、文件、消息原文或会话文件ID)、project、builtin、retrieve(need与extent)。",
+			"extent":  "extent 使用 region、bbox 或 from:前序数据ID + expand:0.2。",
+			"repair":  "只修正所列语义问题；系统自动保存已完成的步骤和产出。无需data_find/find_id或重复抽取。",
 		},
 	}
 }

@@ -302,6 +302,10 @@ def load_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
         geometry = handle.get("geometry")
         if hasattr(layer, "geometryType") and geometry in ("point", "line", "polygon") and layer.geometryType() != {"point": 0, "line": 1, "polygon": 2}[geometry]:
             raise ValueError("样式几何类型与图层不一致")
+        import math
+        scale = float(params.get("scale", 1))
+        if not math.isfinite(scale) or scale <= 0:
+            raise ValueError("scale 必须大于 0")
         message, ok = layer.loadNamedStyle(str(path))
         if not ok:
             return {
@@ -310,8 +314,12 @@ def load_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 "info": f"加载图层样式失败: {message}",
             }
         from autocarto.tools.system._shared.style_labeling import restore_qml_font_families, _override_label_field, resolve_name_field
-        restore_qml_font_families(layer)
-        warnings = list(handle.get("warnings", []))
+        from autocarto.tools.system._shared.symbology import read_symbology, symbology_differences, scale_loaded_style
+        from autocarto.tools.system._shared.style_labeling import select_label_font
+        expected, scale_warnings = scale_loaded_style(layer, scale)
+        if layer.labeling() is not None and hasattr(layer.labeling(), "settings"):
+            expected["labels"]["font"] = select_label_font(layer.labeling().settings().format().font().family())[0]
+        warnings = list(handle.get("warnings", [])) + scale_warnings + restore_qml_font_families(layer)
         actual = ""
         requested = explicit if explicit is not None else handle.get("label_field")
         labeling = layer.labeling() if hasattr(layer, "labeling") else None
@@ -339,10 +347,17 @@ def load_style_handler(params: Dict[str, Any]) -> Dict[str, Any]:
                 else:
                     layer.setLabelsEnabled(False)
                     warnings.append("图层没有可用名称字段，已关闭标注")
+        if requested == "无" or (not actual and requested):
+            expected["labels"] = {"enabled": False}
+        elif actual:
+            expected["labels"].update(enabled=True, field=actual)
+        readback = read_symbology(layer)
+        differences = symbology_differences(expected, readback)
         layer.triggerRepaint()
         return {"success": True, "output": str(path), "info": "图层样式已加载",
                 "resource": handle_summary(handle), "label_field": actual, "warnings": warnings,
-                "data": {"layer_id": layer.id(), "layer_name": layer.name(), "label_field": actual}}
+                "data": {"layer_id": layer.id(), "layer_name": layer.name(), "label_field": actual,
+                         "requested": expected, "actual": readback, "warnings": warnings, "differences": differences}}
     except ResourceHandleError as exc:
         return {"success": False, "output": "", "info": str(exc), "error_type": exc.code, "data": exc.details}
     except Exception as e:
@@ -360,7 +375,7 @@ def load_styles_handler(params):
         if not isinstance(item, dict):
             results.append({"success": False, "info": "样式项必须是对象"})
             continue
-        result = load_style_handler(item)
+        result = load_style_handler(dict(item, scale=params.get("scale", 1)))
         results.append(dict(result, layer=item.get("layer")))
     return {"success": all(r.get("success") for r in results), "output": "", "info": "批量样式处理完成", "data": {"items": results}}
 

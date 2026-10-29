@@ -213,11 +213,13 @@ def extract_boundary_handler(params):
                 raise
         from autocarto.tools.system._shared.data_loading_impl import load_vector_handler
 
-        loaded = load_vector_handler({"path": str(output), "layer_name": selected["name"], "reuse_existing": True}) if params.get("load", True) else {"success": True, "data": {}}
+        level_name = {"province": "省级", "city": "市级", "county": "区县"}[selected["level"]] if params.get("within") is not None else ""
+        layer_name = selected["name"] + level_name + "边界"
+        loaded = load_vector_handler({"path": str(output), "layer_name": layer_name, "show": params.get("show"), "_autocarto_output_owner": params.get("_autocarto_output_owner")}) if params.get("load", True) else {"success": True, "data": {"layer_name": layer_name, "source": str(output)}}
         loaded["data"]["feature_count"] = len(features)
         if not loaded.get("success"):
             return loaded
-        return {"success": True, "output": str(output), "info": "行政区原始边界已提取" + ("并加载" if params.get("load", True) else ""),
+        return {"success": True, "output": str(output), "info": "行政区原始边界已提取" + ("，已显示到地图" if loaded["data"].get("shown") else ""),
                 "data": dict(loaded["data"], selected=selected, geometry=geometry, source_record=source,
                              provenance_path=str(provenance_path), reused_output=reused_output,
                              artifact_paths=[str(output), str(provenance_path)])}

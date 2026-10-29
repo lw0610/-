@@ -5,17 +5,17 @@ metadata:
   display_name: 查看资源
   domain: runtime-control
   runtime: internal
-  keywords: [资源, 资源名称, 文件清单, 资源编号]
+  keywords: [样式, 版面, 资源名称, 资源编号]
 spec:
-  description: 按名称或编号查看经过统一解析的资源及其实际条目；流程内可使用本步骤资源名称。
+  description: 按名称或编号查看模板与样式库中的样式或版面。此工具不查询史料、附件、用户文件夹或制图数据；读取这些材料使用 file_read、file_list 或 document_extract，查找制图数据使用 data_find。
   parameters:
     - name: name
       type: string
       required: true
-      description: 资源名称或编号。
+      description: 模板与样式库中已有的样式或版面名称、编号。
     - name: type
       type: string
-      description: 可选资源类型；不指定时按名称匹配。
+      description: 可选样式或版面类型（style、layout）；不指定时在模板与样式库中按名称匹配。
     - name: offset
       type: integer
       default: 0

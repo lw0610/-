@@ -33,7 +33,7 @@ spec:
     type: output_raster
     description: 输出栅格
 execution:
-  backend_tool: gdal_hillshade
+  backend_tool: gdal:hillshade
   param_mapping:
     INPUT: '{{ INPUT }}'
     BAND: '{{ BAND }}'

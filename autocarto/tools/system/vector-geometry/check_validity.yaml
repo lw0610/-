@@ -7,7 +7,7 @@ metadata:
   domain: vector-geometry
   runtime: qgis
 spec:
-  description: 检查几何图形的有效性
+  description: 检查几何有效性，返回有效、无效及错误数量，不向工程添加检查图层。需要保留具体要素时指定对应输出文件路径。
   parameters:
   - name: INPUT_LAYER
     type: layer
@@ -23,13 +23,13 @@ spec:
     - 2
   - name: VALID_OUTPUT
     type: output_layer
-    description: 有效输出
+    description: 有效要素输出文件（可选）；省略时仅返回统计，不新增工程图层
   - name: INVALID_OUTPUT
     type: output_layer
-    description: 无效输出
+    description: 无效要素输出文件（可选）；省略时仅返回统计，不新增工程图层
   - name: ERROR_OUTPUT
     type: output_layer
-    description: 错误输出
+    description: 错误位置输出文件（可选）；省略时仅返回统计，不新增工程图层
 execution:
   backend_tool: check_validity
   param_mapping:
@@ -39,4 +39,4 @@ execution:
     INVALID_OUTPUT: '{{ INVALID_OUTPUT }}'
     ERROR_OUTPUT: '{{ ERROR_OUTPUT }}'
   output:
-    auto_load: true
+    auto_load: false

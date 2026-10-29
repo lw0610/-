@@ -43,13 +43,16 @@ func CheckRevision(run *RunState, next *plan.Plan, executable *flow.FlowPlan) er
 		// Executable snapshots also contain implicit acquire steps absent from
 		// the model's visible plan. Their consumed/resolved data is just as
 		// immutable as data used by an explicitly declared completed step.
-		consumed := append(append([]string{}, before.Uses...), before.Data...)
+		consumed := append(append(append([]string{}, before.Uses...), before.Data...), before.Inputs...)
 		if run.Plan != nil && i < len(run.Plan.Steps) {
 			consumed = append(consumed, run.Plan.Steps[i].DataIDs...)
 			consumed = append(consumed, run.Plan.Steps[i].DataUses...)
 		}
 		for _, id := range consumed {
-			a, _ := run.CartoPlan.DataByID(id)
+			a, external := run.CartoPlan.DataByID(id)
+			if !external {
+				continue
+			}
 			b, found := next.DataByID(id)
 			if !found || !samePlanData(a, b) {
 				return fmt.Errorf("已完成步骤使用的数据不能改写：%s", a.Name)
@@ -103,6 +106,8 @@ func (c *Controller) Revise(ctx context.Context, sessionID string, next *plan.Pl
 		n, ok := frozen.DataByID(d.ID)
 		if !ok || !samePlanData(d, n) {
 			delete(run.AcquiredInputs, d.ID)
+			delete(run.DataNeeds, d.ID)
+			delete(run.InputDetails, d.ID)
 			for _, r := range run.Plan.Resources {
 				if r.BaseDirFromInput == d.ID {
 					delete(run.EntryOverrides, r.Key)
@@ -192,4 +197,45 @@ func samePlanData(a, b plan.Data) bool {
 		b.Output = b.OutputLabel()
 	}
 	return reflect.DeepEqual(a, b)
+}
+
+// PreserveCompleted is applied before validating a new model proposal. Completed
+// work is execution state, not text the model must reproduce byte for byte.
+func PreserveCompleted(run *RunState, next *plan.Plan) {
+	if run == nil || run.CartoPlan == nil || next == nil {
+		return
+	}
+	completed := map[string]bool{}
+	consumed := map[string]bool{}
+	steps := []plan.Step{}
+	for _, state := range run.Steps {
+		if !preservedStep(state.Status) {
+			break
+		}
+		if old, ok := run.CartoPlan.StepByID(state.ID); ok {
+			steps = append(steps, old)
+			completed[old.ID] = true
+			for _, id := range old.Inputs {
+				consumed[id] = true
+			}
+		}
+	}
+	for _, step := range next.Steps {
+		if !completed[step.ID] {
+			steps = append(steps, step)
+		}
+	}
+	next.Steps = steps
+	data := []plan.Data{}
+	for _, d := range run.CartoPlan.Data {
+		if consumed[d.ID] {
+			data = append(data, d)
+		}
+	}
+	for _, d := range next.Data {
+		if !consumed[d.ID] {
+			data = append(data, d)
+		}
+	}
+	next.Data = data
 }

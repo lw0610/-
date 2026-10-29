@@ -9,12 +9,15 @@ spec:
   description: 在独立临时工程中生成样式或版面 PNG 预览，不改变当前工程图层与版面。
   parameters:
     - {name: resource_path, type: string, required: true, description: 资源主文件的本机绝对路径}
-    - {name: resource_type, type: string, required: true, enum: [style, layout], description: 资源类型}
+    - {name: resource_type, type: string, required: true, enum: [style, layout, layer], description: 资源类型}
     - {name: output_path, type: string, required: true, description: 系统分配的 PNG 输出路径}
     - {name: label_field, type: string, description: 标注字段说明}
     - {name: geometry, type: string, description: point、line、polygon 或 raster}
     - {name: name, type: string, description: 预览中的示例标题}
     - {name: layer_id, type: string, default: '', description: 可选的当前工程图层 ID；仅在独立副本中查看样式的实际数据效果}
+    - {name: sublayer, type: string, description: 图层预览的子图层}
+    - {name: crs, type: string, description: 图层实际坐标系}
+    - {name: style, type: resource, resource_type: style, description: 图层默认样式名称}
 policy:
   visibility: hidden
 execution:
@@ -27,3 +30,6 @@ execution:
     geometry: '{{ geometry }}'
     name: '{{ name }}'
     layer_id: '{{ layer_id }}'
+    sublayer: '{{ sublayer }}'
+    crs: '{{ crs }}'
+    style: '{{ style }}'

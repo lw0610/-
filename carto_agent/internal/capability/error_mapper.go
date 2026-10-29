@@ -17,6 +17,7 @@ type toolErrorPayload struct {
 	Code                string         `json:"code,omitempty"`
 	Retryable           bool           `json:"retryable,omitempty"`
 	ProviderDiagnostics map[string]any `json:"provider_diagnostics,omitempty"`
+	Output              any            `json:"output,omitempty"`
 }
 
 func (DefaultErrorMapper) MapToolError(_ context.Context, _ string, err error) (*schema.ToolResult, error) {
@@ -34,6 +35,10 @@ func (DefaultErrorMapper) MapToolError(_ context.Context, _ string, err error) (
 		payload.Code = strings.TrimSpace(coded.ToolErrorCode())
 		payload.Retryable = coded.ToolRetryable()
 		payload.ProviderDiagnostics = coded.ToolProviderDiagnostics()
+	}
+	var partial interface{ ToolOutput() any }
+	if errors.As(err, &partial) {
+		payload.Output = partial.ToolOutput()
 	}
 	return toolresult.JSON(payload)
 }

@@ -27,6 +27,7 @@ class Worker:
         self.vars = dict(scenario["variables"])
         self.vars.update(inputs=scenario["inputs"])
         self.calls = []
+        self.symbology_checks = []
         self.engine = QGISToolEngine(load_interactive_tools=False)
         self.engine.update_contract(execution_manifest=json.loads((self.out/"authority-manifest.json").read_text()))
         output_manager.set_session_context(SimpleNamespace(session_id=scenario["id"], session_dir=str(self.out), session_subdirs={}, project_path=""))
@@ -46,6 +47,7 @@ class Worker:
         self.plan = None
         self.resource_parameters = {}
         self.linked_resources = []
+        self.builtin_styles = {}
 
     def resolve(self, value):
         if isinstance(value, dict):
@@ -84,6 +86,10 @@ class Worker:
                 return {key:nested(item,schema.get("properties",{}).get(key,{})) for key,item in value.items()}
             return value
         params = dict(params)
+        if name == "layer_load_builtin" and not params.get("style"):
+            selected = self.builtin_styles.get(params["name"])
+            if selected is not None:
+                params["style"] = selected
         for parameter in self.resource_parameters.get(name, []):
             key=parameter["name"]
             selected=params.get(key) or parameter.get("default_resource")
@@ -110,6 +116,21 @@ class Worker:
             assert envelope["success"] or allow_failure, envelope
             result = envelope["output"]
             assert allow_failure or not isinstance(result, dict) or result.get("success", True), result
+        if name in ("layer_set_symbology", "layer_load_style", "layer_load_styles") and isinstance(result, dict) and result.get("success"):
+            from autocarto.tools.system._shared.symbology import read_symbology, symbology_differences
+            data = result["data"]
+            rows = data["items"] if name != "layer_load_style" else [data]
+            for row in rows:
+                item = row["data"] if name == "layer_load_styles" else row
+                assert not item["differences"], item
+                layer = self.project.mapLayer(item["layer_id"])
+                assert layer is not None, item["layer_id"]
+                actual = read_symbology(layer)
+                differences = symbology_differences(item["requested"], actual)
+                self.symbology_checks.append({"tool": name, "layer": layer.name(), "scale": params.get("scale", 1),
+                                               "requested": item["requested"], "actual": actual, "differences": differences,
+                                               "warnings": item.get("warnings", [])})
+                assert not differences, self.symbology_checks[-1]
         self.calls.append({"tool": name, "params": params, "result": result})
         return result
 
@@ -171,6 +192,7 @@ class Worker:
         if op == "init":
             self.plan = request["plan"]
             self.resource_parameters = request["resource_parameters"]
+            self.builtin_styles = request["builtin_styles"]
             return {"ok": True}
         if op == "verify":
             return {"ok": True, "result": self.call(request["tool"], request["params"])}
@@ -180,13 +202,14 @@ class Worker:
             recipe = self.scenario["steps"][step["id"]]
             for action in recipe["actions"]:
                 self.action(action, request["role"]["tools"])
-            outputs = self.resolve(recipe["outputs"])
+            original_outputs = self.resolve(recipe["outputs"])
+            outputs = {key: original_outputs[label] for key,label in request["output_names"].items()}
             required = {item["label"] for item in step["expected_outputs"] if item["required"]}
             assert required <= set(outputs), (required, outputs)
             return {"ok": True, "receipt": {"status": "completed", "summary": "真实工具执行并交接实际产出；确定性角色适配器", "outputs": outputs, "issues": []}}
         if op == "finalize":
             from autocarto.tests.golden.run_golden import snapshot, validate_composed_title, FIXTURES
-            from autocarto.tests.golden.compare_golden import compare_directories
+            from autocarto.tests.golden.compare_golden import compare_directories, compare_snapshots
             layout = self.project.layoutManager().layoutByName(self.scenario["layout"])
             assert layout is not None
             replacements = {str(ROOT): "<repository>", str(self.out): "<run>", str(FIXTURES): "<fixtures>"}
@@ -195,10 +218,26 @@ class Worker:
             invariants = self.resolve(self.scenario.get("invariants", {}))
             result = snapshot(layout, self.scenario.get("golden", "acceptance"), "new", invariants, self.out, replacements)
             validate_composed_title(layout, self.scenario.get("title_geometry", self.scenario.get("golden", "statistical")), self.out)
+            if "expected_map_order" in self.scenario:
+                expected_order = self.resolve(self.scenario["expected_map_order"])
+                assert result["main_map"]["layers"] == expected_order, result["main_map"]
             if "golden" in self.scenario:
                 report = compare_directories(ROOT/"autocarto/tests/golden/baseline"/self.scenario["golden"], self.out)
+                if "expected_map_order" in self.scenario:
+                    # v7/05 explicitly moves boundaries below water/roads. Keep
+                    # the raw v6 delta; all other structure stays under comparison.
+                    report["v6_differences"] = report["differences"]
+                    expected = json.loads((ROOT/"autocarto/tests/golden/baseline"/self.scenario["golden"]/"snapshot.json").read_text())
+                    expected["main_map"]["layers"] = expected_order
+                    report["differences"] = compare_snapshots(expected, result)
+                    report["success"] = not report["differences"]
+                    report["expected_map_order"] = expected_order
                 (self.out/"comparison.json").write_text(json.dumps(report, ensure_ascii=False, indent=2)+"\n")
                 assert report["success"], report
+            if "symbology_scale" in self.scenario:
+                assert len(self.symbology_checks) == 8, self.symbology_checks
+                assert all(item["scale"] == self.scenario["symbology_scale"] for item in self.symbology_checks)
+                (self.out/"symbology-readback.json").write_text(json.dumps(self.symbology_checks, ensure_ascii=False, indent=2)+"\n")
             project_path = str(self.out/"project.qgz")
             assert self.project.write(project_path)
             (self.out/"tool-calls.json").write_text(json.dumps(self.calls, ensure_ascii=False, indent=2, default=str)+"\n")
@@ -212,6 +251,7 @@ def main():
     protocol = sys.stdout
     with contextlib.redirect_stdout(sys.stderr):
         with isolated_qgis(Path(scenario["out"])) as (_, canvas):
+            os.environ["AUTOCARTO_HOME"] = str(Path(scenario["out"])/"controller-runtime")
             worker = Worker(scenario, canvas)
             for line in sys.stdin:
                 try:

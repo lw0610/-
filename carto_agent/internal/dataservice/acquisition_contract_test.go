@@ -115,7 +115,11 @@ func TestAcquisitionContractUnresolvedNeedsNeverComplete(t *testing.T) {
 			if _, err := s.ValidateChoice(context.Background(), found.FindID, nil); err == nil {
 				t.Fatal("unresolved query became a successful empty selection")
 			}
+			if found.FindID != "" {
+				t.Fatal("invalid need received a query ID", found.FindID)
+			}
 			// Also exercise old or restored caches with zero rows.
+			found.FindID = "df-00000000000000000000000000000001"
 			if err := s.saveQuery(query{Request: req, Result: found}); err != nil {
 				t.Fatal(err)
 			}
@@ -143,11 +147,15 @@ func TestAcquisitionContractExplicitScopeSurvivesLaterQuery(t *testing.T) {
 	if err := s.AuthorizeFallback(ctxA, "web_search"); err != nil {
 		t.Fatal("later B changed A's available acquisition methods", err)
 	}
-	requireContractError(t, s.AuthorizeFallback(ctxA, "osm_get_roads"), "DATA_NO_CANDIDATE")
+	if err := s.AuthorizeFallback(ctxA, "osm_get_roads"); err != nil {
+		t.Fatal("v7 must not freeze allowed methods", err)
+	}
 	if err := s.AuthorizeFallback(WithAcquisitionSelection(context.Background(), selectedB), "osm_get_roads"); err != nil {
 		t.Fatal(err)
 	}
-	requireContractError(t, s.AuthorizeFallback(context.Background(), "web_search"), "DATA_QUERY_SCOPE_REQUIRED")
+	if err := s.AuthorizeFallback(context.Background(), "web_search"); err != nil {
+		t.Fatal("settings allow must not require a query", err)
+	}
 	_, err := s.Get(ctxA, GetRequest{FindID: b.FindID})
 	requireContractError(t, err, "DATA_QUERY_SCOPE_MISMATCH")
 	_, err = s.Register(ctxA, contractRegistration(t, s, b.FindID))
@@ -430,7 +438,9 @@ func TestAcquisitionContractApprovedPortalCanReadDownloadAndRegisterWithoutSearc
 	if event, err := contractEvents(resumed); err != nil || event != nil || len(calls) != 2 {
 		t.Fatalf("approved portal cannot use read/download transport: event=%v err=%v calls=%v", event, err, calls)
 	}
-	requireContractError(t, s.AuthorizeFallback(ctx, "web_search"), "DATA_NO_CANDIDATE")
+	if err := s.AuthorizeFallback(ctx, "web_search"); err != nil {
+		t.Fatal("session approval should cover configured search", err)
+	}
 	registration := contractRegistration(t, s, found.FindID)
 	_, err = s.Register(ctx, registration) // web_search is not this query's source.
 	requireContractError(t, err, "DATA_CHOICE_INVALID")
@@ -502,6 +512,48 @@ func contractEvents(iter *adk.AsyncIterator[*adk.AgentEvent]) (*adk.AgentEvent, 
 		if event.Action != nil && event.Action.Interrupted != nil {
 			return event, nil
 		}
+	}
+}
+
+func TestBuildCanSelectMultipleDataQueriesInOneRun(t *testing.T) {
+	s, _ := fixture(t)
+	a, _ := contractExplore(t, s)
+	b, _ := contractExplore(t, s)
+	var scopes []string
+	get := contractTool{name: "data_get", run: func(ctx context.Context, raw string) (any, error) {
+		var request GetRequest
+		if err := json.Unmarshal([]byte(raw), &request); err != nil {
+			return nil, err
+		}
+		result, err := s.Get(ctx, request)
+		if err != nil {
+			return nil, err
+		}
+		selection, ok := AcquisitionSelection(ctx)
+		if !ok || result.Status != "exploration_required" {
+			t.Fatalf("query did not reach local exploration handoff: %+v", result)
+		}
+		scopes = append(scopes, selection.FindID)
+		return result, nil
+	}}
+	chat := &contractModel{messages: []*schema.Message{
+		contractCall("data_get", `{"find_id":"`+a.FindID+`"}`),
+		contractCall("data_get", `{"find_id":"`+b.FindID+`"}`),
+		schema.AssistantMessage("done", nil),
+	}}
+	toolConfig := adk.ToolsConfig{}
+	toolConfig.Tools = []tool.BaseTool{get}
+	agent, err := adk.NewChatModelAgent(context.Background(), &adk.ChatModelAgentConfig{Name: "orchestrator", Description: "offline test", Model: chat, ToolsConfig: toolConfig})
+	if err != nil {
+		t.Fatal(err)
+	}
+	runner := adk.NewRunner(context.Background(), adk.RunnerConfig{Agent: agent})
+	interrupted, err := contractEvents(runner.Query(context.Background(), "prepare two inputs"))
+	if err != nil || interrupted != nil {
+		t.Fatalf("second query blocked by previous selection: %v, %v", interrupted, err)
+	}
+	if len(scopes) != 2 || scopes[0] != a.FindID || scopes[1] != b.FindID {
+		t.Fatalf("wrong query handoff: %v", scopes)
 	}
 }
 
@@ -578,7 +630,7 @@ func TestAcquisitionContractADKToolScopeAndRealOptionResume(t *testing.T) {
 			}
 			interrupt := event.Action.Interrupted.InterruptContexts[0]
 			info, ok := interrupt.Info.(hitl.InterruptPayload)
-			if !ok || !strings.Contains(info.Description, "河流") || strings.Contains(info.Description, "更晚") {
+			if !ok || !strings.Contains(info.Description, "本会话") {
 				t.Fatalf("permission did not target selected A: %+v", interrupt.Info)
 			}
 			// Expiry and a fresh context model real checkpoint restoration, rather
@@ -600,7 +652,7 @@ func TestAcquisitionContractADKToolScopeAndRealOptionResume(t *testing.T) {
 			} else if runErr != nil || onlineCalls != 1 || !s.fallbackApproved(a.FindID) {
 				t.Fatalf("option allow did not authorize one operation: calls=%d err=%v", onlineCalls, runErr)
 			}
-			if len(scopeIDs) != 2 || scopeIDs[0] != a.FindID || scopeIDs[1] != a.FindID || s.fallbackApproved(laterFindID) {
+			if len(scopeIDs) != 2 || scopeIDs[0] != a.FindID || scopeIDs[1] != a.FindID || s.fallbackApproved(laterFindID) != (option == "allow") {
 				t.Fatalf("query scope leaked across tools/resume: %+v", scopeIDs)
 			}
 		})

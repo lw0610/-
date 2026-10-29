@@ -7,11 +7,11 @@ metadata:
   domain: project-state
   runtime: qgis
 spec:
-  description: 获取当前项目中所有图层的详细信息列表
+  description: 按图层面板从上到下的顺序列出图层信息，不包含后台计算对象。检查后台结果时使用 get_active_layer_info 并指定工具返回的 layer_id。
   parameters:
     - name: include_invisible
       type: boolean
-      description: 是否包含不可见图层
+      description: 是否包含图层面板中未勾选或所在分组隐藏的图层，默认 true
 execution:
   handler: handlers.project.get_layers_info
   param_mapping:

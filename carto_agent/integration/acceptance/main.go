@@ -17,8 +17,11 @@ import (
 
 	"github.com/autocarto/carto_agent/internal/api"
 	"github.com/autocarto/carto_agent/internal/config"
+	"github.com/autocarto/carto_agent/internal/dataservice"
+	"github.com/autocarto/carto_agent/internal/datasource"
 	"github.com/autocarto/carto_agent/internal/flow"
 	"github.com/autocarto/carto_agent/internal/flowrun"
+	"github.com/autocarto/carto_agent/internal/layers"
 	cartoplan "github.com/autocarto/carto_agent/internal/plan"
 	"github.com/autocarto/carto_agent/internal/planexec"
 	"github.com/autocarto/carto_agent/internal/resource"
@@ -28,6 +31,8 @@ import (
 )
 
 type scenario struct {
+	LayerImportDir string   `json:"layer_import_dir"`
+	BuiltinLayers  []string `json:"builtin_layers"`
 	// Optional additions let acceptance scenarios consume newly exported artifacts.
 	// Existing built-in scenarios omit these fields and retain their original path.
 	FlowPackage     string `json:"flow_package"`
@@ -51,11 +56,13 @@ type scenario struct {
 	} `json:"steps"`
 }
 type bridge struct {
-	mu         sync.Mutex
-	in         io.WriteCloser
-	out        *bufio.Scanner
-	command    *exec.Cmd
-	transcript *os.File
+	builtinStyles map[string]any
+	plan          *cartoplan.Plan
+	mu            sync.Mutex
+	in            io.WriteCloser
+	out           *bufio.Scanner
+	command       *exec.Cmd
+	transcript    *os.File
 }
 
 func (b *bridge) call(value any) (map[string]any, error) {
@@ -91,7 +98,12 @@ func (b *bridge) Run(ctx context.Context, r flowrun.StepRequest) (flowrun.StepRe
 			resources = append(resources, map[string]any{"key": selected.Key, "label": selected.Label, "handle": selected.Handle()})
 		}
 	}
-	response, e := b.call(map[string]any{"op": "step", "step": r.Step, "role": r.Role, "messages": r.Messages, "resources": resources})
+	outputNames := map[string]string{}
+	step, _ := b.plan.StepByID(r.Step.ID)
+	for _, product := range step.Produces {
+		outputNames[product.ID] = product.Name
+	}
+	response, e := b.call(map[string]any{"op": "step", "step": r.Step, "role": r.Role, "messages": r.Messages, "resources": resources, "output_names": outputNames})
 	if e != nil {
 		return flowrun.StepResult{}, e
 	}
@@ -220,10 +232,6 @@ func run() error {
 	if e != nil {
 		return e
 	}
-	guide, e := store.Resolve(ctx, s.FlowID, library)
-	if e != nil {
-		return e
-	}
 	defs, e := tool.LoadAuthorityDefinitions(filepath.Join(assets, "tools/system"))
 	if e != nil {
 		return e
@@ -236,30 +244,6 @@ func run() error {
 	// real LLM calls; this fixture provider is explicitly recorded as such.
 	env.MainProvider = "offline-fixture"
 	env.VisionProviders = []string{"offline-fixture"}
-	visible, e := fixturePlan(s, env)
-	if e != nil {
-		return e
-	}
-	visible.Guide = &cartoplan.GuideRef{ID: s.FlowID, Version: guide.Doc.Meta.Version}
-	caps := map[string]bool{}
-	for _, p := range env.Packages {
-		if p.Enabled {
-			caps[p.ID] = true
-		}
-	}
-	if e = cartoplan.RequireValid(visible, cartoplan.Environment{ProjectRoot: s.Root, Capabilities: caps}); e != nil {
-		return e
-	}
-	plan, inputs, e := planexec.Build(visible, planexec.BuildOptions{Environment: env, Guide: guide.Doc, Scope: guide.Scope, OriginalSource: "请使用本次明确提供的数据制作验收地图。"})
-	if e != nil {
-		return e
-	}
-	if e = writeJSON(filepath.Join(s.Out, "plan.json"), plan); e != nil {
-		return e
-	}
-	if e = writeJSON(filepath.Join(s.Out, "carto-plan.json"), visible); e != nil {
-		return e
-	}
 	command := exec.CommandContext(ctx, s.Python, filepath.Join(assets, "tests/integration/acceptance/qgis_worker.py"), os.Args[1])
 	errlog, e := os.Create(filepath.Join(s.Out, "qgis.log"))
 	if e != nil {
@@ -285,8 +269,65 @@ func run() error {
 	defer transcript.Close()
 	scan := bufio.NewScanner(out)
 	scan.Buffer(make([]byte, 4096), 32<<20)
-	b := &bridge{in: in, out: scan, command: command, transcript: transcript}
+	b := &bridge{in: in, out: scan, command: command, transcript: transcript, builtinStyles: map[string]any{}}
 	defer func() { in.Close(); command.Wait() }()
+	if e = importLayers(ctx, s, b, library); e != nil {
+		return e
+	}
+	guide, e := store.Resolve(ctx, s.FlowID, library)
+	if e != nil {
+		return e
+	}
+	visible, e := fixturePlan(s, env)
+	if e != nil {
+		return e
+	}
+	visible.Guide = &cartoplan.GuideRef{ID: s.FlowID, Version: guide.Doc.Meta.Version}
+	caps := map[string]bool{}
+	for _, p := range env.Packages {
+		if p.Enabled {
+			caps[p.ID] = true
+		}
+	}
+	if e = cartoplan.RequireValid(visible, cartoplan.Environment{ProjectRoot: s.Root, Capabilities: caps}); e != nil {
+		return e
+	}
+	plan, inputs, e := planexec.Build(visible, planexec.BuildOptions{Environment: env, Guide: guide.Doc, Scope: guide.Scope, OriginalSource: "请使用本次明确提供的数据制作验收地图。"})
+	if e != nil {
+		return e
+	}
+	if e = writeJSON(filepath.Join(s.Out, "plan.json"), plan); e != nil {
+		return e
+	}
+	if e = writeJSON(filepath.Join(s.Out, "carto-plan.json"), visible); e != nil {
+		return e
+	}
+	b.plan = visible
+	precheck := cartoplan.CheckData(visible, func(d *cartoplan.Data) cartoplan.Precheck {
+		if d.Source == "builtin" {
+			catalog, e := layers.NewDefaultLibrary()
+			if e != nil {
+				return cartoplan.Precheck{Status: "unavailable", Reason: e.Error()}
+			}
+			matches, e := catalog.Match(layers.Requirement{ExplicitName: d.Ref, Name: d.Name})
+			if e != nil || len(matches) == 0 {
+				return cartoplan.Precheck{Status: "unavailable", Reason: "内置图层未匹配：" + d.Ref}
+			}
+			return cartoplan.Precheck{Status: "available", Reason: strings.Join(matches[0].Reasons, "；"), Ref: matches[0].Layer.Name}
+		}
+		if _, e := os.Stat(d.Ref); e != nil {
+			return cartoplan.Precheck{Status: "unavailable", Reason: e.Error()}
+		}
+		return cartoplan.Precheck{Status: "available", Reason: "已读取用户夹具路径"}
+	})
+	if e = writeJSON(filepath.Join(s.Out, "precheck.json"), precheck); e != nil {
+		return e
+	}
+	for _, check := range precheck {
+		if check.Status == "unavailable" {
+			return fmt.Errorf("预检失败：%s", check.Reason)
+		}
+	}
 	resourceParameters := map[string][]tool.ToolParameter{}
 	for _, definition := range defs {
 		for _, parameter := range definition.Spec.Parameters {
@@ -295,7 +336,7 @@ func run() error {
 			}
 		}
 	}
-	if _, e = b.call(map[string]any{"op": "init", "plan": plan, "resource_parameters": resourceParameters}); e != nil {
+	if _, e = b.call(map[string]any{"op": "init", "plan": plan, "resource_parameters": resourceParameters, "builtin_styles": b.builtinStyles}); e != nil {
 		return e
 	}
 	eventfile, e := os.Create(filepath.Join(s.Out, "events.jsonl"))
@@ -303,7 +344,7 @@ func run() error {
 		return e
 	}
 	defer eventfile.Close()
-	controller, e := flowrun.NewController(flowrun.Options{Runner: b, Tools: b, Store: flowrun.FileRunStore{}, Events: &events{f: eventfile}})
+	controller, e := flowrun.NewController(flowrun.Options{Runner: b, Tools: b, DataGet: acceptanceData, Store: flowrun.FileRunStore{}, Events: &events{f: eventfile}})
 	if e != nil {
 		return e
 	}
@@ -351,12 +392,17 @@ func fixturePlan(s scenario, env flow.Environment) (*cartoplan.Plan, error) {
 				if label == "底图数据" {
 					label = "中国底图"
 				}
-				p.Data = append(p.Data, cartoplan.Data{ID: id, Name: label, From: "user", Path: path})
+				p.Data = append(p.Data, cartoplan.Data{ID: id, Name: label, Source: "user", Ref: path})
 				uses = append(uses, id)
 				continue
 			}
 		}
 		p.Facts = append(p.Facts, cartoplan.Fact{Name: name, Value: value, From: "固定验收夹具"})
+	}
+	for _, name := range s.BuiltinLayers {
+		id := fmt.Sprintf("d%d", len(p.Data)+1)
+		p.Data = append(p.Data, cartoplan.Data{ID: id, Name: name, Source: "builtin", Ref: name, Kind: "layer"})
+		uses = append(uses, id)
 	}
 	owners := map[string]string{}
 	for _, pkg := range env.Packages {
@@ -390,7 +436,7 @@ func fixturePlan(s scenario, env flow.Environment) (*cartoplan.Plan, error) {
 			}
 		}
 		fixture := s.Steps[id]
-		st := cartoplan.Step{ID: id, Title: "验收步骤 " + id, Uses: uses, Instructions: "执行固定动作配方并返回实际核验产出"}
+		st := cartoplan.Step{ID: id, Title: "验收步骤 " + id, Inputs: append([]string{}, uses...), Instructions: "执行固定动作配方并返回实际核验产出"}
 		if previous != "" {
 			st.DependsOn = []string{previous}
 		}
@@ -430,12 +476,138 @@ func fixturePlan(s scenario, env flow.Environment) (*cartoplan.Plan, error) {
 				o.Type = "file"
 				o.Format = "png"
 			}
-			st.Outputs = append(st.Outputs, o)
+			product := cartoplan.Product{ID: fmt.Sprintf("%s_out%d", id, len(st.Produces)+1), Name: label, Kind: o.Type, Format: o.Format}
+			if product.Kind == "layers" {
+				product.Kind = "layer"
+			}
+			st.Produces = append(st.Produces, product)
 		}
 		p.Steps = append(p.Steps, st)
+		for _, product := range st.Produces {
+			uses = append(uses, product.ID)
+		}
 	}
 	if len(p.Steps) > 0 {
-		p.Deliverables = p.Steps[len(p.Steps)-1].Outputs
+		for _, product := range p.Steps[len(p.Steps)-1].Produces {
+			p.Deliverables = append(p.Deliverables, product.Declaration())
+		}
 	}
 	return p, nil
+}
+
+// Imports run through the same scanner, QGIS header probe and registration
+// library as the UI. Original data are never copied into a flow package.
+func importLayers(ctx context.Context, s scenario, b *bridge, library *resource.Library) error {
+	if len(s.BuiltinLayers) == 0 {
+		return nil
+	}
+	catalog, e := layers.NewDefaultLibrary()
+	if e != nil {
+		return e
+	}
+	sources, e := datasource.Load(filepath.Join(s.Root, "autocarto/tools/system/data-acquisition/assets"), "")
+	if e != nil {
+		return e
+	}
+	draft, e := sources.ScanLocalDraft(ctx, s.LayerImportDir)
+	if e != nil {
+		return e
+	}
+	wanted := map[string]bool{}
+	for _, name := range s.BuiltinLayers {
+		wanted[name] = true
+	}
+	manifests := []layers.Manifest{}
+	inspection := []any{}
+	for _, entry := range draft.Entries {
+		name := strings.TrimSuffix(entry.Name, filepath.Ext(entry.Name))
+		if !wanted[name] {
+			continue
+		}
+		path := filepath.Join(draft.Source.Root, entry.Path)
+		headers, e := dataservice.InspectProvided(ctx, path)
+		if e != nil {
+			return e
+		}
+		for _, header := range headers {
+			response, e := b.Invoke(ctx, "layer_inspect", map[string]any{"path": path, "sublayer": header.Sublayer})
+			if e != nil {
+				return e
+			}
+			raw, _ := json.Marshal(response)
+			var probe struct {
+				Success bool   `json:"success"`
+				Info    string `json:"info"`
+				Data    struct {
+					CRS          string          `json:"crs"`
+					DeclaredCRS  string          `json:"declared_crs"`
+					Geometry     string          `json:"geometry"`
+					Fields       []string        `json:"available_fields"`
+					FeatureCount int64           `json:"feature_count"`
+					Coverage     layers.Coverage `json:"coverage"`
+					Scale        layers.Scale    `json:"scale"`
+				} `json:"data"`
+			}
+			if e = json.Unmarshal(raw, &probe); e != nil {
+				return e
+			}
+			if !probe.Success {
+				return fmt.Errorf("夹具图层探测失败：%s", probe.Info)
+			}
+			inspection = append(inspection, response)
+			m := layers.Manifest{APIVersion: "layer/v1", ID: layers.NewID(), Name: name, Pack: "China_map 验收夹具", File: path, Sublayer: header.Sublayer, CRS: probe.Data.CRS, DeclaredCRS: probe.Data.DeclaredCRS, Geometry: probe.Data.Geometry, FeatureCount: probe.Data.FeatureCount, Coverage: probe.Data.Coverage, Scale: probe.Data.Scale, Source: layers.Source{Title: "显式选择的离线验收夹具", License: "用户提供"}, Compliance: "验收使用文件声明坐标系，不代表已核实真实坐标系或公开制图合规性"}
+			if e = catalog.Suggest(&m, probe.Data.Fields); e != nil {
+				return e
+			}
+			manifests = append(manifests, m)
+		}
+	}
+	items, e := catalog.SaveBatch(manifests)
+	if e != nil {
+		return e
+	}
+	if len(items) != len(s.BuiltinLayers) {
+		return fmt.Errorf("夹具缺少要求的内置图层：需要%d，导入%d", len(s.BuiltinLayers), len(items))
+	}
+	for _, item := range items {
+		params := map[string]any{"resource_type": "layer", "resource_path": item.Path(), "output_path": item.PreviewPath(), "crs": item.CRS, "label_field": item.LabelField, "sublayer": item.Sublayer}
+		if item.DefaultStyle != "" {
+			resolved := library.Resolve(ctx, resource.Ref{Type: "style", Name: item.DefaultStyle}, resource.Scope{})
+			handle := resolved.Handle()
+			if handle == nil {
+				return fmt.Errorf("验收图层默认样式无法使用：%s：%v", item.DefaultStyle, resolved.Problems)
+			}
+			params["style"] = handle
+			b.builtinStyles[item.Name] = handle
+		}
+		if _, e = b.Invoke(ctx, "resource_preview", params); e != nil {
+			return e
+		}
+	}
+	return writeJSON(filepath.Join(s.Out, "imported-layers.json"), map[string]any{"items": items, "inspection": inspection})
+}
+func acceptanceData(ctx context.Context, run *flowrun.RunState, d cartoplan.Data) (flowrun.DataResult, error) {
+	if d.Source == "user" {
+		if _, e := os.Stat(d.Ref); e != nil {
+			return flowrun.DataResult{}, e
+		}
+		return flowrun.DataResult{Value: d.Ref, Details: map[string]any{"source": "user", "path": d.Ref}}, nil
+	}
+	catalog, e := layers.NewDefaultLibrary()
+	if e != nil {
+		return flowrun.DataResult{}, e
+	}
+	requirement := layers.Requirement{ExplicitName: d.Ref, Name: d.Name}
+	if d.Extent != nil {
+		requirement.Extent = d.Extent.BBox
+	}
+	matches, e := catalog.Match(requirement)
+	if e != nil {
+		return flowrun.DataResult{}, e
+	}
+	if len(matches) == 0 {
+		return flowrun.DataResult{}, fmt.Errorf("内置图层匹配失败：%s", d.Ref)
+	}
+	item := matches[0].Layer
+	return flowrun.DataResult{Value: item.Path(), Details: map[string]any{"source": "builtin", "builtin_name": item.Name, "load_method": "layer_load_builtin", "path": item.Path(), "crs": item.CRS}, Notes: []string{item.Name + "：" + item.Source.Title}}, nil
 }

@@ -1,0 +1,161 @@
+[
+  [
+    "省域面",
+    "Polygon",
+    {
+      "symbol": {
+        "type": "fill",
+        "layers": [
+          {
+            "fill": "#FFFFFF",
+            "outline": "#707070",
+            "outline_width": 0.5,
+            "outline_style": "dash_dot"
+          }
+        ]
+      },
+      "labels": {
+        "field": "NAME",
+        "size": 5.2,
+        "color": "#242424",
+        "placement": "horizontal",
+        "display_all": true,
+        "buffer": {
+          "color": "#ffffff",
+          "size": 0.7
+        },
+        "bold": true,
+        "obstacle": false
+      }
+    }
+  ],
+  [
+    "省界",
+    "LineString",
+    {
+      "symbol": {
+        "type": "line",
+        "layers": [
+          {
+            "color": "#2399E9",
+            "width": 0.5
+          },
+          {
+            "color": "#A6CEE3",
+            "width": 0.5,
+            "offset": 0.4
+          }
+        ]
+      },
+      "labels": null
+    }
+  ],
+  [
+    "河流面",
+    "Polygon",
+    {
+      "symbol": {
+        "type": "fill",
+        "layers": [
+          {
+            "fill": "#A6CEE3",
+            "outline": "#A6CEE3",
+            "outline_width": 0.26
+          }
+        ]
+      },
+      "labels": null
+    }
+  ],
+  [
+    "河流线",
+    "LineString",
+    {
+      "symbol": {
+        "type": "line",
+        "layers": [
+          {
+            "color": "#A6CEE3",
+            "width": 0.46
+          }
+        ]
+      },
+      "labels": {
+        "field": "NAME",
+        "size": 10,
+        "unit": "pt",
+        "color": "#A6CEE3",
+        "placement": "line",
+        "merge_lines": true,
+        "repeat": 0
+      }
+    }
+  ],
+  [
+    "高速公路",
+    "LineString",
+    {
+      "symbol": {
+        "type": "line",
+        "layers": [
+          {
+            "color": "#000000",
+            "width": 0.4
+          },
+          {
+            "color": "#C0C0C0",
+            "width": 0.3
+          }
+        ]
+      },
+      "labels": null
+    }
+  ],
+  [
+    "国道",
+    "LineString",
+    {
+      "symbol": {
+        "type": "line",
+        "layers": [
+          {
+            "color": "#FFB957",
+            "width": 0.3
+          }
+        ]
+      },
+      "labels": null
+    }
+  ],
+  [
+    "县级城市驻地",
+    "Point",
+    {
+      "symbol": {
+        "type": "marker",
+        "layers": [
+          {
+            "shape": "circle",
+            "size": 1.8,
+            "fill": null,
+            "outline": "#000000",
+            "outline_width": 0.1
+          },
+          {
+            "shape": "circle",
+            "size": 0.8,
+            "fill": null,
+            "outline": "#000000",
+            "outline_width": 0.1
+          }
+        ]
+      },
+      "labels": {
+        "field": "name",
+        "size": 3,
+        "color": "#000000",
+        "placement": "around_point"
+      }
+    }
+  ]
+]

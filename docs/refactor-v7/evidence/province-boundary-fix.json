@@ -1,0 +1,64 @@
+{
+  "source": "GeoCode-Release 6e3534f7af3675b19bd3c5d54c94022959dccdd2; existing bundled china_*.geojson",
+  "source_url": "https://github.com/zzhonglei/GeoCode-Release",
+  "boundary_api": "QgsAbstractGeometry.boundary()",
+  "before": {
+    "province": {
+      "records": 34,
+      "empty": 19
+    },
+    "city": {
+      "records": 375,
+      "empty": 104
+    },
+    "county": {
+      "records": 2891,
+      "empty": 227
+    }
+  },
+  "after": {
+    "province": {
+      "records": 34,
+      "empty": 0,
+      "lines": 567
+    },
+    "city": {
+      "records": 375,
+      "empty": 0,
+      "lines": 1104
+    },
+    "county": {
+      "records": 2891,
+      "empty": 0,
+      "lines": 3683
+    }
+  },
+  "coordinate_verification": "All published and regenerated exterior/interior ring coordinates equal original GeoJSON rings, by adcode/name",
+  "unchanged_files_sha256": {
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/tools/system/admin-boundaries/assets/中国行政区边界/data/china_county.geojson": "22db6c54b9cb0118ecdcc8a117bf2da4fc24a2229cdba7e6e55dbb5dd56e8246",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/tools/system/admin-boundaries/assets/中国行政区边界/data/china_city.geojson": "a3038b09823597c5b03ea2563455cebcc90559e83764f5d49d38a1403ad8683a",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/tools/system/admin-boundaries/assets/中国行政区边界/data/china_province.geojson": "672b321924533dc2d4eb1429de322e3b612a5c9de860f518828a25e75ba6f262",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/city-seat/data.gpkg": "2c4a02271784c88b61c242824752c1ae60978a002394ac1f9589f0569545bea0",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/city-seat/preview.png": "722f1de252f75005e48414e210990d27f697ccef655e728e25e968e9b934fbae",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/city-seat/layer.yaml": "a87bc43eb23c6e4d072a350cc2efdffc7fe4e7e12213cc2bf6ae90ff782b62ba",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/county-area/preview.png": "978719cbd8945923a83e5871c94aa393ed91254a0ca73b1dce7fb31761d9477c",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/county-area/layer.yaml": "ed2d54c6f4feca59719398bec8cc53333bcebca66b84acb62bcf24c7a12468b4",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/county-seat/data.gpkg": "dff6e5d41b2b1fd05c3acf5ccc55fde564a43d14e7253ec9a2e35386143f723f",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/county-seat/preview.png": "d2832abacfdf5d628ecebec5f326991b3f3822ab6d8d27635bbbf92eb5ce5886",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/county-seat/layer.yaml": "ddb5867d5d4a6ef212dbfa1161c04c651711fdbe8dbe436a321ea3df81188925",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/province-area/preview.png": "4874fc1ac6714b1b5528a438f82a644669906f2768b490403dac379941da4489",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/province-area/layer.yaml": "3db228805890c051b271c13b1e78debf23b8399c99708d9bad5f44b6ba83e1a2",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/city-area/preview.png": "a296701e8982723da01750f491e417dcc9da1665f7c0284999b1abb76fe2a00f",
+    "/Users/zw/研究生/QGIS-agent/enio2/autocarto/data/layers/system/china-admin/city-area/layer.yaml": "b6c80d3f3858017876d31c974d5a4308fcb0349bdb0edd401dced2cf475da868"
+  },
+  "all_unchanged": true,
+  "tests": [
+    "9 QGIS tests PASS in 17.09s",
+    "go test ./internal/layers -count=1 PASS",
+    "Go flow/api TestBuiltinGuidesParse* PASS"
+  ],
+  "limitations": [
+    "Derived outer boundaries are not certified national borders or coastlines",
+    "Geographic completeness of upstream islands is not independently certified"
+  ]
+}

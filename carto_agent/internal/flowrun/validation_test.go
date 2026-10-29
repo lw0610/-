@@ -184,6 +184,9 @@ func TestOutputValidationFilesDatasetsLayersAndReadOnlyTools(t *testing.T) {
 		{"layout", "", "map", true}, {"layout", "", "missing", false}, {"layout", "", 1, false}, {"layers", "", []any{"roads", map[string]any{"layer_id": "id-1"}}, true}, {"layers", "", map[string]any{"id": "id-1"}, true}, {"layers", "", []any{"missing"}, false}, {"layers", "", "roads", true}, {"layers", "", []any{}, false},
 		{"dataset", "", ".", true}, {"dataset", "", "result.txt", false}, {"dataset", "", 10, false}, {"dataset", "route_dataset", ".", false}, {"dataset", "statistical_dataset", ".", false}, {"text", "", "value", true}, {"text", "", "", false}, {"confirmation", "", false, true}, {"any", "", nil, true}, {"unknown", "", "value", false},
 	} {
+		if tc.kind == "layers" {
+			tc.value = layerOutputValues(tc.value)
+		}
 		err := verifyOutput(context.Background(), flow.OutputDeclaration{Type: tc.kind, Format: tc.format}, tc.value, root, tools)
 		if (err == nil) != tc.want {
 			t.Fatalf("%+v: %v", tc, err)
@@ -200,10 +203,14 @@ func TestOutputValidationFilesDatasetsLayersAndReadOnlyTools(t *testing.T) {
 		}
 	}
 	for _, kind := range []string{"layout", "layers"} {
-		if err := verifyOutput(context.Background(), flow.OutputDeclaration{Type: kind}, "map", root, nil); err == nil {
+		var value any = "map"
+		if kind == "layers" {
+			value = []any{"map"}
+		}
+		if err := verifyOutput(context.Background(), flow.OutputDeclaration{Type: kind}, value, root, nil); err == nil {
 			t.Fatal("missing readonly channel accepted")
 		}
-		if err := verifyOutput(context.Background(), flow.OutputDeclaration{Type: kind}, "map", root, toolFunc(func(context.Context, string, map[string]any) (any, error) { return nil, errors.New("offline") })); err == nil {
+		if err := verifyOutput(context.Background(), flow.OutputDeclaration{Type: kind}, value, root, toolFunc(func(context.Context, string, map[string]any) (any, error) { return nil, errors.New("offline") })); err == nil {
 			t.Fatal("tool error ignored")
 		}
 	}

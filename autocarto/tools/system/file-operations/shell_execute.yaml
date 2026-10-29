@@ -3,7 +3,7 @@ kind: Tool
 metadata:
   name: shell_execute
   display_name: 执行本机命令
-  keywords: [命令, shell, Python, 文件转换, 表格处理]
+  keywords: [命令, 命令行, Python脚本, 文件转换, 表格处理]
   domain: file-operations
   runtime: internal
 spec:

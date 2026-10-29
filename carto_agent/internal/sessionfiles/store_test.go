@@ -21,7 +21,7 @@ func put(t *testing.T, path, body string) string {
 }
 func TestRegistrationScanMergeAndRebuild(t *testing.T) {
 	root := t.TempDir()
-	store, e := NewWithRoots("demo", root)
+	store, e := NewAt("demo", root)
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -82,12 +82,12 @@ func TestRegistrationScanMergeAndRebuild(t *testing.T) {
 		t.Fatal(backups)
 	}
 }
-func TestRejectsOutsideAndChangedSymlinkAndUnindexed(t *testing.T) {
+func TestLocalFilesAndIndexedIdentity(t *testing.T) {
 	root := t.TempDir()
-	store, _ := NewWithRoots("demo", root)
-	outside := put(t, filepath.Join(t.TempDir(), "secret.txt"), "private")
-	if _, e := store.Register(outside, Origin{}); e == nil {
-		t.Fatal("outside registered")
+	store, _ := NewAt("demo", root)
+	outside := put(t, filepath.Join(t.TempDir(), "local.txt"), "local source")
+	if _, e := store.Register(outside, Origin{}); e != nil {
+		t.Fatalf("local file registration failed: %v", e)
 	}
 	if _, e := store.Get("f_unknown"); e == nil {
 		t.Fatal("unindexed read")
@@ -102,10 +102,10 @@ func TestRejectsOutsideAndChangedSymlinkAndUnindexed(t *testing.T) {
 		t.Skip(e)
 	}
 	if _, e = store.Get(item.ID); e == nil {
-		t.Fatal("symlink accepted")
+		t.Fatal("old index ID still refers to a replaced file")
 	}
 	entries, e := store.List(true)
-	if e != nil || len(entries) != 0 {
+	if e != nil || len(entries) != 1 {
 		t.Fatal(entries, e)
 	}
 }
@@ -127,7 +127,7 @@ func TestStructuredPathsDoNotInterpretProse(t *testing.T) {
 func TestDirectoryRolesOverrideLegacyGenericData(t *testing.T) {
 	root := t.TempDir()
 	root, _ = filepath.EvalSymlinks(root)
-	store, _ := NewWithRoots("roles", root)
+	store, _ := NewAt("roles", root)
 	var legacy []Item
 	for _, tc := range []struct{ path, want string }{
 		{"exports/result.geojson", "deliverable"},
@@ -169,10 +169,56 @@ func TestDirectoryRolesOverrideLegacyGenericData(t *testing.T) {
 	}
 }
 
+func TestBusinessFileNamesKeepPathsAndUpdateLegacyIndex(t *testing.T) {
+	store, _ := NewAt("file-names", t.TempDir())
+	for _, tc := range []struct {
+		filename string
+		origin   Origin
+		want     string
+	}{
+		{"data.gpkg", Origin{Type: "data_service", Label: "武汉地铁站点"}, "武汉地铁站点.gpkg"},
+		{"data.tif", Origin{Type: "data_service", Label: "武汉人口格网.tif"}, "武汉人口格网.tif"},
+		{"boundary_county_420100.geojson", Origin{Type: "tool", Label: "提取行政区边界", Name: "武汉市区县边界"}, "武汉市区县边界.geojson"},
+		{"result.geojson", Origin{Type: "tool", Label: "导出矢量图层"}, "result.geojson"},
+		{"source.csv", Origin{Type: "scan", Label: "会话文件"}, "source.csv"},
+	} {
+		path := put(t, filepath.Join(store.Dir, "output", tc.filename), "fixture")
+		item, err := store.Register(path, tc.origin)
+		if err != nil || item.Name != tc.want || filepath.Base(item.Path) != tc.filename {
+			t.Fatalf("register changed path or lost business name: %+v %v", item, err)
+		}
+		// Existing indexes have only the physical name; both direct lookup and
+		// list refresh must adopt the business name without changing identity.
+		legacy, err := store.read()
+		if err != nil {
+			t.Fatal(err)
+		}
+		for i := range legacy.Items {
+			legacy.Items[i].Name = filepath.Base(legacy.Items[i].Path)
+		}
+		if err := store.write(legacy); err != nil {
+			t.Fatal(err)
+		}
+		got, err := store.Get(item.ID)
+		if err != nil || got.Name != tc.want || got.Path != item.Path || !got.RegisteredAt.Equal(item.RegisteredAt) {
+			t.Fatalf("legacy lookup: %+v %v", got, err)
+		}
+		items, err := store.List(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, got := range items {
+			if got.ID == item.ID && (got.Name != tc.want || got.Path != item.Path) {
+				t.Fatalf("legacy list: %+v", got)
+			}
+		}
+	}
+}
+
 func TestReplacingFileKeepsOneIdentityAndSidecars(t *testing.T) {
 	root := t.TempDir()
 	root, _ = filepath.EvalSymlinks(root)
-	store, _ := NewWithRoots("replacement", root)
+	store, _ := NewAt("replacement", root)
 	path := put(t, filepath.Join(root, "output", "osm", "roads.geojson"), `{"type":"FeatureCollection","features":[]}`)
 	sidecar := put(t, path+".source.json", `{"source":"test"}`)
 	original, err := store.Register(path, Origin{Type: "tool", Label: "下载"})

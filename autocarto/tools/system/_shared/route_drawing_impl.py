@@ -392,11 +392,11 @@ def draw_bezier_arrow_from_points_handler(params: Dict[str, Any]) -> Dict[str, A
 
 
 
-def _draw_bezier_route_batch(payloads: List[Dict[str, Any]], style_rows) -> List[Dict[str, Any]]:
+def _draw_bezier_route_batch(payloads: List[Dict[str, Any]], style_rows=None) -> List[Dict[str, Any]]:
     """Choose one safe width per semantic route group before writing features."""
     responses = [None] * len(payloads)
     groups = {}
-    automatic_styles = {row.get("reference_style_id") or row["style_id"] for row in style_rows.values() if _to_bool(row.get("auto_width_group"))}
+    automatic_styles = {row.get("reference_style_id") or row["style_id"] for row in (style_rows or {}).values() if _to_bool(row.get("auto_width_group"))}
     for index, payload in enumerate(payloads):
         options = payload.get("options") or {}
         style = str(payload.get("style_id") or "")
@@ -407,7 +407,8 @@ def _draw_bezier_route_batch(payloads: List[Dict[str, Any]], style_rows) -> List
         # Compiled main paths retain their source route ID before this suffix.
         # Other styles retain their existing two-point symbol sizing.
         source = str(payload.get("route_id") or "").split("__render_", 1)[0]
-        if not explicit and (style not in automatic_styles or not source):
+        automatic = "red" in style if style_rows is None else style in automatic_styles
+        if not explicit and (not automatic or not source):
             continue
         scale = float(options.get("width_scale", 1.0))
         key = (str(payload.get("plugin_dir") or ""), str(explicit or source), style, scale)
@@ -477,10 +478,29 @@ def _route_curve_params(kind: str) -> Dict[str, float]:
     return dict(values.get(kind, values["main"]))
 
 
-def _route_reference_style_id(style_id: str, draw_type: str, style_rows) -> str:
-    for row in style_rows.values():
-        if row["style_id"] == str(style_id).strip() and row["draw_type"] == str(draw_type).strip():
-            return row.get("reference_style_id") or style_id
+def _route_reference_style_id(style_id: str, draw_type: str, style_rows=None, route_type: str = "") -> str:
+    if style_rows is not None:
+        for row in style_rows.values():
+            if row["style_id"] == str(style_id).strip() and row["draw_type"] == str(draw_type).strip():
+                return row.get("reference_style_id") or style_id
+        return style_id
+    style_id = str(style_id or "").strip()
+    draw_type = str(draw_type or "").strip().lower()
+    route_type = str(route_type or "").strip().lower()
+    if route_type == "enemy" or draw_type == "multi_start_bezier":
+        if style_id in ("bezier_blue_gradient", "multi_start_bezier_blue_gradient"):
+            return "multi_start_route_blue_reference" if draw_type == "multi_start_bezier" else "route_blue_reference"
+        if style_id in ("bezier_red_gradient", "multi_start_bezier_red_gradient"):
+            return "multi_start_route_red_reference" if draw_type == "multi_start_bezier" else "route_red_reference"
+    if route_type == "branch" or draw_type == "branch_bezier":
+        if style_id == "branch_bezier_red_gradient":
+            return "branch_route_red_reference"
+        if style_id == "branch_bezier_blue_gradient":
+            return "branch_route_blue_reference"
+    if style_id == "bezier_red_gradient":
+        return "route_red_reference"
+    if style_id == "bezier_blue_gradient":
+        return "route_blue_reference"
     return style_id
 
 
@@ -543,6 +563,7 @@ def _build_route_payloads_from_human_tables(dataset_dir: Path, plugin_dir: str, 
         rid = str(_get_col_value(r, ["route_id"], required=True)).strip()
         path_by_route.setdefault(rid, []).append(r)
 
+    use_builtin_style = route_style is None and route_styles is None
     style_rows, style_defaults = route_styles if route_styles is not None else load_route_styles(route_style)
     payloads: List[Dict[str, Any]] = []
     branch_network_groups: Dict[Tuple[str, str], Dict[str, Any]] = {}
@@ -565,7 +586,7 @@ def _build_route_payloads_from_human_tables(dataset_dir: Path, plugin_dir: str, 
         style_id = str(_get_col_value(rr, ["style_id"], default="")).strip() or preset.get("style_id", "")
         if not style_id:
             raise ValueError("路线缺少样式编号: " + str(rid))
-        style_id = _route_reference_style_id(style_id, draw_type, style_rows)
+        style_id = _route_reference_style_id(style_id, draw_type, None if use_builtin_style else style_rows, route_type)
         input_crs = str(_get_col_value(rr, ["input_crs"], default="EPSG:4326")).strip() or "EPSG:4326"
 
         width_scale_raw = _get_col_value(rr, ["width_scale"], default="") or preset.get("width_scale", "")
@@ -613,7 +634,7 @@ def _build_route_payloads_from_human_tables(dataset_dir: Path, plugin_dir: str, 
         # Text belongs to an individual path, including each incoming branch.
         # Old tables without label_text retain a route-name label on the main only.
         configured = next((row for row in style_rows.values() if (row.get("reference_style_id") or row["style_id"]) == style_id), preset)
-        label_paths = _to_bool(configured.get("label_paths", True))
+        label_paths = (route_type == "enemy" or side == "enemy") if use_builtin_style else _to_bool(configured.get("label_paths", True))
         path_labels: List[Dict[str, Any]] = []
 
         def _path_label(path_rows, role, index=0):
@@ -962,13 +983,13 @@ def route_draw_handler(params):
     """只绘制数据集路线与其标签，不创建专题点或版面元素。"""
     try:
         params = dict(params)
-        params["route_style"] = require_handle(params.get("route_style") or "单色", "route_style")
+        route_style = require_handle(params["route_style"], "route_style") if params.get("route_style") else None
         resolved = resolve_route_dataset(params)
         plugin_dir = renderer_directory(params)
-        route_styles = load_route_styles(params.get("route_style"))
+        route_styles = load_route_styles(route_style) if route_style is not None else None
         payloads = _build_route_payloads_from_human_tables(resolved.dataset_dir, plugin_dir,
                     strict=_to_bool(params.get("strict", True)), route_styles=route_styles)
-        responses = _draw_bezier_route_batch(payloads, route_styles[0])
+        responses = _draw_bezier_route_batch(payloads, route_styles[0] if route_styles is not None else None)
         items = []
         for payload, response in zip(payloads, responses):
             data = response.get("data") or {}
@@ -983,7 +1004,7 @@ def route_draw_handler(params):
         layers = [{"id": value, "name": QgsProject.instance().mapLayer(value).name()} for value in ids if QgsProject.instance().mapLayer(value)]
         return {"success": failed == 0, "output": "", "info": "路线绘制完成" if not failed else "部分路线绘制失败",
                 "error_type": "route_draw_failed" if failed else None,
-                "resource": handle_summary(params["route_style"]),
+                **({"resource": handle_summary(route_style)} if route_style is not None else {}),
                 "data": {"dataset": resolved.to_dict(), "routes": routes, "route_labels": labels, "layers": layers}}
     except DatasetHandoffError as exc:
         return dataset_failure(exc)

@@ -7,7 +7,7 @@ import pytest
 
 from autocarto.tests.support.resource_handles import load_handle, resolve_handle
 from autocarto.tools.system._shared.style_set_support import (
-    StyleSetError, legacy_preset, matching_style, preset_catalog,
+    StyleSetError, matching_style,
     qml_geometry_type,
 )
 
@@ -116,15 +116,12 @@ def test_style_set_missing_or_broken_qml_reports_resource_error(tmp_path):
 
 
 def test_style_set_builtin_eleven_qml_files_and_resource_bindings_are_portable():
-    catalog = preset_catalog()
     entries = load_handle("gb-basemap")["entries"]
-    assert len(catalog["entries"]) == len(entries) == 11
+    assert len(entries) == 11
     for entry in entries:
         assert Path(entry["style_path"]).is_file()
         assert qml_geometry_type(entry["style_path"]) in (0, 1, 2)
         assert "/Users/" not in Path(entry["style_path"]).read_text()
-    assert legacy_preset("fill", "省")["legacy_type"] == "province"
-    assert legacy_preset("line", "invalid") is None
 
 
 @pytest.mark.parametrize("filename", ["对照表.csv", "对照表.xlsx", "mapping.csv", "mapping.xlsx", "symbol_mapping.csv", "symbol_mapping.xlsx"])
@@ -170,15 +167,14 @@ def test_table_reader_keeps_first_sheet_default_and_explicit_sheet_index(tmp_pat
         read_table_rows(path, required=("symbol_type", "svg_path"))
 
 
-def test_legacy_presets_are_hidden_and_have_private_frozen_assets():
+def test_fixed_type_tools_and_private_presets_are_removed():
     import yaml
-    from autocarto.tools.system._shared.tool_assets import tool_asset_path
     root = Path(__file__).resolve().parents[1]
     content = (root / "skills/system/cartography-styling/SKILL.md").read_text()
     package = yaml.safe_load(content.split("---", 2)[1])
-    assert not {"layer_set_marker_symbol", "layer_set_line_symbol", "layer_set_fill_symbol"}.intersection(package["tools"])
-    assert not (Path(load_handle("gb-basemap")["root"]) / "presets.json").exists()
-    for entry in preset_catalog()["entries"]:
-        path = tool_asset_path("cartography", "basemap-legacy-styles", entry["style_file"])
-        assert path.is_file()
-        assert qml_geometry_type(path) in (0, 1, 2)
+    assert "layer_set_symbology" in package["tools"]
+    for name in ("layer_set_marker_symbol", "layer_set_line_symbol", "layer_set_fill_symbol"):
+        assert name not in package["tools"]
+        assert not (root / "tools/system/cartography" / (name + ".yaml")).exists()
+    assert not (root / "tools/system/cartography/assets/basemap-legacy-presets.json").exists()
+    assert not (root / "tools/system/cartography/assets/basemap-legacy-styles").exists()
