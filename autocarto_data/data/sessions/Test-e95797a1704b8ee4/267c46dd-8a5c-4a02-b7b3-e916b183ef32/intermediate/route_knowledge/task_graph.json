@@ -1,0 +1,813 @@
+{
+  "actors": [
+    {
+      "actor_id": "act_north_reinforcement",
+      "aliases": [],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev1"
+      ],
+      "name": "北路增援队"
+    },
+    {
+      "actor_id": "act_northwest_reinforcement",
+      "aliases": [],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev2"
+      ],
+      "name": "西北路增援队"
+    },
+    {
+      "actor_id": "act_reinforcement_column",
+      "aliases": [
+        "合编后的主力部队"
+      ],
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev3",
+        "ev4"
+      ],
+      "name": "增援纵队"
+    },
+    {
+      "actor_id": "act_main_force",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "ev3"
+      ],
+      "name": "主力部队（驻守洛阳）"
+    },
+    {
+      "actor_id": "act_detachment",
+      "aliases": [],
+      "confidence": 0.9,
+      "evidence_refs": [
+        "ev6"
+      ],
+      "name": "支队（平顶山分兵）"
+    }
+  ],
+  "callouts": [
+    {
+      "anchor_ref": "evt_rendezvous_luoyang",
+      "anchor_ref_type": "event",
+      "body": "1934年11月上旬，增援纵队经郑州抵达洛阳，与驻守洛阳的主力部队会师。",
+      "callout_id": "co_luoyang_rendezvous",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "straight",
+      "preferred_side": "NE",
+      "priority": 1.0,
+      "template": "text_only",
+      "title": "洛阳会师",
+      "width_mm": 60
+    },
+    {
+      "anchor_ref": "evt_battle_pingdingshan",
+      "anchor_ref_type": "event",
+      "body": "1934年11月中旬，合编后的主力部队在平顶山发生战斗。战斗结束后分兵两路：主力南下南阳，支队西南向内乡。",
+      "callout_id": "co_pingdingshan_battle",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "straight",
+      "preferred_side": "SE",
+      "priority": 1.0,
+      "template": "text_only",
+      "title": "平顶山战斗",
+      "width_mm": 60
+    }
+  ],
+  "events": [
+    {
+      "actor_refs": [
+        "act_north_reinforcement"
+      ],
+      "confidence": 0.95,
+      "event_id": "evt_depart_xinxiang",
+      "event_type": "departure",
+      "evidence_refs": [
+        "ev1",
+        "ev7"
+      ],
+      "location_ref": "se_xinxiang",
+      "name": "北路增援队出发",
+      "time_text": "1934年11月上旬"
+    },
+    {
+      "actor_refs": [
+        "act_northwest_reinforcement"
+      ],
+      "confidence": 0.95,
+      "event_id": "evt_depart_jiaozuo",
+      "event_type": "departure",
+      "evidence_refs": [
+        "ev2",
+        "ev7"
+      ],
+      "location_ref": "se_jiaozuo",
+      "name": "西北路增援队出发",
+      "time_text": "1934年11月上旬"
+    },
+    {
+      "actor_refs": [
+        "act_north_reinforcement",
+        "act_northwest_reinforcement"
+      ],
+      "confidence": 0.95,
+      "description": "北路增援队与西北路增援队在郑州会合，合编为增援纵队",
+      "event_id": "evt_converge_zhengzhou",
+      "event_type": "meeting",
+      "evidence_refs": [
+        "ev3"
+      ],
+      "location_ref": "se_zhengzhou",
+      "name": "郑州会合",
+      "priority": 0.9,
+      "time_text": "1934年11月上旬"
+    },
+    {
+      "actor_refs": [
+        "act_reinforcement_column",
+        "act_main_force"
+      ],
+      "confidence": 0.95,
+      "description": "增援纵队抵达洛阳，与驻守洛阳的主力部队会师",
+      "event_id": "evt_rendezvous_luoyang",
+      "event_type": "rendezvous",
+      "evidence_refs": [
+        "ev3"
+      ],
+      "location_ref": "se_luoyang",
+      "name": "洛阳会师",
+      "priority": 1.0,
+      "time_text": "1934年11月上旬"
+    },
+    {
+      "actor_refs": [
+        "act_reinforcement_column"
+      ],
+      "confidence": 0.95,
+      "event_id": "evt_depart_luoyang",
+      "event_type": "departure",
+      "evidence_refs": [
+        "ev4",
+        "ev8"
+      ],
+      "location_ref": "se_luoyang",
+      "name": "主力部队出发",
+      "time_text": "1934年11月中旬"
+    },
+    {
+      "actor_refs": [
+        "act_reinforcement_column"
+      ],
+      "confidence": 0.95,
+      "description": "主力部队在平顶山发生战斗",
+      "event_id": "evt_battle_pingdingshan",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev4"
+      ],
+      "location_ref": "se_pingdingshan",
+      "name": "平顶山战斗",
+      "priority": 1.0,
+      "time_text": "1934年11月中旬"
+    },
+    {
+      "actor_refs": [
+        "act_reinforcement_column",
+        "act_detachment"
+      ],
+      "confidence": 0.95,
+      "description": "战斗结束后分为两路：主力向南、支队向西南",
+      "event_id": "evt_fork_pingdingshan",
+      "event_type": "turn",
+      "evidence_refs": [
+        "ev5",
+        "ev6"
+      ],
+      "location_ref": "se_pingdingshan",
+      "name": "平顶山分兵",
+      "priority": 0.9,
+      "time_text": "1934年11月中旬"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "ev1",
+      "quote": "北路增援队从新乡出发，依次经过获嘉、原阳，向郑州前进"
+    },
+    {
+      "evidence_id": "ev2",
+      "quote": "西北路增援队同时从焦作出发，依次经过修武、武陟、荥泽，也向郑州前进"
+    },
+    {
+      "evidence_id": "ev3",
+      "quote": "两支增援队在郑州会合，随后合编为增援纵队，经新密、登封、巩义抵达洛阳，并与驻守洛阳的主力部队会师"
+    },
+    {
+      "evidence_id": "ev4",
+      "quote": "合编后的主力部队从洛阳出发，依次经过伊川、汝阳、汝州和宝丰，在平顶山发生战斗"
+    },
+    {
+      "evidence_id": "ev5",
+      "quote": "部队在平顶山分为两路：主力继续向南，经叶县、方城，最终抵达南阳"
+    },
+    {
+      "evidence_id": "ev6",
+      "quote": "另一支支队从平顶山向西南行动，经鲁山、南召、镇平，最终抵达内乡"
+    },
+    {
+      "evidence_id": "ev7",
+      "quote": "1934年11月上旬"
+    },
+    {
+      "evidence_id": "ev8",
+      "quote": "11月中旬"
+    }
+  ],
+  "output_constraints": {
+    "self_intersection_policy": "allow_with_overpass"
+  },
+  "point_presentations": [
+    {
+      "anchor_ref": "se_zhengzhou",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "pp_zhengzhou_meeting",
+      "priority": 0.9,
+      "symbol_type": "meeting",
+      "visible": true
+    },
+    {
+      "anchor_ref": "se_luoyang",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "pp_luoyang_rendezvous",
+      "priority": 1.0,
+      "symbol_type": "rendezvous",
+      "visible": true
+    },
+    {
+      "anchor_ref": "se_pingdingshan",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "pp_pingdingshan_battle",
+      "priority": 1.0,
+      "symbol_type": "battle",
+      "visible": true
+    },
+    {
+      "anchor_ref": "se_pingdingshan",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "pp_pingdingshan_turn",
+      "priority": 0.85,
+      "symbol_type": "turning_point",
+      "visible": true
+    }
+  ],
+  "routes": [
+    {
+      "confidence": 0.95,
+      "enabled": true,
+      "evidence_refs": [
+        "ev1",
+        "ev2",
+        "ev3"
+      ],
+      "name": "增援合流与洛阳会师",
+      "paths": [
+        {
+          "attach_ref": "se_zhengzhou",
+          "direction": "toward_attach",
+          "nodes": [
+            {
+              "ref_id": "se_xinxiang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_huojia",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yuanyang",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "path_north_incoming",
+          "role": "incoming"
+        },
+        {
+          "attach_ref": "se_zhengzhou",
+          "direction": "toward_attach",
+          "nodes": [
+            {
+              "ref_id": "se_jiaozuo",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_xiuwu",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_wuzhi",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_xingze",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "path_northwest_incoming",
+          "role": "incoming"
+        },
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "se_zhengzhou",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_xinmi",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_dengfeng",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_gongyi",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_luoyang",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "path_main_to_luoyang",
+          "role": "main"
+        }
+      ],
+      "route_id": "rte_converge_to_luoyang",
+      "side": "friendly",
+      "style_ref": "friendly_multi_start_red",
+      "topology": "multi_start"
+    },
+    {
+      "confidence": 0.95,
+      "effective_width_scale": 1.5,
+      "enabled": true,
+      "evidence_refs": [
+        "ev4",
+        "ev5",
+        "ev6"
+      ],
+      "name": "主力南进与支队分兵",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "se_luoyang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yichuan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_ruyang",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_ruzhou",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_baofeng",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_pingdingshan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_yexian",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_fangcheng",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_nanyang",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "path_main_to_nanyang",
+          "role": "main"
+        },
+        {
+          "attach_ref": "se_pingdingshan",
+          "direction": "away_from_attach",
+          "nodes": [
+            {
+              "ref_id": "se_lushan",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_nanzhao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_zhenping",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "se_neixiang",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "path_branch_to_neixiang",
+          "role": "branch"
+        }
+      ],
+      "route_id": "rte_main_and_branch",
+      "side": "friendly",
+      "style_ref": "friendly_branch_red",
+      "topology": "branch"
+    }
+  ],
+  "schema_version": "1.0",
+  "spatial_entities": [
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "description": "北路增援队出发地",
+      "entity_id": "se_xinxiang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev1"
+      ],
+      "factual": true,
+      "lat": 35.3,
+      "lon": 113.92,
+      "map_role": "route_node",
+      "name": "新乡"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_huojia",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev1"
+      ],
+      "factual": true,
+      "lat": 35.27,
+      "lon": 113.66,
+      "map_role": "route_node",
+      "name": "获嘉"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_yuanyang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev1"
+      ],
+      "factual": true,
+      "lat": 35.05,
+      "lon": 113.96,
+      "map_role": "route_node",
+      "name": "原阳"
+    },
+    {
+      "coordinate_confidence": 0.9,
+      "coordinate_source": "llm_estimated",
+      "description": "两路增援队会合点",
+      "entity_id": "se_zhengzhou",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev1",
+        "ev2",
+        "ev3"
+      ],
+      "factual": true,
+      "lat": 34.76,
+      "lon": 113.65,
+      "map_role": "event_anchor",
+      "name": "郑州"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_jiaozuo",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev2"
+      ],
+      "factual": true,
+      "lat": 35.22,
+      "lon": 113.24,
+      "map_role": "route_node",
+      "name": "焦作"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_xiuwu",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev2"
+      ],
+      "factual": true,
+      "lat": 35.23,
+      "lon": 113.45,
+      "map_role": "route_node",
+      "name": "修武"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_wuzhi",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev2"
+      ],
+      "factual": true,
+      "lat": 35.1,
+      "lon": 113.4,
+      "map_role": "route_node",
+      "name": "武陟"
+    },
+    {
+      "coordinate_confidence": 0.75,
+      "coordinate_source": "llm_estimated",
+      "description": "历史地名，位于今荥阳东北",
+      "entity_id": "se_xingze",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev2"
+      ],
+      "factual": true,
+      "lat": 34.86,
+      "lon": 113.47,
+      "map_role": "route_node",
+      "name": "荥泽"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_xinmi",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev3"
+      ],
+      "factual": true,
+      "lat": 34.54,
+      "lon": 113.39,
+      "map_role": "route_node",
+      "name": "新密"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_dengfeng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev3"
+      ],
+      "factual": true,
+      "lat": 34.45,
+      "lon": 113.05,
+      "map_role": "route_node",
+      "name": "登封"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_gongyi",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev3"
+      ],
+      "factual": true,
+      "lat": 34.76,
+      "lon": 113.02,
+      "map_role": "route_node",
+      "name": "巩义"
+    },
+    {
+      "coordinate_confidence": 0.9,
+      "coordinate_source": "llm_estimated",
+      "description": "会师地点，主力驻地",
+      "entity_id": "se_luoyang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev3",
+        "ev4"
+      ],
+      "factual": true,
+      "lat": 34.62,
+      "lon": 112.45,
+      "map_role": "event_anchor",
+      "name": "洛阳"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_yichuan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev4"
+      ],
+      "factual": true,
+      "lat": 34.42,
+      "lon": 112.42,
+      "map_role": "route_node",
+      "name": "伊川"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_ruyang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev4"
+      ],
+      "factual": true,
+      "lat": 34.15,
+      "lon": 112.47,
+      "map_role": "route_node",
+      "name": "汝阳"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_ruzhou",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev4"
+      ],
+      "factual": true,
+      "lat": 34.17,
+      "lon": 112.84,
+      "map_role": "route_node",
+      "name": "汝州"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_baofeng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev4"
+      ],
+      "factual": true,
+      "lat": 33.88,
+      "lon": 113.05,
+      "map_role": "route_node",
+      "name": "宝丰"
+    },
+    {
+      "coordinate_confidence": 0.9,
+      "coordinate_source": "llm_estimated",
+      "description": "战斗地点，分叉点",
+      "entity_id": "se_pingdingshan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev4",
+        "ev5",
+        "ev6"
+      ],
+      "factual": true,
+      "lat": 33.75,
+      "lon": 113.19,
+      "map_role": "event_anchor",
+      "name": "平顶山"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_yexian",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev5"
+      ],
+      "factual": true,
+      "lat": 33.63,
+      "lon": 113.35,
+      "map_role": "route_node",
+      "name": "叶县"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_fangcheng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev5"
+      ],
+      "factual": true,
+      "lat": 33.25,
+      "lon": 113.0,
+      "map_role": "route_node",
+      "name": "方城"
+    },
+    {
+      "coordinate_confidence": 0.9,
+      "coordinate_source": "llm_estimated",
+      "description": "主力最终目的地",
+      "entity_id": "se_nanyang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev5"
+      ],
+      "factual": true,
+      "lat": 33.0,
+      "lon": 112.53,
+      "map_role": "route_node",
+      "name": "南阳"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_lushan",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev6"
+      ],
+      "factual": true,
+      "lat": 33.74,
+      "lon": 112.91,
+      "map_role": "route_node",
+      "name": "鲁山"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_nanzhao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev6"
+      ],
+      "factual": true,
+      "lat": 33.49,
+      "lon": 112.43,
+      "map_role": "route_node",
+      "name": "南召"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "se_zhenping",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev6"
+      ],
+      "factual": true,
+      "lat": 33.04,
+      "lon": 112.23,
+      "map_role": "route_node",
+      "name": "镇平"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "description": "支队最终目的地",
+      "entity_id": "se_neixiang",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev6"
+      ],
+      "factual": true,
+      "lat": 33.05,
+      "lon": 111.85,
+      "map_role": "route_node",
+      "name": "内乡"
+    },
+    {
+      "coordinate_confidence": 0.9,
+      "coordinate_source": "llm_estimated",
+      "description": "用户指定为地图背景地点，不属于行军路线",
+      "entity_id": "se_kaifeng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev7"
+      ],
+      "factual": true,
+      "lat": 34.79,
+      "lon": 114.31,
+      "map_role": "background",
+      "name": "开封"
+    }
+  ],
+  "task": {
+    "input_crs": "EPSG:4326",
+    "map_type": "marching_route",
+    "task_id": "henan-marching-route-1934",
+    "title": "1934年河南省行军路线图"
+  }
+}

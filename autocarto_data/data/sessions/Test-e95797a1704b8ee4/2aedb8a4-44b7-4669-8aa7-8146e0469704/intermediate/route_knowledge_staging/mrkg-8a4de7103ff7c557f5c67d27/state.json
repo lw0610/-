@@ -1,0 +1,560 @@
+{
+  "format_version": 1,
+  "extraction_id": "mrkg-8a4de7103ff7c557f5c67d27",
+  "status": "collecting",
+  "revision": 1,
+  "schema_version": "1.0",
+  "contract_id": "tkg-v1-sha256:8a4de7103ff7c557f5c67d27c9a166c4c1fb633f2953bb0d6651269dc1d70f85",
+  "source_sha256": "3e763856ac5d83dd599f068fcba72a993cd898af546a5973ad1695dd2f3694cc",
+  "source_kind": "current_user_message",
+  "source_length": 2878,
+  "source_artifact_id": "marching_route_source/current_session:3e763856ac5d83dd599f068f",
+  "knowledge_artifact_id": "marching_route_graph/current_session:mrkg-8a4de7103ff7c557f5c67d27",
+  "units": [
+    {
+      "unit_id": "U00001",
+      "start": 0,
+      "end": 31,
+      "sha256": "58c108af8259198460effd417dadaab8b59f380489b9e28e21dea82b5ba23058"
+    },
+    {
+      "unit_id": "U00002",
+      "start": 31,
+      "end": 82,
+      "sha256": "b5df5385d577d7a060c5d72fa7c56fba3502e9bf7a199fa1c4b45bc22057b3c2"
+    },
+    {
+      "unit_id": "U00003",
+      "start": 82,
+      "end": 122,
+      "sha256": "5c8757f5828c7e423b10f83912a1a84e281d9c2c6babaac1b43d62b77ff5cad4"
+    },
+    {
+      "unit_id": "U00004",
+      "start": 122,
+      "end": 130,
+      "sha256": "152e331f276b94ad88c1d93230f2d87c55442a28ae1c941f3c0d4fa2a17aa5a4"
+    },
+    {
+      "unit_id": "U00005",
+      "start": 132,
+      "end": 157,
+      "sha256": "19b1feef2b15f3107cf7370e2c6a6f33d78af5a57eb9298c73dd029de5d3e621"
+    },
+    {
+      "unit_id": "U00006",
+      "start": 159,
+      "end": 297,
+      "sha256": "0fe1593e3ed2638f469b0e852ba8ef025af4f64bb801d8dd21cd728ccdfafee4"
+    },
+    {
+      "unit_id": "U00007",
+      "start": 299,
+      "end": 401,
+      "sha256": "77aa736e9eb173bad6ea85e5da5740200973acdd3556ab3cc9fc5a4703585b82"
+    },
+    {
+      "unit_id": "U00008",
+      "start": 403,
+      "end": 600,
+      "sha256": "757047ccf0a8b8de958967dee25a84307f99b058407ef1ad49b35c32e298e7cc"
+    },
+    {
+      "unit_id": "U00009",
+      "start": 602,
+      "end": 685,
+      "sha256": "6e19ec6de875a8538a057c53c2f44b3d4218c134b6fbab4da6c00c17145b07c1"
+    },
+    {
+      "unit_id": "U00010",
+      "start": 687,
+      "end": 875,
+      "sha256": "12193b654a9d7bce0869e4e4dc5a12870c2f2591113c517922aa85ef3961dab0"
+    },
+    {
+      "unit_id": "U00011",
+      "start": 877,
+      "end": 892,
+      "sha256": "80548dd52d7576b2380c6574baf25b6affa3e5741d5fdb3409a495c288467ceb"
+    },
+    {
+      "unit_id": "U00012",
+      "start": 892,
+      "end": 985,
+      "sha256": "ec31c233bd2f802e1be61c81e34ed3cd3e3970588e680cc1e58d55bf652599c8"
+    },
+    {
+      "unit_id": "U00013",
+      "start": 985,
+      "end": 1015,
+      "sha256": "1ac38b8eb88cd79bac6ff46574d707eae9d505b6db0205b1b92498ab4606b922"
+    },
+    {
+      "unit_id": "U00014",
+      "start": 1015,
+      "end": 1044,
+      "sha256": "33882c63f6f23ada4110ec384906d88ec8762192051841c6e5bb922793de4bed"
+    },
+    {
+      "unit_id": "U00015",
+      "start": 1046,
+      "end": 1078,
+      "sha256": "122c82385785901ebede87ce4f3b78fd555f4863a5bff02912baa3d3f408c930"
+    },
+    {
+      "unit_id": "U00016",
+      "start": 1078,
+      "end": 1147,
+      "sha256": "f0384a79ce5e9b7da7942b5f5234281bacd0fdf9c75ad067215af395d54f2781"
+    },
+    {
+      "unit_id": "U00017",
+      "start": 1147,
+      "end": 1235,
+      "sha256": "edf14533cd19fe292147d7c6ee993addae4765d2fc1b4775abe7dc451705011c"
+    },
+    {
+      "unit_id": "U00018",
+      "start": 1237,
+      "end": 1325,
+      "sha256": "72b592f1fe6e74a2a38448a25edbc52d37cf890a2bdd5e014f9285331df8e46a"
+    },
+    {
+      "unit_id": "U00019",
+      "start": 1325,
+      "end": 1363,
+      "sha256": "111c3e3fb3e27bff84cfd5e1fcac1238ef16ea8971f5937261d8d2379b4e102b"
+    },
+    {
+      "unit_id": "U00020",
+      "start": 1363,
+      "end": 1394,
+      "sha256": "420202ffac7713b8a2de09b5cd781d917af0ae824081ac14f84769ad806b43bc"
+    },
+    {
+      "unit_id": "U00021",
+      "start": 1396,
+      "end": 1422,
+      "sha256": "8b3c6b0e9041c584eec7ff05b6a5a4b394e3040e95caf75cd13f8c7c621aa5e2"
+    },
+    {
+      "unit_id": "U00022",
+      "start": 1422,
+      "end": 1436,
+      "sha256": "d5432cd75c3a3ab3603d576ccfd328a79d10b654ba9846dfee82742cc8f78ed5"
+    },
+    {
+      "unit_id": "U00023",
+      "start": 1436,
+      "end": 1463,
+      "sha256": "2bb3f113322fbe3c3a24251af99e84180393694697ce238134c93497de4af8a6"
+    },
+    {
+      "unit_id": "U00024",
+      "start": 1463,
+      "end": 1479,
+      "sha256": "368f5ed18bbbdd8b783d5995c643ca8674e5b3f8dcbeaea2087387612d4889e2"
+    },
+    {
+      "unit_id": "U00025",
+      "start": 1479,
+      "end": 1521,
+      "sha256": "b86a4ae21983c918eedc6afed54c314a278cf5b593ed44847df86907b1da8f01"
+    },
+    {
+      "unit_id": "U00026",
+      "start": 1521,
+      "end": 1538,
+      "sha256": "af54399883e874f46f7a0284f63d9a3115c5f58545cd6d9e0d0e4d2fd6ee61c9"
+    },
+    {
+      "unit_id": "U00027",
+      "start": 1540,
+      "end": 1614,
+      "sha256": "a93d357e9ce944ee65d58236c977c1f297f6b74efd244b2f842244bfb6e81b9a"
+    },
+    {
+      "unit_id": "U00028",
+      "start": 1616,
+      "end": 1739,
+      "sha256": "0354ce9ca627347816320ef13264a290befdb59fb26feefd3df1aa8feae52d1c"
+    },
+    {
+      "unit_id": "U00029",
+      "start": 1741,
+      "end": 1805,
+      "sha256": "b058f05273665d1fe09f9642a1166c8c72d497a6482b23a25090c21a5604258d"
+    },
+    {
+      "unit_id": "U00030",
+      "start": 1807,
+      "end": 1841,
+      "sha256": "7a3d81b15c9084fd2d8135df58d5ff79c28739180a9d28869c6a29b614485d63"
+    },
+    {
+      "unit_id": "U00031",
+      "start": 1841,
+      "end": 1917,
+      "sha256": "97b04811d3fa94c01b83cbd595b2fe41abf53d0f3f01ccae353cd76f3464413b"
+    },
+    {
+      "unit_id": "U00032",
+      "start": 1917,
+      "end": 1956,
+      "sha256": "f9b4306237bb807c01c0694e607113b999a69f847648207ae9990b42361217d9"
+    },
+    {
+      "unit_id": "U00033",
+      "start": 1958,
+      "end": 1980,
+      "sha256": "c4f154d957bff94205c489cbef2ebe763c7ed7eeb340221b2bd25b6e91297362"
+    },
+    {
+      "unit_id": "U00034",
+      "start": 1981,
+      "end": 1994,
+      "sha256": "db2f4e9c0ee7c45c4e2cb9f742bb79af2c63d501e2c5e03928635ef0486de9a9"
+    },
+    {
+      "unit_id": "U00035",
+      "start": 1995,
+      "end": 2051,
+      "sha256": "cb45d66600438a3fbdfbaaa97fa687b412684170907f775a31a6bdcd83746820"
+    },
+    {
+      "unit_id": "U00036",
+      "start": 2052,
+      "end": 2149,
+      "sha256": "8fe938c42117cac7bbf34fb6091a63012b1b0362bd93ab40780ef05e1a6836b9"
+    },
+    {
+      "unit_id": "U00037",
+      "start": 2151,
+      "end": 2172,
+      "sha256": "276363f1cfb12684467a49745ea8fc18fff781416650c2942faf0cb22819367c"
+    },
+    {
+      "unit_id": "U00038",
+      "start": 2173,
+      "end": 2187,
+      "sha256": "6be5dde9cb3214e00f12f098e646ec1afe17687ab18327deb9511dcc92ac2e14"
+    },
+    {
+      "unit_id": "U00039",
+      "start": 2188,
+      "end": 2219,
+      "sha256": "d0a453adc4b1d81bd48a49a05b5341e20278333a92ace069bcab0092fb62ae3a"
+    },
+    {
+      "unit_id": "U00040",
+      "start": 2220,
+      "end": 2315,
+      "sha256": "3244e4360b5688857cac20eb37ef950a0b8b7710173651ca996adb1cb73559ac"
+    },
+    {
+      "unit_id": "U00041",
+      "start": 2317,
+      "end": 2339,
+      "sha256": "808cacb0962e796de8826df5eb7dd8922fab17aaf9ee0ad65948d089b46d4f72"
+    },
+    {
+      "unit_id": "U00042",
+      "start": 2340,
+      "end": 2350,
+      "sha256": "4701d1284402cd70fa0ec3308f1f57a59d48bb8e6897755eb567bf257871dadc"
+    },
+    {
+      "unit_id": "U00043",
+      "start": 2351,
+      "end": 2393,
+      "sha256": "27c3f4cd7fdeaa404ef7a10ba3bbf28e5f0fbb99ad005c84fcf3e256c870cf3c"
+    },
+    {
+      "unit_id": "U00044",
+      "start": 2394,
+      "end": 2491,
+      "sha256": "009b171d284c163aaa99ca8b7e1779de441b813a9f0805d3ab3326b2cfccf775"
+    },
+    {
+      "unit_id": "U00045",
+      "start": 2493,
+      "end": 2515,
+      "sha256": "edf6ee1122038e163d04f603e01e92c95062b1c9cef4fb29e6217412633660f7"
+    },
+    {
+      "unit_id": "U00046",
+      "start": 2516,
+      "end": 2528,
+      "sha256": "a7d8027203ebaf54d262ae53f743acfb8291edb5dde162444999a4f5f0f438ad"
+    },
+    {
+      "unit_id": "U00047",
+      "start": 2529,
+      "end": 2560,
+      "sha256": "84fd23d2e5a9025667d77d9dde326ab8a23a544700983684baf44f2cd0e5e2f1"
+    },
+    {
+      "unit_id": "U00048",
+      "start": 2561,
+      "end": 2656,
+      "sha256": "78b0948db0dbc218de1e895342b6fc4712c61f586fcf256238dcd93d30086c74"
+    },
+    {
+      "unit_id": "U00049",
+      "start": 2658,
+      "end": 2680,
+      "sha256": "f9d6c03fa47b23249d959ece349b09dd22e4dae85d34501b5884a88ff55250bd"
+    },
+    {
+      "unit_id": "U00050",
+      "start": 2681,
+      "end": 2693,
+      "sha256": "00bcb738b11f7217bd295865eb5329e9755671b57ab4731fc97fd4e9756265e1"
+    },
+    {
+      "unit_id": "U00051",
+      "start": 2694,
+      "end": 2729,
+      "sha256": "53676b24e3924d64a3d0530572950fd462c0b8832c2a0611e43166def26352c8"
+    },
+    {
+      "unit_id": "U00052",
+      "start": 2730,
+      "end": 2825,
+      "sha256": "0faaada1cc89486d8c86db92dcccf1f22b0243056b14dc3a3d23265e9e9adc08"
+    },
+    {
+      "unit_id": "U00053",
+      "start": 2827,
+      "end": 2869,
+      "sha256": "71d358801d9d45e52e8d64b5ab1fab527b0e7619235238a6de31b57961234ae0"
+    },
+    {
+      "unit_id": "U00054",
+      "start": 2870,
+      "end": 2878,
+      "sha256": "152e331f276b94ad88c1d93230f2d87c55442a28ae1c941f3c0d4fa2a17aa5a4"
+    }
+  ],
+  "batches": [
+    {
+      "batch_id": "B00001",
+      "unit_ids": [
+        "U00001",
+        "U00002",
+        "U00003",
+        "U00004",
+        "U00005",
+        "U00006",
+        "U00007",
+        "U00008",
+        "U00009",
+        "U00010"
+      ],
+      "start": 0,
+      "end": 875,
+      "status": "completed",
+      "submission_sha256": "abd0ffd2c34cd1b4c1384a8853503769350c366c5f349f20643b738cfdb7503c"
+    },
+    {
+      "batch_id": "B00002",
+      "unit_ids": [
+        "U00011",
+        "U00012",
+        "U00013",
+        "U00014",
+        "U00015",
+        "U00016",
+        "U00017",
+        "U00018",
+        "U00019",
+        "U00020",
+        "U00021",
+        "U00022",
+        "U00023",
+        "U00024",
+        "U00025",
+        "U00026",
+        "U00027"
+      ],
+      "start": 877,
+      "end": 1614,
+      "status": "pending"
+    },
+    {
+      "batch_id": "B00003",
+      "unit_ids": [
+        "U00028",
+        "U00029",
+        "U00030",
+        "U00031",
+        "U00032",
+        "U00033",
+        "U00034",
+        "U00035",
+        "U00036",
+        "U00037",
+        "U00038",
+        "U00039",
+        "U00040",
+        "U00041"
+      ],
+      "start": 1616,
+      "end": 2339,
+      "status": "pending"
+    },
+    {
+      "batch_id": "B00004",
+      "unit_ids": [
+        "U00042",
+        "U00043",
+        "U00044",
+        "U00045",
+        "U00046",
+        "U00047",
+        "U00048",
+        "U00049",
+        "U00050",
+        "U00051",
+        "U00052",
+        "U00053",
+        "U00054"
+      ],
+      "start": 2340,
+      "end": 2878,
+      "status": "pending"
+    }
+  ],
+  "coverage": {
+    "U00001": {
+      "unit_id": "U00001",
+      "status": "extracted",
+      "object_refs": [
+        "henan_marching_route_2024"
+      ],
+      "note": ""
+    },
+    "U00002": {
+      "unit_id": "U00002",
+      "status": "instruction",
+      "object_refs": [],
+      "note": ""
+    },
+    "U00003": {
+      "unit_id": "U00003",
+      "status": "instruction",
+      "object_refs": [],
+      "note": ""
+    },
+    "U00004": {
+      "unit_id": "U00004",
+      "status": "instruction",
+      "object_refs": [],
+      "note": ""
+    },
+    "U00005": {
+      "unit_id": "U00005",
+      "status": "background",
+      "object_refs": [],
+      "note": ""
+    },
+    "U00006": {
+      "unit_id": "U00006",
+      "status": "extracted",
+      "object_refs": [
+        "ev_u00006"
+      ],
+      "note": ""
+    },
+    "U00007": {
+      "unit_id": "U00007",
+      "status": "extracted",
+      "object_refs": [
+        "ev_u00007"
+      ],
+      "note": ""
+    },
+    "U00008": {
+      "unit_id": "U00008",
+      "status": "extracted",
+      "object_refs": [
+        "ev_u00008"
+      ],
+      "note": ""
+    },
+    "U00009": {
+      "unit_id": "U00009",
+      "status": "extracted",
+      "object_refs": [
+        "ev_u00009"
+      ],
+      "note": ""
+    },
+    "U00010": {
+      "unit_id": "U00010",
+      "status": "extracted",
+      "object_refs": [
+        "ev_u00010"
+      ],
+      "note": ""
+    }
+  },
+  "submissions": {
+    "B00001": {
+      "sha256": "abd0ffd2c34cd1b4c1384a8853503769350c366c5f349f20643b738cfdb7503c",
+      "revision": 1,
+      "mode": "extracting",
+      "submitted_at": "2026-08-07T13:46:11.143016Z"
+    }
+  },
+  "graph": {
+    "schema_version": "1.0",
+    "task": {
+      "task_id": "henan_marching_route_2024",
+      "title": "河南省行军路线综合图",
+      "map_type": "marching_route",
+      "input_crs": "EPSG:4326"
+    },
+    "actors": [],
+    "spatial_entities": [],
+    "events": [],
+    "routes": [],
+    "point_presentations": [],
+    "callouts": [],
+    "evidence": [
+      {
+        "evidence_id": "ev_u00006",
+        "quote": "第一段 R_MAIN_01 从三门峡（111.194，34.777）出发，依次经过陕州（111.104，34.721）、渑池（111.762，34.767）、义马（111.874，34.747）、新安（112.132，34.728），到达洛阳（112.454，34.619）。",
+        "start": 159,
+        "end": 297
+      },
+      {
+        "evidence_id": "ev_u00007",
+        "quote": "第二段 R_MAIN_02 从洛阳出发，依次经过偃师（112.789，34.727）、巩义（112.972，34.754）、荥阳（113.383，34.787），到达郑州（113.625，34.747）。",
+        "start": 299,
+        "end": 401
+      },
+      {
+        "evidence_id": "ev_u00008",
+        "quote": "第三段 R_MAIN_03 从郑州出发，依次经过中牟（114.022，34.718）、开封（114.307，34.798）、尉氏（114.193，34.411）、通许（114.467，34.480）、杞县（114.782，34.550）、兰考（114.821，34.823）、民权（115.148，34.648）、宁陵（115.314，34.455），到达商丘（115.657，34.415）。",
+        "start": 403,
+        "end": 600
+      },
+      {
+        "evidence_id": "ev_u00009",
+        "quote": "第四段 R_MAIN_04 从商丘出发，依次经过虞城（115.863，34.400）、夏邑（116.131，34.237），到达永城（116.449，33.929）。",
+        "start": 602,
+        "end": 685
+      },
+      {
+        "evidence_id": "ev_u00010",
+        "quote": "友方分叉路线 R_BRANCH_01 的主路径从洛阳出发，依次经过伊川（112.425，34.421）、汝阳（112.473，34.154）、汝州（112.844，34.167）、宝丰（113.054，33.869）、平顶山（113.192，33.766）、叶县（113.357，33.626）、方城（113.010，33.255），到达南阳（112.529，32.990）。",
+        "start": 687,
+        "end": 875
+      }
+    ],
+    "output_constraints": {}
+  },
+  "created_at": "2026-08-07T13:40:40.304657Z",
+  "updated_at": "2026-08-07T13:46:11.143016Z"
+}

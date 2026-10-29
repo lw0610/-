@@ -1,0 +1,2 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+red25_main_route,红二十五军行军路线,main,bezier_arrow,bezier_red_gradient,1.2,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow

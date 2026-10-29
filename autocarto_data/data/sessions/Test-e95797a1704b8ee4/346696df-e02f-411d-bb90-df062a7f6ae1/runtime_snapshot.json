@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "session_id": "346696df-e02f-411d-bb90-df062a7f6ae1",
+  "active_config_name": "Zttzt",
+  "runtime_revision": "Zttzt:3261d67bf0ccaebc",
+  "messages": [
+    {
+      "role": "user",
+      "content": "先使用data"
+    },
+    {
+      "role": "user",
+      "content": "先使用data"
+    },
+    {
+      "role": "system",
+      "content": "任务已取消"
+    },
+    {
+      "role": "system",
+      "content": "已创建新会话。"
+    }
+  ],
+  "runtime_projection": {
+    "runtime_status": "cancelled",
+    "run_id": "task-346696df-e02f-411d-bb90-df062a7f6ae1-1781516637688467000",
+    "execution_mode": "build",
+    "phase": "building",
+    "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_51440_1781515782",
+    "bound_project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test.qgz",
+    "checkpoint_id": "task-346696df-e02f-411d-bb90-df062a7f6ae1-1781516637688467000",
+    "runtime_revision": "Zttzt:3261d67bf0ccaebc",
+    "active_agent_config": "Zttzt",
+    "updated_at": "2026-06-15T09:44:02Z",
+    "runtime_summary": "收到用户请求，开始分析任务需求...",
+    "workflow_blocks": [
+      {
+        "agent": "orchestrator",
+        "agentDisplayName": "主智能体",
+        "entries": [
+          {
+            "content": "收到用户请求，开始分析任务需求...",
+            "id": "entry-20260615094357.571",
+            "phase": "thinking",
+            "timestamp": 1781516637571,
+            "type": "thinking"
+          }
+        ],
+        "finishedAt": 1781516642736,
+        "id": "wf-20260615094357.571",
+        "startedAt": 1781516637571,
+        "status": "completed",
+        "summary": "收到用户请求，开始分析任务需求...",
+        "updatedAt": 1781516642736
+      }
+    ]
+  },
+  "created_at": "2026-06-15T17:43:51+08:00",
+  "last_active_at": "2026-06-15T09:44:05.782Z"
+}

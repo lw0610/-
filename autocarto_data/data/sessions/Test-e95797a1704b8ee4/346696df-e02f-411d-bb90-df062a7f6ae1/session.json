@@ -1,0 +1,80 @@
+{
+  "active_agent_config": "Zttzt",
+  "archived": false,
+  "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_51440_1781515782",
+  "bound_project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test.qgz",
+  "checkpoint_id": "task-346696df-e02f-411d-bb90-df062a7f6ae1-1781516637688467000",
+  "compression_history": [],
+  "context_stats": {
+    "compressed_count": 0,
+    "estimated_tokens": 15,
+    "message_count": 4,
+    "total_chars": 62,
+    "total_tokens": 15
+  },
+  "created_at": "2026-06-15T17:43:51+08:00",
+  "description": "",
+  "execution_mode": "build",
+  "last_message_preview": "[status] 已创建新会话。",
+  "llm_config": {},
+  "messages": [
+    {
+      "content": "先使用data",
+      "role": "user"
+    },
+    {
+      "content": "先使用data",
+      "msg_type": "user",
+      "role": "user",
+      "timestamp": "2026-06-15T09:43:57.571Z"
+    },
+    {
+      "content": "任务已取消",
+      "msg_type": "status",
+      "role": "system",
+      "timestamp": "2026-06-15T09:44:02.739Z"
+    },
+    {
+      "content": "已创建新会话。",
+      "msg_type": "status",
+      "role": "system",
+      "timestamp": "2026-06-15T09:44:05.261Z"
+    }
+  ],
+  "name": "数据使用步骤",
+  "name_auto_generated": false,
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test.qgz",
+  "run_id": "task-346696df-e02f-411d-bb90-df062a7f6ae1-1781516637688467000",
+  "run_intent": "execute",
+  "runtime_phase": "building",
+  "runtime_revision": "Zttzt:3261d67bf0ccaebc",
+  "runtime_status": "running",
+  "runtime_summary": "收到用户请求，开始分析任务需求...",
+  "session_id": "346696df-e02f-411d-bb90-df062a7f6ae1",
+  "snapshots": [],
+  "tags": [],
+  "title_source": "llm",
+  "tool_calls": [],
+  "total_tokens_used": 15,
+  "updated_at": "2026-06-15T17:44:32+08:00",
+  "workflow_blocks": [
+    {
+      "agent": "orchestrator",
+      "agentDisplayName": "主智能体",
+      "entries": [
+        {
+          "content": "收到用户请求，开始分析任务需求...",
+          "id": "entry-20260615094357.571",
+          "phase": "thinking",
+          "timestamp": 1781516637571,
+          "type": "thinking"
+        }
+      ],
+      "id": "wf-20260615094357.571",
+      "startedAt": 1781516637571,
+      "status": "running",
+      "summary": "收到用户请求，开始分析任务需求...",
+      "updatedAt": 1781516637571
+    }
+  ]
+}

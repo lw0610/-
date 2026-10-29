@@ -1,0 +1,78 @@
+{
+  "schema_version": "autocarto-statistical-data/v1",
+  "created_at": "2026-10-06T16:13:12.009322+00:00",
+  "validated": true,
+  "validate_only": false,
+  "year": 2020,
+  "table_format": "long",
+  "name_field": "name",
+  "value_field": "population",
+  "metadata": {
+    "indicator": "常住人口",
+    "unit": "人",
+    "source": "国家统计局《第七次全国人口普查公报（第三号）》(2021-05-11)",
+    "database": "第七次全国人口普查"
+  },
+  "counts": {
+    "polygon_count": 34,
+    "boundary_count": 0,
+    "csv_row_count": 31,
+    "csv_region_count": 31,
+    "valid_count": 31,
+    "missing_count": 0,
+    "unmatched_count": 0,
+    "excluded_count": 3
+  },
+  "unmatched_csv_regions": [],
+  "unmatched_geojson_regions": [],
+  "missing_regions": [],
+  "excluded_regions": [
+    "台湾省",
+    "澳门特别行政区",
+    "香港特别行政区"
+  ],
+  "allow_unmatched": false,
+  "value_range": {
+    "min": 3648100.0,
+    "max": 126012510.0
+  },
+  "distinct_value_count": 31,
+  "warnings": [
+    "明确排除 3 个地区，其面数值保持 null"
+  ],
+  "inputs": {
+    "geojson": {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto/skills/system/china-admin-boundaries/data/china_province.geojson",
+      "sha256": "672b321924533dc2d4eb1429de322e3b612a5c9de860f518828a25e75ba6f262",
+      "size_bytes": 1973055
+    },
+    "csv": {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f21dc5d5-8f3a-4c91-b645-64e495ceaf7f/output/china_province_population_2020_census.csv",
+      "sha256": "79a06ce057f4a07260a7544faa66717a3350025712c9c8b654f4482c4a8ef70c",
+      "size_bytes": 821
+    }
+  },
+  "matching_policy": "exact_after_trim",
+  "missing_tokens": [
+    "",
+    "-",
+    "--",
+    "...",
+    "N/A",
+    "NA",
+    "NONE",
+    "NULL",
+    "–",
+    "—",
+    "…"
+  ],
+  "session_id": "f21dc5d5-8f3a-4c91-b645-64e495ceaf7f",
+  "project_path": "/home/shared-user/Desktop/Test.qgz",
+  "paths": {
+    "polygons_geojson": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f21dc5d5-8f3a-4c91-b645-64e495ceaf7f/output/intermediate/statistical/statistics-2020-fcndjcvf/statistical_polygons.geojson",
+    "boundaries_geojson": null,
+    "long_csv": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f21dc5d5-8f3a-4c91-b645-64e495ceaf7f/output/intermediate/statistical/statistics-2020-fcndjcvf/statistical_long.csv",
+    "manifest": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f21dc5d5-8f3a-4c91-b645-64e495ceaf7f/output/intermediate/statistical/statistics-2020-fcndjcvf/manifest.json"
+  },
+  "output_dir": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f21dc5d5-8f3a-4c91-b645-64e495ceaf7f/output/intermediate/statistical/statistics-2020-fcndjcvf"
+}

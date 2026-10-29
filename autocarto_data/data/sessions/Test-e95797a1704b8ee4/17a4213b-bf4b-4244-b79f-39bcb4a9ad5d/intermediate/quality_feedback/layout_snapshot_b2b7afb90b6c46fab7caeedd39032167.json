@@ -1,0 +1,515 @@
+{
+  "captured_at": "2026-08-09T11:59:42.534962+00:00",
+  "layout_item_ids": {
+    "callouts": {
+      "co_ly": {
+        "body": "callout_co_ly_body",
+        "box": "callout_co_ly_box",
+        "image": "callout_co_ly_image",
+        "leader": [
+          "callout_co_ly_leader_1",
+          "callout_co_ly_leader_2"
+        ],
+        "title": "callout_co_ly_title"
+      },
+      "co_ny": {
+        "body": "callout_co_ny_body",
+        "box": "callout_co_ny_box",
+        "image": "callout_co_ny_image",
+        "leader": [
+          "callout_co_ny_leader_1",
+          "callout_co_ny_leader_2"
+        ],
+        "title": "callout_co_ny_title"
+      },
+      "co_smx": {
+        "body": "callout_co_smx_body",
+        "box": "callout_co_smx_box",
+        "image": "callout_co_smx_image",
+        "leader": [
+          "callout_co_smx_leader_1",
+          "callout_co_smx_leader_2"
+        ],
+        "title": "callout_co_smx_title"
+      },
+      "co_xc": {
+        "body": "callout_co_xc_body",
+        "box": "callout_co_xc_box",
+        "image": "callout_co_xc_image",
+        "leader": [
+          "callout_co_xc_leader_1",
+          "callout_co_xc_leader_2"
+        ],
+        "title": "callout_co_xc_title"
+      },
+      "co_zz": {
+        "body": "callout_co_zz_body",
+        "box": "callout_co_zz_box",
+        "image": "callout_co_zz_image",
+        "leader": [
+          "callout_co_zz_leader_1",
+          "callout_co_zz_leader_2"
+        ],
+        "title": "callout_co_zz_title"
+      }
+    },
+    "standard": {
+      "decorative_border": "decorative_border_1",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "callout_co_ly_body": {
+        "item_id": "callout_co_ly_body",
+        "rect_mm": {
+          "height": 7.474479166666667,
+          "width": 26.4,
+          "x": 186.76372903009437,
+          "y": 175.75776538516814
+        },
+        "text": "红二十五军长征途经洛阳南\n部山区，留有多处战斗与宿\n营遗址。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 11.0
+      },
+      "callout_co_ly_box": {
+        "item_id": "callout_co_ly_box",
+        "rect_mm": {
+          "height": 35.39830729166666,
+          "width": 30.0,
+          "x": 184.96372903009436,
+          "y": 149.63393726016812
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 8.0
+      },
+      "callout_co_ly_image": {
+        "item_id": "callout_co_ly_image",
+        "rect_mm": {
+          "height": 18.0,
+          "width": 26.4,
+          "x": 186.76372903009437,
+          "y": 151.43393726016814
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 9.0
+      },
+      "callout_co_ly_leader_1": {
+        "item_id": "callout_co_ly_leader_1",
+        "rect_mm": {
+          "height": 3.0,
+          "width": 18.0,
+          "x": 214.96372903009436,
+          "y": 164.33309090600144
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 12.0
+      },
+      "callout_co_ly_leader_2": {
+        "item_id": "callout_co_ly_leader_2",
+        "rect_mm": {
+          "height": 3.0,
+          "width": 18.0,
+          "x": 214.96372903009436,
+          "y": 167.33309090600144
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 13.0
+      },
+      "callout_co_ly_title": {
+        "item_id": "callout_co_ly_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 26.4,
+          "x": 186.76372903009437,
+          "y": 170.93393726016814
+        },
+        "text": "洛阳红25军长征纪念地",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 10.0
+      },
+      "callout_co_ny_body": {
+        "item_id": "callout_co_ny_body",
+        "rect_mm": {
+          "height": 7.474479166666667,
+          "width": 26.4,
+          "x": 234.49296466773862,
+          "y": 255.50559347262174
+        },
+        "text": "桐柏是鄂豫皖、豫西、桐柏\n山三大根据地交汇地，中原\n军区旧址所在地。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 29.0
+      },
+      "callout_co_ny_box": {
+        "item_id": "callout_co_ny_box",
+        "rect_mm": {
+          "height": 35.39830729166666,
+          "width": 30.0,
+          "x": 232.6929646677386,
+          "y": 229.38176534762172
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 26.0
+      },
+      "callout_co_ny_image": {
+        "item_id": "callout_co_ny_image",
+        "rect_mm": {
+          "height": 18.0,
+          "width": 26.4,
+          "x": 234.49296466773862,
+          "y": 231.18176534762173
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 27.0
+      },
+      "callout_co_ny_leader_1": {
+        "item_id": "callout_co_ny_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 3.0,
+          "x": 244.6929646677386,
+          "y": 264.7800726392884
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 30.0
+      },
+      "callout_co_ny_leader_2": {
+        "item_id": "callout_co_ny_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 3.0,
+          "x": 247.6929646677386,
+          "y": 264.7800726392884
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 31.0
+      },
+      "callout_co_ny_title": {
+        "item_id": "callout_co_ny_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 26.4,
+          "x": 234.49296466773862,
+          "y": 250.68176534762173
+        },
+        "text": "南阳桐柏革命纪念馆",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 28.0
+      },
+      "callout_co_smx_body": {
+        "item_id": "callout_co_smx_body",
+        "rect_mm": {
+          "height": 12.457465277777777,
+          "width": 26.4,
+          "x": 148.81995733510004,
+          "y": 136.54240371879345
+        },
+        "text": "红二十五军长征途经三门峡\n卢氏，在此宿营、休整，军\n部旧址所在地，是长征精神\n重要纪念地三门峡市文化广\n电和旅游局",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 5.0
+      },
+      "callout_co_smx_box": {
+        "item_id": "callout_co_smx_box",
+        "rect_mm": {
+          "height": 40.38129340277777,
+          "width": 30.0,
+          "x": 147.01995733510003,
+          "y": 110.41857559379343
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "callout_co_smx_image": {
+        "item_id": "callout_co_smx_image",
+        "rect_mm": {
+          "height": 18.0,
+          "width": 26.4,
+          "x": 148.81995733510004,
+          "y": 112.21857559379343
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 3.0
+      },
+      "callout_co_smx_leader_1": {
+        "item_id": "callout_co_smx_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 3.0,
+          "x": 159.01995733510003,
+          "y": 150.7998689965712
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 6.0
+      },
+      "callout_co_smx_leader_2": {
+        "item_id": "callout_co_smx_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 3.0,
+          "x": 162.01995733510003,
+          "y": 150.7998689965712
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 7.0
+      },
+      "callout_co_smx_title": {
+        "item_id": "callout_co_smx_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 26.4,
+          "x": 148.81995733510004,
+          "y": 131.71857559379345
+        },
+        "text": "红二十五军长征纪念馆",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "callout_co_xc_body": {
+        "item_id": "callout_co_xc_body",
+        "rect_mm": {
+          "height": 7.474479166666667,
+          "width": 26.4,
+          "x": 301.8593973101202,
+          "y": 236.6089218494424
+        },
+        "text": "纪念许昌地区革命先烈，陈\n列抗战、解放战争时期文物\n与事迹。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 23.0
+      },
+      "callout_co_xc_box": {
+        "item_id": "callout_co_xc_box",
+        "rect_mm": {
+          "height": 35.39830729166666,
+          "width": 30.0,
+          "x": 300.0593973101202,
+          "y": 210.48509372444238
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 20.0
+      },
+      "callout_co_xc_image": {
+        "item_id": "callout_co_xc_image",
+        "rect_mm": {
+          "height": 18.0,
+          "width": 26.4,
+          "x": 301.8593973101202,
+          "y": 212.2850937244424
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 21.0
+      },
+      "callout_co_xc_leader_1": {
+        "item_id": "callout_co_xc_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 3.0,
+          "x": 312.0593973101202,
+          "y": 198.48509372444238
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 24.0
+      },
+      "callout_co_xc_leader_2": {
+        "item_id": "callout_co_xc_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 3.0,
+          "x": 315.0593973101202,
+          "y": 198.48509372444238
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 25.0
+      },
+      "callout_co_xc_title": {
+        "item_id": "callout_co_xc_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 26.4,
+          "x": 301.8593973101202,
+          "y": 231.7850937244424
+        },
+        "text": "许昌革命烈士纪念馆",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 22.0
+      },
+      "callout_co_zz_body": {
+        "item_id": "callout_co_zz_body",
+        "rect_mm": {
+          "height": 7.474479166666667,
+          "width": 26.4,
+          "x": 283.87255857455625,
+          "y": 190.18275191463385
+        },
+        "text": "纪念 1923 年京汉铁路工人\n大罢工，是中国工人运动重\n要里程碑，郑州红色地标。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 17.0
+      },
+      "callout_co_zz_box": {
+        "item_id": "callout_co_zz_box",
+        "rect_mm": {
+          "height": 35.39830729166666,
+          "width": 30.0,
+          "x": 282.07255857455624,
+          "y": 164.05892378963384
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 14.0
+      },
+      "callout_co_zz_image": {
+        "item_id": "callout_co_zz_image",
+        "rect_mm": {
+          "height": 18.0,
+          "width": 26.4,
+          "x": 283.87255857455625,
+          "y": 165.85892378963385
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 15.0
+      },
+      "callout_co_zz_leader_1": {
+        "item_id": "callout_co_zz_leader_1",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 3.0,
+          "x": 294.07255857455624,
+          "y": 152.05892378963384
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 18.0
+      },
+      "callout_co_zz_leader_2": {
+        "item_id": "callout_co_zz_leader_2",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 3.0,
+          "x": 297.07255857455624,
+          "y": 152.05892378963384
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 19.0
+      },
+      "callout_co_zz_title": {
+        "item_id": "callout_co_zz_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 26.4,
+          "x": 283.87255857455625,
+          "y": 185.35892378963385
+        },
+        "text": "郑州二七纪念塔",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 16.0
+      },
+      "decorative_border_1": {
+        "item_id": "decorative_border_1",
+        "outer_rect_mm": {
+          "height": 370.0,
+          "width": 517.9,
+          "x": 38.05000000000001,
+          "y": 25.0
+        },
+        "rect_mm": {
+          "height": 363.7,
+          "width": 511.59999999999997,
+          "x": 41.20000000000001,
+          "y": 28.15
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 32.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 113.9712109375,
+          "width": 27.5875,
+          "x": 44.55,
+          "y": 274.53
+        },
+        "title": "图例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 35.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 357.0,
+          "width": 504.9,
+          "x": 44.55000000000001,
+          "y": 31.5
+        },
+        "scale": 1612003.7788514448,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 25.0,
+          "width": 25.0,
+          "x": 44.55000000000001,
+          "y": 31.5
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 37.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 15.597727272727273,
+          "width": 60.91363636363636,
+          "x": 488.54,
+          "y": 31.5
+        },
+        "text": "本图展示红二十五军长征在河南省境内的行军路线。路\n线从三门峡出发，经洛阳、郑州、许昌、南阳等地，途\n经豫西、豫中、豫东、豫南四大节点区。底图包含河南\n省市域行政区划、铁路、高速公路、国道及水系等地理\n要素，全面呈现行军路线与地形、交通的关系。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 34.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 87.60414721345883,
+          "x": 461.846,
+          "y": 375.404
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 30.0,
+        "z_value": 36.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 116.03181818181818,
+          "x": 238.98,
+          "y": 14.01
+        },
+        "text": "河南省行军路线综合图",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 33.0
+      }
+    },
+    "layout": "河南省行军路线综合图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 420.0,
+      "width": 594.0
+    }
+  },
+  "layout_name": "河南省行军路线综合图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "17a4213b-bf4b-4244-b79f-39bcb4a9ad5d",
+  "snapshot_id": "b2b7afb90b6c46fab7caeedd39032167"
+}

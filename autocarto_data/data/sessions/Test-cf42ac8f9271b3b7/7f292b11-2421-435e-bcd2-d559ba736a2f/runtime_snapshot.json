@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "session_id": "7f292b11-2421-435e-bcd2-d559ba736a2f",
+  "active_config_name": "default",
+  "runtime_revision": "default:30f6ec21aa43c3e3",
+  "messages": [
+    {
+      "role": "user",
+      "content": "制作一张河南省各市的人口统计专题图"
+    },
+    {
+      "role": "user",
+      "content": "制作一张河南省各市的人口统计专题图"
+    },
+    {
+      "role": "system",
+      "content": "正在分析您的请求..."
+    },
+    {
+      "role": "user",
+      "content": "制作河南省各市人口统计专题图",
+      "extra": {
+        "guide_id": "statistical-choropleth"
+      }
+    },
+    {
+      "role": "user",
+      "content": "制作河南省各市人口统计专题图"
+    },
+    {
+      "role": "system",
+      "content": "正在分析您的请求..."
+    },
+    {
+      "role": "system",
+      "content": "已创建新会话。"
+    }
+  ],
+  "runtime_projection": {
+    "runtime_status": "failed",
+    "run_id": "task-7f292b11-2421-435e-bcd2-d559ba736a2f-1793171138452479000",
+    "execution_mode": "build",
+    "phase": "building",
+    "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_50273_1793170998",
+    "bound_project_path": "/home/shared-user/Desktop/Test.qgz",
+    "checkpoint_id": "task-7f292b11-2421-435e-bcd2-d559ba736a2f-1793171138452479000",
+    "runtime_revision": "default:30f6ec21aa43c3e3",
+    "active_agent_config": "default",
+    "last_error": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: dd1fc1ec-40e4-4603-b7c5-618327894de8)\n------------------------\nnode path: [node_1, ChatModel]",
+    "failure_reason": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: dd1fc1ec-40e4-4603-b7c5-618327894de8)\n------------------------\nnode path: [node_1, ChatModel]",
+    "updated_at": "2026-10-28T07:37:46.497Z",
+    "runtime_summary": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: dd1fc1ec-40e4-4603-b7c5-618327894de8)\n------------------------\nnode path: [node_1, ChatModel]",
+    "workflow_blocks": [
+      {
+        "agent": "orchestrator",
+        "agentDisplayName": "主智能体",
+        "entries": [
+          {
+            "content": "收到用户请求，开始分析任务需求...",
+            "id": "entry-20261028070439.881",
+            "phase": "thinking",
+            "timestamp": 1793171079881,
+            "type": "thinking"
+          },
+          {
+            "content": "识别到需要 主智能体 处理此任务",
+            "data": {
+              "mode_phase": "building"
+            },
+            "id": "entry-20261028070440.397",
+            "phase": "thinking",
+            "timestamp": 1793171080397,
+            "type": "thinking"
+          }
+        ],
+        "finishedAt": 1793171080480,
+        "id": "wf-20261028070439.881",
+        "startedAt": 1793171079881,
+        "status": "error",
+        "summary": "识别到需要 主智能体 处理此任务",
+        "updatedAt": 1793171080480
+      },
+      {
+        "agent": "orchestrator",
+        "agentDisplayName": "主智能体",
+        "entries": [
+          {
+            "content": "收到用户请求，开始分析任务需求...",
+            "id": "entry-20261028070538.462",
+            "phase": "thinking",
+            "timestamp": 1793171138462,
+            "type": "thinking"
+          },
+          {
+            "content": "识别到需要 主智能体 处理此任务",
+            "data": {
+              "mode_phase": "building"
+            },
+            "id": "entry-20261028070539.018",
+            "phase": "thinking",
+            "timestamp": 1793171139018,
+            "type": "thinking"
+          }
+        ],
+        "finishedAt": 1793171139104,
+        "id": "wf-20261028070538.462",
+        "startedAt": 1793171138462,
+        "status": "error",
+        "summary": "识别到需要 主智能体 处理此任务",
+        "updatedAt": 1793171139104
+      }
+    ]
+  },
+  "created_at": "2026-10-28T15:03:53+08:00",
+  "last_active_at": "2026-10-28T07:37:46.497Z"
+}

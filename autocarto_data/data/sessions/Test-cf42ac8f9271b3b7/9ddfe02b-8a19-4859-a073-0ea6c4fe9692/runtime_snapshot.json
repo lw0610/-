@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "session_id": "9ddfe02b-8a19-4859-a073-0ea6c4fe9692",
+  "active_config_name": "default",
+  "messages": [
+    {
+      "role": "user",
+      "content": "制作河南省各市人口统计图"
+    },
+    {
+      "role": "user",
+      "content": "制作河南省各市人口统计图"
+    },
+    {
+      "role": "system",
+      "content": "正在分析您的请求..."
+    },
+    {
+      "role": "system",
+      "content": "Build 模式不可用：智能体未初始化。"
+    },
+    {
+      "role": "user",
+      "content": "制作河南省各市人口统计图"
+    }
+  ],
+  "runtime_projection": {
+    "runtime_status": "failed",
+    "execution_mode": "build",
+    "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_67662_1793178677",
+    "bound_project_path": "/home/shared-user/Desktop/Test.qgz",
+    "active_agent_config": "default",
+    "last_error": "Build 模式不可用：创建 AgentRuntime 失败: resolve middleware packages for cartographer: middleware package \"route-cartography\" not found in governed registry",
+    "failure_code": "AGENT_UNAVAILABLE",
+    "failure_reason": "Build 模式不可用：创建 AgentRuntime 失败: resolve middleware packages for cartographer: middleware package \"route-cartography\" not found in governed registry",
+    "updated_at": "2026-10-28T09:11:39Z",
+    "runtime_summary": "Build 模式不可用：创建 AgentRuntime 失败: resolve middleware packages for cartographer: middleware package \"route-cartography\" not found in governed registry",
+    "workflow_blocks": [
+      {
+        "agent": "orchestrator",
+        "agentDisplayName": "主智能体",
+        "entries": [
+          {
+            "content": "收到用户请求，开始分析任务需求...",
+            "id": "entry-20261028091138.881",
+            "phase": "thinking",
+            "timestamp": 1793178698881,
+            "type": "thinking"
+          }
+        ],
+        "finishedAt": 1793178699056,
+        "id": "wf-20261028091138.881",
+        "startedAt": 1793178698881,
+        "status": "error",
+        "summary": "收到用户请求，开始分析任务需求...",
+        "updatedAt": 1793178699056
+      }
+    ]
+  },
+  "created_at": "2026-10-28T15:54:38+08:00",
+  "last_active_at": "2026-10-28T17:11:39+08:00"
+}

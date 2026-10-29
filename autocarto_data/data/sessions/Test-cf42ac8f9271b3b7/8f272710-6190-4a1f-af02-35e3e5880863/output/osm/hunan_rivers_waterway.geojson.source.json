@@ -1,0 +1,88 @@
+{
+  "acquired_at": "2026-10-26T03:58:49Z",
+  "attribution": "© OpenStreetMap contributors",
+  "clipped": true,
+  "dropped": null,
+  "dropped_fields": {
+    "CLC:explanation": 4,
+    "NSIW": 74,
+    "admin_level": 3,
+    "alt_name": 519,
+    "alt_name:cs": 4,
+    "alt_name:en": 345,
+    "alt_name:zh": 1,
+    "alt_name:zh-Hant": 2,
+    "alt_name:zh-Latn-pinyin": 319,
+    "boat": 1043,
+    "code": 1078,
+    "designation": 1,
+    "draft": 4,
+    "fishing": 13,
+    "fixme": 5,
+    "int_name": 290,
+    "intermittent": 38,
+    "layer": 533,
+    "lock": 1,
+    "lock_name": 1,
+    "motorboat": 4,
+    "name:cs": 4,
+    "name:en": 1797,
+    "name:es": 1,
+    "name:fr": 1,
+    "name:kn": 4,
+    "name:ko": 2,
+    "name:ru": 34,
+    "name:simple": 1,
+    "name:uk": 31,
+    "name:vi": 7,
+    "name:zh-Hans": 2,
+    "name:zh-Hant": 480,
+    "name:zh-Latn-pinyin": 1413,
+    "note": 2,
+    "nsdi_code": 971,
+    "official_name": 1,
+    "old_name": 8,
+    "old_ref": 1,
+    "route": 5,
+    "ship": 131,
+    "source": 3715,
+    "source:name": 45,
+    "source:ref": 1,
+    "tidal": 7,
+    "tunnel": 530,
+    "usage": 2,
+    "was:highway": 1,
+    "width": 29,
+    "wikidata": 56,
+    "wikipedia": 50,
+    "zhb_code": 1018
+  },
+  "extents": [
+    "bbox:24.634426,108.783112,30.128006,114.254105"
+  ],
+  "failed_extents": null,
+  "feature_count": 5519,
+  "kept_fields": [
+    "category",
+    "name",
+    "name:zh",
+    "osm_id",
+    "osm_type",
+    "waterway"
+  ],
+  "license": "ODbL 1.0",
+  "nodes": [
+    "https://overpass-api.de/api/interpreter"
+  ],
+  "partial": false,
+  "queries": [
+    "[out:json][timeout:120];\n\n(\nway[\"waterway\"=\"river\"](24.634426,108.783112,30.128006,114.254105);\n);\nout geom;"
+  ],
+  "source": "OpenStreetMap",
+  "tags": [
+    "waterway=river"
+  ],
+  "warnings": [
+    "OSM 行政边界不代表我国标准地图，制图请使用内置行政区边界"
+  ]
+}

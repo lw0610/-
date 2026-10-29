@@ -1,0 +1,228 @@
+{
+  "actors": [
+    {
+      "actor_id": "red25",
+      "aliases": [],
+      "confidence": 1.0,
+      "evidence_refs": [
+        "ev-001"
+      ],
+      "name": "红二十五军"
+    }
+  ],
+  "callouts": [
+    {
+      "anchor_ref": "dushuzhen_battle",
+      "anchor_ref_type": "event",
+      "body": "1934年11月，红二十五军行军途中在独树镇发生战斗。",
+      "callout_id": "dushuzhen_battle_note",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "straight",
+      "preferred_side": "right",
+      "priority": 1.0,
+      "template": "text_only",
+      "title": "独树镇战斗",
+      "width_mm": 42
+    }
+  ],
+  "events": [
+    {
+      "actor_refs": [
+        "red25"
+      ],
+      "confidence": 1.0,
+      "description": "红二十五军行军途中在独树镇发生战斗",
+      "event_id": "dushuzhen_battle",
+      "event_type": "battle",
+      "evidence_refs": [
+        "ev-007"
+      ],
+      "location_ref": "dushuzhen",
+      "name": "独树镇战斗",
+      "priority": 1.0,
+      "time_text": "1934年11月"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "ev-001",
+      "quote": "红二十五军"
+    },
+    {
+      "evidence_id": "ev-002",
+      "quote": "从方城出发"
+    },
+    {
+      "evidence_id": "ev-003",
+      "quote": "经独树镇"
+    },
+    {
+      "evidence_id": "ev-004",
+      "quote": "南召"
+    },
+    {
+      "evidence_id": "ev-005",
+      "quote": "最后到达卢氏"
+    },
+    {
+      "evidence_id": "ev-006",
+      "quote": "开封只作为地图背景"
+    },
+    {
+      "evidence_id": "ev-007",
+      "quote": "行军途中在独树镇发生战斗"
+    }
+  ],
+  "output_constraints": {
+    "self_intersection_policy": "allow"
+  },
+  "point_presentations": [
+    {
+      "anchor_ref": "fangcheng",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "start_fangcheng",
+      "priority": 1.0,
+      "symbol_type": "start_flag",
+      "visible": true
+    },
+    {
+      "anchor_ref": "dushuzhen_battle",
+      "anchor_ref_type": "event",
+      "presentation_id": "battle_dushuzhen",
+      "priority": 1.0,
+      "symbol_type": "battle",
+      "visible": true
+    },
+    {
+      "anchor_ref": "nanzhao",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "waypoint_nanzhao",
+      "priority": 0.5,
+      "symbol_type": "waypoint",
+      "visible": true
+    }
+  ],
+  "routes": [
+    {
+      "confidence": 1.0,
+      "effective_width_scale": 1.2,
+      "enabled": true,
+      "evidence_refs": [
+        "ev-002",
+        "ev-003",
+        "ev-004",
+        "ev-005"
+      ],
+      "name": "红二十五军行军路线",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "fangcheng",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "dushuzhen",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "nanzhao",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "lushi",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "main_path",
+          "role": "main"
+        }
+      ],
+      "route_id": "red25_main_route",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    }
+  ],
+  "schema_version": "1.0",
+  "spatial_entities": [
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "fangcheng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev-002"
+      ],
+      "factual": true,
+      "lat": 33.26,
+      "lon": 113.01,
+      "map_role": "route_node",
+      "name": "方城"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "dushuzhen",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev-003"
+      ],
+      "factual": true,
+      "lat": 33.34,
+      "lon": 113.08,
+      "map_role": "route_node",
+      "name": "独树镇"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "nanzhao",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev-004"
+      ],
+      "factual": true,
+      "lat": 33.49,
+      "lon": 112.43,
+      "map_role": "route_node",
+      "name": "南召"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "lushi",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev-005"
+      ],
+      "factual": true,
+      "lat": 34.05,
+      "lon": 111.05,
+      "map_role": "route_node",
+      "name": "卢氏"
+    },
+    {
+      "coordinate_confidence": 0.9,
+      "coordinate_source": "llm_estimated",
+      "entity_id": "kaifeng",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "ev-006"
+      ],
+      "factual": true,
+      "lat": 34.8,
+      "lon": 114.35,
+      "map_role": "background",
+      "name": "开封"
+    }
+  ],
+  "task": {
+    "input_crs": "EPSG:4326",
+    "map_type": "marching_route",
+    "task_id": "red25-march-1934-11",
+    "title": "红二十五军行军路线图（1934年11月）"
+  }
+}

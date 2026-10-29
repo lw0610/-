@@ -1,0 +1,54 @@
+{
+  "success": true,
+  "status": "script_completed",
+  "tasks": [],
+  "downloads": [
+    {
+      "download_id": 1,
+      "filename": "gushi_county_imagery_rgb.tif",
+      "status": "completed",
+      "dtype": "float64",
+      "width": 5561,
+      "height": 9133,
+      "bands": 3,
+      "crs": "EPSG:32650",
+      "bytes": 389077379,
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/gushi_county_imagery_rgb.tif"
+    }
+  ],
+  "environment": {
+    "python": "/home/shared-user/.venvs/autocarto-gee/bin/python",
+    "project": "certain-tangent-507508-m0",
+    "ready": true,
+    "install_command": [
+      "/home/shared-user/.venvs/autocarto-gee/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "earthengine-api"
+    ],
+    "download_install_command": [
+      "/home/shared-user/.venvs/autocarto-gee/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "geedim==2.0.0"
+    ],
+    "region_install_command": [
+      "/home/shared-user/.venvs/autocarto-gee/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "geopandas"
+    ],
+    "authenticate_command": [
+      "/home/shared-user/.venvs/autocarto-gee/bin/python",
+      "-c",
+      "import ee; ee.Authenticate()"
+    ],
+    "project_step": "Configure a Google Cloud project registered for Earth Engine, with the Earth Engine API enabled and access granted to your account.",
+    "credentials_note": "Complete authentication yourself in a terminal/browser. Do not paste tokens or credential file contents into the chat.",
+    "earthengine_api_version": "1.7.47"
+  },
+  "message": "Python script finished. Inspect outputs for scientific validity."
+}

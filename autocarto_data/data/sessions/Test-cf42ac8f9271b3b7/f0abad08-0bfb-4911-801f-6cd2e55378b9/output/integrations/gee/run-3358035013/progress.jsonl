@@ -1,0 +1,148 @@
+{"type": "workflow_progress", "stage_id": 1, "stage": "Loading region: boundary_county_411525.geojson", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 1, "stage": "Loading region: boundary_county_411525.geojson", "phase": "completed", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "筛选与云掩膜", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 2, "stage": "筛选与云掩膜", "phase": "completed", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 3, "stage": "计算中值合成", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 3, "stage": "计算中值合成", "phase": "completed", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 4, "stage": "Checking coverage", "phase": "running", "elapsed_seconds": 0}
+{"type": "workflow_progress", "stage_id": 4, "stage": "Checking coverage", "phase": "completed", "elapsed_seconds": 17}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 0}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "preparing", "percent": null}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 0.0, "completed_bytes": 0, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 0.4922888259749615, "completed_bytes": 6000640, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 1.8686813387349903, "completed_bytes": 22777856, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 30}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 3.245073851495019, "completed_bytes": 39555072, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 3.7373626774699806, "completed_bytes": 45555712, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 4.229651503444942, "completed_bytes": 51556352, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 60}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 5.606044016204971, "completed_bytes": 68333568, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 6.098332842179932, "completed_bytes": 74334208, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 6.590621668154894, "completed_bytes": 80334848, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 7.967014180914923, "completed_bytes": 97112064, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 90}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 9.343406693674952, "completed_bytes": 113889280, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 9.835695519649914, "completed_bytes": 119889920, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 10.327984345624875, "completed_bytes": 125890560, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 11.704376858384903, "completed_bytes": 142667776, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 120}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 13.080769371144932, "completed_bytes": 159444992, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 150}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 14.065347023094855, "completed_bytes": 171446272, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 14.557635849069817, "completed_bytes": 177446912, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 180}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 15.934028361829846, "completed_bytes": 194224128, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 17.310420874589873, "completed_bytes": 211001344, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 18.686813387349904, "completed_bytes": 227778560, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 20.06320590010993, "completed_bytes": 244555776, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 210}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 20.555494726084895, "completed_bytes": 250556416, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 21.047783552059855, "completed_bytes": 256557056, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 21.540072378034818, "completed_bytes": 262557696, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 22.916464890794845, "completed_bytes": 279334912, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 240}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 23.408753716769805, "completed_bytes": 285335552, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 24.785146229529836, "completed_bytes": 302112768, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 25.277435055504796, "completed_bytes": 308113408, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 270}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 26.653827568264827, "completed_bytes": 324890624, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 28.030220081024854, "completed_bytes": 341667840, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 28.522508906999818, "completed_bytes": 347668480, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 29.898901419759845, "completed_bytes": 364445696, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 300}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 30.39119024573481, "completed_bytes": 370446336, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 31.956940820573305, "completed_bytes": 389531688, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 32.44922964654827, "completed_bytes": 395532328, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 330}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 33.825622159308296, "completed_bytes": 412309544, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 35.20201467206832, "completed_bytes": 429086760, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 35.69430349804328, "completed_bytes": 435087400, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 360}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 36.18659232401825, "completed_bytes": 441088040, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 36.67888114999321, "completed_bytes": 447088680, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 390}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 38.5475624887282, "completed_bytes": 469866536, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 420}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 41.30034751424826, "completed_bytes": 503420968, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 42.676740027008286, "completed_bytes": 520198184, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 450}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 44.54542136574327, "completed_bytes": 542976040, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 45.03771019171824, "completed_bytes": 548976680, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 45.5299990176932, "completed_bytes": 554977320, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 480}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 46.90639153045323, "completed_bytes": 571754536, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 48.282784043213255, "completed_bytes": 588531752, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 48.775072869188214, "completed_bytes": 594532392, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 50.15146538194825, "completed_bytes": 611309608, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 510}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 50.64375420792321, "completed_bytes": 617310248, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 540}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 52.020146720683236, "completed_bytes": 634087464, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 53.396539233443264, "completed_bytes": 650864680, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 53.88882805941822, "completed_bytes": 656865320, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 55.26522057217826, "completed_bytes": 673642536, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 55.75750939815322, "completed_bytes": 679643176, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 570}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 56.24979822412818, "completed_bytes": 685643816, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 56.74208705010314, "completed_bytes": 691644456, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 600}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 58.11847956286317, "completed_bytes": 708421672, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 58.61076838883813, "completed_bytes": 714422312, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 59.98716090159816, "completed_bytes": 731199528, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 60.47944972757312, "completed_bytes": 737200168, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 61.855842240333146, "completed_bytes": 753977384, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 630}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 62.34813106630811, "completed_bytes": 759978024, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 64.87778996182996, "completed_bytes": 790812712, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 65.29027415390664, "completed_bytes": 795840592, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 660}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 65.7825629798816, "completed_bytes": 801841232, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 67.15895549264162, "completed_bytes": 818618448, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 68.53534800540166, "completed_bytes": 835395664, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 690}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 69.91174051816168, "completed_bytes": 852172880, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 70.40402934413665, "completed_bytes": 858173520, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 71.78042185689668, "completed_bytes": 874950736, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 720}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 73.64910319563167, "completed_bytes": 897728592, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 74.14139202160663, "completed_bytes": 903729232, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 74.63368084758159, "completed_bytes": 909729872, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 75.12596967355655, "completed_bytes": 915730512, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 76.50236218631657, "completed_bytes": 932507728, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 750}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 76.99465101229154, "completed_bytes": 938508368, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 77.48693983826651, "completed_bytes": 944509008, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 780}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 78.86333235102653, "completed_bytes": 961286224, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 79.3556211770015, "completed_bytes": 967286864, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 810}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 80.73201368976152, "completed_bytes": 984064080, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 840}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 82.10840620252155, "completed_bytes": 1000841296, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 84.8611912280416, "completed_bytes": 1034395728, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 85.35348005401657, "completed_bytes": 1040396368, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 85.84576887999152, "completed_bytes": 1046397008, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 870}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 86.33805770596649, "completed_bytes": 1052397648, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 900}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 86.83034653194146, "completed_bytes": 1058398288, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 88.20673904470148, "completed_bytes": 1075175504, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 930}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 89.58313155746151, "completed_bytes": 1091952720, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 90.95952407022155, "completed_bytes": 1108729936, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 91.4518128961965, "completed_bytes": 1114730576, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 960}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 91.94410172217147, "completed_bytes": 1120731216, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 92.43639054814642, "completed_bytes": 1126731856, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 93.81278306090645, "completed_bytes": 1143509072, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 990}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 95.18917557366649, "completed_bytes": 1160286288, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 95.68146439964144, "completed_bytes": 1166286928, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 97.05785691240148, "completed_bytes": 1183064144, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 97.47034110447815, "completed_bytes": 1188092024, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "running", "elapsed_seconds": 1020}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 98.62360748723997, "completed_bytes": 1202149496, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "downloading", "percent": 99.0, "completed_bytes": 1218926712, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "validating", "percent": 99.0, "completed_bytes": 1218926712, "total_bytes": 1218926712}
+{"type": "download_progress", "download_id": 1, "filename": "gushi_county_imagery_rgb.tif", "phase": "completed", "percent": 100.0, "completed_bytes": 1218926712, "total_bytes": 1218926712}
+{"type": "workflow_progress", "stage_id": 5, "stage": "下载 GeoTIFF", "phase": "completed", "elapsed_seconds": 1038}

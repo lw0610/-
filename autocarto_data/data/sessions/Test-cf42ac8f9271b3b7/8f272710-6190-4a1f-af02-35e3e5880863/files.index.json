@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_6fb825d7c659c158",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/8f272710-6190-4a1f-af02-35e3e5880863/output/osm/hunan_rivers_waterway.geojson",
+      "name": "hunan_rivers_waterway.geojson",
+      "kind": "vector",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "osm_get_features",
+        "label": "按范围下载 OSM 要素",
+        "call_id": "call_00_taLwSTUQ91UxAsrnUHZ45936",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T03:58:49.127718Z",
+      "modified_at": "2026-10-26T03:58:49.026709124Z",
+      "size": 13488264,
+      "exists": true
+    },
+    {
+      "id": "f_f19ab8b994f30434",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/8f272710-6190-4a1f-af02-35e3e5880863/output/osm/hunan_rivers_waterway.geojson.source.json",
+      "name": "hunan_rivers_waterway.geojson.source.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "osm_get_features",
+        "label": "按范围下载 OSM 要素",
+        "call_id": "call_00_taLwSTUQ91UxAsrnUHZ45936",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T03:58:49.128012Z",
+      "modified_at": "2026-10-26T03:58:49.026869291Z",
+      "size": 1884,
+      "exists": true
+    },
+    {
+      "id": "f_e232d62b56d82261",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/8f272710-6190-4a1f-af02-35e3e5880863/temp/previews/f_6fb825d7c659c158-1792987325321187000.png",
+      "name": "f_6fb825d7c659c158-1792987325321187000.png",
+      "kind": "image",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "preview",
+        "label": "数据缩略图"
+      },
+      "registered_at": "2026-10-26T04:02:05.81466Z",
+      "modified_at": "2026-10-26T04:02:05.813427499Z",
+      "size": 238893,
+      "exists": true
+    }
+  ]
+}

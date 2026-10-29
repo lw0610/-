@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "session_id": "d594a94b-ed61-4c2b-85fa-6f36e8673d53",
+  "active_config_name": "default",
+  "runtime_revision": "default:30f6ec21aa43c3e3",
+  "messages": [
+    {
+      "role": "user",
+      "content": "制作一张河南省各市的人口统计专题图"
+    },
+    {
+      "role": "user",
+      "content": "制作一张河南省各市的人口统计专题图"
+    },
+    {
+      "role": "system",
+      "content": "正在分析您的请求..."
+    },
+    {
+      "role": "system",
+      "content": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: f7cf3992-3fca-4d75-8c7c-ca7ed1d0cb0b)\n------------------------\nnode path: [node_1, ChatModel]"
+    }
+  ],
+  "runtime_projection": {
+    "runtime_status": "failed",
+    "run_id": "task-d594a94b-ed61-4c2b-85fa-6f36e8673d53-1793173067935239000",
+    "execution_mode": "build",
+    "phase": "building",
+    "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_57403_1793172848",
+    "bound_project_path": "/home/shared-user/Desktop/Test.qgz",
+    "checkpoint_id": "task-d594a94b-ed61-4c2b-85fa-6f36e8673d53-1793173067935239000",
+    "runtime_revision": "default:30f6ec21aa43c3e3",
+    "active_agent_config": "default",
+    "last_error": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: f7cf3992-3fca-4d75-8c7c-ca7ed1d0cb0b)\n------------------------\nnode path: [node_1, ChatModel]",
+    "failure_reason": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: f7cf3992-3fca-4d75-8c7c-ca7ed1d0cb0b)\n------------------------\nnode path: [node_1, ChatModel]",
+    "updated_at": "2026-10-28T07:37:48Z",
+    "runtime_summary": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: f7cf3992-3fca-4d75-8c7c-ca7ed1d0cb0b)\n------------------------\nnode path: [node_1, ChatModel]",
+    "workflow_blocks": [
+      {
+        "agent": "orchestrator",
+        "agentDisplayName": "主智能体",
+        "entries": [
+          {
+            "content": "收到用户请求，开始分析任务需求...",
+            "id": "entry-20261028073747.935",
+            "phase": "thinking",
+            "timestamp": 1793173067935,
+            "type": "thinking"
+          },
+          {
+            "content": "识别到需要 主智能体 处理此任务",
+            "data": {
+              "mode_phase": "building"
+            },
+            "id": "entry-20261028073748.348",
+            "phase": "thinking",
+            "timestamp": 1793173068348,
+            "type": "thinking"
+          }
+        ],
+        "finishedAt": 1793173068423,
+        "id": "wf-20261028073747.935",
+        "startedAt": 1793173067935,
+        "status": "error",
+        "summary": "识别到需要 主智能体 处理此任务",
+        "updatedAt": 1793173068423
+      }
+    ]
+  },
+  "created_at": "2026-10-28T15:37:45+08:00",
+  "last_active_at": "2026-10-28T07:37:48.953Z"
+}

@@ -1,0 +1,135 @@
+{
+  "active_agent_config": "default",
+  "archived": false,
+  "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_50273_1793170998",
+  "bound_project_path": "/home/shared-user/Desktop/Test.qgz",
+  "carto_plans": [],
+  "checkpoint_id": "task-7f292b11-2421-435e-bcd2-d559ba736a2f-1793171138452479000",
+  "compression_history": [],
+  "context_stats": {
+    "compressed_count": 0,
+    "estimated_tokens": 46,
+    "message_count": 6,
+    "total_chars": 240,
+    "total_tokens": 46
+  },
+  "created_at": "2026-10-28T15:03:53+08:00",
+  "description": "",
+  "execution_mode": "build",
+  "flow_run": null,
+  "last_error": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: dd1fc1ec-40e4-4603-b7c5-618327894de8)\n------------------------\nnode path: [node_1, ChatModel]",
+  "last_message_preview": "[status] 已创建新会话。",
+  "llm_config": {},
+  "messages": [
+    {
+      "content": "制作一张河南省各市的人口统计专题图",
+      "role": "user"
+    },
+    {
+      "content": "制作一张河南省各市的人口统计专题图",
+      "role": "user"
+    },
+    {
+      "content": "正在分析您的请求...",
+      "role": "system"
+    },
+    {
+      "content": "制作河南省各市人口统计专题图",
+      "extra": {
+        "guide_id": "statistical-choropleth"
+      },
+      "role": "user"
+    },
+    {
+      "content": "制作河南省各市人口统计专题图",
+      "role": "user"
+    },
+    {
+      "content": "正在分析您的请求...",
+      "role": "system"
+    },
+    {
+      "content": "已创建新会话。",
+      "msg_type": "status",
+      "role": "system",
+      "timestamp": "2026-10-28T07:37:45.973Z"
+    }
+  ],
+  "name": "河南省各市人口统计专题图制作",
+  "name_auto_generated": false,
+  "project_path": "/home/shared-user/Desktop/Test.qgz",
+  "run_id": "task-7f292b11-2421-435e-bcd2-d559ba736a2f-1793171138452479000",
+  "run_intent": "execute",
+  "runtime_failure_reason": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: dd1fc1ec-40e4-4603-b7c5-618327894de8)\n------------------------\nnode path: [node_1, ChatModel]",
+  "runtime_phase": "building",
+  "runtime_revision": "default:30f6ec21aa43c3e3",
+  "runtime_status": "failed",
+  "runtime_summary": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: dd1fc1ec-40e4-4603-b7c5-618327894de8)\n------------------------\nnode path: [node_1, ChatModel]",
+  "session_id": "7f292b11-2421-435e-bcd2-d559ba736a2f",
+  "snapshots": [],
+  "tags": [],
+  "title_source": "llm",
+  "tool_calls": [],
+  "total_tokens_used": 46,
+  "updated_at": "2026-10-28T07:37:46.497Z",
+  "workflow_blocks": [
+    {
+      "agent": "orchestrator",
+      "agentDisplayName": "主智能体",
+      "entries": [
+        {
+          "content": "收到用户请求，开始分析任务需求...",
+          "id": "entry-20261028070439.881",
+          "phase": "thinking",
+          "timestamp": 1793171079881,
+          "type": "thinking"
+        },
+        {
+          "content": "识别到需要 主智能体 处理此任务",
+          "data": {
+            "mode_phase": "building"
+          },
+          "id": "entry-20261028070440.397",
+          "phase": "thinking",
+          "timestamp": 1793171080397,
+          "type": "thinking"
+        }
+      ],
+      "finishedAt": 1793171080480,
+      "id": "wf-20261028070439.881",
+      "startedAt": 1793171079881,
+      "status": "error",
+      "summary": "识别到需要 主智能体 处理此任务",
+      "updatedAt": 1793171080480
+    },
+    {
+      "agent": "orchestrator",
+      "agentDisplayName": "主智能体",
+      "entries": [
+        {
+          "content": "收到用户请求，开始分析任务需求...",
+          "id": "entry-20261028070538.462",
+          "phase": "thinking",
+          "timestamp": 1793171138462,
+          "type": "thinking"
+        },
+        {
+          "content": "识别到需要 主智能体 处理此任务",
+          "data": {
+            "mode_phase": "building"
+          },
+          "id": "entry-20261028070539.018",
+          "phase": "thinking",
+          "timestamp": 1793171139018,
+          "type": "thinking"
+        }
+      ],
+      "finishedAt": 1793171139104,
+      "id": "wf-20261028070538.462",
+      "startedAt": 1793171138462,
+      "status": "error",
+      "summary": "识别到需要 主智能体 处理此任务",
+      "updatedAt": 1793171139104
+    }
+  ]
+}

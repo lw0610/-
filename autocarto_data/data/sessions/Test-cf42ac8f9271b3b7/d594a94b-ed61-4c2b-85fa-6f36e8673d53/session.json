@@ -1,0 +1,102 @@
+{
+  "active_agent_config": "default",
+  "archived": false,
+  "bound_instance_id": "qgis_zwdeMacBook-Air.local_f62be59cee06_57403_1793172848",
+  "bound_project_path": "/home/shared-user/Desktop/Test.qgz",
+  "carto_plans": [],
+  "checkpoint_id": "task-d594a94b-ed61-4c2b-85fa-6f36e8673d53-1793173067935239000",
+  "compression_history": [],
+  "context_stats": {
+    "compressed_count": 0,
+    "estimated_tokens": 92,
+    "message_count": 4,
+    "total_chars": 394,
+    "total_tokens": 92
+  },
+  "created_at": "2026-10-28T15:37:45+08:00",
+  "description": "",
+  "execution_mode": "build",
+  "flow_run": null,
+  "last_error": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: f7cf3992-3fca-4d75-8c7c-ca7ed1d0cb0b)\n------------------------\nnode path: [node_1, ChatModel]",
+  "last_message_preview": "[error] [NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for functio...",
+  "llm_config": {},
+  "messages": [
+    {
+      "content": "制作一张河南省各市的人口统计专题图",
+      "role": "user"
+    },
+    {
+      "content": "制作一张河南省各市的人口统计专题图",
+      "msg_type": "user",
+      "role": "user",
+      "timestamp": "2026-10-28T07:37:47.934Z"
+    },
+    {
+      "content": "正在分析您的请求...",
+      "data": {
+        "protocol_version": 1,
+        "status": "thinking"
+      },
+      "msg_type": "status",
+      "role": "system",
+      "timestamp": "2026-10-28T07:37:47.950Z"
+    },
+    {
+      "content": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: f7cf3992-3fca-4d75-8c7c-ca7ed1d0cb0b)\n------------------------\nnode path: [node_1, ChatModel]",
+      "data": {
+        "protocol_version": 1
+      },
+      "msg_type": "error",
+      "role": "system",
+      "timestamp": "2026-10-28T07:37:48.423Z"
+    }
+  ],
+  "name": "河南省各市人口统计专题图",
+  "name_auto_generated": false,
+  "project_path": "/home/shared-user/Desktop/Test.qgz",
+  "run_id": "task-d594a94b-ed61-4c2b-85fa-6f36e8673d53-1793173067935239000",
+  "run_intent": "execute",
+  "runtime_failure_reason": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: f7cf3992-3fca-4d75-8c7c-ca7ed1d0cb0b)\n------------------------\nnode path: [node_1, ChatModel]",
+  "runtime_phase": "building",
+  "runtime_revision": "default:30f6ec21aa43c3e3",
+  "runtime_status": "failed",
+  "runtime_summary": "[NodeRunError] error, status code: 400, status: 400 Bad Request, message: Invalid schema for function 'plan_propose': null is not of types \"boolean\", \"object\" (request_id: f7cf3992-3fca-4d75-8c7c-ca7ed1d0cb0b)\n------------------------\nnode path: [node_1, ChatModel]",
+  "session_id": "d594a94b-ed61-4c2b-85fa-6f36e8673d53",
+  "snapshots": [],
+  "tags": [],
+  "title_source": "llm",
+  "tool_calls": [],
+  "total_tokens_used": 92,
+  "updated_at": "2026-10-28T15:37:51+08:00",
+  "workflow_blocks": [
+    {
+      "agent": "orchestrator",
+      "agentDisplayName": "主智能体",
+      "entries": [
+        {
+          "content": "收到用户请求，开始分析任务需求...",
+          "id": "entry-20261028073747.935",
+          "phase": "thinking",
+          "timestamp": 1793173067935,
+          "type": "thinking"
+        },
+        {
+          "content": "识别到需要 主智能体 处理此任务",
+          "data": {
+            "mode_phase": "building"
+          },
+          "id": "entry-20261028073748.348",
+          "phase": "thinking",
+          "timestamp": 1793173068348,
+          "type": "thinking"
+        }
+      ],
+      "finishedAt": 1793173068423,
+      "id": "wf-20261028073747.935",
+      "startedAt": 1793173067935,
+      "status": "error",
+      "summary": "识别到需要 主智能体 处理此任务",
+      "updatedAt": 1793173068423
+    }
+  ]
+}

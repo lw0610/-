@@ -1,0 +1,22 @@
+{
+  "counts": {
+    "callouts.csv": 1,
+    "places.csv": 4,
+    "points.csv": 4,
+    "route_paths.csv": 4,
+    "routes.csv": 1,
+    "symbol_mapping.csv": 8
+  },
+  "files": [
+    "places.csv",
+    "routes.csv",
+    "route_paths.csv",
+    "points.csv",
+    "symbol_mapping.csv",
+    "callouts.csv"
+  ],
+  "schema_version": "1.0",
+  "task_id": "red25th-army-march-1934",
+  "title": "红二十五军长征行军路线图（1934年11月·河南段）",
+  "warnings": []
+}

@@ -1,0 +1,16 @@
+{
+  "dataset": "COPERNICUS/S2_SR_HARMONIZED",
+  "bands": [
+    "B4",
+    "B3",
+    "B2"
+  ],
+  "method": "median composite",
+  "search_start": "2024-06-01",
+  "search_end_exclusive": "2025-06-01",
+  "cloud_filter_lt": 30,
+  "image_count": 51,
+  "coverage_before_fill": 1.0,
+  "coverage_check_scale": 30,
+  "output": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/gushi_county_imagery_rgb.tif"
+}

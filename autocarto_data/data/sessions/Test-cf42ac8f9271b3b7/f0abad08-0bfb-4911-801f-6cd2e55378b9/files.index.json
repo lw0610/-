@@ -1,0 +1,243 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "f_912094dce7b22cae",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/boundaries/boundary_county_411525.geojson",
+      "name": "boundary_county_411525.geojson",
+      "kind": "vector",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "admin_boundary_extract",
+        "label": "admin_boundary_extract",
+        "call_id": "call_01_kh7u7yA1Wsl00dsfYVfi1458",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T13:22:11.388154Z",
+      "modified_at": "2026-10-26T13:21:47.718637166Z",
+      "size": 4038,
+      "exists": true
+    },
+    {
+      "id": "f_762034570461e4b4",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/boundaries/boundary_county_411525.provenance.json",
+      "name": "boundary_county_411525.provenance.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "admin_boundary_extract",
+        "label": "admin_boundary_extract",
+        "call_id": "call_01_kh7u7yA1Wsl00dsfYVfi1458",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T13:22:11.388612Z",
+      "modified_at": "2026-10-26T13:21:47.718361208Z",
+      "size": 1408,
+      "exists": true
+    },
+    {
+      "id": "f_3ac9e0bbf3ab6504",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/_gee_worker.py",
+      "name": "_gee_worker.py",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-26T17:17:05.132425874Z",
+      "modified_at": "2026-10-26T17:17:05.132425874Z",
+      "size": 43507,
+      "exists": true
+    },
+    {
+      "id": "f_84b5c69f2bd4e134",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/_worker_result.json",
+      "name": "_worker_result.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-26T17:34:45.589019749Z",
+      "modified_at": "2026-10-26T17:34:45.589019749Z",
+      "size": 1450,
+      "exists": true
+    },
+    {
+      "id": "f_9098bc537fb3ef0c",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/downloads.jsonl",
+      "name": "downloads.jsonl",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_Z8KjkDITLkQJtW97jfdD6544",
+        "agent": "scripting_specialist"
+      },
+      "registered_at": "2026-10-26T17:34:45.744397Z",
+      "modified_at": "2026-10-26T17:34:45.587519208Z",
+      "size": 480,
+      "exists": true
+    },
+    {
+      "id": "f_dd5a56208b41d577",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/gushi_county_imagery_rgb.tif",
+      "name": "gushi_county_imagery_rgb.tif",
+      "kind": "raster",
+      "group": "data",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_Z8KjkDITLkQJtW97jfdD6544",
+        "agent": "scripting_specialist"
+      },
+      "registered_at": "2026-10-26T17:34:45.745027Z",
+      "modified_at": "2026-10-26T17:34:45.553819583Z",
+      "size": 389077379,
+      "exists": true
+    },
+    {
+      "id": "f_ff503403b9eac7c1",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/gushi_county_imagery_rgb.tif.aux.xml",
+      "name": "gushi_county_imagery_rgb.tif.aux.xml",
+      "kind": "text",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "scan",
+        "label": "会话文件"
+      },
+      "registered_at": "2026-10-27T15:27:42.494824083Z",
+      "modified_at": "2026-10-27T15:27:42.494824083Z",
+      "size": 1500650,
+      "exists": true
+    },
+    {
+      "id": "f_0bdf367ee4d66544",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/gushi_imagery_report.json",
+      "name": "gushi_imagery_report.json",
+      "kind": "json",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_Z8KjkDITLkQJtW97jfdD6544",
+        "agent": "scripting_specialist"
+      },
+      "registered_at": "2026-10-26T17:34:45.745265Z",
+      "modified_at": "2026-10-26T17:34:45.588692916Z",
+      "size": 512,
+      "exists": true
+    },
+    {
+      "id": "f_cfdde262894ec7e5",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/progress.jsonl",
+      "name": "progress.jsonl",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_Z8KjkDITLkQJtW97jfdD6544",
+        "agent": "scripting_specialist"
+      },
+      "registered_at": "2026-10-26T17:34:45.745643Z",
+      "modified_at": "2026-10-26T17:34:45.588407499Z",
+      "size": 26194,
+      "exists": true
+    },
+    {
+      "id": "f_536579e9ffc41795",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/script.py",
+      "name": "script.py",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_Z8KjkDITLkQJtW97jfdD6544",
+        "agent": "scripting_specialist"
+      },
+      "registered_at": "2026-10-26T17:34:45.745904Z",
+      "modified_at": "2026-10-26T17:17:05.132629333Z",
+      "size": 2322,
+      "exists": true
+    },
+    {
+      "id": "f_81521c3c5f21430e",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/stderr.log",
+      "name": "stderr.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_Z8KjkDITLkQJtW97jfdD6544",
+        "agent": "scripting_specialist"
+      },
+      "registered_at": "2026-10-26T17:34:45.746208Z",
+      "modified_at": "2026-10-26T17:34:45.743503124Z",
+      "size": 6089,
+      "exists": true
+    },
+    {
+      "id": "f_119921f7f28931d0",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/integrations/gee/run-3358035013/stdout.log",
+      "name": "stdout.log",
+      "kind": "other",
+      "group": "other",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "gee_run_script",
+        "label": "执行云端遥感脚本",
+        "call_id": "call_00_Z8KjkDITLkQJtW97jfdD6544",
+        "agent": "scripting_specialist"
+      },
+      "registered_at": "2026-10-26T17:34:45.746497Z",
+      "modified_at": "2026-10-26T17:34:45.743457374Z",
+      "size": 8778,
+      "exists": true
+    },
+    {
+      "id": "f_20738217fafbb0d9",
+      "path": "/home/shared-user/研究生/QGIS-agent/enio2/autocarto_data/data/sessions/Test-cf42ac8f9271b3b7/f0abad08-0bfb-4911-801f-6cd2e55378b9/output/固始县边界预览.png",
+      "name": "固始县边界预览.png",
+      "kind": "image",
+      "group": "deliverable",
+      "members": [],
+      "origin": {
+        "type": "tool",
+        "tool": "geodata_thumbnail",
+        "label": "生成地理文件缩略图",
+        "call_id": "call_00_O3BWPTAH9gFcHnbSLwBy1718",
+        "agent": "data_engineer"
+      },
+      "registered_at": "2026-10-26T13:22:10.867735Z",
+      "modified_at": "2026-10-26T13:22:10.671316583Z",
+      "size": 43472,
+      "exists": true
+    }
+  ]
+}

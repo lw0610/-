@@ -1,0 +1,277 @@
+{
+  "actors": [
+    {
+      "actor_id": "A_RED25",
+      "aliases": [
+        "红25军"
+      ],
+      "confidence": 1.0,
+      "evidence_refs": [
+        "E1"
+      ],
+      "name": "红二十五军"
+    }
+  ],
+  "callouts": [
+    {
+      "anchor_ref": "EV_BATTLE_DUSHU",
+      "anchor_ref_type": "event",
+      "body": "1934年11月，红二十五军在行军途中于独树镇与敌军发生战斗。独树镇战斗是红二十五军长征途中一次重要战斗。",
+      "callout_id": "CO_BATTLE_DUSHU",
+      "image_enabled": false,
+      "image_path": "",
+      "leader_style": "straight",
+      "preferred_side": "right",
+      "priority": 2.0,
+      "template": "text_only",
+      "title": "独树镇战斗",
+      "width_mm": 50
+    }
+  ],
+  "events": [
+    {
+      "actor_refs": [
+        "A_RED25"
+      ],
+      "confidence": 1.0,
+      "description": "红二十五军从方城出发",
+      "event_id": "EV_DEPARTURE",
+      "event_type": "departure",
+      "evidence_refs": [
+        "E1"
+      ],
+      "location_ref": "SE_FANGCHENG",
+      "name": "方城出发",
+      "priority": 1.0,
+      "time_text": "1934年11月"
+    },
+    {
+      "actor_refs": [
+        "A_RED25"
+      ],
+      "confidence": 1.0,
+      "description": "红二十五军在行军途中于独树镇发生战斗",
+      "event_id": "EV_BATTLE_DUSHU",
+      "event_type": "battle",
+      "evidence_refs": [
+        "E2"
+      ],
+      "location_ref": "SE_DUSHUIZHEN",
+      "name": "独树镇战斗",
+      "priority": 2.0,
+      "time_text": "1934年11月"
+    },
+    {
+      "actor_refs": [
+        "A_RED25"
+      ],
+      "confidence": 1.0,
+      "description": "红二十五军行军途经南召",
+      "event_id": "EV_PASSAGE_NANZHAO",
+      "event_type": "passage",
+      "evidence_refs": [
+        "E1"
+      ],
+      "location_ref": "SE_NANZHAO",
+      "name": "途经南召",
+      "priority": 0.8,
+      "time_text": "1934年11月"
+    },
+    {
+      "actor_refs": [
+        "A_RED25"
+      ],
+      "confidence": 1.0,
+      "description": "红二十五军最终到达卢氏",
+      "event_id": "EV_ARRIVAL",
+      "event_type": "arrival",
+      "evidence_refs": [
+        "E1"
+      ],
+      "location_ref": "SE_LUSHI",
+      "name": "抵达卢氏",
+      "priority": 1.0,
+      "time_text": "1934年11月"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E1",
+      "quote": "红二十五军从方城出发，经独树镇、南召，最后到达卢氏"
+    },
+    {
+      "evidence_id": "E2",
+      "quote": "行军途中在独树镇发生战斗"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "经独树镇"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "开封只作为地图背景，不属于行军路线"
+    }
+  ],
+  "output_constraints": {
+    "self_intersection_policy": "allow"
+  },
+  "point_presentations": [
+    {
+      "anchor_ref": "SE_FANGCHENG",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_START",
+      "priority": 1.0,
+      "symbol_type": "start_flag",
+      "visible": true
+    },
+    {
+      "anchor_ref": "EV_BATTLE_DUSHU",
+      "anchor_ref_type": "event",
+      "presentation_id": "PP_BATTLE",
+      "priority": 2.0,
+      "symbol_type": "battle",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_NANZHAO",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_WAYPOINT_NANZHAO",
+      "priority": 0.8,
+      "symbol_type": "waypoint",
+      "visible": true
+    },
+    {
+      "anchor_ref": "SE_LUSHI",
+      "anchor_ref_type": "spatial_entity",
+      "presentation_id": "PP_END",
+      "priority": 1.0,
+      "symbol_type": "waypoint",
+      "visible": true
+    }
+  ],
+  "routes": [
+    {
+      "confidence": 1.0,
+      "effective_width_scale": 1.2,
+      "enabled": true,
+      "evidence_refs": [
+        "E1"
+      ],
+      "name": "红二十五军主力行军路线",
+      "paths": [
+        {
+          "direction": "forward",
+          "nodes": [
+            {
+              "ref_id": "SE_FANGCHENG",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_DUSHUIZHEN",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_NANZHAO",
+              "ref_type": "spatial_entity"
+            },
+            {
+              "ref_id": "SE_LUSHI",
+              "ref_type": "spatial_entity"
+            }
+          ],
+          "path_id": "P_MAIN_1",
+          "role": "main"
+        }
+      ],
+      "route_id": "R_MAIN",
+      "side": "friendly",
+      "style_ref": "friendly_main_red",
+      "topology": "standard"
+    }
+  ],
+  "schema_version": "1.0",
+  "spatial_entities": [
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "description": "河南省南阳市方城县，红二十五军出发地",
+      "entity_id": "SE_FANGCHENG",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E1"
+      ],
+      "factual": true,
+      "lat": 33.25,
+      "lon": 113.0,
+      "map_role": "route_node",
+      "name": "方城"
+    },
+    {
+      "coordinate_confidence": 0.8,
+      "coordinate_source": "llm_estimated",
+      "description": "河南省方城县独树镇，战斗发生地",
+      "entity_id": "SE_DUSHUIZHEN",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E1",
+        "E2"
+      ],
+      "factual": true,
+      "lat": 33.32,
+      "lon": 113.05,
+      "map_role": "route_node",
+      "name": "独树镇"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "description": "河南省南阳市南召县，行军途经地",
+      "entity_id": "SE_NANZHAO",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E1"
+      ],
+      "factual": true,
+      "lat": 33.49,
+      "lon": 112.43,
+      "map_role": "route_node",
+      "name": "南召"
+    },
+    {
+      "coordinate_confidence": 0.85,
+      "coordinate_source": "llm_estimated",
+      "description": "河南省三门峡市卢氏县，行军终点",
+      "entity_id": "SE_LUSHI",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E1"
+      ],
+      "factual": true,
+      "lat": 34.05,
+      "lon": 111.05,
+      "map_role": "route_node",
+      "name": "卢氏"
+    },
+    {
+      "coordinate_confidence": 0.9,
+      "coordinate_source": "llm_estimated",
+      "description": "河南省开封市，仅作为地图背景参考",
+      "entity_id": "SE_KAIFENG",
+      "entity_kind": "place",
+      "evidence_refs": [
+        "E4"
+      ],
+      "factual": true,
+      "lat": 34.8,
+      "lon": 114.35,
+      "map_role": "background",
+      "name": "开封"
+    }
+  ],
+  "task": {
+    "input_crs": "EPSG:4326",
+    "map_type": "marching_route",
+    "task_id": "red25th-army-march-1934",
+    "title": "红二十五军长征行军路线图（1934年11月·河南段）"
+  }
+}

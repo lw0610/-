@@ -1,0 +1,3 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+rte_converge_to_luoyang,增援合流与洛阳会师,main,multi_start_bezier,multi_start_bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=multi_start;self_intersection_policy=allow_with_overpass
+rte_main_and_branch,主力南进与支队分兵,branch,branch_bezier,branch_bezier_red_gradient,2.27272727273,EPSG:4326,1,side=friendly;topology=branch;self_intersection_policy=allow_with_overpass
