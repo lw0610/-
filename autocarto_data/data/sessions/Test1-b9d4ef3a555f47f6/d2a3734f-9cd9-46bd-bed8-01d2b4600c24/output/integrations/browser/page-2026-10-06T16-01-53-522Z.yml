@@ -1,0 +1,246 @@
+- generic [active] [ref=f2e1]:
+  - banner [ref=f2e2]:
+    - button "跳至内容" [ref=f2e3] [cursor=pointer]
+    - button "辅助功能反馈" [ref=f2e6] [cursor=pointer]
+    - generic [ref=f2e9]:
+      - link [ref=f2e10] [cursor=pointer]:
+        - /url: /?FORM=Z9FD1
+        - heading "返回到必应搜索" [level=1] [ref=f2e11]
+      - search [ref=f2e12]:
+        - button "搜索" [ref=f2e15] [cursor=pointer]
+        - searchbox "在此处输入你的搜索 — 输入时会显示搜索建议" [ref=f2e16]: 2025年各省份地区生产总值GDP排名 国家统计局
+        - generic [ref=f2e17] [cursor=pointer]
+        - button "使用图像搜索" [ref=f2e22] [cursor=pointer]
+    - complementary "帐户奖励和偏好设置" [ref=f2e24]:
+      - button "Microsoft Rewards" [ref=f2e25] [cursor=pointer]:
+        - generic [ref=f2e26]: Rewards
+      - link "登录" [ref=f2e42] [cursor=pointer]:
+        - /url: javascript:void(0)
+    - navigation "主菜单" [ref=f2e44]:
+      - list [ref=f2e45]:
+        - listitem [ref=f2e46]:
+          - link "全部" [ref=f2e47] [cursor=pointer]:
+            - /url: /?scope=web&FORM=HDRSC1
+        - listitem [ref=f2e48]:
+          - link "搜索" [ref=f2e49] [cursor=pointer]:
+            - /url: /copilotsearch?q=2025%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bcGDP%e6%8e%92%e5%90%8d+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FORM=CSSCOP
+        - listitem [ref=f2e52]:
+          - link "图片" [ref=f2e53] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=04d50c7002360a19190b75529993ec42282f2928c6ac134f39bbee289af3a4c4JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L2ltYWdlcy9zZWFyY2g_cT0yMDI1JWU1JWI5JWI0JWU1JTkwJTg0JWU3JTljJTgxJWU0JWJiJWJkJWU1JTljJWIwJWU1JThjJWJhJWU3JTk0JTlmJWU0JWJhJWE3JWU2JTgwJWJiJWU1JTgwJWJjR0RQJWU2JThlJTkyJWU1JTkwJThkKyVlNSU5YiViZCVlNSVhZSViNiVlNyViYiU5ZiVlOCVhZSVhMSVlNSViMSU4MCZGT1JNPUhEUlNDMw&ntb=1
+        - listitem [ref=f2e54]:
+          - link "视频" [ref=f2e55] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=ad6bfa8ea1fe394b4946e2aff36d4c8e8aface5f4fb9c054aec3c3ca591c5a5eJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3ZpZGVvcy9zZWFyY2g_cT0yMDI1JWU1JWI5JWI0JWU1JTkwJTg0JWU3JTljJTgxJWU0JWJiJWJkJWU1JTljJWIwJWU1JThjJWJhJWU3JTk0JTlmJWU0JWJhJWE3JWU2JTgwJWJiJWU1JTgwJWJjR0RQJWU2JThlJTkyJWU1JTkwJThkKyVlNSU5YiViZCVlNSVhZSViNiVlNyViYiU5ZiVlOCVhZSVhMSVlNSViMSU4MCZGT1JNPUhEUlNDNA&ntb=1
+        - listitem [ref=f2e56]:
+          - link "地图" [ref=f2e57] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=9ad0a5cc2baf3f825d086833b93c1d33cd8e84ed891de1c3960163107d9dfa65JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L21hcHM_cT0yMDI1JWU1JWI5JWI0JWU1JTkwJTg0JWU3JTljJTgxJWU0JWJiJWJkJWU1JTljJWIwJWU1JThjJWJhJWU3JTk0JTlmJWU0JWJhJWE3JWU2JTgwJWJiJWU1JTgwJWJjR0RQJWU2JThlJTkyJWU1JTkwJThkKyVlNSU5YiViZCVlNSVhZSViNiVlNyViYiU5ZiVlOCVhZSVhMSVlNSViMSU4MCZGT1JNPUhEUlNDNg&ntb=1
+        - listitem [ref=f2e58]:
+          - link "资讯" [ref=f2e59] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=2d337a2c50b9bf4eb36dee533f808b6f696c6f496874f5004ad389dc303f4738JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L25ld3Mvc2VhcmNoP3E9MjAyNSVlNSViOSViNCVlNSU5MCU4NCVlNyU5YyU4MSVlNCViYiViZCVlNSU5YyViMCVlNSU4YyViYSVlNyU5NCU5ZiVlNCViYSVhNyVlNiU4MCViYiVlNSU4MCViY0dEUCVlNiU4ZSU5MiVlNSU5MCU4ZCslZTUlOWIlYmQlZTUlYWUlYjYlZTclYmIlOWYlZTglYWUlYTElZTUlYjElODAmRk9STT1IRFJTQzc&ntb=1
+        - listitem [ref=f2e60]:
+          - button [ref=f2e61] [cursor=pointer]
+  - generic [ref=f2e65]:
+    - main "搜索结果" [ref=f2e66]:
+      - generic [ref=f2e68]:
+        - generic [aria-hidden] [ref=f2e69]:
+          - generic [ref=f2e70] [cursor=pointer]
+          - generic [ref=f2e72] [cursor=pointer]
+          - generic [ref=f2e75] [cursor=pointer]
+        - text: 约 12,500 个结果
+      - list [ref=f2e78]:
+        - listitem [ref=f2e79]:
+          - generic [ref=f2e80]:
+            - text: 以下是
+            - link [ref=f2e81] [cursor=pointer]:
+              - /url: /search?q=cr2025+%e5%b9%b4+%e5%90%84+%e7%9c%81+%e5%9c%b0%e5%8c%ba+%e7%94%9f%e4%ba%a7+%e6%80%bb%e9%a2%9d+GPD+%e6%8e%92%e8%a1%8c+%e5%9b%bd%e5%ae%b6+%e7%bb%9f%e8%ae%a1+%e5%b1%80&FORM=AWRE
+              - strong [ref=f2e82]: cr2025
+              - text: 年 各
+              - strong [ref=f2e83]: 省
+              - text: 地区 生产 总
+              - strong [ref=f2e84]: 额 GPD
+              - text: 排
+              - strong [ref=f2e85]: 行
+              - text: 国家 统计 局
+            - text: 的结果。
+          - generic [ref=f2e86]:
+            - text: 改为搜索
+            - link "2025年各省份地区生产总值GDP排名 国家统计局" [ref=f2e87] [cursor=pointer]:
+              - /url: /search?q=%2b2025%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bcGDP%e6%8e%92%e5%90%8d+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&filters=rcrse%3a%221%22&FORM=RCRE
+            - text: "?"
+        - listitem [ref=f2e88]:
+          - link "国家统计局" [ref=f2e90] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=b47c6be426b775b3497ac5aac246b78ff62903f735011961807bf088461f60d7JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL3NqL3p4ZmIvMjAyNjAxL3QyMDI2MDEyMF8xOTYyMzQ5Lmh0bWw&ntb=1
+            - img "全球 Web 图标" [ref=f2e94]
+            - generic [ref=f2e95]:
+              - generic [ref=f2e96]: 国家统计局
+              - generic [ref=f2e97]: https://www.stats.gov.cn › sj › zxfb
+          - heading [level=2] [ref=f2e100]:
+            - link "2025年四季度和全年国内生产总值初步核算结果 - 国家统计局" [ref=f2e101] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=b47c6be426b775b3497ac5aac246b78ff62903f735011961807bf088461f60d7JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL3NqL3p4ZmIvMjAyNjAxL3QyMDI2MDEyMF8xOTYyMzQ5Lmh0bWw&ntb=1
+          - paragraph [ref=f2e103]: 2026年1月20日 · GDP核算的生产范围包括以下四个部分：第一，生产者提供或准备提供给其他单位的货物或服务的生产；第二，生产 …
+        - listitem [ref=f2e104]:
+          - link "国家统计局" [ref=f2e106] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=863bb90d7945c4be2609209099ca674bd815ff9f818b1b86e728f9695a8b2c5cJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL3pzL3Rqd2gvdGprdy90anFrL3pneHhiLzIwMjYwMy9QMDIwMjYwMzAyMzI0NDU2MDAyMDIxLnBkZg&ntb=1
+            - img "全球 Web 图标" [ref=f2e110]
+            - generic [ref=f2e111]:
+              - generic [ref=f2e112]: 国家统计局
+              - generic [ref=f2e114]:
+                - generic [ref=f2e115]: https://www.stats.gov.cn › zs › tjwh › tjkw › tjqk › zgxxb
+                - text: · PDF 文件
+          - heading [level=2] [ref=f2e116]:
+            - link "02B20260302C - 国家统计局" [ref=f2e117] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=863bb90d7945c4be2609209099ca674bd815ff9f818b1b86e728f9695a8b2c5cJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL3pzL3Rqd2gvdGprdy90anFrL3pneHhiLzIwMjYwMy9QMDIwMjYwMzAyMzI0NDU2MDAyMDIxLnBkZg&ntb=1
+          - paragraph [ref=f2e119]: 年末全国常住人口城镇化率为67.89%,比上年末提高0.89个百分点。 分区域看[21],全年东部地区生产总值730876亿元,比上年增长5.0%; …
+        - listitem [ref=f2e120]:
+          - link "聚汇数据" [ref=f2e122] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=cbef88cb6ae2f221b5aec20231a9feda9078ef58ff0b58fb156a0ac4bd16b8acJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuZ290b2h1aS5jb20vcmFua2luZy9nZHAvcHJvdmluY2UvMjAyNQ&ntb=1
+            - generic [ref=f2e127]:
+              - generic [ref=f2e128]: 聚汇数据
+              - generic [ref=f2e129]: https://www.gotohui.com › ranking › gdp › province
+          - heading [level=2] [ref=f2e132]:
+            - link "全国各省GDP排行榜_2025年_聚汇数据 - gotohui.com" [ref=f2e133] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=cbef88cb6ae2f221b5aec20231a9feda9078ef58ff0b58fb156a0ac4bd16b8acJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuZ290b2h1aS5jb20vcmFua2luZy9nZHAvcHJvdmluY2UvMjAyNQ&ntb=1
+          - paragraph [ref=f2e135]: 聚汇数据提供2025年全国各省GDP排行榜，查看当年各省GDP排名、同比变化与历年数据。
+        - listitem [ref=f2e136]:
+          - link "知乎专栏" [ref=f2e138] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=cdf3b4a98e5c5df8214b23cb56dff9f610ea3336c9816a853be922fba4b969e5JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8yMDAwMTYwNjI3MjY4ODE0MTYx&ntb=1
+            - generic [ref=f2e143]:
+              - generic [ref=f2e144]: 知乎专栏
+              - generic [ref=f2e145]: https://zhuanlan.zhihu.com
+          - heading [level=2] [ref=f2e148]:
+            - link "2025年全国各省份GDP数据（附图表） - 知乎" [ref=f2e149] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=cdf3b4a98e5c5df8214b23cb56dff9f610ea3336c9816a853be922fba4b969e5JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8yMDAwMTYwNjI3MjY4ODE0MTYx&ntb=1
+          - paragraph [ref=f2e151]: 2026年1月19日 · 截止1月28日，全国31个省份2025年GDP数据已全部出炉。 全国GDP总量140.19万亿元，增速为5%。 超10万亿省 …
+        - listitem [ref=f2e152]:
+          - link "今日头条" [ref=f2e154] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=309552393fdd7d14460a0761b21ce893c07c40c5f40ce28f8027782cfd2dff1bJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cudG91dGlhby5jb20vYXJ0aWNsZS83NjAwMzg2OTU0NzQwOTkwNDk4Lw&ntb=1
+            - generic [ref=f2e159]:
+              - generic [ref=f2e160]: 今日头条
+              - generic [ref=f2e161]: https://www.toutiao.com › article
+          - heading [level=2] [ref=f2e164]:
+            - link "31省2025年GDP出炉 - 今日头条" [ref=f2e165] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=309552393fdd7d14460a0761b21ce893c07c40c5f40ce28f8027782cfd2dff1bJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cudG91dGlhby5jb20vYXJ0aWNsZS83NjAwMzg2OTU0NzQwOTkwNDk4Lw&ntb=1
+          - paragraph [ref=f2e167]: 2026年1月28日 · 本文将对2025年中国31省市的GDP数据进行深入分析，探讨区域经济的变化趋势及未来发展潜力。 一、整体经济格 …
+        - listitem [ref=f2e168]:
+          - link "百度文库" [ref=f2e170] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=ec3a78f53f6b3a37a6c441e9ec5a028aaee906fe8a66cd22664eb7c655fc56d5JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93ZW5rdS5iYWlkdS5jb20vdmlldy8yMGNmYTM2MjU2ZWE1NTE4MTBhNmY1MjRjY2JmZjEyMWRjMzZjNTZmLmh0bWw&ntb=1
+            - generic [ref=f2e175]:
+              - generic [ref=f2e176]: 百度文库
+              - generic [ref=f2e177]: https://wenku.baidu.com › view
+          - heading [level=2] [ref=f2e180]:
+            - link "2025年GDP十强省份排名出炉：广东江苏破10万亿，山东第三" [ref=f2e181] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=ec3a78f53f6b3a37a6c441e9ec5a028aaee906fe8a66cd22664eb7c655fc56d5JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93ZW5rdS5iYWlkdS5jb20vdmlldy8yMGNmYTM2MjU2ZWE1NTE4MTBhNmY1MjRjY2JmZjEyMWRjMzZjNTZmLmh0bWw&ntb=1
+          - paragraph [ref=f2e183]: 数据来源与统计口径说明 本文所引用的GDP数据均来源于权威官方渠道。其中，各省GDP数据来源于各地统计局，全国GDP数据来源 …
+        - listitem [ref=f2e184]:
+          - link "网易" [ref=f2e186] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=0c24fad14671fa9ce17ae876d0f01032fe0a6446204e1e79b68bd4cf67a554bfJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuMTYzLmNvbS9keS9hcnRpY2xlL0tLQ1MwQ01NMDUxOUZNOTAuaHRtbA&ntb=1
+            - generic [ref=f2e191]:
+              - generic [ref=f2e192]: 网易
+              - generic [ref=f2e193]: https://www.163.com › dy › article
+          - heading [level=2] [ref=f2e196]:
+            - link "官宣！31省份2025年GDP排名，来了|广东|山西|山东|社会消费品|地区 …" [ref=f2e197] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=0c24fad14671fa9ce17ae876d0f01032fe0a6446204e1e79b68bd4cf67a554bfJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuMTYzLmNvbS9keS9hcnRpY2xlL0tLQ1MwQ01NMDUxOUZNOTAuaHRtbA&ntb=1
+          - paragraph [ref=f2e199]: 03 总结来看，过去一年31个省份的成绩单，有几个特点。 首先，经济大省“挑大梁”作用更加凸显。 比如，GDP十强省份中，增速5.5% …
+        - listitem [ref=f2e200]:
+          - link "今日头条" [ref=f2e202] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=0206dae241c7ced8712e0a74dd78da86f951feb7ce21ec2b4fc1b42e439ba463JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cudG91dGlhby5jb20vYXJ0aWNsZS83NjAyOTM2ODgyNjYxNDc0ODY2Lw&ntb=1
+            - generic [ref=f2e207]:
+              - generic [ref=f2e208]: 今日头条
+              - generic [ref=f2e209]: https://www.toutiao.com › article
+          - heading [level=2] [ref=f2e212]:
+            - link "31省份2025年GDP排名出炉 - 今日头条" [ref=f2e213] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=0206dae241c7ced8712e0a74dd78da86f951feb7ce21ec2b4fc1b42e439ba463JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cudG91dGlhby5jb20vYXJ0aWNsZS83NjAyOTM2ODgyNjYxNDc0ODY2Lw&ntb=1
+          - paragraph [ref=f2e215]: 与2024年GDP排名相比，2025年值得注意的变化就是，重庆反超辽宁，排名升至全国第16位。 从经济增速看，2025年GDP增速由高 …
+        - listitem [ref=f2e216]:
+          - link "网易" [ref=f2e218] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=716aa763fc1882590d40fc7af978a5499b1450bf2ac845cdc78e1096be7c02b8JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuMTYzLmNvbS9keS9hcnRpY2xlL0tLSDI4SVRTMDUyNERCMkkuaHRtbA&ntb=1
+            - generic [ref=f2e223]:
+              - generic [ref=f2e224]: 网易
+              - generic [ref=f2e225]: https://www.163.com › dy › article
+          - heading [level=2] [ref=f2e228]:
+            - link "2025年各大省份GDP排名，江苏紧追广东，河南不敌四川|福建|山东" [ref=f2e229] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=716aa763fc1882590d40fc7af978a5499b1450bf2ac845cdc78e1096be7c02b8JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuMTYzLmNvbS9keS9hcnRpY2xlL0tLSDI4SVRTMDUyNERCMkkuaHRtbA&ntb=1
+          - paragraph [ref=f2e231]: 从GDP总量来看，共有2个省份超过14万亿，分别为：广东、江苏；1个省份处在10万亿级，即：山东；1个省份处在9万亿级，即：浙 …
+        - listitem [ref=f2e232]:
+          - link "uibe.edu.cn" [ref=f2e234] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=730f1c692db907bf72c46ca2abe907556059228f404d7c1694d647b739459ff2JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9kZWxhYi51aWJlLmVkdS5jbi9kb2NzLzIwMjYtMDQvNjdlY2U2MzBiYmMwNGQ2M2E3ODQ2MGQ1ZjdlNjhiYjMucGRm&ntb=1
+            - generic [ref=f2e239]:
+              - generic [ref=f2e240]: uibe.edu.cn
+              - generic [ref=f2e242]:
+                - generic [ref=f2e243]: https://delab.uibe.edu.cn › docs
+                - text: · PDF 文件
+          - heading [level=2] [ref=f2e244]:
+            - link "中国 31 省市经济运行状况年度监测报告 2025 年1-12" [ref=f2e245] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=730f1c692db907bf72c46ca2abe907556059228f404d7c1694d647b739459ff2JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9kZWxhYi51aWJlLmVkdS5jbi9kb2NzLzIwMjYtMDQvNjdlY2U2MzBiYmMwNGQ2M2E3ODQ2MGQ1ZjdlNjhiYjMucGRm&ntb=1
+          - paragraph [ref=f2e247]: 分地区来看,全国生产总值排名前三的省/直辖市为广东省、江苏省和山东省,GDP 分别为 145846.8 亿元、142351.5 亿元和 103197.0 亿 …
+        - listitem [ref=f2e248]:
+          - generic [ref=f2e250]:
+            - heading "其他用户还问了以下问题" [level=2] [ref=f2e251]
+            - list [ref=f2e255]:
+              - listitem [ref=f2e256]:
+                - heading [level=3] [ref=f2e257]:
+                  - button "2025年哪些省份GDP增速由高至低前十强?" [ref=f2e258] [cursor=pointer]
+              - listitem [ref=f2e260]:
+                - heading [level=3] [ref=f2e261]:
+                  - button "2025年经济前十强省份有哪些?" [ref=f2e262] [cursor=pointer]
+              - listitem [ref=f2e264]:
+                - heading [level=3] [ref=f2e265]:
+                  - button "2025 年1-12 月全国商品房销售额累计值排名前三的省市有哪些?" [ref=f2e266] [cursor=pointer]
+        - listitem [ref=f2e269]:
+          - generic [ref=f2e270]:
+            - text: 以下是
+            - link [ref=f2e271] [cursor=pointer]:
+              - /url: /search?q=cr2025+%e5%b9%b4+%e5%90%84+%e7%9c%81+%e5%9c%b0%e5%8c%ba+%e7%94%9f%e4%ba%a7+%e6%80%bb%e9%a2%9d+GPD+%e6%8e%92%e8%a1%8c+%e5%9b%bd%e5%ae%b6+%e7%bb%9f%e8%ae%a1+%e5%b1%80&FORM=AWRE1
+              - strong [ref=f2e272]: cr2025
+              - text: 年 各
+              - strong [ref=f2e273]: 省
+              - text: 地区 生产 总
+              - strong [ref=f2e274]: 额 GPD
+              - text: 排
+              - strong [ref=f2e275]: 行
+              - text: 国家 统计 局
+            - text: 的结果。
+          - generic [ref=f2e276]:
+            - text: 改为搜索
+            - link "2025年各省份地区生产总值GDP排名 国家统计局" [ref=f2e277] [cursor=pointer]:
+              - /url: /search?q=%2b2025%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bcGDP%e6%8e%92%e5%90%8d+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&filters=rcrse%3a%221%22&FORM=RCRE1
+            - text: "?"
+        - listitem [ref=f2e278]:
+          - navigation "2025年各省份地区生产总值GDP排名 国家统计局 的更多搜索结果":
+            - list:
+              - listitem [ref=f2e279]:
+                - generic "第 1 页" [ref=f2e280]: "1"
+              - listitem [ref=f2e281]:
+                - link "第 2 页" [ref=f2e282] [cursor=pointer]:
+                  - /url: /search?q=2025%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bcGDP%e6%8e%92%e5%90%8d+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FPIG=98276253D35B49F9A475897EE7DB4F9A&first=11&FORM=PERE
+                  - text: "2"
+              - listitem [ref=f2e283]:
+                - link "第 3 页" [ref=f2e284] [cursor=pointer]:
+                  - /url: /search?q=2025%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bcGDP%e6%8e%92%e5%90%8d+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FPIG=98276253D35B49F9A475897EE7DB4F9A&first=21&FORM=PERE1
+                  - text: "3"
+              - listitem [ref=f2e285]:
+                - link "第 4 页" [ref=f2e286] [cursor=pointer]:
+                  - /url: /search?q=2025%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bcGDP%e6%8e%92%e5%90%8d+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FPIG=98276253D35B49F9A475897EE7DB4F9A&first=31&FORM=PERE2
+                  - text: "4"
+              - listitem [ref=f2e287]:
+                - link "下一页" [ref=f2e288] [cursor=pointer]:
+                  - /url: /search?q=2025%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bcGDP%e6%8e%92%e5%90%8d+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FPIG=98276253D35B49F9A475897EE7DB4F9A&first=11&FORM=PORE
+    - complementary "更多结果" [ref=f2e289]:
+      - list
+  - contentinfo [ref=f2e290]:
+    - generic [ref=f2e291]:
+      - generic [ref=f2e292]: © 2026 Microsoft
+      - list:
+        - listitem [ref=f2e293]:
+          - link "隐私声明和 Cookie" [ref=f2e294] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=984cf7fb0d76b6892a6da5a2a3e123e3b99d726c1cbef9e2d98222b31df4ab8dJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cDovL2dvLm1pY3Jvc29mdC5jb20vZndsaW5rLz9MaW5rSWQ9NTIxODM5&ntb=1
+        - listitem [ref=f2e295]:
+          - link "法律声明" [ref=f2e296] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=c5a4ce0164106d9c9b0d24e8c279d07db7ed3009975defc2ef7dfb87cc91e329JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cDovL2dvLm1pY3Jvc29mdC5jb20vZndsaW5rLz9MaW5rSUQ9MjQ2MzM4&ntb=1
+        - listitem [ref=f2e297]:
+          - link "广告" [ref=f2e298] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=b971b3cb0ced15172269f694f688db09b38284c052632db4eef096ad10386c47JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9nby5taWNyb3NvZnQuY29tL2Z3bGluay8_bGlua2lkPTg2ODkyMg&ntb=1
+        - listitem [ref=f2e299]:
+          - link "帮助" [ref=f2e300] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=06655e6831bdd3a654ddaea10210c2aa5e5ba094c69eb6da31566950065cdb28JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9zdXBwb3J0Lm1pY3Jvc29mdC5jb20vdG9waWMvODJkMjA3MjEtMmQ2Zi00MDEyLWExM2QtZDE5MTBjY2YyMDNm&ntb=1
+        - listitem [ref=f2e301]:
+          - button "反馈" [ref=f2e302] [cursor=pointer]

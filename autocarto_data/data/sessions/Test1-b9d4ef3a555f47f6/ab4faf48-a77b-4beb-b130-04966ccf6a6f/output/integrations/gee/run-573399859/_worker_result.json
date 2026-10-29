@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "status": "COMPLETED",
+  "tasks": [],
+  "environment": {
+    "python": "/home/shared-user/.venvs/autocarto-gee/bin/python",
+    "project": "certain-tangent-507508-m0",
+    "ready": true,
+    "install_command": [
+      "/home/shared-user/.venvs/autocarto-gee/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "earthengine-api"
+    ],
+    "authenticate_command": [
+      "/home/shared-user/.venvs/autocarto-gee/bin/python",
+      "-c",
+      "import ee; ee.Authenticate()"
+    ],
+    "project_step": "Configure a Google Cloud project registered for Earth Engine, with the Earth Engine API enabled and access granted to your account.",
+    "credentials_note": "Complete authentication yourself in a terminal/browser. Do not paste tokens or credential file contents into the chat.",
+    "earthengine_api_version": "1.7.47"
+  },
+  "task": {
+    "id": "YD3NOUAM2Q6PNX6QJVY7VEPR",
+    "name": "projects/certain-tangent-507508-m0/operations/YD3NOUAM2Q6PNX6QJVY7VEPR",
+    "state": "COMPLETED",
+    "done": true,
+    "description": "wuhan_s2_rgb_6m",
+    "destinationUris": [
+      "https://drive.google.com/#folders/1GHaVKA_10skwCn1HNtHe9Ik6-EuZT1bk"
+    ],
+    "createTime": "2026-10-06T10:27:19.239202Z",
+    "updateTime": "2026-10-06T10:38:15.358634Z"
+  },
+  "message": "Earth Engine task state: COMPLETED"
+}

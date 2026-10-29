@@ -1,0 +1,78 @@
+{
+  "schema_version": "autocarto-statistical-data/v1",
+  "created_at": "2026-10-06T16:04:58.740916+00:00",
+  "validated": true,
+  "validate_only": false,
+  "year": 2025,
+  "table_format": "long",
+  "name_field": "name",
+  "value_field": "gdp_2025",
+  "metadata": {
+    "indicator": "地区生产总值（GDP）",
+    "unit": "亿元",
+    "source": "各省（区、市）统计局2025年国民经济和社会发展统计公报（初步核算）",
+    "database": "聚汇数据 gdp.gotohui.com 汇总"
+  },
+  "counts": {
+    "polygon_count": 34,
+    "boundary_count": 0,
+    "csv_row_count": 31,
+    "csv_region_count": 31,
+    "valid_count": 31,
+    "missing_count": 0,
+    "unmatched_count": 3,
+    "excluded_count": 0
+  },
+  "unmatched_csv_regions": [],
+  "unmatched_geojson_regions": [
+    "台湾省",
+    "澳门特别行政区",
+    "香港特别行政区"
+  ],
+  "missing_regions": [],
+  "excluded_regions": [],
+  "allow_unmatched": true,
+  "value_range": {
+    "min": 3031.89,
+    "max": 145846.8
+  },
+  "distinct_value_count": 31,
+  "warnings": [
+    "存在未匹配地区；只去除首尾空白，未应用简称、模糊匹配或自动别名"
+  ],
+  "inputs": {
+    "geojson": {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto/skills/system/china-admin-boundaries/data/china_province.geojson",
+      "sha256": "672b321924533dc2d4eb1429de322e3b612a5c9de860f518828a25e75ba6f262",
+      "size_bytes": 1973055
+    },
+    "csv": {
+      "path": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/d2a3734f-9cd9-46bd-bed8-01d2b4600c24/output/integrations/gee/run-887160563/gdp_2025_province_long.csv",
+      "sha256": "6fb00ccc573057042ebd1ea47586a936aa734661a6d893376eb84ef1ddfcee20",
+      "size_bytes": 6039
+    }
+  },
+  "matching_policy": "exact_after_trim",
+  "missing_tokens": [
+    "",
+    "-",
+    "--",
+    "...",
+    "N/A",
+    "NA",
+    "NONE",
+    "NULL",
+    "–",
+    "—",
+    "…"
+  ],
+  "session_id": "d2a3734f-9cd9-46bd-bed8-01d2b4600c24",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "paths": {
+    "polygons_geojson": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/d2a3734f-9cd9-46bd-bed8-01d2b4600c24/intermediate/statistical/statistics-2025-xi5yeumw/statistical_polygons.geojson",
+    "boundaries_geojson": null,
+    "long_csv": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/d2a3734f-9cd9-46bd-bed8-01d2b4600c24/intermediate/statistical/statistics-2025-xi5yeumw/statistical_long.csv",
+    "manifest": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/d2a3734f-9cd9-46bd-bed8-01d2b4600c24/intermediate/statistical/statistics-2025-xi5yeumw/manifest.json"
+  },
+  "output_dir": "/home/shared-user/研究生/QGIS-agent/Eino/autocarto_data/data/sessions/Test1-b9d4ef3a555f47f6/d2a3734f-9cd9-46bd-bed8-01d2b4600c24/intermediate/statistical/statistics-2025-xi5yeumw"
+}

@@ -1,0 +1,13 @@
+route_id,route_name,route_type,draw_type,style_id,width_scale,input_crs,enabled,notes
+route_initial,长征先遣阶段：何家冲至庾家河,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_first_manuever,第一次大范围转战：庾家河至葛牌镇,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_june_july,郧西至沣峪口转战,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_westward,西征北上：沣峪口至双石铺,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_gansu,进入甘肃至永坪会师,main,bezier_arrow,bezier_red_gradient,,EPSG:4326,1,side=friendly;topology=standard;self_intersection_policy=allow_with_overpass
+route_enemy_40army,国民党第四十军第一一五旅堵截,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+route_enemy_60div,国民党第六十师追击,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+route_enemy_xian,西安方向部队进逼,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+route_enemy_jingbeilv,陕军警备第一旅推进,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+route_enemy_3army,王均第三军追击,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+route_enemy_37army,毛炳文第三十七军堵截,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass
+route_enemy_35div,马鸿宾第三十五师阻击,enemy,bezier_arrow,bezier_blue_gradient,,EPSG:4326,1,side=enemy;topology=standard;self_intersection_policy=allow_with_overpass

@@ -1,0 +1,463 @@
+- generic [active] [ref=f5e1]:
+  - generic [ref=f5e4]:
+    - generic [ref=f5e5]:
+      - link [ref=f5e7] [cursor=pointer]:
+        - /url: https://www.gotohui.com/
+      - navigation [ref=f5e9]:
+        - list [ref=f5e12]:
+          - listitem [ref=f5e13]:
+            - link "首页" [ref=f5e14] [cursor=pointer]:
+              - /url: https://www.gotohui.com/
+          - listitem [ref=f5e15]:
+            - link "房价" [ref=f5e16] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=f5e17]:
+            - link "数据" [ref=f5e18] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=f5e19]:
+            - link "地区" [ref=f5e20] [cursor=pointer]:
+              - /url: "#"
+    - generic [ref=f5e21]:
+      - generic [ref=f5e24]:
+        - textbox "输入搜索词" [ref=f5e25]
+        - button "" [ref=f5e26] [cursor=pointer]
+      - generic [ref=f5e28]:
+        - link "数据工具" [ref=f5e30] [cursor=pointer]:
+          - /url: javascript:void(0)
+        - link "开放API" [ref=f5e37] [cursor=pointer]:
+          - /url: https://www.gotohui.com/open-api/docs
+      - generic [ref=f5e43]:
+        - link "登录" [ref=f5e44] [cursor=pointer]:
+          - /url: https://www.gotohui.com/user/login?redirect_url=https%3A%2F%2Fwww.gotohui.com%2Franking%2Fgdp%2Fprovince%2F2025
+        - link "注册" [ref=f5e45] [cursor=pointer]:
+          - /url: https://www.gotohui.com/user/register?redirect_url=https%3A%2F%2Fwww.gotohui.com%2Franking%2Fgdp%2Fprovince%2F2025
+  - generic [ref=f5e46]:
+    - navigation "breadcrumb" [ref=f5e47]:
+      - list [ref=f5e48]:
+        - listitem [ref=f5e49]:
+          - link " 首页" [ref=f5e50] [cursor=pointer]:
+            - /url: /
+            - generic [ref=f5e51]: 
+            - text: 首页
+        - listitem [ref=f5e52]:
+          - text: /
+          - link "排行榜" [ref=f5e53] [cursor=pointer]:
+            - /url: /ranking
+        - listitem [ref=f5e54]: / 全国各省GDP排行榜
+    - generic [ref=f5e55]:
+      - generic [ref=f5e57]:
+        - heading "数据分类" [level=5] [ref=f5e58]
+        - generic [ref=f5e59]:
+          - link "全部排行 " [ref=f5e60] [cursor=pointer]:
+            - /url: /ranking
+            - generic [ref=f5e61]: 全部排行
+            - generic [ref=f5e64]: 
+          - link "GDP排行 " [ref=f5e65] [cursor=pointer]:
+            - /url: /ranking?category=gdp
+            - generic [ref=f5e66]: GDP排行
+            - generic [ref=f5e70]: 
+          - link "人口排行 " [ref=f5e71] [cursor=pointer]:
+            - /url: /ranking?category=population
+            - generic [ref=f5e72]: 人口排行
+            - generic [ref=f5e76]: 
+          - link "收入排行 " [ref=f5e77] [cursor=pointer]:
+            - /url: /ranking?category=income
+            - generic [ref=f5e78]: 收入排行
+            - generic [ref=f5e82]: 
+          - link "外贸排行 " [ref=f5e83] [cursor=pointer]:
+            - /url: /ranking?category=trade
+            - generic [ref=f5e84]: 外贸排行
+            - generic [ref=f5e89]: 
+          - link "金融排行 " [ref=f5e90] [cursor=pointer]:
+            - /url: /ranking?category=finance
+            - generic [ref=f5e91]: 金融排行
+            - generic [ref=f5e95]: 
+          - link "教育排行 " [ref=f5e96] [cursor=pointer]:
+            - /url: /ranking?category=education
+            - generic [ref=f5e97]: 教育排行
+            - generic [ref=f5e101]: 
+          - link "卫生排行 " [ref=f5e102] [cursor=pointer]:
+            - /url: /ranking?category=health
+            - generic [ref=f5e103]: 卫生排行
+            - generic [ref=f5e106]: 
+      - generic [ref=f5e109]:
+        - generic [ref=f5e110]:
+          - heading "全国各省GDP排行榜" [level=1] [ref=f5e112]
+          - button " 导出" [ref=f5e114] [cursor=pointer]:
+            - generic [ref=f5e115]: 
+            - text: 导出
+        - generic [ref=f5e116]:
+          - generic [ref=f5e117]:
+            - generic [ref=f5e118]: 年份：
+            - button "2025年" [ref=f5e120] [cursor=pointer]
+            - button " 未来数据预测" [ref=f5e123] [cursor=pointer]:
+              - generic [ref=f5e124]: 
+              - text: 未来数据预测
+          - generic [ref=f5e125]:
+            - button " 表格" [ref=f5e126] [cursor=pointer]:
+              - generic [ref=f5e127]: 
+              - text: 表格
+            - button "柱状" [ref=f5e128] [cursor=pointer]
+            - button " 地图" [ref=f5e133] [cursor=pointer]:
+              - generic [ref=f5e134]: 
+              - text: 地图
+        - table [ref=f5e136]:
+          - rowgroup [ref=f5e137]:
+            - row [ref=f5e138]:
+              - columnheader "排名" [ref=f5e139]
+              - columnheader "地区" [ref=f5e140]
+              - columnheader "GDP（亿元）" [ref=f5e141]
+              - columnheader "同比" [ref=f5e142]
+              - columnheader "详情" [ref=f5e143]
+          - rowgroup [ref=f5e144]:
+            - row [ref=f5e145]:
+              - cell "1" [ref=f5e146]
+              - cell [ref=f5e148]:
+                - link "广东" [ref=f5e149] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-7
+              - cell "145846.80" [ref=f5e150]
+              - cell "+3.08%" [ref=f5e151]
+              - cell [ref=f5e153]:
+                - link "详情" [ref=f5e154] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-201145
+            - row [ref=f5e155]:
+              - cell "2" [ref=f5e156]
+              - cell [ref=f5e158]:
+                - link "江苏" [ref=f5e159] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-9
+              - cell "142351.50" [ref=f5e160]
+              - cell "+4.14%" [ref=f5e161]
+              - cell [ref=f5e163]:
+                - link "详情" [ref=f5e164] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-201213
+            - row [ref=f5e165]:
+              - cell "3" [ref=f5e166]
+              - cell [ref=f5e168]:
+                - link "山东" [ref=f5e169] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-25
+              - cell "103197.50" [ref=f5e170]
+              - cell "+4.87%" [ref=f5e171]
+              - cell [ref=f5e173]:
+                - link "详情" [ref=f5e174] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-184798
+            - row [ref=f5e175]:
+              - cell "4" [ref=f5e176]
+              - cell [ref=f5e178]:
+                - link "浙江" [ref=f5e179] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-2
+              - cell "94545.00" [ref=f5e180]
+              - cell "+5.04%" [ref=f5e181]
+              - cell [ref=f5e183]:
+                - link "详情" [ref=f5e184] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-201369
+            - row [ref=f5e185]:
+              - cell "5" [ref=f5e186]
+              - cell [ref=f5e188]:
+                - link "四川" [ref=f5e189] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-29
+              - cell "67665.34" [ref=f5e190]
+              - cell "+4.85%" [ref=f5e191]
+              - cell [ref=f5e193]:
+                - link "详情" [ref=f5e194] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-202284
+            - row [ref=f5e195]:
+              - cell "6" [ref=f5e196]
+              - cell [ref=f5e198]:
+                - link "河南" [ref=f5e199] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-14
+              - cell "66632.79" [ref=f5e200]
+              - cell "+4.84%" [ref=f5e201]
+              - cell [ref=f5e203]:
+                - link "详情" [ref=f5e204] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-201641
+            - row [ref=f5e205]:
+              - cell "7" [ref=f5e206]
+              - cell [ref=f5e208]:
+                - link "湖北" [ref=f5e209] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-17
+              - cell "62660.90" [ref=f5e210]
+              - cell "+5.06%" [ref=f5e211]
+              - cell [ref=f5e213]:
+                - link "详情" [ref=f5e214] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-199738
+            - row [ref=f5e215]:
+              - cell "8" [ref=f5e216]
+              - cell [ref=f5e218]:
+                - link "福建" [ref=f5e219] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-8
+              - cell "60199.50" [ref=f5e220]
+              - cell "+4.74%" [ref=f5e221]
+              - cell [ref=f5e223]:
+                - link "详情" [ref=f5e224] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-202257
+            - row [ref=f5e225]:
+              - cell "9" [ref=f5e226]
+              - cell [ref=f5e228]:
+                - link "上海" [ref=f5e229] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-3
+              - cell "56708.71" [ref=f5e230]
+              - cell "+5.49%" [ref=f5e231]
+              - cell [ref=f5e233]:
+                - link "详情" [ref=f5e234] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-199649
+            - row [ref=f5e235]:
+              - cell "10" [ref=f5e236]
+              - cell [ref=f5e238]:
+                - link "湖南" [ref=f5e239] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-18
+              - cell "55308.65" [ref=f5e240]
+              - cell "+4.19%" [ref=f5e241]
+              - cell [ref=f5e243]:
+                - link "详情" [ref=f5e244] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-184708
+            - row [ref=f5e245]:
+              - cell "11" [ref=f5e246]
+              - cell [ref=f5e248]:
+                - link "安徽" [ref=f5e249] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-10
+              - cell "52989.50" [ref=f5e250]
+              - cell "+4.63%" [ref=f5e251]
+              - cell [ref=f5e253]:
+                - link "详情" [ref=f5e254] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-202392
+            - row [ref=f5e255]:
+              - cell "12" [ref=f5e256]
+              - cell [ref=f5e258]:
+                - link "北京" [ref=f5e259] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-1
+              - cell "52073.40" [ref=f5e260]
+              - cell "+4.47%" [ref=f5e261]
+              - cell [ref=f5e263]:
+                - link "详情" [ref=f5e264] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-198051
+            - row [ref=f5e265]:
+              - cell "13" [ref=f5e266]
+              - cell [ref=f5e268]:
+                - link "河北" [ref=f5e269] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-15
+              - cell "49305.20" [ref=f5e270]
+              - cell "+3.91%" [ref=f5e271]
+              - cell [ref=f5e273]:
+                - link "详情" [ref=f5e274] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-202884
+            - row [ref=f5e275]:
+              - cell "14" [ref=f5e276]
+              - cell [ref=f5e278]:
+                - link "陕西" [ref=f5e279] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-27
+              - cell "36551.10" [ref=f5e280]
+              - cell "+3.14%" [ref=f5e281]
+              - cell [ref=f5e283]:
+                - link "详情" [ref=f5e284] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-203074
+            - row [ref=f5e285]:
+              - cell "15" [ref=f5e286]
+              - cell [ref=f5e288]:
+                - link "江西" [ref=f5e289] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-20
+              - cell "36020.00" [ref=f5e290]
+              - cell "+5.24%" [ref=f5e291]
+              - cell [ref=f5e293]:
+                - link "详情" [ref=f5e294] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-203353
+            - row [ref=f5e295]:
+              - cell "16" [ref=f5e296]
+              - cell [ref=f5e298]:
+                - link "重庆" [ref=f5e299] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-6
+              - cell "33757.93" [ref=f5e300]
+              - cell "+5.34%" [ref=f5e301]
+              - cell [ref=f5e303]:
+                - link "详情" [ref=f5e304] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-202007
+            - row [ref=f5e305]:
+              - cell "17" [ref=f5e306]
+              - cell [ref=f5e308]:
+                - link "辽宁" [ref=f5e309] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-21
+              - cell "33182.90" [ref=f5e310]
+              - cell "+1.97%" [ref=f5e311]
+              - cell [ref=f5e313]:
+                - link "详情" [ref=f5e314] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-203942
+            - row [ref=f5e315]:
+              - cell "18" [ref=f5e316]
+              - cell [ref=f5e318]:
+                - link "云南" [ref=f5e319] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-28
+              - cell "32765.78" [ref=f5e320]
+              - cell "+4.27%" [ref=f5e321]
+              - cell [ref=f5e323]:
+                - link "详情" [ref=f5e324] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-204138
+            - row [ref=f5e325]:
+              - cell "19" [ref=f5e326]
+              - cell [ref=f5e328]:
+                - link "广西" [ref=f5e329] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-11
+              - cell "29727.45" [ref=f5e330]
+              - cell "+3.60%" [ref=f5e331]
+              - cell [ref=f5e333]:
+                - link "详情" [ref=f5e334] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-204450
+            - row [ref=f5e335]:
+              - cell "20" [ref=f5e336]
+              - cell [ref=f5e338]:
+                - link "内蒙古" [ref=f5e339] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-22
+              - cell "26710.34" [ref=f5e340]
+              - cell "+1.42%" [ref=f5e341]
+              - cell [ref=f5e343]:
+                - link "详情" [ref=f5e344] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-204837
+            - row [ref=f5e345]:
+              - cell "21" [ref=f5e346]
+              - cell [ref=f5e348]:
+                - link "山西" [ref=f5e349] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-26
+              - cell "25495.68" [ref=f5e350]
+              - cell "+0.56%" [ref=f5e351]
+              - cell [ref=f5e353]:
+                - link "详情" [ref=f5e354] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-204726
+            - row [ref=f5e355]:
+              - cell "22" [ref=f5e356]
+              - cell [ref=f5e358]:
+                - link "贵州" [ref=f5e359] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-13
+              - cell "23562.17" [ref=f5e360]
+              - cell "+4.05%" [ref=f5e361]
+              - cell [ref=f5e363]:
+                - link "详情" [ref=f5e364] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-205067
+            - row [ref=f5e365]:
+              - cell "23" [ref=f5e366]
+              - cell [ref=f5e368]:
+                - link "新疆" [ref=f5e369] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-31
+              - cell "21462.14" [ref=f5e370]
+              - cell "+4.73%" [ref=f5e371]
+              - cell [ref=f5e373]:
+                - link "详情" [ref=f5e374] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-205150
+            - row [ref=f5e375]:
+              - cell "24" [ref=f5e376]
+              - cell [ref=f5e378]:
+                - link "天津" [ref=f5e379] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-4
+              - cell "18539.82" [ref=f5e380]
+              - cell "+2.86%" [ref=f5e381]
+              - cell [ref=f5e383]:
+                - link "详情" [ref=f5e384] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-200379
+            - row [ref=f5e385]:
+              - cell "25" [ref=f5e386]
+              - cell [ref=f5e388]:
+                - link "黑龙江" [ref=f5e389] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-16
+              - cell "16878.00" [ref=f5e390]
+              - cell "+2.43%" [ref=f5e391]
+              - cell [ref=f5e393]:
+                - link "详情" [ref=f5e394] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-205777
+            - row [ref=f5e395]:
+              - cell "26" [ref=f5e396]
+              - cell [ref=f5e398]:
+                - link "吉林" [ref=f5e399] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-19
+              - cell "14973.88" [ref=f5e400]
+              - cell "+4.68%" [ref=f5e401]
+              - cell [ref=f5e403]:
+                - link "详情" [ref=f5e404] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-206180
+            - row [ref=f5e405]:
+              - cell "27" [ref=f5e406]
+              - cell [ref=f5e408]:
+                - link "甘肃" [ref=f5e409] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-30
+              - cell "13697.50" [ref=f5e410]
+              - cell "+5.20%" [ref=f5e411]
+              - cell [ref=f5e413]:
+                - link "详情" [ref=f5e414] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-206490
+            - row [ref=f5e415]:
+              - cell "28" [ref=f5e416]
+              - cell [ref=f5e418]:
+                - link "海南" [ref=f5e419] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-12
+              - cell "8108.85" [ref=f5e420]
+              - cell "+1.71%" [ref=f5e421]
+              - cell [ref=f5e423]:
+                - link "详情" [ref=f5e424] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-207002
+            - row [ref=f5e425]:
+              - cell "29" [ref=f5e426]
+              - cell [ref=f5e428]:
+                - link "宁夏" [ref=f5e429] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-23
+              - cell "5696.49" [ref=f5e430]
+              - cell "+3.19%" [ref=f5e431]
+              - cell [ref=f5e433]:
+                - link "详情" [ref=f5e434] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-207292
+            - row [ref=f5e435]:
+              - cell "30" [ref=f5e436]
+              - cell [ref=f5e438]:
+                - link "青海" [ref=f5e439] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-24
+              - cell "4121.84" [ref=f5e440]
+              - cell "+3.94%" [ref=f5e441]
+              - cell [ref=f5e443]:
+                - link "详情" [ref=f5e444] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-207412
+            - row [ref=f5e445]:
+              - cell "31" [ref=f5e446]
+              - cell [ref=f5e448]:
+                - link "西藏" [ref=f5e449] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/data-32
+              - cell "3031.89" [ref=f5e450]
+              - cell "+9.65%" [ref=f5e451]
+              - cell [ref=f5e453]:
+                - link "详情" [ref=f5e454] [cursor=pointer]:
+                  - /url: https://gdp.gotohui.com/show-207518
+  - generic [ref=f5e456]:
+    - generic [ref=f5e457]:
+      - list:
+        - listitem [ref=f5e458]:
+          - link "关于我们" [ref=f5e459] [cursor=pointer]:
+            - /url: https://www.gotohui.com/note/view/5
+        - listitem [ref=f5e460]:
+          - link "联系我们" [ref=f5e461] [cursor=pointer]:
+            - /url: https://www.gotohui.com/note/view/2
+        - listitem [ref=f5e462]:
+          - link "免责声明" [ref=f5e463] [cursor=pointer]:
+            - /url: https://www.gotohui.com/note/view/1
+        - listitem [ref=f5e464]:
+          - link "用户协议" [ref=f5e465] [cursor=pointer]:
+            - /url: https://www.gotohui.com/note/view/3
+        - listitem [ref=f5e466]:
+          - link "用户隐私权" [ref=f5e467] [cursor=pointer]:
+            - /url: https://www.gotohui.com/note/view/4
+        - listitem [ref=f5e468]:
+          - link "意见反馈" [ref=f5e469] [cursor=pointer]:
+            - /url: javascript:showFeedbackQrModal()
+        - listitem [ref=f5e470]:
+          - link "用户帮助" [ref=f5e471] [cursor=pointer]:
+            - /url: https://www.gotohui.com/note/view/6
+    - generic [ref=f5e472]:
+      - paragraph [ref=f5e473]: 福州标点文化传播有限公司|邮箱：admin@gotohui.com
+      - paragraph [ref=f5e474]:
+        - generic [ref=f5e475]:
+          - text: Copyright
+          - generic [ref=f5e476]: 
+          - text: 2024 gotohui.com
+        - link "闽ICP备08105781号-11" [ref=f5e478] [cursor=pointer]:
+          - /url: http://beian.miit.gov.cn
+        - text: 闽公网安备35011102350481号
+    - generic [ref=f5e479]:
+      - paragraph [ref=f5e480]
+      - paragraph [ref=f5e481]: 微信小程序
+    - generic [ref=f5e482]:
+      - paragraph [ref=f5e483]
+      - paragraph [ref=f5e484]: 微信服务号
+  - text:    

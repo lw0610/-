@@ -1,0 +1,345 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - button "跳至内容" [ref=e3] [cursor=pointer]
+    - button "辅助功能反馈" [ref=e6] [cursor=pointer]
+    - generic [ref=e9]:
+      - link [ref=e10] [cursor=pointer]:
+        - /url: /?FORM=Z9FD1
+        - heading "返回到必应搜索" [level=1] [ref=e11]
+      - search [ref=e12]:
+        - button "搜索" [ref=e15] [cursor=pointer]
+        - searchbox "在此处输入你的搜索 — 输入时会显示搜索建议" [ref=e16]: 2024年各省份地区生产总值 GDP 国家统计局
+        - generic [ref=e17] [cursor=pointer]
+        - button "使用图像搜索" [ref=e22] [cursor=pointer]
+    - complementary "帐户奖励和偏好设置" [ref=e24]:
+      - button "Microsoft Rewards" [ref=e25] [cursor=pointer]
+      - link "登录" [ref=e26] [cursor=pointer]:
+        - /url: javascript:void(0)
+    - navigation "主菜单" [ref=e28]:
+      - list [ref=e29]:
+        - listitem [ref=e30]:
+          - link "全部" [ref=e31] [cursor=pointer]:
+            - /url: /?scope=web&FORM=HDRSC1
+        - listitem [ref=e32]:
+          - link "搜索" [ref=e33] [cursor=pointer]:
+            - /url: /copilotsearch?q=2024%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bc+GDP+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FORM=CSSCOP
+        - listitem [ref=e36]:
+          - link "图片" [ref=e37] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=ef41f916622d4e0332ffd9c3cbed6a71fe56d3909a43039db864a5b6131a0313JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L2ltYWdlcy9zZWFyY2g_cT0yMDI0JWU1JWI5JWI0JWU1JTkwJTg0JWU3JTljJTgxJWU0JWJiJWJkJWU1JTljJWIwJWU1JThjJWJhJWU3JTk0JTlmJWU0JWJhJWE3JWU2JTgwJWJiJWU1JTgwJWJjK0dEUCslZTUlOWIlYmQlZTUlYWUlYjYlZTclYmIlOWYlZTglYWUlYTElZTUlYjElODAmRk9STT1IRFJTQzM&ntb=1
+        - listitem [ref=e38]:
+          - link "视频" [ref=e39] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=d5db6be0ab5c9dfc1e97c35b5e7920de1057dbe99f9fe7982ba2b67080c9ee99JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3ZpZGVvcy9zZWFyY2g_cT0yMDI0JWU1JWI5JWI0JWU1JTkwJTg0JWU3JTljJTgxJWU0JWJiJWJkJWU1JTljJWIwJWU1JThjJWJhJWU3JTk0JTlmJWU0JWJhJWE3JWU2JTgwJWJiJWU1JTgwJWJjK0dEUCslZTUlOWIlYmQlZTUlYWUlYjYlZTclYmIlOWYlZTglYWUlYTElZTUlYjElODAmRk9STT1IRFJTQzQ&ntb=1
+        - listitem [ref=e40]:
+          - link "地图" [ref=e41] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=161ccf5f43f6b9df110a1bd56c01355fa41afc7efe5a25c0316ccd482bd24758JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L21hcHM_cT0yMDI0JWU1JWI5JWI0JWU1JTkwJTg0JWU3JTljJTgxJWU0JWJiJWJkJWU1JTljJWIwJWU1JThjJWJhJWU3JTk0JTlmJWU0JWJhJWE3JWU2JTgwJWJiJWU1JTgwJWJjK0dEUCslZTUlOWIlYmQlZTUlYWUlYjYlZTclYmIlOWYlZTglYWUlYTElZTUlYjElODAmRk9STT1IRFJTQzY&ntb=1
+        - listitem [ref=e42]:
+          - link "资讯" [ref=e43] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=8534d475fd5d017214da851d5f248a3185de4134027cf7054dbc243f21d7361eJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L25ld3Mvc2VhcmNoP3E9MjAyNCVlNSViOSViNCVlNSU5MCU4NCVlNyU5YyU4MSVlNCViYiViZCVlNSU5YyViMCVlNSU4YyViYSVlNyU5NCU5ZiVlNCViYSVhNyVlNiU4MCViYiVlNSU4MCViYytHRFArJWU1JTliJWJkJWU1JWFlJWI2JWU3JWJiJTlmJWU4JWFlJWExJWU1JWIxJTgwJkZPUk09SERSU0M3&ntb=1
+        - listitem [ref=e44]:
+          - button [ref=e45] [cursor=pointer]
+  - generic [ref=e49]:
+    - main "搜索结果" [ref=e50]:
+      - generic [ref=e52]:
+        - generic [aria-hidden] [ref=e53]:
+          - generic [ref=e54] [cursor=pointer]
+          - generic [ref=e57] [cursor=pointer]
+          - generic [ref=e60] [cursor=pointer]
+        - text: 约 22,500 个结果
+      - list [ref=e63]:
+        - listitem [ref=e64]:
+          - link "国家统计局" [ref=e66] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=85a26e7684513654b69df7dbaa4b9265afaaf4f85b17411b31d3710bc55a9accJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL3NqL3p4ZmIvMjAyNTAyL3QyMDI1MDIyOF8xOTU4ODE3Lmh0bWw&ntb=1
+            - generic [ref=e71]:
+              - generic [ref=e72]: 国家统计局
+              - generic [ref=e73]: https://www.stats.gov.cn › sj › zxfb
+          - heading [level=2] [ref=e76]:
+            - link "中华人民共和国2024年国民经济和社会发展统计公报 - 国家统计局" [ref=e77] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=85a26e7684513654b69df7dbaa4b9265afaaf4f85b17411b31d3710bc55a9accJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL3NqL3p4ZmIvMjAyNTAyL3QyMDI1MDIyOF8xOTU4ODE3Lmh0bWw&ntb=1
+          - paragraph [ref=e79]: 2025年2月28日 · 第一产业增加值占国内生产总值比重为6.8%，第二产业增加值比重为36.5%，第三产业增加值比重为56.7%。 最终消 …
+          - generic [ref=e80]:
+            - list [ref=e81]:
+              - listitem [ref=e82]:
+                - link "公开" [ref=e83] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=8d386c442f6dcfcd28f44ce87b0f8b8d67f3c317c82a49db142eef6d2a337f5fJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL2drLw&ntb=1
+                - paragraph [ref=e84]: "公开 版权所有: 国家统计局 联系我们 服务条款 网站地图 地址: 北京市西城区月坛南 …"
+              - listitem [ref=e85]:
+                - link "机构" [ref=e86] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=9cd26cfd0fc8c58f356f5fc39a85bc22936a22433b271c81a46ec30ceda6893dJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL2pnL2psZC8&ntb=1
+                - paragraph [ref=e87]: 局领导 简历—— 康义，男，汉族，1966年8月出生，大学学历，高级经济师，中 …
+              - listitem [ref=e88]:
+                - link "STATISTICAL COMMUNIQ…" [ref=e89] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=0bfefbfc1475a71283c2814ec5ef6e97d200734f30cee31d15edfa24ee9a2e13JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL2VuZ2xpc2gvUHJlc3NSZWxlYXNlLzIwMjUwMi90MjAyNTAyMjhfMTk1ODgyMi5odG1s&ntb=1
+                - paragraph [ref=e90]: STATISTICAL COMMUNIQUÉ OF THE PEOPLE'S REPUBLIC OF CHINA ON …
+            - list [ref=e91]:
+              - listitem [ref=e92]:
+                - link "National Bureau of Statistic…" [ref=e93] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=b55164b14abb1b3ebbc7df77e33e290b3e28262d1125a2cb90079b13416eb0f7JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL2VuZ2xpc2gv&ntb=1
+                - paragraph [ref=e94]: 国家统计局 Kang Yi Meets with IEA Executive Director and Signs …
+              - listitem [ref=e95]:
+                - link "智能问答" [ref=e96] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=5e60008b140971298ee11e65a81e7f0c78604aed5033e1b4109701578885f5b2JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL3pud2Qv&ntb=1
+                - paragraph [ref=e97]: "版权所有: 国家统计局 联系我们 服务条款 网站地图 地址: 北京市西城区月坛南街57 …"
+          - link "仅显示来自 stats.gov.cn 的搜索结果" [ref=e98] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=02fe0524aaaf177b752c4b399d99478cdedbdc44d814140f212aaa69a2db12b0JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPXNpdGU6c3RhdHMuZ292LmNuKzIwMjQlZTUlYjklYjQlZTUlOTAlODQlZTclOWMlODElZTQlYmIlYmQlZTUlOWMlYjAlZTUlOGMlYmElZTclOTQlOWYlZTQlYmElYTclZTYlODAlYmIlZTUlODAlYmMrR0RQKyVlNSU5YiViZCVlNSVhZSViNiVlNyViYiU5ZiVlOCVhZSVhMSVlNSViMSU4MCZmb3JtPURMSU5LUg&ntb=1
+        - listitem [ref=e99]:
+          - link "国家统计局" [ref=e101] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=ce2f479df11fdbfa0299733425f84c96a26afede9e63c62b2e1d83debab732e0JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL3NqL3p4ZmJoamQvMjAyNTEyL3QyMDI1MTIyNl8xOTYyMTQ0Lmh0bWw&ntb=1
+            - generic [ref=e106]:
+              - generic [ref=e107]: 国家统计局
+              - generic [ref=e108]: https://www.stats.gov.cn › sj › zxfbhjd
+          - heading [level=2] [ref=e111]:
+            - link "国家统计局关于2024年国内生产总值最终核实的公告 - 国家统计局" [ref=e112] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=ce2f479df11fdbfa0299733425f84c96a26afede9e63c62b2e1d83debab732e0JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc3RhdHMuZ292LmNuL3NqL3p4ZmJoamQvMjAyNTEyL3QyMDI1MTIyNl8xOTYyMTQ0Lmh0bWw&ntb=1
+          - paragraph [ref=e114]: 2025年12月26日 · 按照我国国内生产总值（GDP）核算和数据发布制度规定，年度GDP核算包括初步核算和最终核实两个步骤。 近 …
+        - listitem [ref=e115]:
+          - link "中国政府网" [ref=e117] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=50d48dd359d0523d3bd35634a242039fa64b97f618a046ae4219d6b3a7039d03JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuZ292LmNuL2xpYW5iby8yMDI1MTIvY29udGVudF83MDUyODAxLmh0bQ&ntb=1
+            - generic [ref=e122]:
+              - generic [ref=e123]: 中国政府网
+              - generic [ref=e124]: https://www.gov.cn › lianbo
+          - heading [level=2] [ref=e127]:
+            - link "国家统计局关于2024年国内生产总值最终核实的公告__中国政府网" [ref=e128] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=50d48dd359d0523d3bd35634a242039fa64b97f618a046ae4219d6b3a7039d03JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuZ292LmNuL2xpYW5iby8yMDI1MTIvY29udGVudF83MDUyODAxLmh0bQ&ntb=1
+          - paragraph [ref=e130]: 按照我国国内生产总值（GDP）核算和数据发布制度规定，年度GDP核算包括初步核算和最终核实两个步骤。 近日，根据国家统计局 …
+        - listitem [ref=e131]:
+          - link "中国政府网" [ref=e133] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=32d5b3d14b20d9224b59d85b84f28a8bdc89df4a5e0b1e20d7815f0c75fb4695JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuZ292LmNuL2xpYW5iby9idW1lbi8yMDI1MDIvY29udGVudF83MDA4NjA1Lmh0bQ&ntb=1
+            - generic [ref=e138]:
+              - generic [ref=e139]: 中国政府网
+              - generic [ref=e140]: https://www.gov.cn › lianbo › bumen
+          - heading [level=2] [ref=e143]:
+            - link "中华人民共和国2024年国民经济和社会发展统计公报" [ref=e144] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=32d5b3d14b20d9224b59d85b84f28a8bdc89df4a5e0b1e20d7815f0c75fb4695JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuZ292LmNuL2xpYW5iby9idW1lbi8yMDI1MDIvY29udGVudF83MDA4NjA1Lmh0bQ&ntb=1
+          - paragraph [ref=e146]: 2025年2月28日 · 全年京津冀地区生产总值115394亿元，比上年增长5.2%；长江经济带地区生产总值630228亿元，增长5.4%；长三角 …
+        - listitem [ref=e147]:
+          - link "CSDN博客" [ref=e149] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=b27997e713b0f2bdc4cd71786420afce2628cef4af27574201a5f8ee403ccc42JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9ibG9nLmNzZG4ubmV0LzI0MDFfODQ1ODU2MTUvYXJ0aWNsZS9kZXRhaWxzLzE2MjQxOTk2NA&ntb=1
+            - generic [ref=e154]:
+              - generic [ref=e155]: CSDN博客
+              - generic [ref=e156]: https://blog.csdn.net › article › details
+          - heading [level=2] [ref=e159]:
+            - link "2000-2024年 各省生产总值GDP、人均GDP和经济发展水平数据 xlsx_ …" [ref=e160] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=b27997e713b0f2bdc4cd71786420afce2628cef4af27574201a5f8ee403ccc42JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9ibG9nLmNzZG4ubmV0LzI0MDFfODQ1ODU2MTUvYXJ0aWNsZS9kZXRhaWxzLzE2MjQxOTk2NA&ntb=1
+          - paragraph [ref=e162]: 本数据集系统整理了2000年至2024年间全国31个省级行政区的宏观经济指标，涵盖地区生产总值、人均地区生产总值及经济发展水平 …
+        - listitem [ref=e163]:
+          - link "百度百科" [ref=e165] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=362407606d988ea75a683f0a36b70621a44083ae51bb139d14820cce7ea28bf3JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTQlQjglQUQlRTUlOEQlOEUlRTQlQkElQkElRTYlQjAlOTElRTUlODUlQjElRTUlOTIlOEMlRTUlOUIlQkQyMDI0JUU1JUI5JUI0JUU1JTlCJUJEJUU2JUIwJTkxJUU3JUJCJThGJUU2JUI1JThFJUU1JTkyJThDJUU3JUE0JUJFJUU0JUJDJTlBJUU1JThGJTkxJUU1JUIxJTk1JUU3JUJCJTlGJUU4JUFFJUExJUU1JTg1JUFDJUU2JThBJUE1LzY1NDQ0OTAw&ntb=1
+            - generic [ref=e170]:
+              - generic [ref=e171]: 百度百科
+              - generic [ref=e172]: https://baike.baidu.com › item
+          - heading [level=2] [ref=e175]:
+            - link "中华人民共和国2024年国民经济和社会发展统计公报（2025年2月28日 …" [ref=e176] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=362407606d988ea75a683f0a36b70621a44083ae51bb139d14820cce7ea28bf3JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTQlQjglQUQlRTUlOEQlOEUlRTQlQkElQkElRTYlQjAlOTElRTUlODUlQjElRTUlOTIlOEMlRTUlOUIlQkQyMDI0JUU1JUI5JUI0JUU1JTlCJUJEJUU2JUIwJTkxJUU3JUJCJThGJUU2JUI1JThFJUU1JTkyJThDJUU3JUE0JUJFJUU0JUJDJTlBJUU1JThGJTkxJUU1JUIxJTk1JUU3JUJCJTlGJUU4JUFFJUExJUU1JTg1JUFDJUU2JThBJUE1LzY1NDQ0OTAw&ntb=1
+          - paragraph [ref=e178]: 《中华人民共和国2024年国民经济和社会发展统计公报》由国家统计局于2025年2月28日发布。 经初步核算，2024年国内生产总值 …
+        - listitem [ref=e179]:
+          - link "uibe.edu.cn" [ref=e181] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=140be1840e0d79ce36817d7e825478e1b3352ef5883100bb9ffecb286022ff90JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9kZWxhYi51aWJlLmVkdS5jbi9kb2NzLzIwMjQtMTIvYzhmN2I5YThkODRjNDY5ZmIxNzlhZTEwMWU0YzkwODQucGRm&ntb=1
+            - generic [ref=e186]:
+              - generic [ref=e187]: uibe.edu.cn
+              - generic [ref=e189]:
+                - generic [ref=e190]: https://delab.uibe.edu.cn › docs
+                - text: · PDF 文件
+          - heading [level=2] [ref=e191]:
+            - link "中国 31 省市经济运行状况季度监测报告 (2024 年 1-9 月)" [ref=e192] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=140be1840e0d79ce36817d7e825478e1b3352ef5883100bb9ffecb286022ff90JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9kZWxhYi51aWJlLmVkdS5jbi9kb2NzLzIwMjQtMTIvYzhmN2I5YThkODRjNDY5ZmIxNzlhZTEwMWU0YzkwODQucGRm&ntb=1
+          - paragraph [ref=e194]: 分地区来看,全国生产总值排名前三的省/直辖市(下文简称“省市”)为广东省、江苏省和山东省,GDP 分别为 99939 亿元、97744 亿元和 …
+        - listitem [ref=e195]:
+          - link "cmir.org.cn" [ref=e197] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=d076694dd9293e55d7fd0bace155c784c504bb19bb3032f99f15ed590979b7f6JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuY21pci5vcmcuY24vY3lqai8zMDEuaHRtbA&ntb=1
+            - img "全球 Web 图标" [ref=e200]
+            - generic [ref=e201]:
+              - generic [ref=e202]: cmir.org.cn
+              - generic [ref=e203]: https://www.cmir.org.cn › cyjj
+          - heading [level=2] [ref=e206]:
+            - link "2024年31省份GDP公布，多省份迈上新台阶-中国社会经济决策咨询中 …" [ref=e207] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=d076694dd9293e55d7fd0bace155c784c504bb19bb3032f99f15ed590979b7f6JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuY21pci5vcmcuY24vY3lqai8zMDEuaHRtbA&ntb=1
+          - paragraph [ref=e209]: 截至1月25日下午，全国31个省份 (不含港澳台)中的30个已公布2024年地区生产总值 (GDP)数据，同时公布了经第五次经济普查修订 …
+        - listitem [ref=e210]:
+          - link "搜狐" [ref=e212] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=317c3828d18398db9d5f9477c5154a4b86ecc4226265d9e02ccd7211b842c9edJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc29odS5jb20vYS84NTM3MzMxNzlfNDcyNzcz&ntb=1
+            - generic [ref=e217]:
+              - generic [ref=e218]: 搜狐
+              - generic [ref=e219]: https://www.sohu.com
+          - heading [level=2] [ref=e222]:
+            - link "2024中国各省份GDP公布：粤苏双雄领跑，长三角全面发力，这三省 …" [ref=e223] [cursor=pointer]:
+              - /url: https://www.bing.com/ck/a?!&&p=317c3828d18398db9d5f9477c5154a4b86ecc4226265d9e02ccd7211b842c9edJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly93d3cuc29odS5jb20vYS84NTM3MzMxNzlfNDcyNzcz&ntb=1
+          - paragraph [ref=e225]: 截至2024年1月27日上午，全国31个省份（不含港澳台）中所有省份都公布了2024年地区生产总值（GDP）数据。 在深入探讨这些数 …
+        - listitem [ref=e226]:
+          - link "聚汇数据" [ref=e228] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=0250311ec2ea54af06387656d01f047648642551ae8ffcc3207404848ca19a15JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9nZHAuZ290b2h1aS5jb20vdG9waWMtNDYxNQ&ntb=1
+            - generic [ref=e233]:
+              - generic [ref=e234]: 聚汇数据
+              - generic [ref=e235]: https://gdp.gotohui.com
+          - heading "2024年全国各省市GDP排名 - 聚汇数据" [level=2] [ref=e238]:
+            - link "2024年全国各省市GDP排名 - 聚汇数据":
+              - /url: https://www.bing.com/ck/a?!&&p=0250311ec2ea54af06387656d01f047648642551ae8ffcc3207404848ca19a15JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9nZHAuZ290b2h1aS5jb20vdG9waWMtNDYxNQ&ntb=1
+          - paragraph [ref=e240]: 2025年1月27日 · 聚汇数据中心提供2024年全国各省市GDP排名,区域中国全国,数据来源各省市统计局,单位亿元
+        - listitem [ref=e241]:
+          - generic [ref=e243]:
+            - heading "其他用户还问了以下问题" [level=2] [ref=e244]
+            - list [ref=e248]:
+              - listitem [ref=e249]:
+                - heading [level=3] [ref=e250]:
+                  - button "2024年国内生产总值达多少?" [ref=e251] [cursor=pointer]
+              - listitem [ref=e253]:
+                - heading [level=3] [ref=e254]:
+                  - button "2024年GDP现价总量比上年增长了多少?" [ref=e255] [cursor=pointer]
+              - listitem [ref=e257]:
+                - heading [level=3] [ref=e258]:
+                  - button "2024年对主要国家和地区货物进出口总额增长了多少?" [ref=e259] [cursor=pointer]
+              - listitem [ref=e261]:
+                - heading [level=3] [ref=e262]:
+                  - button "2024年年末全国人口数及其构成是什么?" [ref=e263] [cursor=pointer]
+        - listitem [ref=e266]:
+          - generic [ref=e267]:
+            - heading [level=2] [ref=e268]:
+              - strong [ref=e269]: 2024年各省份地区生产总值 GDP 国家统计局
+              - text: 的相关搜索
+            - list [ref=e270]:
+              - listitem [ref=e271]:
+                - link [ref=e272] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=7fbd628e35e3b9297b1568b62f45b6ec455954438c7c2a7949061e9bbc7a7884JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTUlOTAlODQlZTclOWMlODElZTclOTQlOWYlZTQlYmElYTclZTYlODAlYmIlZTUlODAlYmMmRk9STT1RU1JFMQ&ntb=1
+                  - generic [ref=e274]:
+                    - text: "2024"
+                    - strong [ref=e275]: 年各省生产总值
+              - listitem [ref=e276]:
+                - link [ref=e277] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=ac4fd0e971dc4d0f5618ffa9edb632c092ca8eae88ef4841111949426b9d173eJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTUlODUlYTglZTUlOWIlYmQlZTUlOTAlODQlZTUlOWMlYjAlZTUlOGMlYmElZTclOTQlOWYlZTQlYmElYTclZTYlODAlYmIlZTUlODAlYmMmRk9STT1RU1JFMg&ntb=1
+                  - generic [ref=e279]:
+                    - text: "2024"
+                    - strong [ref=e280]: 年全国各地区生产总值
+              - listitem [ref=e281]:
+                - link [ref=e282] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=39d76d504e54b345bff8217794c8f52fcf3e08fd2bd91f11693736c952e67565JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTUlOWMlYjAlZTUlOGMlYmElZTclOTQlOWYlZTQlYmElYTclZTYlODAlYmIlZTUlODAlYmMlZTYlOGUlOTIlZTUlOTAlOGQmRk9STT1RU1JFMw&ntb=1
+                  - generic [ref=e284]:
+                    - text: "2024"
+                    - strong [ref=e285]: 年地区生产总值排名
+              - listitem [ref=e286]:
+                - link [ref=e287] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=f339d9e59fbadc5de47976332fa738068e4ce84934917283b6296703f083aa53JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTUlODUlYTglZTUlOWIlYmRnZHAlZTYlOGUlOTIlZTUlOTAlOGQlZTclOWMlODElZTQlYmIlYmQmRk9STT1RU1JFNA&ntb=1
+                  - generic [ref=e289]:
+                    - text: "2024"
+                    - strong [ref=e290]: 年全国
+                    - text: gdp
+                    - strong [ref=e291]: 排名省份
+              - listitem [ref=e292]:
+                - link [ref=e293] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=382f08fd9dffa4cb490a82c3793a86b1ae921d333ddd444a25fc21af93b884aaJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlODUlYTglZTUlOWIlYmQlZTclYmIlOWYlZTglYWUlYTElZTUlODUlYWMlZTYlOGElYTUmRk9STT1RU1JFNQ&ntb=1
+                  - generic [ref=e295]:
+                    - text: "2024"
+                    - strong [ref=e296]: 全国统计公报
+              - listitem [ref=e297]:
+                - link [ref=e298] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=941fa8e5424d0e26bf3b3096dcf488a5abbd39b0310987f4f02a729eda708a98JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPSVlNSU4NSVhOCVlNSU5YiViZDIwMjQlZTUlYjklYjQlZTclYmIlOWYlZTglYWUlYTElZTUlODUlYWMlZTYlOGElYTUmRk9STT1RU1JFNg&ntb=1
+                  - generic [ref=e300]:
+                    - strong [ref=e301]: 全国
+                    - text: "2024"
+                    - strong [ref=e302]: 年统计公报
+              - listitem [ref=e303]:
+                - link [ref=e304] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=9b9ddde718a0b6f1a6ad475f4eff00deb80d2181fe4611e9a15a8003bd0c5301JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTQlYjglYWElZTclOWMlODElZTQlYmIlYmRnZHAlZTYlOTUlYjAlZTYlOGQlYWUmRk9STT1RU1JFNw&ntb=1
+                  - generic [ref=e306]:
+                    - text: "2024"
+                    - strong [ref=e307]: 年个省份
+                    - text: gdp
+                    - strong [ref=e308]: 数据
+              - listitem [ref=e309]:
+                - link [ref=e310] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=36e4508e55a49bd4cf61f404a49ab18ad91ca09c1c6ba64de27b5c7110642dfcJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlOTAlODQlZTclOWMlODElZTQlYmIlYmRnZHAlZTYlOTUlYjAlZTYlOGQlYWUmRk9STT1RU1JFOA&ntb=1
+                  - generic [ref=e312]:
+                    - text: "2024"
+                    - strong [ref=e313]: 各省份
+                    - text: gdp
+                    - strong [ref=e314]: 数据
+        - listitem [ref=e315]:
+          - navigation "2024年各省份地区生产总值 GDP 国家统计局 的更多搜索结果":
+            - list:
+              - listitem [ref=e316]:
+                - generic "第 1 页" [ref=e317]: "1"
+              - listitem [ref=e318]:
+                - link "第 2 页" [ref=e319] [cursor=pointer]:
+                  - /url: /search?q=2024%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bc+GDP+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FPIG=37AA694CB3C64BCEB6DB3E71E459C1E4&first=11&FORM=PERE
+                  - text: "2"
+              - listitem [ref=e320]:
+                - link "第 3 页" [ref=e321] [cursor=pointer]:
+                  - /url: /search?q=2024%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bc+GDP+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FPIG=37AA694CB3C64BCEB6DB3E71E459C1E4&first=21&FORM=PERE1
+                  - text: "3"
+              - listitem [ref=e322]:
+                - link "第 4 页" [ref=e323] [cursor=pointer]:
+                  - /url: /search?q=2024%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bc+GDP+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FPIG=37AA694CB3C64BCEB6DB3E71E459C1E4&first=31&FORM=PERE2
+                  - text: "4"
+              - listitem [ref=e324]:
+                - link "下一页" [ref=e325] [cursor=pointer]:
+                  - /url: /search?q=2024%e5%b9%b4%e5%90%84%e7%9c%81%e4%bb%bd%e5%9c%b0%e5%8c%ba%e7%94%9f%e4%ba%a7%e6%80%bb%e5%80%bc+GDP+%e5%9b%bd%e5%ae%b6%e7%bb%9f%e8%ae%a1%e5%b1%80&FPIG=37AA694CB3C64BCEB6DB3E71E459C1E4&first=11&FORM=PORE
+    - complementary "更多结果" [ref=e326]:
+      - list [ref=e327]:
+        - listitem [ref=e328]:
+          - generic "相关搜索" [ref=e329]:
+            - generic [ref=e331]:
+              - heading "相关搜索" [level=2] [ref=e333]
+              - generic [ref=e334]:
+                - link [ref=e336] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=02ebd9257aef8b58b6d82f4daeea7dc37db5f10d3ef1cff2ec0cd77b566fe0d2JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTUlOTAlODQlZTclOWMlODElZTclOTQlOWYlZTQlYmElYTclZTYlODAlYmIlZTUlODAlYmMmRk9STT1SNUZE&ntb=1
+                  - generic [ref=e338]:
+                    - text: "2024"
+                    - strong [ref=e339]: 年各省生产总值
+                - link [ref=e341] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=2e40ec02fa4631fd48193e4871f04a8966cf4a350f75887fefa12e57c292551aJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTUlODUlYTglZTUlOWIlYmQlZTUlOTAlODQlZTUlOWMlYjAlZTUlOGMlYmElZTclOTQlOWYlZTQlYmElYTclZTYlODAlYmIlZTUlODAlYmMmRk9STT1SNUZEMQ&ntb=1
+                  - generic [ref=e343]:
+                    - text: "2024"
+                    - strong [ref=e344]: 年全国各地区生产总值
+                - link [ref=e346] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=bdad2ae9db2168a041319170f4ebbe8f9c54d198f3f87010ae3881f2d163a8c2JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTUlOWMlYjAlZTUlOGMlYmElZTclOTQlOWYlZTQlYmElYTclZTYlODAlYmIlZTUlODAlYmMlZTYlOGUlOTIlZTUlOTAlOGQmRk9STT1SNUZEMg&ntb=1
+                  - generic [ref=e348]:
+                    - text: "2024"
+                    - strong [ref=e349]: 年地区生产总值排名
+                - link [ref=e351] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=194334c154edfa275228138701b70a4baa2896a7579d32711a8961b1030f19b1JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTUlODUlYTglZTUlOWIlYmRnZHAlZTYlOGUlOTIlZTUlOTAlOGQlZTclOWMlODElZTQlYmIlYmQmRk9STT1SNUZEMw&ntb=1
+                  - generic [ref=e353]:
+                    - text: "2024"
+                    - strong [ref=e354]: 年全国
+                    - text: gdp
+                    - strong [ref=e355]: 排名省份
+                - link [ref=e357] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=568a635e1d27a9e81ddbe895dc727cb0a9f6e9c9d6d326e0d06f349fef0c337fJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlODUlYTglZTUlOWIlYmQlZTclYmIlOWYlZTglYWUlYTElZTUlODUlYWMlZTYlOGElYTUmRk9STT1SNUZENA&ntb=1
+                  - generic [ref=e359]:
+                    - text: "2024"
+                    - strong [ref=e360]: 全国统计公报
+                - link [ref=e362] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=2c95efe04a442ff0d55032eb103653e446176649fa6222fd1e8917960830ece3JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPSVlNSU4NSVhOCVlNSU5YiViZDIwMjQlZTUlYjklYjQlZTclYmIlOWYlZTglYWUlYTElZTUlODUlYWMlZTYlOGElYTUmRk9STT1SNUZENQ&ntb=1
+                  - generic [ref=e364]:
+                    - strong [ref=e365]: 全国
+                    - text: "2024"
+                    - strong [ref=e366]: 年统计公报
+                - link [ref=e368] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=c993cab379f95777f6aa63dd08c7cb4303c3da745a42f4e484150fd0e75006cbJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlYjklYjQlZTQlYjglYWElZTclOWMlODElZTQlYmIlYmRnZHAlZTYlOTUlYjAlZTYlOGQlYWUmRk9STT1SNUZENg&ntb=1
+                  - generic [ref=e370]:
+                    - text: "2024"
+                    - strong [ref=e371]: 年个省份
+                    - text: gdp
+                    - strong [ref=e372]: 数据
+                - link [ref=e374] [cursor=pointer]:
+                  - /url: https://www.bing.com/ck/a?!&&p=45c601d8c3356e248dfbbbec94b225a3f3794015da5c989671ab18f8cd034bbbJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1L3NlYXJjaD9xPTIwMjQlZTUlOTAlODQlZTclOWMlODElZTQlYmIlYmRnZHAlZTYlOTUlYjAlZTYlOGQlYWUmRk9STT1SNUZENw&ntb=1
+                  - generic [ref=e376]:
+                    - text: "2024"
+                    - strong [ref=e377]: 各省份
+                    - text: gdp
+                    - strong [ref=e378]: 数据
+  - contentinfo [ref=e379]:
+    - generic [ref=e380]:
+      - generic [ref=e381]: © 2026 Microsoft
+      - list:
+        - listitem [ref=e382]:
+          - link "隐私声明和 Cookie" [ref=e383] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=984cf7fb0d76b6892a6da5a2a3e123e3b99d726c1cbef9e2d98222b31df4ab8dJmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cDovL2dvLm1pY3Jvc29mdC5jb20vZndsaW5rLz9MaW5rSWQ9NTIxODM5&ntb=1
+        - listitem [ref=e384]:
+          - link "法律声明" [ref=e385] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=c5a4ce0164106d9c9b0d24e8c279d07db7ed3009975defc2ef7dfb87cc91e329JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cDovL2dvLm1pY3Jvc29mdC5jb20vZndsaW5rLz9MaW5rSUQ9MjQ2MzM4&ntb=1
+        - listitem [ref=e386]:
+          - link "广告" [ref=e387] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=b971b3cb0ced15172269f694f688db09b38284c052632db4eef096ad10386c47JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9nby5taWNyb3NvZnQuY29tL2Z3bGluay8_bGlua2lkPTg2ODkyMg&ntb=1
+        - listitem [ref=e388]:
+          - link "帮助" [ref=e389] [cursor=pointer]:
+            - /url: https://www.bing.com/ck/a?!&&p=06655e6831bdd3a654ddaea10210c2aa5e5ba094c69eb6da31566950065cdb28JmltdHM9MTc5MTI0NDgwMA&ptn=3&ver=2&hsh=4&fclid=10242c82-b2a5-6a4d-3ae7-3b68b30f6bc7&u=a1aHR0cHM6Ly9zdXBwb3J0Lm1pY3Jvc29mdC5jb20vdG9waWMvODJkMjA3MjEtMmQ2Zi00MDEyLWExM2QtZDE5MTBjY2YyMDNm&ntb=1
+        - listitem [ref=e390]:
+          - button "反馈" [ref=e391] [cursor=pointer]

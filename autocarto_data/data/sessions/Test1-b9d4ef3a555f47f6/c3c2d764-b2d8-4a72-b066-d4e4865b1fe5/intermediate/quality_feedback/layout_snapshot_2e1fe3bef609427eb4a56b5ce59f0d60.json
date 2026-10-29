@@ -1,0 +1,281 @@
+{
+  "captured_at": "2026-08-25T16:05:37.849600+00:00",
+  "layout_item_ids": {
+    "callouts": {
+      "callout_fengyukou": {
+        "body": "callout_callout_fengyukou_body",
+        "box": "callout_callout_fengyukou_box",
+        "leader": "callout_callout_fengyukou_leader",
+        "title": "callout_callout_fengyukou_title"
+      },
+      "callout_yongping": {
+        "body": "callout_callout_yongping_body",
+        "box": "callout_callout_yongping_box",
+        "leader": "callout_callout_yongping_leader",
+        "title": "callout_callout_yongping_title"
+      },
+      "callout_yujiahe": {
+        "body": "callout_callout_yujiahe_body",
+        "box": "callout_callout_yujiahe_box",
+        "leader": "callout_callout_yujiahe_leader",
+        "title": "callout_callout_yujiahe_title"
+      }
+    },
+    "standard": {
+      "decorative_border": "decorative_border_1",
+      "legend": "legend",
+      "main_map": "main_map",
+      "north_arrow": "north_arrow",
+      "overview": "overview",
+      "scalebar": "scalebar",
+      "title": "title"
+    }
+  },
+  "layout_item_state": {
+    "items": {
+      "callout_callout_fengyukou_body": {
+        "item_id": "callout_callout_fengyukou_body",
+        "rect_mm": {
+          "height": 9.965972222222222,
+          "width": 38.4,
+          "x": 270.5174999999997,
+          "y": 192.55178338237502
+        },
+        "text": "1935年7月15日，中共鄂豫陕省委在沣峪\n口召开会议，决定红二十五军继续西征\n北上。7月16日部队从沣峪口出发，沿秦\n岭地区向西行进。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 8.0
+      },
+      "callout_callout_fengyukou_box": {
+        "item_id": "callout_callout_fengyukou_box",
+        "rect_mm": {
+          "height": 18.389800347222224,
+          "width": 42.0,
+          "x": 268.7174999999997,
+          "y": 185.927955257375
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 6.0
+      },
+      "callout_callout_fengyukou_leader": {
+        "item_id": "callout_callout_fengyukou_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 22.08078340386271,
+          "x": 250.7174999999997,
+          "y": 204.31775560459724
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 9.0
+      },
+      "callout_callout_fengyukou_title": {
+        "item_id": "callout_callout_fengyukou_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 270.5174999999997,
+          "y": 187.72795525737502
+        },
+        "text": "沣峪口会议",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 7.0
+      },
+      "callout_callout_yongping_body": {
+        "item_id": "callout_callout_yongping_body",
+        "rect_mm": {
+          "height": 9.965972222222222,
+          "width": 38.4,
+          "x": 297.8662499999993,
+          "y": 64.22303338237529
+        },
+        "text": "1935年9月15日红二十五军到达永坪镇\n，9月16日与陕甘红军会师，红二十五军\n长征至此结束。此后与红二十六军、红\n二十七军合编为红十五军团。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 12.0
+      },
+      "callout_callout_yongping_box": {
+        "item_id": "callout_callout_yongping_box",
+        "rect_mm": {
+          "height": 18.389800347222224,
+          "width": 42.0,
+          "x": 296.0662499999993,
+          "y": 57.59920525737529
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 10.0
+      },
+      "callout_callout_yongping_leader": {
+        "item_id": "callout_callout_yongping_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 22.080783403862767,
+          "x": 278.0662499999993,
+          "y": 75.98900560459751
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 13.0
+      },
+      "callout_callout_yongping_title": {
+        "item_id": "callout_callout_yongping_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 297.8662499999993,
+          "y": 59.399205257375286
+        },
+        "text": "永坪会师",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 11.0
+      },
+      "callout_callout_yujiahe_body": {
+        "item_id": "callout_callout_yujiahe_body",
+        "rect_mm": {
+          "height": 9.965972222222222,
+          "width": 38.4,
+          "x": 342.0449999999991,
+          "y": 198.86303338237497
+        },
+        "text": "1934年12月10日，中共鄂豫皖省委在庾\n家河召开会议，决定创建鄂豫陕革命根\n据地。此后红二十五军在鄂豫陕边区进\n行了持续数月的往返转战。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 4.0
+      },
+      "callout_callout_yujiahe_box": {
+        "item_id": "callout_callout_yujiahe_box",
+        "rect_mm": {
+          "height": 18.389800347222224,
+          "width": 42.0,
+          "x": 340.2449999999991,
+          "y": 192.23920525737495
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 2.0
+      },
+      "callout_callout_yujiahe_leader": {
+        "item_id": "callout_callout_yujiahe_leader",
+        "rect_mm": {
+          "height": 12.0,
+          "width": 22.08078340386271,
+          "x": 322.2449999999991,
+          "y": 210.62900560459718
+        },
+        "type": "QgsLayoutItemPolyline",
+        "z_value": 5.0
+      },
+      "callout_callout_yujiahe_title": {
+        "item_id": "callout_callout_yujiahe_title",
+        "rect_mm": {
+          "height": 3.823828125,
+          "width": 38.4,
+          "x": 342.0449999999991,
+          "y": 194.03920525737496
+        },
+        "text": "庾家河会议",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 3.0
+      },
+      "decorative_border_1": {
+        "item_id": "decorative_border_1",
+        "outer_rect_mm": {
+          "height": 350.11301120919387,
+          "width": 518.4,
+          "x": 37.80000000000001,
+          "y": 34.943494395403064
+        },
+        "rect_mm": {
+          "height": 343.61301120919387,
+          "width": 511.9,
+          "x": 41.05000000000001,
+          "y": 38.193494395403064
+        },
+        "type": "QgsLayoutItemShape",
+        "z_value": 14.0
+      },
+      "legend": {
+        "item_id": "legend",
+        "rect_mm": {
+          "height": 119.2712109375,
+          "width": 42.41328125,
+          "x": 44.55,
+          "y": 259.03
+        },
+        "title": "图例",
+        "type": "QgsLayoutItemLegend",
+        "z_value": 17.0
+      },
+      "main_map": {
+        "item_id": "main_map",
+        "layers": [],
+        "map_rotation": 0.0,
+        "rect_mm": {
+          "height": 336.61301120919387,
+          "width": 504.9,
+          "x": 44.55000000000001,
+          "y": 41.693494395403064
+        },
+        "scale": 1640431.3719872325,
+        "type": "QgsLayoutItemMap",
+        "z_value": 1.0
+      },
+      "north_arrow": {
+        "item_id": "north_arrow",
+        "rect_mm": {
+          "height": 25.0,
+          "width": 25.0,
+          "x": 44.55000000000001,
+          "y": 41.69
+        },
+        "type": "QgsLayoutItemPicture",
+        "z_value": 19.0
+      },
+      "overview": {
+        "item_id": "overview",
+        "rect_mm": {
+          "height": 21.370454545454546,
+          "width": 58.893181818181816,
+          "x": 490.56,
+          "y": 41.69
+        },
+        "text": "红二十五军长征及转战要图\n本图展示1934年11月至1935年9月红二十五军从河南\n罗山出发，经湖北、陕西、甘肃等地的长征路线。全\n程途经主要城镇40余处，跨越秦岭、六盘山等山脉，\n转战鄂豫陕甘四省，最终到达陕北永坪镇与陕甘红军\n会师。底图涵盖省域边界、县级驻地、铁路公路及河\n流水系等地理要素。",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 16.0
+      },
+      "scalebar": {
+        "item_id": "scalebar",
+        "rect_mm": {
+          "height": 13.096235795454545,
+          "width": 87.39168770639665,
+          "x": 462.058,
+          "y": 365.21
+        },
+        "segments": 4,
+        "segments_left": 0,
+        "type": "QgsLayoutItemScaleBar",
+        "unit_label": "km",
+        "units": "kilometers",
+        "units_per_segment": 40.0,
+        "z_value": 18.0
+      },
+      "title": {
+        "item_id": "title",
+        "rect_mm": {
+          "height": 14.143181818181818,
+          "width": 254.8659090909091,
+          "x": 169.57,
+          "y": 20.8
+        },
+        "text": "红二十五军长征及转战行军路线图（1934-1935）",
+        "type": "QgsLayoutItemLabel",
+        "z_value": 15.0
+      }
+    },
+    "layout": "红二十五军行军路线图",
+    "missing_item_ids": [],
+    "page_size_mm": {
+      "height": 420.0,
+      "width": 594.0
+    }
+  },
+  "layout_name": "红二十五军行军路线图",
+  "project_path": "/home/shared-user/研究生/QGIS-agent/数据/底图数据/Test1.qgz",
+  "schema_version": "quality-feedback-layout-snapshot/v1",
+  "session_id": "c3c2d764-b2d8-4a72-b066-d4e4865b1fe5",
+  "snapshot_id": "2e1fe3bef609427eb4a56b5ce59f0d60"
+}
