@@ -24,10 +24,9 @@ import (
 func TestStatisticalToolPackagesHaveRealRoleTools(t *testing.T) {
 	f := loadGEESkillIntegrationFixture(t)
 	for role, workflow := range map[string]string{
-		"orchestrator":    "flow-control",
-		"data_engineer":   "statistical-data-tools",
-		"spatial_analyst": "data-loading",
-		"cartographer":    "print-layout",
+		"orchestrator":  "flow-control",
+		"data_engineer": "statistical-data-tools",
+		"cartographer":  "print-layout",
 	} {
 		pkg, ok := f.registry.skills.GetPackage(workflow)
 		if !ok || pkg.Kind != "category" || !pkg.Enabled {
@@ -54,10 +53,11 @@ func TestStatisticalToolPackagesHaveRealRoleTools(t *testing.T) {
 			t.Errorf("statistical method ownership for %s: readable=%v allowed=%v", role, readable, allowed)
 		}
 	}
-	for _, role := range []string{"spatial_analyst", "cartographer"} {
+	for _, role := range []string{"data_engineer", "spatial_analyst", "cartographer"} {
 		for _, name := range []string{"data_load_vector", "data_load_raster", "data_load_list"} {
-			if !slices.Contains(f.runtimeConfig.GetAgentAllowedTools(role), name) {
-				t.Errorf("%s cannot display its prepared final layer with %s", role, name)
+			allowed := slices.Contains(f.runtimeConfig.GetAgentAllowedTools(role), name)
+			if allowed != (role == "data_engineer") {
+				t.Errorf("layer loading permission for %s with %s = %v", role, name, allowed)
 			}
 		}
 	}
@@ -95,7 +95,6 @@ func TestStatisticalTaskSkillAndToolAdapters(t *testing.T) {
 			{"data_load_vector", encode(map[string]any{"path": preparedPath, "layer_name": "statistical_base"}), "base-id", map[string]any{"success": true, "data": map[string]any{"layer_id": "base-id"}}},
 		}},
 		{"cartographer", "print-layout", []statisticalProbeStep{
-			{"data_load_vector", encode(map[string]any{"layer_id": "theme-id", "show": true}), "theme-id", map[string]any{"success": true, "data": map[string]any{"layer_id": "theme-id", "shown": true}}},
 			{"cartography_set_style", `{"layer":"statistical_base","style_type":"simple","color":"#e5e7eb"}`, "gray-base", map[string]any{"success": true, "data": "gray-base"}},
 			{"cartography_graduated_style", `{"layer":"statistical_theme","field":"stat_value","classes":5,"method":"jenks","color_ramp":"Blues"}`, "graduatedSymbol", map[string]any{"success": true, "data": map[string]any{"renderer_type": "graduatedSymbol", "renderer_field": "stat_value"}}},
 			{"layout_set_map_layers", `{"layout":"statistics","item_id":"map","layers":["statistical_theme","statistical_base"]}`, "locked-layers", map[string]any{"success": true, "data": "locked-layers"}},

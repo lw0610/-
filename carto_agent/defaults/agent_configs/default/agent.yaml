@@ -70,7 +70,7 @@ runtime:
       enabled: true
       kind: agent
       llm: {provider: ""}
-      tool_packages: [vector-geometry, vector-creation, crs-projection, raster-analysis, gdal-processing, grass-analysis, spatial-analysis, network-analysis, visibility-analysis, mesh-analysis, gee-remote-sensing, data-loading]
+      tool_packages: [vector-geometry, vector-creation, crs-projection, raster-analysis, gdal-processing, grass-analysis, spatial-analysis, network-analysis, visibility-analysis, mesh-analysis, gee-remote-sensing]
       prompts:
         static_instructions: |
           只负责空间分析、分析结果解释与必要的分析产物生成。
@@ -83,7 +83,7 @@ runtime:
       enabled: true
       kind: agent
       llm: {provider: ""}
-      tool_packages: [cartography-styling, route-cartography, print-layout, canvas-navigation, charts, data-loading]
+      tool_packages: [cartography-styling, route-cartography, print-layout, canvas-navigation, charts]
       prompts:
         static_instructions: |
           只负责可视化表达、符号化、标注、布局编排、图表集成与导出质量。
