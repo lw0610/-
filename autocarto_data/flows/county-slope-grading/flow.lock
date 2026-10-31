@@ -1,0 +1,19 @@
+layers:
+    - id: layer.system.china-admin.county-area
+      name: 县域面
+      digest: sha256:eb738db7a43c8a52652a35a8e1b8583be0d36bec078a44f8b5c15a034e14f0df
+document_format: flow/v6
+apiVersion: flow-lock/v1
+resources:
+    - type: style
+      name: 铁路
+      id: style.basemap-97492a0e5d
+      version: 1.0.0
+      digest: sha256:da200b2effea27334b24aee424a23d714de0460fb80664400b539a3363831ab2
+      source: library_builtin
+    - type: layout
+      name: 统计专题版式
+      id: layout.statistical
+      version: 1.0.0
+      digest: sha256:8dab6693290a47e8e34ad677db1f11bd0025d4be41fea87ddaf1c3a4b5fa35a2
+      source: library_builtin

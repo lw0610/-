@@ -1,0 +1,33 @@
+document_format: flow/v6
+apiVersion: flow-lock/v1
+resources:
+    - type: style
+      name: 市域面
+      id: style.basemap-1a51d33883
+      version: 1.0.0
+      digest: sha256:030380b82ac0e89bb2b5ab8d5bd288ca49079608c4f33fb79d49ff6004728730
+      source: library_builtin
+    - type: style
+      name: 县域面
+      id: style.basemap-fbe4b96472
+      version: 1.0.0
+      digest: sha256:365b2a33c7231a2d03a3f2c105bd4427b9d1350062afd261603552d50343be1f
+      source: library_builtin
+    - type: style
+      name: 河流线
+      id: style.basemap-5046d6b037
+      version: 1.0.0
+      digest: sha256:06821c6c49b3b9b40d47edc197f57b83feb9043764e771b5380f824f6e776eeb
+      source: library_builtin
+    - type: style
+      name: 河流面
+      id: style.basemap-cd19de795c
+      version: 1.0.0
+      digest: sha256:a96d40376efac47e905ee2c8a95cd76cb7a1cb0e61c5e84248d331d2e4afd104
+      source: library_builtin
+    - type: layout
+      name: 四角对齐版式
+      id: layout.four-corner
+      version: 1.0.0
+      digest: sha256:96860578cbcd670bb2c613249d12b3608afc52d75531641e91e0637965e03a73
+      source: library_builtin
